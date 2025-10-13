@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-ui-configmap
+data:
+  env-contents: |
+    window._env = {
+        VITE_API_URL: "{{ .Values.envVars.apiUrl }}",
+        VITE_ENV: "{{ .Values.envVars.env }}"
+    };

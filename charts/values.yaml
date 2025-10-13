@@ -1,0 +1,9 @@
+hostname: workflow-ui.local
+ingressClass: nginx
+image: workflow-ui
+tag: latest
+certificateName: datanose-nl # Used later for secretproviderclass
+
+envVars:
+  apiUrl: ""
+  env: "development"
