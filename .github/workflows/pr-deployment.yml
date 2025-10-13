@@ -1,0 +1,39 @@
+name: build and deploy pr app
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    environment:
+      name: pr-${{ github.event.number }}
+      url: https://workflow-ui-v2-pr-${{ github.event.number }}.datanose.nl/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build and deploy
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          UPDATER_SECRET: ${{ secrets.UPDATER_SECRET_DN }}
+          NPM_TOKEN: ${{ secrets.FA_NPM_TOKEN }}
+          DESCR: ${{ github.event.pull_request.body }}
+        run: |
+          set -euxo pipefail
+          TAG="pr-${PR_NUMBER}"
+          docker build -f Dockerfile --build-arg npm_token=${NPM_TOKEN} -t "datanosecr.azurecr.io/workflow-ui:${TAG}" .
+          docker push "datanosecr.azurecr.io/workflow-ui:${TAG}"
+          VERSION=$(date "+1.0.%Y%m%d%H%M%S")
+          helm package --version "${VERSION}" --app-version "${VERSION}" charts/workflow-ui
+          helm push "workflow-ui-${VERSION}.tgz" oci://datanosecr.azurecr.io/helm/pr
+          if [[ "$DESCR" =~ workflow-api/pull/([0-9]+) ]]; then
+            pr=${BASH_REMATCH[1]}
+            curl --fail --no-progress-meter "https://api-v2-tst.datanose.nl/gitops-updater?name=workflow-ui-pr&secret=${UPDATER_SECRET}&version=${VERSION}&id=${PR_NUMBER}&target=https://workflow-api-v2-pr-${pr}.datanose.nl"
+          else
+            curl --fail --no-progress-meter "https://api-v2-tst.datanose.nl/gitops-updater?name=workflow-ui-pr&secret=${UPDATER_SECRET}&version=${VERSION}&id=${PR_NUMBER}&target=https://workflow-api-v2-tst.datanose.nl"
+          fi
