@@ -1,6 +1,6 @@
 hostname: workflow-ui.local
 ingressClass: nginx
-image: workflow-ui
+image: datanosecr.azurecr.io/workflow-ui
 tag: latest
 certificateName: datanose-nl # Used later for secretproviderclass
 
