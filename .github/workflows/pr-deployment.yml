@@ -9,7 +9,7 @@ jobs:
     runs-on: self-hosted
     environment:
       name: pr-${{ github.event.number }}
-      url: https://workflow-ui-v2-pr-${{ github.event.number }}.datanose.nl/
+      url: https://workflow-ui-pr-${{ github.event.number }}.datanose.nl/
 
     steps:
       - name: Checkout
