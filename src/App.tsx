@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { VITE_WEBAPI_URL, VITE_ENV } from './helpers/Environment'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -28,8 +29,8 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <p>API URL: {import.meta.env.VITE_API_URL}</p>
-      <p>Environment: {import.meta.env.VITE_ENV}</p>
+      <p>API URL: {VITE_WEBAPI_URL}</p>
+      <p>Environment: {VITE_ENV}</p>
     </>
   )
 }

@@ -5,6 +5,6 @@ metadata:
 data:
   env-contents: |
     window._env = {
-        VITE_API_URL: "{{ .Values.envVars.apiUrl }}",
+        VITE_WEBAPI_URL: "{{ .Values.envVars.webapiUrl }}",
         VITE_ENV: "{{ .Values.envVars.env }}"
     };
