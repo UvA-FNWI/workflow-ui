@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "jsx": "react-jsx",
+        "declaration": true,
+        "outDir": "dist",
+        "esModuleInterop": true,
+        "moduleResolution": "bundler",
+        "skipLibCheck": true,
+        "strict": true,
+        "types": ["vitest/globals"]
+    },
+    "include": [
+        "src"
+    ]
+}
