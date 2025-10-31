@@ -11,7 +11,7 @@ export default defineConfig({
             fileName: (format) => `datanose-ui.${format}.js`,
         },
         rollupOptions: {
-            external: ['react', 'react-dom'],
+            external: ['react', 'react-dom', 'react-aria', 'react-stately'],
             output: {
                 globals: {
                     react: 'React',

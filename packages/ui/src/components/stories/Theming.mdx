@@ -1,0 +1,193 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Design System/Theming" />
+
+# Theming Guide
+
+Complete guide for implementing light and dark themes using the ThemeProvider component.
+
+## Overview
+
+The UI kit provides a flexible theming system that supports:
+- **Light and Dark themes** with automatic system preference detection
+- **Manual theme switching** with persistent user preferences
+- **Component-level theme awareness** for fine-grained control
+
+## Quick Start
+
+### 1. Basic Setup
+
+Wrap your application with the `ThemeProvider` component:
+
+```tsx
+import { ThemeProvider } from '@datanose/ui';
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="system">
+      <YourAppContent />
+    </ThemeProvider>
+  );
+}
+```
+
+### 2. Use Theme-Aware Components
+
+All UI kit components support theming:
+
+```tsx
+import { Text, Checkbox } from '@datanose/ui';
+
+function MyComponent() {
+  return (
+    <div>
+      <Text intent="primary">This text adapts to the current theme</Text>
+      <Checkbox label="Theme-aware checkbox" isSelected={false} />
+    </div>
+  );
+}
+```
+
+## Theme Control
+
+Use the `useTheme` hook for programmatic theme control:
+
+```tsx
+import { useTheme } from '@datanose/ui';
+
+function CustomThemeControl() {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <p>Resolved theme: {resolvedTheme}</p>
+      
+      <button onClick={() => setTheme('light')}>
+        Light Mode
+      </button>
+      
+      <button onClick={() => setTheme('dark')}>
+        Dark Mode
+      </button>
+      
+      <button onClick={() => setTheme('system')}>
+        Follow System
+      </button>
+    </div>
+  );
+}
+```
+
+### Theme Hook API
+
+The `useTheme` hook returns:
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>theme</code></td>
+      <td><code>'light' | 'dark' | 'system'</code></td>
+      <td>Current theme setting</td>
+    </tr>
+    <tr>
+      <td><code>setTheme</code></td>
+      <td><code>(theme) => void</code></td>
+      <td>Function to change theme</td>
+    </tr>
+    <tr>
+      <td><code>resolvedTheme</code></td>
+      <td><code>'light' | 'dark'</code></td>
+      <td>Actual theme being displayed</td>
+    </tr>
+  </tbody>
+</table>
+
+## Advanced Configuration
+
+### Theme Options
+
+The `ThemeProvider` accepts these props:
+
+<table>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>defaultTheme</code></td>
+      <td><code>'light' | 'dark' | 'system'</code></td>
+      <td><code>'system'</code></td>
+      <td>Initial theme setting</td>
+    </tr>
+    <tr>
+      <td><code>storageKey</code></td>
+      <td><code>string</code></td>
+      <td><code>'ui-theme'</code></td>
+      <td>localStorage key for persistence</td>
+    </tr>
+    <tr>
+      <td><code>children</code></td>
+      <td><code>React.ReactNode</code></td>
+      <td>-</td>
+      <td>Your app content</td>
+    </tr>
+  </tbody>
+</table>
+
+```tsx
+<ThemeProvider
+  defaultTheme="light"
+  storageKey="my-app-theme"
+>
+  <App />
+</ThemeProvider>
+```
+
+## Custom Styling
+
+### Component-Specific Theming
+
+For fine-grained control, components can define their own theme variables:
+
+```scss
+// MyComponent.scss
+:root {
+  --my-component-bg: #{$white};
+  --my-component-text: #{$black};
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --my-component-bg: #{$grey-800};
+    --my-component-text: #{$white};
+  }
+}
+
+.theme-light {
+  --my-component-bg: #{$white};
+  --my-component-text: #{$black};
+}
+
+.theme-dark {
+  --my-component-bg: #{$grey-800};
+  --my-component-text: #{$white};
+}
+
+.MyComponent {
+  background: var(--my-component-bg);
+  color: var(--my-component-text);
+}
+```

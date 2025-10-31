@@ -1,0 +1,42 @@
+/* Storybook theme styling - using hardcoded colors for reliability */
+
+/* Apply theme colors to Storybook canvas */
+.sb-show-main {
+    background-color: var(--storybook-bg, #ffffff);
+    color: var(--storybook-text, #1f1d21);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light theme (default) */
+.sb-show-main {
+    --storybook-bg: #ffffff;
+    --storybook-text: #1f1d21;
+    --storybook-surface: #fafafa;
+    --storybook-border: #e7e5e4;
+}
+
+/* Dark theme via system preference */
+@media (prefers-color-scheme: dark) {
+    .sb-show-main {
+        --storybook-bg: #282524;
+        --storybook-text: #ffffff;
+        --storybook-surface: #433f3d;
+        --storybook-border: #8f8884;
+    }
+}
+
+/* Dark theme via class override */
+[data-theme="dark"] .sb-show-main {
+    --storybook-bg: #282524;
+    --storybook-text: #ffffff;
+    --storybook-surface: #433f3d;
+    --storybook-border: #8f8884;
+}
+
+/* Light theme via class override */
+[data-theme="light"] .sb-show-main {
+    --storybook-bg: #ffffff;
+    --storybook-text: #1f1d21;
+    --storybook-surface: #fafafa;
+    --storybook-border: #e7e5e4;
+}

@@ -1,0 +1,101 @@
+// Font Family Variables
+@use '_variables' as vars;
+
+$heading-font: 'Utopia', serif;
+$body-font: 'Source Sans Pro', sans-serif;
+
+// Font Size Variables
+// Base font size
+$font-size-base: 16px;
+
+// Font size scale
+$font-size-xs: 0.75rem; // 12px
+$font-size-sm: 0.875rem; // 14px
+$font-size-md: 1rem; // 16px (base)
+$font-size-lg: 1.125rem; // 18px
+$font-size-xl: 1.25rem; // 20px
+$font-size-2xl: 1.5rem; // 24px
+$font-size-3xl: 1.875rem; // 30px
+$font-size-4xl: 2.25rem; // 36px
+$font-size-5xl: 3rem; // 48px
+$font-size-6xl: 3.75rem; // 60px
+$font-size-7xl: 4.5rem; // 72px
+
+// Font Weight Variables
+// Numeric font weights (recommended for better browser support)
+$font-weight-normal: 400; // Normal/Regular
+$font-weight-semibold: 600; // Semi Bold
+$font-weight-bold: 700; // Bold
+
+// Font Face Declarations
+@font-face {
+  font-family: #{$heading-font};
+  src:
+    local('Utopia'),
+    url('../fonts/utopia/utopia-regular.ttf') format('truetype');
+  font-weight: #{$font-weight-normal};
+  font-style: normal;
+}
+
+@font-face {
+  font-family: #{$heading-font};
+  src:
+    local('Utopia'),
+    url('../fonts/utopia/utopia-bold.ttf') format('truetype');
+  font-weight: #{$font-weight-normal};
+  font-style: normal;
+}
+
+@font-face {
+  font-family: #{$body-font};
+  src:
+    local('Source Sans Pro'),
+    url('../fonts/sourcesanspro/sourcesanspro-semibold.otf') format('opentype');
+  font-weight: #{$font-weight-semibold};
+}
+
+@font-face {
+  font-family: #{$body-font};
+  src:
+    local('Source Sans Pro'),
+    url('../fonts/sourcesanspro/sourcesanspro-regular.otf') format('opentype');
+  font-weight: #{$font-weight-normal};
+  font-style: normal;
+}
+
+@font-face {
+  font-family: #{$body-font};
+  src:
+    local('Source Sans Pro'),
+    url('../fonts/sourcesanspro/sourcesanspro-bold.otf') format('opentype');
+  font-weight: #{$font-weight-bold};
+  font-style: normal;
+}
+
+@font-face {
+  font-family: #{$body-font};
+  src:
+    local('Source Sans Pro'),
+    url('../fonts/sourcesanspro/sourcesanspro-boldit.otf') format('opentype');
+  font-weight: #{$font-weight-bold};
+  font-style: italic;
+}
+
+@font-face {
+  font-family: #{$body-font};
+  src:
+    local('Source Sans Pro'),
+    url('../fonts/sourcesanspro/sourcesanspro-it.otf') format('opentype');
+  font-weight: #{$font-weight-normal};
+  font-style: italic;
+}
+
+@font-face {
+  font-family: #{$body-font};
+  src:
+    local('Source Sans Pro'),
+    url('../fonts/sourcesanspro/sourcesanspro-semiboldit.otf')
+      format('opentype');
+  font-weight: #{$font-weight-semibold};
+  font-style: italic;
+}
