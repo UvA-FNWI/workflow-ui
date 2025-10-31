@@ -1,4 +1,4 @@
-FROM node:24-slim AS base
+FROM docker.io/node:24-slim AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -21,7 +21,7 @@ COPY . .
 
 RUN pnpm run build
 
-FROM nginx:1.29.0-alpine
+FROM docker.io/nginx:1.29.0-alpine
 RUN apk add --no-cache bash
 
 RUN mkdir -p /etc/nginx/templates
