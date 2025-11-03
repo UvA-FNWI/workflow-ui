@@ -30,11 +30,10 @@ jobs:
         needs: setup
         steps:
             - uses: actions/checkout@v4
-            # - name: Restore cached dependencies
-            #   uses: actions/cache@v4
-            #   with:
-            #       path: node_modules
-            #       key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10
             - name: Prettier
               run: pnpm run format:check
 
@@ -44,11 +43,10 @@ jobs:
         needs: setup
         steps:
             - uses: actions/checkout@v4
-            - name: Restore cached dependencies
-              uses: actions/cache@v4
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
               with:
-                  path: node_modules
-                  key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+                  version: 10
             - name: Lint
               run: pnpm run lint
 
@@ -58,10 +56,9 @@ jobs:
         needs: setup
         steps:
             - uses: actions/checkout@v4
-            - name: Restore cached dependencies
-              uses: actions/cache@v4
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
               with:
-                  path: node_modules
-                  key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+                  version: 10
             - name: Translations
               run: pnpm run translations:check
