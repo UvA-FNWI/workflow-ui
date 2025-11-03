@@ -36,3 +36,6 @@ jobs:
             - name: Lint
               if: always()
               run: pnpm run lint
+            - name: Translations
+              if: always()
+              run: pnpm run translations:check
