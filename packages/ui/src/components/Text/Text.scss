@@ -1,31 +1,21 @@
 @use '../../styles/variables' as *;
 @use '../../styles/colors' as *;
 @use '../../styles/typography' as *;
+@use '../../styles/_mixins' as *;
 @use 'sass:map';
 
-// Light theme text colors
-:root {
-  --color-text-primary: #{$black};
-  --color-text-secondary: #{$grey-600};
-}
-
-// Dark theme text colors
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text-primary: #{$white};
-    --color-text-secondary: #{$grey-400};
-  }
-}
-
-.theme-light {
-  --color-text-primary: #{$black};
-  --color-text-secondary: #{$grey-600};
-}
-
-.theme-dark {
-  --color-text-primary: #{$white};
-  --color-text-secondary: #{$grey-400};
-}
+@include theme-variables(
+  (
+    'color-text-primary': (
+      'light': $black,
+      'dark': $white,
+    ),
+    'color-text-secondary': (
+      'light': $grey-600,
+      'dark': $grey-400,
+    ),
+  )
+);
 
 $textSizesVars: (
   'xs': $font-size-xs,

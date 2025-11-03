@@ -160,34 +160,23 @@ The `ThemeProvider` accepts these props:
 
 ### Component-Specific Theming
 
-For fine-grained control, components can define their own theme variables:
+For fine-grained control, components can define their own theme variables using the `theme-variables` mixin:
 
 ```scss
 // MyComponent.scss
-:root {
-  --my-component-bg: #{$white};
-  --my-component-text: #{$black};
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --my-component-bg: #{$grey-800};
-    --my-component-text: #{$white};
-  }
-}
+@use '../../styles/_mixins' as *;
 
-.theme-light {
-  --my-component-bg: #{$white};
-  --my-component-text: #{$black};
-}
-
-.theme-dark {
-  --my-component-bg: #{$grey-800};
-  --my-component-text: #{$white};
-}
+@include theme-variables(
+  (
+    'color-text-primary': (
+      'light': $black,
+      'dark': $white,
+    ),
+  )
+);
 
 .MyComponent {
-  background: var(--my-component-bg);
-  color: var(--my-component-text);
+  color: var(--color-text-primary);
 }
 ```
