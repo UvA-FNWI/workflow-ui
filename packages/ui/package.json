@@ -33,6 +33,7 @@
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
     "@vitejs/plugin-react": "^5.0.4",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
@@ -53,9 +54,13 @@
     "react-dom": "^18"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.16",
     "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "react-aria": "^3.44.0",
     "react-aria-components": "^1.13.0",
-    "react-stately": "^3.42.0"
+    "react-stately": "^3.42.0",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.16"
   }
 }

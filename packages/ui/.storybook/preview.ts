@@ -1,5 +1,7 @@
 import type { Preview } from '@storybook/react-vite'
 import './preview.css'
+import React from 'react'
+import { ThemeProvider } from '../src/components/ThemeProvider'
 
 const preview: Preview = {
   parameters: {
@@ -31,23 +33,15 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals.theme || 'system';
 
-      // Apply theme to document root
-      if (typeof window !== 'undefined') {
-        const root = document.documentElement;
-
-        // Remove existing theme classes
-        root.classList.remove('theme-light', 'theme-dark');
-
-        // Add new theme class if not system
-        if (theme !== 'system') {
-          root.classList.add(`theme-${theme}`);
+      return React.createElement(
+        ThemeProvider,
+        {
+          key: `theme-${theme}`,
+          defaultTheme: theme,
+          storageKey: 'storybook-theme',
+          children: React.createElement(Story)
         }
-
-        // Set data attribute for styling the storybook canvas
-        root.setAttribute('data-theme', theme);
-      }
-
-      return Story();
+      );
     },
   ],
 };

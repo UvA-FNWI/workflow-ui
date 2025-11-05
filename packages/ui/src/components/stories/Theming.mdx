@@ -142,7 +142,7 @@ The `ThemeProvider` accepts these props:
       <td><code>children</code></td>
       <td><code>React.ReactNode</code></td>
       <td>-</td>
-      <td>Your app content</td>
+      <td>App content</td>
     </tr>
   </tbody>
 </table>
@@ -158,25 +158,140 @@ The `ThemeProvider` accepts these props:
 
 ## Custom Styling
 
-### Component-Specific Theming
+### Tailwind CSS + Class Variance Authority
 
-For fine-grained control, components can define their own theme variables using the `theme-variables` mixin:
+This UI kit uses **Tailwind CSS** with **Class Variance Authority (CVA)** for component styling.
 
-```scss
-// MyComponent.scss
+#### Component Structure
 
-@use '../../styles/_mixins' as *;
+Components use CVA to define variants and Tailwind utilities:
 
-@include theme-variables(
-  (
-    'color-text-primary': (
-      'light': $black,
-      'dark': $white,
-    ),
-  )
+```tsx
+// Text.tsx
+import { cva, VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils/cn';
+
+const textVariants = cva('font-body inline-block p-0 m-0', {
+  variants: {
+    intent: {
+      primary: 'text-intent-primary',
+      secondary: 'text-intent-secondary',
+    },
+    size: {
+      xs: 'text-xs',      // 12px
+      sm: 'text-sm',      // 14px  
+      md: 'text-md',      // 16px (default)
+      lg: 'text-lg',      // 18px
+      xl: 'text-xl',      // 20px
+      '2xl': 'text-2xl',  // 24px
+      '3xl': 'text-3xl',  // 30px
+    },
+  },
+  defaultVariants: {
+    intent: 'primary',
+    size: 'md',
+  },
+});
+
+export const Text = ({ className, intent, size, ...props }) => {
+  return (
+    <p
+      className={cn(textVariants({ intent, size }), className)}
+      {...props}
+    />
+  );
+};
+```
+
+#### Creating Custom Components
+
+When creating new components, we follow this pattern:
+
+```tsx
+// Button.tsx
+import { cva, VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils/cn';
+
+const buttonVariants = cva(
+  // Base classes (always applied)
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-navy-600 text-white hover:bg-navy-700',
+        secondary: 'bg-grey-100 text-grey-900 hover:bg-grey-200',
+        outline: 'border border-grey-300 bg-transparent hover:bg-grey-100',
+      },
+      size: {
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4',
+        lg: 'h-12 px-6 text-lg',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
 );
 
-.MyComponent {
-  color: var(--color-text-primary);
+interface ButtonProps 
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+export const Button = ({ 
+  className, 
+  variant, 
+  size, 
+  ...props 
+}: ButtonProps) => {
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    />
+  );
+};
+```
+
+#### Benefits of This Approach
+
+**✅ Type Safety**
+- CVA provides full TypeScript support
+- Autocomplete for all variant options
+- Compile-time checking for invalid combinations
+
+**✅ Performance**  
+- Only used Tailwind classes are included in the bundle
+- Optimal caching and reuse
+
+**✅ Developer Experience**
+- Quick development once familiar with Tailwind utility classes
+- Easy to customize and extend
+- IntelliSense support
+
+**✅ Consistency**
+- Design system colors defined in Tailwind config
+- Standardized spacing and typography scales
+- Automatic dark mode support
+
+#### Tailwind Configuration
+
+The project includes a custom Tailwind configuration to apply the UvA design system styles:
+
+```css
+// tailwind.css
+
+@theme {
+  --font-body: var(--font-sans);
+  --font-heading: var(--font-serif);
+  --font-sans: 'Source Sans Pro', system-ui, sans-serif;
+  --font-serif: 'Utopia', serif;
+  
+  /* Grey */
+  --color-grey-100: hsl(20, 5%, 98%);
+  ...
 }
 ```

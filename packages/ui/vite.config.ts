@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+        tailwindcss(),
+    ],
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/index.ts'),
@@ -16,15 +20,10 @@ export default defineConfig({
                 globals: {
                     react: 'React',
                     'react-dom': 'ReactDOM',
+                    'react-aria': 'ReactAria',
+                    'react-stately': 'ReactStately',
                 },
             },
         },
     },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                // additionalData: `@import "./src/styles/_variables.scss";`,
-            },
-        },
-    }
 });

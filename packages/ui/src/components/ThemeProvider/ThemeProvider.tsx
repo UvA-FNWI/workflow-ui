@@ -63,14 +63,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       const root = document.documentElement;
 
       // Remove any existing theme classes
-      root.classList.remove('theme-light', 'theme-dark');
+      root.classList.remove('dark');
 
-      // Add new theme class if not using system preference
-      if (theme !== 'system') {
-        root.classList.add(`theme-${theme}`);
+      // Add Tailwind's dark class when resolved theme is dark
+      if (resolvedTheme === 'dark') {
+        root.classList.add('dark');
       }
     }
-  }, [theme, resolvedTheme]);
+  }, [resolvedTheme]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
