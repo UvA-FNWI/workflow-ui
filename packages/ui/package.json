@@ -10,7 +10,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/datanose-ui.es.js",
       "require": "./dist/datanose-ui.umd.js"
-    }
+    },
+    "./styles": "./dist/ui.css"
   },
   "files": [
     "dist"
@@ -56,6 +57,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.0",
     "vite": "^7.1.9",
+    "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.4"
   },

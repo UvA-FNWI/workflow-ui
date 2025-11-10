@@ -13,7 +13,11 @@ function Overview() {
         <Link to="/instance/2">Instance 2</Link>
         <Link to="/instance/3">Instance 3</Link>
       </nav>
-      <div>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+      }}>
         <p>Welcome to the Workflow UI Overview page.</p>
         <p>Here are some examples to get started with the UI kit:</p>
         <Checkbox isSelected={checked} onChange={setChecked} label='Example checkbox'/>
