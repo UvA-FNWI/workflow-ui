@@ -5,5 +5,5 @@ tag: latest
 certificateName: datanose-nl # Used later for secretproviderclass
 
 envVars:
-  webapiUrl: ""
-  env: "development"
+    webapiUrl: ""
+    env: "development"
