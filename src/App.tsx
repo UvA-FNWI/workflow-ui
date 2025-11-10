@@ -1,5 +1,4 @@
 import { Outlet } from "react-router";
-import "./App.css";
 import { VITE_WEBAPI_URL, VITE_ENV } from "./helpers/Environment";
 import { ThemeProvider } from "@datanose/ui";
 
