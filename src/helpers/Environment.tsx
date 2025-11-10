@@ -5,5 +5,10 @@ interface CustomEnvWindow extends Window {
   };
 }
 const envWindow = window as CustomEnvWindow;
+const env = {
+  VITE_WEBAPI_URL:
+    envWindow._env?.VITE_WEBAPI_URL ?? import.meta.env.VITE_WEBAPI_URL,
+  VITE_ENV: envWindow._env?.VITE_ENV ?? import.meta.env.VITE_ENV,
+};
 
-export const { VITE_WEBAPI_URL, VITE_ENV } = envWindow._env || {};
+export const { VITE_WEBAPI_URL, VITE_ENV } = env;
