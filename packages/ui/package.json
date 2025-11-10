@@ -11,7 +11,8 @@
       "import": "./dist/datanose-ui.es.js",
       "require": "./dist/datanose-ui.umd.js"
     },
-    "./styles": "./dist/ui.css"
+    "./styles": "./dist/ui.css",
+    "./tokens": "./src/styles/tokens.css"
   },
   "files": [
     "dist"
