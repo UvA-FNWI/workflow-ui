@@ -11,7 +11,8 @@ ENV NPM_TOKEN=$npm_token
 
 WORKDIR /app
 
-COPY pnpm-lock.yaml package.json ./
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+COPY packages ./packages
 
 RUN pnpm fetch
 
