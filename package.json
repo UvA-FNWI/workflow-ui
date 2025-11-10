@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:ui": "pnpm --filter @datanose/ui dev",
-    "dev:all": "pnpm --parallel --recursive pnpm dev && pnpm dev:ui",
+    "dev:all": "pnpm --parallel dev:ui dev",
     "build": "tsc -b && vite build",
     "build:ui": "pnpm --filter @datanose/ui build",
     "lint": "eslint .",
