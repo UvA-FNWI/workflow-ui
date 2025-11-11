@@ -1,9 +1,12 @@
 import {StrictMode} from "react";
+
 import {createRoot} from "react-dom/client";
 import {RouterProvider} from "react-router";
+
+import {ThemeProvider} from "@datanose/ui";
+
 import "./index.css";
 import router from "./router/routes.tsx";
-import {ThemeProvider} from "@datanose/ui";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>

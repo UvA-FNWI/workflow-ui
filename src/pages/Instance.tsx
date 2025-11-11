@@ -1,10 +1,10 @@
-import {useParams, Link} from "react-router";
+import {Link, useParams} from "react-router";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
 
     return (
-        <div>
+        <div className="bg-red-500 text-black dark:text-white">
             <nav>
                 <Link to="/">← Overview</Link>
             </nav>

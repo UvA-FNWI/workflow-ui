@@ -1,6 +1,7 @@
 import {type RouteObject} from "react-router";
-import WorkflowList from "../pages/WorkflowList";
+
 import WorkflowDetail from "../pages/WorkflowDetail";
+import WorkflowList from "../pages/WorkflowList";
 
 export const workflowRoutes: RouteObject[] = [
     {

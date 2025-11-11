@@ -16,7 +16,7 @@ import { Text } from '../Text/Text';
 
 const checkboxVariants = cva(
   // Base classes for the checkbox container
-  'inline-flex items-center gap-2 cursor-pointer select-none',
+  'inline-flex cursor-pointer items-center gap-2 select-none',
   {
     variants: {
       isDisabled: {
@@ -24,7 +24,7 @@ const checkboxVariants = cva(
         false: 'cursor-pointer',
       },
       isFocusVisible: {
-        true: 'ring-2 ring-navy-600 ring-offset-6 dark:ring-offset-grey-900 dark:ring-orange-500',
+        true: 'ring-navy-600 dark:ring-offset-grey-900 ring-2 ring-offset-6 dark:ring-orange-500',
         false: '',
       },
     },
@@ -37,12 +37,12 @@ const checkboxVariants = cva(
 
 const checkboxBoxVariants = cva(
   // Base checkbox box styles
-  'relative inline-flex h-6 w-6 items-center justify-center rounded border-1 transition-all duration-200 outline-6 outline-transparent',
+  'relative inline-flex h-6 w-6 items-center justify-center rounded border-1 outline-6 outline-transparent transition-all duration-200',
   {
     variants: {
       isSelected: {
-        true: 'bg-navy-600 border-navy-600 dark:bg-sky-500 dark:border-sky-500',
-        false: 'bg-white border-grey-300 dark:bg-grey-800 dark:border-grey-600',
+        true: 'bg-navy-600 border-navy-600 dark:border-sky-500 dark:bg-sky-500',
+        false: 'border-grey-300 dark:bg-grey-800 dark:border-grey-600 bg-white',
       },
       isDisabled: {
         true: 'bg-grey-100 border-grey-300 dark:bg-grey-800 dark:border-grey-600',
@@ -53,7 +53,7 @@ const checkboxBoxVariants = cva(
         false: 'border-red-600 dark:border-red-400',
       },
       isHovered: {
-        true: 'bg-navy-100 dark:bg-sky-900 outline-6 outline-navy-100 dark:outline-sky-900',
+        true: 'bg-navy-100 outline-navy-100 outline-6 dark:bg-sky-900 dark:outline-sky-900',
         false: '',
       },
     },
@@ -67,7 +67,7 @@ const checkboxBoxVariants = cva(
         isHovered: true,
         isSelected: true,
         class:
-          'bg-navy-600 dark:bg-sky-500 border-navy-600 dark:border-sky-500 outline-navy-100 dark:outline-sky-900',
+          'bg-navy-600 border-navy-600 outline-navy-100 dark:border-sky-500 dark:bg-sky-500 dark:outline-sky-900',
       },
       {
         isValid: false,

@@ -3,8 +3,9 @@ import prettier from 'eslint-config-prettier';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
+import { defineConfig } from 'vite';
 
-export default tseslint.config(
+export default defineConfig([
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettier, // Disables ESLint rules that conflict with Prettier
@@ -81,5 +82,5 @@ export default tseslint.config(
       '*.config.{js,ts}',
       '.storybook/',
     ],
-  }
-);
+  },
+]);

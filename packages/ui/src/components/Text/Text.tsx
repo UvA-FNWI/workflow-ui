@@ -6,7 +6,7 @@ import { cn } from '../../utils/cn';
 
 export type TextVariantProps = VariantProps<typeof textVariants>;
 
-const textVariants = cva('font-body inline-block p-0 m-0', {
+const textVariants = cva('font-body m-0 inline-block p-0', {
   variants: {
     intent: {
       primary: 'text-black dark:text-white',
@@ -33,7 +33,7 @@ const textVariants = cva('font-body inline-block p-0 m-0', {
       capitalize: 'capitalize',
     },
     truncate: {
-      true: 'overflow-hidden text-ellipsis whitespace-nowrap w-full',
+      true: 'w-full overflow-hidden text-ellipsis whitespace-nowrap',
       false: '',
     },
   },

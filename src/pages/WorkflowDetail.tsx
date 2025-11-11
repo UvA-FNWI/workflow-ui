@@ -1,4 +1,4 @@
-import {useParams, Link} from "react-router";
+import {Link, useParams} from "react-router";
 
 function WorkflowDetail() {
     const {id} = useParams<{id: string}>();
