@@ -1,7 +1,9 @@
-import type { Preview } from '@storybook/react-vite'
-import './preview.css'
-import React from 'react'
-import { ThemeProvider } from '../src/components/ThemeProvider'
+import React from 'react';
+
+import type { Preview } from '@storybook/react-vite';
+
+import { ThemeProvider } from '../src/components/ThemeProvider';
+import './preview.css';
 
 const preview: Preview = {
   parameters: {
@@ -33,15 +35,12 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals.theme || 'system';
 
-      return React.createElement(
-        ThemeProvider,
-        {
-          key: `theme-${theme}`,
-          defaultTheme: theme,
-          storageKey: 'storybook-theme',
-          children: React.createElement(Story)
-        }
-      );
+      return React.createElement(ThemeProvider, {
+        key: `theme-${theme}`,
+        defaultTheme: theme,
+        storageKey: 'storybook-theme',
+        children: React.createElement(Story),
+      });
     },
   ],
 };

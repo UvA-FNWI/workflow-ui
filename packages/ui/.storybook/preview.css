@@ -2,5 +2,5 @@
 
 /* Dark mode styles for Storybook */
 .dark {
-    background-color: var(--color-grey-900);
+  background-color: var(--color-grey-900);
 }

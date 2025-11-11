@@ -1,15 +1,12 @@
 {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-    },
-    "typescript.preferences.importModuleSpecifier": "relative",
-    "css.lint.unknownAtRules": "ignore",
-    "tailwindCSS.experimental.configFile": null,
-    "tailwindCSS.experimental.classRegex": [
-        [
-            "class:\\s*?[\"'`]([^\"'`]*).*?[\"'`]",
-            "[\"'`]([^\"'`]*)[\"'`]"
-        ]
-    ]
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.experimental.configFile": null,
+  "tailwindCSS.experimental.classRegex": [
+    ["class:\\s*?[\"'`]([^\"'`]*).*?[\"'`]", "[\"'`]([^\"'`]*)[\"'`]"]
+  ]
 }
