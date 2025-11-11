@@ -11,7 +11,8 @@ ENV NPM_TOKEN=$npm_token
 
 WORKDIR /app
 
-COPY pnpm-lock.yaml package.json ./
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+COPY packages ./packages
 
 RUN pnpm fetch
 
@@ -19,7 +20,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm run build
+RUN pnpm build:ui && pnpm run build
 
 FROM docker.io/nginx:1.29.0-alpine
 RUN apk add --no-cache bash

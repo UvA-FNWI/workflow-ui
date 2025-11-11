@@ -1,0 +1,249 @@
+import { ColorItem, ColorPalette, Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Colors" />
+
+# UvA Design System Color Palette
+
+The University of Amsterdam (UvA) design system provides a comprehensive color palette that ensures brand consistency and accessibility across all digital products.
+
+## Base Colors
+
+Foundation colors that form the basis of the design system.
+
+<ColorPalette>
+  <ColorItem
+    title="Base Colors"
+    subtitle="Essential foundation colors"
+    colors={{
+      $white: '#FFFFFF',
+      $black: '#1F1D21',
+    }}
+  />
+</ColorPalette>
+
+## Primary Brand Color
+
+<ColorPalette>
+  <ColorItem
+    title="UvA Red"
+    subtitle="Main brand color"
+    colors={{
+      $red: '#BD0032',
+    }}
+  />
+</ColorPalette>
+
+## Grey Scale
+
+Neutral colors for text, backgrounds, and subtle UI elements.
+
+<ColorPalette>
+  <ColorItem
+    title="Grey Scale"
+    subtitle="Neutral colors from light to dark"
+    colors={{
+      '$grey-100': '#FAFAFA',
+      '$grey-200': '#F5F5F4',
+      '$grey-300': '#E7E5E4',
+      '$grey-400': '#CFCBC9',
+      '$grey-500': '#B1ACA9',
+      '$grey-600': '#8F8884',
+      '$grey-700': '#6B6461',
+      '$grey-800': '#433F3D',
+      '$grey-900': '#282524',
+    }}
+  />
+</ColorPalette>
+
+## Red Palette
+
+Extended red color palette for alerts, errors, and accent elements.
+
+<ColorPalette>
+  <ColorItem
+    title="Red Palette"
+    subtitle="From light pink to deep red"
+    colors={{
+      '$red-100': '#FFEBEF',
+      '$red-200': '#FBD0D9',
+      '$red-300': '#F7A1B4',
+      '$red-400': '#F15577',
+      '$red-500': '#EC1342',
+      '$red-600': '#E00031',
+      '$red-700': '#C2002A',
+      '$red-800': '#A30023',
+      '$red-900': '#85001D',
+    }}
+  />
+</ColorPalette>
+
+## Orange Palette
+
+Warm orange tones for warnings.
+
+<ColorPalette>
+  <ColorItem
+    title="Orange Palette"
+    subtitle="Warm and energetic oranges"
+    colors={{
+      '$orange-100': '#FFF2E0',
+      '$orange-200': '#FFE0B8',
+      '$orange-300': '#FFD399',
+      '$orange-400': '#FFBD66',
+      '$orange-500': '#FFA733',
+      '$orange-600': '#F58B00',
+      '$orange-700': '#E07F00',
+      '$orange-800': '#C26E00',
+      '$orange-900': '#A35C00',
+    }}
+  />
+</ColorPalette>
+
+## Lime Palette
+
+<ColorPalette>
+  <ColorItem
+    title="Lime Palette"
+    subtitle="Bright and vibrant lime greens"
+    colors={{
+      '$lime-100': '#FDFBE3',
+      '$lime-200': '#FAF7BD',
+      '$lime-300': '#F7F297',
+      '$lime-400': '#F3EC68',
+      '$lime-500': '#EFE639',
+      '$lime-600': '#D9CF12',
+      '$lime-700': '#C2B800',
+      '$lime-800': '#A39B00',
+      '$lime-900': '#857E00',
+    }}
+  />
+</ColorPalette>
+
+## Forest Palette
+
+Natural greens for success states.
+
+<ColorPalette>
+  <ColorItem
+    title="Forest Palette"
+    subtitle="Natural and calming greens"
+    colors={{
+      '$forest-100': '#EAF5EC',
+      '$forest-200': '#C8E4CE',
+      '$forest-300': '#98CDA2',
+      '$forest-400': '#68B677',
+      '$forest-500': '#41AA56',
+      '$forest-600': '#1C9C35',
+      '$forest-700': '#0F8A28',
+      '$forest-800': '#0C6E20',
+      '$forest-900': '#0A5C1B',
+    }}
+  />
+</ColorPalette>
+
+## Sky Palette
+
+Light blues for informational content.
+
+<ColorPalette>
+  <ColorItem
+    title="Sky Palette"
+    subtitle="Light and airy blues"
+    colors={{
+      '$sky-100': '#EFF8FB',
+      '$sky-200': '#DDF1F8',
+      '$sky-300': '#C2E7F4',
+      '$sky-400': '#9DDBF1',
+      '$sky-500': '#63C9EE',
+      '$sky-600': '#35B9E9',
+      '$sky-700': '#17A1D3',
+      '$sky-800': '#127EA5',
+      '$sky-900': '#00698F',
+    }}
+  />
+</ColorPalette>
+
+## Navy Palette
+
+<ColorPalette>
+  <ColorItem
+    title="Navy Palette"
+    subtitle="Professional and trustworthy blues"
+    colors={{
+      '$navy-100': '#E7F0F9',
+      '$navy-200': '#CEE2F3',
+      '$navy-300': '#ADCEEB',
+      '$navy-400': '#74ACDC',
+      '$navy-500': '#3385CC',
+      '$navy-600': '#0562B3',
+      '$navy-700': '#005299',
+      '$navy-800': '#00417A',
+      '$navy-900': '#003666',
+    }}
+  />
+</ColorPalette>
+
+## Purple Palette
+
+<ColorPalette>
+  <ColorItem
+    title="Purple Palette"
+    subtitle="Creative and sophisticated purples"
+    colors={{
+      '$purple-100': '#F5EAF3',
+      '$purple-200': '#EDD4E9',
+      '$purple-300': '#E0AED9',
+      '$purple-400': '#D47DC7',
+      '$purple-500': '#B42D9F',
+      '$purple-600': '#91087D',
+      '$purple-700': '#7E076C',
+      '$purple-800': '#6B065B',
+      '$purple-900': '#57054B',
+    }}
+  />
+</ColorPalette>
+
+## Usage Guidelines
+
+### Accessibility
+
+- Always ensure sufficient contrast ratios when combining colors
+- Use darker shades (700-900) for text on light backgrounds
+- Use lighter shades (100-300) for backgrounds and subtle elements
+
+### Semantic Usage
+
+- **Red**: Errors, destructive actions, urgent alerts
+- **Orange**: Warnings, caution states
+- **Forest**: Success states, positive feedback
+- **Sky**: Informational content
+- **Grey**: Text, borders, neutral backgrounds
+
+The other colors (Lime, Navy, Purple) can be used to bring variation in case there are many colored elements, but should be used sparingly.
+
+### Implementation
+
+Colors are available as SCSS variables in `src/styles/_colors.scss`:
+
+```scss
+// Base colors
+$white: #ffffff;
+$black: #1f1d21;
+
+// Primary brand
+$red: #bd0032;
+
+// Grey scale
+$grey-100: #fafafa;
+$grey-500: #b1aca9;
+$grey-900: #282524;
+
+// Color palettes (100-900 range available for each)
+$red-500: #ec1342;
+$orange-500: #ffa733;
+$lime-500: #efe639;
+$forest-500: #41aa56;
+$sky-500: #63c9ee;
+$navy-500: #3385cc;
+$purple-500: #b42d9f;
+```

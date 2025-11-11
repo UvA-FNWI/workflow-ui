@@ -1,0 +1,6 @@
+@import '../src/styles/index.css';
+
+/* Dark mode styles for Storybook */
+.dark {
+  background-color: var(--color-grey-900);
+}

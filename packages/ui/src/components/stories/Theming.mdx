@@ -1,0 +1,315 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Theming" />
+
+# Theming Guide
+
+Complete guide for implementing light and dark themes using the ThemeProvider component.
+
+## Overview
+
+The UI kit provides a flexible theming system that supports:
+
+- **Light and Dark themes** with automatic system preference detection
+- **Manual theme switching** with persistent user preferences
+- **Component-level theme awareness** for fine-grained control
+
+## Quick Start
+
+### 1. Basic Setup
+
+Wrap your application with the `ThemeProvider` component:
+
+```tsx
+import { ThemeProvider } from '@datanose/ui';
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="system">
+      <YourAppContent />
+    </ThemeProvider>
+  );
+}
+```
+
+### 2. Use Theme-Aware Components
+
+All UI kit components support theming:
+
+```tsx
+import { Checkbox, Text } from '@datanose/ui';
+
+function MyComponent() {
+  return (
+    <div>
+      <Text intent="primary">This text adapts to the current theme</Text>
+      <Checkbox label="Theme-aware checkbox" isSelected={false} />
+    </div>
+  );
+}
+```
+
+## Theme Control
+
+Use the `useTheme` hook for programmatic theme control:
+
+```tsx
+import { useTheme } from '@datanose/ui';
+
+function CustomThemeControl() {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <p>Resolved theme: {resolvedTheme}</p>
+
+      <button onClick={() => setTheme('light')}>Light Mode</button>
+
+      <button onClick={() => setTheme('dark')}>Dark Mode</button>
+
+      <button onClick={() => setTheme('system')}>Follow System</button>
+    </div>
+  );
+}
+```
+
+### Theme Hook API
+
+The `useTheme` hook returns:
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>theme</code>
+      </td>
+      <td>
+        <code>'light' | 'dark' | 'system'</code>
+      </td>
+      <td>Current theme setting</td>
+    </tr>
+    <tr>
+      <td>
+        <code>setTheme</code>
+      </td>
+      <td>
+        <code>(theme) => void</code>
+      </td>
+      <td>Function to change theme</td>
+    </tr>
+    <tr>
+      <td>
+        <code>resolvedTheme</code>
+      </td>
+      <td>
+        <code>'light' | 'dark'</code>
+      </td>
+      <td>Actual theme being displayed</td>
+    </tr>
+  </tbody>
+</table>
+
+## Advanced Configuration
+
+### Theme Options
+
+The `ThemeProvider` accepts these props:
+
+<table>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>defaultTheme</code>
+      </td>
+      <td>
+        <code>'light' | 'dark' | 'system'</code>
+      </td>
+      <td>
+        <code>'system'</code>
+      </td>
+      <td>Initial theme setting</td>
+    </tr>
+    <tr>
+      <td>
+        <code>storageKey</code>
+      </td>
+      <td>
+        <code>string</code>
+      </td>
+      <td>
+        <code>'ui-theme'</code>
+      </td>
+      <td>localStorage key for persistence</td>
+    </tr>
+    <tr>
+      <td>
+        <code>children</code>
+      </td>
+      <td>
+        <code>React.ReactNode</code>
+      </td>
+      <td>-</td>
+      <td>App content</td>
+    </tr>
+  </tbody>
+</table>
+
+```tsx
+<ThemeProvider defaultTheme="light" storageKey="my-app-theme">
+  <App />
+</ThemeProvider>
+```
+
+## Custom Styling
+
+### Tailwind CSS + Class Variance Authority
+
+This UI kit uses **Tailwind CSS** with **Class Variance Authority (CVA)** for component styling.
+
+#### Component Structure
+
+Components use CVA to define variants and Tailwind utilities:
+
+```tsx
+// Text.tsx
+import { cva, VariantProps } from 'class-variance-authority';
+
+import { cn } from '../../utils/cn';
+
+const textVariants = cva('font-body inline-block p-0 m-0', {
+  variants: {
+    intent: {
+      primary: 'text-intent-primary',
+      secondary: 'text-intent-secondary',
+    },
+    size: {
+      xs: 'text-xs', // 12px
+      sm: 'text-sm', // 14px
+      md: 'text-md', // 16px (default)
+      lg: 'text-lg', // 18px
+      xl: 'text-xl', // 20px
+      '2xl': 'text-2xl', // 24px
+      '3xl': 'text-3xl', // 30px
+    },
+  },
+  defaultVariants: {
+    intent: 'primary',
+    size: 'md',
+  },
+});
+
+export const Text = ({ className, intent, size, ...props }) => {
+  return (
+    <p className={cn(textVariants({ intent, size }), className)} {...props} />
+  );
+};
+```
+
+#### Creating Custom Components
+
+When creating new components, we follow this pattern:
+
+```tsx
+// Button.tsx
+import { cva, VariantProps } from 'class-variance-authority';
+
+import { cn } from '../../utils/cn';
+
+const buttonVariants = cva(
+  // Base classes (always applied)
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-navy-600 text-white hover:bg-navy-700',
+        secondary: 'bg-grey-100 text-grey-900 hover:bg-grey-200',
+        outline: 'border border-grey-300 bg-transparent hover:bg-grey-100',
+      },
+      size: {
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4',
+        lg: 'h-12 px-6 text-lg',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+);
+
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+export const Button = ({ className, variant, size, ...props }: ButtonProps) => {
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    />
+  );
+};
+```
+
+#### Benefits of This Approach
+
+**✅ Type Safety**
+
+- CVA provides full TypeScript support
+- Autocomplete for all variant options
+- Compile-time checking for invalid combinations
+
+**✅ Performance**
+
+- Only used Tailwind classes are included in the bundle
+- Optimal caching and reuse
+
+**✅ Developer Experience**
+
+- Quick development once familiar with Tailwind utility classes
+- Easy to customize and extend
+- IntelliSense support
+
+**✅ Consistency**
+
+- Design system colors defined in Tailwind config
+- Standardized spacing and typography scales
+- Automatic dark mode support
+
+#### Tailwind Configuration
+
+The project includes a custom Tailwind configuration to apply the UvA design system styles:
+
+```css
+// tailwind.css
+
+@theme {
+  --font-body: var(--font-sans);
+  --font-heading: var(--font-serif);
+  --font-sans: 'Source Sans Pro', system-ui, sans-serif;
+  --font-serif: 'Utopia', serif;
+
+  /* Grey */
+  --color-grey-100: hsl(20, 5%, 98%);
+  ...
+}
+```
