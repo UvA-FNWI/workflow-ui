@@ -1,4 +1,4 @@
-FROM node:24-slim AS base
+FROM docker.io/node:24-slim AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -11,7 +11,8 @@ ENV NPM_TOKEN=$npm_token
 
 WORKDIR /app
 
-COPY pnpm-lock.yaml package.json ./
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+COPY packages ./packages
 
 RUN pnpm fetch
 
@@ -19,9 +20,9 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm run build
+RUN pnpm build:ui && pnpm run build
 
-FROM nginx:1.29.0-alpine
+FROM docker.io/nginx:1.29.0-alpine
 RUN apk add --no-cache bash
 
 RUN mkdir -p /etc/nginx/templates

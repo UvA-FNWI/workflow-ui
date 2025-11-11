@@ -2,45 +2,41 @@ import { HTMLAttributes, PropsWithChildren } from 'react';
 
 import { cva, VariantProps } from 'class-variance-authority';
 
-import './Text.scss';
+import { cn } from '../../utils/cn';
 
 export type TextVariantProps = VariantProps<typeof textVariants>;
 
-const textVariants = cva('Text', {
+const textVariants = cva('font-body inline-block p-0 m-0', {
   variants: {
     intent: {
-      primary: 'text-primary',
-      secondary: 'text-secondary',
+      primary: 'text-black dark:text-white',
+      secondary: 'text-grey-600 dark:text-grey-400',
     },
     size: {
-      xs: 'font-size-xs',
-      sm: 'font-size-sm',
-      md: 'font-size-md',
-      lg: 'font-size-lg',
-      xl: 'font-size-xl',
-      '2xl': 'font-size-2xl',
-      '3xl': 'font-size-3xl',
+      xs: 'text-xs', // 12px
+      sm: 'text-sm', // 14px
+      md: 'text-md', // 16px
+      lg: 'text-lg', // 18px
+      xl: 'text-xl', // 20px
+      '2xl': 'text-2xl', // 24px
+      '3xl': 'text-3xl', // 30px
     },
-
     decoration: {
-      none: 'text-decoration-none',
-      underline: 'text-decoration-underline',
-      'line-through': 'text-decoration-line-through',
+      none: 'no-underline',
+      underline: 'underline',
+      'line-through': 'line-through',
     },
-
     textTransform: {
-      none: 'text-transform-none',
-      uppercase: 'text-transform-uppercase',
-      lowercase: 'text-transform-lowercase',
-      capitalize: 'text-transform-capitalize',
+      none: 'normal-case',
+      uppercase: 'uppercase',
+      lowercase: 'lowercase',
+      capitalize: 'capitalize',
     },
-
     truncate: {
-      true: 'truncate',
+      true: 'overflow-hidden text-ellipsis whitespace-nowrap w-full',
       false: '',
     },
   },
-
   defaultVariants: {
     intent: 'primary',
     size: 'md',
@@ -68,18 +64,29 @@ export const Text = ({
   title = '',
   truncate,
   intent,
+  color,
+  style,
   ...otherProps
 }: PropsWithChildren<TextProps & HTMLAttributes<HTMLParagraphElement>>) => {
   return (
     <Tag
-      className={textVariants({
-        size,
-        decoration,
-        textTransform,
-        truncate,
-        className,
-        intent,
-      })}
+      className={cn(
+        textVariants({
+          size,
+          decoration,
+          textTransform,
+          truncate,
+          intent,
+        }),
+        // Font weight classes based on tag
+        Tag === 'b' && 'font-bold',
+        (Tag === 'p' || Tag === 'span' || Tag === 'i') && 'font-normal',
+        className
+      )}
+      style={{
+        ...(color && { color }),
+        ...style,
+      }}
       title={truncate && !title ? String(children) : title}
       {...otherProps}
     >
