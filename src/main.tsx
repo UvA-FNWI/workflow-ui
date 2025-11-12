@@ -5,6 +5,7 @@ import {RouterProvider} from "react-router";
 
 import {ThemeProvider} from "@datanose/ui";
 
+import "./i18n";
 import "./index.css";
 import router from "./router/routes.tsx";
 
