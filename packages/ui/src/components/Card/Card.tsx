@@ -36,7 +36,7 @@ const cardVariants = cva(
   }
 );
 
-interface CardProps
+export interface CardProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {}
 
