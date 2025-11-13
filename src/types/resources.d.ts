@@ -5,6 +5,12 @@ interface Resources {
         language_en: "English";
         language_nl: "Dutch";
     };
+    workflow: {
+        progress: {
+            label: "Here's where you are in the process";
+            title: "Progress";
+        };
+    };
 }
 
 export default Resources;

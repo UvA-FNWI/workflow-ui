@@ -6,7 +6,7 @@ function App() {
     return (
         <div className="bg-grey-200 dark:bg-grey-900 min-h-screen w-full text-black dark:text-white">
             <TemporaryNavbar />
-            <main className="mx-auto w-full max-w-6xl px-6 py-8">
+            <main className="mx-auto w-full max-w-7xl px-6 py-8">
                 <Outlet />
             </main>
         </div>
