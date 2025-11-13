@@ -1,3 +1,5 @@
+import type {LocalString} from "hooks/useTranslate";
+
 import {baseApi} from "./baseApi";
 
 export type WorkflowInstance = {
@@ -8,14 +10,10 @@ export type WorkflowInstance = {
 
 export type WorkflowStep = {
     id: string;
-    title: BilingualString;
+    title: LocalString;
     event: string;
     dateCompleted: string | null;
     children: WorkflowStep[] | null;
-};
-export type BilingualString = {
-    en: string;
-    nl: string;
 };
 
 export const instancesApi = baseApi.injectEndpoints({

@@ -21,6 +21,11 @@ const textVariants = cva('font-body m-0 inline-block p-0', {
       '2xl': 'text-2xl', // 24px
       '3xl': 'text-3xl', // 30px
     },
+    fontWeight: {
+      normal: 'font-normal',
+      semibold: 'font-semibold',
+      bold: 'font-bold',
+    },
     decoration: {
       none: 'no-underline',
       underline: 'underline',
@@ -40,6 +45,7 @@ const textVariants = cva('font-body m-0 inline-block p-0', {
   defaultVariants: {
     intent: 'primary',
     size: 'md',
+    fontWeight: 'normal',
     decoration: 'none',
     textTransform: 'none',
     truncate: false,
@@ -59,6 +65,7 @@ export const Text = ({
   as: Tag = 'p',
   size,
   className = '',
+  fontWeight,
   decoration,
   textTransform,
   title = '',
@@ -73,6 +80,7 @@ export const Text = ({
       className={cn(
         textVariants({
           size,
+          fontWeight,
           decoration,
           textTransform,
           truncate,

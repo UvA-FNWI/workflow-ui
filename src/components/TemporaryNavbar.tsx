@@ -1,17 +1,16 @@
 import {type ChangeEvent, useEffect} from "react";
 
-import {useTranslation} from "react-i18next";
-
 import {useTheme} from "@datanose/ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
+import {useTranslate} from "~/hooks/useTranslate";
 
 type Language = "en" | "nl";
 
 // Temporary navbar for quick theme & language switching during development.
 function TemporaryNavbar() {
     const {resolvedTheme, setTheme} = useTheme();
-    const {i18n, t} = useTranslation("common");
+    const {i18n, t} = useTranslate("common");
 
     useEffect(() => {
         document.documentElement.setAttribute("lang", i18n.language);

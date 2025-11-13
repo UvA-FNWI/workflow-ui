@@ -7,6 +7,7 @@ export default defineConfig({
         output: "public/locales/{{language}}/{{namespace}}.json",
         defaultNS: "common",
         defaultValue: "$TODO$",
+        useTranslationNames: ["useTranslation", "useTranslate"],
     },
     types: {
         input: ["public/locales/**/*.json"],

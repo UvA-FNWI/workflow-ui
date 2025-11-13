@@ -6,6 +6,12 @@ interface Resources {
         language_nl: "Dutch";
     };
     workflow: {
+        first_help: {
+            title: "First aid with thesis";
+        };
+        good_to_know: {
+            title: "Handy during your thesis";
+        };
         progress: {
             label: "Here's where you are in the process";
             title: "Progress";
