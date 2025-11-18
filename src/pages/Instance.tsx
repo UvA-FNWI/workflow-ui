@@ -1,4 +1,4 @@
-import {useParams} from "react-router";
+import {Link, useParams} from "react-router";
 
 import {Card, Heading, Separator, Text} from "@datanose/ui";
 
@@ -14,10 +14,15 @@ function Instance() {
 
     return (
         <div className="">
-            {/* Back button */}
-            <Text size="2xl" className="mb-8">
-                Instance {id}
-            </Text>
+            {/* Back button temp */}
+            <div className="flex flex-col">
+                <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
+                    Go back
+                </Link>
+                <Text size="2xl" className="mb-8">
+                    Instance {id}
+                </Text>
+            </div>
             {/* Progress */}
             <div className="flex flex-col gap-6 sm:grid sm:grid-cols-6">
                 <div className="col-span-4 flex flex-col gap-8">
