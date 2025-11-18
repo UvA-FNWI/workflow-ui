@@ -7,9 +7,20 @@ export {
   type HeadingVariantProps,
 } from './components/Heading/Heading';
 export {
+  Input,
+  type InputProps,
+  type InputVariantProps,
+} from './components/Input/Input';
+export {
+  NumberInput,
+  type NumberInputProps,
+  type NumberInputVariantProps,
+} from './components/NumberInput/NumberInput';
+export {
   Separator,
   type SeparatorVariantProps,
 } from './components/Separator/Separator';
+export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';
