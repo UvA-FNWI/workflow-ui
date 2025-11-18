@@ -1,4 +1,4 @@
-import {useParams} from "react-router";
+import {Link, useParams} from "react-router";
 
 import {Card, Heading, Separator, Skeleton, Text} from "@datanose/ui";
 
@@ -26,9 +26,14 @@ function Instance() {
             {isLoading ? (
                 <Skeleton className="mb-8 h-8 w-48" />
             ) : (
-                <Text size="2xl" className="mb-8">
-                    Instance {id}
-                </Text>
+                <>
+                    <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
+                        Go back
+                    </Link>
+                    <Text size="2xl" className="mb-8">
+                        Instance {id}
+                    </Text>
+                </>
             )}
             {/* Progress */}
             <div className="flex flex-col gap-6 sm:grid sm:grid-cols-6">
