@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
-import { IconType } from 'src/components/Icon/IconTypes';
 
 import { cn } from '../../utils/cn';
+import { IconType } from './IconTypes';
 import { loadSprite, SPRITE_ID } from './spriteData';
 
 const iconVariants = cva('inline-block', {
