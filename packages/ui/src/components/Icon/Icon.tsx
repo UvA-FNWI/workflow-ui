@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
+import { IconType } from 'src/components/Icon/IconTypes';
 
 import { cn } from '../../utils/cn';
 import { loadSprite, SPRITE_ID } from './spriteData';
@@ -62,7 +63,7 @@ export interface IconProps
   extends Omit<React.SVGProps<SVGSVGElement>, 'name' | 'color'>,
     VariantProps<typeof iconVariants> {
   /** Icon name from the sprite (e.g., 'accessibility-line', 'alarm-solid') */
-  name: string;
+  name: IconType;
   /** Accessible label for screen readers */
   label?: string;
   /** Whether the icon is decorative only (hidden from screen readers) */
