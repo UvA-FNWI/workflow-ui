@@ -30,7 +30,7 @@ describe('Checkbox Component', () => {
 
     test('renders the visual checkbox element', () => {
       render(<Checkbox {...defaultProps} />);
-      const checkboxSpan = document.querySelector('span[class*="relative"]');
+      const checkboxSpan = document.querySelector('span[class*="ui:relative"]');
       expect(checkboxSpan).toBeInTheDocument();
     });
 
@@ -44,7 +44,11 @@ describe('Checkbox Component', () => {
     test('applies base CSS classes', () => {
       render(<Checkbox {...defaultProps} />);
       const label = screen.getByRole('checkbox').closest('label');
-      expect(label).toHaveClass('inline-flex', 'items-center', 'gap-2');
+      expect(label).toHaveClass(
+        'ui:inline-flex',
+        'ui:items-center',
+        'ui:gap-2'
+      );
     });
   });
 
@@ -61,14 +65,14 @@ describe('Checkbox Component', () => {
 
     test('applies selected CSS classes when isSelected is true', () => {
       render(<Checkbox {...defaultProps} isSelected={true} />);
-      const checkboxBox = document.querySelector('span[class*="relative"]');
-      expect(checkboxBox).toHaveClass('bg-navy-600', 'border-navy-600');
+      const checkboxBox = document.querySelector('span[class*="ui:relative"]');
+      expect(checkboxBox).toHaveClass('ui:bg-navy-600', 'ui:border-navy-600');
     });
 
     test('does not apply selected CSS classes when isSelected is false', () => {
       render(<Checkbox {...defaultProps} isSelected={false} />);
-      const checkboxBox = document.querySelector('span[class*="relative"]');
-      expect(checkboxBox).toHaveClass('bg-white', 'border-grey-300');
+      const checkboxBox = document.querySelector('span[class*="ui:relative"]');
+      expect(checkboxBox).toHaveClass('ui:bg-white', 'ui:border-grey-300');
     });
   });
 
@@ -93,7 +97,9 @@ describe('Checkbox Component', () => {
       const onChange = vi.fn();
       render(<Checkbox {...defaultProps} onChange={onChange} />);
 
-      const visualCheckbox = document.querySelector('span[class*="relative"]');
+      const visualCheckbox = document.querySelector(
+        'span[class*="ui:relative"]'
+      );
       fireEvent.click(visualCheckbox!);
       expect(onChange).toHaveBeenCalledWith(true);
     });
@@ -114,7 +120,7 @@ describe('Checkbox Component', () => {
     test('applies disabled CSS classes when isDisabled is true', () => {
       render(<Checkbox {...defaultProps} isDisabled={true} />);
       const label = screen.getByRole('checkbox').closest('label');
-      expect(label).toHaveClass('cursor-not-allowed', 'opacity-60');
+      expect(label).toHaveClass('ui:cursor-not-allowed', 'ui:opacity-60');
     });
 
     test('checkbox indicates disabled state', () => {
@@ -141,7 +147,9 @@ describe('Checkbox Component', () => {
         <Checkbox {...defaultProps} isDisabled={true} onChange={onChange} />
       );
 
-      const visualCheckbox = document.querySelector('span[class*="relative"]');
+      const visualCheckbox = document.querySelector(
+        'span[class*="ui:relative"]'
+      );
       fireEvent.click(visualCheckbox!);
       expect(onChange).not.toHaveBeenCalled();
     });
@@ -150,33 +158,33 @@ describe('Checkbox Component', () => {
       render(<Checkbox {...defaultProps} isDisabled={true} />);
       const textElement = screen.getByText('Test Checkbox');
       // The Text component should receive secondary intent when disabled
-      expect(textElement).toHaveClass('text-grey-600');
+      expect(textElement).toHaveClass('ui:text-grey-600');
     });
 
     test('shows primary text intent when not disabled', () => {
       render(<Checkbox {...defaultProps} isDisabled={false} />);
       const textElement = screen.getByText('Test Checkbox');
-      expect(textElement).toHaveClass('text-black');
+      expect(textElement).toHaveClass('ui:text-black');
     });
   });
 
   describe('Validation State', () => {
     test('applies invalid CSS classes when isValid is false', () => {
       render(<Checkbox {...defaultProps} isValid={false} />);
-      const checkboxBox = document.querySelector('span[class*="relative"]');
-      expect(checkboxBox).toHaveClass('border-red-600');
+      const checkboxBox = document.querySelector('span[class*="ui:relative"]');
+      expect(checkboxBox).toHaveClass('ui:border-red-600');
     });
 
     test('does not apply invalid CSS classes when isValid is true', () => {
       render(<Checkbox {...defaultProps} isValid={true} />);
-      const checkboxBox = document.querySelector('span[class*="relative"]');
-      expect(checkboxBox).not.toHaveClass('border-red-600');
+      const checkboxBox = document.querySelector('span[class*="ui:relative"]');
+      expect(checkboxBox).not.toHaveClass('ui:border-red-600');
     });
 
     test('does not apply invalid CSS classes when isValid is undefined (default)', () => {
       render(<Checkbox {...defaultProps} />);
-      const checkboxBox = document.querySelector('span[class*="relative"]');
-      expect(checkboxBox).not.toHaveClass('border-red-600');
+      const checkboxBox = document.querySelector('span[class*="ui:relative"]');
+      expect(checkboxBox).not.toHaveClass('ui:border-red-600');
     });
   });
 
@@ -240,7 +248,7 @@ describe('Checkbox Component', () => {
       render(<Checkbox {...defaultProps} className="custom-checkbox" />);
       const label = screen.getByRole('checkbox').closest('label');
       expect(label).toHaveClass('custom-checkbox');
-      expect(label).toHaveClass('inline-flex'); // Should still have base classes
+      expect(label).toHaveClass('ui:inline-flex'); // Should still have base classes
     });
 
     test('forwards HTML attributes to label', () => {
@@ -328,13 +336,13 @@ describe('Checkbox Component', () => {
 
       const checkbox = screen.getByRole('checkbox');
       const label = checkbox.closest('label');
-      const checkboxBox = document.querySelector('span[class*="relative"]');
+      const checkboxBox = document.querySelector('span[class*="ui:relative"]');
 
       expect(checkbox).toBeChecked();
       // The checkbox should indicate its disabled state in some way
       expect(checkbox).toBeInTheDocument();
-      expect(label).toHaveClass('cursor-not-allowed', 'opacity-60');
-      expect(checkboxBox).toHaveClass('bg-grey-600', 'border-grey-600');
+      expect(label).toHaveClass('ui:cursor-not-allowed', 'ui:opacity-60');
+      expect(checkboxBox).toHaveClass('ui:bg-grey-600', 'ui:border-grey-600');
     });
 
     test('all variants applied together', () => {
@@ -349,9 +357,9 @@ describe('Checkbox Component', () => {
       );
 
       const label = screen.getByRole('checkbox').closest('label');
-      expect(label).toHaveClass('inline-flex');
-      expect(label).toHaveClass('cursor-not-allowed');
-      expect(label).toHaveClass('opacity-60');
+      expect(label).toHaveClass('ui:inline-flex');
+      expect(label).toHaveClass('ui:cursor-not-allowed');
+      expect(label).toHaveClass('ui:opacity-60');
       expect(label).toHaveClass('custom-class');
     });
   });

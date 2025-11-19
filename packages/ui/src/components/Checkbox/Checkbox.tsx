@@ -16,15 +16,15 @@ import { Text } from '../Text/Text';
 
 const checkboxVariants = cva(
   // Base classes for the checkbox container
-  'inline-flex cursor-pointer items-center gap-2 select-none',
+  'ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-2 ui:select-none',
   {
     variants: {
       isDisabled: {
-        true: 'cursor-not-allowed opacity-60',
-        false: 'cursor-pointer',
+        true: 'ui:cursor-not-allowed ui:opacity-60',
+        false: 'ui:cursor-pointer',
       },
       isFocusVisible: {
-        true: 'ring-navy-600 dark:ring-offset-grey-900 ring-2 ring-offset-6 dark:ring-orange-500',
+        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-6 ui:dark:ring-orange-500',
         false: '',
       },
     },
@@ -37,23 +37,24 @@ const checkboxVariants = cva(
 
 const checkboxBoxVariants = cva(
   // Base checkbox box styles
-  'relative inline-flex h-6 w-6 items-center justify-center rounded border-1 outline-6 outline-transparent transition-all duration-200',
+  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded ui:transition-all ui:duration-200 border-1 outline-6 outline-transparent',
   {
     variants: {
       isSelected: {
-        true: 'bg-navy-600 border-navy-600 dark:border-sky-500 dark:bg-sky-500',
-        false: 'border-grey-300 dark:bg-grey-800 dark:border-grey-600 bg-white',
+        true: 'ui:bg-navy-600 ui:border-navy-600 ui:dark:border-sky-500 ui:dark:bg-sky-500',
+        false:
+          'ui:border-grey-300 ui:dark:bg-grey-800 ui:dark:border-grey-600 ui:bg-white',
       },
       isDisabled: {
-        true: 'bg-grey-100 border-grey-300 dark:bg-grey-800 dark:border-grey-600',
+        true: 'ui:bg-grey-100 ui:border-grey-300 ui:dark:bg-grey-800 ui:dark:border-grey-600',
         false: '',
       },
       isValid: {
         true: '',
-        false: 'border-red-600 dark:border-red-400',
+        false: 'ui:border-red-600 ui:dark:border-red-400',
       },
       isHovered: {
-        true: 'bg-navy-100 outline-navy-100 outline-6 dark:bg-sky-900 dark:outline-sky-900',
+        true: 'ui:bg-navy-100 ui:outline-navy-100 ui:outline-6 ui:dark:bg-sky-900 ui:dark:outline-sky-900',
         false: '',
       },
     },
@@ -61,24 +62,24 @@ const checkboxBoxVariants = cva(
       {
         isSelected: true,
         isDisabled: true,
-        class: 'bg-grey-600 border-grey-600',
+        class: 'ui:bg-grey-600 ui:border-grey-600',
       },
       {
         isHovered: true,
         isSelected: true,
         class:
-          'bg-navy-600 border-navy-600 outline-navy-100 dark:border-sky-500 dark:bg-sky-500 dark:outline-sky-900',
+          'ui:bg-navy-600 ui:border-navy-600 ui:outline-navy-100 ui:dark:border-sky-500 ui:dark:bg-sky-500 ui:dark:outline-sky-900',
       },
       {
         isValid: false,
         isSelected: true,
-        class: 'bg-navy-600 border-navy-600',
+        class: 'ui:bg-navy-600 ui:border-navy-600',
       },
       {
         isSelected: false,
         isHovered: true,
         isDisabled: false,
-        class: 'bg-navy-100 dark:bg-sky-900',
+        class: 'ui:bg-navy-100 ui:dark:bg-sky-900',
       },
     ],
     defaultVariants: {
@@ -156,7 +157,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       >
         {state.isSelected && !isDisabled && (
           <svg
-            className="h-6 w-6 text-white"
+            className="ui:h-6 ui:w-6 ui:text-white"
             fill="currentColor"
             viewBox="0 0 16 16"
             aria-hidden="true"

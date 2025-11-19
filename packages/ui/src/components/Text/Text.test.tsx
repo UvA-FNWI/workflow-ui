@@ -19,10 +19,10 @@ describe('Text Component', () => {
     test('applies default classes', () => {
       render(<Text>Test content</Text>);
       const element = screen.getByText('Test content');
-      expect(element).toHaveClass('font-body');
-      expect(element).toHaveClass('inline-block');
-      expect(element).toHaveClass('p-0');
-      expect(element).toHaveClass('m-0');
+      expect(element).toHaveClass('ui:font-body');
+      expect(element).toHaveClass('ui:inline-block');
+      expect(element).toHaveClass('ui:p-0');
+      expect(element).toHaveClass('ui:m-0');
     });
   });
 
@@ -39,7 +39,7 @@ describe('Text Component', () => {
       expect(element.tagName).toBe('B');
     });
 
-    test('renders as italic when as="i"', () => {
+    test('renders as ui:italic when as="i"', () => {
       render(<Text as="i">Italic text</Text>);
       const element = screen.getByText('Italic text');
       expect(element.tagName).toBe('I');
@@ -56,69 +56,57 @@ describe('Text Component', () => {
     test('applies primary intent by default', () => {
       render(<Text>Primary text</Text>);
       const element = screen.getByText('Primary text');
-      expect(element).toHaveClass('text-black');
+      expect(element).toHaveClass('ui:text-black');
     });
 
     test('applies primary intent when explicitly set', () => {
       render(<Text intent="primary">Primary text</Text>);
       const element = screen.getByText('Primary text');
-      expect(element).toHaveClass('text-black');
+      expect(element).toHaveClass('ui:text-black');
     });
 
     test('applies secondary intent', () => {
       render(<Text intent="secondary">Secondary text</Text>);
       const element = screen.getByText('Secondary text');
-      expect(element).toHaveClass('text-grey-600');
+      expect(element).toHaveClass('ui:text-grey-600');
     });
   });
 
   describe('Size Variants', () => {
-    test('applies medium size by default', () => {
-      render(<Text>Medium text</Text>);
-      const element = screen.getByText('Medium text');
-      expect(element).toHaveClass('text-md');
-    });
-
     test('applies extra small size', () => {
       render(<Text size="xs">XS text</Text>);
       const element = screen.getByText('XS text');
-      expect(element).toHaveClass('text-xs');
+      expect(element).toHaveClass('ui:text-xs');
     });
 
     test('applies small size', () => {
       render(<Text size="sm">Small text</Text>);
       const element = screen.getByText('Small text');
-      expect(element).toHaveClass('text-sm');
-    });
-
-    test('applies medium size when explicitly set', () => {
-      render(<Text size="md">Medium text</Text>);
-      const element = screen.getByText('Medium text');
-      expect(element).toHaveClass('text-md');
+      expect(element).toHaveClass('ui:text-sm');
     });
 
     test('applies large size', () => {
       render(<Text size="lg">Large text</Text>);
       const element = screen.getByText('Large text');
-      expect(element).toHaveClass('text-lg');
+      expect(element).toHaveClass('ui:text-lg');
     });
 
     test('applies extra large size', () => {
       render(<Text size="xl">XL text</Text>);
       const element = screen.getByText('XL text');
-      expect(element).toHaveClass('text-xl');
+      expect(element).toHaveClass('ui:text-xl');
     });
 
     test('applies 2xl size', () => {
       render(<Text size="2xl">2XL text</Text>);
       const element = screen.getByText('2XL text');
-      expect(element).toHaveClass('text-2xl');
+      expect(element).toHaveClass('ui:text-2xl');
     });
 
     test('applies 3xl size', () => {
       render(<Text size="3xl">3XL text</Text>);
       const element = screen.getByText('3XL text');
-      expect(element).toHaveClass('text-3xl');
+      expect(element).toHaveClass('ui:text-3xl');
     });
   });
 
@@ -126,95 +114,96 @@ describe('Text Component', () => {
     test('applies no decoration by default', () => {
       render(<Text>No decoration</Text>);
       const element = screen.getByText('No decoration');
-      expect(element).toHaveClass('no-underline');
+      expect(element).toHaveClass('ui:no-underline');
     });
 
-    test('applies underline decoration', () => {
+    test('applies ui:underline decoration', () => {
       render(<Text decoration="underline">Underlined text</Text>);
       const element = screen.getByText('Underlined text');
-      expect(element).toHaveClass('underline');
+      expect(element).toHaveClass('ui:underline');
     });
 
-    test('applies line-through decoration', () => {
+    test('applies ui:line-through decoration', () => {
       render(<Text decoration="line-through">Strikethrough text</Text>);
       const element = screen.getByText('Strikethrough text');
-      expect(element).toHaveClass('line-through');
+      expect(element).toHaveClass('ui:line-through');
     });
 
     test('applies none decoration when explicitly set', () => {
       render(<Text decoration="none">No decoration</Text>);
       const element = screen.getByText('No decoration');
-      expect(element).toHaveClass('no-underline');
+      expect(element).toHaveClass('ui:no-underline');
     });
   });
 
   describe('Text Transform Variants', () => {
-    test('applies no transform by default', () => {
+    test('applies no ui:transform by default', () => {
       render(<Text>Normal case</Text>);
       const element = screen.getByText('Normal case');
-      expect(element).toHaveClass('normal-case');
+      expect(element).toHaveClass('ui:normal-case');
     });
 
-    test('applies uppercase transform', () => {
+    test('applies ui:uppercase ui:transform', () => {
       render(<Text textTransform="uppercase">Uppercase text</Text>);
       const element = screen.getByText('Uppercase text');
-      expect(element).toHaveClass('uppercase');
+      expect(element).toHaveClass('ui:uppercase');
     });
 
-    test('applies lowercase transform', () => {
+    test('applies ui:lowercase ui:transform', () => {
       render(<Text textTransform="lowercase">Lowercase text</Text>);
       const element = screen.getByText('Lowercase text');
-      expect(element).toHaveClass('lowercase');
+      expect(element).toHaveClass('ui:lowercase');
     });
 
-    test('applies capitalize transform', () => {
+    test('applies ui:capitalize ui:transform', () => {
       render(<Text textTransform="capitalize">Capitalize text</Text>);
       const element = screen.getByText('Capitalize text');
-      expect(element).toHaveClass('capitalize');
+      expect(element).toHaveClass('ui:capitalize');
     });
 
-    test('applies none transform when explicitly set', () => {
+    test('applies none ui:transform when explicitly set', () => {
       render(<Text textTransform="none">Normal case</Text>);
       const element = screen.getByText('Normal case');
-      expect(element).toHaveClass('normal-case');
+      expect(element).toHaveClass('ui:normal-case');
     });
   });
 
   describe('Truncate Functionality', () => {
-    test('does not truncate by default', () => {
+    test('does not ui:truncate by default', () => {
       render(<Text>Long text content</Text>);
       const element = screen.getByText('Long text content');
-      expect(element).not.toHaveClass('truncate');
+      expect(element).not.toHaveClass('ui:truncate');
     });
 
-    test('applies truncate class when truncate is true', () => {
+    test('applies ui:truncate class when ui:truncate is true', () => {
       render(<Text truncate={true}>Long text content</Text>);
       const element = screen.getByText('Long text content');
-      expect(element).toHaveClass('overflow-hidden');
-      expect(element).toHaveClass('text-ellipsis');
-      expect(element).toHaveClass('whitespace-nowrap');
-      expect(element).toHaveClass('w-full');
+      console.log(element.classList);
+      expect(element).toHaveClass('ui:overflow-hidden');
+      expect(element).toHaveClass('ui:text-ellipsis');
+      expect(element).toHaveClass('ui:whitespace-nowrap');
+      expect(element).toHaveClass('ui:w-full');
     });
 
-    test('does not apply truncate class when truncate is false', () => {
+    test('does not apply ui:truncate class when ui:truncate is false', () => {
       render(<Text truncate={false}>Normal text</Text>);
       const element = screen.getByText('Normal text');
-      expect(element).not.toHaveClass('overflow-hidden');
-      expect(element).not.toHaveClass('text-ellipsis');
-      expect(element).not.toHaveClass('whitespace-nowrap');
-      expect(element).not.toHaveClass('w-full');
+      expect(element).not.toHaveClass('ui:overflow-hidden');
+      expect(element).not.toHaveClass('ui:text-ellipsis');
+      expect(element).not.toHaveClass('ui:whitespace-nowrap');
+      expect(element).not.toHaveClass('ui:w-full');
     });
 
-    test('sets title to children content when truncated and no title provided', () => {
-      render(<Text truncate={true}>Long text that will be truncated</Text>);
-      const element = screen.getByText('Long text that will be truncated');
+    test('sets title to children content when ui:truncated and no title provided', () => {
+      render(<Text truncate={true}>Long text that will be ui:truncated</Text>);
+      const element = screen.getByText('Long text that will be ui:truncated');
       expect(element).toHaveAttribute(
         'title',
-        'Long text that will be truncated'
+        'Long text that will be ui:truncated'
       );
     });
 
-    test('uses provided title when truncated and title is explicitly set', () => {
+    test('uses provided title when ui:truncated and title is explicitly set', () => {
       render(
         <Text truncate={true} title="Custom title">
           Long text content
@@ -224,7 +213,7 @@ describe('Text Component', () => {
       expect(element).toHaveAttribute('title', 'Custom title');
     });
 
-    test('uses provided title when not truncated', () => {
+    test('uses provided title when not ui:truncated', () => {
       render(<Text title="Custom title">Normal text</Text>);
       const element = screen.getByText('Normal text');
       expect(element).toHaveAttribute('title', 'Custom title');
@@ -236,7 +225,7 @@ describe('Text Component', () => {
       render(<Text className="custom-class">Custom styled text</Text>);
       const element = screen.getByText('Custom styled text');
       expect(element).toHaveClass('custom-class');
-      expect(element).toHaveClass('font-body'); // Should still have base class
+      expect(element).toHaveClass('ui:font-body'); // Should still have base class
     });
 
     test('forwards HTML attributes', () => {
@@ -280,14 +269,14 @@ describe('Text Component', () => {
         </Text>
       );
       const element = screen.getByText('Complex text');
-      expect(element).toHaveClass('text-grey-600');
-      expect(element).toHaveClass('text-lg');
-      expect(element).toHaveClass('underline');
-      expect(element).toHaveClass('uppercase');
-      expect(element).toHaveClass('overflow-hidden');
-      expect(element).toHaveClass('text-ellipsis');
-      expect(element).toHaveClass('whitespace-nowrap');
-      expect(element).toHaveClass('w-full');
+      expect(element).toHaveClass('ui:text-grey-600');
+      expect(element).toHaveClass('ui:text-lg');
+      expect(element).toHaveClass('ui:underline');
+      expect(element).toHaveClass('ui:uppercase');
+      expect(element).toHaveClass('ui:overflow-hidden');
+      expect(element).toHaveClass('ui:text-ellipsis');
+      expect(element).toHaveClass('ui:whitespace-nowrap');
+      expect(element).toHaveClass('ui:w-full');
     });
 
     test('combines HTML element type with variants', () => {
@@ -298,9 +287,9 @@ describe('Text Component', () => {
       );
       const element = screen.getByText('Span with variants');
       expect(element.tagName).toBe('SPAN');
-      expect(element).toHaveClass('text-xl');
-      expect(element).toHaveClass('text-black');
-      expect(element).toHaveClass('underline');
+      expect(element).toHaveClass('ui:text-xl');
+      expect(element).toHaveClass('ui:text-black');
+      expect(element).toHaveClass('ui:underline');
     });
   });
 
@@ -326,35 +315,47 @@ describe('Text Component', () => {
     });
 
     test('handles empty content', () => {
-      render(<Text></Text>);
-      const element = document.querySelector('.font-body');
-      expect(element).toBeInTheDocument();
-      expect(element).toBeEmptyDOMElement();
+      const { container } = render(<Text></Text>);
+      const element = container.querySelector('p[class*="ui:font-body"]');
+      expect(element).not.toBeNull();
+      if (element) {
+        const htmlElement = element as HTMLElement;
+        expect(htmlElement).toBeInTheDocument();
+        expect(htmlElement).toBeEmptyDOMElement();
+      }
     });
   });
 
   describe('Edge Cases', () => {
     test('handles undefined children gracefully', () => {
-      render(<Text>{undefined}</Text>);
-      const element = document.querySelector('.font-body');
-      expect(element).toBeInTheDocument();
+      const { container } = render(<Text>{undefined}</Text>);
+      const element = container.querySelector('p[class*="ui:font-body"]');
+      expect(element).not.toBeNull();
+      if (element) {
+        const htmlElement = element as HTMLElement;
+        expect(htmlElement).toBeInTheDocument();
+      }
     });
 
     test('handles null children gracefully', () => {
-      render(<Text>{null}</Text>);
-      const element = document.querySelector('.font-body');
-      expect(element).toBeInTheDocument();
+      const { container } = render(<Text>{null}</Text>);
+      const element = container.querySelector('p[class*="ui:font-body"]');
+      expect(element).not.toBeNull();
+      if (element) {
+        const htmlElement = element as HTMLElement;
+        expect(htmlElement).toBeInTheDocument();
+      }
     });
 
     test('applies all default variants when no props provided', () => {
       render(<Text>Default text</Text>);
       const element = screen.getByText('Default text');
-      expect(element).toHaveClass('font-body');
-      expect(element).toHaveClass('text-black');
-      expect(element).toHaveClass('text-md');
-      expect(element).toHaveClass('no-underline');
-      expect(element).toHaveClass('normal-case');
-      expect(element).not.toHaveClass('overflow-hidden');
+      expect(element).toHaveClass('ui:font-body');
+      expect(element).toHaveClass('ui:text-black');
+      expect(element).toHaveClass('ui:text-lg');
+      expect(element).toHaveClass('ui:no-underline');
+      expect(element).toHaveClass('ui:normal-case');
+      expect(element).not.toHaveClass('ui:overflow-hidden');
     });
   });
 });

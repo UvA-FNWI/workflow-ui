@@ -6,18 +6,18 @@ import { cn } from '../../utils/cn';
 
 export type HeadingVariantProps = VariantProps<typeof headingVariants>;
 
-const headingVariants = cva('m-0 p-0', {
+const headingVariants = cva('ui:m-0 ui:p-0', {
   variants: {
     size: {
-      xs: 'text-lg',
-      sm: 'text-xl',
-      md: 'text-2xl',
-      lg: 'text-3xl',
-      xl: 'text-4xl',
+      xs: 'ui:text-lg',
+      sm: 'ui:text-xl',
+      md: 'ui:text-2xl',
+      lg: 'ui:text-3xl',
+      xl: 'ui:text-4xl',
     },
     fontType: {
-      heading: 'font-heading',
-      body: 'font-body',
+      heading: 'ui:font-heading',
+      body: 'ui:font-body',
     },
   },
   defaultVariants: {
@@ -28,12 +28,12 @@ const headingVariants = cva('m-0 p-0', {
     {
       size: 'xs',
       fontType: undefined,
-      className: 'font-body',
+      className: 'ui:font-body',
     },
     {
       size: 'xs',
       fontType: 'heading',
-      className: 'font-body',
+      className: 'ui:font-body',
     },
   ],
 });

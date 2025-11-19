@@ -6,11 +6,11 @@ import { cn } from '../../utils/cn';
 
 export type SeparatorVariantProps = VariantProps<typeof separatorVariants>;
 
-const separatorVariants = cva('bg-grey-300 dark:bg-grey-600', {
+const separatorVariants = cva('ui:bg-grey-300 ui:dark:bg-grey-600', {
   variants: {
     orientation: {
-      horizontal: 'h-[2px] w-full',
-      vertical: 'h-full w-[2px]',
+      horizontal: 'ui:h-[2px] ui:w-full',
+      vertical: 'ui:h-full ui:w-[2px]',
     },
   },
   defaultVariants: {
