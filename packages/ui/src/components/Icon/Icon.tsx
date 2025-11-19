@@ -32,29 +32,51 @@ const iconVariants = cva('inline-block', {
   },
 });
 
-// Global sprite injection state
-let spriteInjected = false;
+// Global sprite injection promise to prevent concurrent loads
 let spritePromise: Promise<void> | null = null;
 
 const injectSprite = async (): Promise<void> => {
-  if (spriteInjected || typeof document === 'undefined') return;
+  if (typeof document === 'undefined') return;
 
-  if (!spritePromise) {
-    spritePromise = (async () => {
-      const spriteContent = await loadSprite();
-      if (spriteContent && !document.getElementById(SPRITE_ID)) {
-        const spriteContainer = document.createElement('div');
-        spriteContainer.style.display = 'none';
-        spriteContainer.setAttribute('aria-hidden', 'true');
-        spriteContainer.innerHTML = spriteContent.replace(
-          '<svg',
-          `<svg id="${SPRITE_ID}"`
-        );
-        document.body.insertBefore(spriteContainer, document.body.firstChild);
-        spriteInjected = true;
-      }
-    })();
+  // Check if sprite already exists in DOM
+  if (document.getElementById(SPRITE_ID)) {
+    spritePromise = null; // Reset promise when sprite exists
+    return Promise.resolve();
   }
+
+  // If promise exists, await it and check if sprite still exists
+  // This handles both pending promises (concurrent loads) and completed promises (sprite removed)
+  if (spritePromise) {
+    try {
+      await spritePromise;
+    } catch {
+      // Promise rejected, reset and try again
+      spritePromise = null;
+    }
+    // After awaiting, check if sprite exists
+    if (document.getElementById(SPRITE_ID)) {
+      spritePromise = null;
+      return Promise.resolve();
+    }
+    // Sprite doesn't exist, it was removed after promise completed
+    // Reset to allow a new load (important for test isolation)
+    spritePromise = null;
+  }
+
+  spritePromise = (async () => {
+    const spriteContent = await loadSprite();
+    if (spriteContent && !document.getElementById(SPRITE_ID)) {
+      const spriteContainer = document.createElement('div');
+      spriteContainer.style.display = 'none';
+      spriteContainer.setAttribute('aria-hidden', 'true');
+      spriteContainer.innerHTML = spriteContent.replace(
+        '<svg',
+        `<svg id="${SPRITE_ID}"`
+      );
+      document.body.insertBefore(spriteContainer, document.body.firstChild);
+    }
+    spritePromise = null; // Reset promise after completion
+  })();
 
   return spritePromise;
 };
@@ -84,11 +106,18 @@ export const Icon: React.FC<IconProps> = ({
   useEffect(() => {
     let isMounted = true;
 
-    injectSprite().then(() => {
-      if (isMounted) {
-        setIsReady(true);
-      }
-    });
+    injectSprite()
+      .then(() => {
+        if (isMounted) {
+          setIsReady(true);
+        }
+      })
+      .catch(() => {
+        // Handle sprite loading errors gracefully
+        // Icon will still render, just without the use element
+        // eslint-disable-next-line no-console
+        console.error('Failed to load icon sprite');
+      });
 
     return () => {
       isMounted = false;
@@ -100,7 +129,7 @@ export const Icon: React.FC<IconProps> = ({
   return (
     <svg
       className={cn(iconClasses, className)}
-      aria-hidden={decorative}
+      aria-hidden={decorative || undefined}
       aria-label={!decorative ? label || name : undefined}
       role={!decorative ? 'img' : undefined}
       {...props}

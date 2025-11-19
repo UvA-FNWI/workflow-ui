@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import { Icon } from './Icon';
+import { IconType } from './IconTypes';
 import * as spriteData from './spriteData';
 
 // Mock the spriteData module
@@ -24,10 +25,10 @@ describe('Icon Component', () => {
   `;
 
   const defaultProps = {
-    name: 'test-icon',
+    name: 'test-icon' as IconType,
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     // Reset DOM
     document.body.innerHTML = '';
@@ -201,11 +202,6 @@ describe('Icon Component', () => {
   });
 
   describe('Sprite Loading and Injection', () => {
-    test('calls loadSprite function', () => {
-      render(<Icon {...defaultProps} />);
-      expect(spriteData.loadSprite).toHaveBeenCalled();
-    });
-
     test('injects sprite into DOM when loaded', async () => {
       render(<Icon {...defaultProps} />);
 
@@ -236,8 +232,10 @@ describe('Icon Component', () => {
     });
 
     test('does not inject sprite multiple times', async () => {
-      render(<Icon name="icon1" />);
-      render(<Icon name="icon2" />);
+      const icon1Name = 'icon1' as IconType;
+      const icon2Name = 'icon2' as IconType;
+      await render(<Icon name={icon1Name} />);
+      render(<Icon name={icon2Name} />);
 
       await waitFor(() => {
         expect(spriteData.loadSprite).toHaveBeenCalledTimes(1);
