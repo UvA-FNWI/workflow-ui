@@ -22,5 +22,6 @@ export {
 } from './components/Separator/Separator';
 export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';
+export { Icon } from './components/Icon/Icon';
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';
