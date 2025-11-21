@@ -15,7 +15,7 @@ export {
   NumberInput,
   type NumberInputProps,
   type NumberInputVariantProps,
-} from './components/NumberInput/NumberInput';
+} from './components/Input/NumberInput/NumberInput';
 export {
   Separator,
   type SeparatorVariantProps,
