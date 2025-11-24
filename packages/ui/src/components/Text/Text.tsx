@@ -6,7 +6,7 @@ import { cn } from '../../utils/cn';
 
 export type TextVariantProps = VariantProps<typeof textVariants>;
 
-const textVariants = cva('ui:font-body ui:m-0 ui:inline-block ui:p-0', {
+const textVariants = cva('ui:font-body ui:m-0 ui:p-0', {
   variants: {
     intent: {
       primary: 'ui:text-black ui:dark:text-white',
@@ -40,6 +40,11 @@ const textVariants = cva('ui:font-body ui:m-0 ui:inline-block ui:p-0', {
       true: 'ui:w-full ui:overflow-hidden ui:text-ellipsis ui:whitespace-nowrap',
       false: '',
     },
+    display: {
+      inline: 'ui:inline',
+      'inline-block': 'ui:inline-block',
+      block: 'ui:block',
+    },
   },
   defaultVariants: {
     intent: 'primary',
@@ -48,6 +53,7 @@ const textVariants = cva('ui:font-body ui:m-0 ui:inline-block ui:p-0', {
     decoration: 'none',
     textTransform: 'none',
     truncate: false,
+    display: 'inline-block',
   },
 });
 
@@ -70,6 +76,7 @@ export const Text = ({
   title = '',
   truncate,
   intent,
+  display,
   color,
   style,
   ...otherProps
@@ -84,6 +91,7 @@ export const Text = ({
           textTransform,
           truncate,
           intent,
+          display,
         }),
         // Font weight classes based on tag
         Tag === 'b' && 'ui:font-bold',
