@@ -25,7 +25,7 @@ const meta: Meta<typeof Text> = {
     },
     size: {
       control: { type: 'select' },
-      options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'],
+      options: ['xs', 'sm', 'lg', 'xl', '2xl', '3xl'],
       description: 'The size of the text',
     },
     decoration: {
@@ -77,7 +77,6 @@ export const Sizes: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <Text size="xs">Extra Small Text (xs)</Text>
       <Text size="sm">Small Text (sm)</Text>
-      <Text size="md">Medium Text (md) - Default</Text>
       <Text size="lg">Large Text (lg)</Text>
       <Text size="xl">Extra Large Text (xl)</Text>
       <Text size="2xl">2X Large Text (2xl)</Text>
