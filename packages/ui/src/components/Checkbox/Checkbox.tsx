@@ -37,7 +37,7 @@ const checkboxVariants = cva(
 
 const checkboxBoxVariants = cva(
   // Base checkbox box styles
-  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded ui:transition-all ui:duration-200 border-1 outline-6 outline-transparent',
+  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded ui:transition-all ui:duration-200 ui:border-1 ui:outline-6 ui:outline-transparent',
   {
     variants: {
       isSelected: {

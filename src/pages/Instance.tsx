@@ -54,7 +54,7 @@ function Instance() {
                                     <Heading>{t("progress.title")}</Heading>
                                     <Separator />
                                     <div className="flex items-center gap-8">
-                                        <Text size="md" className="whitespace-nowrap">
+                                        <Text className="whitespace-nowrap">
                                             {t("progress.label")}
                                         </Text>
                                         <WorkflowProgressBar />

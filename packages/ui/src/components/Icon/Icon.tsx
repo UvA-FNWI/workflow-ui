@@ -6,24 +6,24 @@ import { cn } from '../../utils/cn';
 import { IconType } from './IconTypes';
 import { loadSprite, SPRITE_ID } from './spriteData';
 
-const iconVariants = cva('inline-block', {
+const iconVariants = cva('ui:inline-block', {
   variants: {
     size: {
-      xs: 'w-3 h-3', // 12px
-      sm: 'w-4 h-4', // 16px
-      md: 'w-5 h-5', // 20px
-      lg: 'w-6 h-6', // 24px
-      xl: 'w-8 h-8', // 32px
-      '2xl': 'w-10 h-10', // 40px
+      xs: 'ui:w-3 ui:h-3', // 12px
+      sm: 'ui:w-4 ui:h-4', // 16px
+      md: 'ui:w-5 ui:h-5', // 20px
+      lg: 'ui:w-6 ui:h-6', // 24px
+      xl: 'ui:w-8 ui:h-8', // 32px
+      '2xl': 'ui:w-10 ui:h-10', // 40px
     },
     color: {
-      current: 'text-current',
-      primary: 'text-grey-900 dark:text-grey-100',
-      secondary: 'text-grey-600 dark:text-grey-400',
-      success: 'text-green-600 dark:text-green-400',
-      warning: 'text-yellow-600 dark:text-yellow-400',
-      danger: 'text-red-600 dark:text-red-400',
-      info: 'text-blue-600 dark:text-blue-400',
+      current: 'ui:text-current',
+      primary: 'ui:text-grey-900 ui:dark:text-grey-100',
+      secondary: 'ui:text-grey-600 ui:dark:text-grey-400',
+      success: 'ui:text-green-600 ui:dark:text-green-400',
+      warning: 'ui:text-yellow-600 ui:dark:text-yellow-400',
+      danger: 'ui:text-red-600 ui:dark:text-red-400',
+      info: 'ui:text-blue-600 ui:dark:text-blue-400',
     },
   },
   defaultVariants: {

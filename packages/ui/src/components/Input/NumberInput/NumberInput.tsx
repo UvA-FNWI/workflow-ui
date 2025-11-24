@@ -89,11 +89,11 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   // TODO: Add buttons for increment and decrement via react-aria
   return (
-    <div className="w-full">
+    <div className="ui:w-full">
       {label && (
         <label
           {...labelProps}
-          className="mb-1 block text-sm font-medium text-black dark:text-white"
+          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
         >
           {label}
         </label>
@@ -106,7 +106,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       {description && (
         <div
           {...descriptionProps}
-          className="text-grey-600 dark:text-grey-400 mt-1 text-sm"
+          className="ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
         >
           {description}
         </div>
@@ -114,7 +114,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       {errorMessage && isValid === false && (
         <div
           {...errorMessageProps}
-          className="mt-1 text-sm text-red-600 dark:text-red-400"
+          className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"
         >
           {errorMessage}
         </div>

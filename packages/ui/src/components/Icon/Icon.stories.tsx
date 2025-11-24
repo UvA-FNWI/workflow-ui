@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { Text } from '../Text/Text';
 import { Icon } from './Icon';
+import { IconType } from './IconTypes';
 import { getIconNames as getAvailableIcons } from './spriteData';
 
 const meta: Meta<typeof Icon> = {
@@ -75,7 +76,7 @@ const IconBrowserComponent = () => {
     return allIcons.filter(icon =>
       icon.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [allIcons, searchTerm]);
+  }, [allIcons, searchTerm]) as IconType[];
 
   const handleCopyIconName = (iconName: string) => {
     navigator.clipboard.writeText(iconName);
@@ -92,42 +93,42 @@ const IconBrowserComponent = () => {
           placeholder="Search icons..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-grey-300 rounded-sm"
+          className="border-grey-300 w-full rounded-sm border px-4 py-2"
         />
         <Text intent="secondary" size="sm">
           {filteredIcons.length} of {allIcons.length} icons
           {searchTerm && ` matching "${searchTerm}"`}
         </Text>
       </div>
-      <div className="mb-6 p-4 bg-grey-200 rounded-sm">
-        <h4 className="font-medium mb-2">Usage Tips:</h4>
-        <ul className="text-sm text-grey-800 space-y-1">
+      <div className="bg-grey-200 mb-6 rounded-sm p-4">
+        <h4 className="mb-2 font-medium">Usage Tips:</h4>
+        <ul className="text-grey-800 space-y-1 text-sm">
           <li>• Click any icon to copy its name to clipboard</li>
           <li>• Use the search bar to filter icons by name</li>
           <li>• Icon names can be used with: {'<Icon name="icon-name" />'}</li>
         </ul>
       </div>
-      <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-4 rounded-sm">
+      <div className="grid grid-cols-3 gap-4 rounded-sm md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10">
         {filteredIcons.map(iconName => (
           <div
             key={iconName}
-            className="flex flex-col items-center p-3 rounded-lg border border-grey-600 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer group"
+            className="border-grey-600 group flex cursor-pointer flex-col items-center rounded-lg border p-3 transition-all hover:border-red-300 hover:bg-red-50"
             onClick={() => handleCopyIconName(iconName)}
             title={`Click to copy: ${iconName}`}
           >
             <Icon
               name={iconName}
               size="lg"
-              className=" group-hover:text-red-brand transition-colors"
+              className="group-hover:text-red-brand transition-colors"
             />
-            <span className="text-xs text-center mt-2 group-hover:text-red-brand font-medium truncate w-full">
+            <span className="group-hover:text-red-brand mt-2 w-full truncate text-center text-xs font-medium">
               {iconName.replace(/-/g, ' ')}
             </span>
           </div>
         ))}
       </div>{' '}
       {filteredIcons.length === 0 && (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <Icon
             name="cross-line"
             size="xl"
@@ -180,17 +181,17 @@ export const CustomStyling: Story = {
     <div className="flex items-center gap-4">
       <Icon
         name="alarm-solid"
-        className="text-blue-500 hover:text-blue-700 transition-colors cursor-pointer"
+        className="cursor-pointer text-blue-500 transition-colors hover:text-blue-700"
         size="xl"
       />
       <Icon
         name="accessibility-solid"
-        className="text-green-500 rotate-45 transform"
+        className="rotate-45 transform text-green-500"
         size="xl"
       />
       <Icon
         name="ai-brain-solid"
-        className="text-purple-500 animate-pulse"
+        className="animate-pulse text-purple-500"
         size="xl"
       />
     </div>

@@ -1,36 +1,36 @@
 import { cva } from 'class-variance-authority';
 
 export const inputVariants = cva(
-  'w-full rounded-md border px-3 py-1.5 text-base transition-all duration-200 outline-none',
+  'ui:w-full ui:rounded-md ui:border ui:px-3 ui:py-1.5 ui:text-base ui:transition-all ui:duration-200 ui:outline-none',
   {
     variants: {
       isDisabled: {
-        true: 'bg-grey-100 dark:bg-grey-800 cursor-not-allowed opacity-60',
-        false: 'dark:bg-grey-900 bg-white',
+        true: 'ui:bg-grey-100 ui:dark:bg-grey-800 ui:cursor-not-allowed ui:opacity-60',
+        false: 'ui:dark:bg-grey-900 ui:bg-white',
       },
       isFocusVisible: {
-        true: 'ring-navy-600 dark:ring-offset-grey-900 ring-2 ring-offset-2 dark:ring-orange-500',
+        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-2 ui:dark:ring-orange-500',
         false: '',
       },
       isHovered: {
-        true: 'border-navy-600 dark:border-sky-500',
+        true: 'ui:border-navy-600 ui:dark:border-sky-500',
         false: '',
       },
       isValid: {
-        true: 'border-grey-300 dark:border-grey-600',
-        false: 'border-red-600 dark:border-red-400',
+        true: 'ui:border-grey-300 ui:dark:border-grey-600',
+        false: 'ui:border-red-600 ui:dark:border-red-400',
       },
     },
     compoundVariants: [
       {
         isFocusVisible: true,
         isValid: true,
-        class: 'border-navy-600 dark:border-sky-500',
+        class: 'ui:border-navy-600 ui:dark:border-sky-500',
       },
       {
         isFocusVisible: true,
         isValid: false,
-        class: 'border-red-600 dark:border-red-400',
+        class: 'ui:border-red-600 ui:dark:border-red-400',
       },
     ],
     defaultVariants: {
