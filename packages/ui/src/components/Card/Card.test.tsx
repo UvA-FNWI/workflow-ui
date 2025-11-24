@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import { Card } from './Card';
@@ -90,10 +90,10 @@ describe('Card Component', () => {
 
       const card = screen.getByTestId('card');
 
-      card.click();
+      fireEvent.click(card);
       expect(handleClick).toHaveBeenCalledTimes(1);
 
-      card.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      fireEvent.mouseEnter(card);
       expect(handleMouseEnter).toHaveBeenCalledTimes(1);
     });
   });
