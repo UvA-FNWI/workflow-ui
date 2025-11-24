@@ -33,10 +33,10 @@ export const Default: Story = {
   args: {
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card Title
         </Text>
-        <Text intent="secondary">
+        <Text intent="secondary" display="block">
           This is a default card with medium padding, shadow, and border.
         </Text>
       </>
@@ -49,10 +49,10 @@ export const NoPadding: Story = {
     padding: 'none',
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card with No Padding
         </Text>
-        <Text intent="secondary">
+        <Text intent="secondary" display="block">
           This card has no padding. Content goes to the edges.
         </Text>
       </>
@@ -65,10 +65,12 @@ export const SmallPadding: Story = {
     padding: 'sm',
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card with Small Padding
         </Text>
-        <Text intent="secondary">This card has small padding (p-4).</Text>
+        <Text intent="secondary" display="block">
+          This card has small padding (p-4).
+        </Text>
       </>
     ),
   },
@@ -79,10 +81,12 @@ export const LargePadding: Story = {
     padding: 'lg',
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card with Large Padding
         </Text>
-        <Text intent="secondary">This card has large padding (p-8).</Text>
+        <Text intent="secondary" display="block">
+          This card has large padding (p-8).
+        </Text>
       </>
     ),
   },
@@ -93,10 +97,12 @@ export const NoShadow: Story = {
     shadow: 'none',
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card with No Shadow
         </Text>
-        <Text intent="secondary">This card has no shadow.</Text>
+        <Text intent="secondary" display="block">
+          This card has no shadow.
+        </Text>
       </>
     ),
   },
@@ -107,10 +113,12 @@ export const LargeShadow: Story = {
     shadow: 'lg',
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card with Large Shadow
         </Text>
-        <Text intent="secondary">This card has a large shadow.</Text>
+        <Text intent="secondary" display="block">
+          This card has a large shadow.
+        </Text>
       </>
     ),
   },
@@ -121,10 +129,12 @@ export const NoBorder: Story = {
     border: 'none',
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card with No Border
         </Text>
-        <Text intent="secondary">This card has no border.</Text>
+        <Text intent="secondary" display="block">
+          This card has no border.
+        </Text>
       </>
     ),
   },
@@ -135,10 +145,12 @@ export const MediumBorder: Story = {
     border: 'medium',
     children: (
       <>
-        <Text size="lg" className="mb-2">
+        <Text size="lg" display="block" className="mb-2">
           Card with Medium Border
         </Text>
-        <Text intent="secondary">This card has a medium border (2px).</Text>
+        <Text intent="secondary" display="block">
+          This card has a medium border (2px).
+        </Text>
       </>
     ),
   },
@@ -150,14 +162,14 @@ export const ComplexContent: Story = {
     shadow: 'lg',
     children: (
       <div>
-        <Text size="2xl" className="mb-4">
+        <Text size="2xl" display="block" className="mb-4">
           Complex Card Example
         </Text>
-        <Text className="mb-2">
+        <Text display="block" className="mb-2">
           This card contains multiple elements and demonstrates how the Card
           component can be used with various content types.
         </Text>
-        <Text intent="secondary" size="sm">
+        <Text intent="secondary" size="sm" display="block">
           Additional information can be placed here.
         </Text>
       </div>

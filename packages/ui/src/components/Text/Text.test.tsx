@@ -20,7 +20,7 @@ describe('Text Component', () => {
       render(<Text>Test content</Text>);
       const element = screen.getByText('Test content');
       expect(element).toHaveClass('ui:font-body');
-      expect(element).toHaveClass('ui:inline-block');
+      expect(element).toHaveClass('ui:inline-block'); // default display variant
       expect(element).toHaveClass('ui:p-0');
       expect(element).toHaveClass('ui:m-0');
     });
@@ -355,7 +355,34 @@ describe('Text Component', () => {
       expect(element).toHaveClass('ui:text-lg');
       expect(element).toHaveClass('ui:no-underline');
       expect(element).toHaveClass('ui:normal-case');
+      expect(element).toHaveClass('ui:inline-block'); // default display
       expect(element).not.toHaveClass('ui:overflow-hidden');
+    });
+  });
+
+  describe('Display Variants', () => {
+    test('applies inline display variant', () => {
+      render(<Text display="inline">Inline text</Text>);
+      const element = screen.getByText('Inline text');
+      expect(element).toHaveClass('ui:inline');
+    });
+
+    test('applies inline-block display variant (default)', () => {
+      render(<Text display="inline-block">Inline-block text</Text>);
+      const element = screen.getByText('Inline-block text');
+      expect(element).toHaveClass('ui:inline-block');
+    });
+
+    test('applies block display variant', () => {
+      render(<Text display="block">Block text</Text>);
+      const element = screen.getByText('Block text');
+      expect(element).toHaveClass('ui:block');
+    });
+
+    test('uses default display when display prop is not provided', () => {
+      render(<Text>Default display text</Text>);
+      const element = screen.getByText('Default display text');
+      expect(element).toHaveClass('ui:inline-block');
     });
   });
 });
