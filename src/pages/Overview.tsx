@@ -1,9 +1,11 @@
-import React from "react";
+import {useState} from "react";
+
 import {Link} from "react-router";
+
 import {Checkbox, Text} from "@datanose/ui";
 
 function Overview() {
-    const [checked, setChecked] = React.useState(false);
+    const [checked, setChecked] = useState(false);
     return (
         <div>
             <h1>Overview</h1>

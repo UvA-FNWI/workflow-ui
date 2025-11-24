@@ -85,7 +85,7 @@ describe('Icon Component', () => {
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
-        expect(svg).toHaveClass('w-5', 'h-5');
+        expect(svg).toHaveClass('ui:w-5', 'ui:h-5');
       });
     });
 
@@ -94,7 +94,7 @@ describe('Icon Component', () => {
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
-        expect(svg).toHaveClass('w-3', 'h-3');
+        expect(svg).toHaveClass('ui:w-3', 'ui:h-3');
       });
     });
   });
@@ -105,7 +105,7 @@ describe('Icon Component', () => {
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
-        expect(svg).toHaveClass('text-grey-900');
+        expect(svg).toHaveClass('ui:text-grey-900');
       });
     });
 
@@ -114,7 +114,7 @@ describe('Icon Component', () => {
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
-        expect(svg).toHaveClass('text-current');
+        expect(svg).toHaveClass('ui:text-current');
       });
     });
 
@@ -123,7 +123,7 @@ describe('Icon Component', () => {
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
-        expect(svg).toHaveClass('text-grey-600');
+        expect(svg).toHaveClass('ui:text-grey-600');
       });
     });
   });
@@ -168,7 +168,7 @@ describe('Icon Component', () => {
       await waitFor(() => {
         const svg = screen.getByRole('img');
         expect(svg).toHaveClass('custom-icon');
-        expect(svg).toHaveClass('inline-block'); // Should still have base classes
+        expect(svg).toHaveClass('ui:inline-block'); // Should still have base classes
       });
     });
 
@@ -193,10 +193,10 @@ describe('Icon Component', () => {
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
-        expect(svg).toHaveClass('w-6', 'h-6'); // size classes
-        expect(svg).toHaveClass('text-red-600'); // color classes
+        expect(svg).toHaveClass('ui:w-6', 'ui:h-6'); // size classes
+        expect(svg).toHaveClass('ui:text-red-600'); // color classes
         expect(svg).toHaveClass('custom-class', 'rotate-90'); // custom classes
-        expect(svg).toHaveClass('inline-block'); // base classes
+        expect(svg).toHaveClass('ui:inline-block'); // base classes
       });
     });
   });

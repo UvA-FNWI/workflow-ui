@@ -192,7 +192,7 @@ import { cva, VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
 
-const textVariants = cva('font-body inline-block p-0 m-0', {
+const textVariants = cva('font-body m-0 inline-block p-0', {
   variants: {
     intent: {
       primary: 'text-intent-primary',
@@ -233,13 +233,13 @@ import { cn } from '../../utils/cn';
 
 const buttonVariants = cva(
   // Base classes (always applied)
-  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2',
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none',
   {
     variants: {
       variant: {
-        primary: 'bg-navy-600 text-white hover:bg-navy-700',
+        primary: 'bg-navy-600 hover:bg-navy-700 text-white',
         secondary: 'bg-grey-100 text-grey-900 hover:bg-grey-200',
-        outline: 'border border-grey-300 bg-transparent hover:bg-grey-100',
+        outline: 'border-grey-300 hover:bg-grey-100 border bg-transparent',
       },
       size: {
         sm: 'h-8 px-3 text-sm',

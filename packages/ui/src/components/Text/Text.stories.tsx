@@ -25,7 +25,7 @@ const meta: Meta<typeof Text> = {
     },
     size: {
       control: { type: 'select' },
-      options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'],
+      options: ['xs', 'sm', 'lg', 'xl', '2xl', '3xl'],
       description: 'The size of the text',
     },
     decoration: {
@@ -41,6 +41,11 @@ const meta: Meta<typeof Text> = {
     truncate: {
       control: 'boolean',
       description: 'Whether to truncate long text with ellipsis',
+    },
+    display: {
+      control: { type: 'select' },
+      options: ['inline', 'inline-block', 'block'],
+      description: 'The display type of the text element',
     },
   },
 };
@@ -77,7 +82,6 @@ export const Sizes: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <Text size="xs">Extra Small Text (xs)</Text>
       <Text size="sm">Small Text (sm)</Text>
-      <Text size="md">Medium Text (md) - Default</Text>
       <Text size="lg">Large Text (lg)</Text>
       <Text size="xl">Extra Large Text (xl)</Text>
       <Text size="2xl">2X Large Text (2xl)</Text>
@@ -140,6 +144,34 @@ export const Truncated: Story = {
         This is a very long text that will be truncated with an ellipsis when it
         exceeds the container width
       </Text>
+    </div>
+  ),
+};
+
+// Display variants
+export const DisplayTypes: Story = {
+  render: () => (
+    <div style={{ border: '1px solid #ccc', padding: '16px' }}>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Different display types affect how text elements behave in layout:
+      </p>
+      <div>
+        <Text display="inline">Inline text </Text>
+        <Text display="inline">flows together </Text>
+        <Text display="inline">on the same line.</Text>
+      </div>
+      <br />
+      <div>
+        <Text display="inline-block">Inline-block text </Text>
+        <Text display="inline-block">can sit side by side </Text>
+        <Text display="inline-block">but respects width/height.</Text>
+      </div>
+      <br />
+      <div>
+        <Text display="block">Block text</Text>
+        <Text display="block">creates new lines</Text>
+        <Text display="block">for each element.</Text>
+      </div>
     </div>
   ),
 };

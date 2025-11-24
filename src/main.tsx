@@ -1,14 +1,22 @@
 import {StrictMode} from "react";
+
 import {createRoot} from "react-dom/client";
+import {Provider} from "react-redux";
 import {RouterProvider} from "react-router";
+
+import {ThemeProvider} from "@datanose/ui";
+
+import "./i18n";
 import "./index.css";
 import router from "./router/routes.tsx";
-import {ThemeProvider} from "@datanose/ui";
+import {store} from "./store/store";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <ThemeProvider>
-            <RouterProvider router={router} />
-        </ThemeProvider>
+        <Provider store={store}>
+            <ThemeProvider>
+                <RouterProvider router={router} />
+            </ThemeProvider>
+        </Provider>
     </StrictMode>,
 );
