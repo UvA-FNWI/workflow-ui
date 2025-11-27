@@ -37,3 +37,6 @@ jobs:
             - name: Translations
               if: always()
               run: pnpm run translations:check
+            - name: Test
+              if: always()
+              run: pnpm -r test

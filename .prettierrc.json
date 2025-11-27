@@ -9,6 +9,18 @@
   "trailingComma": "all",
   "bracketSpacing": false,
   "endOfLine": "lf",
+  "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  "importOrder": [
+    "^react$",
+    "^react/(.*)$",
+    "^react-(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^@/(.*)$",
+    "^(?:~/(.*)|[./].*)$"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderCaseInsensitive": true,
   "overrides": [
     {
       "files": ["*.scss", "*.json"],

@@ -1,8 +1,9 @@
 import {createBrowserRouter, type RouteObject} from "react-router";
+
+import App from "../App";
 import Overview from "../pages/Overview";
 import {instanceRoutes} from "./instanceRoutes";
 import {workflowRoutes} from "./workflowRoutes";
-import App from "../App";
 
 const routes: RouteObject[] = [
     {
