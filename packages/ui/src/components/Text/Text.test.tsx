@@ -178,7 +178,6 @@ describe('Text Component', () => {
     test('applies ui:truncate class when ui:truncate is true', () => {
       render(<Text truncate={true}>Long text content</Text>);
       const element = screen.getByText('Long text content');
-      console.log(element.classList);
       expect(element).toHaveClass('ui:overflow-hidden');
       expect(element).toHaveClass('ui:text-ellipsis');
       expect(element).toHaveClass('ui:whitespace-nowrap');
@@ -352,7 +351,7 @@ describe('Text Component', () => {
       const element = screen.getByText('Default text');
       expect(element).toHaveClass('ui:font-body');
       expect(element).toHaveClass('ui:text-black');
-      expect(element).toHaveClass('ui:text-lg');
+      expect(element).toHaveClass('ui:text-md');
       expect(element).toHaveClass('ui:no-underline');
       expect(element).toHaveClass('ui:normal-case');
       expect(element).toHaveClass('ui:inline-block'); // default display

@@ -48,7 +48,7 @@ export const PageControl = ({instanceId, submissionId, page}: PageControlProps) 
         <div className="flex flex-col gap-4">
             <div>
                 <Heading className="uppercase">{l(page.title)}</Heading>
-                <Text>{l(page.introduction)}</Text>
+                <Text size="lg">{l(page.introduction)}</Text>
             </div>
             <div>
                 <form>

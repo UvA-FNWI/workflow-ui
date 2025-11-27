@@ -1,5 +1,6 @@
 import './styles/index.css';
 
+export { Button, type ButtonProps } from './components/Button/Button';
 export { Card, type CardVariantProps } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
 export {
@@ -16,6 +17,7 @@ export {
   type NumberInputProps,
   type NumberInputVariantProps,
 } from './components/Input/NumberInput/NumberInput';
+export { Pill, type PillProps } from './components/Pill/Pill';
 export {
   Separator,
   type SeparatorVariantProps,
@@ -23,5 +25,35 @@ export {
 export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';
 export { Icon } from './components/Icon/Icon';
+export {
+  LoadingSpinner,
+  type LoadingSpinnerProps,
+} from './components/LoadingSpinner/LoadingSpinner';
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';
+
+export {
+  Toast,
+  type ToasterType,
+  type ToasterConfig,
+} from './components/Toast/Toast';
+export { ToastRegion } from './components/Toast/ToastRegion';
+export {
+  ToastProvider,
+  useToastContext,
+} from './components/Toast/ToastProvider';
+export { useToast } from './components/Toast/hooks/useToast';
+
+export { Modal, type ModalProps } from './components/Modal/Modal';
+
+// Tabs exports
+export {
+  Tab,
+  Tabs,
+  TabList,
+  TabPanels,
+  TabPanel,
+  useTabsWithRouter,
+  useTabsWithUrl,
+  type TabsProps,
+} from './components/Tabs/Tabs';
