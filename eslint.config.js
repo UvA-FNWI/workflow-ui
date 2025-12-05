@@ -7,14 +7,10 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig([
     globalIgnores(["dist", "packages/*"]),
+    reactHooks.configs["recommended-latest"],
     {
         files: ["**/*.{ts,tsx}"],
-        extends: [
-            js.configs.recommended,
-            tseslint.configs.recommended,
-            reactHooks.configs["recommended-latest"],
-            reactRefresh.configs.vite,
-        ],
+        extends: [js.configs.recommended, tseslint.configs.recommended, reactRefresh.configs.vite],
         languageOptions: {
             ecmaVersion: 2020,
             globals: globals.browser,
