@@ -17,6 +17,9 @@ export const FormPage = ({
 
     return (
         <div>
+            {/* Placeholder */}
+            {submission.dateSubmitted && <p>Submitted on {submission.dateSubmitted}</p>}
+
             {submission.form.pages.map((page) => (
                 <div key={page.index}>
                     <PageControl instanceId={instanceId} submissionId={submissionId} page={page} />

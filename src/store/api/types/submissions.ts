@@ -28,6 +28,7 @@ export type Form = {
     name: string;
     title: LocalString;
     pages: Page[];
+    step?: string;
 };
 
 export type Page = {
@@ -46,7 +47,7 @@ export type Question = {
     isRequired: boolean;
     isArray: boolean;
     choices: Choice[];
-    entityType?: string;
+    workflowDefinition?: string;
     hideInResults: boolean;
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
