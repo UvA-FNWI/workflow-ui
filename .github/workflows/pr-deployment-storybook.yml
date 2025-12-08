@@ -29,6 +29,7 @@ jobs:
             - name: Push chart and deploy
               env:
                   PR_NUMBER: ${{ github.event.number }}
+                  UPDATER_SECRET: ${{ secrets.UPDATER_SECRET_DN }}
               run: |
                   VERSION=$(date "+1.0.%Y%m%d%H%M%S")
                   helm package --version "${VERSION}" --app-version "${VERSION}" charts/storybook-ui
