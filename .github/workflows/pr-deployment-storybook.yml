@@ -10,8 +10,8 @@ jobs:
     build:
         runs-on: self-hosted
         environment:
-          name: storybook-pr-${{ github.event.number }}
-          url: https://storybook-ui-pr-${{ github.event.number }}.datanose.nl/
+            name: storybook-pr-${{ github.event.number }}
+            url: https://storybook-ui-pr-${{ github.event.number }}.datanose.nl/
 
         steps:
             - name: Checkout
