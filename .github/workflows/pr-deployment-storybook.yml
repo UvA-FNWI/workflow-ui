@@ -2,9 +2,9 @@ name: build and deploy pr UI library
 
 on:
     pull_request:
-        types: [ opened, synchronize, reopened, ready_for_review ]
+        types: [opened, synchronize, reopened, ready_for_review]
         paths:
-          - packages/ui/**
+            - packages/ui/**
 
 jobs:
     build:
@@ -28,7 +28,7 @@ jobs:
 
             - name: Push chart and deploy
               env:
-                PR_NUMBER: ${{ github.event.number }}
+                  PR_NUMBER: ${{ github.event.number }}
               run: |
                   VERSION=$(date "+1.0.%Y%m%d%H%M%S")
                   helm package --version "${VERSION}" --app-version "${VERSION}" charts/storybook-ui
