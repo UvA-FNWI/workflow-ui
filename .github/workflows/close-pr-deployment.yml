@@ -13,3 +13,4 @@ jobs:
             - name: Cleanup PR deployment
               run: |
                   curl "https://api-v2-tst.datanose.nl/gitops-updater?name=workflow-ui-pr&secret=${{ secrets.UPDATER_SECRET_DN }}&version=delete&id=${{ github.event.pull_request.number }}"
+                  curl "https://api-v2-tst.datanose.nl/gitops-updater?name=storybook-ui-pr&secret=${{ secrets.UPDATER_SECRET_DN }}&version=delete&id=${{ github.event.pull_request.number }}"

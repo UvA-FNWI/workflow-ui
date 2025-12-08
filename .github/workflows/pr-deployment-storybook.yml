@@ -1,0 +1,40 @@
+name: build and deploy pr UI library
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+        paths:
+            - packages/ui/**
+
+jobs:
+    build:
+        runs-on: self-hosted
+        environment:
+            name: storybook-pr-${{ github.event.number }}
+            url: https://storybook-ui-pr-${{ github.event.number }}.datanose.nl/
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Build and push container
+              env:
+                  PR_NUMBER: ${{ github.event.number }}
+              working-directory: ./packages/ui
+              run: |
+                  set -euxo pipefail
+                  TAG="pr-${PR_NUMBER}"
+                  docker build -f Dockerfile -t "datanosecr.azurecr.io/storybook-ui:${TAG}" .
+                  docker push "datanosecr.azurecr.io/storybook-ui:${TAG}"
+
+            - name: Push chart and deploy
+              env:
+                  PR_NUMBER: ${{ github.event.number }}
+                  UPDATER_SECRET: ${{ secrets.UPDATER_SECRET_DN }}
+              run: |
+                  VERSION=$(date "+1.0.%Y%m%d%H%M%S")
+                  helm package --version "${VERSION}" --app-version "${VERSION}" charts/storybook-ui
+                  helm push "storybook-ui-${VERSION}.tgz" oci://datanosecr.azurecr.io/helm/pr
+                  curl --fail --no-progress-meter "https://api-v2-tst.datanose.nl/gitops-updater?name=storybook-ui-pr&secret=${UPDATER_SECRET}&version=${VERSION}&id=${PR_NUMBER}"
