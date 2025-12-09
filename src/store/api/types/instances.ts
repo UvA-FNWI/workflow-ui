@@ -25,6 +25,8 @@ export type Action = {
     title: LocalString;
     mail?: string;
     step?: string;
+    intent: ActionIntent;
 };
 
 export type ActionType = "SubmitForm" | "Execute";
+export type ActionIntent = "Primary" | "Secondary" | "Destructive";
