@@ -1,3 +1,5 @@
+import type {ActionType} from "~/store/api/types/instances.ts";
+
 export type SaveAnswerParams = {
     instanceId: string;
     submissionId: string;
@@ -20,4 +22,10 @@ export type FileParams = {
     questionName: string;
     file?: File | null;
     deleteFileId?: string | null;
+};
+
+export type ExecuteActionParams = {
+    instanceId: string;
+    type: ActionType;
+    name: string;
 };
