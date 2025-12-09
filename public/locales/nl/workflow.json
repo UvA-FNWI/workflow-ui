@@ -8,5 +8,13 @@
   "progress": {
     "label": "Hier ben je in het proces",
     "title": "Voortgang"
+  },
+  "screens": {
+    "dynamic": {
+      "assign-subject": "Onderwerp toewijzen",
+      "completed": "Afgesloten",
+      "thesis-in-progress": "Bezig met scriptie"
+    },
+    "students": "Studenten"
   }
 }

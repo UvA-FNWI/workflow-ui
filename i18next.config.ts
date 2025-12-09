@@ -8,6 +8,7 @@ export default defineConfig({
         defaultNS: "common",
         defaultValue: "$TODO$",
         useTranslationNames: ["useTranslation", "useTranslate"],
+        preservePatterns: ["*.dynamic.*"],
     },
     types: {
         input: ["public/locales/**/*.json"],
