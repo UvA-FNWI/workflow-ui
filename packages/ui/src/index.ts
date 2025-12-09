@@ -35,5 +35,6 @@ export {
   type PillProps,
   type PillVariantProps,
 } from './components/Pill/Pill';
+export { Modal } from './components/Modal/Modal';
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';

@@ -2,9 +2,9 @@ import {Link, useParams} from "react-router";
 
 import {Card, Heading, Separator, Skeleton, Text} from "@datanose/ui";
 
-import {FormPage} from "./FormPage";
 import {WorkflowProgressBar} from "~/components/WorkflowProgressBar";
 import {useTranslate} from "~/hooks/useTranslate";
+import {StepCard} from "~/pages/StepCard.tsx";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 
 function Instance() {
@@ -64,19 +64,17 @@ function Instance() {
                         </div>
                     </Card>
                     {/* Content */}
-                    <Card>
-                        {isLoading ? (
+                    {isLoading && (
+                        <Card>
                             <div className="flex flex-col gap-4">
                                 <Skeleton className="h-6 w-40" />
                                 <Skeleton className="h-32 w-full" />
                             </div>
-                        ) : (
-                            id &&
-                            instance?.steps[0]?.id && (
-                                <FormPage instanceId={id} submissionId={instance.steps[0].id} />
-                            )
-                        )}
-                    </Card>
+                        </Card>
+                    )}
+                    {instance?.steps.map((step) => (
+                        <StepCard step={step} instance={instance} key={step.id} />
+                    ))}
                 </div>
                 <div className="col-span-2 flex flex-col gap-6">
                     {/* Student info */}

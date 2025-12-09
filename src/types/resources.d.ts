@@ -6,6 +6,8 @@ interface Resources {
         language_nl: "Dutch";
     };
     workflow: {
+        cancel: "Cancel";
+        confirm: "Confirm";
         first_help: {
             title: "First aid with thesis";
         };

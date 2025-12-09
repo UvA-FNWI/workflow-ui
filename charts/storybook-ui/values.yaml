@@ -1,0 +1,4 @@
+hostname: storybook-ui.local
+ingressClass: nginx
+image: datanosecr.azurecr.io/storybook-ui
+tag: latest
