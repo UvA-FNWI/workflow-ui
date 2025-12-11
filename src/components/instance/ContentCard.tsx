@@ -1,6 +1,6 @@
 import {Card, Skeleton} from "@datanose/ui";
 
-import {StepCard} from "~/pages/StepCard";
+import {StepCard} from "~/components/instance/StepCard";
 import type {WorkflowInstance} from "~/store/api/types/instances";
 
 interface ContentCardProps {

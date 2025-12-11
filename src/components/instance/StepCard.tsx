@@ -56,12 +56,11 @@ export const StepCard = ({step, instance}: Props) => {
                 </div>
             </div>
 
-            <Modal isOpen={activeAction !== null}>
-                <Modal.Header>{l(activeAction?.title)}</Modal.Header>
+            <Modal isOpen={activeAction !== null} onOpenChange={() => setActiveAction(null)}>
+                <Modal.Header>{activeAction && l(activeAction.title)}</Modal.Header>
                 <Modal.Body className="mt-2 mb-4">TODO: body text.</Modal.Body>
                 {activeAction && (
                     <Modal.Footer className="mt-2 flex gap-2">
-                        {/* TODO: button component (DN-3417?) */}
                         <button
                             className="rounded-md border px-3 py-1.5 text-base"
                             onClick={() => {

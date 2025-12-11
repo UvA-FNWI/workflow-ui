@@ -1,8 +1,15 @@
-import { forwardRef, ReactNode, useEffect, useRef } from 'react';
+import {
+  createContext,
+  forwardRef,
+  HTMLAttributes,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react';
 
 import { FocusScope, useDialog, useModalOverlay } from 'react-aria';
 import { createPortal } from 'react-dom';
-import { useOverlayTriggerState } from 'react-stately';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 
@@ -38,16 +45,11 @@ type ModalVariantProps = VariantProps<typeof dialogClassGenerator>;
 
 export interface ModalProps extends ModalVariantProps {
   // Content
-  title?: ReactNode;
   children: ReactNode;
-  footer?: ReactNode;
 
   // State
   isOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
-
-  // Trigger (optional - for controlled usage)
-  trigger?: ReactNode;
 
   // Close button
   showCloseButton?: boolean;
@@ -66,6 +68,24 @@ export interface ModalProps extends ModalVariantProps {
   isKeyboardDismissDisabled?: boolean;
   shouldBlockScroll?: boolean;
 }
+
+// Context to share modal state with sub-components
+interface ModalContextValue {
+  onClose: () => void;
+  showCloseButton: boolean;
+}
+
+const ModalContext = createContext<ModalContextValue | null>(null);
+
+const useModalContext = () => {
+  const context = useContext(ModalContext);
+  if (!context) {
+    throw new Error(
+      'Modal sub-components must be used within a Modal component'
+    );
+  }
+  return context;
+};
 
 const ModalOverlay = ({
   children,
@@ -130,19 +150,16 @@ const ModalOverlay = ({
 
 const ModalDialog = ({
   children,
-  title,
   role = 'dialog',
   ...props
 }: {
   children: ReactNode;
-  title?: ReactNode;
   role?: 'dialog' | 'alertdialog';
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { dialogProps, titleProps } = useDialog(
+  const { dialogProps } = useDialog(
     {
       role,
-      'aria-labelledby': title ? 'modal-title' : undefined,
       ...props,
     },
     ref
@@ -150,95 +167,19 @@ const ModalDialog = ({
 
   return (
     <div {...dialogProps} ref={ref}>
-      {title && (
-        <h2 {...titleProps} id="modal-title" className="ui:sr-only">
-          {title}
-        </h2>
-      )}
       {children}
     </div>
   );
 };
 
-// Modal Content Component to avoid duplication
-const ModalContent = forwardRef<
-  HTMLDivElement,
-  {
-    title?: ReactNode;
-    showCloseButton?: boolean;
-    onClose: () => void;
-    footer?: ReactNode;
-    children: ReactNode;
-    size: 'sm' | 'md' | 'lg' | 'xl' | 'full' | null;
-  }
->(
-  (
-    { title, showCloseButton, onClose, footer, children, size, ...restProps },
-    ref
-  ) => (
-    <div
-      className={cn(dialogClassGenerator({ size }))}
-      ref={ref}
-      {...restProps}
-    >
-      {/* Header */}
-      {(title || showCloseButton) && (
-        <header className="ui:flex ui:items-center ui:justify-between ui:border-b ui:border-grey-200 ui:dark:border-grey-800 ui:px-6 ui:py-4">
-          {title && (
-            <h2 className="ui:text-lg ui:font-semibold ui:text-grey-900 ui:dark:text-white">
-              {title}
-            </h2>
-          )}
-
-          {showCloseButton && (
-            <Button
-              intent="secondary"
-              size="small"
-              shape="circular"
-              className="ui:ml-auto ui:border-0 ui:bg-transparent ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-              onClick={onClose}
-              aria-label="Close modal"
-            >
-              <Icon name="cross-line" size="sm" color="primary" />
-            </Button>
-          )}
-        </header>
-      )}
-
-      {/* Body */}
-      <div
-        className={cn(
-          'ui:px-6 ui:py-4',
-          !title && !showCloseButton && 'ui:pt-6',
-          !footer && 'ui:pb-6'
-        )}
-      >
-        {children}
-      </div>
-
-      {/* Footer */}
-      {footer && (
-        <footer className="ui:flex ui:items-center ui:justify-end ui:gap-3 ui:border-t ui:border-grey-200 ui:px-6 ui:py-4">
-          {footer}
-        </footer>
-      )}
-    </div>
-  )
-);
-
-export const Modal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
+const BaseModal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
   const {
     // Content
-    title,
     children,
-    footer,
 
     // State
     isOpen,
     onOpenChange,
-
-    // Trigger
-    trigger,
 
     // Close button
     showCloseButton = true,
@@ -260,74 +201,121 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
     ...restProps
   } = props;
 
-  // Use overlay trigger state for uncontrolled behavior when trigger is provided
-  const overlayState = useOverlayTriggerState({
-    defaultOpen: isOpen,
-    isOpen,
-    onOpenChange,
-  });
-
-  // If trigger is provided, return the trigger with the modal
-  if (trigger) {
-    return (
-      <>
-        <div onClick={() => overlayState.open()}>{trigger}</div>
-
-        {overlayState.isOpen && (
-          <ModalOverlay
-            className={cn(modalClassGenerator(), className)}
-            onClose={overlayState.close}
-            isDismissable={isDismissable}
-            isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-            shouldBlockScroll={shouldBlockScroll}
-          >
-            <ModalDialog title={title} role={role}>
-              <ModalContent
-                title={title}
-                showCloseButton={showCloseButton}
-                onClose={overlayState.close}
-                footer={footer}
-                size={size}
-                ref={ref}
-                {...restProps}
-              >
-                {children}
-              </ModalContent>
-            </ModalDialog>
-          </ModalOverlay>
-        )}
-      </>
-    );
-  }
-
-  // Don't render anything if not open (controlled usage)
+  // Don't render anything if not open
   if (!isOpen) {
     return null;
   }
 
+  const handleClose = () => onOpenChange?.(false);
+
   return (
     <ModalOverlay
       className={cn(modalClassGenerator(), className)}
-      onClose={() => onOpenChange?.(false)}
+      onClose={handleClose}
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
       shouldBlockScroll={shouldBlockScroll}
     >
-      <ModalDialog title={title} role={role}>
-        <ModalContent
-          title={title}
-          showCloseButton={showCloseButton}
-          onClose={() => onOpenChange?.(false)}
-          footer={footer}
-          size={size}
-          ref={ref}
-          {...restProps}
+      <ModalDialog role={role}>
+        <ModalContext.Provider
+          value={{ onClose: handleClose, showCloseButton }}
         >
-          {children}
-        </ModalContent>
+          <div
+            className={cn(dialogClassGenerator({ size }))}
+            ref={ref}
+            {...restProps}
+          >
+            {children}
+          </div>
+        </ModalContext.Provider>
       </ModalDialog>
     </ModalOverlay>
   );
 });
 
-Modal.displayName = 'Modal';
+BaseModal.displayName = 'Modal';
+
+// Sub-components for compound component pattern
+const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
+  ({ children, className, ...props }, ref) => {
+    const { onClose, showCloseButton } = useModalContext();
+
+    return (
+      <header
+        ref={ref}
+        className={cn(
+          'ui:flex ui:items-center ui:justify-between ui:border-b ui:border-grey-200 ui:dark:border-grey-800 ui:px-6 ui:py-4',
+          className
+        )}
+        {...props}
+      >
+        <h2 className="ui:text-lg ui:font-semibold ui:text-grey-900 ui:dark:text-white">
+          {children}
+        </h2>
+        {showCloseButton && (
+          <Button
+            intent="secondary"
+            size="small"
+            shape="circular"
+            className="ui:ml-auto ui:border-0 ui:bg-transparent ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
+            <Icon name="cross-line" size="sm" color="primary" />
+          </Button>
+        )}
+      </header>
+    );
+  }
+);
+
+ModalHeader.displayName = 'Modal.Header';
+
+const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ children, className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        'ui:px-6 ui:py-4 ui:text-black ui:dark:text-white',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+);
+
+ModalBody.displayName = 'Modal.Body';
+
+const ModalFooter = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
+  ({ children, className, ...props }, ref) => (
+    <footer
+      ref={ref}
+      className={cn(
+        'ui:flex ui:items-center ui:justify-end ui:gap-3 ui:border-t ui:border-grey-200 ui:dark:border-grey-800 ui:px-6 ui:py-4',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </footer>
+  )
+);
+
+ModalFooter.displayName = 'Modal.Footer';
+
+// Create the Modal component with sub-components
+type ModalComponent = typeof BaseModal & {
+  Header: typeof ModalHeader;
+  Body: typeof ModalBody;
+  Footer: typeof ModalFooter;
+};
+
+// Attach sub-components to Modal
+const Modal = BaseModal as ModalComponent;
+Modal.Header = ModalHeader;
+Modal.Body = ModalBody;
+Modal.Footer = ModalFooter;
+
+export { Modal };
