@@ -1,27 +1,16 @@
 import {useState} from "react";
 
-import {Card, Heading, Modal, Separator} from "@datanose/ui";
+import {Button, Card, Heading, Modal, Separator} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {FormPage} from "~/pages/FormPage.tsx";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
-import type {
-    Action,
-    ActionIntent,
-    WorkflowInstance,
-    WorkflowStep,
-} from "~/store/api/types/instances.ts";
+import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 
 type Props = {
     step: WorkflowStep;
     instance: WorkflowInstance;
 };
-
-// TODO: get rid of this once we have a button component
-const buttonClasses = "rounded-md border px-3 py-1.5 text-base";
-const buttonClassesDestructive = `${buttonClasses} bg-red-800`;
-const getButtonClass = (intent: ActionIntent) =>
-    intent === "Destructive" ? buttonClassesDestructive : buttonClasses;
 
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
@@ -43,15 +32,14 @@ export const StepCard = ({step, instance}: Props) => {
                 )}
 
                 <div className="flex gap-2">
-                    {/* TODO: button component (DN-3417?) */}
                     {actions.map((a) => (
-                        <button
+                        <Button
                             key={a.id}
                             onClick={() => a.type === "Execute" && setActiveAction(a)}
-                            className={getButtonClass(a.intent)}
+                            intent={a.intent === "Destructive" ? "destructivePrimary" : "secondary"}
                         >
                             {l(a.title)}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
