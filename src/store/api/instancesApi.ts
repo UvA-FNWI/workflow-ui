@@ -8,7 +8,8 @@ export const instancesApi = baseApi.injectEndpoints({
             providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
         }),
         getInstances: builder.query<WorkflowInstance[], string>({
-            query: (entityType: string) => `/WorkflowInstances/instances/${entityType}`,
+            query: (workflowDefinition: string) =>
+                `/WorkflowInstances/instances/${workflowDefinition}`,
             providesTags: ["Instance"],
         }),
     }),
