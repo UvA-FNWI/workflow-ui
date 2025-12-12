@@ -1,10 +1,10 @@
 import {baseApi} from "./baseApi";
-import type {Screen} from "./types/screens";
+import type {GroupedScreen} from "./types/screens";
 
 export type OverviewScreenKeys = "assign-subject" | "thesis-in-progress" | "completed";
 export const screensApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getProjectsOverviewScreens: builder.query<Record<OverviewScreenKeys, Screen>, void>({
+        getProjectsOverviewScreens: builder.query<GroupedScreen, void>({
             query: () => `/Screens/Projects/Overview`,
         }),
     }),

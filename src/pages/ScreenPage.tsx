@@ -4,10 +4,10 @@ import {Card, Heading, Input, Tab, Tabs} from "@datanose/ui";
 
 import {ScreenTable} from "~/components/ScreenTable";
 import {useTranslate} from "~/hooks/useTranslate";
-import {type OverviewScreenKeys, screensEndpoints} from "~/store/api/screensApi";
+import {screensEndpoints} from "~/store/api/screensApi";
 
 export const ProjectScreenOverview = () => {
-    const {t} = useTranslate("workflow", {keyPrefix: "screens"});
+    const {t, l} = useTranslate("workflow", {keyPrefix: "screens"});
     const {data: screens} = screensEndpoints.getProjectsOverviewScreens.useQuery();
     const [search, setSearch] = useState("");
 
@@ -27,17 +27,16 @@ export const ProjectScreenOverview = () => {
                 </div>
                 <Tabs>
                     {screens &&
-                        Object.keys(screens).map((value) => {
-                            const key = value as OverviewScreenKeys;
+                        screens.groups.map((group) => {
                             return (
                                 <Tab
-                                    key={key}
-                                    title={t(`dynamic.${key}`)}
-                                    count={screens[key].rows.length}
+                                    key={group.name}
+                                    title={l(group.title)}
+                                    count={group.rows.length}
                                 >
                                     <ScreenTable
-                                        columns={screens[key].columns}
-                                        rows={screens[key].rows}
+                                        columns={screens.columns}
+                                        rows={group.rows}
                                         globalFilter={search}
                                     />
                                 </Tab>
