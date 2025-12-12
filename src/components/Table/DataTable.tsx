@@ -57,6 +57,7 @@ export function DataTable<TData>({
         return itemRank.passed;
     };
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
         columns,
