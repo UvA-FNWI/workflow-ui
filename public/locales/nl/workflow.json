@@ -1,11 +1,21 @@
 {
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
+  "continue": "Doorgaan",
   "first_help": {
     "title": "Eerste hulp bij scripties"
   },
+  "go_back": "Terug",
   "good_to_know": {
     "title": "Handig tijdens je scriptie"
+  },
+  "home": "Home",
+  "instance": {
+    "submission": {
+      "submittedOn": "Ingeleverd op {{date}}"
+    },
+    "summary": "Samenvatting",
+    "workflowInstance": "Workflow"
   },
   "progress": {
     "label": "Hier ben je in het proces",

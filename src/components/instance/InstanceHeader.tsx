@@ -1,25 +1,30 @@
 import {Link} from "react-router";
 
-import {Skeleton, Text} from "@datanose/ui";
+import {Icon, Skeleton, Text} from "@datanose/ui";
+
+import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
 interface InstanceHeaderProps {
-    id?: string;
+    title?: LocalString | null;
     isLoading: boolean;
 }
 
-export function InstanceHeader({id, isLoading}: InstanceHeaderProps) {
+export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
+    const {t, l} = useTranslate("workflow");
+
     if (isLoading) {
         return <Skeleton className="mb-8 h-8 w-48" />;
     }
 
     return (
-        <>
-            <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
-                Go back
+        <div className="flex flex-col gap-2">
+            <Link to="/" className="text-red-brand text-sm hover:opacity-80">
+                <Icon name="arrow-left-line" size={"xs"} className="mr-1" color={"current"} />
+                {t("home")}
             </Link>
             <Text size="2xl" className="mb-8">
-                Instance {id}
+                {l(title) || t("instance.workflowInstance")}
             </Text>
-        </>
+        </div>
     );
 }

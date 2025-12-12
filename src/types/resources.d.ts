@@ -8,11 +8,21 @@ interface Resources {
     workflow: {
         cancel: "Cancel";
         confirm: "Confirm";
+        continue: "Continue";
         first_help: {
             title: "First aid with thesis";
         };
+        go_back: "Go back";
         good_to_know: {
             title: "Handy during your thesis";
+        };
+        home: "Home";
+        instance: {
+            submission: {
+                submittedOn: "Submitted on {{date}}";
+            };
+            summary: "Summary";
+            workflowInstance: "Workflow Instance";
         };
         progress: {
             label: "Here's where you are in the process";

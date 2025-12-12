@@ -1,9 +1,9 @@
 import {useState} from "react";
 
-import {Button, Card, Heading, Modal, Separator} from "@datanose/ui";
+import {Card, Heading, Modal, Separator} from "@datanose/ui";
 
+import {FormPage} from "./FormPage.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {FormPage} from "~/pages/FormPage.tsx";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 
@@ -28,20 +28,13 @@ export const StepCard = ({step, instance}: Props) => {
                 <Heading>{l(step.title)}</Heading>
                 <Separator />
                 {submissions.length > 0 && (
-                    <FormPage instanceId={instance.id} submissionId={submissions[0].id} />
+                    <FormPage
+                        instanceId={instance.id}
+                        submissionId={submissions[0].id}
+                        actions={actions}
+                        setActiveAction={setActiveAction}
+                    />
                 )}
-
-                <div className="flex gap-2">
-                    {actions.map((a) => (
-                        <Button
-                            key={a.id}
-                            onClick={() => a.type === "Execute" && setActiveAction(a)}
-                            intent={a.intent === "Destructive" ? "destructivePrimary" : "secondary"}
-                        >
-                            {l(a.title)}
-                        </Button>
-                    ))}
-                </div>
             </div>
 
             <Modal isOpen={activeAction !== null} onOpenChange={() => setActiveAction(null)}>

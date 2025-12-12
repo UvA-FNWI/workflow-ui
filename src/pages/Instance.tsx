@@ -21,7 +21,7 @@ function Instance() {
 
     return (
         <div className="">
-            <InstanceHeader id={id} isLoading={isLoading} />
+            <InstanceHeader title={instance?.title} isLoading={isLoading} />
             <div className="flex flex-col gap-6 sm:grid sm:grid-cols-6">
                 <div className="col-span-4 flex flex-col gap-8">
                     <ProgressCard isLoading={isLoading} />
