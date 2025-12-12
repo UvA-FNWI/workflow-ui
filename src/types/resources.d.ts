@@ -19,11 +19,6 @@ interface Resources {
             title: "Progress";
         };
         screens: {
-            dynamic: {
-                "assign-subject": "Assign topic";
-                completed: "Completed";
-                "thesis-in-progress": "Thesis in progress";
-            };
             students: "Students";
         };
     };
