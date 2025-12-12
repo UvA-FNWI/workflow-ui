@@ -53,7 +53,7 @@ describe('Tabs', () => {
     );
 
     expect(screen.getByText('Content 2')).toBeInTheDocument();
-    expect(screen.queryByText('Content 1')).not.toBeInTheDocument();
+    expect(screen.getByText('Content 1')).not.toBeVisible();
   });
 
   it('switches content when clicking a different tab', () => {
