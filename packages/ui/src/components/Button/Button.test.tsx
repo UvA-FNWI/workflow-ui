@@ -53,6 +53,16 @@ describe('Button', () => {
         'ui:border-red-brand'
       );
     });
+
+    it('applies ghost intent styles', () => {
+      render(<Button intent="ghost">Ghost</Button>);
+      const button = screen.getByRole('button');
+      expect(button).toHaveClass(
+        'ui:bg-transparent',
+        'ui:text-black',
+        'ui:border-transparent'
+      );
+    });
   });
 
   describe('Size variants', () => {

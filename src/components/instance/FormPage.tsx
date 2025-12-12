@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Button, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from "@datanose/ui";
+import {Button, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from "@datanose/ui";
 
 import {PageControl} from "./PageControl";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -78,20 +78,48 @@ export const FormPage = ({
                             </TabPanel>
                         )),
                         <TabPanel key="summary">
-                            <div className="flex gap-2">
-                                {actions.map((a) => (
-                                    <Button
-                                        key={a.id}
-                                        onClick={() => a.type === "Execute" && setActiveAction(a)}
-                                        intent={
-                                            a.intent === "Destructive"
-                                                ? "destructivePrimary"
-                                                : "secondary"
-                                        }
-                                    >
-                                        {l(a.title)}
-                                    </Button>
-                                ))}
+                            <div className="flex flex-col gap-4">
+                                {/* Summary of all pages */}
+                                <div className="mb-6 flex flex-col gap-3">
+                                    {submission.form.pages.map((page, index) => (
+                                        <div key={index} className="flex gap-1">
+                                            <Text fontWeight="bold" size="md">
+                                                {l(page.title)}
+                                            </Text>
+                                            <Button
+                                                intent="ghost"
+                                                size="small"
+                                                onClick={() => setActiveTabIndex(index)}
+                                                rightIcon={
+                                                    <Icon
+                                                        name="edit-line"
+                                                        size="xs"
+                                                        color="danger"
+                                                    />
+                                                }
+                                            ></Button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Action buttons */}
+                                <div className="flex gap-2">
+                                    {actions.map((a) => (
+                                        <Button
+                                            key={a.id}
+                                            onClick={() =>
+                                                a.type === "Execute" && setActiveAction(a)
+                                            }
+                                            intent={
+                                                a.intent === "Destructive"
+                                                    ? "destructivePrimary"
+                                                    : "secondary"
+                                            }
+                                        >
+                                            {l(a.title)}
+                                        </Button>
+                                    ))}
+                                </div>
                             </div>
                         </TabPanel>,
                     ]}

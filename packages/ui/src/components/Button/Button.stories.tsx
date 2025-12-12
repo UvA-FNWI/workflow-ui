@@ -13,6 +13,7 @@ const commonArgTypes = {
       'secondary',
       'destructivePrimary',
       'destructiveSecondary',
+      'ghost',
     ],
   },
   size: {
@@ -135,4 +136,24 @@ export const Sizes: Story = {
       </div>
     );
   },
+};
+
+export const Ghost: Story = {
+  args: {
+    intent: 'ghost',
+    size: 'medium',
+    shape: 'rounded',
+    children: 'Ghost Button',
+  },
+  argTypes: commonArgTypes,
+};
+
+export const GhostWithIcon: Story = {
+  args: {
+    intent: 'ghost',
+    size: 'small',
+    shape: 'rounded',
+    rightIcon: <Icon name="edit-line" size="xs" color="danger" />,
+  },
+  argTypes: commonArgTypes,
 };
