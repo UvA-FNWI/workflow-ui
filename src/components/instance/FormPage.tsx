@@ -107,9 +107,17 @@ export const FormPage = ({
                                     {actions.map((a) => (
                                         <Button
                                             key={a.id}
-                                            onClick={() =>
-                                                a.type === "Execute" && setActiveAction(a)
-                                            }
+                                            onClick={() => {
+                                                if (
+                                                    a.type === "Execute" ||
+                                                    (a.type === "SubmitForm" &&
+                                                        a.formLayout === "Modal")
+                                                ) {
+                                                    setActiveAction(a);
+                                                } else {
+                                                    // TODO: handle regular form submission
+                                                }
+                                            }}
                                             intent={
                                                 a.intent === "Destructive"
                                                     ? "destructivePrimary"
