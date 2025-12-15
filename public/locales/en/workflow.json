@@ -14,7 +14,10 @@
     "submission": {
       "submittedOn": "Submitted on {{date}}"
     },
-    "summary": "Summary",
+    "summary": {
+      "noAnswer": "No answer provided",
+      "title": "Summary"
+    },
     "workflowInstance": "Workflow Instance"
   },
   "progress": {

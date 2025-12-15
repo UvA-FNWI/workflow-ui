@@ -1,11 +1,12 @@
 import {useState} from "react";
 
-import {Button, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from "@datanose/ui";
+import {Button, Heading, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from "@datanose/ui";
 
 import {PageControl} from "./PageControl";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Action} from "~/store/api/types/instances";
+import {formatAnswer} from "~/utils/formatAnswer";
 import {formatDate} from "~/utils/formatDate";
 
 export const FormPage = ({
@@ -47,7 +48,6 @@ export const FormPage = ({
 
     return (
         <div>
-            {/* QUESTION: Does this need to be displayed here? Or somewhere else? */}
             {submission.dateSubmitted && (
                 <Text className="mb-2">
                     {t("instance.submission.submittedOn", {date: formattedDate})}
@@ -60,7 +60,7 @@ export const FormPage = ({
                         ...submission.form.pages.map((page, index) => (
                             <Tab key={index}>{l(page.title)}</Tab>
                         )),
-                        <Tab key="summary">{t("instance.summary")}</Tab>,
+                        <Tab key="summary">{t("instance.summary.title")}</Tab>,
                     ]}
                 </TabList>
                 <TabPanels>
@@ -78,32 +78,66 @@ export const FormPage = ({
                             </TabPanel>
                         )),
                         <TabPanel key="summary">
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-6 pt-4">
                                 {/* Summary of all pages */}
-                                <div className="mb-6 flex flex-col gap-3">
+                                <Heading size="sm" className="uppercase" fontType="body">
+                                    {t("instance.summary.title")}
+                                </Heading>
+                                <div className="flex flex-col gap-6">
                                     {submission.form.pages.map((page, index) => (
-                                        <div key={index} className="flex gap-1">
-                                            <Text fontWeight="bold" size="md">
-                                                {l(page.title)}
-                                            </Text>
-                                            <Button
-                                                intent="ghost"
-                                                size="small"
-                                                onClick={() => setActiveTabIndex(index)}
-                                                rightIcon={
-                                                    <Icon
-                                                        name="edit-line"
-                                                        size="xs"
-                                                        color="danger"
-                                                    />
-                                                }
-                                            ></Button>
+                                        <div key={index} className="flex flex-col gap-3">
+                                            {/* Page title with edit button */}
+                                            <div className="flex items-center gap-1">
+                                                <Text fontWeight="bold" size="lg">
+                                                    {l(page.title)}
+                                                </Text>
+                                                <Button
+                                                    intent="ghost"
+                                                    size="small"
+                                                    onClick={() => setActiveTabIndex(index)}
+                                                    rightIcon={
+                                                        <Icon
+                                                            name="edit-line"
+                                                            size="xs"
+                                                            color="danger"
+                                                        />
+                                                    }
+                                                ></Button>
+                                            </div>
+
+                                            {/* Questions and answers */}
+                                            <div className="flex flex-col gap-2">
+                                                {page.questions.map((question) => {
+                                                    const answer = submission.answers.find(
+                                                        (a) => a.questionName === question.name,
+                                                    );
+
+                                                    const formattedValue =
+                                                        answer?.value != null
+                                                            ? formatAnswer(
+                                                                  answer.value,
+                                                                  question.type,
+                                                                  i18n.language,
+                                                              )
+                                                            : t("instance.summary.noAnswer");
+
+                                                    return (
+                                                        <div
+                                                            key={question.name}
+                                                            className="grid grid-cols-2 gap-4"
+                                                        >
+                                                            <Text>{l(question.text)}</Text>
+                                                            <Text>{formattedValue}</Text>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
 
                                 {/* Action buttons */}
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 pt-2">
                                     {actions.map((a) => (
                                         <Button
                                             key={a.id}

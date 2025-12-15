@@ -72,7 +72,7 @@ export const PageControl = ({
                                 name={question.name}
                                 render={({field}) => {
                                     return (
-                                        <>
+                                        <div className="mb-4">
                                             <div key={question.name}>{l(question.text)}</div>
                                             <InputControl
                                                 value={field.value}
@@ -80,7 +80,7 @@ export const PageControl = ({
                                                 question={question}
                                                 onSave={(val: unknown) => save(val as AnswerInput)}
                                             />
-                                        </>
+                                        </div>
                                     );
                                 }}
                             />

@@ -14,7 +14,10 @@
     "submission": {
       "submittedOn": "Ingeleverd op {{date}}"
     },
-    "summary": "Samenvatting",
+    "summary": {
+      "noAnswer": "Geen antwoord gegeven",
+      "title": "Samenvatting"
+    },
     "workflowInstance": "Workflow"
   },
   "progress": {
