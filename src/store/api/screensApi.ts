@@ -5,7 +5,7 @@ export type OverviewScreenKeys = "assign-subject" | "thesis-in-progress" | "comp
 export const screensApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getProjectsOverviewScreens: builder.query<GroupedScreen, void>({
-            query: () => `/Screens/Projects/Overview`,
+            query: () => `/Screens/Grouped/Project/Projects`,
         }),
     }),
 });
