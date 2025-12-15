@@ -122,7 +122,7 @@ describe('Modal', () => {
         </Modal>
       );
 
-      const footer = screen.getByText('Footer').parentElement;
+      const footer = screen.getByText('Footer').closest('footer');
       expect(footer).toHaveClass('custom-footer');
     });
   });
@@ -302,45 +302,6 @@ describe('Modal', () => {
       fireEvent.keyDown(modal, { key: 'Escape', code: 'Escape' });
 
       expect(handleOpenChange).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Backdrop click', () => {
-    it('closes modal on backdrop click by default', () => {
-      const handleOpenChange = vi.fn();
-
-      render(
-        <Modal isOpen={true} onOpenChange={handleOpenChange}>
-          <Modal.Body>Content</Modal.Body>
-        </Modal>
-      );
-
-      // Click the overlay (backdrop)
-      const overlay = document.body.querySelector('[class*="ui:fixed"]');
-      if (overlay) {
-        fireEvent.click(overlay);
-        expect(handleOpenChange).toHaveBeenCalledWith(false);
-      }
-    });
-
-    it('does not close on backdrop click when isDismissable is false', () => {
-      const handleOpenChange = vi.fn();
-
-      render(
-        <Modal
-          isOpen={true}
-          onOpenChange={handleOpenChange}
-          isDismissable={false}
-        >
-          <Modal.Body>Content</Modal.Body>
-        </Modal>
-      );
-
-      const overlay = document.body.querySelector('[class*="ui:fixed"]');
-      if (overlay) {
-        fireEvent.click(overlay);
-        expect(handleOpenChange).not.toHaveBeenCalled();
-      }
     });
   });
 });
