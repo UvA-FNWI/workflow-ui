@@ -94,6 +94,8 @@ export const FormPage = ({
                                                 <Button
                                                     intent="ghost"
                                                     size="small"
+                                                    shape="circular"
+                                                    className="ui:border-0 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                                                     onClick={() => setActiveTabIndex(index)}
                                                     rightIcon={
                                                         <Icon
@@ -102,6 +104,9 @@ export const FormPage = ({
                                                             color="danger"
                                                         />
                                                     }
+                                                    aria-label={t("instance.summary.edit_page", {
+                                                        pageTitle: l(page.title),
+                                                    })}
                                                 ></Button>
                                             </div>
 
@@ -119,7 +124,7 @@ export const FormPage = ({
                                                                   question.type,
                                                                   i18n.language,
                                                               )
-                                                            : t("instance.summary.noAnswer");
+                                                            : t("instance.summary.no_answer");
 
                                                     return (
                                                         <div

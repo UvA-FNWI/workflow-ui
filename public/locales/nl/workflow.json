@@ -1,4 +1,5 @@
 {
+  "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
   "continue": "Doorgaan",
@@ -15,7 +16,8 @@
       "submittedOn": "Ingeleverd op {{date}}"
     },
     "summary": {
-      "noAnswer": "Geen antwoord gegeven",
+      "edit_page": "Pagina bewerken",
+      "no_answer": "Geen antwoord gegeven",
       "title": "Samenvatting"
     },
     "workflowInstance": "Workflow"

@@ -6,6 +6,7 @@ interface Resources {
         language_nl: "Dutch";
     };
     workflow: {
+        are_you_sure: "Are you sure?";
         cancel: "Cancel";
         confirm: "Confirm";
         continue: "Continue";
@@ -22,7 +23,8 @@ interface Resources {
                 submittedOn: "Submitted on {{date}}";
             };
             summary: {
-                noAnswer: "No answer provided";
+                edit_page: "Edit page";
+                no_answer: "No answer provided";
                 title: "Summary";
             };
             workflowInstance: "Workflow Instance";

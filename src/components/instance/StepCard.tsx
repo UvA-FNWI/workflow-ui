@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Card, Heading, Modal, Separator} from "@datanose/ui";
+import {Button, Card, Heading, Modal, Separator} from "@datanose/ui";
 
 import {FormPage} from "./FormPage.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -39,11 +39,19 @@ export const StepCard = ({step, instance}: Props) => {
 
             <Modal isOpen={activeAction !== null} onOpenChange={() => setActiveAction(null)}>
                 <Modal.Header>{activeAction && l(activeAction.title)}</Modal.Header>
-                <Modal.Body className="mt-2 mb-4">TODO: body text.</Modal.Body>
+                <Modal.Body className="mt-2 mb-4">
+                    <p>{t("are_you_sure")}</p>
+                </Modal.Body>
                 {activeAction && (
                     <Modal.Footer className="mt-2 flex gap-2">
-                        <button
+                        <Button
                             className="rounded-md border px-3 py-1.5 text-base"
+                            intent="secondary"
+                            onClick={() => setActiveAction(null)}
+                        >
+                            {t("cancel")}
+                        </Button>
+                        <Button
                             onClick={() => {
                                 executeAction({
                                     instanceId: instance.id,
@@ -52,15 +60,10 @@ export const StepCard = ({step, instance}: Props) => {
                                 });
                                 setActiveAction(null);
                             }}
+                            intent="primary"
                         >
                             {t("confirm")}
-                        </button>
-                        <button
-                            className="rounded-md border px-3 py-1.5 text-base"
-                            onClick={() => setActiveAction(null)}
-                        >
-                            {t("cancel")}
-                        </button>
+                        </Button>
                     </Modal.Footer>
                 )}
             </Modal>
