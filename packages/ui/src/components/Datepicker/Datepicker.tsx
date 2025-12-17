@@ -1,13 +1,21 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import {
   AriaDatePickerProps,
   DateValue,
   DismissButton,
+  I18nProvider,
   useButton,
   useDatePicker,
 } from 'react-aria';
 import { DatePickerState, useDatePickerState } from 'react-stately';
+
+import {
+  CalendarDate,
+  fromDate,
+  getLocalTimeZone,
+  toCalendarDate,
+} from '@internationalized/date';
 
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
@@ -16,12 +24,36 @@ import { Calendar } from './Calendar';
 import { DateField } from './DateField';
 import { Popover } from './Popover';
 
-export interface DatePickerProps extends AriaDatePickerProps<DateValue> {
+// Helper functions for Date <-> DateValue conversion
+function dateToDateValue(date: Date | null | undefined): CalendarDate | null {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    return null;
+  }
+  return toCalendarDate(fromDate(date, getLocalTimeZone()));
+}
+
+function dateValueToDate(dateValue: DateValue | null | undefined): Date | null {
+  if (!dateValue) {
+    return null;
+  }
+  return dateValue.toDate(getLocalTimeZone());
+}
+
+// Public API that accepts Date objects
+export interface DatePickerProps
+  extends Omit<
+    AriaDatePickerProps<DateValue>,
+    'value' | 'defaultValue' | 'onChange'
+  > {
   label?: string;
   description?: string;
   errorMessage?: string;
   isValid?: boolean;
   className?: string;
+  locale?: string;
+  value?: Date | DateValue | null;
+  defaultValue?: Date | DateValue | null;
+  onChange?: (date: Date | null) => void;
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
@@ -31,9 +63,75 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   isValid = true,
   isDisabled = false,
   className,
+  locale = 'nl-NL',
+  value,
+  defaultValue,
+  onChange,
   ...props
 }) => {
-  const state = useDatePickerState({ ...props, isDisabled });
+  // Convert Date to DateValue if needed
+  const internalValue = useMemo(() => {
+    if (!value) return undefined;
+    return value instanceof Date ? dateToDateValue(value) : value;
+  }, [value]);
+
+  const internalDefaultValue = useMemo(() => {
+    if (!defaultValue) return undefined;
+    return defaultValue instanceof Date
+      ? dateToDateValue(defaultValue)
+      : defaultValue;
+  }, [defaultValue]);
+
+  // Wrap onChange to convert DateValue back to Date
+  const handleChange = useMemo(() => {
+    if (!onChange) return undefined;
+    return (dateValue: DateValue | null) => {
+      onChange(dateValueToDate(dateValue));
+    };
+  }, [onChange]);
+
+  return (
+    <I18nProvider locale={locale}>
+      <DatePickerInner
+        label={label}
+        description={description}
+        errorMessage={errorMessage}
+        isValid={isValid}
+        isDisabled={isDisabled}
+        className={className}
+        value={internalValue}
+        defaultValue={internalDefaultValue}
+        onChange={handleChange}
+        {...props}
+      />
+    </I18nProvider>
+  );
+};
+
+// Internal component that works with DateValue
+interface DatePickerInnerProps
+  extends Omit<
+      DatePickerProps,
+      'locale' | 'value' | 'defaultValue' | 'onChange'
+    >,
+    Pick<
+      AriaDatePickerProps<DateValue>,
+      'value' | 'defaultValue' | 'onChange'
+    > {}
+
+const DatePickerInner: React.FC<DatePickerInnerProps> = ({
+  label,
+  description,
+  errorMessage,
+  isValid = true,
+  isDisabled = false,
+  className,
+  ...props
+}) => {
+  const state = useDatePickerState({
+    ...props,
+    isDisabled,
+  });
   const ref = useRef<HTMLDivElement>(null);
   const {
     groupProps,

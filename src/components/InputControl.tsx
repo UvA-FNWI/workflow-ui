@@ -1,10 +1,22 @@
 import {useCallback} from "react";
 
 import {Input, NumberInput} from "@datanose/ui";
+import {parseISO} from "date-fns";
 
+import {DatePicker} from "~/components/Datepicker/Datepicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {Answer, Question} from "~/store/api/types/submissions";
+
+const toDate = (value: unknown) => {
+    if (!value) return undefined;
+    try {
+        const date = typeof value === "string" ? parseISO(value) : value;
+        return date instanceof Date ? date : undefined;
+    } catch {
+        return undefined;
+    }
+};
 
 interface InputControlProps {
     value?: unknown;
@@ -49,6 +61,11 @@ export const InputControl = ({value, question, onChange, onSave}: InputControlPr
                     debouncedChange(value);
                 }}
             />
+        );
+    }
+    if (question.type === "Date") {
+        return (
+            <DatePicker value={toDate(value)} onChange={(newValue) => debouncedChange(newValue)} />
         );
     }
 

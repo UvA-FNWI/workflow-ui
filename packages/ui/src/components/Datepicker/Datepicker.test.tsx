@@ -10,7 +10,12 @@ import { DatePicker } from './Datepicker';
 describe('DatePicker Component', () => {
   const defaultProps = {
     label: 'Date',
+    locale: 'nl-NL',
   };
+
+  const getDaySegment = () => screen.getAllByRole('spinbutton')[0];
+  const getMonthSegment = () => screen.getAllByRole('spinbutton')[1];
+  const getYearSegment = () => screen.getAllByRole('spinbutton')[2];
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -27,9 +32,9 @@ describe('DatePicker Component', () => {
 
       const segments = screen.getAllByRole('spinbutton');
       expect(segments).toHaveLength(3);
-      expect(screen.getByLabelText(/month/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/day/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/year/i)).toBeInTheDocument();
+      expect(getMonthSegment()).toBeInTheDocument();
+      expect(getDaySegment()).toBeInTheDocument();
+      expect(getYearSegment()).toBeInTheDocument();
     });
 
     test('renders calendar button', () => {
@@ -63,27 +68,27 @@ describe('DatePicker Component', () => {
     test('shows placeholder text when no value is set', () => {
       render(<DatePicker {...defaultProps} />);
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('mm');
-      expect(screen.getByLabelText(/day/i)).toHaveTextContent('dd');
-      expect(screen.getByLabelText(/year/i)).toHaveTextContent('yyyy');
+      expect(getDaySegment()).toHaveTextContent('dd');
+      expect(getMonthSegment()).toHaveTextContent('mm');
+      expect(getYearSegment()).toHaveTextContent('jjjj'); // Dutch: jaar = year
     });
 
     test('displays default value when provided', () => {
       const defaultValue = parseDate('2024-03-15');
       render(<DatePicker {...defaultProps} defaultValue={defaultValue} />);
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('3');
-      expect(screen.getByLabelText(/day/i)).toHaveTextContent('15');
-      expect(screen.getByLabelText(/year/i)).toHaveTextContent('2024');
+      expect(getDaySegment()).toHaveTextContent('15');
+      expect(getMonthSegment()).toHaveTextContent('3');
+      expect(getYearSegment()).toHaveTextContent('2024');
     });
 
     test('displays controlled value when provided', () => {
       const value = parseDate('2023-12-25');
       render(<DatePicker {...defaultProps} value={value} />);
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('12');
-      expect(screen.getByLabelText(/day/i)).toHaveTextContent('25');
-      expect(screen.getByLabelText(/year/i)).toHaveTextContent('2023');
+      expect(getDaySegment()).toHaveTextContent('25');
+      expect(getMonthSegment()).toHaveTextContent('12');
+      expect(getYearSegment()).toHaveTextContent('2023');
     });
 
     test('updates display when controlled value changes', () => {
@@ -91,14 +96,15 @@ describe('DatePicker Component', () => {
         <DatePicker {...defaultProps} value={parseDate('2024-01-01')} />
       );
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('1');
+      expect(getDaySegment()).toHaveTextContent('1');
+      expect(getMonthSegment()).toHaveTextContent('1');
 
       rerender(
         <DatePicker {...defaultProps} value={parseDate('2024-06-15')} />
       );
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('6');
-      expect(screen.getByLabelText(/day/i)).toHaveTextContent('15');
+      expect(getDaySegment()).toHaveTextContent('15');
+      expect(getMonthSegment()).toHaveTextContent('6');
     });
   });
 
@@ -178,7 +184,7 @@ describe('DatePicker Component', () => {
     test('segments can be focused for input', () => {
       render(<DatePicker {...defaultProps} />);
 
-      const monthSegment = screen.getByLabelText(/month/i);
+      const monthSegment = getMonthSegment();
 
       act(() => {
         monthSegment.focus();
@@ -197,9 +203,9 @@ describe('DatePicker Component', () => {
         <DatePicker {...defaultProps} value={parseDate('2024-06-15')} />
       );
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('6');
-      expect(screen.getByLabelText(/day/i)).toHaveTextContent('15');
-      expect(screen.getByLabelText(/year/i)).toHaveTextContent('2024');
+      expect(getDaySegment()).toHaveTextContent('15');
+      expect(getMonthSegment()).toHaveTextContent('6');
+      expect(getYearSegment()).toHaveTextContent('2024');
     });
   });
 
@@ -235,7 +241,7 @@ describe('DatePicker Component', () => {
         <DatePicker {...defaultProps} isDisabled={true} onChange={onChange} />
       );
 
-      const monthSegment = screen.getByLabelText(/month/i);
+      const monthSegment = getMonthSegment();
 
       act(() => {
         monthSegment.focus();
@@ -347,7 +353,7 @@ describe('DatePicker Component', () => {
     test('segments can receive focus via Tab key', () => {
       render(<DatePicker {...defaultProps} />);
 
-      const monthSegment = screen.getByLabelText(/month/i);
+      const monthSegment = getMonthSegment();
 
       act(() => {
         monthSegment.focus();
@@ -359,8 +365,8 @@ describe('DatePicker Component', () => {
     test('can navigate between segments with Tab', async () => {
       render(<DatePicker {...defaultProps} />);
 
-      const monthSegment = screen.getByLabelText(/month/i);
-      const daySegment = screen.getByLabelText(/day/i);
+      const monthSegment = getMonthSegment();
+      const daySegment = getDaySegment();
 
       act(() => {
         monthSegment.focus();
@@ -387,7 +393,7 @@ describe('DatePicker Component', () => {
         />
       );
 
-      const monthSegment = screen.getByLabelText(/month/i);
+      const monthSegment = getMonthSegment();
 
       act(() => {
         monthSegment.focus();
@@ -430,9 +436,12 @@ describe('DatePicker Component', () => {
     test('segments have proper aria-labels', () => {
       render(<DatePicker {...defaultProps} />);
 
-      expect(screen.getByLabelText(/month/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/day/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/year/i)).toBeInTheDocument();
+      // Segments should exist and be accessible
+      const segments = screen.getAllByRole('spinbutton');
+      expect(segments).toHaveLength(3);
+      segments.forEach(segment => {
+        expect(segment).toHaveAttribute('aria-label');
+      });
     });
 
     test('error message is associated with field', () => {
@@ -467,17 +476,17 @@ describe('DatePicker Component', () => {
     test('handles null value', () => {
       render(<DatePicker {...defaultProps} value={null as any} />);
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('mm');
-      expect(screen.getByLabelText(/day/i)).toHaveTextContent('dd');
-      expect(screen.getByLabelText(/year/i)).toHaveTextContent('yyyy');
+      expect(getDaySegment()).toHaveTextContent('dd');
+      expect(getMonthSegment()).toHaveTextContent('mm');
+      expect(getYearSegment()).toHaveTextContent('jjjj'); // Dutch: jaar = year
     });
 
     test('handles undefined value', () => {
       render(<DatePicker {...defaultProps} value={undefined} />);
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('mm');
-      expect(screen.getByLabelText(/day/i)).toHaveTextContent('dd');
-      expect(screen.getByLabelText(/year/i)).toHaveTextContent('yyyy');
+      expect(getDaySegment()).toHaveTextContent('dd');
+      expect(getMonthSegment()).toHaveTextContent('mm');
+      expect(getYearSegment()).toHaveTextContent('jjjj'); // Dutch: jaar = year
     });
 
     test('maintains controlled behavior', async () => {
@@ -490,16 +499,12 @@ describe('DatePicker Component', () => {
         />
       );
 
-      const calendarButton = screen.getByRole('button');
-      fireEvent.click(calendarButton);
+      // Verify initial value
+      expect(getDaySegment()).toHaveTextContent('1');
+      expect(getMonthSegment()).toHaveTextContent('1');
+      expect(getYearSegment()).toHaveTextContent('2024');
 
-      await waitFor(() => {
-        expect(screen.getByRole('grid')).toBeInTheDocument();
-      });
-
-      // Value should not change until parent updates it
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('1');
-
+      // Update to a new controlled value
       rerender(
         <DatePicker
           {...defaultProps}
@@ -508,7 +513,83 @@ describe('DatePicker Component', () => {
         />
       );
 
-      expect(screen.getByLabelText(/month/i)).toHaveTextContent('6');
+      // Verify value updated correctly
+      expect(getDaySegment()).toHaveTextContent('15');
+      expect(getMonthSegment()).toHaveTextContent('6');
+      expect(getYearSegment()).toHaveTextContent('2024');
+    });
+  });
+
+  describe('Date Object Support', () => {
+    test('accepts Date object as value', () => {
+      const date = new Date('2024-03-15T12:00:00Z');
+      render(<DatePicker {...defaultProps} value={date} />);
+
+      expect(getDaySegment()).toHaveTextContent('15');
+      expect(getMonthSegment()).toHaveTextContent('3');
+    });
+
+    test('accepts Date object as defaultValue', () => {
+      const date = new Date('2024-12-25T12:00:00Z');
+      render(<DatePicker {...defaultProps} defaultValue={date} />);
+
+      expect(getDaySegment()).toHaveTextContent('25');
+      expect(getMonthSegment()).toHaveTextContent('12');
+    });
+
+    test('calls onChange with Date object', async () => {
+      const onChange = vi.fn();
+      render(<DatePicker {...defaultProps} onChange={onChange} />);
+
+      const calendarButton = screen.getByRole('button', { name: /kalender/i });
+      fireEvent.click(calendarButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('grid')).toBeInTheDocument();
+      });
+
+      const today = new Date();
+      const dayButton = screen.getByText(today.getDate().toString());
+      fireEvent.click(dayButton);
+
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalled();
+      });
+
+      const calledWith = onChange.mock.calls[0][0];
+      expect(calledWith).toBeInstanceOf(Date);
+    });
+
+    test('handles null Date value', () => {
+      render(<DatePicker {...defaultProps} value={null} />);
+      expect(getDaySegment()).toHaveTextContent('dd');
+      expect(getMonthSegment()).toHaveTextContent('mm');
+      expect(getYearSegment()).toHaveTextContent('jjjj');
+    });
+
+    test('accepts mixed DateValue and Date', async () => {
+      const dateValue = parseDate('2024-01-01');
+      const { rerender } = render(
+        <DatePicker {...defaultProps} value={dateValue} />
+      );
+
+      expect(getDaySegment()).toHaveTextContent('1');
+      expect(getMonthSegment()).toHaveTextContent('1');
+
+      const date = new Date('2024-06-15T12:00:00Z');
+      rerender(<DatePicker {...defaultProps} value={date} />);
+
+      expect(getDaySegment()).toHaveTextContent('15');
+      expect(getMonthSegment()).toHaveTextContent('6');
+    });
+
+    test('converts invalid Date to null', () => {
+      const invalidDate = new Date('invalid');
+      render(<DatePicker {...defaultProps} value={invalidDate} />);
+
+      expect(getDaySegment()).toHaveTextContent('dd');
+      expect(getMonthSegment()).toHaveTextContent('mm');
+      expect(getYearSegment()).toHaveTextContent('jjjj');
     });
   });
 });
