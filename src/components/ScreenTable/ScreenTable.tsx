@@ -1,5 +1,7 @@
 import {useMemo} from "react";
 
+import {Link} from "react-router";
+
 import {type ColumnDef} from "@tanstack/react-table";
 
 import {DataTable} from "~/components/Table";
@@ -25,7 +27,22 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                     header: () => l(col.title),
                     cell: (info) => {
                         const value = info.getValue();
-                        return formatCellValue(value, col.dataType);
+                        const formattedValue = formatCellValue(value, col.dataType);
+
+                        if (col.link) {
+                            const rowId = info.row.original.id;
+                            // TODO: Replace with Link component perhaps
+                            return (
+                                <Link
+                                    to={`/instance/${rowId}`}
+                                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                                >
+                                    {formattedValue}
+                                </Link>
+                            );
+                        }
+
+                        return formattedValue;
                     },
                     enableSorting: true,
                 })),
