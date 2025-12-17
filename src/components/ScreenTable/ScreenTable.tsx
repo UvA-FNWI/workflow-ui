@@ -1,0 +1,104 @@
+import {useMemo} from "react";
+
+import {Link} from "react-router";
+
+import {type ColumnDef} from "@tanstack/react-table";
+
+import {DataTable} from "~/components/Table";
+import {useTranslate} from "~/hooks/useTranslate";
+import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
+
+type ScreenTableProps = {
+    columns: ScreenColumn[];
+    rows: ScreenRow[];
+    globalFilter?: string;
+};
+
+export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps) => {
+    const {l} = useTranslate();
+
+    const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(
+        () =>
+            columns
+                .filter((col) => col.displayType !== "ExportOnly")
+                .map((col) => ({
+                    id: String(col.id),
+                    accessorFn: (row) => row.values[col.id],
+                    header: () => l(col.title),
+                    cell: (info) => {
+                        const value = info.getValue();
+                        const formattedValue = formatCellValue(value, col.dataType);
+
+                        if (col.link) {
+                            const rowId = info.row.original.id;
+                            // TODO: Replace with Link component perhaps
+                            return (
+                                <Link
+                                    to={`/instance/${rowId}`}
+                                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                                >
+                                    {formattedValue}
+                                </Link>
+                            );
+                        }
+
+                        return formattedValue;
+                    },
+                    enableSorting: true,
+                })),
+        [columns, l],
+    );
+
+    return <DataTable data={rows} columns={tableColumns} globalFilter={globalFilter} />;
+};
+
+function formatCellValue(value: unknown, dataType: string): React.ReactNode {
+    if (value === null || value === undefined) {
+        return "—";
+    }
+
+    switch (dataType) {
+        case "Date":
+            return formatDate(value);
+        case "DateTime":
+            return formatDateTime(value);
+        case "Currency":
+            return formatCurrency(value);
+        case "Double":
+            return typeof value === "number" ? value.toLocaleString() : String(value);
+        case "Int":
+            return typeof value === "number" ? value.toLocaleString() : String(value);
+        default:
+            return String(value);
+    }
+}
+
+function formatDate(value: unknown): string {
+    if (typeof value === "string" || typeof value === "number") {
+        const date = new Date(value);
+        if (!isNaN(date.getTime())) {
+            return date.toLocaleDateString();
+        }
+    }
+    return String(value);
+}
+
+function formatDateTime(value: unknown): string {
+    if (typeof value === "string" || typeof value === "number") {
+        const date = new Date(value);
+        if (!isNaN(date.getTime())) {
+            return date.toLocaleString();
+        }
+    }
+    return String(value);
+}
+
+function formatCurrency(value: unknown): string {
+    if (typeof value === "number") {
+        return new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: "EUR",
+        }).format(value);
+    }
+    return String(value);
+}

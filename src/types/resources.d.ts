@@ -18,6 +18,9 @@ interface Resources {
             label: "Here's where you are in the process";
             title: "Progress";
         };
+        screens: {
+            students: "Students";
+        };
     };
 }
 

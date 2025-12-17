@@ -23,6 +23,18 @@ export {
 export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';
 export { Icon } from './components/Icon/Icon';
+export {
+  Tabs,
+  Tab,
+  type TabsProps,
+  type TabProps,
+  type TabsVariantProps,
+} from './components/Tabs/Tabs';
+export {
+  Pill,
+  type PillProps,
+  type PillVariantProps,
+} from './components/Pill/Pill';
 export { Modal } from './components/Modal/Modal';
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';
