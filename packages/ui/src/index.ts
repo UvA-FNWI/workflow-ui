@@ -2,6 +2,7 @@ import './styles/index.css';
 
 export { Card, type CardVariantProps } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
+export { DatePicker, type DatePickerProps } from './components/Datepicker';
 export {
   Heading,
   type HeadingVariantProps,
