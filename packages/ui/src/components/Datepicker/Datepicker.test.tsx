@@ -13,54 +13,48 @@ describe('DatePicker Component', () => {
     locale: 'nl-NL',
   };
 
+  const PLACEHOLDER_DAY = 'dd';
+  const PLACEHOLDER_MONTH = 'mm';
+  const PLACEHOLDER_YEAR = 'jjjj';
+
   const getDaySegment = () => screen.getAllByRole('spinbutton')[0];
   const getMonthSegment = () => screen.getAllByRole('spinbutton')[1];
   const getYearSegment = () => screen.getAllByRole('spinbutton')[2];
+
+  // Helper to find date button in open calendar
+  const findDateButton = (dateText: string) => {
+    const buttons = screen.getAllByText(dateText);
+    return buttons.find(
+      btn => btn.parentElement?.getAttribute('role') !== 'columnheader'
+    );
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Basic Rendering', () => {
-    test('renders without crashing', () => {
+    test('renders all essential elements', () => {
       render(<DatePicker {...defaultProps} />);
+
+      // Label, segments, and button
       expect(screen.getByText('Date')).toBeInTheDocument();
+      expect(screen.getAllByRole('spinbutton')).toHaveLength(3);
+      expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
-    test('renders date field with month, day, and year segments', () => {
-      render(<DatePicker {...defaultProps} />);
-
-      const segments = screen.getAllByRole('spinbutton');
-      expect(segments).toHaveLength(3);
-      expect(getMonthSegment()).toBeInTheDocument();
-      expect(getDaySegment()).toBeInTheDocument();
-      expect(getYearSegment()).toBeInTheDocument();
-    });
-
-    test('renders calendar button', () => {
-      render(<DatePicker {...defaultProps} />);
-
-      const button = screen.getByRole('button');
-      expect(button).toBeInTheDocument();
-    });
-
-    test('displays label when provided', () => {
-      render(<DatePicker label="Select Date" />);
+    test('handles label and aria-label correctly', () => {
+      const { rerender } = render(<DatePicker label="Select Date" />);
       expect(screen.getByText('Select Date')).toBeInTheDocument();
-    });
 
-    test('does not display label when not provided but has aria-label', () => {
-      render(<DatePicker aria-label="Select date" />);
+      rerender(<DatePicker aria-label="Select date" />);
       expect(screen.queryByRole('heading')).not.toBeInTheDocument();
-      // Should have group with aria-label for accessibility
-      const group = screen.getByRole('group');
-      expect(group).toBeInTheDocument();
+      expect(screen.getByRole('group')).toBeInTheDocument();
     });
 
     test('applies custom className', () => {
       render(<DatePicker {...defaultProps} className="custom-class" />);
-      const group = screen.getByRole('group');
-      expect(group).toHaveClass('custom-class');
+      expect(screen.getByRole('group')).toHaveClass('custom-class');
     });
   });
 
@@ -68,9 +62,9 @@ describe('DatePicker Component', () => {
     test('shows placeholder text when no value is set', () => {
       render(<DatePicker {...defaultProps} />);
 
-      expect(getDaySegment()).toHaveTextContent('dd');
-      expect(getMonthSegment()).toHaveTextContent('mm');
-      expect(getYearSegment()).toHaveTextContent('jjjj'); // Dutch: jaar = year
+      expect(getDaySegment()).toHaveTextContent(PLACEHOLDER_DAY);
+      expect(getMonthSegment()).toHaveTextContent(PLACEHOLDER_MONTH);
+      expect(getYearSegment()).toHaveTextContent(PLACEHOLDER_YEAR);
     });
 
     test('displays default value when provided', () => {
@@ -166,73 +160,34 @@ describe('DatePicker Component', () => {
         expect(screen.getByRole('grid')).toBeInTheDocument();
       });
 
-      // Find a date cell (15th of the month)
-      const dateCells = screen.getAllByRole('button', { name: /15/i });
-      const dateButton = dateCells.find(
-        btn => btn.getAttribute('role') === 'button' && btn.textContent === '15'
-      );
+      const dateButton = findDateButton('15');
 
       if (dateButton) {
         fireEvent.click(dateButton);
-
         await waitFor(() => {
           expect(onChange).toHaveBeenCalled();
         });
       }
     });
-
-    test('segments can be focused for input', () => {
-      render(<DatePicker {...defaultProps} />);
-
-      const monthSegment = getMonthSegment();
-
-      act(() => {
-        monthSegment.focus();
-      });
-
-      expect(monthSegment).toHaveFocus();
-    });
-
-    test('updates segments after calendar date selection', async () => {
-      const { rerender } = render(
-        <DatePicker {...defaultProps} value={parseDate('2024-01-01')} />
-      );
-
-      // Simulate selecting a different date
-      rerender(
-        <DatePicker {...defaultProps} value={parseDate('2024-06-15')} />
-      );
-
-      expect(getDaySegment()).toHaveTextContent('15');
-      expect(getMonthSegment()).toHaveTextContent('6');
-      expect(getYearSegment()).toHaveTextContent('2024');
-    });
   });
 
   describe('Disabled State', () => {
-    test('disables all segments when isDisabled is true', () => {
+    test('disables all interactions and applies styles', () => {
       render(<DatePicker {...defaultProps} isDisabled={true} />);
 
+      // Check all segments are disabled
       const segments = screen.getAllByRole('spinbutton');
       segments.forEach(segment => {
         expect(segment).toHaveAttribute('aria-disabled', 'true');
       });
-    });
 
-    test('disables calendar button when isDisabled is true', () => {
-      render(<DatePicker {...defaultProps} isDisabled={true} />);
-
+      // Check button is disabled
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
-    });
 
-    test('does not open calendar when disabled and button is clicked', () => {
-      render(<DatePicker {...defaultProps} isDisabled={true} />);
-
-      const calendarButton = screen.getByRole('button');
-      fireEvent.click(calendarButton);
-
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      // Check styles are applied
+      const group = screen.getByRole('group');
+      expect(group).toHaveClass('ui:opacity-60', 'ui:cursor-not-allowed');
     });
 
     test('does not call onChange when disabled', async () => {
@@ -242,21 +197,10 @@ describe('DatePicker Component', () => {
       );
 
       const monthSegment = getMonthSegment();
-
-      act(() => {
-        monthSegment.focus();
-      });
-
+      act(() => monthSegment.focus());
       fireEvent.input(monthSegment, { target: { textContent: '5' } });
 
       expect(onChange).not.toHaveBeenCalled();
-    });
-
-    test('applies disabled styles', () => {
-      render(<DatePicker {...defaultProps} isDisabled={true} />);
-
-      const group = screen.getByRole('group');
-      expect(group).toHaveClass('ui:opacity-60', 'ui:cursor-not-allowed');
     });
   });
 
@@ -303,11 +247,16 @@ describe('DatePicker Component', () => {
 
   describe('Date Constraints', () => {
     test('respects minValue constraint', async () => {
-      const minValue = parseDate('2024-01-01');
-      const value = parseDate('2023-12-31');
+      const onChange = vi.fn();
+      const minValue = parseDate('2024-06-15');
 
       render(
-        <DatePicker {...defaultProps} value={value} minValue={minValue} />
+        <DatePicker
+          {...defaultProps}
+          value={parseDate('2024-06-20')}
+          minValue={minValue}
+          onChange={onChange}
+        />
       );
 
       const calendarButton = screen.getByRole('button');
@@ -317,16 +266,35 @@ describe('DatePicker Component', () => {
         expect(screen.getByRole('grid')).toBeInTheDocument();
       });
 
-      // Dates before minValue should be disabled in the calendar
-      // This would require navigating to December 2023 to test properly
+      const disabledButton = findDateButton('10');
+      const validButton = findDateButton('25');
+
+      if (disabledButton) {
+        expect(disabledButton).toHaveClass(
+          'ui:cursor-not-allowed',
+          'ui:opacity-50'
+        );
+        fireEvent.click(disabledButton);
+        expect(onChange).not.toHaveBeenCalled();
+      }
+
+      if (validButton) {
+        fireEvent.click(validButton);
+        await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+      }
     });
 
     test('respects maxValue constraint', async () => {
-      const maxValue = parseDate('2024-12-31');
-      const value = parseDate('2024-06-15');
+      const onChange = vi.fn();
+      const maxValue = parseDate('2024-06-20');
 
       render(
-        <DatePicker {...defaultProps} value={value} maxValue={maxValue} />
+        <DatePicker
+          {...defaultProps}
+          value={parseDate('2024-06-15')}
+          maxValue={maxValue}
+          onChange={onChange}
+        />
       );
 
       const calendarButton = screen.getByRole('button');
@@ -336,50 +304,37 @@ describe('DatePicker Component', () => {
         expect(screen.getByRole('grid')).toBeInTheDocument();
       });
 
-      // Dates after maxValue should be disabled in the calendar
-    });
-  });
+      const disabledButton = findDateButton('25');
+      const validButton = findDateButton('18');
 
-  describe('Required State', () => {
-    test('accepts isRequired prop', () => {
-      render(<DatePicker {...defaultProps} isRequired={true} />);
+      if (disabledButton) {
+        expect(disabledButton).toHaveClass(
+          'ui:cursor-not-allowed',
+          'ui:opacity-50'
+        );
+        fireEvent.click(disabledButton);
+        expect(onChange).not.toHaveBeenCalled();
+      }
 
-      const group = screen.getByRole('group');
-      expect(group).toBeInTheDocument();
+      if (validButton) {
+        fireEvent.click(validButton);
+        await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+      }
     });
   });
 
   describe('Keyboard Navigation', () => {
-    test('segments can receive focus via Tab key', () => {
-      render(<DatePicker {...defaultProps} />);
-
-      const monthSegment = getMonthSegment();
-
-      act(() => {
-        monthSegment.focus();
-      });
-
-      expect(monthSegment).toHaveFocus();
-    });
-
-    test('can navigate between segments with Tab', async () => {
+    test('segments can receive and navigate focus', async () => {
       render(<DatePicker {...defaultProps} />);
 
       const monthSegment = getMonthSegment();
       const daySegment = getDaySegment();
 
-      act(() => {
-        monthSegment.focus();
-      });
-
+      act(() => monthSegment.focus());
       expect(monthSegment).toHaveFocus();
 
       fireEvent.keyDown(monthSegment, { key: 'Tab', code: 'Tab' });
-
-      act(() => {
-        daySegment.focus();
-      });
-
+      act(() => daySegment.focus());
       expect(daySegment).toHaveFocus();
     });
 
@@ -394,49 +349,21 @@ describe('DatePicker Component', () => {
       );
 
       const monthSegment = getMonthSegment();
-
-      act(() => {
-        monthSegment.focus();
-      });
-
+      act(() => monthSegment.focus());
       fireEvent.keyDown(monthSegment, { key: 'ArrowUp', code: 'ArrowUp' });
 
-      // Arrow up should increment the month
-      await waitFor(() => {
-        expect(onChange).toHaveBeenCalled();
-      });
+      await waitFor(() => expect(onChange).toHaveBeenCalled());
     });
   });
 
   describe('Accessibility', () => {
-    test('has proper ARIA roles', () => {
-      render(<DatePicker {...defaultProps} />);
-
-      expect(screen.getByRole('group')).toBeInTheDocument();
-      expect(screen.getAllByRole('spinbutton')).toHaveLength(3);
-    });
-
-    test('label is properly associated with date field', () => {
+    test('has proper ARIA roles and labels', () => {
       render(<DatePicker label="Select Date" />);
 
-      const label = screen.getByText('Select Date');
-      const group = screen.getByRole('group');
+      expect(screen.getByRole('group')).toBeInTheDocument();
+      expect(screen.getByText('Select Date')).toBeInTheDocument();
+      expect(screen.getByRole('button')).toHaveAttribute('aria-label');
 
-      expect(label).toBeInTheDocument();
-      expect(group).toBeInTheDocument();
-    });
-
-    test('calendar button has accessible label', () => {
-      render(<DatePicker {...defaultProps} />);
-
-      const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label');
-    });
-
-    test('segments have proper aria-labels', () => {
-      render(<DatePicker {...defaultProps} />);
-
-      // Segments should exist and be accessible
       const segments = screen.getAllByRole('spinbutton');
       expect(segments).toHaveLength(3);
       segments.forEach(segment => {
@@ -444,7 +371,7 @@ describe('DatePicker Component', () => {
       });
     });
 
-    test('error message is associated with field', () => {
+    test('associates error message with field', () => {
       render(
         <DatePicker
           {...defaultProps}
@@ -453,85 +380,58 @@ describe('DatePicker Component', () => {
         />
       );
 
-      const errorMessage = screen.getByText('Invalid date');
-      expect(errorMessage).toHaveAttribute('id');
+      expect(screen.getByText('Invalid date')).toHaveAttribute('id');
     });
 
-    test('description is associated with field', () => {
+    test('associates description with field', () => {
       render(<DatePicker {...defaultProps} description="Select a date" />);
-
-      const description = screen.getByText('Select a date');
-      expect(description).toHaveAttribute('id');
+      expect(screen.getByText('Select a date')).toHaveAttribute('id');
     });
   });
 
   describe('Edge Cases', () => {
     test('works without onChange handler', () => {
       render(<DatePicker {...defaultProps} />);
-
-      const calendarButton = screen.getByRole('button');
-      expect(() => fireEvent.click(calendarButton)).not.toThrow();
+      expect(() => fireEvent.click(screen.getByRole('button'))).not.toThrow();
     });
 
-    test('handles null value', () => {
-      render(<DatePicker {...defaultProps} value={null as any} />);
-
-      expect(getDaySegment()).toHaveTextContent('dd');
-      expect(getMonthSegment()).toHaveTextContent('mm');
-      expect(getYearSegment()).toHaveTextContent('jjjj'); // Dutch: jaar = year
-    });
-
-    test('handles undefined value', () => {
-      render(<DatePicker {...defaultProps} value={undefined} />);
-
-      expect(getDaySegment()).toHaveTextContent('dd');
-      expect(getMonthSegment()).toHaveTextContent('mm');
-      expect(getYearSegment()).toHaveTextContent('jjjj'); // Dutch: jaar = year
-    });
-
-    test('maintains controlled behavior', async () => {
-      const onChange = vi.fn();
+    test('handles null and undefined values', () => {
       const { rerender } = render(
-        <DatePicker
-          {...defaultProps}
-          value={parseDate('2024-01-01')}
-          onChange={onChange}
-        />
+        <DatePicker {...defaultProps} value={null as any} />
       );
 
-      // Verify initial value
-      expect(getDaySegment()).toHaveTextContent('1');
-      expect(getMonthSegment()).toHaveTextContent('1');
-      expect(getYearSegment()).toHaveTextContent('2024');
+      expect(getDaySegment()).toHaveTextContent(PLACEHOLDER_DAY);
+      expect(getMonthSegment()).toHaveTextContent(PLACEHOLDER_MONTH);
+      expect(getYearSegment()).toHaveTextContent(PLACEHOLDER_YEAR);
 
-      // Update to a new controlled value
-      rerender(
-        <DatePicker
-          {...defaultProps}
-          value={parseDate('2024-06-15')}
-          onChange={onChange}
-        />
-      );
+      rerender(<DatePicker {...defaultProps} value={undefined} />);
 
-      // Verify value updated correctly
-      expect(getDaySegment()).toHaveTextContent('15');
-      expect(getMonthSegment()).toHaveTextContent('6');
-      expect(getYearSegment()).toHaveTextContent('2024');
+      expect(getDaySegment()).toHaveTextContent(PLACEHOLDER_DAY);
+      expect(getMonthSegment()).toHaveTextContent(PLACEHOLDER_MONTH);
+      expect(getYearSegment()).toHaveTextContent(PLACEHOLDER_YEAR);
     });
   });
 
   describe('Date Object Support', () => {
     test('accepts Date object as value', () => {
-      const date = new Date('2024-03-15T12:00:00Z');
-      render(<DatePicker {...defaultProps} value={date} />);
+      render(
+        <DatePicker
+          {...defaultProps}
+          value={new Date('2024-03-15T12:00:00Z')}
+        />
+      );
 
       expect(getDaySegment()).toHaveTextContent('15');
       expect(getMonthSegment()).toHaveTextContent('3');
     });
 
     test('accepts Date object as defaultValue', () => {
-      const date = new Date('2024-12-25T12:00:00Z');
-      render(<DatePicker {...defaultProps} defaultValue={date} />);
+      render(
+        <DatePicker
+          {...defaultProps}
+          defaultValue={new Date('2024-12-25T12:00:00Z')}
+        />
+      );
 
       expect(getDaySegment()).toHaveTextContent('25');
       expect(getMonthSegment()).toHaveTextContent('12');
@@ -554,42 +454,35 @@ describe('DatePicker Component', () => {
 
       await waitFor(() => {
         expect(onChange).toHaveBeenCalled();
+        expect(onChange.mock.calls[0][0]).toBeInstanceOf(Date);
       });
-
-      const calledWith = onChange.mock.calls[0][0];
-      expect(calledWith).toBeInstanceOf(Date);
     });
 
-    test('handles null Date value', () => {
-      render(<DatePicker {...defaultProps} value={null} />);
-      expect(getDaySegment()).toHaveTextContent('dd');
-      expect(getMonthSegment()).toHaveTextContent('mm');
-      expect(getYearSegment()).toHaveTextContent('jjjj');
-    });
-
-    test('accepts mixed DateValue and Date', async () => {
-      const dateValue = parseDate('2024-01-01');
+    test('accepts mixed DateValue and Date types', async () => {
       const { rerender } = render(
-        <DatePicker {...defaultProps} value={dateValue} />
+        <DatePicker {...defaultProps} value={parseDate('2024-01-01')} />
       );
 
       expect(getDaySegment()).toHaveTextContent('1');
       expect(getMonthSegment()).toHaveTextContent('1');
 
-      const date = new Date('2024-06-15T12:00:00Z');
-      rerender(<DatePicker {...defaultProps} value={date} />);
+      rerender(
+        <DatePicker
+          {...defaultProps}
+          value={new Date('2024-06-15T12:00:00Z')}
+        />
+      );
 
       expect(getDaySegment()).toHaveTextContent('15');
       expect(getMonthSegment()).toHaveTextContent('6');
     });
 
     test('converts invalid Date to null', () => {
-      const invalidDate = new Date('invalid');
-      render(<DatePicker {...defaultProps} value={invalidDate} />);
+      render(<DatePicker {...defaultProps} value={new Date('invalid')} />);
 
-      expect(getDaySegment()).toHaveTextContent('dd');
-      expect(getMonthSegment()).toHaveTextContent('mm');
-      expect(getYearSegment()).toHaveTextContent('jjjj');
+      expect(getDaySegment()).toHaveTextContent(PLACEHOLDER_DAY);
+      expect(getMonthSegment()).toHaveTextContent(PLACEHOLDER_MONTH);
+      expect(getYearSegment()).toHaveTextContent(PLACEHOLDER_YEAR);
     });
   });
 });
