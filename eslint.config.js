@@ -9,12 +9,10 @@ export default defineConfig([
     globalIgnores(["dist", "packages/*"]),
     {
         files: ["**/*.{ts,tsx}"],
-        extends: [
-            js.configs.recommended,
-            tseslint.configs.recommended,
-            reactHooks.configs["recommended-latest"],
-            reactRefresh.configs.vite,
-        ],
+        extends: [js.configs.recommended, tseslint.configs.recommended, reactRefresh.configs.vite],
+        plugins: {
+            "react-hooks": reactHooks,
+        },
         languageOptions: {
             ecmaVersion: 2020,
             globals: globals.browser,
@@ -23,6 +21,9 @@ export default defineConfig([
                 tsconfigRootDir: import.meta.dirname,
                 project: ["./tsconfig.app.json", "./tsconfig.node.json"],
             },
+        },
+        rules: {
+            ...reactHooks.configs.recommended.rules,
         },
     },
 ]);
