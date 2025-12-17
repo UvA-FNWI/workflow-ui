@@ -109,9 +109,12 @@ export function DataTable<TData>({
                 </thead>
                 <tbody>
                     {table.getRowModel().rows.map((row) => (
-                        <tr key={row.id} className="hover:bg-gray-50">
+                        <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                             {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className="border-b border-gray-100 px-4 py-3">
+                                <td
+                                    key={cell.id}
+                                    className="border-b border-gray-100 px-4 py-3 dark:border-gray-600"
+                                >
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}
