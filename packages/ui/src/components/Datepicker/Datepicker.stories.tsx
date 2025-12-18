@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import type { DateValue } from 'react-aria';
-
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -71,8 +69,8 @@ export const WithMinMax: Story = {
 
 export const Controlled: Story = {
   render: function ControlledDatePicker() {
-    const [value, setValue] = useState<DateValue | null>(
-      parseDate('2024-01-15')
+    const [value, setValue] = useState<Date | null>(
+      parseDate('2024-01-15').toDate(getLocalTimeZone())
     );
 
     return (
