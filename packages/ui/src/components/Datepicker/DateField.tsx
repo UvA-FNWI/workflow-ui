@@ -29,7 +29,7 @@ function DateSegment({ segment, state }: DateSegmentProps) {
       {...segmentProps}
       ref={ref}
       className={cn(
-        'ui:rounded ui:px-1 ui:tabular-nums ui:outline-none',
+        'ui:rounded ui:px-1 ui:tabular-nums ui:outline-none ui:text-black ui:dark:text-white',
         'ui:focus:bg-navy-600 ui:focus:text-white ui:dark:focus:bg-sky-500',
         segment.isPlaceholder ? 'ui:text-grey-400 ui:dark:text-grey-600' : '',
         !segment.isEditable ? 'ui:text-grey-500' : ''
