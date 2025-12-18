@@ -45,6 +45,11 @@ export { useToast } from './components/Toast/hooks/useToast';
 
 export { Modal, type ModalProps } from './components/Modal/Modal';
 
+export {
+  FileUpload,
+  type FileUploadProps,
+} from './components/FileUpload/FileUpload';
+
 // Tabs exports
 export {
   Tab,
