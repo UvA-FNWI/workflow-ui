@@ -150,9 +150,7 @@ export const FormPage = ({
                                                 a.type === "Execute" && setActiveAction(a)
                                             }
                                             intent={
-                                                a.intent === "Destructive"
-                                                    ? "destructivePrimary"
-                                                    : "secondary"
+                                                a.intent === "Destructive" ? "primary" : "secondary"
                                             }
                                         >
                                             {l(a.title)}
