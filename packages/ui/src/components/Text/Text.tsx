@@ -15,7 +15,7 @@ const textVariants = cva('ui:font-body ui:m-0 ui:p-0', {
     size: {
       xs: 'ui:text-xs', // 12px
       sm: 'ui:text-sm', // 14px
-      md: 'ui:text-md', // 16px
+      md: 'ui:text-base', // 16px
       lg: 'ui:text-lg', // 18px
       xl: 'ui:text-xl', // 20px
       '2xl': 'ui:text-2xl', // 24px

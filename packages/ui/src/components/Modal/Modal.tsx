@@ -4,7 +4,6 @@ import {
   HTMLAttributes,
   ReactNode,
   useContext,
-  useEffect,
   useRef,
 } from 'react';
 
@@ -56,6 +55,7 @@ export interface ModalProps extends ModalVariantProps {
 
   // Styling
   className?: string;
+  ref?: React.Ref<HTMLDivElement>;
 
   // Accessibility
   role?: 'dialog' | 'alertdialog';
@@ -66,7 +66,6 @@ export interface ModalProps extends ModalVariantProps {
   // Behavior
   isDismissable?: boolean;
   isKeyboardDismissDisabled?: boolean;
-  shouldBlockScroll?: boolean;
 }
 
 // Context to share modal state with sub-components
@@ -92,29 +91,15 @@ const ModalOverlay = ({
   onClose,
   isDismissable = true,
   isKeyboardDismissDisabled = false,
-  shouldBlockScroll = true,
   className,
 }: {
   children: ReactNode;
   onClose: () => void;
   isDismissable?: boolean;
   isKeyboardDismissDisabled?: boolean;
-  shouldBlockScroll?: boolean;
   className?: string;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-
-  // Handle body scroll blocking
-  useEffect(() => {
-    if (shouldBlockScroll) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [shouldBlockScroll]);
 
   // Create a simple state that mimics OverlayTriggerState
   const state = {
@@ -172,7 +157,7 @@ const ModalDialog = ({
   );
 };
 
-const BaseModal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
+const BaseModal = (props: ModalProps) => {
   const {
     // Content
     children,
@@ -189,6 +174,7 @@ const BaseModal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
 
     // Styling
     className,
+    ref,
 
     // Accessibility
     role = 'dialog',
@@ -196,7 +182,6 @@ const BaseModal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
     // Behavior
     isDismissable = true,
     isKeyboardDismissDisabled = false,
-    shouldBlockScroll = false,
 
     ...restProps
   } = props;
@@ -214,7 +199,6 @@ const BaseModal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
       onClose={handleClose}
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-      shouldBlockScroll={shouldBlockScroll}
     >
       <ModalDialog role={role}>
         <ModalContext.Provider
@@ -231,7 +215,7 @@ const BaseModal = forwardRef<HTMLDivElement, ModalProps>((props, ref) => {
       </ModalDialog>
     </ModalOverlay>
   );
-});
+};
 
 BaseModal.displayName = 'Modal';
 
