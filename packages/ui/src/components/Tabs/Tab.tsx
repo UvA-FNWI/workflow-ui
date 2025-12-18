@@ -1,4 +1,7 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useRef } from 'react';
+
+import { useTab } from 'react-aria';
+import { TabListState } from 'react-stately';
 
 import { cva } from 'class-variance-authority';
 
@@ -30,6 +33,8 @@ export interface TabProps extends PropsWithChildren {
   disabled?: boolean;
   hidden?: boolean;
   ref?: React.Ref<HTMLButtonElement>;
+  item?: { key: string };
+  state?: TabListState<object>;
 }
 
 const Tab: React.FunctionComponent<TabProps> = ({
@@ -38,19 +43,42 @@ const Tab: React.FunctionComponent<TabProps> = ({
   onTabClick,
   disabled = false,
   hidden = false,
-  ref,
+  ref: externalRef,
+  item,
+  state,
 }) => {
+  const internalRef = useRef<HTMLButtonElement>(null);
+  const tabRef = externalRef || internalRef;
+
+  // Always call useTab hook, but only use its result if state is provided
+  const ariaResult = useTab(
+    {
+      key: item?.key || '0',
+      isDisabled: disabled,
+    },
+    state as TabListState<object>,
+    tabRef as React.RefObject<HTMLElement>
+  );
+
+  // Use react-aria's props if state is provided, otherwise use fallback
+  const tabProps =
+    state && item
+      ? ariaResult.tabProps
+      : {
+          onClick: () => !disabled && onTabClick?.(),
+          role: 'tab',
+          'aria-selected': isActive,
+          'aria-disabled': disabled,
+          type: 'button' as const,
+        };
+
   return hidden ? (
     <></>
   ) : (
     <button
-      onClick={() => !disabled && onTabClick?.()}
-      role="tab"
+      {...tabProps}
       className={cn(tabClassGenerator({ isActive, disabled }))}
-      aria-selected={isActive}
-      aria-disabled={disabled}
-      type="button"
-      ref={ref}
+      ref={tabRef as React.Ref<HTMLButtonElement>}
     >
       {children}
     </button>

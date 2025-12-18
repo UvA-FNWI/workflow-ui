@@ -1,5 +1,7 @@
 // React
-import { cloneElement, HTMLAttributes, ReactElement } from 'react';
+import { cloneElement, HTMLAttributes, ReactElement, RefObject } from 'react';
+
+import { TabListState } from 'react-stately';
 
 // External
 import { cva } from 'class-variance-authority';
@@ -15,6 +17,9 @@ export type TabListProps = {
   children: Array<ReactElement<TabProps>>;
   activeIndex?: number;
   onTabClick?: (index: number) => void;
+  tabListProps?: HTMLAttributes<HTMLElement>;
+  tabListRef?: RefObject<HTMLDivElement | null>;
+  state?: TabListState<object>;
 } & HTMLAttributes<HTMLDivElement>;
 
 const TabList = ({
@@ -22,13 +27,17 @@ const TabList = ({
   className,
   activeIndex = 0,
   onTabClick,
+  tabListProps,
+  tabListRef,
+  state,
   ...otherProps
 }: TabListProps) => {
   return (
     <div
       className={cn(tabListClassGenerator(), className)}
-      role="tablist"
+      {...tabListProps}
       {...otherProps}
+      ref={tabListRef}
     >
       <div className="ui:flex ui:justify-start" id="tablist-container">
         {children.map((child, index) =>
@@ -36,6 +45,8 @@ const TabList = ({
             key: index,
             isActive: index === activeIndex,
             onTabClick: () => onTabClick?.(index),
+            item: state ? { key: index.toString() } : undefined,
+            state,
           })
         )}
       </div>
