@@ -25,5 +25,10 @@
   "progress": {
     "label": "Hier ben je in het proces",
     "title": "Voortgang"
+  },
+  "fileUpload": {
+    "description": "Omschrijving",
+    "uploaded": "Geüpload",
+    "maxFileSize": "Max. {{size}} per bestand"
   }
 }

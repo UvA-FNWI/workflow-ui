@@ -25,5 +25,10 @@
   "progress": {
     "label": "Here's where you are in the process",
     "title": "Progress"
+  },
+  "fileUpload": {
+    "description": "Description",
+    "uploaded": "Uploaded",
+    "maxFileSize": "Max. {{size}} per file"
   }
 }

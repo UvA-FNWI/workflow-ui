@@ -2,6 +2,7 @@ import {useCallback} from "react";
 
 import {Input, NumberInput} from "@datanose/ui";
 
+import {FileUploadTable} from "./FileUploadTable";
 import {useDebounce} from "~/hooks/useDebounce";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {Answer, Question} from "~/store/api/types/submissions";
@@ -47,6 +48,20 @@ export const InputControl = ({value, question, onChange, onSave}: InputControlPr
                 step={1}
                 onChange={(value) => {
                     debouncedChange(value);
+                }}
+            />
+        );
+    }
+    if (question.type === "File") {
+        return (
+            <FileUploadTable
+                description={question.description}
+                value={value as File | null}
+                onFileSelect={(file) => {
+                    onChange?.(file);
+                    if (file) {
+                        save(file);
+                    }
                 }}
             />
         );
