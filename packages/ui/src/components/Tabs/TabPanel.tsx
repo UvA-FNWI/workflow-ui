@@ -21,26 +21,20 @@ const TabPanel: React.FunctionComponent<TabPanelProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  // Always call useTabPanel hook
-  const ariaResult = useTabPanel(
+  // Use react-aria for accessibility
+  const { tabPanelProps } = useTabPanel(
     { id: item?.key || '0' },
     state as TabListState<object>,
     ref
   );
 
-  // Use react-aria's props if state is provided
-  const tabPanelProps =
-    state && item
-      ? ariaResult.tabPanelProps
-      : {
-          role: 'tabpanel' as const,
-        };
+  if (!isActive) return null;
 
-  return isActive ? (
+  return (
     <div {...tabPanelProps} className={cx('TabPanel', className)} ref={ref}>
       {children}
     </div>
-  ) : null;
+  );
 };
 
 export { TabPanel };

@@ -17,7 +17,6 @@ export {
   type NumberInputProps,
   type NumberInputVariantProps,
 } from './components/Input/NumberInput/NumberInput';
-export { Pill, type PillProps } from './components/Pill/Pill';
 export {
   Separator,
   type SeparatorVariantProps,

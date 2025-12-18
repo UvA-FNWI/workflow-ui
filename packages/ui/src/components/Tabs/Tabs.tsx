@@ -6,10 +6,9 @@ import {
   Ref,
   useImperativeHandle,
   useRef,
-  useState,
 } from 'react';
 
-import { useTab, useTabList, useTabPanel } from 'react-aria';
+import { useTabList } from 'react-aria';
 import { Item, useTabListState } from 'react-stately';
 
 import { cva } from 'class-variance-authority';
@@ -61,13 +60,6 @@ const Tabs = forwardRef(
     // Determine if component is controlled
     const isControlled = controlledActiveIndex !== undefined;
 
-    // State management for controlled/uncontrolled behavior
-    const [internalActiveIndex, setInternalActiveIndex] =
-      useState(defaultActiveIndex);
-    const activeIndex = isControlled
-      ? controlledActiveIndex
-      : internalActiveIndex;
-
     // Use react-stately for state management
     const state = useTabListState({
       children: tabs.map((tab, index) => (
@@ -75,23 +67,16 @@ const Tabs = forwardRef(
           {tab.props.children}
         </Item>
       )),
-      selectedKey: activeIndex?.toString(),
+      selectedKey: isControlled ? controlledActiveIndex?.toString() : undefined,
+      defaultSelectedKey: defaultActiveIndex.toString(),
       onSelectionChange: key => {
         const index = parseInt(key.toString(), 10);
-
-        // Update internal state if uncontrolled
-        if (!isControlled) {
-          setInternalActiveIndex(index);
-        }
 
         // Call user's callback
         onTabChange?.(index);
 
         // Execute custom tab click handler
-        const handler = customHandlers[index];
-        if (handler) {
-          handler();
-        }
+        customHandlers[index]?.();
       },
     });
 
@@ -107,19 +92,12 @@ const Tabs = forwardRef(
     // Expose imperative handle
     useImperativeHandle(ref, () => ({
       goToTab: (index: number) => {
-        if (!isControlled) {
-          setInternalActiveIndex(index);
-        }
         state.setSelectedKey(index.toString());
-        onTabChange?.(index);
-
-        // Execute custom handler
-        const handler = customHandlers[index];
-        if (handler) {
-          handler();
-        }
       },
     }));
+
+    // Get active index from state
+    const activeIndex = parseInt(state.selectedKey?.toString() || '0', 10);
 
     return (
       <div className={tabsClassGenerator({ className })}>
@@ -138,6 +116,6 @@ const Tabs = forwardRef(
 
 Tabs.displayName = 'Tabs';
 
-export { Tab, Tabs, TabList, TabPanels, TabPanel, useTab, useTabPanel };
+export { Tab, Tabs, TabList, TabPanels, TabPanel };
 export type { TabsProps };
 export { useTabsWithRouter, useTabsWithUrl } from './hooks/useTabsWithRouter';

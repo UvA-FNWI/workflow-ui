@@ -8,7 +8,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const tabClassGenerator = cva(
-  'ui:p-3 ui:text-sm ui:flex ui:items-center ui:border-b ui:border-transparent ui:cursor-pointer ui:bg-transparent ui:border-0 ui:border-b ui:transition-colors ui:duration-150 ui:ease-in-out',
+  'ui:p-3 ui:text-sm ui:flex ui:items-center ui:border-b ui:border-transparent ui:cursor-pointer ui:bg-transparent ui:transition-colors ui:duration-150 ui:ease-in-out',
   {
     variants: {
       isActive: {
@@ -40,7 +40,6 @@ export interface TabProps extends PropsWithChildren {
 const Tab: React.FunctionComponent<TabProps> = ({
   children,
   isActive = false,
-  onTabClick,
   disabled = false,
   hidden = false,
   ref: externalRef,
@@ -48,37 +47,22 @@ const Tab: React.FunctionComponent<TabProps> = ({
   state,
 }) => {
   const internalRef = useRef<HTMLButtonElement>(null);
-  const tabRef = externalRef || internalRef;
+  const ref = externalRef || internalRef;
 
-  // Always call useTab hook, but only use its result if state is provided
-  const ariaResult = useTab(
-    {
-      key: item?.key || '0',
-      isDisabled: disabled,
-    },
+  // Use react-aria for accessibility when state is available
+  const { tabProps } = useTab(
+    { key: item?.key || '0', isDisabled: disabled },
     state as TabListState<object>,
-    tabRef as React.RefObject<HTMLElement>
+    ref as React.RefObject<HTMLElement>
   );
 
-  // Use react-aria's props if state is provided, otherwise use fallback
-  const tabProps =
-    state && item
-      ? ariaResult.tabProps
-      : {
-          onClick: () => !disabled && onTabClick?.(),
-          role: 'tab',
-          'aria-selected': isActive,
-          'aria-disabled': disabled,
-          type: 'button' as const,
-        };
+  if (hidden) return null;
 
-  return hidden ? (
-    <></>
-  ) : (
+  return (
     <button
       {...tabProps}
       className={cn(tabClassGenerator({ isActive, disabled }))}
-      ref={tabRef as React.Ref<HTMLButtonElement>}
+      ref={ref as React.Ref<HTMLButtonElement>}
     >
       {children}
     </button>
