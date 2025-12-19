@@ -10,9 +10,4 @@ export default defineConfig({
         useTranslationNames: ["useTranslation", "useTranslate"],
         preservePatterns: ["*.dynamic.*"],
     },
-    types: {
-        input: ["public/locales/**/*.json"],
-        output: "src/types/i18next.d.ts",
-        resourcesFile: "src/types/resources.d.ts",
-    },
 });
