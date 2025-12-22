@@ -43,7 +43,9 @@ export const StepCard = ({step, instance}: Props) => {
                 onOpenChange={() => setActiveAction(null)}
             >
                 <Modal.Header>{activeAction && l(activeAction.title)}</Modal.Header>
-                <Modal.Body className="mt-2 mb-4">TODO: body text.</Modal.Body>
+                <Modal.Body className="mt-2 mb-4">
+                    <p>{t("are_you_sure")}</p>
+                </Modal.Body>
                 {activeAction && (
                     <Modal.Footer className="mt-2 flex gap-2">
                         <Button
@@ -58,9 +60,6 @@ export const StepCard = ({step, instance}: Props) => {
                             }}
                         >
                             {t("confirm")}
-                        </Button>
-                        <Button intent="secondary" onClick={() => setActiveAction(null)}>
-                            {t("cancel")}
                         </Button>
                     </Modal.Footer>
                 )}

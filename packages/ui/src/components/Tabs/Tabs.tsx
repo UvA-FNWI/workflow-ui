@@ -5,8 +5,11 @@ import {
   ReactElement,
   Ref,
   useImperativeHandle,
-  useState,
+  useRef,
 } from 'react';
+
+import { useTabList } from 'react-aria';
+import { Item, useTabListState } from 'react-stately';
 
 import { cva } from 'class-variance-authority';
 
@@ -46,51 +49,72 @@ const Tabs = forwardRef(
       child => child.type === TabPanels
     ) as ReactElement<TabPanelsProps>;
 
-    // State - support both controlled and uncontrolled modes
-    const [internalActiveIndex, setInternalActiveIndex] =
-      useState<number>(defaultActiveIndex);
+    const tabListRef = useRef<HTMLDivElement>(null);
+
+    // Get tab items from children
+    const tabs = tabList?.props.children || [];
+
+    // Store custom onClick handlers
+    const customHandlers = tabs.map(tab => tab.props.onTabClick);
 
     // Determine if component is controlled
     const isControlled = controlledActiveIndex !== undefined;
-    const activeIndex = isControlled
-      ? controlledActiveIndex
-      : internalActiveIndex;
 
-    const executeCustomOnTabClick = (index: number) => {
-      // Execute custom onTabClick if provided
-      const onTabClick = tabList?.props.children[index].props.onTabClick;
-      if (onTabClick) {
-        onTabClick();
-      }
-    };
+    // Use react-stately for state management
+    const state = useTabListState({
+      children: tabs.map((tab, index) => (
+        <Item key={index.toString()} textValue={`Tab ${index}`}>
+          {tab.props.children}
+        </Item>
+      )),
+      selectedKey: isControlled ? controlledActiveIndex?.toString() : undefined,
+      defaultSelectedKey: defaultActiveIndex.toString(),
+      onSelectionChange: key => {
+        const index = parseInt(key.toString(), 10);
 
-    const handleTabClick = (index: number) => {
-      // Update internal state only if component is uncontrolled
-      if (!isControlled) {
-        setInternalActiveIndex(index);
-      }
+        // Call user's callback
+        onTabChange?.(index);
 
-      // Always call onTabChange callback
-      onTabChange?.(index);
+        // Execute custom tab click handler
+        customHandlers[index]?.();
+      },
+    });
 
-      // Execute any custom tab click handlers
-      executeCustomOnTabClick(index);
-    };
+    // Use react-aria for accessibility
+    const { tabListProps } = useTabList(
+      {
+        'aria-label': 'Tabs',
+      },
+      state,
+      tabListRef
+    );
 
     // Expose imperative handle
     useImperativeHandle(ref, () => ({
-      goToTab: handleTabClick,
+      goToTab: (index: number) => {
+        state.setSelectedKey(index.toString());
+      },
     }));
+
+    // Get active index from state
+    const activeIndex = parseInt(state.selectedKey?.toString() || '0', 10);
 
     return (
       <div className={tabsClassGenerator({ className })}>
         {tabList &&
-          cloneElement(tabList, { activeIndex, onTabClick: handleTabClick })}
-        {tabPanels && cloneElement(tabPanels, { activeIndex })}
+          cloneElement(tabList, {
+            activeIndex,
+            tabListProps,
+            tabListRef,
+            state,
+          })}
+        {tabPanels && cloneElement(tabPanels, { activeIndex, state })}
       </div>
     );
   }
 );
+
+Tabs.displayName = 'Tabs';
 
 export { Tab, Tabs, TabList, TabPanels, TabPanel };
 export type { TabsProps };

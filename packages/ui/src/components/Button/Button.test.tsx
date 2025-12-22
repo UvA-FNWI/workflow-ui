@@ -48,9 +48,9 @@ describe('Button', () => {
       render(<Button intent="destructivePrimary">Delete</Button>);
       const button = screen.getByRole('button');
       expect(button).toHaveClass(
-        'ui:bg-red-brand',
+        'ui:bg-red-600',
         'ui:text-white',
-        'ui:border-red-brand'
+        'ui:border-red-600'
       );
     });
 

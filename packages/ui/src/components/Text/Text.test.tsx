@@ -351,7 +351,7 @@ describe('Text Component', () => {
       const element = screen.getByText('Default text');
       expect(element).toHaveClass('ui:font-body');
       expect(element).toHaveClass('ui:text-black');
-      expect(element).toHaveClass('ui:text-md');
+      expect(element).toHaveClass('ui:text-base');
       expect(element).toHaveClass('ui:no-underline');
       expect(element).toHaveClass('ui:normal-case');
       expect(element).toHaveClass('ui:inline-block'); // default display

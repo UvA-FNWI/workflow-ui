@@ -1,11 +1,14 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useRef } from 'react';
+
+import { useTab } from 'react-aria';
+import { TabListState } from 'react-stately';
 
 import { cva } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
 
 const tabClassGenerator = cva(
-  'ui:p-3 ui:text-sm ui:flex ui:items-center ui:border-b ui:border-transparent ui:cursor-pointer ui:bg-transparent ui:border-0 ui:border-b ui:transition-colors ui:duration-150 ui:ease-in-out',
+  'ui:p-3 ui:text-sm ui:flex ui:items-center ui:border-b ui:border-transparent ui:cursor-pointer ui:bg-transparent ui:transition-colors ui:duration-150 ui:ease-in-out',
   {
     variants: {
       isActive: {
@@ -30,27 +33,36 @@ export interface TabProps extends PropsWithChildren {
   disabled?: boolean;
   hidden?: boolean;
   ref?: React.Ref<HTMLButtonElement>;
+  item?: { key: string };
+  state?: TabListState<object>;
 }
 
 const Tab: React.FunctionComponent<TabProps> = ({
   children,
   isActive = false,
-  onTabClick,
   disabled = false,
   hidden = false,
-  ref,
+  ref: externalRef,
+  item,
+  state,
 }) => {
-  return hidden ? (
-    <></>
-  ) : (
+  const internalRef = useRef<HTMLButtonElement>(null);
+  const ref = externalRef || internalRef;
+
+  // Use react-aria for accessibility when state is available
+  const { tabProps } = useTab(
+    { key: item?.key || '0', isDisabled: disabled },
+    state as TabListState<object>,
+    ref as React.RefObject<HTMLElement>
+  );
+
+  if (hidden) return null;
+
+  return (
     <button
-      onClick={() => !disabled && onTabClick?.()}
-      role="tab"
+      {...tabProps}
       className={cn(tabClassGenerator({ isActive, disabled }))}
-      aria-selected={isActive}
-      aria-disabled={disabled}
-      type="button"
-      ref={ref}
+      ref={ref as React.Ref<HTMLButtonElement>}
     >
       {children}
     </button>
