@@ -20,13 +20,27 @@ import {debounce} from "lodash-es";
  */
 export function useDebounce(callback: (...args: unknown[]) => void, delay: number) {
     const callbackRef = useRef(callback);
+    const debouncedRef = useRef<ReturnType<typeof debounce> | undefined>(undefined);
 
     useLayoutEffect(() => {
         callbackRef.current = callback;
-    });
+    }, [callback]);
+
+    useLayoutEffect(() => {
+        debouncedRef.current = debounce(
+            (...args: unknown[]) => callbackRef.current(...args),
+            delay,
+        );
+
+        return () => {
+            debouncedRef.current?.cancel();
+        };
+    }, [delay]);
 
     return useMemo(
-        () => debounce((...args: unknown[]) => callbackRef.current(...args), delay),
-        [delay],
+        () =>
+            (...args: unknown[]) =>
+                debouncedRef.current?.(...args),
+        [],
     );
 }
