@@ -30,9 +30,6 @@ const meta: Meta<typeof Modal> = {
     isKeyboardDismissDisabled: {
       control: { type: 'boolean' },
     },
-    shouldBlockScroll: {
-      control: { type: 'boolean' },
-    },
   },
 };
 
@@ -246,7 +243,6 @@ export const Basic: Story = {
     size: 'md',
     isDismissable: true,
     isKeyboardDismissDisabled: false,
-    shouldBlockScroll: false,
   },
 };
 
