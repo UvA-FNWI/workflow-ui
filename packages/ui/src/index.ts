@@ -28,6 +28,12 @@ export {
   LoadingSpinner,
   type LoadingSpinnerProps,
 } from './components/LoadingSpinner/LoadingSpinner';
+export {
+  Pill,
+  type PillProps,
+  type PillVariantProps,
+} from './components/Pill/Pill';
+
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';
 
@@ -50,7 +56,6 @@ export {
   type FileUploadProps,
 } from './components/FileUpload/FileUpload';
 
-// Tabs exports
 export {
   Tab,
   Tabs,

@@ -30,5 +30,8 @@
     "description": "Description",
     "uploaded": "Uploaded",
     "maxFileSize": "Max. {{size}} per file"
+  },
+  "screens": {
+    "students": "Students"
   }
 }

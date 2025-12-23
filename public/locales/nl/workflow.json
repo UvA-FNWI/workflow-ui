@@ -30,5 +30,8 @@
     "description": "Omschrijving",
     "uploaded": "Geüpload",
     "maxFileSize": "Max. {{size}} per bestand"
+  },
+  "screens": {
+    "students": "Studenten"
   }
 }
