@@ -1,0 +1,11 @@
+{
+  "toast": {
+    "titles": {
+      "success": "Succes",
+      "error": "Fout",
+      "info": "Info",
+      "warning": "Waarschuwing",
+      "note": "Notitie"
+    }
+  }
+}

@@ -3,7 +3,7 @@ import type {Submission} from "~/store/api/types/submissions.ts";
 
 export type WorkflowInstance = {
     id: string;
-    title: string | null;
+    title: LocalString | null;
     steps: WorkflowStep[];
     submissions: Submission[];
     actions: Action[];
