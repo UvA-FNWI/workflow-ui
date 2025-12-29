@@ -8,10 +8,6 @@ export default defineConfig({
         defaultNS: "common",
         defaultValue: "$TODO$",
         useTranslationNames: ["useTranslation", "useTranslate"],
-    },
-    types: {
-        input: ["public/locales/**/*.json"],
-        output: "src/types/i18next.d.ts",
-        resourcesFile: "src/types/resources.d.ts",
+        preservePatterns: ["*.dynamic.*"],
     },
 });

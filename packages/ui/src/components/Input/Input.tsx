@@ -62,7 +62,7 @@ export const Input: React.FC<InputProps> = ({
   });
 
   return (
-    <div className="ui:w-full">
+    <div>
       {label && (
         <label
           {...labelProps}

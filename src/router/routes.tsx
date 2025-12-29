@@ -3,6 +3,7 @@ import {createBrowserRouter, type RouteObject} from "react-router";
 import App from "../App";
 import Overview from "../pages/Overview";
 import {instanceRoutes} from "./instanceRoutes";
+import screenRoutes from "./screenRoutes";
 import {workflowRoutes} from "./workflowRoutes";
 
 const routes: RouteObject[] = [
@@ -16,6 +17,7 @@ const routes: RouteObject[] = [
             },
             ...instanceRoutes,
             ...workflowRoutes,
+            ...screenRoutes,
         ],
     },
 ];

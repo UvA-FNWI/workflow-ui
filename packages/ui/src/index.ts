@@ -28,6 +28,11 @@ export {
   LoadingSpinner,
   type LoadingSpinnerProps,
 } from './components/LoadingSpinner/LoadingSpinner';
+export {
+  Pill,
+  type PillProps,
+  type PillVariantProps,
+} from './components/Pill/Pill';
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';
 
@@ -45,7 +50,6 @@ export { useToast } from './components/Toast/hooks/useToast';
 
 export { Modal, type ModalProps } from './components/Modal/Modal';
 
-// Tabs exports
 export {
   Tab,
   Tabs,
