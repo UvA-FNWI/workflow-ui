@@ -15,9 +15,10 @@ type PageControlProps = {
     instanceId: string;
     submissionId: string;
     page: Page;
-    currentTabIndex: number;
-    onNext: () => void;
-    onPrevious: () => void;
+    currentTabIndex?: number;
+    onNext?: () => void;
+    onPrevious?: () => void;
+    showTitle?: boolean;
 };
 
 export const PageControl = ({
@@ -27,6 +28,7 @@ export const PageControl = ({
     currentTabIndex,
     onNext,
     onPrevious,
+    showTitle = true,
 }: PageControlProps) => {
     const {l, t} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
@@ -58,9 +60,11 @@ export const PageControl = ({
         <>
             <div className="mb-4 flex flex-col gap-4 pt-4">
                 <div>
-                    <Heading size="sm" className="uppercase" fontType="body">
-                        {l(page.title)}
-                    </Heading>
+                    {showTitle && (
+                        <Heading size="sm" className="uppercase" fontType="body">
+                            {l(page.title)}
+                        </Heading>
+                    )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
                 </div>
                 <div>
@@ -88,20 +92,22 @@ export const PageControl = ({
                     </form>
                 </div>
             </div>
-            <div className="mt-4 flex justify-between gap-2">
-                {currentTabIndex > 0 && (
-                    <Button intent="secondary" onClick={onPrevious}>
-                        {t("go_back")}
+            {onNext && onPrevious && (
+                <div className="mt-4 flex justify-between gap-2">
+                    {(currentTabIndex ?? 0) > 0 && (
+                        <Button intent="secondary" onClick={onPrevious}>
+                            {t("go_back")}
+                        </Button>
+                    )}
+                    <Button
+                        intent="secondary"
+                        onClick={onNext}
+                        className={currentTabIndex === 0 ? "ml-auto" : ""}
+                    >
+                        {t("continue")}
                     </Button>
-                )}
-                <Button
-                    intent="secondary"
-                    onClick={onNext}
-                    className={currentTabIndex === 0 ? "ml-auto" : ""}
-                >
-                    {t("continue")}
-                </Button>
-            </div>
+                </div>
+            )}
         </>
     );
 };

@@ -1,13 +1,40 @@
 import {baseApi} from "./baseApi";
 import type {Submission} from "./types/submissions";
+import {instancesApi} from "~/store/api/instancesApi.ts";
+import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
+
+type SubmissionParams = {instanceId: string; submissionId: string};
 
 export const submissionsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getSubmission: builder.query<Submission, {instanceId: string; submissionId: string}>({
+        getSubmission: builder.query<Submission, SubmissionParams>({
             query: ({instanceId, submissionId}) => `/Submissions/${instanceId}/${submissionId}`,
             providesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Submission", instanceId, submissionId},
             ],
+        }),
+        submitSubmission: builder.mutation<SubmitSubmissionResult, SubmissionParams>({
+            query: (params) => ({
+                url: `Submissions/${params.instanceId}/${params.submissionId}`,
+                method: "post",
+            }),
+            async onQueryStarted(params, {dispatch, queryFulfilled}) {
+                const {data} = await queryFulfilled;
+                dispatch(
+                    instancesApi.util.updateQueryData(
+                        "getInstance",
+                        params.instanceId,
+                        () => data.updatedInstance,
+                    ),
+                );
+                dispatch(
+                    submissionsApi.util.updateQueryData(
+                        "getSubmission",
+                        {instanceId: params.instanceId, submissionId: params.submissionId},
+                        () => data.submission,
+                    ),
+                );
+            },
         }),
     }),
 });
