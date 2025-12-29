@@ -3,6 +3,11 @@
   "cancel": "Cancel",
   "confirm": "Confirm",
   "continue": "Continue",
+  "fileUpload": {
+    "description": "Description",
+    "maxFileSize": "Max. {{size}} per file",
+    "uploaded": "Uploaded"
+  },
   "first_help": {
     "title": "First aid with thesis"
   },
@@ -25,11 +30,6 @@
   "progress": {
     "label": "Here's where you are in the process",
     "title": "Progress"
-  },
-  "fileUpload": {
-    "description": "Description",
-    "uploaded": "Uploaded",
-    "maxFileSize": "Max. {{size}} per file"
   },
   "screens": {
     "students": "Students"

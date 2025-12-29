@@ -3,6 +3,11 @@
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
   "continue": "Doorgaan",
+  "fileUpload": {
+    "description": "Omschrijving",
+    "maxFileSize": "Max. {{size}} per bestand",
+    "uploaded": "Geüpload"
+  },
   "first_help": {
     "title": "Eerste hulp bij scripties"
   },
@@ -25,11 +30,6 @@
   "progress": {
     "label": "Hier ben je in het proces",
     "title": "Voortgang"
-  },
-  "fileUpload": {
-    "description": "Omschrijving",
-    "uploaded": "Geüpload",
-    "maxFileSize": "Max. {{size}} per bestand"
   },
   "screens": {
     "students": "Studenten"
