@@ -4,7 +4,9 @@ import {Controller, useForm} from "react-hook-form";
 
 import {Button, Heading, Text} from "@datanose/ui";
 
+import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
+import {useFileQuestions} from "~/hooks/useFileQuestions";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
@@ -54,6 +56,11 @@ export const PageControl = ({
         [instanceId, submissionId, saveAnswer],
     );
 
+    const {fileQuestions, regularQuestions, fileValuesMap} = useFileQuestions({
+        questions: page.questions,
+        control: form.control,
+    });
+
     return (
         <>
             <div className="mb-4 flex flex-col gap-4 pt-4">
@@ -65,7 +72,7 @@ export const PageControl = ({
                 </div>
                 <div>
                     <form>
-                        {page.questions.map((question) => (
+                        {regularQuestions.map((question) => (
                             <Controller
                                 key={question.name}
                                 control={form.control}
@@ -85,6 +92,19 @@ export const PageControl = ({
                                 }}
                             />
                         ))}
+
+                        {fileQuestions.length > 0 && (
+                            <FileUploadTable
+                                questions={fileQuestions}
+                                values={fileValuesMap}
+                                onFileSelect={(questionName, file) => {
+                                    form.setValue(questionName, file);
+                                    if (file) {
+                                        save({questionName, value: file});
+                                    }
+                                }}
+                            />
+                        )}
                     </form>
                 </div>
             </div>

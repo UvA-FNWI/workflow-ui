@@ -1,27 +1,22 @@
-import {useState} from "react";
-
 import {FileUpload} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
-import type {LocalString} from "~/hooks/useTranslate";
+import type {Question} from "~/store/api/types/submissions";
 
 interface FileUploadTableProps {
-    description?: LocalString;
-    onFileSelect?: (file: File | null) => void;
-    value?: File | null;
+    questions: Question[];
+    values: Record<string, File | null>;
+    onFileSelect: (questionName: string, file: File | null) => void;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
 
-export const FileUploadTable = ({description, onFileSelect, value}: FileUploadTableProps) => {
+export const FileUploadTable = ({questions, values, onFileSelect}: FileUploadTableProps) => {
     const {t, l} = useTranslate("workflow");
-    const [selectedFile, setSelectedFile] = useState<File | null>(value || null);
-    const handleFileSelect = (file: File | null) => {
-        setSelectedFile(file);
-        onFileSelect?.(file);
-    };
 
-    const hasValidFile = selectedFile !== null;
+    const handleFileSelect = (questionName: string, file: File | null) => {
+        onFileSelect(questionName, file);
+    };
 
     return (
         <div className="flex flex-col gap-2">
@@ -34,35 +29,53 @@ export const FileUploadTable = ({description, onFileSelect, value}: FileUploadTa
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className="p-2 align-top">
-                            <div
-                                className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-500" : "bg-red-500"}`}
-                                aria-label={
-                                    hasValidFile
-                                        ? t("file_upload.uploaded")
-                                        : t("file_upload.no_file_uploaded")
-                                }
-                            />
-                        </td>
-                        <td className="p-2 align-top">{l(description)}</td>
-                        <td className="p-2 align-top">
-                            <FileUpload
-                                maxSize={MAX_FILE_SIZE}
-                                onFileSelect={handleFileSelect}
-                                showFileName={true}
-                                buttonText={
-                                    selectedFile
-                                        ? t("file_upload.change_file")
-                                        : t("file_upload.upload_file")
-                                }
-                                buttonIntent="secondary"
-                                errorMessages={{
-                                    fileSize: t("file_upload.error_max_file_size", {size: "10MB"}),
-                                }}
-                            />
-                        </td>
-                    </tr>
+                    {questions.map((question) => {
+                        const selectedFile = values[question.name];
+                        const hasValidFile = selectedFile !== null && selectedFile !== undefined;
+
+                        return (
+                            <tr key={question.name} className="border-b">
+                                <td className="p-2 align-top">
+                                    <div
+                                        className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-500" : "bg-red-500"}`}
+                                        aria-label={
+                                            hasValidFile
+                                                ? t("file_upload.uploaded")
+                                                : t("file_upload.no_file_uploaded")
+                                        }
+                                    />
+                                </td>
+                                <td className="p-2 align-top">
+                                    <div className="font-medium">{l(question.text)}</div>
+                                    {question.description && (
+                                        <div className="text-sm text-gray-600">
+                                            {l(question.description)}
+                                        </div>
+                                    )}
+                                </td>
+                                <td className="p-2 align-top">
+                                    <FileUpload
+                                        maxSize={MAX_FILE_SIZE}
+                                        onFileSelect={(file: File | null) =>
+                                            handleFileSelect(question.name, file)
+                                        }
+                                        showFileName={true}
+                                        buttonText={
+                                            selectedFile
+                                                ? t("file_upload.change_file")
+                                                : t("file_upload.upload_file")
+                                        }
+                                        buttonIntent="secondary"
+                                        errorMessages={{
+                                            fileSize: t("file_upload.error_max_file_size", {
+                                                size: "10MB",
+                                            }),
+                                        }}
+                                    />
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
             <div className="text-sm text-gray-600">
