@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react';
 
-import { useButton } from 'react-aria';
-
 import { cva } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
@@ -59,20 +57,8 @@ export const FileUpload = ({
   errorMessages = {},
 }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Use react-aria for button accessibility
-  const { buttonProps } = useButton(
-    {
-      onPress: () => {
-        inputRef.current?.click();
-      },
-      isDisabled: disabled,
-    },
-    buttonRef
-  );
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -158,10 +144,9 @@ export const FileUpload = ({
       />
 
       <Button
-        {...buttonProps}
-        ref={buttonRef}
         intent={buttonIntent}
         disabled={disabled}
+        onClick={() => inputRef.current?.click()}
         leftIcon={<Icon name="upload-line" size="sm" color="current" />}
       >
         {buttonText}

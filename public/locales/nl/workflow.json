@@ -3,9 +3,13 @@
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
   "continue": "Doorgaan",
-  "fileUpload": {
-    "description": "Omschrijving",
-    "maxFileSize": "Max. {{size}} per bestand",
+  "file_upload": {
+    "change_file": "Wijzig bestand",
+    "description": "Beschrijving",
+    "max_file_size": "Max. {{size}} per bestand",
+    "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
+    "no_file_uploaded": "Geen bestand geüpload",
+    "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
   "first_help": {
