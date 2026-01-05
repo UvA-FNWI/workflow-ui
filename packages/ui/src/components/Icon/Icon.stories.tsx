@@ -27,7 +27,7 @@ const meta: Meta<typeof Icon> = {
     color: {
       control: { type: 'select' },
       options: [
-        'default',
+        'current',
         'primary',
         'secondary',
         'success',
@@ -51,7 +51,7 @@ export const Default: Story = {
   args: {
     name: 'accessibility-line',
     size: 'md',
-    color: 'primary',
+    color: 'current',
   },
 };
 
@@ -120,6 +120,7 @@ const IconBrowserComponent = () => {
               name={iconName}
               size="lg"
               className="ui:group-hover:text-red-brand ui:transition-colors"
+              color="current"
             />
             <span className="ui:group-hover:text-red-brand ui:mt-2 ui:w-full ui:truncate ui:text-center ui:text-xs ui:font-medium">
               {iconName.replace(/-/g, ' ')}
@@ -153,12 +154,12 @@ export const All: Story = {
 export const Sizes: Story = {
   render: () => (
     <div className="ui:flex ui:items-center ui:gap-4">
-      <Icon name="accessibility-line" size="xs" />
-      <Icon name="accessibility-line" size="sm" />
-      <Icon name="accessibility-line" size="md" />
-      <Icon name="accessibility-line" size="lg" />
-      <Icon name="accessibility-line" size="xl" />
-      <Icon name="accessibility-line" size="2xl" />
+      <Icon name="accessibility-line" size="xs" color="current" />
+      <Icon name="accessibility-line" size="sm" color="current" />
+      <Icon name="accessibility-line" size="md" color="current" />
+      <Icon name="accessibility-line" size="lg" color="current" />
+      <Icon name="accessibility-line" size="xl" color="current" />
+      <Icon name="accessibility-line" size="2xl" color="current" />
     </div>
   ),
 };
@@ -183,16 +184,19 @@ export const CustomStyling: Story = {
         name="alarm-solid"
         className="ui:cursor-pointer ui:text-blue-500 ui:transition-colors ui:hover:text-blue-700"
         size="xl"
+        color="current"
       />
       <Icon
         name="accessibility-solid"
         className="ui:rotate-45 ui:transform ui:text-green-500"
         size="xl"
+        color="current"
       />
       <Icon
         name="ai-brain-solid"
         className="ui:animate-pulse ui:text-purple-500"
         size="xl"
+        color="current"
       />
     </div>
   ),
@@ -202,11 +206,11 @@ export const Accessibility: Story = {
   render: () => (
     <div className="ui:flex ui:flex-col ui:gap-4">
       <div className="ui:flex ui:items-center ui:gap-2">
-        <Icon name="accessibility-line" decorative />
+        <Icon name="accessibility-line" decorative color="current" />
         <span>Decorative icon (hidden from screen readers)</span>
       </div>
       <div className="ui:flex ui:items-center ui:gap-2">
-        <Icon name="alarm-line" label="Set alarm" />
+        <Icon name="alarm-line" label="Set alarm" color="current" />
         <span>Icon with custom accessible label</span>
       </div>
     </div>

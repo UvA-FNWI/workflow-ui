@@ -27,6 +27,7 @@ export type StoredFile = {
 export type Form = {
     name: string;
     title: LocalString;
+    layout: FormLayout;
     pages: Page[];
     step?: string;
 };
@@ -83,3 +84,4 @@ export type DataType =
     | "Reference"
     | "Int";
 export type ChoiceLayoutType = "Dropdown" | "RadioList";
+export type FormLayout = "Normal" | "SinglePage" | "Modal";

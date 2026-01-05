@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Card, Heading, Input, Tab, Tabs} from "@datanose/ui";
+import {Card, Heading, Input, Tab, TabList, TabPanel, TabPanels, Tabs} from "@datanose/ui";
 
 import {ScreenTable} from "~/components/ScreenTable";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -10,6 +10,10 @@ export const ProjectScreenOverview = () => {
     const {t, l} = useTranslate("workflow", {keyPrefix: "screens"});
     const {data: screens} = screensEndpoints.getProjectsOverviewScreens.useQuery();
     const [search, setSearch] = useState("");
+
+    if (!screens) {
+        return null;
+    }
 
     return (
         <div>
@@ -26,22 +30,24 @@ export const ProjectScreenOverview = () => {
                     </div>
                 </div>
                 <Tabs>
-                    {screens &&
-                        screens.groups.map((group) => {
-                            return (
-                                <Tab
-                                    key={group.name}
-                                    title={l(group.title)}
-                                    count={group.rows.length}
-                                >
-                                    <ScreenTable
-                                        columns={screens.columns}
-                                        rows={group.rows}
-                                        globalFilter={search}
-                                    />
-                                </Tab>
-                            );
-                        })}
+                    <TabList>
+                        {screens.groups.map((group) => (
+                            <Tab key={group.name}>
+                                {l(group.title)} ({group.rows.length})
+                            </Tab>
+                        ))}
+                    </TabList>
+                    <TabPanels>
+                        {screens.groups.map((group) => (
+                            <TabPanel key={group.name}>
+                                <ScreenTable
+                                    columns={screens.columns}
+                                    rows={group.rows}
+                                    globalFilter={search}
+                                />
+                            </TabPanel>
+                        ))}
+                    </TabPanels>
                 </Tabs>
             </Card>
         </div>
