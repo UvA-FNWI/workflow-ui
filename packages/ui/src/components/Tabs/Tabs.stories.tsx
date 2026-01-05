@@ -1,310 +1,305 @@
 import { useState } from 'react';
 
-import type { Key } from 'react-stately';
-
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Tab, Tabs, TabsProps } from './Tabs';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from './Tabs';
 
 const meta: Meta<typeof Tabs> = {
   title: 'Components/Tabs',
   component: Tabs,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: `
+The Tabs component provides a tabbed interface for organizing content. It follows the controlled/uncontrolled component pattern and is framework-agnostic.
+
+## Features
+- **Controlled and Uncontrolled modes**: Use \`activeIndex\` and \`onTabChange\` for controlled mode, or \`defaultActiveIndex\` for uncontrolled
+- **Router Integration**: Optional hooks available for URL synchronization
+- **Accessibility**: Full keyboard support and ARIA attributes
+- **Disabled/Hidden Tabs**: Support for disabled and hidden tabs
+- **Imperative API**: Ref-based methods for programmatic control
+        `,
+      },
+    },
+  },
+  argTypes: {
+    activeIndex: {
+      control: 'number',
+      description: 'Current active tab index (controlled mode)',
+      table: { defaultValue: { summary: 'undefined' } },
+    },
+    defaultActiveIndex: {
+      control: 'number',
+      description: 'Default active tab index (uncontrolled mode)',
+      table: { defaultValue: { summary: '0' } },
+    },
+    onTabChange: {
+      action: 'tab-changed',
+      description: 'Callback fired when tab changes',
+    },
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes',
+    },
   },
 };
+
 export default meta;
+type Story = StoryObj<typeof meta>;
 
-type Story = StoryObj<typeof Tabs>;
-
-export const Default: Story = {
-  render: () => (
-    <Tabs aria-label="Main tabs">
-      <Tab title="Overview">
-        <div>
-          <h3 className="ui:text-lg ui:font-semibold ui:mb-2 ui:text-black ui:dark:text-white">
-            Overview
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            This is the overview tab content. It provides a general summary of
-            the information.
+// Template for basic tabs
+const BasicTabsTemplate = (args: any) => (
+  <Tabs {...args}>
+    <TabList>
+      <Tab>Overview</Tab>
+      <Tab>Settings</Tab>
+      <Tab>Analytics</Tab>
+      <Tab>Team</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Overview</h3>
+          <p>
+            This is the overview tab content. It contains general information
+            about your account and recent activity.
           </p>
         </div>
-      </Tab>
-      <Tab title="Details">
-        <div>
-          <h3 className="ui:text-lg ui:font-semibold ui:mb-2 ui:text-black ui:dark:text-white">
-            Details
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Here you can find more detailed information about the selected
-            topic.
+      </TabPanel>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Settings</h3>
+          <p>
+            Configure your preferences and account settings here. You can update
+            your profile, notifications, and more.
           </p>
         </div>
-      </Tab>
-      <Tab title="Settings">
-        <div>
-          <h3 className="ui:text-lg ui:font-semibold ui:mb-2 ui:text-black ui:dark:text-white">
-            Settings
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Configure your preferences and options in this settings panel.
+      </TabPanel>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Analytics</h3>
+          <p>
+            View detailed analytics and metrics about your usage, performance,
+            and engagement statistics.
           </p>
         </div>
-      </Tab>
-    </Tabs>
-  ),
-};
+      </TabPanel>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Team</h3>
+          <p>
+            Manage your team members, roles, and permissions. Invite new users
+            and organize your workspace.
+          </p>
+        </div>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
+);
 
-const ControlledTabsExample = (args: Partial<TabsProps>) => {
-  const [selectedKey, setSelectedKey] = useState<Key>('overview');
+// Controlled tabs template
+const ControlledTabsTemplate = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <div>
-      <p className="ui:mb-4 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400">
-        Selected tab: <strong>{String(selectedKey)}</strong>
-      </p>
-      <Tabs
-        {...args}
-        selectedKey={selectedKey}
-        onSelectionChange={setSelectedKey}
-        aria-label="Controlled tabs"
-      >
-        <Tab id="overview" title="Overview">
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Overview content
-          </p>
-        </Tab>
-        <Tab id="details" title="Details">
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Details content
-          </p>
-        </Tab>
-        <Tab id="settings" title="Settings">
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Settings content
-          </p>
-        </Tab>
+      <div style={{ marginBottom: '16px' }}>
+        <strong>Current active tab: {activeIndex}</strong>
+        <br />
+        <button
+          onClick={() => setActiveIndex(0)}
+          style={{ marginRight: '8px', marginTop: '8px' }}
+        >
+          Go to Tab 1
+        </button>
+        <button
+          onClick={() => setActiveIndex(1)}
+          style={{ marginRight: '8px', marginTop: '8px' }}
+        >
+          Go to Tab 2
+        </button>
+        <button onClick={() => setActiveIndex(2)} style={{ marginTop: '8px' }}>
+          Go to Tab 3
+        </button>
+      </div>
+
+      <Tabs activeIndex={activeIndex} onTabChange={setActiveIndex}>
+        <TabList>
+          <Tab>Dashboard</Tab>
+          <Tab>Reports</Tab>
+          <Tab>Users</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <div
+              style={{
+                padding: '20px',
+                backgroundColor: '#f0f9ff',
+                borderRadius: '8px',
+              }}
+            >
+              <h3>Dashboard</h3>
+              <p>
+                Welcome to your dashboard! This is a controlled tab component
+                example.
+              </p>
+              <p>
+                You can programmatically control which tab is active using the
+                buttons above.
+              </p>
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <div
+              style={{
+                padding: '20px',
+                backgroundColor: '#f0fdf4',
+                borderRadius: '8px',
+              }}
+            >
+              <h3>Reports</h3>
+              <p>
+                Generate and view your reports here. This tab is controlled by
+                the parent component state.
+              </p>
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <div
+              style={{
+                padding: '20px',
+                backgroundColor: '#fefce8',
+                borderRadius: '8px',
+              }}
+            >
+              <h3>Users</h3>
+              <p>
+                Manage your users and their permissions. The active state is
+                managed externally.
+              </p>
+            </div>
+          </TabPanel>
+        </TabPanels>
       </Tabs>
     </div>
   );
 };
 
-export const Controlled: Story = {
-  render: args => <ControlledTabsExample {...args} />,
-};
+// Template with disabled and states
+const TabStatesTemplate = () => (
+  <Tabs defaultActiveIndex={0}>
+    <TabList>
+      <Tab>Active Tab</Tab>
+      <Tab disabled>Disabled Tab</Tab>
+      <Tab>Another Active Tab</Tab>
+      <Tab hidden>Hidden Tab</Tab>
+      <Tab>Final Tab</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Active Tab Content</h3>
+          <p>This is a normal, active tab that users can interact with.</p>
+        </div>
+      </TabPanel>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Disabled Tab Content</h3>
+          <p>This content won't be shown because the tab is disabled.</p>
+        </div>
+      </TabPanel>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Another Active Tab</h3>
+          <p>This tab is also interactive and users can click on it.</p>
+        </div>
+      </TabPanel>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Hidden Tab Content</h3>
+          <p>This content won't be shown because the tab is hidden.</p>
+        </div>
+      </TabPanel>
+      <TabPanel>
+        <div style={{ padding: '20px' }}>
+          <h3>Final Tab</h3>
+          <p>This is the last tab in the list.</p>
+        </div>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
+);
 
-export const WithDefaultSelected: Story = {
+export const Default = {
+  render: BasicTabsTemplate,
+  args: {
+    defaultActiveIndex: 0,
+  },
+} satisfies Story;
+
+export const Uncontrolled = {
+  render: BasicTabsTemplate,
+  args: {
+    defaultActiveIndex: 2,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Uncontrolled tabs manage their own state. Use `defaultActiveIndex` to set the initial active tab.',
+      },
+    },
+  },
+} satisfies Story;
+
+export const Controlled = {
+  render: ControlledTabsTemplate,
+  args: {},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Controlled tabs allow you to manage the active state externally. Use `activeIndex` and `onTabChange` props for full control.',
+      },
+    },
+  },
+} satisfies Story;
+
+export const WithDisabledAndHiddenTabs = {
+  render: TabStatesTemplate,
+  args: {},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Tabs can be disabled (non-interactive) or hidden (not visible). Disabled tabs cannot be clicked, while hidden tabs are not rendered.',
+      },
+    },
+  },
+} satisfies Story;
+
+export const MinimalExample = {
   render: () => (
-    <Tabs defaultSelectedKey="details" aria-label="Tabs with default selection">
-      <Tab id="overview" title="Overview">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Overview content
-        </p>
-      </Tab>
-      <Tab id="details" title="Details">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          This tab is selected by default!
-        </p>
-      </Tab>
-      <Tab id="settings" title="Settings">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Settings content
-        </p>
-      </Tab>
+    <Tabs>
+      <TabList>
+        <Tab>Tab 1</Tab>
+        <Tab>Tab 2</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel>Content for tab 1</TabPanel>
+        <TabPanel>Content for tab 2</TabPanel>
+      </TabPanels>
     </Tabs>
   ),
-};
-
-export const Vertical: Story = {
-  render: () => (
-    <Tabs orientation="vertical" aria-label="Vertical tabs">
-      <Tab title="Overview">
-        <div>
-          <h3 className="ui:text-lg ui:font-semibold ui:mb-2 ui:text-black ui:dark:text-white">
-            Overview
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            This is the overview tab content.
-          </p>
-        </div>
-      </Tab>
-      <Tab title="Details">
-        <div>
-          <h3 className="ui:text-lg ui:font-semibold ui:mb-2 ui:text-black ui:dark:text-white">
-            Details
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Here you can find more detailed information.
-          </p>
-        </div>
-      </Tab>
-      <Tab title="Settings">
-        <div>
-          <h3 className="ui:text-lg ui:font-semibold ui:mb-2 ui:text-black ui:dark:text-white">
-            Settings
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Configure your preferences here.
-          </p>
-        </div>
-      </Tab>
-    </Tabs>
-  ),
-};
-
-export const WithDisabledTab: Story = {
-  render: () => (
-    <Tabs aria-label="Tabs with disabled item">
-      <Tab title="Active Tab">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          This tab is active and clickable.
-        </p>
-      </Tab>
-      <Tab title="Disabled Tab" isDisabled>
-        <p>You cannot see this content.</p>
-      </Tab>
-      <Tab title="Another Tab">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          This is another active tab.
-        </p>
-      </Tab>
-    </Tabs>
-  ),
-};
-
-export const AllDisabled: Story = {
-  render: () => (
-    <Tabs isDisabled aria-label="All disabled tabs">
-      <Tab title="Tab 1">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">Content 1</p>
-      </Tab>
-      <Tab title="Tab 2">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">Content 2</p>
-      </Tab>
-      <Tab title="Tab 3">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">Content 3</p>
-      </Tab>
-    </Tabs>
-  ),
-};
-
-export const ManyTabs: Story = {
-  render: () => (
-    <Tabs aria-label="Many tabs example">
-      <Tab title="First">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Content for first tab
-        </p>
-      </Tab>
-      <Tab title="Second">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Content for second tab
-        </p>
-      </Tab>
-      <Tab title="Third">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Content for third tab
-        </p>
-      </Tab>
-      <Tab title="Fourth">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Content for fourth tab
-        </p>
-      </Tab>
-      <Tab title="Fifth">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Content for fifth tab
-        </p>
-      </Tab>
-      <Tab title="Sixth">
-        <p className="ui:text-grey-700 ui:dark:text-grey-300">
-          Content for sixth tab
-        </p>
-      </Tab>
-    </Tabs>
-  ),
-};
-
-export const WithRichContent: Story = {
-  render: () => (
-    <Tabs aria-label="Settings with icons">
-      <Tab
-        id="profile"
-        title={
-          <span className="ui:flex ui:items-center ui:gap-2">
-            <svg
-              className="ui:w-4 ui:h-4"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-            </svg>
-            Profile
-          </span>
-        }
-      >
-        <div className="ui:space-y-4">
-          <h3 className="ui:text-lg ui:font-semibold ui:text-black ui:dark:text-white">
-            User Profile
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Manage your account settings and preferences.
-          </p>
-        </div>
-      </Tab>
-      <Tab
-        id="notifications"
-        title={
-          <span className="ui:flex ui:items-center ui:gap-2">
-            <svg
-              className="ui:w-4 ui:h-4"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-            </svg>
-            Notifications
-          </span>
-        }
-      >
-        <div className="ui:space-y-4">
-          <h3 className="ui:text-lg ui:font-semibold ui:text-black ui:dark:text-white">
-            Notification Settings
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Configure how you want to receive updates.
-          </p>
-        </div>
-      </Tab>
-      <Tab
-        id="security"
-        title={
-          <span className="ui:flex ui:items-center ui:gap-2">
-            <svg
-              className="ui:w-4 ui:h-4"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Security
-          </span>
-        }
-      >
-        <div className="ui:space-y-4">
-          <h3 className="ui:text-lg ui:font-semibold ui:text-black ui:dark:text-white">
-            Security Settings
-          </h3>
-          <p className="ui:text-grey-700 ui:dark:text-grey-300">
-            Manage your password and security preferences.
-          </p>
-        </div>
-      </Tab>
-    </Tabs>
-  ),
-};
+  args: {},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Minimal tabs setup with no configuration. Defaults to uncontrolled mode with first tab active.',
+      },
+    },
+  },
+} satisfies Story;

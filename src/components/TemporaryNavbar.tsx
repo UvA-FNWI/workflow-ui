@@ -1,6 +1,6 @@
 import {type ChangeEvent, useEffect} from "react";
 
-import {useTheme} from "@datanose/ui";
+import {Button, useTheme} from "@datanose/ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -35,13 +35,9 @@ function TemporaryNavbar() {
                 </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
-                <button
-                    className="border-grey-300 text-grey-900 hover:bg-grey-100 dark:border-grey-700 dark:bg-grey-800 dark:text-grey-100 dark:hover:bg-grey-700 rounded border bg-white px-3 py-1 text-sm font-medium transition"
-                    onClick={handleThemeToggle}
-                    type="button"
-                >
+                <Button intent="secondary" onClick={handleThemeToggle} type="button">
                     Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode
-                </button>
+                </Button>
                 <label
                     className="text-grey-700 dark:text-grey-200 flex items-center gap-2 text-sm font-medium"
                     htmlFor="temporary-language-select"

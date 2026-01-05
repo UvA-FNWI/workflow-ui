@@ -1,9 +1,9 @@
 import type {LocalString} from "~/hooks/useTranslate";
-import type {Submission} from "~/store/api/types/submissions.ts";
+import type {FormLayout, Submission} from "~/store/api/types/submissions.ts";
 
 export type WorkflowInstance = {
     id: string;
-    title: string | null;
+    title: LocalString | null;
     steps: WorkflowStep[];
     submissions: Submission[];
     actions: Action[];
@@ -26,6 +26,7 @@ export type Action = {
     mail?: string;
     step?: string;
     intent: ActionIntent;
+    formLayout: FormLayout;
 };
 
 export type ActionType = "SubmitForm" | "Execute";
