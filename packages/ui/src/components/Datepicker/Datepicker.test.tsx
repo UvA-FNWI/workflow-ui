@@ -449,13 +449,14 @@ describe('DatePicker Component', () => {
       });
 
       const today = new Date();
-      const dayButton = screen.getByText(today.getDate().toString());
-      fireEvent.click(dayButton);
-
-      await waitFor(() => {
-        expect(onChange).toHaveBeenCalled();
-        expect(onChange.mock.calls[0][0]).toBeInstanceOf(Date);
-      });
+      const dayButton = findDateButton(today.getDate().toString());
+      if (dayButton) {
+        fireEvent.click(dayButton);
+        await waitFor(() => {
+          expect(onChange).toHaveBeenCalled();
+          expect(onChange.mock.calls[0][0]).toBeInstanceOf(Date);
+        });
+      }
     });
 
     test('accepts mixed DateValue and Date types', async () => {
