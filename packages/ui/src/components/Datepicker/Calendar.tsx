@@ -1,42 +1,35 @@
 import { useRef } from 'react';
 
 import {
-  AriaButtonProps,
   AriaCalendarProps,
+  AriaRangeCalendarProps,
   DateValue,
-  useButton,
   useCalendar,
   useCalendarGrid,
   useLocale,
+  useRangeCalendar,
 } from 'react-aria';
-import { CalendarState, useCalendarState } from 'react-stately';
+import {
+  CalendarState,
+  RangeCalendarState,
+  useCalendarState,
+  useRangeCalendarState,
+} from 'react-stately';
 
 import { createCalendar } from '@internationalized/date';
 
 import { Icon } from '../Icon';
+import { CalendarNavButton } from './CalendarButton';
 import { CalendarCell } from './CalendarCell';
 
-type CalendarProps = AriaCalendarProps<DateValue>;
-
-// TODO: Replace with Button component
-function NavButton(
-  props: AriaButtonProps<'button'> & { children: React.ReactNode }
-) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const { buttonProps } = useButton(props, ref);
-
-  return (
-    <button
-      {...buttonProps}
-      ref={ref}
-      className="ui:flex ui:h-8 ui:w-8 ui:items-center ui:justify-center ui:rounded ui:text-grey-700 ui:transition-colors ui:hover:bg-grey-200 ui:dark:text-grey-300 ui:dark:hover:bg-grey-800"
-    >
-      {props.children}
-    </button>
-  );
-}
-
-function CalendarGrid({ state }: { state: CalendarState }) {
+/**
+ * Shared calendar grid component that works with both single and range calendar states
+ */
+function CalendarGrid({
+  state,
+}: {
+  state: CalendarState | RangeCalendarState;
+}) {
   const { gridProps, headerProps, weekDays } = useCalendarGrid({}, state);
 
   return (
@@ -72,17 +65,29 @@ function CalendarGrid({ state }: { state: CalendarState }) {
   );
 }
 
-export const Calendar: React.FC<CalendarProps> = props => {
-  const { locale } = useLocale();
-  const state = useCalendarState({
-    ...props,
-    locale,
-    createCalendar,
-  });
+/**
+ * Shared calendar layout wrapper
+ */
+interface CalendarLayoutProps {
+  calendarProps: React.HTMLAttributes<HTMLDivElement>;
+  onPressNext: () => void;
+  onPressPrev: () => void;
+  isPrevDisabled?: boolean;
+  isNextDisabled?: boolean;
+  title: string;
+  state: CalendarState | RangeCalendarState;
+}
 
+function CalendarLayout({
+  calendarProps,
+  onPressPrev,
+  onPressNext,
+  isPrevDisabled,
+  isNextDisabled,
+  title,
+  state,
+}: CalendarLayoutProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const { calendarProps, prevButtonProps, nextButtonProps, title } =
-    useCalendar(props, state);
 
   return (
     <div
@@ -92,18 +97,73 @@ export const Calendar: React.FC<CalendarProps> = props => {
     >
       {/* Header with navigation */}
       <div className="ui:mb-4 ui:flex ui:items-center ui:justify-between">
-        <NavButton {...prevButtonProps}>
+        <CalendarNavButton onPress={onPressPrev} isDisabled={isPrevDisabled}>
           <Icon name="chevron-left-line" className="ui:h-5 ui:w-5" />
-        </NavButton>
+        </CalendarNavButton>
         <h2 className="ui:text-lg ui:font-semibold ui:text-black ui:dark:text-white">
           {title}
         </h2>
-        <NavButton {...nextButtonProps}>
+        <CalendarNavButton onPress={onPressNext} isDisabled={isNextDisabled}>
           <Icon name="chevron-right-line" className="ui:h-5 ui:w-5" />
-        </NavButton>
+        </CalendarNavButton>
       </div>
       {/* Calendar Grid */}
       <CalendarGrid state={state} />
     </div>
+  );
+}
+
+// Single Date Calendar
+type CalendarProps = AriaCalendarProps<DateValue>;
+
+export const Calendar: React.FC<CalendarProps> = props => {
+  const { locale } = useLocale();
+  const state = useCalendarState({
+    ...props,
+    locale,
+    createCalendar,
+  });
+
+  const { calendarProps, prevButtonProps, nextButtonProps, title } =
+    useCalendar(props, state);
+
+  return (
+    <CalendarLayout
+      calendarProps={calendarProps}
+      onPressPrev={() => state.focusPreviousPage()}
+      onPressNext={() => state.focusNextPage()}
+      isPrevDisabled={prevButtonProps.isDisabled}
+      isNextDisabled={nextButtonProps.isDisabled}
+      title={title}
+      state={state}
+    />
+  );
+};
+
+// Range Calendar
+type RangeCalendarProps = AriaRangeCalendarProps<DateValue>;
+
+export const RangeCalendar: React.FC<RangeCalendarProps> = props => {
+  const { locale } = useLocale();
+  const state = useRangeCalendarState({
+    ...props,
+    locale,
+    createCalendar,
+  });
+
+  const ref = useRef<HTMLDivElement>(null);
+  const { calendarProps, prevButtonProps, nextButtonProps, title } =
+    useRangeCalendar(props, state, ref);
+
+  return (
+    <CalendarLayout
+      calendarProps={calendarProps}
+      onPressPrev={() => state.focusPreviousPage()}
+      onPressNext={() => state.focusNextPage()}
+      isPrevDisabled={prevButtonProps.isDisabled}
+      isNextDisabled={nextButtonProps.isDisabled}
+      title={title}
+      state={state}
+    />
   );
 };

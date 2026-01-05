@@ -5,6 +5,11 @@ export { Card, type CardVariantProps } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
 export { DatePicker, type DatePickerProps } from './components/Datepicker';
 export {
+  DateRangePicker,
+  type DateRangePickerProps,
+  type DateRange,
+} from './components/Datepicker';
+export {
   Heading,
   type HeadingVariantProps,
 } from './components/Heading/Heading';

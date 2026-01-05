@@ -1,26 +1,33 @@
 import { useMemo, useRef } from 'react';
 
 import {
-  AriaDatePickerProps,
+  AriaDateRangePickerProps,
   DateValue,
   DismissButton,
   I18nProvider,
-  useDatePicker,
+  useDateRangePicker,
 } from 'react-aria';
-import { useDatePickerState } from 'react-stately';
+import { useDateRangePickerState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
 import { inputVariants } from '../Input/InputVariant';
-import { Calendar } from './Calendar';
+import { RangeCalendar } from './Calendar';
 import { CalendarButton } from './CalendarButton';
 import { DateField } from './DateField';
 import { Popover } from './Popover';
-import { dateToDateValue, dateValueToDate } from './utils';
+import {
+  DateRange,
+  dateRangeToDateValueRange,
+  dateValueRangeToDateRange,
+} from './utils';
+
+// Re-export DateRange type for consumers
+export type { DateRange } from './utils';
 
 // Public API that accepts Date objects
-export interface DatePickerProps
+export interface DateRangePickerProps
   extends Omit<
-    AriaDatePickerProps<DateValue>,
+    AriaDateRangePickerProps<DateValue>,
     'value' | 'defaultValue' | 'onChange'
   > {
   label?: string;
@@ -29,12 +36,12 @@ export interface DatePickerProps
   isValid?: boolean;
   className?: string;
   locale?: string;
-  value?: Date | DateValue | null;
-  defaultValue?: Date | DateValue | null;
-  onChange?: (date: Date | null) => void;
+  value?: DateRange | null;
+  defaultValue?: DateRange | null;
+  onChange?: (range: DateRange | null) => void;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
+export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   label,
   description,
   errorMessage,
@@ -47,30 +54,28 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   onChange,
   ...props
 }) => {
-  // Convert Date to DateValue if needed
+  // Convert Date range to DateValue range if needed
   const internalValue = useMemo(() => {
     if (!value) return undefined;
-    return value instanceof Date ? dateToDateValue(value) : value;
+    return dateRangeToDateValueRange(value) ?? undefined;
   }, [value]);
 
   const internalDefaultValue = useMemo(() => {
     if (!defaultValue) return undefined;
-    return defaultValue instanceof Date
-      ? dateToDateValue(defaultValue)
-      : defaultValue;
+    return dateRangeToDateValueRange(defaultValue) ?? undefined;
   }, [defaultValue]);
 
-  // Wrap onChange to convert DateValue back to Date
+  // Wrap onChange to convert DateValue range back to Date range
   const handleChange = useMemo(() => {
     if (!onChange) return undefined;
-    return (dateValue: DateValue | null) => {
-      onChange(dateValueToDate(dateValue));
+    return (range: { start: DateValue; end: DateValue } | null) => {
+      onChange(dateValueRangeToDateRange(range));
     };
   }, [onChange]);
 
   return (
     <I18nProvider locale={locale}>
-      <DatePickerInner
+      <DateRangePickerInner
         label={label}
         description={description}
         errorMessage={errorMessage}
@@ -87,17 +92,17 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 };
 
 // Internal component that works with DateValue
-interface DatePickerInnerProps
+interface DateRangePickerInnerProps
   extends Omit<
-      DatePickerProps,
+      DateRangePickerProps,
       'locale' | 'value' | 'defaultValue' | 'onChange'
     >,
     Pick<
-      AriaDatePickerProps<DateValue>,
+      AriaDateRangePickerProps<DateValue>,
       'value' | 'defaultValue' | 'onChange'
     > {}
 
-const DatePickerInner: React.FC<DatePickerInnerProps> = ({
+const DateRangePickerInner: React.FC<DateRangePickerInnerProps> = ({
   label,
   description,
   errorMessage,
@@ -106,7 +111,7 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
   className,
   ...props
 }) => {
-  const state = useDatePickerState({
+  const state = useDateRangePickerState({
     ...props,
     isDisabled,
   });
@@ -114,13 +119,14 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
   const {
     groupProps,
     labelProps,
-    fieldProps,
+    startFieldProps,
+    endFieldProps,
     buttonProps,
     dialogProps,
     calendarProps,
     descriptionProps,
     errorMessageProps,
-  } = useDatePicker({ ...props, label, isDisabled }, state, ref);
+  } = useDateRangePicker({ ...props, label, isDisabled }, state, ref);
 
   const inputClasses = inputVariants({
     isDisabled,
@@ -144,18 +150,28 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
         ref={ref}
         className={cn(
           inputClasses,
-          'ui:flex ui:items-center ui:justify-between',
+          'ui:flex ui:items-center ui:justify-between ui:gap-2',
           className
         )}
       >
-        <DateField {...fieldProps} />
+        <div className="ui:flex ui:flex-1 ui:items-center ui:gap-2">
+          <div className="ui:flex ui:flex-col ui:gap-0.5">
+            <DateField {...startFieldProps} />
+          </div>
+          <span className="ui:text-grey-400 ui:dark:text-grey-600 ui:mt-auto">
+            –
+          </span>
+          <div className="ui:flex ui:flex-col ui:gap-0.5">
+            <DateField {...endFieldProps} />
+          </div>
+        </div>
         <CalendarButton {...buttonProps} isDisabled={isDisabled} />
       </div>
       {state.isOpen && (
         <Popover state={state} triggerRef={ref as React.RefObject<HTMLElement>}>
           <DismissButton onDismiss={state.close} />
           <div {...dialogProps}>
-            <Calendar {...calendarProps} />
+            <RangeCalendar {...calendarProps} />
           </div>
           <DismissButton onDismiss={state.close} />
         </Popover>
