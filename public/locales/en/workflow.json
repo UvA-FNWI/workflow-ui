@@ -1,6 +1,7 @@
 {
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
+  "close": "Close",
   "confirm": "Confirm",
   "continue": "Continue",
   "file_upload": {
@@ -37,5 +38,6 @@
   },
   "screens": {
     "students": "Students"
-  }
+  },
+  "submit": "Submit"
 }

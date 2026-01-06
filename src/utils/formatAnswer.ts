@@ -23,6 +23,8 @@ export function formatAnswer(value: unknown, type: DataType, locale: string = "e
                     year: "numeric",
                     month: "long",
                     day: "numeric",
+                    hour: undefined,
+                    minute: undefined,
                 });
             }
             return String(value);

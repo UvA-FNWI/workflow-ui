@@ -1,6 +1,7 @@
 {
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
+  "close": "Sluiten",
   "confirm": "Bevestigen",
   "continue": "Doorgaan",
   "file_upload": {
@@ -37,5 +38,6 @@
   },
   "screens": {
     "students": "Studenten"
-  }
+  },
+  "submit": "Indienen"
 }
