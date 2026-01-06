@@ -26,7 +26,7 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
     const [submitSubmission, {isLoading}] = submissionsEndpoints.submitSubmission.useMutation();
 
     return (
-        <Modal isOpen={isOpen}>
+        <Modal isOpen={isOpen} onOpenChange={onClose}>
             <Modal.Header>{l(submission?.form.title)}</Modal.Header>
             <Modal.Body>
                 {submission && (

@@ -4,6 +4,7 @@ import {Button, Card, Heading, Modal, Separator} from "@datanose/ui";
 
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
+import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
@@ -22,19 +23,40 @@ export const StepCard = ({step, instance}: Props) => {
     const stepIds = [step.id, ...(step.children?.map((s) => s.id) ?? [])];
     const actions = instance.actions.filter((a) => a.step && stepIds.includes(a.step));
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
+    const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
 
     return (
         <Card>
             <div className="flex flex-col gap-4">
                 <Heading>{l(step.title)}</Heading>
                 <Separator />
-                {submissions.length > 0 && (
+                {submissions.map((submission) => (
+                    <FormSummary instanceId={instance.id} submission={submission} />
+                ))}
+
+                {isFormOpen && (
                     <FormPage
                         instanceId={instance.id}
-                        submissionId={submissions[0].id}
-                        actions={actions}
-                        setActiveAction={setActiveAction}
+                        submissionId={activeAction?.form ?? ""}
+                        onClose={() => setActiveAction(null)}
                     />
+                )}
+
+                {/* Action buttons */}
+                {!isFormOpen && (
+                    <div className="flex gap-2 pt-2">
+                        {actions.map((a) => (
+                            <Button
+                                key={a.id}
+                                onClick={() => setActiveAction(a)}
+                                intent={
+                                    a.intent === "Destructive" ? "destructivePrimary" : "secondary"
+                                }
+                            >
+                                {l(a.title)}
+                            </Button>
+                        ))}
+                    </div>
                 )}
             </div>
 
@@ -48,6 +70,9 @@ export const StepCard = ({step, instance}: Props) => {
                 </Modal.Body>
                 {activeAction && (
                     <Modal.Footer className="mt-2 flex gap-2">
+                        <Button intent="secondary" onClick={() => setActiveAction(null)}>
+                            {t("cancel")}
+                        </Button>
                         <Button
                             intent="destructivePrimary"
                             onClick={() => {
@@ -65,7 +90,7 @@ export const StepCard = ({step, instance}: Props) => {
                 )}
             </Modal>
             <FormModal
-                isOpen={activeAction?.type === "SubmitForm"}
+                isOpen={activeAction?.type === "SubmitForm" && activeAction.formLayout === "Modal"}
                 onClose={() => setActiveAction(null)}
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}

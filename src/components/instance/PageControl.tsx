@@ -2,7 +2,7 @@ import {useCallback} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Button, Heading, Text} from "@datanose/ui";
+import {Heading, Text} from "@datanose/ui";
 
 import {InputControl} from "./InputControl";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -15,9 +15,6 @@ type PageControlProps = {
     instanceId: string;
     submissionId: string;
     page: Page;
-    currentTabIndex?: number;
-    onNext?: () => void;
-    onPrevious?: () => void;
     showTitle?: boolean;
 };
 
@@ -25,12 +22,9 @@ export const PageControl = ({
     instanceId,
     submissionId,
     page,
-    currentTabIndex,
-    onNext,
-    onPrevious,
     showTitle = true,
 }: PageControlProps) => {
-    const {l, t} = useTranslate("workflow");
+    const {l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
         submissionId,
@@ -92,22 +86,6 @@ export const PageControl = ({
                     </form>
                 </div>
             </div>
-            {onNext && onPrevious && (
-                <div className="mt-4 flex justify-between gap-2">
-                    {(currentTabIndex ?? 0) > 0 && (
-                        <Button intent="secondary" onClick={onPrevious}>
-                            {t("go_back")}
-                        </Button>
-                    )}
-                    <Button
-                        intent="secondary"
-                        onClick={onNext}
-                        className={currentTabIndex === 0 ? "ml-auto" : ""}
-                    >
-                        {t("continue")}
-                    </Button>
-                </div>
-            )}
         </>
     );
 };
