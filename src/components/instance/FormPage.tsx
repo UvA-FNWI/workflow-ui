@@ -1,11 +1,12 @@
 import {useState} from "react";
 
-import {Button, Heading, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from "@datanose/ui";
+import {Button, Heading, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from "@datanose/ui";
 
 import {PageControl} from "./PageControl";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
+import type {Page} from "~/store/api/types/submissions";
 import {formatDate} from "~/utils/formatDate";
 
 type Props = {
@@ -28,6 +29,18 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
     if (!submission) return <div>Loading...</div>;
 
     const totalTabs = submission.form.pages.length + 1; // +1 for summary tab
+
+    const isPageComplete = (page: Page): boolean => {
+        const requiredQuestions = page.questions.filter((q) => q.isRequired);
+        return requiredQuestions.every((question) => {
+            const answer = submission.answers.find((a) => a.questionName === question.name);
+            return (
+                answer && answer.value !== null && answer.value !== undefined && answer.value !== ""
+            );
+        });
+    };
+
+    const areAllPagesComplete = submission.form.pages.every((page) => isPageComplete(page));
 
     const goToNextTab = () => {
         if (activeTabIndex < totalTabs - 1) {
@@ -53,9 +66,21 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                 <TabList>
                     {[
                         ...submission.form.pages.map((page, index) => (
-                            <Tab key={index}>{l(page.title)}</Tab>
+                            <Tab key={index}>
+                                {l(page.title)}
+                                {isPageComplete(page) && (
+                                    <Icon
+                                        name="circle-checkmark-solid"
+                                        size="xs"
+                                        color="success"
+                                        className="ml-1"
+                                    />
+                                )}
+                            </Tab>
                         )),
-                        <Tab key="summary">{t("instance.summary.title")}</Tab>,
+                        ...(areAllPagesComplete
+                            ? [<Tab key="summary">{t("instance.summary.title")}</Tab>]
+                            : []),
                     ]}
                 </TabList>
                 <TabPanels>
@@ -78,26 +103,34 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                             {t("close")}
                                         </Button>
                                     )}
-                                    <Button intent="secondary" onClick={goToNextTab}>
+                                    <Button
+                                        intent="secondary"
+                                        disabled={!isPageComplete(page)}
+                                        onClick={goToNextTab}
+                                    >
                                         {t("continue")}
                                     </Button>
                                 </div>
                             </TabPanel>
                         )),
-                        <TabPanel key="summary">
-                            <div className="flex flex-col gap-6 pt-4">
-                                {/* Summary of all pages */}
-                                <Heading size="sm" className="uppercase" fontType="body">
-                                    {t("instance.summary.title")}
-                                </Heading>
-                                <FormSummary
-                                    submission={submission}
-                                    instanceId={instanceId}
-                                    onSubmit={onClose}
-                                    onEditPage={setActiveTabIndex}
-                                />
-                            </div>
-                        </TabPanel>,
+                        ...(areAllPagesComplete
+                            ? [
+                                  <TabPanel key="summary">
+                                      <div className="flex flex-col gap-6 pt-4">
+                                          {/* Summary of all pages */}
+                                          <Heading size="sm" className="uppercase" fontType="body">
+                                              {t("instance.summary.title")}
+                                          </Heading>
+                                          <FormSummary
+                                              submission={submission}
+                                              instanceId={instanceId}
+                                              onSubmit={onClose}
+                                              onEditPage={setActiveTabIndex}
+                                          />
+                                      </div>
+                                  </TabPanel>,
+                              ]
+                            : []),
                     ]}
                 </TabPanels>
             </Tabs>

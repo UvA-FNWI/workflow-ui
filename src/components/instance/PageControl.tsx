@@ -71,7 +71,10 @@ export const PageControl = ({
                                 render={({field}) => {
                                     return (
                                         <div className="mb-4">
-                                            <div key={question.name}>{l(question.text)}</div>
+                                            <div key={question.name}>
+                                                {l(question.text)}
+                                                {!question.isRequired && ` ${l("optional")}`}
+                                            </div>
                                             <InputControl
                                                 value={field.value}
                                                 onChange={field.onChange}
