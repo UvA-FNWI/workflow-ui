@@ -1,4 +1,6 @@
-import {FileUpload} from "@datanose/ui";
+import {useState} from "react";
+
+import {FileUpload, Text} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
@@ -7,7 +9,10 @@ interface FileUploadTableProps {
     questions: Question[];
     values: Record<string, File | null>;
     answers?: Answer[];
-    onFileSelect: (questionName: string, file: File | null) => void;
+    onFileSelect: (
+        questionName: string,
+        file: File | null,
+    ) => Promise<{success: boolean; error: Error | null}>;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
@@ -19,9 +24,29 @@ export const FileUploadTable = ({
     onFileSelect,
 }: FileUploadTableProps) => {
     const {t, l} = useTranslate("workflow");
+    const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
+    const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
 
-    const handleFileSelect = (questionName: string, file: File | null) => {
-        onFileSelect(questionName, file);
+    const handleFileSelect = async (questionName: string, file: File | null) => {
+        if (!file) {
+            setUploadErrors((prev) => ({...prev, [questionName]: ""}));
+            await onFileSelect(questionName, file);
+            return;
+        }
+
+        setUploadingFiles((prev) => ({...prev, [questionName]: true}));
+        setUploadErrors((prev) => ({...prev, [questionName]: ""}));
+
+        const result = await onFileSelect(questionName, file);
+
+        setUploadingFiles((prev) => ({...prev, [questionName]: false}));
+
+        if (!result.success) {
+            setUploadErrors((prev) => ({
+                ...prev,
+                [questionName]: result.error?.message || t("file_upload.error_upload_failed"),
+            }));
+        }
     };
 
     return (
@@ -64,25 +89,33 @@ export const FileUploadTable = ({
                                     )}
                                 </td>
                                 <td className="p-2 align-top">
-                                    <FileUpload
-                                        maxSize={MAX_FILE_SIZE}
-                                        onFileSelect={(file: File | null) =>
-                                            handleFileSelect(question.name, file)
-                                        }
-                                        showFileName={true}
-                                        fileName={selectedFile?.name || storedFiles[0]?.name}
-                                        buttonText={
-                                            selectedFile || storedFiles.length > 0
-                                                ? t("file_upload.change_file")
-                                                : t("file_upload.upload_file")
-                                        }
-                                        buttonIntent="secondary"
-                                        errorMessages={{
-                                            fileSize: t("file_upload.error_max_file_size", {
-                                                size: "10MB",
-                                            }),
-                                        }}
-                                    />
+                                    <div className="flex flex-col gap-2">
+                                        <FileUpload
+                                            maxSize={MAX_FILE_SIZE}
+                                            onFileSelect={(file: File | null) =>
+                                                handleFileSelect(question.name, file)
+                                            }
+                                            showFileName={true}
+                                            fileName={selectedFile?.name || storedFiles[0]?.name}
+                                            buttonText={
+                                                selectedFile || storedFiles.length > 0
+                                                    ? t("file_upload.change_file")
+                                                    : t("file_upload.upload_file")
+                                            }
+                                            buttonIntent="secondary"
+                                            isLoading={uploadingFiles[question.name]}
+                                            errorMessages={{
+                                                fileSize: t("file_upload.error_max_file_size", {
+                                                    size: "10MB",
+                                                }),
+                                            }}
+                                        />
+                                        {uploadErrors[question.name] && (
+                                            <Text size="sm" className="text-red-600">
+                                                {uploadErrors[question.name]}
+                                            </Text>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         );

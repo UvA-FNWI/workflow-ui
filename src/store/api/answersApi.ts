@@ -1,5 +1,5 @@
 import {baseApi} from "./baseApi";
-import type {SaveAnswerParams} from "./types/params";
+import type {SaveAnswerParams, SaveFileParams} from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 
@@ -11,6 +11,34 @@ export const answersApi = baseApi.injectEndpoints({
                 method: "post",
                 body: params.answer,
             }),
+            async onQueryStarted(params, {dispatch, queryFulfilled}) {
+                const {data} = await queryFulfilled;
+                dispatch(
+                    submissionsApi.util.updateQueryData(
+                        "getSubmission",
+                        {instanceId: params.instanceId, submissionId: params.submissionId},
+                        (current) => {
+                            current.answers = current.answers.map((oldAnswer) => {
+                                const newAnswer = data.answers.filter(
+                                    (a) => a.id === oldAnswer.id,
+                                )[0];
+                                return newAnswer ?? oldAnswer;
+                            });
+                        },
+                    ),
+                );
+            },
+        }),
+        saveFile: build.mutation<SaveAnswerResult, SaveFileParams>({
+            query: (params) => {
+                const formData = new FormData();
+                formData.append("file", params.file);
+                return {
+                    url: `Answers/${params.instanceId}/${params.submissionId}/${params.questionName}/artifacts`,
+                    method: "post",
+                    body: formData,
+                };
+            },
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
                 const {data} = await queryFulfilled;
                 dispatch(

@@ -45,6 +45,8 @@ export interface FileUploadProps {
     fileType?: string;
     fileSize?: string;
   };
+  /** Whether the upload is in progress */
+  isLoading?: boolean;
 }
 
 export const FileUpload = ({
@@ -58,6 +60,7 @@ export const FileUpload = ({
   showFileName = true,
   fileName,
   errorMessages = {},
+  isLoading = false,
 }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -151,6 +154,7 @@ export const FileUpload = ({
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
         leftIcon={<Icon name="upload-line" size="sm" color="current" />}
+        isLoading={isLoading}
       >
         {buttonText}
       </Button>

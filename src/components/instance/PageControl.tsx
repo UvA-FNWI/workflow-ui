@@ -46,10 +46,24 @@ export const PageControl = ({
     });
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
+    const [saveFile] = answersApi.endpoints.saveFile.useMutation();
 
     const save = useCallback(
         (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}),
         [instanceId, submissionId, saveAnswer],
+    );
+
+    const saveFileAnswer = useCallback(
+        async (questionName: string, file: File) => {
+            try {
+                await saveFile({instanceId, submissionId, questionName, file}).unwrap();
+                return {success: true, error: null};
+            } catch (error) {
+                console.error("Failed to upload file:", error);
+                return {success: false, error: error as Error};
+            }
+        },
+        [instanceId, submissionId, saveFile],
     );
 
     const {fileQuestions, regularQuestions, fileValuesMap} = useFileQuestions({
@@ -96,11 +110,12 @@ export const PageControl = ({
                                 questions={fileQuestions}
                                 values={fileValuesMap}
                                 answers={submission?.answers}
-                                onFileSelect={(questionName, file) => {
+                                onFileSelect={async (questionName, file) => {
                                     form.setValue(questionName, file);
                                     if (file) {
-                                        save({questionName, value: file});
+                                        return await saveFileAnswer(questionName, file);
                                     }
+                                    return {success: true, error: null};
                                 }}
                             />
                         )}
