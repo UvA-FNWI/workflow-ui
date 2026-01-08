@@ -38,6 +38,8 @@ export interface FileUploadProps {
     | 'ghost';
   /** Show selected file name */
   showFileName?: boolean;
+  /** External file name to display (e.g., from backend) */
+  fileName?: string;
   /** Custom error messages */
   errorMessages?: {
     fileType?: string;
@@ -54,6 +56,7 @@ export const FileUpload = ({
   buttonText = 'Upload File',
   buttonIntent = 'secondary',
   showFileName = true,
+  fileName,
   errorMessages = {},
 }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -152,10 +155,16 @@ export const FileUpload = ({
         {buttonText}
       </Button>
 
-      {showFileName && selectedFile && !error && (
+      {showFileName && (selectedFile || fileName) && !error && (
         <div className={fileInfoClassGenerator()}>
-          <strong>{selectedFile.name}</strong> (
-          {formatFileSize(selectedFile.size)})
+          {selectedFile ? (
+            <>
+              <strong>{selectedFile.name}</strong> (
+              {formatFileSize(selectedFile.size)})
+            </>
+          ) : (
+            <strong>{fileName}</strong>
+          )}
         </div>
       )}
 

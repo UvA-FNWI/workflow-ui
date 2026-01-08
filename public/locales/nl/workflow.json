@@ -7,8 +7,8 @@
   "file_upload": {
     "change_file": "Wijzig bestand",
     "description": "Beschrijving",
-    "max_file_size": "Max. {{size}} per bestand",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
+    "max_file_size": "Max. {{size}} per bestand",
     "no_file_uploaded": "Geen bestand geüpload",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"

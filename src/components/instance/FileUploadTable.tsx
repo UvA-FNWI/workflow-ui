@@ -1,17 +1,23 @@
 import {FileUpload} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
-import type {Question} from "~/store/api/types/submissions";
+import type {Answer, Question} from "~/store/api/types/submissions";
 
 interface FileUploadTableProps {
     questions: Question[];
     values: Record<string, File | null>;
+    answers?: Answer[];
     onFileSelect: (questionName: string, file: File | null) => void;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
 
-export const FileUploadTable = ({questions, values, onFileSelect}: FileUploadTableProps) => {
+export const FileUploadTable = ({
+    questions,
+    values,
+    answers,
+    onFileSelect,
+}: FileUploadTableProps) => {
     const {t, l} = useTranslate("workflow");
 
     const handleFileSelect = (questionName: string, file: File | null) => {
@@ -31,11 +37,15 @@ export const FileUploadTable = ({questions, values, onFileSelect}: FileUploadTab
                 <tbody>
                     {questions.map((question) => {
                         const selectedFile = values[question.name];
-                        const hasValidFile = selectedFile !== null && selectedFile !== undefined;
+                        const answer = answers?.find((a) => a.questionName === question.name);
+                        const storedFiles = answer?.files || [];
+                        const hasValidFile =
+                            (selectedFile !== null && selectedFile !== undefined) ||
+                            storedFiles.length > 0;
 
                         return (
                             <tr key={question.name} className="border-b">
-                                <td className="p-2 align-top">
+                                <td className="align-center p-2">
                                     <div
                                         className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-500" : "bg-red-500"}`}
                                         aria-label={
@@ -60,8 +70,9 @@ export const FileUploadTable = ({questions, values, onFileSelect}: FileUploadTab
                                             handleFileSelect(question.name, file)
                                         }
                                         showFileName={true}
+                                        fileName={selectedFile?.name || storedFiles[0]?.name}
                                         buttonText={
-                                            selectedFile
+                                            selectedFile || storedFiles.length > 0
                                                 ? t("file_upload.change_file")
                                                 : t("file_upload.upload_file")
                                         }

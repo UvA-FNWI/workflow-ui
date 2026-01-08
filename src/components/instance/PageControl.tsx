@@ -95,6 +95,7 @@ export const PageControl = ({
                             <FileUploadTable
                                 questions={fileQuestions}
                                 values={fileValuesMap}
+                                answers={submission?.answers}
                                 onFileSelect={(questionName, file) => {
                                     form.setValue(questionName, file);
                                     if (file) {

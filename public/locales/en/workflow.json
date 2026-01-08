@@ -7,8 +7,8 @@
   "file_upload": {
     "change_file": "Change file",
     "description": "Description",
-    "max_file_size": "Max. {{size}} per file",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
+    "max_file_size": "Max. {{size}} per file",
     "no_file_uploaded": "No file uploaded",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
