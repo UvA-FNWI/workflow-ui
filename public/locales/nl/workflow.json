@@ -1,6 +1,7 @@
 {
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
+  "close": "Sluiten",
   "confirm": "Bevestigen",
   "continue": "Doorgaan",
   "first_help": {
@@ -28,5 +29,6 @@
   },
   "screens": {
     "students": "Studenten"
-  }
+  },
+  "submit": "Indienen"
 }
