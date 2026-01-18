@@ -15,14 +15,18 @@ export function InfoCards({isLoading}: InfoCardsProps) {
                 {isLoading ? (
                     <Skeleton className="h-5 w-28" />
                 ) : (
-                    <Heading size="sm">{t("good_to_know.title")}</Heading>
+                    <Heading as="h3" size="sm">
+                        {t("good_to_know.title")}
+                    </Heading>
                 )}
             </Card>
             <Card>
                 {isLoading ? (
                     <Skeleton className="h-5 w-24" />
                 ) : (
-                    <Heading size="sm">{t("first_help.title")}</Heading>
+                    <Heading as="h3" size="sm">
+                        {t("first_help.title")}
+                    </Heading>
                 )}
             </Card>
         </>

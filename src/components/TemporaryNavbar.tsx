@@ -30,7 +30,7 @@ function TemporaryNavbar() {
         <nav className="border-grey-300 text-grey-900 dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100 sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b bg-white/90 px-6 py-4 shadow-sm backdrop-blur">
             <div>
                 <p className="text-base font-semibold">Workflow UI</p>
-                <p className="text-grey-600 dark:text-grey-400 text-xs">
+                <p className="text-grey-700 dark:text-grey-300 text-xs">
                     {VITE_ENV} | {VITE_WEBAPI_URL}
                 </p>
             </div>
