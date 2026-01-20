@@ -5,6 +5,7 @@ import {Button, Card, Heading, Modal, Separator} from "@datanose/ui";
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
+import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
@@ -15,7 +16,7 @@ type Props = {
 };
 
 export const StepCard = ({step, instance}: Props) => {
-    const {t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow", {keyPrefix: "step_card"});
     const [activeAction, setActiveAction] = useState<Action | null>(null);
 
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
@@ -30,6 +31,11 @@ export const StepCard = ({step, instance}: Props) => {
             <div className="flex flex-col gap-4">
                 <Heading>{l(step.title)}</Heading>
                 <Separator />
+
+                {step.versions?.map((v) => (
+                    <VersionCard key={v.versionNumber} version={v} submissions={submissions} />
+                ))}
+
                 {submissions.map((submission) => (
                     <FormSummary instanceId={instance.id} submission={submission} />
                 ))}

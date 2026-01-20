@@ -15,6 +15,16 @@ export type WorkflowStep = {
     event: string;
     dateCompleted: string | null;
     children: WorkflowStep[] | null;
+    versions: WorkflowStepVersion[] | null;
+};
+
+export type WorkflowStepVersion = {
+    versionNumber: number;
+    eventId: string;
+    submittedAt: string;
+    isActive: boolean;
+    suppressedBy?: string | null;
+    formData: Record<string, unknown | null>;
 };
 
 export type Action = {

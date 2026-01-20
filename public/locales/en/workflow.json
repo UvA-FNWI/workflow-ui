@@ -1,5 +1,4 @@
 {
-  "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "close": "Close",
   "confirm": "Confirm",
@@ -30,5 +29,15 @@
   "screens": {
     "students": "Students"
   },
-  "submit": "Submit"
+  "step_card": {
+    "are_you_sure": "Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "submit": "Submit",
+  "version_card": {
+    "no_answer": "No answer provided",
+    "submitted": "Submitted",
+    "version_nr": "Version #{{versionNumber}}"
+  }
 }

@@ -1,5 +1,4 @@
 {
-  "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "close": "Sluiten",
   "confirm": "Bevestigen",
@@ -30,5 +29,15 @@
   "screens": {
     "students": "Studenten"
   },
-  "submit": "Indienen"
+  "step_card": {
+    "are_you_sure": "Weet je het zeker?",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen"
+  },
+  "submit": "Indienen",
+  "version_card": {
+    "no_answer": "Geen antwoord gegeven",
+    "submitted": "Ingeleverd",
+    "version_nr": "Versie #{{versionNumber}}"
+  }
 }

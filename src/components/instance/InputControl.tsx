@@ -51,6 +51,44 @@ export const InputControl = ({value, question, onChange, onSave}: InputControlPr
             />
         );
     }
+    if (question.type === "Choice") {
+        // Flatten and normalize value to always be a flat string array
+        const normalizeValue = (val: unknown): string[] => {
+            if (!val) return [];
+            if (Array.isArray(val)) {
+                // Flatten nested arrays and filter to only strings
+                return val.flat(Infinity).filter((v): v is string => typeof v === "string");
+            }
+            return typeof val === "string" ? [val] : [];
+        };
 
-    return <div>Not supported type...</div>;
+        const selectedValues = normalizeValue(value);
+
+        const handleChange = (choiceName: string, checked: boolean) => {
+            const newValues = checked
+                ? [...selectedValues.filter((v) => v !== choiceName), choiceName]
+                : selectedValues.filter((v) => v !== choiceName);
+            debouncedChange(newValues);
+        };
+
+        return (
+            <>
+                {question.choices.map((choice) => (
+                    <div key={choice.name}>
+                        <label>
+                            <input
+                                type="checkbox"
+                                value={choice.name}
+                                checked={selectedValues.includes(choice.name)}
+                                onChange={(e) => handleChange(choice.name, e.target.checked)}
+                            />
+                            {choice.name}
+                        </label>
+                    </div>
+                ))}
+            </>
+        );
+
+        return <div>Not supported type...</div>;
+    }
 };

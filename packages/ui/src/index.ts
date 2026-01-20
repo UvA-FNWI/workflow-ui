@@ -51,6 +51,12 @@ export { useToast } from './components/Toast/hooks/useToast';
 export { Modal, type ModalProps } from './components/Modal/Modal';
 
 export {
+  Disclosure,
+  type DisclosureProps,
+  type DisclosureVariantProps,
+} from './components/Disclosure/Disclosure';
+
+export {
   Tab,
   Tabs,
   TabList,
