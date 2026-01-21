@@ -22,8 +22,6 @@ export type WorkflowStepVersion = {
     versionNumber: number;
     eventId: string;
     submittedAt: string;
-    isActive: boolean;
-    suppressedBy?: string | null;
     formData: Record<string, unknown | null>;
 };
 
