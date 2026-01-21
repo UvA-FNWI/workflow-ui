@@ -51,13 +51,13 @@ export const InputControl = ({value, question, onChange, onSave}: InputControlPr
             />
         );
     }
+    // TODO: This is a hack to support the choice type. We should create something better later.
     if (question.type === "Choice") {
-        // Flatten and normalize value to always be a flat string array
+        // Normalize value to always be a string array
         const normalizeValue = (val: unknown): string[] => {
             if (!val) return [];
             if (Array.isArray(val)) {
-                // Flatten nested arrays and filter to only strings
-                return val.flat(Infinity).filter((v): v is string => typeof v === "string");
+                return val.filter((v): v is string => typeof v === "string");
             }
             return typeof val === "string" ? [val] : [];
         };
@@ -88,7 +88,7 @@ export const InputControl = ({value, question, onChange, onSave}: InputControlPr
                 ))}
             </>
         );
-
-        return <div>Not supported type...</div>;
     }
+
+    return <div>Not supported type...</div>;
 };
