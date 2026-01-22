@@ -1,6 +1,5 @@
 import {
   createContext,
-  forwardRef,
   HTMLAttributes,
   ReactNode,
   useContext,
@@ -63,6 +62,9 @@ export interface DisclosureProps extends DisclosureVariantProps {
   // Accessibility
   'aria-label'?: string;
   'aria-labelledby'?: string;
+
+  // Ref
+  ref?: React.Ref<HTMLDivElement>;
 }
 
 // Context to share disclosure state and refs with sub-components
@@ -84,70 +86,79 @@ const useDisclosureContext = () => {
   return context;
 };
 
-const BaseDisclosure = forwardRef<HTMLDivElement, DisclosureProps>(
-  (props, ref) => {
-    const {
-      // Content
-      children,
+const BaseDisclosure = (props: DisclosureProps) => {
+  const {
+    // Content
+    children,
 
-      // State
-      isExpanded,
-      defaultExpanded = false,
-      onExpandedChange,
+    // State
+    isExpanded,
+    defaultExpanded = false,
+    onExpandedChange,
 
-      // Variants
-      padding,
-      shadow,
-      border,
+    // Variants
+    padding,
+    shadow,
+    border,
 
-      // Styling
-      className,
+    // Styling
+    className,
 
-      ...restProps
-    } = props;
+    // Ref
+    ref,
 
-    // Use React Aria's disclosure state management
-    const state = useDisclosureState({
-      isExpanded,
-      defaultExpanded,
-      onExpandedChange,
-    });
+    ...restProps
+  } = props;
 
-    // Create refs for button and panel
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const panelRef = useRef<HTMLDivElement>(null);
+  // Use React Aria's disclosure state management
+  const state = useDisclosureState({
+    isExpanded,
+    defaultExpanded,
+    onExpandedChange,
+  });
 
-    return (
-      <DisclosureContext.Provider value={{ state, buttonRef, panelRef }}>
-        <div
-          ref={ref}
-          className={cn(
-            disclosureVariants({
-              padding,
-              shadow,
-              border,
-            }),
-            className
-          )}
-          {...restProps}
-        >
-          {children}
-        </div>
-      </DisclosureContext.Provider>
-    );
-  }
-);
+  // Create refs for button and panel
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <DisclosureContext.Provider value={{ state, buttonRef, panelRef }}>
+      <div
+        ref={ref}
+        className={cn(
+          disclosureVariants({
+            padding,
+            shadow,
+            border,
+          }),
+          className
+        )}
+        {...restProps}
+      >
+        {children}
+      </div>
+    </DisclosureContext.Provider>
+  );
+};
 
 BaseDisclosure.displayName = 'Disclosure';
 
 // Sub-components for compound component pattern
-const DisclosureHeader = forwardRef<
-  HTMLButtonElement,
-  HTMLAttributes<HTMLButtonElement> & {
+const DisclosureHeader = (
+  props: HTMLAttributes<HTMLButtonElement> & {
     children: ReactNode;
     showChevron?: boolean;
+    ref?: React.Ref<HTMLButtonElement>;
   }
->(({ children, className, showChevron = true, onClick, ...props }, ref) => {
+) => {
+  const {
+    children,
+    className,
+    showChevron = true,
+    onClick,
+    ref,
+    ...restProps
+  } = props;
   const { state, buttonRef, panelRef } = useDisclosureContext();
 
   // Use React Aria's useDisclosure hook for proper accessibility
@@ -171,7 +182,7 @@ const DisclosureHeader = forwardRef<
           'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
           className
         )}
-        {...props}
+        {...restProps}
       >
         <div className="ui:flex-1">{children}</div>
         {showChevron && (
@@ -186,17 +197,18 @@ const DisclosureHeader = forwardRef<
       {state.isExpanded && <Separator />}
     </div>
   );
-});
+};
 
 DisclosureHeader.displayName = 'Disclosure.Header';
 
-const DisclosureContent = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement> & {
+const DisclosureContent = (
+  props: HTMLAttributes<HTMLDivElement> & {
     children: ReactNode;
     padding?: 'none' | 'sm' | 'md' | 'lg';
+    ref?: React.Ref<HTMLDivElement>;
   }
->(({ children, className, padding = 'md', ...props }, ref) => {
+) => {
+  const { children, className, padding = 'md', ref, ...restProps } = props;
   const { state, panelRef } = useDisclosureContext();
 
   // Use React Aria's useDisclosure hook to get panel props
@@ -218,12 +230,12 @@ const DisclosureContent = forwardRef<
         'ui:text-grey-900 ui:dark:text-white',
         className
       )}
-      {...props}
+      {...restProps}
     >
       {children}
     </div>
   );
-});
+};
 
 DisclosureContent.displayName = 'Disclosure.Content';
 
