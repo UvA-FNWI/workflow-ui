@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Button, Card, Heading, Modal, Separator} from "@datanose/ui";
+import {Button, Disclosure, Heading, Modal} from "@datanose/ui";
 
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
@@ -25,82 +25,89 @@ export const StepCard = ({step, instance}: Props) => {
     const actions = instance.actions.filter((a) => a.step && stepIds.includes(a.step));
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
+    const isCurrentStep = stepIds.includes(instance.currentStep);
 
     return (
-        <Card>
-            <div className="flex flex-col gap-4">
+        <Disclosure defaultExpanded={isCurrentStep}>
+            <Disclosure.Header>
                 <Heading>{l(step.title)}</Heading>
-                <Separator />
+            </Disclosure.Header>
+            <Disclosure.Content>
+                <div className="flex flex-col gap-4">
+                    {step.versions?.map((v) => (
+                        <VersionCard key={v.versionNumber} version={v} submissions={submissions} />
+                    ))}
 
-                {step.versions?.map((v) => (
-                    <VersionCard key={v.versionNumber} version={v} submissions={submissions} />
-                ))}
+                    {submissions.map((submission) => (
+                        <FormSummary instanceId={instance.id} submission={submission} />
+                    ))}
 
-                {submissions.map((submission) => (
-                    <FormSummary instanceId={instance.id} submission={submission} />
-                ))}
+                    {isFormOpen && (
+                        <FormPage
+                            instanceId={instance.id}
+                            submissionId={activeAction?.form ?? ""}
+                            onClose={() => setActiveAction(null)}
+                        />
+                    )}
 
-                {isFormOpen && (
-                    <FormPage
-                        instanceId={instance.id}
-                        submissionId={activeAction?.form ?? ""}
-                        onClose={() => setActiveAction(null)}
-                    />
-                )}
+                    {/* Action buttons */}
+                    {!isFormOpen && (
+                        <div className="flex gap-2 pt-2">
+                            {actions.map((a) => (
+                                <Button
+                                    key={a.id}
+                                    onClick={() => setActiveAction(a)}
+                                    intent={
+                                        a.intent === "Destructive"
+                                            ? "destructivePrimary"
+                                            : "secondary"
+                                    }
+                                >
+                                    {l(a.title)}
+                                </Button>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
-                {/* Action buttons */}
-                {!isFormOpen && (
-                    <div className="flex gap-2 pt-2">
-                        {actions.map((a) => (
-                            <Button
-                                key={a.id}
-                                onClick={() => setActiveAction(a)}
-                                intent={
-                                    a.intent === "Destructive" ? "destructivePrimary" : "secondary"
-                                }
-                            >
-                                {l(a.title)}
+                <Modal
+                    isOpen={activeAction?.type === "Execute"}
+                    onOpenChange={() => setActiveAction(null)}
+                >
+                    <Modal.Header>{activeAction && l(activeAction.title)}</Modal.Header>
+                    <Modal.Body className="mt-2 mb-4">
+                        <p>{t("are_you_sure")}</p>
+                    </Modal.Body>
+                    {activeAction && (
+                        <Modal.Footer className="mt-2 flex gap-2">
+                            <Button intent="secondary" onClick={() => setActiveAction(null)}>
+                                {t("cancel")}
                             </Button>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            <Modal
-                isOpen={activeAction?.type === "Execute"}
-                onOpenChange={() => setActiveAction(null)}
-            >
-                <Modal.Header>{activeAction && l(activeAction.title)}</Modal.Header>
-                <Modal.Body className="mt-2 mb-4">
-                    <p>{t("are_you_sure")}</p>
-                </Modal.Body>
-                {activeAction && (
-                    <Modal.Footer className="mt-2 flex gap-2">
-                        <Button intent="secondary" onClick={() => setActiveAction(null)}>
-                            {t("cancel")}
-                        </Button>
-                        <Button
-                            intent="destructivePrimary"
-                            onClick={() => {
-                                executeAction({
-                                    instanceId: instance.id,
-                                    name: activeAction.name,
-                                    type: activeAction.type,
-                                });
-                                setActiveAction(null);
-                            }}
-                        >
-                            {t("confirm")}
-                        </Button>
-                    </Modal.Footer>
-                )}
-            </Modal>
-            <FormModal
-                isOpen={activeAction?.type === "SubmitForm" && activeAction.formLayout === "Modal"}
-                onClose={() => setActiveAction(null)}
-                instanceId={instance.id}
-                submissionId={activeAction?.form ?? ""}
-            />
-        </Card>
+                            <Button
+                                intent="destructivePrimary"
+                                onClick={() => {
+                                    executeAction({
+                                        instanceId: instance.id,
+                                        name: activeAction.name,
+                                        type: activeAction.type,
+                                    });
+                                    setActiveAction(null);
+                                }}
+                            >
+                                {t("confirm")}
+                            </Button>
+                        </Modal.Footer>
+                    )}
+                </Modal>
+                <FormModal
+                    isOpen={
+                        activeAction?.type === "SubmitForm" && activeAction.formLayout === "Modal"
+                    }
+                    onClose={() => setActiveAction(null)}
+                    instanceId={instance.id}
+                    submissionId={activeAction?.form ?? ""}
+                />
+            </Disclosure.Content>
+        </Disclosure>
     );
 };
