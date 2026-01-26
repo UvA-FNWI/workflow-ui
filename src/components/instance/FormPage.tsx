@@ -78,9 +78,9 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                 )}
                             </Tab>
                         )),
-                        ...(areAllPagesComplete
-                            ? [<Tab key="summary">{t("instance.summary.title")}</Tab>]
-                            : []),
+                        <Tab key="summary" disabled={!areAllPagesComplete}>
+                            {t("instance.summary.title")}
+                        </Tab>,
                     ]}
                 </TabList>
                 <TabPanels>
@@ -113,24 +113,20 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                 </div>
                             </TabPanel>
                         )),
-                        ...(areAllPagesComplete
-                            ? [
-                                  <TabPanel key="summary">
-                                      <div className="flex flex-col gap-6 pt-4">
-                                          {/* Summary of all pages */}
-                                          <Heading size="sm" className="uppercase" fontType="body">
-                                              {t("instance.summary.title")}
-                                          </Heading>
-                                          <FormSummary
-                                              submission={submission}
-                                              instanceId={instanceId}
-                                              onSubmit={onClose}
-                                              onEditPage={setActiveTabIndex}
-                                          />
-                                      </div>
-                                  </TabPanel>,
-                              ]
-                            : []),
+                        <TabPanel key="summary">
+                            <div className="flex flex-col gap-6 pt-4">
+                                {/* Summary of all pages */}
+                                <Heading size="sm" className="uppercase" fontType="body">
+                                    {t("instance.summary.title")}
+                                </Heading>
+                                <FormSummary
+                                    submission={submission}
+                                    instanceId={instanceId}
+                                    onSubmit={onClose}
+                                    onEditPage={setActiveTabIndex}
+                                />
+                            </div>
+                        </TabPanel>,
                     ]}
                 </TabPanels>
             </Tabs>
