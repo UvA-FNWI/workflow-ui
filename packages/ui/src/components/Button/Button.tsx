@@ -14,15 +14,15 @@ const buttonClassGenerator = cva(
     variants: {
       intent: {
         primary:
-          'ui:bg-black ui:text-white ui:border-black ui:hover:enabled:bg-grey-800',
+          'ui:bg-black ui:text-white ui:border-black ui:hover:enabled:bg-grey-800 ui:dark:bg-grey-800 ui:dark:border-grey-400 ui:hover:enabled:dark:bg-grey-700',
         secondary:
-          'ui:bg-white ui:text-black ui:border-black ui:hover:enabled:bg-grey-300',
+          'ui:bg-white ui:text-black ui:border-black ui:hover:enabled:bg-grey-300 ui:dark:bg-grey-900 ui:dark:text-white ui:dark:border-grey-400 ui:hover:enabled:dark:bg-grey-800',
         destructivePrimary:
-          'ui:bg-red-600 ui:text-white ui:border-red-600 ui:hover:enabled:border-red-800 ui:hover:enabled:bg-red-800',
+          'ui:bg-red-600 ui:text-white ui:border-red-600 ui:hover:enabled:border-red-800 ui:hover:enabled:bg-red-800 ui:dark:bg-red-700 ui:dark:border-red-400 ui:hover:enabled:dark:bg-red-600 ui:hover:enabled:dark:border-red-500',
         destructiveSecondary:
-          'ui:bg-white ui:text-red-brand ui:border-red-brand ui:hover:enabled:bg-grey-300',
+          'ui:bg-white ui:text-red-brand ui:border-red-brand ui:hover:enabled:bg-grey-300 ui:dark:bg-grey-900 ui:dark:text-red-400 ui:dark:border-red-400 ui:hover:enabled:dark:bg-grey-800',
         ghost:
-          'ui:bg-transparent ui:text-black ui:border-transparent ui:hover:enabled:bg-grey-200',
+          'ui:bg-transparent ui:text-black ui:border-transparent ui:hover:enabled:bg-grey-200 ui:dark:text-white ui:hover:enabled:dark:bg-grey-800',
       },
       size: {
         small: 'ui:px-2 ui:h-6 ui:text-xs',

@@ -1,12 +1,12 @@
 import { cva } from 'class-variance-authority';
 
 export const inputVariants = cva(
-  'ui:w-full ui:rounded-md ui:border ui:px-3 ui:py-1.5 ui:text-base ui:transition-all ui:duration-200 ui:outline-none',
+  'ui:w-full ui:rounded-md ui:border ui:px-3 ui:py-2 ui:text-base ui:transition-all ui:duration-200 ui:outline-none',
   {
     variants: {
       isDisabled: {
         true: 'ui:bg-grey-100 ui:dark:bg-grey-800 ui:cursor-not-allowed ui:opacity-60',
-        false: 'ui:dark:bg-grey-900 ui:bg-white',
+        false: 'ui:dark:bg-grey-900 ui:bg-grey-100',
       },
       isFocusVisible: {
         true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-2 ui:dark:ring-orange-500',
@@ -17,7 +17,7 @@ export const inputVariants = cva(
         false: '',
       },
       isValid: {
-        true: 'ui:border-grey-300 ui:dark:border-grey-600',
+        true: 'ui:border-grey-600 ui:dark:border-grey-400',
         false: 'ui:border-red-600 ui:dark:border-red-400',
       },
     },
