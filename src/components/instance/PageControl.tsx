@@ -24,7 +24,7 @@ export const PageControl = ({
     page,
     showTitle = true,
 }: PageControlProps) => {
-    const {l} = useTranslate("workflow");
+    const {l, t} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
         submissionId,
@@ -73,7 +73,7 @@ export const PageControl = ({
                                         <div className="mb-4">
                                             <div key={question.name}>
                                                 {l(question.text)}
-                                                {!question.isRequired && ` ${l("optional")}`}
+                                                {!question.isRequired && ` ${t("optional")}`}
                                             </div>
                                             <InputControl
                                                 value={field.value}
