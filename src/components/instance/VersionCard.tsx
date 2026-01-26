@@ -21,7 +21,7 @@ export const VersionCard = ({version, submissions}: Props) => {
             <Disclosure.Header>
                 <div className="flex w-full items-center justify-between">
                     <Heading>{t("version_nr", {versionNumber: version.versionNumber})}</Heading>
-                    <Text>
+                    <Text as="span">
                         <Text fontWeight="semibold">{t("submitted")}:</Text>{" "}
                         {formatDate(version.submittedAt, i18n.language)}
                     </Text>

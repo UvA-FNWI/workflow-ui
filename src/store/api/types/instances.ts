@@ -4,6 +4,7 @@ import type {FormLayout, Submission} from "~/store/api/types/submissions.ts";
 export type WorkflowInstance = {
     id: string;
     title: LocalString | null;
+    currentStep: string;
     steps: WorkflowStep[];
     submissions: Submission[];
     actions: Action[];
