@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:local": "concurrently \"pnpm run translations:types -w\" \"vite\"",
+    "dev:local": "vite",
     "dev": "pnpm --parallel dev:local",
     "build": "pnpm --filter @datanose/ui build && tsc -b && vite build",
     "build:ui": "pnpm --filter @datanose/ui build",
@@ -13,7 +13,6 @@
     "format:fix": "prettier --write .",
     "translations:check": "i18next-cli extract --ci",
     "translations:generate": "i18next-cli extract",
-    "translations:types": "i18next-cli types",
     "preview": "vite preview",
     "prepare": "husky"
   },
