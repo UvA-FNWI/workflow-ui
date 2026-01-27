@@ -23,6 +23,7 @@ export {
   type NumberInputProps,
   type NumberInputVariantProps,
 } from './components/Input/NumberInput/NumberInput';
+export { Link, type LinkProps } from './components/Link/Link';
 export {
   Separator,
   type SeparatorVariantProps,

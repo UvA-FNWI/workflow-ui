@@ -22,7 +22,7 @@ const buttonClassGenerator = cva(
         destructiveSecondary:
           'ui:bg-white ui:text-red-brand ui:border-red-brand ui:hover:enabled:bg-grey-300',
         ghost:
-          'ui:bg-transparent ui:text-black ui:border-transparent ui:hover:enabled:bg-grey-200',
+          'ui:bg-transparent ui:text-black ui:dark:text-grey-100 ui:border-transparent ui:hover:enabled:bg-grey-200 ui:dark:hover:enabled:bg-grey-900',
       },
       size: {
         small: 'ui:px-2 ui:h-6 ui:text-xs',

@@ -5,6 +5,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
+import { Link } from '../Link/Link';
 
 const fileUploadClassGenerator = cva('ui:inline-flex ui:flex-col ui:gap-2');
 
@@ -49,6 +50,8 @@ export interface FileUploadProps {
   isLoading?: boolean;
   /** Whether to allow removing the selected file */
   allowRemove?: boolean;
+  /** Callback when file name is clicked */
+  onFileNameClick?: () => void;
 }
 
 export const FileUpload = ({
@@ -64,6 +67,7 @@ export const FileUpload = ({
   errorMessages = {},
   isLoading = false,
   allowRemove = false,
+  onFileNameClick,
 }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -184,6 +188,10 @@ export const FileUpload = ({
                 <strong>{selectedFile.name}</strong> (
                 {formatFileSize(selectedFile.size)})
               </>
+            ) : onFileNameClick ? (
+              <Link intent="primary" underline onClick={onFileNameClick}>
+                {fileName}
+              </Link>
             ) : (
               <strong>{fileName}</strong>
             )}
@@ -193,7 +201,7 @@ export const FileUpload = ({
               intent="ghost"
               disabled={disabled}
               onClick={handleRemoveFile}
-              leftIcon={<Icon name="cross-line" size="sm" color="current" />}
+              leftIcon={<Icon name="trash-line" size="sm" color="current" />}
               aria-label="Remove file"
               className="ui:ml-1"
             />

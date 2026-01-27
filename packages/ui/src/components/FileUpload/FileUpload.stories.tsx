@@ -103,6 +103,38 @@ export const SecondaryIntent: Story = {
   },
 };
 
+export const WithClickableFileName: Story = {
+  render: function Render(args) {
+    const [clickCount, setClickCount] = useState(0);
+
+    const handleFileNameClick = () => {
+      setClickCount(prev => prev + 1);
+      alert('File clicked! This would open the file in a new tab.');
+    };
+
+    return (
+      <div className="ui:flex ui:flex-col ui:gap-4 ui:w-96">
+        <FileUpload
+          {...args}
+          onFileNameClick={handleFileNameClick}
+          fileName="document.pdf"
+          showFileName
+        />
+        <div className="ui:p-4 ui:bg-gray-100 ui:rounded-md">
+          <p className="ui:text-sm ui:font-medium">Info:</p>
+          <p className="ui:text-sm">File name clicked {clickCount} time(s)</p>
+          <p className="ui:text-xs ui:text-gray-600 ui:mt-2">
+            Click the file name above to test the functionality
+          </p>
+        </div>
+      </div>
+    );
+  },
+  args: {
+    buttonText: 'Upload File',
+  },
+};
+
 export const Interactive: Story = {
   render: function Render(args) {
     const [file, setFile] = useState<File | null>(null);

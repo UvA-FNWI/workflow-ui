@@ -2,10 +2,13 @@ import {useState} from "react";
 
 import {FileUpload, Text} from "@datanose/ui";
 
+import {VITE_WEBAPI_URL} from "~/helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
 
 interface FileUploadTableProps {
+    instanceId: string;
+    submissionId: string;
     questions: Question[];
     values: Record<string, File | null>;
     answers?: Answer[];
@@ -18,6 +21,8 @@ interface FileUploadTableProps {
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
 
 export const FileUploadTable = ({
+    instanceId,
+    submissionId,
     questions,
     values,
     answers,
@@ -68,6 +73,14 @@ export const FileUploadTable = ({
                             (selectedFile !== null && selectedFile !== undefined) ||
                             storedFiles.length > 0;
 
+                        const handleFileNameClick = () => {
+                            const storedFile = storedFiles[0];
+                            if (!storedFile || !VITE_WEBAPI_URL) return;
+
+                            const url = `${VITE_WEBAPI_URL}/${instanceId}/${submissionId}/${question.name}/artifacts/${storedFile.id}?token=${storedFile.accessToken}`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                        };
+
                         return (
                             <tr key={question.name} className="border-b">
                                 <td className="align-center p-2">
@@ -97,6 +110,7 @@ export const FileUploadTable = ({
                                             }
                                             showFileName={true}
                                             fileName={selectedFile?.name || storedFiles[0]?.name}
+                                            onFileNameClick={handleFileNameClick}
                                             buttonText={
                                                 selectedFile || storedFiles.length > 0
                                                     ? t("file_upload.change_file")
