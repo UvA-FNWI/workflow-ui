@@ -47,6 +47,8 @@ export interface FileUploadProps {
   };
   /** Whether the upload is in progress */
   isLoading?: boolean;
+  /** Whether to allow removing the selected file */
+  allowRemove?: boolean;
 }
 
 export const FileUpload = ({
@@ -61,6 +63,7 @@ export const FileUpload = ({
   fileName,
   errorMessages = {},
   isLoading = false,
+  allowRemove = false,
 }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -72,6 +75,15 @@ export const FileUpload = ({
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setError(null);
+    onFileSelect?.(null);
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
   };
 
   const validateFile = (file: File): string | null => {
@@ -160,14 +172,31 @@ export const FileUpload = ({
       </Button>
 
       {showFileName && (selectedFile || fileName) && !error && (
-        <div className={fileInfoClassGenerator()}>
-          {selectedFile ? (
-            <>
-              <strong>{selectedFile.name}</strong> (
-              {formatFileSize(selectedFile.size)})
-            </>
-          ) : (
-            <strong>{fileName}</strong>
+        <div
+          className={cn(
+            'ui:flex ui:items-center ui:justify-between',
+            fileInfoClassGenerator()
+          )}
+        >
+          <div>
+            {selectedFile ? (
+              <>
+                <strong>{selectedFile.name}</strong> (
+                {formatFileSize(selectedFile.size)})
+              </>
+            ) : (
+              <strong>{fileName}</strong>
+            )}
+          </div>
+          {allowRemove && selectedFile && (
+            <Button
+              intent="ghost"
+              disabled={disabled}
+              onClick={handleRemoveFile}
+              leftIcon={<Icon name="cross-line" size="sm" color="current" />}
+              aria-label="Remove file"
+              className="ui:ml-1"
+            />
           )}
         </div>
       )}

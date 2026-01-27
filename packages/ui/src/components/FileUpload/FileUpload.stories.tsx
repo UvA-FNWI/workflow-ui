@@ -74,6 +74,14 @@ export const Disabled: Story = {
   },
 };
 
+export const WithRemoveButton: Story = {
+  args: {
+    allowRemove: true,
+    buttonText: 'Upload File',
+    showFileName: true,
+  },
+};
+
 export const WithFileName: Story = {
   args: {
     showFileName: true,
@@ -107,7 +115,7 @@ export const Interactive: Story = {
           `Selected: ${selectedFile.name} (${selectedFile.size} bytes)`
         );
       } else {
-        setStatus('File validation failed');
+        setStatus('No file selected');
       }
     };
 
@@ -142,5 +150,6 @@ export const Interactive: Story = {
     ],
     maxSize: 1024 * 1024 * 10, // 10MB
     buttonText: 'Upload File',
+    allowRemove: true,
   },
 };

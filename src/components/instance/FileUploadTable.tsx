@@ -104,6 +104,7 @@ export const FileUploadTable = ({
                                             }
                                             buttonIntent="secondary"
                                             isLoading={uploadingFiles[question.name]}
+                                            allowRemove={true}
                                             errorMessages={{
                                                 fileSize: t("file_upload.error_max_file_size", {
                                                     size: "10MB",
