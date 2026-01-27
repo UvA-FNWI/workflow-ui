@@ -2,9 +2,9 @@ import {useState} from "react";
 
 import {FileUpload, Text} from "@datanose/ui";
 
-import {VITE_WEBAPI_URL} from "~/helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
+import {downloadFile} from "~/utils/fileDownload";
 
 interface FileUploadTableProps {
     instanceId: string;
@@ -73,14 +73,6 @@ export const FileUploadTable = ({
                             (selectedFile !== null && selectedFile !== undefined) ||
                             storedFiles.length > 0;
 
-                        const handleFileNameClick = () => {
-                            const storedFile = storedFiles[0];
-                            if (!storedFile || !VITE_WEBAPI_URL) return;
-
-                            const url = `${VITE_WEBAPI_URL}/${instanceId}/${submissionId}/${question.name}/artifacts/${storedFile.id}?token=${storedFile.accessToken}`;
-                            window.open(url, "_blank", "noopener,noreferrer");
-                        };
-
                         return (
                             <tr key={question.name} className="border-b">
                                 <td className="align-center p-2">
@@ -110,7 +102,14 @@ export const FileUploadTable = ({
                                             }
                                             showFileName={true}
                                             fileName={selectedFile?.name || storedFiles[0]?.name}
-                                            onFileNameClick={handleFileNameClick}
+                                            onFileNameClick={() =>
+                                                downloadFile(
+                                                    storedFiles[0],
+                                                    question.name,
+                                                    instanceId,
+                                                    submissionId,
+                                                )
+                                            }
                                             buttonText={
                                                 selectedFile || storedFiles.length > 0
                                                     ? t("file_upload.change_file")
@@ -137,7 +136,7 @@ export const FileUploadTable = ({
                     })}
                 </tbody>
             </table>
-            <div className="text-sm text-gray-600">
+            <div className="ui:text-sm ui:text-gray-600 ui:dark:ui:text-gray-400">
                 {t("file_upload.max_file_size", {size: "10MB"})}
             </div>
         </div>

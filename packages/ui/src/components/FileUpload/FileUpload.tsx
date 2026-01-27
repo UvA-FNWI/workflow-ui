@@ -185,18 +185,17 @@ export const FileUpload = ({
           <div>
             {selectedFile ? (
               <>
-                <strong>{selectedFile.name}</strong> (
-                {formatFileSize(selectedFile.size)})
+                {selectedFile.name} ({formatFileSize(selectedFile.size)})
               </>
             ) : onFileNameClick ? (
               <Link intent="primary" underline onClick={onFileNameClick}>
                 {fileName}
               </Link>
             ) : (
-              <strong>{fileName}</strong>
+              fileName
             )}
           </div>
-          {allowRemove && selectedFile && (
+          {allowRemove && (selectedFile || fileName) && (
             <Button
               intent="ghost"
               disabled={disabled}
