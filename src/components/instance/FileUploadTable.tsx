@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {FileUpload, Text} from "@datanose/ui";
+import {FileUpload, Text, useToast} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
@@ -16,6 +16,7 @@ interface FileUploadTableProps {
         questionName: string,
         file: File | null,
     ) => Promise<{success: boolean; error: Error | null}>;
+    onRemoveStoredFile?: (questionName: string) => Promise<void>;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
@@ -27,8 +28,10 @@ export const FileUploadTable = ({
     values,
     answers,
     onFileSelect,
+    onRemoveStoredFile,
 }: FileUploadTableProps) => {
     const {t, l} = useTranslate("workflow");
+    const toast = useToast();
     const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
     const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
 
@@ -69,9 +72,10 @@ export const FileUploadTable = ({
                         const selectedFile = values[question.name];
                         const answer = answers?.find((a) => a.questionName === question.name);
                         const storedFiles = answer?.files || [];
+                        const isLoading = !!uploadingFiles[question.name];
                         const hasValidFile =
                             (selectedFile !== null && selectedFile !== undefined) ||
-                            storedFiles.length > 0;
+                            (!isLoading && storedFiles.length > 0);
 
                         return (
                             <tr key={question.name} className="border-b">
@@ -97,11 +101,38 @@ export const FileUploadTable = ({
                                     <div className="flex flex-col gap-2">
                                         <FileUpload
                                             maxSize={MAX_FILE_SIZE}
-                                            onFileSelect={(file: File | null) =>
-                                                handleFileSelect(question.name, file)
-                                            }
+                                            onFileSelect={async (file: File | null) => {
+                                                const isRemovingStored =
+                                                    file === null && storedFiles.length > 0;
+                                                if (isRemovingStored && onRemoveStoredFile) {
+                                                    setUploadingFiles((prev) => ({
+                                                        ...prev,
+                                                        [question.name]: true,
+                                                    }));
+                                                    try {
+                                                        await onRemoveStoredFile(question.name);
+                                                        toast.success(
+                                                            t("file_upload.removed_success"),
+                                                        );
+                                                    } catch (error) {
+                                                        console.error(error);
+                                                        toast.error(
+                                                            t("file_upload.error_remove_failed"),
+                                                        );
+                                                    } finally {
+                                                        setUploadingFiles((prev) => ({
+                                                            ...prev,
+                                                            [question.name]: false,
+                                                        }));
+                                                    }
+                                                }
+                                                await handleFileSelect(question.name, file);
+                                            }}
                                             showFileName={true}
-                                            fileName={selectedFile?.name || storedFiles[0]?.name}
+                                            fileName={
+                                                selectedFile?.name ||
+                                                (!isLoading ? storedFiles[0]?.name : undefined)
+                                            }
                                             onFileNameClick={() =>
                                                 downloadFile(
                                                     storedFiles[0],
@@ -136,7 +167,7 @@ export const FileUploadTable = ({
                     })}
                 </tbody>
             </table>
-            <div className="ui:text-sm ui:text-gray-600 ui:dark:ui:text-gray-400">
+            <div className="ui:text-sm ui:text-grey-600 ui:dark:text-grey-400">
                 {t("file_upload.max_file_size", {size: "10MB"})}
             </div>
         </div>

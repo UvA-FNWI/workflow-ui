@@ -8,9 +8,11 @@
     "change_file": "Change file",
     "description": "Description",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
+    "error_remove_failed": " Failed to remove file. Please try again.",
     "error_upload_failed": "Failed to upload file. Please try again.",
     "max_file_size": "Max. {{size}} per file",
     "no_file_uploaded": "No file uploaded",
+    "removed_success": "File removed",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },

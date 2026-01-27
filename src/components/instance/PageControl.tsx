@@ -53,6 +53,22 @@ export const PageControl = ({
         [instanceId, submissionId, saveAnswer],
     );
 
+    const removeFileAnswer = useCallback(
+        async (questionName: string) => {
+            try {
+                await saveAnswer({
+                    instanceId,
+                    submissionId,
+                    answer: {questionName, value: null},
+                }).unwrap();
+            } catch (error) {
+                console.error("Failed to remove file answer:", error);
+                throw error;
+            }
+        },
+        [instanceId, submissionId, saveAnswer],
+    );
+
     const saveFileAnswer = useCallback(
         async (questionName: string, file: File) => {
             try {
@@ -118,6 +134,9 @@ export const PageControl = ({
                                         return await saveFileAnswer(questionName, file);
                                     }
                                     return {success: true, error: null};
+                                }}
+                                onRemoveStoredFile={async (questionName) => {
+                                    await removeFileAnswer(questionName);
                                 }}
                             />
                         )}
