@@ -35,25 +35,39 @@ export const FileUploadTable = ({
     const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
     const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
 
-    const handleFileSelect = async (questionName: string, file: File | null) => {
-        if (!file) {
-            setUploadErrors((prev) => ({...prev, [questionName]: ""}));
-            await onFileSelect(questionName, file);
-            return;
-        }
-
+    // Functions
+    const handleFileSelect = async (
+        questionName: string,
+        file: File | null,
+        hasStoredFiles: boolean,
+    ) => {
         setUploadingFiles((prev) => ({...prev, [questionName]: true}));
         setUploadErrors((prev) => ({...prev, [questionName]: ""}));
 
-        const result = await onFileSelect(questionName, file);
+        try {
+            // Handle removal of stored files
+            if (file === null && hasStoredFiles && onRemoveStoredFile) {
+                try {
+                    await onRemoveStoredFile(questionName);
+                    toast.success(t("file_upload.removed_success"));
+                } catch (error) {
+                    console.error(error);
+                    toast.error(t("file_upload.error_remove_failed"));
+                    return;
+                }
+            }
 
-        setUploadingFiles((prev) => ({...prev, [questionName]: false}));
+            // Handle file selection/upload
+            const result = await onFileSelect(questionName, file);
 
-        if (!result.success) {
-            setUploadErrors((prev) => ({
-                ...prev,
-                [questionName]: result.error?.message || t("file_upload.error_upload_failed"),
-            }));
+            if (!result.success) {
+                setUploadErrors((prev) => ({
+                    ...prev,
+                    [questionName]: result.error?.message || t("file_upload.error_upload_failed"),
+                }));
+            }
+        } finally {
+            setUploadingFiles((prev) => ({...prev, [questionName]: false}));
         }
     };
 
@@ -101,33 +115,13 @@ export const FileUploadTable = ({
                                     <div className="flex flex-col gap-2">
                                         <FileUpload
                                             maxSize={MAX_FILE_SIZE}
-                                            onFileSelect={async (file: File | null) => {
-                                                const isRemovingStored =
-                                                    file === null && storedFiles.length > 0;
-                                                if (isRemovingStored && onRemoveStoredFile) {
-                                                    setUploadingFiles((prev) => ({
-                                                        ...prev,
-                                                        [question.name]: true,
-                                                    }));
-                                                    try {
-                                                        await onRemoveStoredFile(question.name);
-                                                        toast.success(
-                                                            t("file_upload.removed_success"),
-                                                        );
-                                                    } catch (error) {
-                                                        console.error(error);
-                                                        toast.error(
-                                                            t("file_upload.error_remove_failed"),
-                                                        );
-                                                    } finally {
-                                                        setUploadingFiles((prev) => ({
-                                                            ...prev,
-                                                            [question.name]: false,
-                                                        }));
-                                                    }
-                                                }
-                                                await handleFileSelect(question.name, file);
-                                            }}
+                                            onFileSelect={(file: File | null) =>
+                                                handleFileSelect(
+                                                    question.name,
+                                                    file,
+                                                    storedFiles.length > 0,
+                                                )
+                                            }
                                             showFileName={true}
                                             fileName={
                                                 selectedFile?.name ||
