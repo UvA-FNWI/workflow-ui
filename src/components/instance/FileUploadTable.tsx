@@ -89,7 +89,7 @@ export const FileUploadTable = ({
                                         }
                                     />
                                 </td>
-                                <td className="p-2 align-top">
+                                <td className="align-center p-2">
                                     <div className="font-medium">{l(question.text)}</div>
                                     {question.description && (
                                         <div className="text-sm text-gray-600">
