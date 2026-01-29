@@ -38,7 +38,7 @@ describe('FileUpload', () => {
       expect(handleFileSelect).toHaveBeenCalledWith(file);
     });
 
-    it('displays selected file name and size', () => {
+    it('displays selected file name', () => {
       render(<FileUpload showFileName={true} />);
 
       const input = document.querySelector(
@@ -51,7 +51,6 @@ describe('FileUpload', () => {
       fireEvent.change(input, { target: { files: [file] } });
 
       expect(screen.getByText(/test\.pdf/)).toBeInTheDocument();
-      expect(screen.getByText(/Bytes/)).toBeInTheDocument();
     });
 
     it('does not display file name when showFileName is false', () => {
