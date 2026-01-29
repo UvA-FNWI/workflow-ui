@@ -29,7 +29,7 @@ export const answersApi = baseApi.injectEndpoints({
                 );
             },
         }),
-        saveFile: build.mutation<SaveAnswerResult, SaveFileParams>({
+        saveFile: build.mutation<{success: boolean}, SaveFileParams>({
             query: (params) => {
                 const formData = new FormData();
                 formData.append("file", params.file);
@@ -39,23 +39,13 @@ export const answersApi = baseApi.injectEndpoints({
                     body: formData,
                 };
             },
-            async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
-                dispatch(
-                    submissionsApi.util.updateQueryData(
-                        "getSubmission",
-                        {instanceId: params.instanceId, submissionId: params.submissionId},
-                        (current) => {
-                            current.answers = current.answers.map((oldAnswer) => {
-                                const newAnswer = data.answers.filter(
-                                    (a) => a.id === oldAnswer.id,
-                                )[0];
-                                return newAnswer ?? oldAnswer;
-                            });
-                        },
-                    ),
-                );
-            },
+            invalidatesTags: (_result, _error, params) => [
+                {
+                    type: "Submission",
+                    instanceId: params.instanceId,
+                    submissionId: params.submissionId,
+                },
+            ],
         }),
     }),
 });
