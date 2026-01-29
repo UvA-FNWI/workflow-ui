@@ -439,7 +439,13 @@ describe('DatePicker Component', () => {
 
     test('calls onChange with Date object', async () => {
       const onChange = vi.fn();
-      render(<DatePicker {...defaultProps} onChange={onChange} />);
+      render(
+        <DatePicker
+          {...defaultProps}
+          defaultValue={parseDate('2024-06-10')}
+          onChange={onChange}
+        />
+      );
 
       const calendarButton = screen.getByRole('button', { name: /kalender/i });
       fireEvent.click(calendarButton);
@@ -448,15 +454,14 @@ describe('DatePicker Component', () => {
         expect(screen.getByRole('grid')).toBeInTheDocument();
       });
 
-      const today = new Date();
-      const dayButton = findDateButton(today.getDate().toString());
-      if (dayButton) {
-        fireEvent.click(dayButton);
-        await waitFor(() => {
-          expect(onChange).toHaveBeenCalled();
-          expect(onChange.mock.calls[0][0]).toBeInstanceOf(Date);
-        });
-      }
+      const dayButton = findDateButton('15');
+      expect(dayButton).toBeTruthy();
+      fireEvent.click(dayButton!);
+
+      await waitFor(() => {
+        expect(onChange).toHaveBeenCalled();
+        expect(onChange.mock.calls[0][0]).toBeInstanceOf(Date);
+      });
     });
 
     test('accepts mixed DateValue and Date types', async () => {
