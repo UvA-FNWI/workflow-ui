@@ -15,7 +15,7 @@ export const generateFileDownloadUrl = (
     instanceId: string,
     submissionId?: string,
 ) =>
-    `${VITE_WEBAPI_URL}Answers/${instanceId}/${submissionId}/${questionName}/artifacts/${storedFile.id}?token=${storedFile.accessToken}`;
+    `${VITE_WEBAPI_URL}/Answers/${instanceId}/${submissionId}/${questionName}/artifacts/${storedFile.id}?token=${storedFile.accessToken}`;
 
 /**
  * Open a file download in a new tab
