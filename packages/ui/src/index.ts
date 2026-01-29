@@ -66,3 +66,5 @@ export {
   useTabsWithUrl,
   type TabsProps,
 } from './components/Tabs/Tabs';
+
+export { Confetti, type ConfettiProps } from './components/Confetti/Confetti';
