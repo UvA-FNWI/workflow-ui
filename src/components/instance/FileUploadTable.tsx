@@ -99,6 +99,9 @@ export const FileUploadTable = ({
                             !hasError &&
                             ((selectedFile !== null && selectedFile !== undefined) ||
                                 (!isLoading && storedFiles.length > 0));
+                        const fileName = !hasError
+                            ? selectedFile?.name || (!isLoading ? storedFiles[0]?.name : undefined)
+                            : undefined;
 
                         return (
                             <tr
@@ -135,14 +138,7 @@ export const FileUploadTable = ({
                                                 )
                                             }
                                             showFileName={!hasError}
-                                            fileName={
-                                                !hasError
-                                                    ? selectedFile?.name ||
-                                                      (!isLoading
-                                                          ? storedFiles[0]?.name
-                                                          : undefined)
-                                                    : undefined
-                                            }
+                                            fileName={fileName}
                                             onFileNameClick={() =>
                                                 downloadFile(
                                                     storedFiles[0],
@@ -152,7 +148,7 @@ export const FileUploadTable = ({
                                                 )
                                             }
                                             buttonText={t("file_upload.upload_file")}
-                                            buttonIntent="secondary"
+                                            buttonIntent="destructivePrimary"
                                             isLoading={uploadingFiles[question.name]}
                                             errorMessages={{
                                                 fileSize: t("file_upload.error_max_file_size", {

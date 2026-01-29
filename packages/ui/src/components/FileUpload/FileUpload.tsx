@@ -150,6 +150,9 @@ export const FileUpload = ({
   // Build accept attribute for input
   const acceptAttribute = accept.length > 0 ? accept.join(',') : undefined;
 
+  const showUploadButton = (!selectedFile && !fileName) || error;
+  const fileNameToShow = selectedFile ? selectedFile.name : fileName;
+
   return (
     <div className={cn(fileUploadClassGenerator(), className)}>
       <input
@@ -162,7 +165,7 @@ export const FileUpload = ({
         aria-label="File upload input"
       />
 
-      {!(selectedFile || fileName) && (
+      {showUploadButton && (
         <Button
           intent={buttonIntent}
           disabled={disabled}
@@ -182,16 +185,12 @@ export const FileUpload = ({
           )}
         >
           <div>
-            {selectedFile ? (
-              <>
-                {selectedFile.name} ({formatFileSize(selectedFile.size)})
-              </>
-            ) : onFileNameClick ? (
+            {onFileNameClick ? (
               <Link intent="primary" underline onClick={onFileNameClick}>
-                {fileName}
+                {fileNameToShow}
               </Link>
             ) : (
-              fileName
+              fileNameToShow
             )}
           </div>
           {(selectedFile || fileName) && (
