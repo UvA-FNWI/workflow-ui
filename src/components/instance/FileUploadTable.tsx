@@ -12,11 +12,17 @@ interface FileUploadTableProps {
     questions: Question[];
     values: Record<string, File | null>;
     answers?: Answer[];
+    /**
+     * Callback when file is selected or removed.
+     * Pass null to clear local file selection.
+     * Return success: false to show error and clear file.
+     */
     onFileSelect: (
         questionName: string,
         file: File | null,
     ) => Promise<{success: boolean; error: Error | null}>;
-    onRemoveStoredFile?: (questionName: string) => Promise<void>;
+    /** Callback to remove file from server */
+    onRemoveStoredFile: (questionName: string) => Promise<void>;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
@@ -35,7 +41,6 @@ export const FileUploadTable = ({
     const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
     const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
 
-    // Functions
     const handleFileSelect = async (
         questionName: string,
         file: File | null,
@@ -45,8 +50,8 @@ export const FileUploadTable = ({
         setUploadErrors((prev) => ({...prev, [questionName]: ""}));
 
         try {
-            // Handle removal of stored files
-            if (file === null && hasStoredFiles && onRemoveStoredFile) {
+            // Handle removal of stored files from server
+            if (file === null && hasStoredFiles) {
                 try {
                     await onRemoveStoredFile(questionName);
                     toast.success(t("file_upload.removed_success"));
@@ -57,7 +62,7 @@ export const FileUploadTable = ({
                 }
             }
 
-            // Handle file selection/upload
+            // Handle file selection/upload or local file clear
             const result = await onFileSelect(questionName, file);
 
             if (!result.success) {
@@ -89,9 +94,11 @@ export const FileUploadTable = ({
                         const answer = answers?.find((a) => a.questionName === question.name);
                         const storedFiles = answer?.files || [];
                         const isLoading = !!uploadingFiles[question.name];
+                        const hasError = !!uploadErrors[question.name];
                         const hasValidFile =
-                            (selectedFile !== null && selectedFile !== undefined) ||
-                            (!isLoading && storedFiles.length > 0);
+                            !hasError &&
+                            ((selectedFile !== null && selectedFile !== undefined) ||
+                                (!isLoading && storedFiles.length > 0));
 
                         return (
                             <tr key={question.name} className="border-b">
@@ -124,10 +131,14 @@ export const FileUploadTable = ({
                                                     storedFiles.length > 0,
                                                 )
                                             }
-                                            showFileName={true}
+                                            showFileName={!hasError}
                                             fileName={
-                                                selectedFile?.name ||
-                                                (!isLoading ? storedFiles[0]?.name : undefined)
+                                                !hasError
+                                                    ? selectedFile?.name ||
+                                                      (!isLoading
+                                                          ? storedFiles[0]?.name
+                                                          : undefined)
+                                                    : undefined
                                             }
                                             onFileNameClick={() =>
                                                 downloadFile(
@@ -138,13 +149,14 @@ export const FileUploadTable = ({
                                                 )
                                             }
                                             buttonText={
-                                                selectedFile || storedFiles.length > 0
+                                                !hasError &&
+                                                (selectedFile || storedFiles.length > 0)
                                                     ? t("file_upload.change_file")
                                                     : t("file_upload.upload_file")
                                             }
                                             buttonIntent="secondary"
                                             isLoading={uploadingFiles[question.name]}
-                                            allowRemove={true}
+                                            allowRemove={!hasError}
                                             errorMessages={{
                                                 fileSize: t("file_upload.error_max_file_size", {
                                                     size: "10MB",

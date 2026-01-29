@@ -129,15 +129,21 @@ export const PageControl = ({
                                 values={fileValuesMap}
                                 answers={submission?.answers}
                                 onFileSelect={async (questionName, file) => {
+                                    // Always update form value (file or null)
                                     form.setValue(questionName, file);
+
                                     if (file) {
-                                        return await saveFileAnswer(questionName, file);
+                                        const result = await saveFileAnswer(questionName, file);
+                                        // Clear local file on error
+                                        if (!result.success) {
+                                            form.setValue(questionName, null);
+                                        }
+                                        return result;
                                     }
+
                                     return {success: true, error: null};
                                 }}
-                                onRemoveStoredFile={async (questionName) => {
-                                    await removeFileAnswer(questionName);
-                                }}
+                                onRemoveStoredFile={removeFileAnswer}
                             />
                         )}
                     </form>
