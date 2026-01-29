@@ -5,7 +5,6 @@
   "confirm": "Confirm",
   "continue": "Continue",
   "file_upload": {
-    "change_file": "Change file",
     "description": "Description",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
     "error_remove_failed": " Failed to remove file. Please try again.",
