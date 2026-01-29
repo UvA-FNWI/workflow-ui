@@ -48,8 +48,6 @@ export interface FileUploadProps {
   };
   /** Whether the upload is in progress */
   isLoading?: boolean;
-  /** Whether to allow removing the selected file */
-  allowRemove?: boolean;
   /** Callback when file name is clicked */
   onFileNameClick?: () => void;
 }
@@ -66,7 +64,6 @@ export const FileUpload = ({
   fileName,
   errorMessages = {},
   isLoading = false,
-  allowRemove = false,
   onFileNameClick,
 }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -165,15 +162,17 @@ export const FileUpload = ({
         aria-label="File upload input"
       />
 
-      <Button
-        intent={buttonIntent}
-        disabled={disabled}
-        onClick={() => inputRef.current?.click()}
-        leftIcon={<Icon name="upload-line" size="sm" color="current" />}
-        isLoading={isLoading}
-      >
-        {buttonText}
-      </Button>
+      {!(selectedFile || fileName) && (
+        <Button
+          intent={buttonIntent}
+          disabled={disabled}
+          onClick={() => inputRef.current?.click()}
+          leftIcon={<Icon name="upload-line" size="sm" color="current" />}
+          isLoading={isLoading}
+        >
+          {buttonText}
+        </Button>
+      )}
 
       {showFileName && (selectedFile || fileName) && !error && (
         <div
@@ -195,7 +194,7 @@ export const FileUpload = ({
               fileName
             )}
           </div>
-          {allowRemove && (selectedFile || fileName) && (
+          {(selectedFile || fileName) && (
             <Button
               intent="ghost"
               disabled={disabled}

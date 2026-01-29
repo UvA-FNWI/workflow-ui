@@ -67,6 +67,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                                                 downloadFile(
                                                     answer?.files?.[0],
                                                     question.name,
+                                                    instanceId,
                                                     submission.id,
                                                 )
                                             }

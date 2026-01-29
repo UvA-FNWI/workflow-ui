@@ -80,7 +80,7 @@ export const FileUploadTable = ({
         <div className="flex flex-col gap-2">
             <table className="w-full border-collapse">
                 <thead>
-                    <tr className="border-b">
+                    <tr className="border-grey-300 dark:border-grey-600 border-b">
                         <th className="w-8 p-2"></th>
                         <th className="p-2 text-left font-semibold">
                             {t("file_upload.description")}
@@ -101,7 +101,10 @@ export const FileUploadTable = ({
                                 (!isLoading && storedFiles.length > 0));
 
                         return (
-                            <tr key={question.name} className="border-b">
+                            <tr
+                                key={question.name}
+                                className="border-grey-300 dark:border-grey-600 border-b"
+                            >
                                 <td className="align-center p-2">
                                     <div
                                         className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-500" : "bg-red-500"}`}
@@ -115,7 +118,7 @@ export const FileUploadTable = ({
                                 <td className="align-center p-2">
                                     <div className="font-medium">{l(question.text)}</div>
                                     {question.description && (
-                                        <div className="text-sm text-gray-600">
+                                        <div className="text-grey-600 dark:text-grey-400 text-sm">
                                             {l(question.description)}
                                         </div>
                                     )}
@@ -148,15 +151,9 @@ export const FileUploadTable = ({
                                                     submissionId,
                                                 )
                                             }
-                                            buttonText={
-                                                !hasError &&
-                                                (selectedFile || storedFiles.length > 0)
-                                                    ? t("file_upload.change_file")
-                                                    : t("file_upload.upload_file")
-                                            }
+                                            buttonText={t("file_upload.upload_file")}
                                             buttonIntent="secondary"
                                             isLoading={uploadingFiles[question.name]}
-                                            allowRemove={!hasError}
                                             errorMessages={{
                                                 fileSize: t("file_upload.error_max_file_size", {
                                                     size: "10MB",
@@ -175,7 +172,7 @@ export const FileUploadTable = ({
                     })}
                 </tbody>
             </table>
-            <div className="ui:text-sm ui:text-grey-600 ui:dark:text-grey-400">
+            <div className="ui:text-sm ui:text-black ui:dark:text-white">
                 {t("file_upload.max_file_size", {size: "10MB"})}
             </div>
         </div>
