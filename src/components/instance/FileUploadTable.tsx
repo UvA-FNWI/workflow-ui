@@ -77,8 +77,10 @@ export const FileUploadTable = ({
                 <thead>
                     <tr className="border-b">
                         <th className="w-8 p-2"></th>
-                        <th className="p-2 text-left">{t("file_upload.description")}</th>
-                        <th className="p-2 text-left">{t("file_upload.uploaded")}</th>
+                        <th className="p-2 text-left font-semibold">
+                            {t("file_upload.description")}
+                        </th>
+                        <th className="p-2 text-left font-semibold">{t("file_upload.uploaded")}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -150,7 +152,7 @@ export const FileUploadTable = ({
                                             }}
                                         />
                                         {uploadErrors[question.name] && (
-                                            <Text size="sm" className="text-red-600">
+                                            <Text size="sm" intent="error">
                                                 {uploadErrors[question.name]}
                                             </Text>
                                         )}
