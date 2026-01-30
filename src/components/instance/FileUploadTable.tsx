@@ -77,8 +77,8 @@ export const FileUploadTable = ({
     };
 
     return (
-        <div className="flex flex-col gap-2">
-            <table className="w-full border-collapse">
+        <div className="gap-2">
+            <table className="border-collapse">
                 <thead>
                     <tr className="border-grey-300 dark:border-grey-600 border-b">
                         <th className="w-8 p-2"></th>
@@ -168,7 +168,7 @@ export const FileUploadTable = ({
                     })}
                 </tbody>
             </table>
-            <div className="ui:text-sm ui:text-black ui:dark:text-white">
+            <div className="mt-2 text-sm text-black dark:text-white">
                 {t("file_upload.max_file_size", {size: "10MB"})}
             </div>
         </div>

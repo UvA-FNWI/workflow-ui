@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const linkClassGenerator = cva(
-  'ui:cursor-pointer ui:transition-colors ui:duration-150 ui:ease-in-out',
+  'ui:cursor-pointer ui:transition-colors ui:duration-150 ui:ease-in-out ui:text-base',
   {
     variants: {
       intent: {
