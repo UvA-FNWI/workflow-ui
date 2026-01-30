@@ -3,10 +3,12 @@ import {useCallback} from "react";
 import {Input, NumberInput} from "@datanose/ui";
 import {parseISO} from "date-fns";
 
+import {UserPicker} from "../UserPicker/UserPicker";
 import {DatePicker} from "~/components/Datepicker/Datepicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {Answer, Question} from "~/store/api/types/submissions";
+import type {UserSearchResult} from "~/store/api/types/users";
 
 const toDate = (value: unknown) => {
     if (!value) return undefined;
@@ -68,6 +70,13 @@ export const InputControl = ({value, question, onChange, onSave}: InputControlPr
             <DatePicker value={toDate(value)} onChange={(newValue) => debouncedChange(newValue)} />
         );
     }
-
+    if (question.type === "User") {
+        return (
+            <UserPicker
+                value={value as UserSearchResult | UserSearchResult[] | null | undefined}
+                onChange={(newValue) => debouncedChange(newValue)}
+            />
+        );
+    }
     return <div>Not supported type...</div>;
 };

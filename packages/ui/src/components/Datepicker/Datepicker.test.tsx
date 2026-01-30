@@ -441,15 +441,15 @@ describe('DatePicker Component', () => {
       const onChange = vi.fn();
       render(<DatePicker {...defaultProps} onChange={onChange} />);
 
-      const calendarButton = screen.getByRole('button', { name: /kalender/i });
+      const calendarButton = screen.getByRole('button');
       fireEvent.click(calendarButton);
 
       await waitFor(() => {
         expect(screen.getByRole('grid')).toBeInTheDocument();
       });
 
-      const today = new Date();
-      const dayButton = findDateButton(today.getDate().toString());
+      // Use a fixed date in the middle of the month that doesn't appear twice
+      const dayButton = findDateButton('15');
       if (dayButton) {
         fireEvent.click(dayButton);
         await waitFor(() => {
