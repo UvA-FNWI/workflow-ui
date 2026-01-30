@@ -4,6 +4,12 @@ export { Button, type ButtonProps } from './components/Button/Button';
 export { Card, type CardVariantProps } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
 export {
+  RadioGroup,
+  Radio,
+  type RadioGroupProps,
+  type RadioProps,
+} from './components/RadioGroup/RadioGroup';
+export {
   Heading,
   type HeadingVariantProps,
 } from './components/Heading/Heading';

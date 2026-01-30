@@ -1,8 +1,9 @@
 import {useCallback} from "react";
 
-import {Input, NumberInput} from "@datanose/ui";
+import {Checkbox, Input, NumberInput, Radio, RadioGroup} from "@datanose/ui";
 
 import {useDebounce} from "~/hooks/useDebounce";
+import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {Answer, Question} from "~/store/api/types/submissions";
 
@@ -17,7 +18,15 @@ interface InputControlProps {
     visibleChoices?: string[] | null;
 }
 
-export const InputControl = ({value, question, onChange, onSave}: InputControlProps) => {
+export const InputControl = ({
+    value,
+    question,
+    onChange,
+    onSave,
+    visibleChoices,
+}: InputControlProps) => {
+    const {l} = useTranslate("workflow");
+
     const save = useCallback(
         (value: unknown) => {
             onSave?.({questionName: question.name, value});
@@ -49,6 +58,65 @@ export const InputControl = ({value, question, onChange, onSave}: InputControlPr
                     debouncedChange(value);
                 }}
             />
+        );
+    }
+
+    if (
+        question.type === "Choice" &&
+        question.layout &&
+        "type" in question.layout &&
+        question.layout.type === "Checkbox"
+    ) {
+        const choices = visibleChoices
+            ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
+            : question.choices;
+
+        const selectedValues = (value as string[]) || [];
+
+        const handleCheckboxChange = (choiceName: string, isSelected: boolean) => {
+            const newValues = isSelected
+                ? [...selectedValues, choiceName]
+                : selectedValues.filter((v) => v !== choiceName);
+            debouncedChange(newValues);
+        };
+
+        return (
+            <div className="flex flex-col gap-2">
+                {choices.map((choice) => (
+                    <Checkbox
+                        key={choice.name}
+                        label={l(choice.text) ?? choice.name}
+                        isSelected={selectedValues.includes(choice.name)}
+                        onChange={(isSelected) => handleCheckboxChange(choice.name, isSelected)}
+                    />
+                ))}
+            </div>
+        );
+    }
+
+    if (
+        question.type === "Choice" &&
+        question.layout &&
+        "type" in question.layout &&
+        question.layout.type === "RadioList"
+    ) {
+        const choices = visibleChoices
+            ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
+            : question.choices;
+
+        return (
+            <RadioGroup
+                value={(value as string) || ""}
+                onChange={(selectedValue: string) => {
+                    debouncedChange(selectedValue);
+                }}
+            >
+                {choices.map((choice) => (
+                    <Radio key={choice.name} value={choice.name}>
+                        {l(choice.text)}
+                    </Radio>
+                ))}
+            </RadioGroup>
         );
     }
 

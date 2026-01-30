@@ -83,5 +83,5 @@ export type DataType =
     | "Double"
     | "Reference"
     | "Int";
-export type ChoiceLayoutType = "Dropdown" | "RadioList";
+export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Checkbox";
 export type FormLayout = "Normal" | "SinglePage" | "Modal";
