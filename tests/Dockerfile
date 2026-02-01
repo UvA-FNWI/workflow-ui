@@ -19,4 +19,6 @@ RUN pnpm exec playwright install --with-deps
 
 COPY . .
 
+RUN echo "window._env = { VITE_WEBAPI_URL: 'http://localhost:5025/', };" > ./public/environment.js
+
 ENTRYPOINT ["pnpm", "run", "e2e-test"]

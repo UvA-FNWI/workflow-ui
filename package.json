@@ -15,7 +15,8 @@
     "translations:generate": "i18next-cli extract",
     "preview": "vite preview",
     "prepare": "husky",
-    "e2e-test": "playwright test"
+    "e2e-test": "playwright test",
+    "dev:mock-api": "tsx tests/dummy-api.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.11.0",
