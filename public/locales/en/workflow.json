@@ -12,9 +12,6 @@
   },
   "home": "Home",
   "instance": {
-    "submission": {
-      "submittedOn": "Submitted on {{date}}"
-    },
     "summary": {
       "edit_page": "Edit page",
       "no_answer": "No answer provided",

@@ -12,9 +12,6 @@
   },
   "home": "Home",
   "instance": {
-    "submission": {
-      "submittedOn": "Ingeleverd op {{date}}"
-    },
     "summary": {
       "edit_page": "Pagina bewerken",
       "no_answer": "Geen antwoord gegeven",
