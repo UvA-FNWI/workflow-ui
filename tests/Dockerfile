@@ -19,4 +19,4 @@ RUN pnpm exec playwright install --with-deps
 
 COPY . .
 
-RUN pnpm run e2e-test
+ENTRYPOINT ["pnpm", "run", "e2e-test"]
