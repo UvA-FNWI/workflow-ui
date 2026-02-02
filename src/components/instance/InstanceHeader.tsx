@@ -18,7 +18,7 @@ export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
 
     return (
         <div className="flex flex-col gap-2">
-            <Link to="/" className="text-red-brand text-sm hover:opacity-80">
+            <Link to="/" className="text-sm text-red-brand hover:opacity-80">
                 <Icon name="arrow-left-line" size={"xs"} className="mr-1" color={"current"} />
                 {t("home")}
             </Link>

@@ -23,6 +23,7 @@
     },
     "workflowInstance": "Workflow Instance"
   },
+  "optional": "(optional)",
   "progress": {
     "label": "Here's where you are in the process",
     "title": "Progress"

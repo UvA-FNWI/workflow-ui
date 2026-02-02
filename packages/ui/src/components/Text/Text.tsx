@@ -6,7 +6,7 @@ import { cn } from '../../utils/cn';
 
 export type TextVariantProps = VariantProps<typeof textVariants>;
 
-const textVariants = cva('ui:font-body ui:m-0 ui:p-0', {
+const textVariants = cva('ui:m-0 ui:p-0 ui:font-body', {
   variants: {
     intent: {
       primary: 'ui:text-black ui:dark:text-white',
