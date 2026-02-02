@@ -18,12 +18,12 @@ import { Icon } from '../Icon';
 
 const modalClassGenerator = cva(
   // Base styles
-  'ui:fixed ui:inset-0 ui:z-50 ui:flex ui:items-center ui:justify-center ui:p-4 ui:bg-black/30'
+  'ui:fixed ui:inset-0 ui:z-50 ui:flex ui:items-center ui:justify-center ui:bg-black/30 ui:p-4'
 );
 
 const dialogClassGenerator = cva(
   // Base styles
-  'ui:relative ui:max-h-[90vh] ui:w-full ui:overflow-auto ui:bg-white ui:dark:bg-grey-900 ui:shadow-2xl ui:outline-none ui:rounded-none',
+  'ui:relative ui:max-h-[90vh] ui:w-full ui:overflow-auto ui:rounded-none ui:bg-white ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900',
   {
     variants: {
       size: {
@@ -31,7 +31,7 @@ const dialogClassGenerator = cva(
         md: 'ui:max-w-lg',
         lg: 'ui:max-w-2xl',
         xl: 'ui:max-w-4xl',
-        full: 'ui:max-w-[95vw] ui:max-h-[95vh]',
+        full: 'ui:max-h-[95vh] ui:max-w-[95vw]',
       },
     },
     defaultVariants: {
@@ -228,7 +228,7 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
       <header
         ref={ref}
         className={cn(
-          'ui:flex ui:items-center ui:justify-between ui:border-b ui:border-grey-200 ui:dark:border-grey-800 ui:px-6 ui:py-4',
+          'ui:flex ui:items-center ui:justify-between ui:border-b ui:border-grey-200 ui:px-6 ui:py-4 ui:dark:border-grey-800',
           className
         )}
         {...props}
@@ -277,7 +277,7 @@ const ModalFooter = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
     <footer
       ref={ref}
       className={cn(
-        'ui:flex ui:items-center ui:justify-end ui:gap-3 ui:border-t ui:border-grey-200 ui:dark:border-grey-800 ui:px-6 ui:py-4',
+        'ui:flex ui:items-center ui:justify-end ui:gap-3 ui:border-t ui:border-grey-200 ui:px-6 ui:py-4 ui:dark:border-grey-800',
         className
       )}
       {...props}

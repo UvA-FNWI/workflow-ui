@@ -5,11 +5,11 @@ export const inputVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'ui:bg-grey-100 ui:dark:bg-grey-800 ui:cursor-not-allowed ui:opacity-60',
-        false: 'ui:dark:bg-grey-900 ui:bg-grey-100',
+        true: 'ui:cursor-not-allowed ui:bg-grey-100 ui:opacity-60 ui:dark:bg-grey-800',
+        false: 'ui:bg-grey-100 ui:dark:bg-grey-900',
       },
       isFocusVisible: {
-        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-2 ui:dark:ring-orange-500',
+        true: 'ui:ring-2 ui:ring-navy-600 ui:ring-offset-2 ui:dark:ring-orange-500 ui:dark:ring-offset-grey-900',
         false: '',
       },
       isHovered: {

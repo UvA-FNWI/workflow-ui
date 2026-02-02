@@ -97,7 +97,7 @@ export const Required: Story = {
 
 export const MultipleStates: Story = {
   render: () => (
-    <div className="ui:flex ui:flex-col ui:gap-6 ui:w-80">
+    <div className="ui:flex ui:w-80 ui:flex-col ui:gap-6">
       <DatePicker label="Default" />
       <DatePicker label="With Value" defaultValue={parseDate('2024-06-15')} />
       <DatePicker

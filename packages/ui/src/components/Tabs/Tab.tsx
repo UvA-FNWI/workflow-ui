@@ -8,15 +8,15 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const tabClassGenerator = cva(
-  'ui:p-3 ui:text-sm ui:flex ui:items-center ui:border-b ui:border-transparent ui:cursor-pointer ui:bg-transparent ui:transition-colors ui:duration-150 ui:ease-in-out',
+  'ui:flex ui:cursor-pointer ui:items-center ui:border-b ui:border-transparent ui:bg-transparent ui:p-3 ui:text-sm ui:transition-colors ui:duration-150 ui:ease-in-out',
   {
     variants: {
       isActive: {
-        true: 'ui:font-semibold ui:border-black ui:cursor-pointer',
+        true: 'ui:cursor-pointer ui:border-black ui:font-semibold',
         false: 'ui:font-normal',
       },
       disabled: {
-        true: 'ui:opacity-50 ui:cursor-not-allowed ui:pointer-events-auto',
+        true: 'ui:pointer-events-auto ui:cursor-not-allowed ui:opacity-50',
         false: '',
       },
     },
