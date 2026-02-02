@@ -26,7 +26,7 @@ const radioGroupVariants = cva('ui:flex ui:gap-2', {
       vertical: 'ui:flex-col',
     },
     isDisabled: {
-      true: 'ui:opacity-60',
+      true: 'ui:cursor-not-allowed',
       false: '',
     },
   },
@@ -42,11 +42,11 @@ const radioItemVariants = cva(
   {
     variants: {
       isDisabled: {
-        true: 'ui:cursor-not-allowed ui:opacity-60',
+        true: 'ui:cursor-not-allowed',
         false: 'ui:cursor-pointer',
       },
       isFocusVisible: {
-        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-6 ui:dark:ring-orange-500',
+        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-6 ui:dark:ring-orange-600',
         false: '',
       },
     },
@@ -65,10 +65,10 @@ const radioCircleVariants = cva(
       isSelected: {
         true: 'ui:border-navy-600 ui:dark:border-sky-500',
         false:
-          'ui:border-grey-300 ui:dark:border-grey-600 ui:bg-white ui:dark:bg-grey-800',
+          'ui:border-grey-600 ui:dark:border-grey-300 ui:bg-white ui:dark:bg-grey-800',
       },
       isDisabled: {
-        true: 'ui:bg-grey-100 ui:border-grey-300 ui:dark:bg-grey-800 ui:dark:border-grey-600',
+        true: 'ui:bg-grey-100 ui:border-grey-500 ui:dark:bg-grey-800 ui:dark:border-grey-600',
         false: '',
       },
       isValid: {
@@ -76,7 +76,7 @@ const radioCircleVariants = cva(
         false: 'ui:border-red-600 ui:dark:border-red-400',
       },
       isHovered: {
-        true: 'ui:bg-navy-100 ui:outline-navy-100 ui:outline-6 ui:dark:bg-sky-900 ui:dark:outline-sky-900',
+        true: 'ui:bg-navy-600/10 ui:outline-navy-100 ui:outline-6 ui:dark:bg-sky-900 ui:dark:outline-sky-900',
         false: '',
       },
     },
@@ -287,9 +287,6 @@ export const Radio: React.FC<RadioProps> = ({
   const { focusProps, isFocusVisible } = useFocusRing();
   const { hoverProps, isHovered } = useHover({ isDisabled });
 
-  // Get validation state from the group
-  const isValid = state.validationState !== 'invalid';
-
   return (
     <label
       {...mergeProps(labelProps, hoverProps)}
@@ -309,7 +306,7 @@ export const Radio: React.FC<RadioProps> = ({
           radioCircleVariants({
             isSelected,
             isDisabled,
-            isValid,
+            isValid: !state.isInvalid,
             isHovered: isHovered && !isDisabled,
           })
         )}
