@@ -72,11 +72,11 @@ export const Accessibility: Story = {
     label: 'Loading user profile data',
   },
   render: args => (
-    <div className="ui:max-w-md ui:mx-auto ui:p-6 ui:space-y-4">
+    <div className="ui:mx-auto ui:max-w-md ui:space-y-4 ui:p-6">
       <p className="ui:text-sm ui:text-grey-600">
         This spinner has a custom aria-label for screen readers:
       </p>
-      <div className="ui:flex ui:items-center ui:justify-center ui:p-4 ui:border ui:border-grey-200 ui:rounded">
+      <div className="ui:flex ui:items-center ui:justify-center ui:rounded ui:border ui:border-grey-200 ui:p-4">
         <LoadingSpinner {...args} />
       </div>
       <p className="ui:text-xs ui:text-grey-500">
