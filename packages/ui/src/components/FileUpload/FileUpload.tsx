@@ -180,13 +180,18 @@ export const FileUpload = ({
       {showFileName && (selectedFile || fileName) && !error && (
         <div
           className={cn(
-            'ui:flex ui:items-center ui:justify-between',
+            'ui:flex ui:min-w-0 ui:items-center ui:justify-between',
             fileInfoClassGenerator()
           )}
         >
-          <div>
+          <div className="ui:min-w-0 ui:max-w-md ui:truncate">
             {onFileNameClick ? (
-              <Link intent="primary" underline onClick={onFileNameClick}>
+              <Link
+                intent="primary"
+                underline
+                onClick={onFileNameClick}
+                className="ui:truncate ui:block"
+              >
                 {fileNameToShow}
               </Link>
             ) : (

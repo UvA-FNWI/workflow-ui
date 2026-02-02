@@ -77,8 +77,8 @@ export const FileUploadTable = ({
     };
 
     return (
-        <div className="gap-2">
-            <table className="border-collapse">
+        <div className="max-w-full gap-2 overflow-x-auto">
+            <table className="w-full border-collapse">
                 <thead>
                     <tr className="border-grey-300 dark:border-grey-600 border-b">
                         <th className="w-8 p-2"></th>

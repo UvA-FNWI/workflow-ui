@@ -63,6 +63,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                                         <Link
                                             intent="primary"
                                             underline
+                                            className="truncate"
                                             onClick={() =>
                                                 downloadFile(
                                                     answer?.files?.[0],
@@ -75,7 +76,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                                             {formattedValue}
                                         </Link>
                                     ) : (
-                                        <Text>{formattedValue}</Text>
+                                        <Text className="truncate">{formattedValue}</Text>
                                     )}
                                 </div>
                             );
