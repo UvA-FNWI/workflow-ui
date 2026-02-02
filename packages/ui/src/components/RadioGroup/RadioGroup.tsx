@@ -46,7 +46,7 @@ const radioItemVariants = cva(
         false: 'ui:cursor-pointer',
       },
       isFocusVisible: {
-        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-6 ui:dark:ring-orange-600',
+        true: 'ui:ring-2 ui:ring-navy-600 ui:ring-offset-6 ui:dark:ring-orange-600 ui:dark:ring-offset-grey-900',
         false: '',
       },
     },
@@ -59,16 +59,16 @@ const radioItemVariants = cva(
 
 // Radio circle variants
 const radioCircleVariants = cva(
-  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded-full ui:transition-all ui:duration-200 ui:border-2 ui:outline-6 ui:outline-transparent',
+  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded-full ui:border-2 ui:outline-6 ui:outline-transparent ui:transition-all ui:duration-200',
   {
     variants: {
       isSelected: {
         true: 'ui:border-navy-600 ui:dark:border-sky-500',
         false:
-          'ui:border-grey-600 ui:dark:border-grey-300 ui:bg-white ui:dark:bg-grey-800',
+          'ui:border-grey-600 ui:bg-white ui:dark:border-grey-300 ui:dark:bg-grey-800',
       },
       isDisabled: {
-        true: 'ui:bg-grey-100 ui:border-grey-500 ui:dark:bg-grey-800 ui:dark:border-grey-600',
+        true: 'ui:border-grey-500 ui:bg-grey-100 ui:dark:border-grey-600 ui:dark:bg-grey-800',
         false: '',
       },
       isValid: {
@@ -76,7 +76,7 @@ const radioCircleVariants = cva(
         false: 'ui:border-red-600 ui:dark:border-red-400',
       },
       isHovered: {
-        true: 'ui:bg-navy-600/10 ui:outline-navy-100 ui:outline-6 ui:dark:bg-sky-900 ui:dark:outline-sky-900',
+        true: 'ui:bg-navy-600/10 ui:outline-6 ui:outline-navy-100 ui:dark:bg-sky-900 ui:dark:outline-sky-900',
         false: '',
       },
     },

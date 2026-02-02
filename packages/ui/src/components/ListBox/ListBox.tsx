@@ -37,9 +37,9 @@ export function ListBox<T extends object>(props: ListBoxProps<T>) {
       {...mergeProps(listBoxProps, focusProps)}
       ref={ref}
       className={cn(
-        'ui:max-h-[400px] ui:overflow-y-auto ui:outline-none ui:border ui:border-grey-300 ui:dark:border-grey-600 ui:rounded-md ui:bg-white ui:dark:bg-grey-900',
+        'ui:max-h-[400px] ui:overflow-y-auto ui:rounded-md ui:border ui:border-grey-300 ui:bg-white ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900',
         isFocusVisible &&
-          'ui:ring-2 ui:ring-navy-600 ui:dark:ring-orange-500 ui:ring-offset-2 ui:dark:ring-offset-grey-900',
+          'ui:ring-2 ui:ring-navy-600 ui:ring-offset-2 ui:dark:ring-orange-500 ui:dark:ring-offset-grey-900',
         className
       )}
     >

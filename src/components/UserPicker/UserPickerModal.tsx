@@ -137,7 +137,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
                 {/* Search hint */}
                 {showSearchHint && (
-                    <div className="text-grey-600 dark:text-grey-400 py-8 text-center">
+                    <div className="py-8 text-center text-grey-600 dark:text-grey-400">
                         {t("user_picker.search_hint", {count: minSearchLength})}
                     </div>
                 )}
@@ -166,7 +166,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                                             {user.displayName}
                                         </span>
                                         {user.email && (
-                                            <span className="text-grey-500 dark:text-grey-500 truncate text-xs">
+                                            <span className="truncate text-xs text-grey-500 dark:text-grey-500">
                                                 {user.email}
                                             </span>
                                         )}
@@ -179,7 +179,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
                 {/* No results */}
                 {showNoResults && (
-                    <div className="text-grey-600 dark:text-grey-400 py-8 text-center">
+                    <div className="py-8 text-center text-grey-600 dark:text-grey-400">
                         {t("user_picker.no_results")}
                     </div>
                 )}

@@ -23,7 +23,7 @@ const modalClassGenerator = cva(
 
 const dialogClassGenerator = cva(
   // Base styles
-  'ui:relative ui:flex ui:flex-col ui:max-h-[90vh] ui:w-full ui:overflow-auto ui:rounded-none ui:bg-white ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900',
+  'ui:relative ui:flex ui:max-h-[90vh] ui:w-full ui:flex-col ui:overflow-auto ui:rounded-none ui:bg-white ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900',
   {
     variants: {
       size: {

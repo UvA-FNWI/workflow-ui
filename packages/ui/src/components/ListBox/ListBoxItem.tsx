@@ -26,12 +26,12 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       {...mergeProps(optionProps, focusProps, hoverProps)}
       ref={ref}
       className={cn(
-        'ui:px-4 ui:py-2 ui:cursor-pointer ui:outline-none ui:transition-colors ui:duration-150',
+        'ui:cursor-pointer ui:px-4 ui:py-2 ui:transition-colors ui:duration-150 ui:outline-none',
         isSelected && 'ui:bg-grey-100 ui:dark:bg-grey-800',
         isHovered && !isSelected && 'ui:bg-grey-50 ui:dark:bg-grey-850',
         isFocusVisible &&
-          'ui:ring-2 ui:ring-navy-600 ui:dark:ring-orange-500 ui:ring-inset',
-        isDisabled && 'ui:opacity-50 ui:cursor-not-allowed ui:bg-transparent'
+          'ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:ring-orange-500',
+        isDisabled && 'ui:cursor-not-allowed ui:bg-transparent ui:opacity-50'
       )}
     >
       {item.rendered}
