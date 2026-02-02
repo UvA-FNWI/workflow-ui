@@ -105,7 +105,11 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                     )}
                                     <Button
                                         intent="secondary"
-                                        disabled={!isPageComplete(page)}
+                                        disabled={
+                                            index === submission.form.pages.length - 1
+                                                ? !areAllPagesComplete
+                                                : !isPageComplete(page)
+                                        }
                                         onClick={goToNextTab}
                                     >
                                         {t("continue")}
