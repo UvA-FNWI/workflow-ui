@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {Button, Icon, Input, Item, ListBox, LoadingSpinner, Modal} from "@datanose/ui";
+import {Button, Icon, Input, Item, ListBox, LoadingSpinner, Modal, Separator} from "@datanose/ui";
 
 import {useDebounce} from "../../hooks/useDebounce";
 import {useTranslate} from "../../hooks/useTranslate";
@@ -112,7 +112,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const searchPlaceholderText = searchPlaceholder ?? t("user_picker.search_placeholder");
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
                 {/* Search Input */}
@@ -124,7 +124,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                         className="pr-12"
                     />
                     <div className="absolute top-0 right-0 flex h-full items-center">
-                        <div className="bg-grey-300 dark:bg-grey-600 h-full w-px" />
+                        <Separator orientation="vertical" className="w-px" />
                         <div className="px-3">
                             {showLoading ? (
                                 <LoadingSpinner size="xs" />
