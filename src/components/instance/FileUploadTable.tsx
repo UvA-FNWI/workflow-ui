@@ -80,7 +80,7 @@ export const FileUploadTable = ({
         <div className="max-w-full gap-2 overflow-x-auto">
             <table className="w-full border-collapse">
                 <thead>
-                    <tr className="border-grey-300 dark:border-grey-600 border-b">
+                    <tr className="border-b border-grey-300 dark:border-grey-600">
                         <th className="w-8 p-2"></th>
                         <th className="p-2 text-left font-semibold">
                             {t("file_upload.description")}
@@ -106,7 +106,7 @@ export const FileUploadTable = ({
                         return (
                             <tr
                                 key={question.name}
-                                className="border-grey-300 dark:border-grey-600 border-b"
+                                className="border-b border-grey-300 dark:border-grey-600"
                             >
                                 <td className="align-center p-2">
                                     <div
@@ -121,7 +121,7 @@ export const FileUploadTable = ({
                                 <td className="align-center p-2">
                                     <div className="font-medium">{l(question.text)}</div>
                                     {question.description && (
-                                        <div className="text-grey-600 dark:text-grey-400 text-sm">
+                                        <div className="text-sm text-grey-600 dark:text-grey-400">
                                             {l(question.description)}
                                         </div>
                                     )}

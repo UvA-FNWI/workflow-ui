@@ -44,7 +44,7 @@ export const Destructive: Story = {
 
 export const InlineUsage: Story = {
   render: args => (
-    <p className="ui:max-w-lg ui:text-sm ui:text-grey-800 ui:dark:ui:text-grey-200">
+    <p className="ui:dark:ui:text-grey-200 ui:max-w-lg ui:text-sm ui:text-grey-800">
       You can place the <Link {...args}>Link component</Link> inline with text
       to provide contextual navigation or actions.
     </p>

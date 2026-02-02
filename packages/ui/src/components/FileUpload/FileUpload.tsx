@@ -184,13 +184,13 @@ export const FileUpload = ({
             fileInfoClassGenerator()
           )}
         >
-          <div className="ui:min-w-0 ui:max-w-md ui:truncate">
+          <div className="ui:max-w-md ui:min-w-0 ui:truncate">
             {onFileNameClick ? (
               <Link
                 intent="primary"
                 underline
                 onClick={onFileNameClick}
-                className="ui:truncate ui:block"
+                className="ui:block ui:truncate"
               >
                 {fileNameToShow}
               </Link>

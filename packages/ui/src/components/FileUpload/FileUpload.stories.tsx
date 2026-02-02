@@ -105,17 +105,17 @@ export const WithClickableFileName: Story = {
     };
 
     return (
-      <div className="ui:flex ui:flex-col ui:gap-4 ui:w-96">
+      <div className="ui:flex ui:w-96 ui:flex-col ui:gap-4">
         <FileUpload
           {...args}
           onFileNameClick={handleFileNameClick}
           fileName="document.pdf"
           showFileName
         />
-        <div className="ui:p-4 ui:bg-gray-100 ui:rounded-md">
+        <div className="ui:rounded-md ui:bg-gray-100 ui:p-4">
           <p className="ui:text-sm ui:font-medium">Info:</p>
           <p className="ui:text-sm">File name clicked {clickCount} time(s)</p>
-          <p className="ui:text-xs ui:text-gray-600 ui:mt-2">
+          <p className="ui:mt-2 ui:text-xs ui:text-gray-600">
             Click the file name above to test the functionality
           </p>
         </div>
@@ -144,15 +144,15 @@ export const Interactive: Story = {
     };
 
     return (
-      <div className="ui:flex ui:flex-col ui:gap-4 ui:w-96">
+      <div className="ui:flex ui:w-96 ui:flex-col ui:gap-4">
         <FileUpload {...args} onFileSelect={handleFileSelect} showFileName />
-        <div className="ui:p-4 ui:bg-gray-100 ui:rounded-md">
+        <div className="ui:rounded-md ui:bg-gray-100 ui:p-4">
           <p className="ui:text-sm ui:font-medium">Status:</p>
           <p className="ui:text-sm">{status}</p>
           {file && (
             <>
-              <p className="ui:text-sm ui:font-medium ui:mt-2">File Details:</p>
-              <ul className="ui:text-sm ui:list-disc ui:list-inside">
+              <p className="ui:mt-2 ui:text-sm ui:font-medium">File Details:</p>
+              <ul className="ui:list-inside ui:list-disc ui:text-sm">
                 <li>Name: {file.name}</li>
                 <li>Type: {file.type}</li>
                 <li>Size: {file.size} bytes</li>
