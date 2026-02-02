@@ -78,63 +78,58 @@ export const InputControl = ({
         );
     }
 
-    if (
-        question.type === "Choice" &&
-        question.layout &&
-        "type" in question.layout &&
-        question.layout.type === "Checkbox"
-    ) {
+    if (question.type === "Choice") {
         const choices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
 
-        const selectedValues = (value as string[]) || [];
+        if (question.layout && "type" in question.layout && question.layout.type === "RadioList") {
+            if (question.isArray) {
+                // Checkbox list for multi-select
+                const selectedValues = (value as string[]) || [];
 
-        const handleCheckboxChange = (choiceName: string, isSelected: boolean) => {
-            const newValues = isSelected
-                ? [...selectedValues, choiceName]
-                : selectedValues.filter((v) => v !== choiceName);
-            debouncedChange(newValues);
-        };
+                const handleCheckboxChange = (choiceName: string, isSelected: boolean) => {
+                    const newValues = isSelected
+                        ? [...selectedValues, choiceName]
+                        : selectedValues.filter((v) => v !== choiceName);
+                    debouncedChange(newValues);
+                };
 
-        return (
-            <div className="flex flex-col gap-2">
-                {choices.map((choice) => (
-                    <Checkbox
-                        key={choice.name}
-                        label={l(choice.text) ?? choice.name}
-                        isSelected={selectedValues.includes(choice.name)}
-                        onChange={(isSelected) => handleCheckboxChange(choice.name, isSelected)}
-                    />
-                ))}
-            </div>
-        );
-    }
+                return (
+                    <div className="flex flex-col gap-2">
+                        {choices.map((choice) => (
+                            <Checkbox
+                                key={choice.name}
+                                label={l(choice.text) ?? choice.name}
+                                isSelected={selectedValues.includes(choice.name)}
+                                onChange={(isSelected) =>
+                                    handleCheckboxChange(choice.name, isSelected)
+                                }
+                            />
+                        ))}
+                    </div>
+                );
+            }
 
-    if (
-        question.type === "Choice" &&
-        question.layout &&
-        "type" in question.layout &&
-        question.layout.type === "RadioList"
-    ) {
-        const choices = visibleChoices
-            ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
-            : question.choices;
+            // RadioGroup for single select
+            return (
+                <RadioGroup
+                    value={(value as string) || ""}
+                    onChange={(selectedValue: string) => {
+                        debouncedChange(selectedValue);
+                    }}
+                >
+                    {choices.map((choice) => (
+                        <Radio key={choice.name} value={choice.name}>
+                            {l(choice.text)}
+                        </Radio>
+                    ))}
+                </RadioGroup>
+            );
+        }
 
-        return (
-            <RadioGroup
-                value={(value as string) || ""}
-                onChange={(selectedValue: string) => {
-                    debouncedChange(selectedValue);
-                }}
-            >
-                {choices.map((choice) => (
-                    <Radio key={choice.name} value={choice.name}>
-                        {l(choice.text)}
-                    </Radio>
-                ))}
-            </RadioGroup>
-        );
+        // Default: dropdown (with multiselect if isArray is true)
+        return <div>Placeholder for dropdown</div>;
     }
 
     return <div>Not supported type...</div>;
