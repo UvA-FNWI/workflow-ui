@@ -19,7 +19,7 @@ export const ToastRegion = () => {
     <div
       {...regionProps}
       ref={ref}
-      className="ui:fixed ui:w-1/5 ui:top-sm ui:left-1/2 ui:-translate-x-1/2 ui:translate-y-0 ui:flex ui:flex-col ui:gap-3 ui:z-13"
+      className="ui:top-sm ui:fixed ui:left-1/2 ui:z-13 ui:flex ui:w-1/5 ui:-translate-x-1/2 ui:translate-y-0 ui:flex-col ui:gap-3"
     >
       {state.visibleToasts.map(toast => (
         <Toast key={toast.key} toast={toast} state={state} />

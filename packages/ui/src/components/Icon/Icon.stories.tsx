@@ -93,36 +93,36 @@ const IconBrowserComponent = () => {
           placeholder="Search icons..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="ui:border-grey-300 ui:w-full ui:rounded-sm ui:border ui:px-4 ui:py-2"
+          className="ui:w-full ui:rounded-sm ui:border ui:border-grey-300 ui:px-4 ui:py-2"
         />
         <Text intent="secondary" size="sm">
           {filteredIcons.length} of {allIcons.length} icons
           {searchTerm && ` matching "${searchTerm}"`}
         </Text>
       </div>
-      <div className="ui:bg-grey-200 ui:mb-6 ui:rounded-sm ui:p-4">
+      <div className="ui:mb-6 ui:rounded-sm ui:bg-grey-200 ui:p-4">
         <h4 className="ui:mb-2 ui:font-medium">Usage Tips:</h4>
-        <ul className="ui:text-grey-800 ui:space-y-1 ui:text-sm">
+        <ul className="ui:space-y-1 ui:text-sm ui:text-grey-800">
           <li>• Click any icon to copy its name to clipboard</li>
           <li>• Use the search bar to filter icons by name</li>
           <li>• Icon names can be used with: {'<Icon name="icon-name" />'}</li>
         </ul>
       </div>
-      <div className="ui:grid ui:grid-cols-3 ui:gap-4 ui:rounded-sm md:ui:grid-cols-6 lg:ui:grid-cols-8 xl:ui:grid-cols-10">
+      <div className="md:ui:grid-cols-6 lg:ui:grid-cols-8 xl:ui:grid-cols-10 ui:grid ui:grid-cols-3 ui:gap-4 ui:rounded-sm">
         {filteredIcons.map(iconName => (
           <div
             key={iconName}
-            className="ui:border-grey-600 ui:group ui:flex ui:cursor-pointer ui:flex-col ui:items-center ui:rounded-lg ui:border ui:p-3 ui:transition-all ui:hover:border-red-300 ui:hover:bg-red-50"
+            className="ui:group ui:flex ui:cursor-pointer ui:flex-col ui:items-center ui:rounded-lg ui:border ui:border-grey-600 ui:p-3 ui:transition-all ui:hover:border-red-300 ui:hover:bg-red-50"
             onClick={() => handleCopyIconName(iconName)}
             title={`Click to copy: ${iconName}`}
           >
             <Icon
               name={iconName}
               size="lg"
-              className="ui:group-hover:text-red-brand ui:transition-colors"
+              className="ui:transition-colors ui:group-hover:text-red-brand"
               color="current"
             />
-            <span className="ui:group-hover:text-red-brand ui:mt-2 ui:w-full ui:truncate ui:text-center ui:text-xs ui:font-medium">
+            <span className="ui:mt-2 ui:w-full ui:truncate ui:text-center ui:text-xs ui:font-medium ui:group-hover:text-red-brand">
               {iconName.replace(/-/g, ' ')}
             </span>
           </div>
@@ -133,7 +133,7 @@ const IconBrowserComponent = () => {
           <Icon
             name="cross-line"
             size="xl"
-            className="ui:text-grey-400 ui:mx-auto ui:mb-4"
+            className="ui:mx-auto ui:mb-4 ui:text-grey-400"
           />
           <p className="ui:text-grey-600">
             No icons found matching "{searchTerm}"

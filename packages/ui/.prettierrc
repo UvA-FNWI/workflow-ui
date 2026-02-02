@@ -11,7 +11,8 @@
     "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss"
   ],
-  "tailwindFunctions": ["cva"],
+  "tailwindStylesheet": "./src/styles/tailwind.css",
+  "tailwindFunctions": ["cva", "cn"],
   "importOrder": [
     "^react$",
     "^react/(.*)$",
