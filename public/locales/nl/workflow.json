@@ -23,6 +23,7 @@
     },
     "workflowInstance": "Workflow"
   },
+  "optional": "(optioneel)",
   "progress": {
     "label": "Hier ben je in het proces",
     "title": "Voortgang"
