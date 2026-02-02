@@ -31,5 +31,14 @@
   "screens": {
     "students": "Studenten"
   },
-  "submit": "Indienen"
+  "submit": "Indienen",
+  "user_picker": {
+    "no_results": "Geen medewerkers gevonden",
+    "search_hint_one": "Zoek een medewerker",
+    "search_hint_other": "Zoek medewerkers",
+    "search_placeholder": "Zoek een medewerker...",
+    "selected_users_one": "{{count}} gebruiker geselecteerd",
+    "selected_users_other": "{{count}} gebruikers geselecteerd",
+    "title": "Zoek medewerker"
+  }
 }

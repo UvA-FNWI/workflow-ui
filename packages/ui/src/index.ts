@@ -63,6 +63,13 @@ export { useToast } from './components/Toast/hooks/useToast';
 export { Modal, type ModalProps } from './components/Modal/Modal';
 
 export {
+  ListBox,
+  Item,
+  type ListBoxProps,
+  type ListState,
+} from './components/ListBox';
+
+export {
   Tab,
   Tabs,
   TabList,
