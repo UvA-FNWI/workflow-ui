@@ -158,7 +158,7 @@ const DateRangePickerInner: React.FC<DateRangePickerInnerProps> = ({
           <div className="ui:flex ui:flex-col ui:gap-0.5">
             <DateField {...startFieldProps} />
           </div>
-          <span className="ui:text-grey-400 ui:dark:text-grey-600 ui:mt-auto">
+          <span className="ui:mt-auto ui:text-grey-400 ui:dark:text-grey-600">
             –
           </span>
           <div className="ui:flex ui:flex-col ui:gap-0.5">

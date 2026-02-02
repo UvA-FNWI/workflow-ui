@@ -20,7 +20,7 @@ export type ToasterConfig = {
 
 const toastClassGenerator = cva(
   // Base styles
-  "ui:relative ui:p-3 ui:w-full ui:break-words ui:grid ui:grid-cols-[auto_1fr_auto] ui:gap-2 ui:items-start ui:shadow-lg ui:before:content-[''] ui:before:absolute ui:before:top-0 ui:before:left-0 ui:before:w-0.5 ui:before:h-full ui:before:block ui:before:z-[1]",
+  "ui:relative ui:grid ui:w-full ui:grid-cols-[auto_1fr_auto] ui:items-start ui:gap-2 ui:p-3 ui:break-words ui:shadow-lg ui:before:absolute ui:before:top-0 ui:before:left-0 ui:before:z-[1] ui:before:block ui:before:h-full ui:before:w-0.5 ui:before:content-['']",
   {
     variants: {
       type: {
@@ -75,7 +75,7 @@ export function Toast({ toast, state }: ToastProps) {
       <div className="ui:flex ui:flex-col ui:gap-1">
         <h1
           {...titleProps}
-          className="ui:leading-tight ui:text-sm ui:font-semibold ui:m-0"
+          className="ui:m-0 ui:text-sm ui:leading-tight ui:font-semibold"
         >
           {toast.content.label}
         </h1>
@@ -84,7 +84,7 @@ export function Toast({ toast, state }: ToastProps) {
         </span>
         {toast.content.actionLabel && (
           <span
-            className="ui:w-fit ui:text-sm ui:font-semibold ui:cursor-pointer ui:mt-1"
+            className="ui:mt-1 ui:w-fit ui:cursor-pointer ui:text-sm ui:font-semibold"
             onClick={() => {
               toast.content.onAction?.();
               state.close(toast.key);
@@ -95,7 +95,7 @@ export function Toast({ toast, state }: ToastProps) {
         )}
       </div>
       <div
-        className="ui:flex ui:items-center ui:justify-center ui:cursor-pointer ui:p-2"
+        className="ui:flex ui:cursor-pointer ui:items-center ui:justify-center ui:p-2"
         onClick={() => state.close(toast.key)}
       >
         <Icon name="cross-line" size="sm" color="current" />

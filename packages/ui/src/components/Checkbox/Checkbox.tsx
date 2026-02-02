@@ -24,7 +24,7 @@ const checkboxVariants = cva(
         false: 'ui:cursor-pointer',
       },
       isFocusVisible: {
-        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-6 ui:dark:ring-orange-500',
+        true: 'ui:ring-2 ui:ring-navy-600 ui:ring-offset-6 ui:dark:ring-orange-500 ui:dark:ring-offset-grey-900',
         false: '',
       },
     },
@@ -37,16 +37,16 @@ const checkboxVariants = cva(
 
 const checkboxBoxVariants = cva(
   // Base checkbox box styles
-  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded ui:transition-all ui:duration-200 ui:border-1 ui:outline-6 ui:outline-transparent',
+  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded ui:border-1 ui:outline-6 ui:outline-transparent ui:transition-all ui:duration-200',
   {
     variants: {
       isSelected: {
-        true: 'ui:bg-navy-600 ui:border-navy-600 ui:dark:border-sky-500 ui:dark:bg-sky-500',
+        true: 'ui:border-navy-600 ui:bg-navy-600 ui:dark:border-sky-500 ui:dark:bg-sky-500',
         false:
-          'ui:border-grey-300 ui:dark:bg-grey-800 ui:dark:border-grey-600 ui:bg-white',
+          'ui:border-grey-300 ui:bg-white ui:dark:border-grey-600 ui:dark:bg-grey-800',
       },
       isDisabled: {
-        true: 'ui:bg-grey-100 ui:border-grey-300 ui:dark:bg-grey-800 ui:dark:border-grey-600',
+        true: 'ui:border-grey-300 ui:bg-grey-100 ui:dark:border-grey-600 ui:dark:bg-grey-800',
         false: '',
       },
       isValid: {
@@ -54,7 +54,7 @@ const checkboxBoxVariants = cva(
         false: 'ui:border-red-600 ui:dark:border-red-400',
       },
       isHovered: {
-        true: 'ui:bg-navy-100 ui:outline-navy-100 ui:outline-6 ui:dark:bg-sky-900 ui:dark:outline-sky-900',
+        true: 'ui:bg-navy-100 ui:outline-6 ui:outline-navy-100 ui:dark:bg-sky-900 ui:dark:outline-sky-900',
         false: '',
       },
     },
@@ -62,18 +62,18 @@ const checkboxBoxVariants = cva(
       {
         isSelected: true,
         isDisabled: true,
-        class: 'ui:bg-grey-600 ui:border-grey-600',
+        class: 'ui:border-grey-600 ui:bg-grey-600',
       },
       {
         isHovered: true,
         isSelected: true,
         class:
-          'ui:bg-navy-600 ui:border-navy-600 ui:outline-navy-100 ui:dark:border-sky-500 ui:dark:bg-sky-500 ui:dark:outline-sky-900',
+          'ui:border-navy-600 ui:bg-navy-600 ui:outline-navy-100 ui:dark:border-sky-500 ui:dark:bg-sky-500 ui:dark:outline-sky-900',
       },
       {
         isValid: false,
         isSelected: true,
-        class: 'ui:bg-navy-600 ui:border-navy-600',
+        class: 'ui:border-navy-600 ui:bg-navy-600',
       },
       {
         isSelected: false,

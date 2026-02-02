@@ -41,7 +41,7 @@ const BasicTemplate = (args: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="ui:min-h-screen ui:flex ui:items-center ui:justify-center ui:p-4">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
       <Button intent="primary" onClick={() => setIsOpen(true)}>
         Open Modal
       </Button>
@@ -71,7 +71,7 @@ const WithoutFooterTemplate = (args: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="ui:min-h-screen ui:flex ui:items-center ui:justify-center ui:p-4">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
       <Button intent="primary" onClick={() => setIsOpen(true)}>
         Open Modal
       </Button>
@@ -92,13 +92,13 @@ const WithoutHeaderTemplate = (args: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="ui:min-h-screen ui:flex ui:items-center ui:justify-center ui:p-4">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
       <Button intent="primary" onClick={() => setIsOpen(true)}>
         Open Modal
       </Button>
       <Modal {...args} isOpen={isOpen} onOpenChange={setIsOpen}>
         <Modal.Body>
-          <p className="ui:font-bold ui:text-lg ui:mb-4">No Header Modal</p>
+          <p className="ui:mb-4 ui:text-lg ui:font-bold">No Header Modal</p>
           <p>This modal doesn't have a separate header component.</p>
         </Modal.Body>
         <Modal.Footer>
@@ -115,7 +115,7 @@ const CustomStylingTemplate = (args: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="ui:min-h-screen ui:flex ui:items-center ui:justify-center ui:p-4">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
       <Button intent="primary" onClick={() => setIsOpen(true)}>
         Open Custom Modal
       </Button>
@@ -123,7 +123,7 @@ const CustomStylingTemplate = (args: any) => {
         <Modal.Header className="ui:bg-blue-50">
           Custom Styled Header
         </Modal.Header>
-        <Modal.Body className="ui:bg-gray-50 ui:min-h-[200px]">
+        <Modal.Body className="ui:min-h-[200px] ui:bg-gray-50">
           <p>
             This modal has custom styling applied to its compound components.
           </p>
@@ -132,7 +132,7 @@ const CustomStylingTemplate = (args: any) => {
             Modal.Footer.
           </p>
         </Modal.Body>
-        <Modal.Footer className="ui:bg-blue-50 ui:justify-start">
+        <Modal.Footer className="ui:justify-start ui:bg-blue-50">
           <Button intent="primary" onClick={() => setIsOpen(false)}>
             Got it
           </Button>
@@ -146,7 +146,7 @@ const NonDismissableTemplate = (args: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="ui:min-h-screen ui:flex ui:items-center ui:justify-center ui:p-4">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
       <Button intent="primary" onClick={() => setIsOpen(true)}>
         Open Non-Dismissable Modal
       </Button>
@@ -176,7 +176,7 @@ const AlertDialogTemplate = (args: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="ui:min-h-screen ui:flex ui:items-center ui:justify-center ui:p-4">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
       <Button intent="destructivePrimary" onClick={() => setIsOpen(true)}>
         Delete Item
       </Button>
@@ -205,7 +205,7 @@ const LongContentTemplate = (args: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="ui:min-h-screen ui:flex ui:items-center ui:justify-center ui:p-4">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
       <Button intent="primary" onClick={() => setIsOpen(true)}>
         Open Modal with Long Content
       </Button>

@@ -106,7 +106,7 @@ export const Required: Story = {
 
 export const MultipleStates: Story = {
   render: () => (
-    <div className="ui:flex ui:flex-col ui:gap-6 ui:w-96">
+    <div className="ui:flex ui:w-96 ui:flex-col ui:gap-6">
       <DateRangePicker label="Default" />
       <DateRangePicker
         label="With Value"

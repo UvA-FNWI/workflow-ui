@@ -5,7 +5,7 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const pillVariants = cva(
-  'ui:inline-flex ui:items-center ui:justify-center ui:min-w-5 ui:h-5 ui:px-1.5 ui:text-xs ui:font-medium ui:rounded-full ui:transition-colors',
+  'ui:inline-flex ui:h-5 ui:min-w-5 ui:items-center ui:justify-center ui:rounded-full ui:px-1.5 ui:text-xs ui:font-medium ui:transition-colors',
   {
     variants: {
       variant: {
