@@ -34,10 +34,6 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
-                    {step.versions?.map((v) => (
-                        <VersionCard key={v.versionNumber} version={v} submissions={submissions} />
-                    ))}
-
                     {submissions.map((submission) => (
                         <FormSummary instanceId={instance.id} submission={submission} />
                     ))}
@@ -68,6 +64,9 @@ export const StepCard = ({step, instance}: Props) => {
                             ))}
                         </div>
                     )}
+                    {step.versions?.map((v) => (
+                        <VersionCard key={v.versionNumber} version={v} submissions={submissions} />
+                    ))}
                 </div>
 
                 <Modal
