@@ -1,6 +1,6 @@
 import {Link} from "react-router";
 
-import {Icon, Skeleton, Text} from "@datanose/ui";
+import {Heading, Icon, Skeleton} from "@datanose/ui";
 
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
@@ -22,9 +22,9 @@ export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
                 <Icon name="arrow-left-line" size={"xs"} className="mr-1" color={"current"} />
                 {t("home")}
             </Link>
-            <Text size="2xl" className="mb-8">
+            <Heading as="h1" size="lg" className="mb-8">
                 {l(title) || t("instance.workflowInstance")}
-            </Text>
+            </Heading>
         </div>
     );
 }
