@@ -3,11 +3,13 @@ import {useCallback} from "react";
 import {Checkbox, Input, NumberInput, Radio, RadioGroup} from "@datanose/ui";
 import {parseISO} from "date-fns";
 
+import {UserPicker} from "../UserPicker/UserPicker";
 import {DatePicker} from "~/components/Datepicker/Datepicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {Answer, Question} from "~/store/api/types/submissions";
+import type {UserSearchResult} from "~/store/api/types/users";
 
 const toDate = (value: unknown) => {
     if (!value) return undefined;
@@ -75,6 +77,14 @@ export const InputControl = ({
     if (question.type === "Date") {
         return (
             <DatePicker value={toDate(value)} onChange={(newValue) => debouncedChange(newValue)} />
+        );
+    }
+    if (question.type === "User") {
+        return (
+            <UserPicker
+                value={value as UserSearchResult | UserSearchResult[] | null | undefined}
+                onChange={(newValue) => debouncedChange(newValue)}
+            />
         );
     }
 

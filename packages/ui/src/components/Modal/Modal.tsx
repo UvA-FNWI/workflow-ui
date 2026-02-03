@@ -23,7 +23,7 @@ const modalClassGenerator = cva(
 
 const dialogClassGenerator = cva(
   // Base styles
-  'ui:relative ui:max-h-[90vh] ui:w-full ui:overflow-auto ui:rounded-none ui:bg-white ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900',
+  'ui:relative ui:flex ui:max-h-[90vh] ui:w-full ui:flex-col ui:overflow-auto ui:rounded-none ui:bg-white ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900',
   {
     variants: {
       size: {
@@ -126,7 +126,9 @@ const ModalOverlay = ({
   return createPortal(
     <div {...underlayProps} ref={ref} className={className}>
       <FocusScope contain restoreFocus autoFocus>
-        <div {...modalProps}>{children}</div>
+        <div {...modalProps} className="ui:h-full ui:w-full">
+          {children}
+        </div>
       </FocusScope>
     </div>,
     document.body
@@ -151,7 +153,11 @@ const ModalDialog = ({
   );
 
   return (
-    <div {...dialogProps} ref={ref}>
+    <div
+      {...dialogProps}
+      ref={ref}
+      className="ui:fixed ui:inset-0 ui:z-50 ui:flex ui:items-center ui:justify-center"
+    >
       {children}
     </div>
   );
