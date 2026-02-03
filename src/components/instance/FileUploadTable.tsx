@@ -25,7 +25,7 @@ interface FileUploadTableProps {
     onRemoveStoredFile: (questionName: string) => Promise<void>;
 }
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 10MB in bytes
 
 export const FileUploadTable = ({
     instanceId,
@@ -78,7 +78,7 @@ export const FileUploadTable = ({
 
     return (
         <div className="max-w-full gap-2 overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table className="border-collapse">
                 <thead>
                     <tr className="border-b border-grey-300 dark:border-grey-600">
                         <th className="w-8 p-2"></th>
@@ -152,9 +152,10 @@ export const FileUploadTable = ({
                                             isLoading={uploadingFiles[question.name]}
                                             errorMessages={{
                                                 fileSize: t("file_upload.error_max_file_size", {
-                                                    size: "10MB",
+                                                    size: "20MB",
                                                 }),
                                             }}
+                                            accept={["application/pdf"]}
                                         />
                                         {uploadErrors[question.name] && (
                                             <Text size="sm" intent="error">
@@ -169,7 +170,7 @@ export const FileUploadTable = ({
                 </tbody>
             </table>
             <div className="mt-2 text-sm text-black dark:text-white">
-                {t("file_upload.max_file_size", {size: "10MB"})}
+                {t("file_upload.max_file_size", {size: "20MB"})}
             </div>
         </div>
     );

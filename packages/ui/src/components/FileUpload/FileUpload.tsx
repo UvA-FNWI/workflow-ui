@@ -172,6 +172,7 @@ export const FileUpload = ({
           onClick={() => inputRef.current?.click()}
           leftIcon={<Icon name="upload-line" size="sm" color="current" />}
           isLoading={isLoading}
+          className="ui:w-fit"
         >
           {buttonText}
         </Button>
