@@ -1,11 +1,11 @@
 import {Button, Icon, Text} from "@datanose/ui";
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 
+import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
 import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
-import {formatAnswer} from "~/utils/formatAnswer.ts";
 
 type Props = {
     instanceId: string;
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
-    const {i18n, t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
 
     const [submitSubmission, {isLoading}] = submissionsEndpoints.submitSubmission.useMutation();
 
@@ -44,25 +44,18 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                     </div>
 
                     {/* Questions and answers */}
-                    <div className="flex flex-col gap-2">
-                        {page.questions.map((question) => {
+                    <QuestionAnswerList
+                        questionAnswerPairs={page.questions.map((question) => {
                             const answer = submission.answers.find(
                                 (a) => a.questionName === question.name,
                             );
-
-                            const formattedValue =
-                                answer?.value != null
-                                    ? formatAnswer(answer.value, question.type, i18n.language)
-                                    : t("instance.summary.no_answer");
-
-                            return (
-                                <div key={question.name} className="grid grid-cols-2 gap-4">
-                                    <Text>{l(question.text)}</Text>
-                                    <Text>{formattedValue}</Text>
-                                </div>
-                            );
+                            return {
+                                question,
+                                value: answer?.value,
+                            };
                         })}
-                    </div>
+                        noAnswerText={t("instance.summary.no_answer")}
+                    />
                 </div>
             ))}
 
