@@ -82,8 +82,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       type = 'button',
       width = 'regular',
+      onClick,
       ...restProps
     } = props;
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled || isLoading) {
+        event.preventDefault();
+        return;
+      }
+      onClick?.(event);
+    };
 
     // Render
     return (
@@ -91,6 +100,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...restProps}
         type={type}
         ref={forwardedRef}
+        onClick={handleClick}
         className={cn(
           buttonClassGenerator({
             intent,
