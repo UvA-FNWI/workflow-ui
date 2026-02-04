@@ -439,7 +439,13 @@ describe('DatePicker Component', () => {
 
     test('calls onChange with Date object', async () => {
       const onChange = vi.fn();
-      render(<DatePicker {...defaultProps} onChange={onChange} />);
+      render(
+        <DatePicker
+          {...defaultProps}
+          defaultValue={parseDate('2024-06-10')}
+          onChange={onChange}
+        />
+      );
 
       const calendarButton = screen.getByRole('button');
       fireEvent.click(calendarButton);
