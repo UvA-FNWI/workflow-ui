@@ -28,7 +28,7 @@ export const StepCard = ({step, instance}: Props) => {
     return (
         <Card>
             <div className="flex flex-col gap-4">
-                <Heading>{l(step.title)}</Heading>
+                <Heading as="h2">{l(step.title)}</Heading>
                 <Separator />
                 {submissions.map((submission) => (
                     <FormSummary instanceId={instance.id} submission={submission} />

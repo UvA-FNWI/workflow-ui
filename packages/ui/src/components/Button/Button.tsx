@@ -9,26 +9,26 @@ import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 
 const buttonClassGenerator = cva(
   // Base styles
-  'ui:relative ui:inline-flex ui:items-center ui:justify-center ui:appearance-none ui:bg-transparent ui:cursor-pointer ui:font-inherit ui:leading-inherit ui:m-0 ui:whitespace-nowrap ui:transition-colors ui:duration-150 ui:ease-in-out ui:overflow-hidden ui:text-ellipsis ui:border ui:gap-1',
+  'ui:font-inherit ui:leading-inherit ui:relative ui:m-0 ui:inline-flex ui:cursor-pointer ui:appearance-none ui:items-center ui:justify-center ui:gap-1 ui:overflow-hidden ui:border ui:bg-transparent ui:text-ellipsis ui:whitespace-nowrap ui:transition-colors ui:duration-150 ui:ease-in-out',
   {
     variants: {
       intent: {
         primary:
-          'ui:bg-black ui:text-white ui:border-black ui:hover:enabled:bg-grey-800',
+          'ui:border-black ui:bg-black ui:text-white ui:hover:enabled:bg-grey-800 ui:dark:border-grey-400 ui:dark:bg-grey-800 ui:hover:enabled:dark:bg-grey-700',
         secondary:
-          'ui:bg-white ui:text-black ui:border-black ui:hover:enabled:bg-grey-300',
+          'ui:border-black ui:bg-white ui:text-black ui:hover:enabled:bg-grey-300 ui:dark:border-grey-400 ui:dark:bg-grey-900 ui:dark:text-white ui:hover:enabled:dark:bg-grey-800',
         destructivePrimary:
-          'ui:bg-red-600 ui:text-white ui:border-red-600 ui:hover:enabled:border-red-800 ui:hover:enabled:bg-red-800',
+          'ui:border-red-600 ui:bg-red-600 ui:text-white ui:hover:enabled:border-red-800 ui:hover:enabled:bg-red-800 ui:dark:border-red-400 ui:dark:bg-red-700 ui:hover:enabled:dark:border-red-500 ui:hover:enabled:dark:bg-red-600',
         destructiveSecondary:
-          'ui:bg-white ui:text-red-brand ui:border-red-brand ui:hover:enabled:bg-grey-300',
+          'ui:border-red-brand ui:bg-white ui:text-red-brand ui:hover:enabled:bg-grey-300 ui:dark:border-red-400 ui:dark:bg-grey-900 ui:dark:text-red-400 ui:hover:enabled:dark:bg-grey-800',
         ghost:
-          'ui:bg-transparent ui:text-black ui:border-transparent ui:hover:enabled:bg-grey-200',
+          'ui:border-transparent ui:bg-transparent ui:text-black ui:hover:enabled:bg-grey-200 ui:dark:text-white ui:hover:enabled:dark:bg-grey-800',
       },
       size: {
-        small: 'ui:px-2 ui:h-6 ui:text-xs',
-        medium: 'ui:px-3 ui:h-8 ui:text-sm',
-        large: 'ui:px-4 ui:h-10 ui:text-base',
-        square: 'ui:p-0 ui:h-8 ui:w-8',
+        small: 'ui:h-6 ui:px-2 ui:text-xs',
+        medium: 'ui:h-8 ui:px-3 ui:text-sm',
+        large: 'ui:h-10 ui:px-4 ui:text-base',
+        square: 'ui:h-8 ui:w-8 ui:p-0',
       },
       shape: {
         rounded: 'ui:rounded-md',
@@ -82,8 +82,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       type = 'button',
       width = 'regular',
+      onClick,
       ...restProps
     } = props;
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled || isLoading) {
+        event.preventDefault();
+        return;
+      }
+      onClick?.(event);
+    };
 
     // Render
     return (
@@ -91,6 +100,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...restProps}
         type={type}
         ref={forwardedRef}
+        onClick={handleClick}
         className={cn(
           buttonClassGenerator({
             intent,
@@ -109,7 +119,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {/* Content */}
         <div
           className={cn(
-            'ui:w-full ui:inline-flex ui:gap-1 ui:items-center ui:justify-center',
+            'ui:inline-flex ui:w-full ui:items-center ui:justify-center ui:gap-1',
             isLoading && !loadingText && 'ui:invisible',
             isLoading && loadingText && 'ui:hidden'
           )}

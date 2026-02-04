@@ -27,10 +27,10 @@ function TemporaryNavbar() {
     };
 
     return (
-        <nav className="border-grey-300 text-grey-900 dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100 sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b bg-white/90 px-6 py-4 shadow-sm backdrop-blur">
+        <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
                 <p className="text-base font-semibold">Workflow UI</p>
-                <p className="text-grey-600 dark:text-grey-400 text-xs">
+                <p className="text-xs text-grey-700 dark:text-grey-300">
                     {VITE_ENV} | {VITE_WEBAPI_URL}
                 </p>
             </div>
@@ -39,14 +39,14 @@ function TemporaryNavbar() {
                     Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode
                 </Button>
                 <label
-                    className="text-grey-700 dark:text-grey-200 flex items-center gap-2 text-sm font-medium"
+                    className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200"
                     htmlFor="temporary-language-select"
                 >
                     {t("language")}
                     <select
                         id="temporary-language-select"
                         aria-label="Select language"
-                        className="border-grey-300 text-grey-900 dark:border-grey-700 dark:bg-grey-800 dark:text-grey-100 rounded border bg-white px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className="rounded border border-grey-300 bg-white px-2 py-1 text-sm text-grey-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-grey-700 dark:bg-grey-800 dark:text-grey-100"
                         value={i18n.language}
                         onChange={handleLanguageChange}
                     >

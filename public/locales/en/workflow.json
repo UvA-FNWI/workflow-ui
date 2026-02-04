@@ -23,6 +23,7 @@
     },
     "workflowInstance": "Workflow Instance"
   },
+  "optional": "(optional)",
   "progress": {
     "label": "Here's where you are in the process",
     "title": "Progress"
@@ -30,5 +31,14 @@
   "screens": {
     "students": "Students"
   },
-  "submit": "Submit"
+  "submit": "Submit",
+  "user_picker": {
+    "no_results": "No users found",
+    "search_hint_one": "Search for a user",
+    "search_hint_other": "Search for users",
+    "search_placeholder": "Search for a user...",
+    "selected_users_one": "{{count}} user selected",
+    "selected_users_other": "{{count}} users selected",
+    "title": "Search user"
+  }
 }

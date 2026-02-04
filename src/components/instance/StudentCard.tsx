@@ -15,7 +15,9 @@ export function StudentCard({isLoading}: StudentCardProps) {
             ) : (
                 <>
                     <div className="inline-block h-16 w-16 rounded-full bg-gray-200 align-middle" />
-                    <Heading size="sm">Naam student</Heading>
+                    <Heading as="h3" size="sm">
+                        Naam student
+                    </Heading>
                 </>
             )}
         </Card>

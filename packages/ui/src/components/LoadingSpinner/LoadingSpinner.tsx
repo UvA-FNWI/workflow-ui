@@ -5,16 +5,16 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const loadingSpinnerVariants = cva(
-  'ui:rounded-full ui:animate-spin ui:border-solid ui:border-transparent ui:border-t-grey-900 ui:border-l-grey-900 ui:border-r-grey-900 ui:border-b-grey-300 ui:border-2',
+  'ui:animate-spin ui:rounded-full ui:border-2 ui:border-solid ui:border-transparent ui:border-t-grey-900 ui:border-r-grey-900 ui:border-b-grey-300 ui:border-l-grey-900',
   {
     variants: {
       size: {
-        xs: 'ui:w-4 ui:h-4',
-        sm: 'ui:w-6 ui:h-6',
-        md: 'ui:w-8 ui:h-8',
-        lg: 'ui:w-12 ui:h-12',
-        xl: 'ui:w-16 ui:h-16',
-        '2xl': 'ui:w-20 ui:h-20',
+        xs: 'ui:h-4 ui:w-4',
+        sm: 'ui:h-6 ui:w-6',
+        md: 'ui:h-8 ui:w-8',
+        lg: 'ui:h-12 ui:w-12',
+        xl: 'ui:h-16 ui:w-16',
+        '2xl': 'ui:h-20 ui:w-20',
       },
     },
     defaultVariants: {
