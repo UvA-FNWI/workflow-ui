@@ -93,32 +93,34 @@ export const WithManyItems: Story = {
   },
 };
 
-export const DisabledItems: Story = {
-  render: () => {
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+const DisabledItemsComponent = () => {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
-    return (
-      <div className="max-w-md">
-        <ListBox
-          selectionMode="single"
-          selectedKeys={selectedKeys}
-          onSelectionChange={setSelectedKeys}
-          disabledKeys={['2', '4']}
-          aria-label="Select with disabled items"
-        >
-          <Item key="1">Item One</Item>
-          <Item key="2">Item Two (disabled)</Item>
-          <Item key="3">Item Three</Item>
-          <Item key="4">Item Four (disabled)</Item>
-          <Item key="5">Item Five</Item>
-        </ListBox>
-        <div className="mt-4 text-sm">
-          <strong>Selected:</strong>{' '}
-          {selectedKeys === 'all'
-            ? 'All items'
-            : Array.from(selectedKeys).join(', ')}
-        </div>
+  return (
+    <div className="max-w-md">
+      <ListBox
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        disabledKeys={['2', '4']}
+        aria-label="Select with disabled items"
+      >
+        <Item key="1">Item One</Item>
+        <Item key="2">Item Two (disabled)</Item>
+        <Item key="3">Item Three</Item>
+        <Item key="4">Item Four (disabled)</Item>
+        <Item key="5">Item Five</Item>
+      </ListBox>
+      <div className="mt-4 text-sm">
+        <strong>Selected:</strong>{' '}
+        {selectedKeys === 'all'
+          ? 'All items'
+          : Array.from(selectedKeys).join(', ')}
       </div>
-    );
-  },
+    </div>
+  );
+};
+
+export const DisabledItems: Story = {
+  render: DisabledItemsComponent,
 };
