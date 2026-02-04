@@ -29,7 +29,7 @@ const ConfettiWithTrigger = () => {
   };
 
   return (
-    <div className="ui:flex ui:items-center ui:justify-center ui:min-h-screen">
+    <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center">
       <Button intent="primary" onClick={handleTrigger} disabled={isActive}>
         {isActive ? 'Celebrating! 🎉' : 'Trigger Confetti'}
       </Button>
@@ -48,7 +48,7 @@ export const MoreConfetti: Story = {
       const [isActive, setIsActive] = useState(false);
 
       return (
-        <div className="ui:flex ui:items-center ui:justify-center ui:min-h-screen">
+        <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center">
           <Button
             intent="primary"
             onClick={() => setIsActive(true)}

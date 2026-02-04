@@ -102,7 +102,7 @@ export const Confetti = ({
   return (
     <div
       className={cn(
-        'ui:pointer-events-none ui:fixed ui:inset-0 ui:overflow-hidden ui:z-50',
+        'ui:pointer-events-none ui:fixed ui:inset-0 ui:z-50 ui:overflow-hidden',
         className
       )}
       aria-hidden="true"
