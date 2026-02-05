@@ -29,6 +29,7 @@ export {
   type NumberInputProps,
   type NumberInputVariantProps,
 } from './components/Input/NumberInput/NumberInput';
+export { Link, type LinkProps } from './components/Link/Link';
 export {
   Separator,
   type SeparatorVariantProps,
@@ -45,6 +46,7 @@ export {
   type PillProps,
   type PillVariantProps,
 } from './components/Pill/Pill';
+
 export { ThemeProvider, useTheme } from './components/ThemeProvider';
 export type { Theme } from './components/ThemeProvider';
 
@@ -61,6 +63,11 @@ export {
 export { useToast } from './components/Toast/hooks/useToast';
 
 export { Modal, type ModalProps } from './components/Modal/Modal';
+
+export {
+  FileUpload,
+  type FileUploadProps,
+} from './components/FileUpload/FileUpload';
 
 export {
   ListBox,

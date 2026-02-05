@@ -1,5 +1,5 @@
 import {baseApi} from "./baseApi";
-import type {SaveAnswerParams} from "./types/params";
+import type {SaveAnswerParams, SaveFileParams} from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 
@@ -28,6 +28,24 @@ export const answersApi = baseApi.injectEndpoints({
                     ),
                 );
             },
+        }),
+        saveFile: build.mutation<{success: boolean}, SaveFileParams>({
+            query: (params) => {
+                const formData = new FormData();
+                formData.append("file", params.file);
+                return {
+                    url: `Answers/${params.instanceId}/${params.submissionId}/${params.questionName}/artifacts`,
+                    method: "post",
+                    body: formData,
+                };
+            },
+            invalidatesTags: (_result, _error, params) => [
+                {
+                    type: "Submission",
+                    instanceId: params.instanceId,
+                    submissionId: params.submissionId,
+                },
+            ],
         }),
     }),
 });

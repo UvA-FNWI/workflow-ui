@@ -1,10 +1,11 @@
-import {Button, Icon, Text} from "@datanose/ui";
+import {Button, Icon, Link, Text} from "@datanose/ui";
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
 import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
+import {downloadFile} from "~/utils/fileDownload.ts";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
 
 type Props = {
@@ -58,7 +59,25 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             return (
                                 <div key={question.name} className="grid grid-cols-2 gap-4">
                                     <Text>{l(question.text)}</Text>
-                                    <Text>{formattedValue}</Text>
+                                    {question.type === "File" && answer?.value != null ? (
+                                        <Link
+                                            intent="primary"
+                                            underline
+                                            className="truncate"
+                                            onClick={() =>
+                                                downloadFile(
+                                                    answer?.files?.[0],
+                                                    question.name,
+                                                    instanceId,
+                                                    submission.id,
+                                                )
+                                            }
+                                        >
+                                            {formattedValue}
+                                        </Link>
+                                    ) : (
+                                        <Text className="truncate">{formattedValue}</Text>
+                                    )}
                                 </div>
                             );
                         })}

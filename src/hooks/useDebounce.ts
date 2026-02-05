@@ -1,4 +1,4 @@
-import {useLayoutEffect, useMemo, useRef} from "react";
+import {useEffect, useMemo, useRef} from "react";
 
 import {debounce} from "lodash-es";
 
@@ -20,27 +20,27 @@ import {debounce} from "lodash-es";
  */
 export function useDebounce(callback: (...args: unknown[]) => void, delay: number) {
     const callbackRef = useRef(callback);
-    const debouncedRef = useRef<ReturnType<typeof debounce> | undefined>(undefined);
+    const debouncedFnRef = useRef<ReturnType<typeof debounce> | null>(null);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         callbackRef.current = callback;
     }, [callback]);
 
-    useLayoutEffect(() => {
-        debouncedRef.current = debounce(
-            (...args: unknown[]) => callbackRef.current(...args),
-            delay,
-        );
+    useEffect(() => {
+        debouncedFnRef.current = debounce((...args: unknown[]) => {
+            callbackRef.current(...args);
+        }, delay);
 
         return () => {
-            debouncedRef.current?.cancel();
+            debouncedFnRef.current?.cancel();
         };
     }, [delay]);
 
     return useMemo(
         () =>
-            (...args: unknown[]) =>
-                debouncedRef.current?.(...args),
+            (...args: unknown[]) => {
+                debouncedFnRef.current?.(...args);
+            },
         [],
     );
 }
