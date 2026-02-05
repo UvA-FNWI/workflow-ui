@@ -23,7 +23,7 @@ export type WorkflowStepVersion = {
     versionNumber: number;
     eventId: string;
     submittedAt: string;
-    formData: Record<string, unknown | null>;
+    submissions: Submission[];
 };
 
 export type Action = {
