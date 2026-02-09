@@ -42,6 +42,10 @@
   "screens": {
     "students": "Students"
   },
+  "studentCard": {
+    "student": "Student",
+    "noStudentInfo": "No student information available"
+  },
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",

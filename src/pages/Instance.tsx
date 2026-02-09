@@ -28,7 +28,7 @@ function Instance() {
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </div>
                 <div className="col-span-2 flex flex-col gap-6">
-                    <StudentCard isLoading={isLoading} />
+                    <StudentCard student={instance?.student} isLoading={isLoading} />
                     <InfoCards isLoading={isLoading} />
                 </div>
             </div>

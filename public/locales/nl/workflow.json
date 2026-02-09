@@ -42,6 +42,10 @@
   "screens": {
     "students": "Studenten"
   },
+  "studentCard": {
+    "student": "Student",
+    "noStudentInfo": "Geen studentinformatie beschikbaar"
+  },
   "submit": "Indienen",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
