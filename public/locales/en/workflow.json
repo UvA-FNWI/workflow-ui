@@ -43,8 +43,8 @@
     "students": "Students"
   },
   "studentCard": {
-    "student": "Student",
-    "noStudentInfo": "No student information available"
+    "noStudentInfo": "No student information available",
+    "student": "Student"
   },
   "submit": "Submit",
   "user_picker": {

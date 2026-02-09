@@ -1,24 +1,23 @@
-import {useTranslation} from "react-i18next";
-
 import {Card, Heading, Link, Skeleton, Text} from "@datanose/ui";
+
+import {useTranslate} from "~/hooks/useTranslate.ts";
+import type {Student} from "~/store/api/types/instances";
 
 interface StudentCardProps {
     isLoading: boolean;
-    student?: {
-        name: string;
-        email?: string;
-    };
+    student?: Student;
 }
 
 const getInitials = (name: string): string => {
     return name
-        .split(" ")
+        .trim()
+        .split(/\s+/)
         .map((word) => word.charAt(0).toUpperCase() + ".")
         .join(" ");
 };
 
 export function StudentCard({isLoading, student}: StudentCardProps) {
-    const {t} = useTranslation("workflow");
+    const {t} = useTranslate("workflow");
 
     return (
         <Card>

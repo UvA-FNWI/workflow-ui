@@ -43,8 +43,8 @@
     "students": "Studenten"
   },
   "studentCard": {
-    "student": "Student",
-    "noStudentInfo": "Geen studentinformatie beschikbaar"
+    "noStudentInfo": "Geen studentinformatie beschikbaar",
+    "student": "Student"
   },
   "submit": "Indienen",
   "user_picker": {

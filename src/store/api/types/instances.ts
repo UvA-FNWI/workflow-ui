@@ -6,13 +6,15 @@ export type WorkflowInstanceField = {
     value: string | string[] | LocalString | null;
 };
 
+export type Student = {
+    name: string;
+    email?: string;
+};
+
 export type WorkflowInstance = {
     id: string;
     title: string | null;
-    student?: {
-        name: string;
-        email?: string;
-    };
+    student?: Student;
     fields: WorkflowInstanceField[];
     steps: WorkflowStep[];
     submissions: Submission[];
