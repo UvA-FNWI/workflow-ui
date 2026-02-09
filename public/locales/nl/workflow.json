@@ -17,7 +17,8 @@
   },
   "go_back": "Terug",
   "good_to_know": {
-    "title": "[{{count}}x] Handig tijdens je scriptie"
+    "title_one": "Handig tijdens je scriptie",
+    "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
   "how_to_choose_a_subject": {
