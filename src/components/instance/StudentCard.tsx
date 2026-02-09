@@ -1,22 +1,22 @@
 import {Card, Heading, Link, Skeleton, Text} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {Student} from "~/store/api/types/instances";
 
 interface StudentCardProps {
     isLoading: boolean;
-    student?: Student;
+    studentName?: string;
+    studentEmail?: string;
 }
 
 const getInitials = (name: string): string => {
     return name
-        .trim()
-        .split(/\s+/)
+        .split(" ")
+        .filter((word) => word.length > 0 && /^[a-zA-Z]/.test(word))
         .map((word) => word.charAt(0).toUpperCase() + ".")
         .join(" ");
 };
 
-export function StudentCard({isLoading, student}: StudentCardProps) {
+export function StudentCard({isLoading, studentName, studentEmail}: StudentCardProps) {
     const {t} = useTranslate("workflow");
 
     return (
@@ -27,26 +27,26 @@ export function StudentCard({isLoading, student}: StudentCardProps) {
                     <Skeleton className="mt-4 h-5 w-32" />
                 </div>
             )}
-            {!isLoading && student && (
+            {!isLoading && (studentName || studentEmail) && (
                 <div className="flex flex-col items-center">
-                    {student?.name && (
+                    {studentName && (
                         <>
                             <div className="mb-2 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 align-middle font-medium text-gray-600">
-                                {getInitials(student.name)}
+                                {getInitials(studentName)}
                             </div>
                             <Heading as="h3" size="sm">
-                                {student.name}
+                                {studentName}
                             </Heading>
                         </>
                     )}
-                    {student?.email && (
-                        <Link intent="destructive" href={`mailto:${student.email}`}>
-                            {student.email}
+                    {studentEmail && (
+                        <Link intent="destructive" href={`mailto:${studentEmail}`}>
+                            {studentEmail}
                         </Link>
                     )}
                 </div>
             )}
-            {!isLoading && !student && (
+            {!isLoading && !studentName && !studentEmail && (
                 <>
                     <Heading as="h3" size="sm" className="mb-2">
                         {t("studentCard.student")}

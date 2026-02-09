@@ -19,6 +19,13 @@ function Instance() {
         return <div>Error loading instance</div>;
     }
 
+    const studentEmail = instance?.fields.find((f) => f.key === "Student.Email")?.value as
+        | string
+        | undefined;
+    const studentName = instance?.fields.find((f) => f.key === "Student.DisplayName")?.value as
+        | string
+        | undefined;
+
     return (
         <div className="">
             <InstanceHeader title={instance?.title} isLoading={isLoading} />
@@ -28,7 +35,11 @@ function Instance() {
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </div>
                 <div className="col-span-2 flex flex-col gap-6">
-                    <StudentCard student={instance?.student} isLoading={isLoading} />
+                    <StudentCard
+                        studentEmail={studentEmail}
+                        studentName={studentName}
+                        isLoading={isLoading}
+                    />
                     <InfoCards isLoading={isLoading} />
                 </div>
             </div>
