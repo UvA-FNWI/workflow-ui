@@ -17,7 +17,7 @@
   },
   "go_back": "Go back",
   "good_to_know": {
-    "title": "Handy during your thesis"
+    "title": "[{{count}}x] Handy during your thesis"
   },
   "home": "Home",
   "how_to_choose_a_subject": {
