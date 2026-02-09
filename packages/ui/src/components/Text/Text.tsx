@@ -95,9 +95,10 @@ export const Text = ({
           intent,
           display,
         }),
-        // Font weight classes based on tag
-        Tag === 'b' && 'ui:font-bold',
-        (Tag === 'p' || Tag === 'span' || Tag === 'i') && 'ui:font-normal',
+        !fontWeight && Tag === 'b' && 'ui:font-bold',
+        !fontWeight &&
+          (Tag === 'p' || Tag === 'span' || Tag === 'i') &&
+          'ui:font-normal',
         className
       )}
       style={{
