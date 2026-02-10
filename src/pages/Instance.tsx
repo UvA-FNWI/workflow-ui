@@ -6,6 +6,7 @@ import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {StudentCard} from "~/components/instance/StudentCard";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import {getStringField} from "~/utils/fieldUtils";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
@@ -19,12 +20,8 @@ function Instance() {
         return <div>Error loading instance</div>;
     }
 
-    const studentEmail = instance?.fields.find((f) => f.key === "Student.Email")?.value as
-        | string
-        | undefined;
-    const studentName = instance?.fields.find((f) => f.key === "Student.DisplayName")?.value as
-        | string
-        | undefined;
+    const studentEmail = getStringField(instance?.fields, "Student.Email");
+    const studentName = getStringField(instance?.fields, "Student.DisplayName");
 
     return (
         <div className="">

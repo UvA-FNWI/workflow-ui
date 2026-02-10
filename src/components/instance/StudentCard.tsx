@@ -10,6 +10,7 @@ interface StudentCardProps {
 
 const getInitials = (name: string): string => {
     return name
+        .trim()
         .split(" ")
         .filter((word) => word.length > 0 && /^[a-zA-Z]/.test(word))
         .map((word) => word.charAt(0).toUpperCase() + ".")

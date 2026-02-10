@@ -1,6 +1,7 @@
 import {Card, Heading, Icon, Link, Skeleton, Text} from "@datanose/ui";
 
-import {type LocalString, useTranslate} from "~/hooks/useTranslate";
+import {mockHelpfulLinks, mockSubjectTips} from "./InfoCardsMockData";
+import {useTranslate} from "~/hooks/useTranslate";
 
 interface InfoCardsProps {
     isLoading: boolean;
@@ -8,38 +9,6 @@ interface InfoCardsProps {
 
 export function InfoCards({isLoading}: InfoCardsProps) {
     const {t, l} = useTranslate("workflow");
-
-    // TODO: replace with real data when available
-    const mockHelpfulLinks: {title: LocalString; url: string; type: "link" | "download"}[] = [
-        {
-            title: {en: "Help with methods and statistics", nl: "Hulp bij methoden en statistiek"},
-            url: "https://student.uva.nl/en/information/help-with-methods-and-statistics",
-            type: "link",
-        },
-        {
-            title: {
-                en: "Key competences of academic writing",
-                nl: "Waar een academische tekst aan moet voldoen ",
-            },
-            url: "https://student.uva.nl/en/information/key-competences-of-academic-writing",
-            type: "link",
-        },
-        {
-            title: {en: "Creating a study plan", nl: "Een planning maken"},
-            url: "https://student.uva.nl/informatie/een-planning-maken",
-            type: "link",
-        },
-        {
-            title: {en: "Plagiarism and fraud", nl: "Plagiaat en fraude"},
-            url: "https://student.uva.nl/informatie/plagiaat-en-fraude",
-            type: "link",
-        },
-        {
-            title: {en: "Example download file", nl: "Voorbeeld download bestand"},
-            url: "#",
-            type: "download",
-        },
-    ];
 
     return (
         <>
@@ -73,24 +42,14 @@ export function InfoCards({isLoading}: InfoCardsProps) {
                         <Heading as="h3" size="sm">
                             {t("how_to_choose_a_subject.title")}
                         </Heading>
-                        <span>
-                            <Text fontWeight="semibold">
-                                1. {t("info.choose_something_interesting.title")}
-                            </Text>
-                            <Text>{t("info.choose_something_interesting.text")}</Text>
-                        </span>
-                        <span>
-                            <Text fontWeight="semibold">
-                                2. {t("info.choose_a_defined_topic.title")}
-                            </Text>
-                            <Text>{t("info.choose_a_defined_topic.text")}</Text>
-                        </span>
-                        <span>
-                            <Text fontWeight="semibold">
-                                3. {t("info.pay_attention_to_feasibility.title")}
-                            </Text>
-                            <Text>{t("info.pay_attention_to_feasibility.text")}</Text>
-                        </span>
+                        {mockSubjectTips.map((tip, index) => (
+                            <span key={index}>
+                                <Text fontWeight="semibold">
+                                    {index + 1}. {l(tip.title)}
+                                </Text>
+                                <Text>{l(tip.text)}</Text>
+                            </span>
+                        ))}
                     </div>
                 )}
             </Card>

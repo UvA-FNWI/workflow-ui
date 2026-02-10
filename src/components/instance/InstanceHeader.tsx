@@ -2,15 +2,15 @@ import {Link} from "react-router";
 
 import {Heading, Icon, Skeleton} from "@datanose/ui";
 
-import {useTranslate} from "~/hooks/useTranslate";
+import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
 interface InstanceHeaderProps {
-    title?: string | null;
+    title?: LocalString | string | null;
     isLoading: boolean;
 }
 
 export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
-    const {t} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
 
     if (isLoading) {
         return <Skeleton className="mb-8 h-8 w-48" />;
@@ -23,7 +23,7 @@ export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
                 {t("home")}
             </Link>
             <Heading as="h1" size="lg" className="mb-8">
-                {title || t("instance.workflowInstance")}
+                {typeof title === "string" ? title : l(title) || t("instance.workflowInstance")}
             </Heading>
         </div>
     );

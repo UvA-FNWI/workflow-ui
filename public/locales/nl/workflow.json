@@ -24,20 +24,6 @@
   "how_to_choose_a_subject": {
     "title": "Zo kies je een goed scriptieonderwerp"
   },
-  "info": {
-    "choose_a_defined_topic": {
-      "text": "Kies een onderwerp dat niet te breed is. Anders maak je het jezelf onnodig moeilijk. Veel studenten lopen hier tegenaan, dus trap niet in die valkuil!",
-      "title": "Kies een afgebakend onderwerp"
-    },
-    "choose_something_interesting": {
-      "text": "Welk onderwerp of vak vond jij echt interessant?",
-      "title": "Kies iets dat jij écht interessant vindt"
-    },
-    "pay_attention_to_feasibility": {
-      "text": "Kijk van tevoren of je genoeg bronnen of data kunt vinden. Dat scheelt later veel frustratie.",
-      "title": "Let op de uitvoerbaarheid "
-    }
-  },
   "instance": {
     "submission": {
       "submittedOn": "Ingeleverd op {{date}}"

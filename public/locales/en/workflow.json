@@ -24,20 +24,6 @@
   "how_to_choose_a_subject": {
     "title": "How to choose a subject"
   },
-  "info": {
-    "choose_a_defined_topic": {
-      "text": "Choose a topic that isn't too broad. Otherwise, you'll make it unnecessarily difficult for yourself. Many students run into this issue, so don't fall into that trap!",
-      "title": "Choose a defined topic"
-    },
-    "choose_something_interesting": {
-      "text": "Which subject or course did you find truly interesting?",
-      "title": "Choose something you find truly interesting"
-    },
-    "pay_attention_to_feasibility": {
-      "text": "Check beforehand if you can find enough sources or data. This will save you a lot of frustration later.",
-      "title": "Pay attention to feasibility"
-    }
-  },
   "instance": {
     "submission": {
       "submittedOn": "Submitted on {{date}}"
