@@ -16,6 +16,9 @@ export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
         return <Skeleton className="mb-8 h-8 w-48" />;
     }
 
+    const displayTitle =
+        (typeof title === "string" ? title : l(title)) || t("instance.workflowInstance");
+
     return (
         <div className="flex flex-col gap-2">
             <Link to="/" className="text-sm text-red-brand hover:opacity-80">
@@ -23,7 +26,7 @@ export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
                 {t("home")}
             </Link>
             <Heading as="h1" size="lg" className="mb-8">
-                {typeof title === "string" ? title : l(title) || t("instance.workflowInstance")}
+                {displayTitle}
             </Heading>
         </div>
     );
