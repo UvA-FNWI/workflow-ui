@@ -15,14 +15,15 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "first_help": {
-    "title": "Eerste hulp bij scripties"
-  },
   "go_back": "Terug",
   "good_to_know": {
-    "title": "Handig tijdens je scriptie"
+    "title_one": "Handig tijdens je scriptie",
+    "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
+  "how_to_choose_a_subject": {
+    "title": "Zo kies je een goed scriptieonderwerp"
+  },
   "instance": {
     "submission": {
       "submittedOn": "Ingeleverd op {{date}}"
@@ -41,6 +42,10 @@
   },
   "screens": {
     "students": "Studenten"
+  },
+  "studentCard": {
+    "noStudentInfo": "Geen studentinformatie beschikbaar",
+    "student": "Student"
   },
   "submit": "Indienen",
   "user_picker": {
