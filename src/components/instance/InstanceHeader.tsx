@@ -5,11 +5,11 @@ import {Heading, Icon, Skeleton} from "@datanose/ui";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
 interface InstanceHeaderProps {
-    title?: LocalString | string | null;
+    courseName?: LocalString | string | null;
     isLoading: boolean;
 }
 
-export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
+export function InstanceHeader({courseName, isLoading}: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
 
     if (isLoading) {
@@ -17,7 +17,8 @@ export function InstanceHeader({title, isLoading}: InstanceHeaderProps) {
     }
 
     const displayTitle =
-        (typeof title === "string" ? title : l(title)) || t("instance.workflowInstance");
+        (typeof courseName === "string" ? courseName : l(courseName)) ||
+        t("instance.workflowInstance");
 
     return (
         <div className="mb-8 flex flex-col gap-2">
