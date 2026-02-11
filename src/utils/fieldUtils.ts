@@ -1,15 +1,19 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {WorkflowInstanceField} from "~/store/api/types/instances";
 
-export function getFieldValue(fields: WorkflowInstanceField[] | undefined, key: string) {
+function findFieldValue(fields: WorkflowInstanceField[] | undefined, key: string) {
     return fields?.find((f) => f.key === key)?.value;
+}
+
+export function getFieldValue(fields: WorkflowInstanceField[] | undefined, key: string) {
+    return findFieldValue(fields, key);
 }
 
 export function getStringField(
     fields: WorkflowInstanceField[] | undefined,
     key: string,
 ): string | undefined {
-    const value = fields?.find((f) => f.key === key)?.value;
+    const value = findFieldValue(fields, key);
     if (typeof value === "string") {
         return value;
     }
@@ -23,7 +27,7 @@ export function getLocalStringField(
     fields: WorkflowInstanceField[] | undefined,
     key: string,
 ): string | LocalString | undefined {
-    const value = fields?.find((f) => f.key === key)?.value;
+    const value = findFieldValue(fields, key);
     if (typeof value === "string") {
         return value;
     }

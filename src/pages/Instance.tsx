@@ -22,7 +22,7 @@ function Instance() {
 
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const studentName = getStringField(instance?.fields, "Student.DisplayName");
-    const courseName = getLocalStringField(instance?.fields, "Course.Title");
+    const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
     return (
         <div className="">
