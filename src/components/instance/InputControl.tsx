@@ -74,44 +74,6 @@ export const InputControl = ({
             />
         );
     }
-    // TODO: This is a hack to support the choice type. We should create something better later.
-    if (question.type === "Choice") {
-        // Normalize value to always be a string array
-        const normalizeValue = (val: unknown): string[] => {
-            if (!val) return [];
-            if (Array.isArray(val)) {
-                return val.filter((v): v is string => typeof v === "string");
-            }
-            return typeof val === "string" ? [val] : [];
-        };
-
-        const selectedValues = normalizeValue(value);
-
-        const handleChange = (choiceName: string, checked: boolean) => {
-            const newValues = checked
-                ? [...selectedValues.filter((v) => v !== choiceName), choiceName]
-                : selectedValues.filter((v) => v !== choiceName);
-            debouncedChange(newValues);
-        };
-
-        return (
-            <>
-                {question.choices.map((choice) => (
-                    <div key={choice.name}>
-                        <label>
-                            <input
-                                type="checkbox"
-                                value={choice.name}
-                                checked={selectedValues.includes(choice.name)}
-                                onChange={(e) => handleChange(choice.name, e.target.checked)}
-                            />
-                            {choice.name}
-                        </label>
-                    </div>
-                ))}
-            </>
-        );
-    }
 
     if (question.type === "Date") {
         return (
