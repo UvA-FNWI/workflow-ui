@@ -1,7 +1,7 @@
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 
 import type {ImpersonationResult} from "./api/types/instances";
-import {loadPersistedImpersonationToken} from "./impersonationStorage";
+import {loadPersistedImpersonationToken} from "./impersonation";
 import type {RootState} from "./store";
 
 export type CurrentUser = {

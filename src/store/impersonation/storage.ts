@@ -1,4 +1,4 @@
-import type {ImpersonationResult} from "./api/types/instances";
+import type {ImpersonationResult} from "../api/types/instances";
 
 const STORAGE_KEY = "workflow-impersonation-token";
 

@@ -5,7 +5,7 @@ import type {Middleware} from "@reduxjs/toolkit";
 
 import {baseApi} from "./api/baseApi";
 import authReducer from "./authSlice";
-import {saveImpersonationToken} from "./impersonationStorage";
+import {impersonationPersistMiddleware} from "./impersonation";
 
 export const store = configureStore({
     reducer: {
@@ -13,12 +13,9 @@ export const store = configureStore({
         [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(baseApi.middleware as Middleware),
-});
-
-// Persist impersonation token to localStorage when it changes
-store.subscribe(() => {
-    saveImpersonationToken(store.getState().auth.impersonation);
+        getDefaultMiddleware()
+            .concat(impersonationPersistMiddleware)
+            .concat(baseApi.middleware as Middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
