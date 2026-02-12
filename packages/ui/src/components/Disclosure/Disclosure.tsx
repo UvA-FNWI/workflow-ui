@@ -16,7 +16,7 @@ import { Icon } from '../Icon';
 import { Separator } from '../Separator/Separator';
 
 const disclosureVariants = cva(
-  'ui:dark:bg-grey-800 ui:rounded-lg ui:bg-white ui:transition-colors',
+  'ui:rounded-lg ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
   {
     variants: {
       padding: {
@@ -33,8 +33,8 @@ const disclosureVariants = cva(
       },
       border: {
         none: 'ui:border-0',
-        thin: 'ui:border-grey-200 ui:dark:border-grey-700 ui:border',
-        medium: 'ui:border-grey-200 ui:dark:border-grey-700 ui:border-2',
+        thin: 'ui:border ui:border-grey-200 ui:dark:border-grey-700',
+        medium: 'ui:border-2 ui:border-grey-200 ui:dark:border-grey-700',
       },
     },
     defaultVariants: {
@@ -171,7 +171,7 @@ const DisclosureHeader = (
   };
 
   return (
-    <div className="ui:flex ui:w-full ui:px-6 ui:py-4 ui:flex-col ui:gap-4">
+    <div className="ui:flex ui:w-full ui:flex-col ui:gap-4 ui:px-6 ui:py-4">
       <button
         {...buttonProps}
         ref={ref || buttonRef}
