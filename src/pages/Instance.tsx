@@ -6,6 +6,7 @@ import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {StudentCard} from "~/components/instance/StudentCard";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
@@ -19,16 +20,24 @@ function Instance() {
         return <div>Error loading instance</div>;
     }
 
+    const studentEmail = getStringField(instance?.fields, "Student.Email");
+    const studentName = getStringField(instance?.fields, "Student.DisplayName");
+    const courseName = getLocalStringField(instance?.fields, "Course.Name");
+
     return (
         <div className="">
-            <InstanceHeader title={instance?.title} isLoading={isLoading} />
+            <InstanceHeader courseName={courseName} isLoading={isLoading} />
             <div className="flex flex-col gap-6 sm:grid sm:grid-cols-6">
                 <div className="col-span-4 flex flex-col gap-8">
                     <ProgressCard isLoading={isLoading} />
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </div>
                 <div className="col-span-2 flex flex-col gap-6">
-                    <StudentCard isLoading={isLoading} />
+                    <StudentCard
+                        studentEmail={studentEmail}
+                        studentName={studentName}
+                        isLoading={isLoading}
+                    />
                     <InfoCards isLoading={isLoading} />
                 </div>
             </div>

@@ -171,4 +171,22 @@
   /* #6B065B */
   --color-purple-900: hsl(309, 90%, 18%);
   /* #57054B */
+
+  /* Animations */
+  --animate-confetti-fall: confetti-fall 3s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(var(--initial-rotation, 0deg));
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh)
+      rotate(calc(var(--initial-rotation, 0deg) + 720deg));
+    opacity: 0;
+  }
 }

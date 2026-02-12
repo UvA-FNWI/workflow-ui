@@ -7,9 +7,10 @@ import {formatDate} from "~/utils/formatDate.ts";
 
 type Props = {
     version: WorkflowStepVersion;
+    instanceId: string;
 };
 
-export const VersionCard = ({version}: Props) => {
+export const VersionCard = ({version, instanceId}: Props) => {
     const {t, i18n, l} = useTranslate("workflow", {keyPrefix: "version_card"});
 
     return (
@@ -30,8 +31,9 @@ export const VersionCard = ({version}: Props) => {
                         const questions = submission.form.pages.flatMap((page) => page.questions);
                         const questionAnswerPairs = questions.map((question) => ({
                             question,
-                            value: submission.answers.find((a) => a.questionName === question.name)
-                                ?.value,
+                            answer:
+                                submission.answers.find((a) => a.questionName === question.name) ??
+                                null,
                         }));
 
                         return (
@@ -42,6 +44,8 @@ export const VersionCard = ({version}: Props) => {
                                 <QuestionAnswerList
                                     questionAnswerPairs={questionAnswerPairs}
                                     noAnswerText={t("no_answer")}
+                                    instanceId={instanceId}
+                                    submissionId={submission.id}
                                 />
                             </div>
                         );

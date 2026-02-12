@@ -20,7 +20,7 @@ export const ProjectScreenOverview = () => {
             <Card>
                 <div className="mb-4">
                     <div className="flex w-full justify-between">
-                        <Heading>{t("students")}</Heading>
+                        <Heading as="h1">{t("students")}</Heading>
                         <Input
                             value={search}
                             onChange={setSearch}

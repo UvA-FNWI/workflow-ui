@@ -52,7 +52,7 @@ const calendarCellVariants = cva(
         false: '',
       },
       isDisabled: {
-        true: 'ui:text-grey-400 ui:cursor-not-allowed ui:opacity-50 ui:dark:text-grey-600',
+        true: 'ui:cursor-not-allowed ui:text-grey-400 ui:opacity-50 ui:dark:text-grey-600',
         false: 'ui:cursor-pointer',
       },
       isOutsideMonth: {
@@ -68,7 +68,7 @@ const calendarCellVariants = cva(
         false: '',
       },
       isFocusVisible: {
-        true: 'ui:ring-navy-600 ui:dark:ring-offset-grey-900 ui:ring-2 ui:ring-offset-2 ui:dark:ring-orange-500 ui:rounded-md',
+        true: 'ui:rounded-md ui:ring-2 ui:ring-navy-600 ui:ring-offset-2 ui:dark:ring-orange-500 ui:dark:ring-offset-grey-900',
         false: '',
       },
     },
@@ -77,7 +77,7 @@ const calendarCellVariants = cva(
       {
         isSelected: true,
         isSingleSelection: true,
-        class: 'ui:bg-navy-600 ui:text-white ui:dark:bg-sky-500 ui:rounded-md',
+        class: 'ui:rounded-md ui:bg-navy-600 ui:text-white ui:dark:bg-sky-500',
       },
       // Single selection hover
       {
@@ -99,7 +99,7 @@ const calendarCellVariants = cva(
         isSelected: false,
         isHovered: true,
         isDisabled: false,
-        class: 'ui:bg-navy-100 ui:dark:bg-sky-900 ui:rounded-md',
+        class: 'ui:rounded-md ui:bg-navy-100 ui:dark:bg-sky-900',
       },
       // Selection edge hover
       {
@@ -112,7 +112,7 @@ const calendarCellVariants = cva(
         isSelected: false,
         isToday: true,
         class:
-          'ui:border ui:border-navy-600 ui:dark:border-sky-500 ui:text-navy-600 ui:dark:text-sky-500 ui:rounded-md',
+          'ui:rounded-md ui:border ui:border-navy-600 ui:text-navy-600 ui:dark:border-sky-500 ui:dark:text-sky-500',
       },
       // Outside month opacity
       {

@@ -65,7 +65,7 @@ export const StepCard = ({step, instance}: Props) => {
                         </div>
                     )}
                     {step.versions?.map((v) => (
-                        <VersionCard key={v.versionNumber} version={v} submissions={submissions} />
+                        <VersionCard key={v.versionNumber} version={v} instanceId={instance.id} />
                     ))}
                 </div>
 

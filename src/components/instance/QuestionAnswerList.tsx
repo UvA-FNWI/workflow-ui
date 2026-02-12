@@ -1,36 +1,68 @@
-import {Text} from "@datanose/ui";
+import {Link, Text} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {Question} from "~/store/api/types/submissions.ts";
+import type {Answer, Question} from "~/store/api/types/submissions.ts";
+import {downloadFile} from "~/utils/fileDownload";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
 
 type QuestionAnswerPair = {
     question: Question;
-    value: unknown;
+    answer: Answer | null;
 };
 
 type Props = {
     questionAnswerPairs: QuestionAnswerPair[];
     noAnswerText?: string;
+    instanceId: string;
+    submissionId: string;
 };
 
-export const QuestionAnswerList = ({questionAnswerPairs, noAnswerText}: Props) => {
+export const QuestionAnswerList = ({
+    questionAnswerPairs,
+    noAnswerText,
+    instanceId,
+    submissionId,
+}: Props) => {
     const {i18n, l} = useTranslate("workflow");
 
     return (
         <div className="flex flex-col gap-2">
-            {questionAnswerPairs.map(({question, value}) => {
+            {questionAnswerPairs.map(({question, answer}) => {
                 const formattedValue =
-                    value != null
-                        ? formatAnswer(value, question.type, i18n.language)
+                    answer != null
+                        ? formatAnswer(answer.value, question.type, i18n.language)
                         : noAnswerText;
 
                 return (
                     <div key={question.name} className="grid grid-cols-2 gap-4">
                         <Text>{l(question.text)}</Text>
-                        <Text>{formattedValue}</Text>
+                        {question.type === "File" && answer != null ? (
+                            <Link
+                                intent="primary"
+                                underline
+                                className="truncate"
+                                onClick={() =>
+                                    downloadFile(
+                                        answer.files[0],
+                                        question.name,
+                                        instanceId,
+                                        submissionId,
+                                    )
+                                }
+                            >
+                                {formattedValue}
+                            </Link>
+                        ) : (
+                            <Text className="truncate">{formattedValue}</Text>
+                        )}
                     </div>
                 );
+                // return (
+                //     <div key={question.name} className="grid grid-cols-2 gap-4">
+                //         <Text>{l(question.text)}</Text>
+                //         <Text>{formattedValue}</Text>
+                //     </div>
+                // );
             })}
         </div>
     );

@@ -6,11 +6,12 @@ import { cn } from '../../utils/cn';
 
 export type TextVariantProps = VariantProps<typeof textVariants>;
 
-const textVariants = cva('ui:font-body ui:m-0 ui:p-0', {
+const textVariants = cva('ui:m-0 ui:p-0 ui:font-body', {
   variants: {
     intent: {
       primary: 'ui:text-black ui:dark:text-white',
       secondary: 'ui:text-grey-600 ui:dark:text-grey-400',
+      error: 'ui:text-red-600 ui:dark:text-red-400',
     },
     size: {
       xs: 'ui:text-xs', // 12px

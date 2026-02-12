@@ -51,10 +51,12 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             );
                             return {
                                 question,
-                                value: answer?.value,
+                                answer: answer ?? null,
                             };
                         })}
                         noAnswerText={t("instance.summary.no_answer")}
+                        instanceId={instanceId}
+                        submissionId={submission.id}
                     />
                 </div>
             ))}

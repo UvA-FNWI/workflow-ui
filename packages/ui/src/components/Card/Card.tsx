@@ -7,7 +7,7 @@ import { cn } from '../../utils/cn';
 export type CardVariantProps = VariantProps<typeof cardVariants>;
 
 const cardVariants = cva(
-  'ui:dark:bg-grey-800 ui:rounded-lg ui:bg-white ui:transition-colors',
+  'ui:overflow-hidden ui:rounded-lg ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
   {
     variants: {
       padding: {
@@ -24,8 +24,8 @@ const cardVariants = cva(
       },
       border: {
         none: 'ui:border-0',
-        thin: 'ui:border-grey-200 ui:dark:border-grey-700 ui:border',
-        medium: 'ui:border-grey-200 ui:dark:border-grey-700 ui:border-2',
+        thin: 'ui:border ui:border-grey-200 ui:dark:border-grey-700',
+        medium: 'ui:border-2 ui:border-grey-200 ui:dark:border-grey-700',
       },
     },
     defaultVariants: {

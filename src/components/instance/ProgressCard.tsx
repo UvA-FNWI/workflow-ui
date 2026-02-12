@@ -24,7 +24,7 @@ export function ProgressCard({isLoading}: ProgressCardProps) {
                     </>
                 ) : (
                     <>
-                        <Heading>{t("progress.title")}</Heading>
+                        <Heading as="h2">{t("progress.title")}</Heading>
                         <Separator />
                         <div className="flex items-center gap-8">
                             <Text className="whitespace-nowrap">{t("progress.label")}</Text>
