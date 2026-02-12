@@ -67,11 +67,14 @@ export interface DisclosureProps extends DisclosureVariantProps {
   ref?: React.Ref<HTMLDivElement>;
 }
 
-// Context to share disclosure state and refs with sub-components
+// Context to share disclosure state, refs, and ARIA props with sub-components.
+// useDisclosure must be called once to ensure aria-controls and panel id match.
 interface DisclosureContextValue {
   state: ReturnType<typeof useDisclosureState>;
   buttonRef: React.RefObject<HTMLButtonElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
+  buttonProps: ReturnType<typeof useDisclosure>['buttonProps'];
+  panelProps: ReturnType<typeof useDisclosure>['panelProps'];
 }
 
 const DisclosureContext = createContext<DisclosureContextValue | null>(null);
@@ -121,8 +124,12 @@ const BaseDisclosure = (props: DisclosureProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const { buttonProps, panelProps } = useDisclosure({}, state, panelRef);
+
   return (
-    <DisclosureContext.Provider value={{ state, buttonRef, panelRef }}>
+    <DisclosureContext.Provider
+      value={{ state, buttonRef, panelRef, buttonProps, panelProps }}
+    >
       <div
         ref={ref}
         className={cn(
@@ -159,10 +166,7 @@ const DisclosureHeader = (
     ref,
     ...restProps
   } = props;
-  const { state, buttonRef, panelRef } = useDisclosureContext();
-
-  // Use React Aria's useDisclosure hook for proper accessibility
-  const { buttonProps } = useDisclosure({}, state, panelRef);
+  const { state, buttonRef, buttonProps } = useDisclosureContext();
 
   // Merge onClick handlers
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -209,10 +213,7 @@ const DisclosureContent = (
   }
 ) => {
   const { children, className, padding = 'md', ref, ...restProps } = props;
-  const { state, panelRef } = useDisclosureContext();
-
-  // Use React Aria's useDisclosure hook to get panel props
-  const { panelProps } = useDisclosure({}, state, panelRef);
+  const { state, panelRef, panelProps } = useDisclosureContext();
 
   const paddingClasses = {
     none: 'ui:p-0',
