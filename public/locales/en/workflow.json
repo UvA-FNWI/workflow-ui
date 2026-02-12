@@ -1,4 +1,11 @@
 {
+  "admin": {
+    "impersonate_role_button": "Impersonate",
+    "impersonate_role_placeholder": "Select a role",
+    "impersonate_role_title": "Impersonate role",
+    "stop_impersonating_button": "Stop impersonating",
+    "title": "Admin"
+  },
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "close": "Close",

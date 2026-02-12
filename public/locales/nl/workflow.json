@@ -1,4 +1,11 @@
 {
+  "admin": {
+    "impersonate_role_button": "Impersoneer",
+    "impersonate_role_placeholder": "Selecteer een rol",
+    "impersonate_role_title": "Impersoneer als",
+    "stop_impersonating_button": "Stop impersoneren",
+    "title": "Admin"
+  },
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "close": "Sluiten",
