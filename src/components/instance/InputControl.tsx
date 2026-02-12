@@ -94,53 +94,54 @@ export const InputControl = ({
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
 
-        if (question.layout && "type" in question.layout && question.layout.type === "RadioList") {
-            if (question.isArray) {
-                // Checkbox list for multi-select
-                const selectedValues = (value as string[]) || [];
-
-                const handleCheckboxChange = (choiceName: string, isSelected: boolean) => {
-                    const newValues = isSelected
-                        ? [...selectedValues, choiceName]
-                        : selectedValues.filter((v) => v !== choiceName);
-                    debouncedChange(newValues);
-                };
-
-                return (
-                    <div className="flex flex-col gap-2">
-                        {choices.map((choice) => (
-                            <Checkbox
-                                key={choice.name}
-                                label={l(choice.text) ?? choice.name}
-                                isSelected={selectedValues.includes(choice.name)}
-                                onChange={(isSelected) =>
-                                    handleCheckboxChange(choice.name, isSelected)
-                                }
-                            />
-                        ))}
-                    </div>
-                );
+        if (question.isArray) {
+            if (
+                question.layout &&
+                "type" in question.layout &&
+                question.layout.type === "Dropdown"
+            ) {
+                // Default: dropdown (with multiselect if isArray is true)
+                return <div>Placeholder for dropdown</div>;
             }
+            // Checkbox list for multi-select
+            const selectedValues = (value as string[]) || [];
 
-            // RadioGroup for single select
+            const handleCheckboxChange = (choiceName: string, isSelected: boolean) => {
+                const newValues = isSelected
+                    ? [...selectedValues, choiceName]
+                    : selectedValues.filter((v) => v !== choiceName);
+                debouncedChange(newValues);
+            };
+
             return (
-                <RadioGroup
-                    value={(value as string) || ""}
-                    onChange={(selectedValue: string) => {
-                        debouncedChange(selectedValue);
-                    }}
-                >
+                <div className="flex flex-col gap-2">
                     {choices.map((choice) => (
-                        <Radio key={choice.name} value={choice.name}>
-                            {l(choice.text)}
-                        </Radio>
+                        <Checkbox
+                            key={choice.name}
+                            label={l(choice.text) ?? choice.name}
+                            isSelected={selectedValues.includes(choice.name)}
+                            onChange={(isSelected) => handleCheckboxChange(choice.name, isSelected)}
+                        />
                     ))}
-                </RadioGroup>
+                </div>
             );
         }
 
-        // Default: dropdown (with multiselect if isArray is true)
-        return <div>Placeholder for dropdown</div>;
+        // RadioGroup for single select
+        return (
+            <RadioGroup
+                value={(value as string) || ""}
+                onChange={(selectedValue: string) => {
+                    debouncedChange(selectedValue);
+                }}
+            >
+                {choices.map((choice) => (
+                    <Radio key={choice.name} value={choice.name}>
+                        {l(choice.text)}
+                    </Radio>
+                ))}
+            </RadioGroup>
+        );
     }
 
     return <div>Not supported type...</div>;
