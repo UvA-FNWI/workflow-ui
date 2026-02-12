@@ -44,16 +44,11 @@
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
-  "submit": "Submit",
-  "version_card": {
-    "no_answer": "No answer provided",
-    "submitted": "Submitted",
-    "version_nr": "Version #{{versionNumber}}"
-  },
   "studentCard": {
     "noStudentInfo": "No student information available",
     "student": "Student"
   },
+  "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
     "search_hint_one": "Search for a user",
@@ -62,5 +57,10 @@
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search user"
+  },
+  "version_card": {
+    "no_answer": "No answer provided",
+    "submitted": "Submitted",
+    "version_nr": "Version #{{versionNumber}}"
   }
 }
