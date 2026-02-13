@@ -81,7 +81,7 @@ export {
   Item as SelectItem,
   type SelectProps,
   type SelectState,
-} from './components/Select';
+} from './components/Select/Select';
 
 export {
   Tab,
