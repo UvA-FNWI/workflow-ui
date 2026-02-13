@@ -1,5 +1,4 @@
 {
-  "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "close": "Sluiten",
   "confirm": "Bevestigen",
@@ -25,9 +24,6 @@
     "title": "Zo kies je een goed scriptieonderwerp"
   },
   "instance": {
-    "submission": {
-      "submittedOn": "Ingeleverd op {{date}}"
-    },
     "summary": {
       "edit_page": "Pagina bewerken",
       "no_answer": "Geen antwoord gegeven",
@@ -43,6 +39,11 @@
   "screens": {
     "students": "Studenten"
   },
+  "step_card": {
+    "are_you_sure": "Weet je het zeker?",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen"
+  },
   "studentCard": {
     "noStudentInfo": "Geen studentinformatie beschikbaar",
     "student": "Student"
@@ -56,5 +57,10 @@
     "selected_users_one": "{{count}} gebruiker geselecteerd",
     "selected_users_other": "{{count}} gebruikers geselecteerd",
     "title": "Zoek medewerker"
+  },
+  "version_card": {
+    "no_answer": "Geen antwoord gegeven",
+    "submitted": "Ingeleverd",
+    "version_nr": "Versie #{{versionNumber}}"
   }
 }

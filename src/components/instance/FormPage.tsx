@@ -1,13 +1,12 @@
 import {useState} from "react";
 
-import {Button, Heading, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, Text} from "@datanose/ui";
+import {Button, Heading, Icon, Tab, TabList, TabPanel, TabPanels, Tabs} from "@datanose/ui";
 
 import {PageControl} from "./PageControl";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page} from "~/store/api/types/submissions";
-import {formatDate} from "~/utils/formatDate";
 
 type Props = {
     instanceId: string;
@@ -16,15 +15,12 @@ type Props = {
 };
 
 export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
-    const {i18n, t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
         submissionId,
     });
     const [activeTabIndex, setActiveTabIndex] = useState(0);
-
-    const formattedDate =
-        (submission?.dateSubmitted && formatDate(submission.dateSubmitted, i18n.language)) ?? "";
 
     if (!submission) return <div>Loading...</div>;
 
@@ -56,12 +52,6 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     return (
         <div>
-            {submission.dateSubmitted && (
-                <Text className="mb-2">
-                    {t("instance.submission.submittedOn", {date: formattedDate})}
-                </Text>
-            )}
-
             <Tabs activeIndex={activeTabIndex} onTabChange={setActiveTabIndex}>
                 <TabList>
                     {[

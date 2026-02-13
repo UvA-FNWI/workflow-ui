@@ -95,6 +95,7 @@ export const Text = ({
           intent,
           display,
         }),
+        // Font weight classes based on tag (only if fontWeight not explicitly provided)
         !fontWeight && Tag === 'b' && 'ui:font-bold',
         !fontWeight &&
           (Tag === 'p' || Tag === 'span' || Tag === 'i') &&

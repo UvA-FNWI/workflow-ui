@@ -9,7 +9,8 @@ export type WorkflowInstanceField = {
 
 export type WorkflowInstance = {
     id: string;
-    title: string | null;
+    title: LocalString | null;
+    currentStep: string;
     fields: WorkflowInstanceField[];
     steps: WorkflowStep[];
     submissions: Submission[];
@@ -22,6 +23,14 @@ export type WorkflowStep = {
     event: string;
     dateCompleted: string | null;
     children: WorkflowStep[] | null;
+    versions: WorkflowStepVersion[] | null;
+};
+
+export type WorkflowStepVersion = {
+    versionNumber: number;
+    eventId: string;
+    submittedAt: string;
+    submissions: Submission[];
 };
 
 export type Action = {

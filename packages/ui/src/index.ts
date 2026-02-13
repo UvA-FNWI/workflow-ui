@@ -65,6 +65,12 @@ export { useToast } from './components/Toast/hooks/useToast';
 export { Modal, type ModalProps } from './components/Modal/Modal';
 
 export {
+  Disclosure,
+  type DisclosureProps,
+  type DisclosureVariantProps,
+} from './components/Disclosure/Disclosure';
+
+export {
   FileUpload,
   type FileUploadProps,
 } from './components/FileUpload/FileUpload';

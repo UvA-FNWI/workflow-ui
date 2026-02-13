@@ -1,5 +1,4 @@
 {
-  "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "close": "Close",
   "confirm": "Confirm",
@@ -25,9 +24,6 @@
     "title": "How to choose a subject"
   },
   "instance": {
-    "submission": {
-      "submittedOn": "Submitted on {{date}}"
-    },
     "summary": {
       "edit_page": "Edit page",
       "no_answer": "No answer provided",
@@ -43,6 +39,11 @@
   "screens": {
     "students": "Students"
   },
+  "step_card": {
+    "are_you_sure": "Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
   "studentCard": {
     "noStudentInfo": "No student information available",
     "student": "Student"
@@ -56,5 +57,10 @@
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search user"
+  },
+  "version_card": {
+    "no_answer": "No answer provided",
+    "submitted": "Submitted",
+    "version_nr": "Version #{{versionNumber}}"
   }
 }
