@@ -22,18 +22,16 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "first_help": {
-    "title": "Eerste hulp bij scripties"
-  },
   "go_back": "Terug",
   "good_to_know": {
-    "title": "Handig tijdens je scriptie"
+    "title_one": "Handig tijdens je scriptie",
+    "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
+  "how_to_choose_a_subject": {
+    "title": "Zo kies je een goed scriptieonderwerp"
+  },
   "instance": {
-    "submission": {
-      "submittedOn": "Ingeleverd op {{date}}"
-    },
     "summary": {
       "edit_page": "Pagina bewerken",
       "no_answer": "Geen antwoord gegeven",
@@ -49,6 +47,15 @@
   "screens": {
     "students": "Studenten"
   },
+  "step_card": {
+    "are_you_sure": "Weet je het zeker?",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen"
+  },
+  "studentCard": {
+    "noStudentInfo": "Geen studentinformatie beschikbaar",
+    "student": "Student"
+  },
   "submit": "Indienen",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
@@ -58,5 +65,10 @@
     "selected_users_one": "{{count}} gebruiker geselecteerd",
     "selected_users_other": "{{count}} gebruikers geselecteerd",
     "title": "Zoek medewerker"
+  },
+  "version_card": {
+    "no_answer": "Geen antwoord gegeven",
+    "submitted": "Ingeleverd",
+    "version_nr": "Versie #{{versionNumber}}"
   }
 }

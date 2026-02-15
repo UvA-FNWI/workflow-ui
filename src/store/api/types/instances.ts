@@ -6,9 +6,17 @@ import type {
     Submission,
 } from "~/store/api/types/submissions.ts";
 
+export type WorkflowInstanceField = {
+    key: string | null;
+    title: LocalString;
+    value: string | string[] | LocalString | null;
+};
+
 export type WorkflowInstance = {
     id: string;
     title: LocalString | null;
+    currentStep: string;
+    fields: WorkflowInstanceField[];
     steps: WorkflowStep[];
     submissions: Submission[];
     actions: Action[];
@@ -22,6 +30,14 @@ export type WorkflowStep = {
     event: string;
     dateCompleted: string | null;
     children: WorkflowStep[] | null;
+    versions: WorkflowStepVersion[] | null;
+};
+
+export type WorkflowStepVersion = {
+    versionNumber: number;
+    eventId: string;
+    submittedAt: string;
+    submissions: Submission[];
 };
 
 export type Action = {
