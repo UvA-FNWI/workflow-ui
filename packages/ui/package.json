@@ -12,10 +12,12 @@
       "require": "./dist/datanose-ui.umd.js"
     },
     "./styles": "./dist/ui.css",
-    "./tokens": "./src/styles/tokens.css"
+    "./tokens": "./src/styles/tokens.css",
+    "./fonts": "./src/styles/fonts.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "src/styles"
   ],
   "scripts": {
     "dev": "vite build --watch",
