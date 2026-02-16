@@ -125,7 +125,7 @@ const SelectListBox = <T extends object>({
     <ul
       {...listBoxProps}
       ref={ref}
-      className="ui:max-h-64 ui:overflow-y-auto ui:rounded-md ui:border ui:border-grey-300 ui:bg-white ui:p-1 ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900"
+      className="ui:max-h-64 ui:overflow-y-auto ui:rounded-md ui:border ui:border-grey-300 ui:bg-white ui:p-1 ui:text-black ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white"
     >
       {[...state.collection].map(item =>
         item.type === 'item' ? (
