@@ -384,4 +384,12 @@ describe('Text Component', () => {
       expect(element).toHaveClass('ui:inline-block');
     });
   });
+
+  describe('Font Weight Variants', () => {
+    test('applies bold font weight when fontWeight="bold"', () => {
+      render(<Text fontWeight="bold">Bold text</Text>);
+      const element = screen.getByText('Bold text');
+      expect(element).toHaveClass('ui:font-bold');
+    });
+  });
 });

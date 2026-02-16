@@ -22,18 +22,16 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
-  "first_help": {
-    "title": "First aid with thesis"
-  },
   "go_back": "Go back",
   "good_to_know": {
-    "title": "Handy during your thesis"
+    "title_one": "Handy during your thesis",
+    "title_other": "[{{count}}x] Handy during your thesis"
   },
   "home": "Home",
+  "how_to_choose_a_subject": {
+    "title": "How to choose a subject"
+  },
   "instance": {
-    "submission": {
-      "submittedOn": "Submitted on {{date}}"
-    },
     "summary": {
       "edit_page": "Edit page",
       "no_answer": "No answer provided",
@@ -49,6 +47,15 @@
   "screens": {
     "students": "Students"
   },
+  "step_card": {
+    "are_you_sure": "Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "studentCard": {
+    "noStudentInfo": "No student information available",
+    "student": "Student"
+  },
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
@@ -58,5 +65,10 @@
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search user"
+  },
+  "version_card": {
+    "no_answer": "No answer provided",
+    "submitted": "Submitted",
+    "version_nr": "Version #{{versionNumber}}"
   }
 }
