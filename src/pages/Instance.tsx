@@ -1,5 +1,6 @@
 import {useParams} from "react-router";
 
+import {AdminCard} from "~/components/instance/AdminCard";
 import {ContentCard} from "~/components/instance/ContentCard";
 import {InfoCards} from "~/components/instance/InfoCards";
 import {InstanceHeader} from "~/components/instance/InstanceHeader";
@@ -39,6 +40,7 @@ function Instance() {
                         isLoading={isLoading}
                     />
                     <InfoCards isLoading={isLoading} />
+                    {instance?.canUseAdminTools && <AdminCard />}
                 </div>
             </div>
         </div>

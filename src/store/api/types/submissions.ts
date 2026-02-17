@@ -85,3 +85,8 @@ export type DataType =
     | "Int";
 export type ChoiceLayoutType = "Dropdown" | "RadioList";
 export type FormLayout = "Normal" | "SinglePage" | "Modal";
+
+export type ImpersonationRole = {
+    name: string;
+    title: LocalString;
+};

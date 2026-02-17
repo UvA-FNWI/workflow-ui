@@ -1,5 +1,10 @@
 import type {LocalString} from "~/hooks/useTranslate";
-import type {FormLayout, Submission} from "~/store/api/types/submissions.ts";
+import type {
+    FormLayout,
+    ImpersonationRole,
+    RoleAction,
+    Submission,
+} from "~/store/api/types/submissions.ts";
 
 export type WorkflowInstanceField = {
     key: string | null;
@@ -15,6 +20,8 @@ export type WorkflowInstance = {
     steps: WorkflowStep[];
     submissions: Submission[];
     actions: Action[];
+    permissions: RoleAction[];
+    canUseAdminTools: boolean;
 };
 
 export type WorkflowStep = {
@@ -47,3 +54,10 @@ export type Action = {
 
 export type ActionType = "SubmitForm" | "Execute";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
+
+export type ImpersonationResult = {
+    instanceId: string;
+    role: ImpersonationRole;
+    token: string;
+    expiresAtUtc: string;
+};

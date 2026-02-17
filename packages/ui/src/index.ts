@@ -83,6 +83,13 @@ export {
 } from './components/ListBox';
 
 export {
+  Select,
+  Item as SelectItem,
+  type SelectProps,
+  type SelectState,
+} from './components/Select/Select';
+
+export {
   Tab,
   Tabs,
   TabList,
