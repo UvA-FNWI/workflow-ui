@@ -94,15 +94,11 @@ export const InputControl = ({
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
 
+        if (question.layout && "type" in question.layout && question.layout.type === "Dropdown") {
+            return <div>Placeholder for dropdown</div>;
+        }
+
         if (question.isArray) {
-            if (
-                question.layout &&
-                "type" in question.layout &&
-                question.layout.type === "Dropdown"
-            ) {
-                // Default: dropdown (with multiselect if isArray is true)
-                return <div>Placeholder for dropdown</div>;
-            }
             // Checkbox list for multi-select
             const selectedValues = (value as string[]) || [];
 
