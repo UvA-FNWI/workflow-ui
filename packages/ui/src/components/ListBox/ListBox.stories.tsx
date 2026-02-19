@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Selection } from 'react-stately';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { Item, ListBox } from './ListBox';
 

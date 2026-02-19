@@ -2,7 +2,7 @@
 import React from 'react';
 
 // External
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon';

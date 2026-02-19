@@ -1,6 +1,6 @@
 import { type ComponentProps, useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { Input } from './Input';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ComponentPropsWithoutRef } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon';
