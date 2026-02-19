@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { DatePicker } from './Datepicker';
 
@@ -120,9 +120,6 @@ export const DarkMode: Story = {
     label: 'Date',
     defaultValue: parseDate('2024-06-15'),
   },
-  parameters: {
-    backgrounds: { default: 'dark' },
-  },
   decorators: [
     Story => (
       <div className="dark">
@@ -130,4 +127,9 @@ export const DarkMode: Story = {
       </div>
     ),
   ],
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };

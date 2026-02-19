@@ -14,19 +14,20 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      default: 'light',
-      values: [
-        {
+      options: {
+        light: {
           name: 'light',
           value: 'var(--color-grey-100)',
         },
-        {
+
+        dark: {
           name: 'dark',
           value: 'var(--color-grey-900)',
         },
-      ],
+      },
     },
   },
+
   globalTypes: {
     theme: {
       description: 'Global theme for components',
@@ -44,6 +45,7 @@ const preview: Preview = {
       },
     },
   },
+
   decorators: [
     (Story, context) => {
       const theme = context.globals.theme || 'system';
@@ -56,6 +58,12 @@ const preview: Preview = {
       });
     },
   ],
+
+  initialGlobals: {
+    backgrounds: {
+      value: 'light',
+    },
+  },
 };
 
 export default preview;
