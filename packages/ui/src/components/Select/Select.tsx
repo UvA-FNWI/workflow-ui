@@ -23,19 +23,26 @@ import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 import { inputVariants } from '../Input/InputVariant';
 
-interface SelectPopoverProps<T extends object>
-  extends Omit<AriaPopoverProps, 'popoverRef'> {
+type SelectSelectionMode = 'single' | 'multiple';
+
+interface SelectPopoverProps<
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+> extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: React.ReactNode;
-  state: SelectState<T>;
+  state: SelectState<T, M>;
   triggerRef: React.RefObject<HTMLElement | null>;
 }
 
-const SelectPopover = <T extends object>({
+const SelectPopover = <
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+>({
   children,
   state,
   triggerRef,
   ...props
-}: SelectPopoverProps<T>) => {
+}: SelectPopoverProps<T, M>) => {
   const popoverRef = useRef<HTMLDivElement>(null);
   const { popoverProps } = usePopover(
     {
@@ -66,15 +73,21 @@ const SelectPopover = <T extends object>({
   );
 };
 
-interface SelectOptionProps<T extends object> {
+interface SelectOptionProps<
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+> {
   item: Node<T>;
-  state: SelectState<T>;
+  state: SelectState<T, M>;
 }
 
-const SelectOption = <T extends object>({
+const SelectOption = <
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+>({
   item,
   state,
-}: SelectOptionProps<T>) => {
+}: SelectOptionProps<T, M>) => {
   const ref = useRef<HTMLLIElement>(null);
   const { optionProps, isSelected, isDisabled } = useOption(
     { key: item.key },
@@ -110,14 +123,20 @@ const SelectOption = <T extends object>({
   );
 };
 
-interface SelectListBoxProps<T extends object> extends AriaListBoxOptions<T> {
-  state: SelectState<T>;
+interface SelectListBoxProps<
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+> extends AriaListBoxOptions<T> {
+  state: SelectState<T, M>;
 }
 
-const SelectListBox = <T extends object>({
+const SelectListBox = <
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+>({
   state,
   ...props
-}: SelectListBoxProps<T>) => {
+}: SelectListBoxProps<T, M>) => {
   const ref = useRef<HTMLUListElement>(null);
   const { listBoxProps } = useListBox(props, state, ref);
 
@@ -136,9 +155,11 @@ const SelectListBox = <T extends object>({
   );
 };
 
-export interface SelectProps<T extends object>
-  extends Omit<
-    AriaSelectProps<T>,
+export interface SelectProps<
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+> extends Omit<
+    AriaSelectProps<T, M>,
     'children' | 'validationState' | 'label' | 'description' | 'errorMessage'
   > {
   /** CSS class name for the select trigger */
@@ -152,10 +173,13 @@ export interface SelectProps<T extends object>
   /** Marks the select as valid or invalid */
   isValid?: boolean;
   /** Select options */
-  children: AriaSelectProps<T>['children'];
+  children: AriaSelectProps<T, M>['children'];
 }
 
-export function Select<T extends object>(props: SelectProps<T>) {
+export function Select<
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+>(props: SelectProps<T, M>) {
   const {
     className,
     label,
@@ -168,7 +192,7 @@ export function Select<T extends object>(props: SelectProps<T>) {
   } = props;
 
   const validationState = isValid === false ? 'invalid' : 'valid';
-  const state = useSelectState({
+  const state = useSelectState<T, M>({
     ...restProps,
     label,
     description,
@@ -187,7 +211,7 @@ export function Select<T extends object>(props: SelectProps<T>) {
     errorMessageProps,
     hiddenSelectProps,
     isInvalid,
-  } = useSelect(
+  } = useSelect<T, M>(
     {
       ...restProps,
       label,

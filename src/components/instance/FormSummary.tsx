@@ -6,6 +6,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
 import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
+import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
@@ -45,15 +46,10 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
 
                     {/* Questions and answers */}
                     <QuestionAnswerList
-                        questionAnswerPairs={page.questions.map((question) => {
-                            const answer = submission.answers.find(
-                                (a) => a.questionName === question.name,
-                            );
-                            return {
-                                question,
-                                answer: answer ?? null,
-                            };
-                        })}
+                        questionAnswerPairs={getVisibleQuestionAnswerPairs(
+                            page.questions,
+                            submission.answers,
+                        )}
                         noAnswerText={t("instance.summary.no_answer")}
                         instanceId={instanceId}
                         submissionId={submission.id}

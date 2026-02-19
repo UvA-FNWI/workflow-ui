@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 
-import {Checkbox, Input, NumberInput, Radio, RadioGroup} from "@datanose/ui";
+import {Checkbox, Input, NumberInput, Radio, RadioGroup, Select, SelectItem} from "@datanose/ui";
 import {parseISO} from "date-fns";
 
 import {UserPicker} from "../UserPicker/UserPicker";
@@ -52,6 +52,10 @@ export const InputControl = ({
         onChange?.(value);
         debouncedOnChange(value);
     };
+    const immediateChange = (value: unknown) => {
+        onChange?.(value);
+        save(value);
+    };
 
     if (question.type === "String") {
         return (
@@ -93,16 +97,49 @@ export const InputControl = ({
         const choices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
+        const isDropdown =
+            question.layout && "type" in question.layout && question.layout.type === "Dropdown";
+
+        if (isDropdown) {
+            if (question.isArray) {
+                const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
+                return (
+                    <Select
+                        selectionMode="multiple"
+                        value={selectedValues}
+                        onChange={(selectedValue) => {
+                            const normalizedValues = Array.isArray(selectedValue)
+                                ? selectedValue.map((v) => String(v))
+                                : selectedValue != null
+                                  ? [String(selectedValue)]
+                                  : [];
+                            immediateChange(normalizedValues);
+                        }}
+                    >
+                        {choices.map((choice) => (
+                            <SelectItem key={choice.name}>
+                                {l(choice.text) ?? choice.name}
+                            </SelectItem>
+                        ))}
+                    </Select>
+                );
+            }
+
+            return (
+                <Select
+                    value={typeof value === "string" ? value : null}
+                    onChange={(selectedValue) => {
+                        immediateChange(selectedValue != null ? String(selectedValue) : null);
+                    }}
+                >
+                    {choices.map((choice) => (
+                        <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
+                    ))}
+                </Select>
+            );
+        }
 
         if (question.isArray) {
-            if (
-                question.layout &&
-                "type" in question.layout &&
-                question.layout.type === "Dropdown"
-            ) {
-                // Default: dropdown (with multiselect if isArray is true)
-                return <div>Placeholder for dropdown</div>;
-            }
             // Checkbox list for multi-select
             const selectedValues = (value as string[]) || [];
 
@@ -110,7 +147,7 @@ export const InputControl = ({
                 const newValues = isSelected
                     ? [...selectedValues, choiceName]
                     : selectedValues.filter((v) => v !== choiceName);
-                debouncedChange(newValues);
+                immediateChange(newValues);
             };
 
             return (
@@ -132,7 +169,7 @@ export const InputControl = ({
             <RadioGroup
                 value={(value as string) || ""}
                 onChange={(selectedValue: string) => {
-                    debouncedChange(selectedValue);
+                    immediateChange(selectedValue);
                 }}
             >
                 {choices.map((choice) => (
