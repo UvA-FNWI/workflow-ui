@@ -1,27 +1,2 @@
-/* TODO: Replace all these fonts by adobe fonts */
 /* Font imports */
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap');
-
-@font-face {
-  font-family: 'Utopia';
-  src: url('../fonts/utopia/utopia-regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Utopia';
-  src: url('../fonts/utopia/utopia-semibold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Utopia';
-  src: url('../fonts/utopia/utopia-bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+@import url('https://use.typekit.net/yix8lgq.css');
