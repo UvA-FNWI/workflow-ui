@@ -17,9 +17,10 @@ jobs:
                   fetch-depth: 0
 
             - name: Build and push container
+              working-directory: ./packages/ui
               run: |
                   set -euxo pipefail
-                  docker build -f packages/ui/Dockerfile -t "datanosecr.azurecr.io/storybook-ui:latest" .
+                  docker build -f Dockerfile -t "datanosecr.azurecr.io/storybook-ui:latest" .
                   docker push "datanosecr.azurecr.io/storybook-ui:latest"
 
             - name: Push chart and deploy
