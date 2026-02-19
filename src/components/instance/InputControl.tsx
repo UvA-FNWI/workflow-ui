@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 
-import {Checkbox, Input, NumberInput, Radio, RadioGroup} from "@datanose/ui";
+import {Checkbox, Input, NumberInput, Radio, RadioGroup, Select, SelectItem} from "@datanose/ui";
 import {parseISO} from "date-fns";
 
 import {UserPicker} from "../UserPicker/UserPicker";
@@ -95,7 +95,18 @@ export const InputControl = ({
             : question.choices;
 
         if (question.layout && "type" in question.layout && question.layout.type === "Dropdown") {
-            return <div>Placeholder for dropdown</div>;
+            return (
+                <Select
+                    value={(value as string) || ""}
+                    onChange={(selectedValue) => debouncedChange(selectedValue)}
+                >
+                    {choices.map((choice) => (
+                        <SelectItem key={choice.name} title={l(choice.text) ?? choice.name}>
+                            {l(choice.text) ?? choice.name}
+                        </SelectItem>
+                    ))}
+                </Select>
+            );
         }
 
         if (question.isArray) {
