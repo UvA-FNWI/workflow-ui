@@ -2,12 +2,16 @@ import {Card, Heading, Separator, Skeleton, Text} from "@datanose/ui";
 
 import {WorkflowProgressBar} from "~/components/WorkflowProgressBar";
 import {useTranslate} from "~/hooks/useTranslate";
+import type {WorkflowStep} from "~/store/api/types/instances";
 
 interface ProgressCardProps {
     isLoading: boolean;
+    isStudent: boolean;
+    steps: WorkflowStep[];
+    currentStep: string;
 }
 
-export function ProgressCard({isLoading}: ProgressCardProps) {
+export function ProgressCard({isLoading, isStudent, steps, currentStep}: ProgressCardProps) {
     const {t} = useTranslate("workflow");
 
     return (
@@ -27,8 +31,15 @@ export function ProgressCard({isLoading}: ProgressCardProps) {
                         <Heading as="h2">{t("progress.title")}</Heading>
                         <Separator />
                         <div className="flex items-center gap-8">
-                            <Text className="whitespace-nowrap">{t("progress.label")}</Text>
-                            <WorkflowProgressBar />
+                            <Text className="whitespace-nowrap">
+                                {t(
+                                    isStudent
+                                        ? "progress.labelStudent"
+                                        : "progress.labelSupervisor",
+                                )}
+                                :
+                            </Text>
+                            <WorkflowProgressBar steps={steps} currentStep={currentStep} />
                         </div>
                     </>
                 )}
