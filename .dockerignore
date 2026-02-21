@@ -1,2 +1,5 @@
 .env
 .env.development
+**/node_modules/
+playwright-report/
+**/dist/

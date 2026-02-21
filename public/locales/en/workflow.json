@@ -1,12 +1,73 @@
 {
-  "first_help": {
-    "title": "First aid with thesis"
+  "admin": {
+    "impersonate_role_button": "Impersonate",
+    "impersonate_role_placeholder": "Select a role",
+    "impersonate_role_title": "Impersonate role",
+    "stop_impersonating_button": "Stop impersonating",
+    "title": "Admin"
   },
+  "cancel": "Cancel",
+  "close": "Close",
+  "confirm": "Confirm",
+  "continue": "Continue",
+  "file_upload": {
+    "description": "Description",
+    "error_max_file_size": "File exceeds maximum size of {{size}}",
+    "error_remove_failed": " Failed to remove file. Please try again.",
+    "error_upload_failed": "Failed to upload file. Please try again.",
+    "max_file_size": "Max. {{size}} per file",
+    "no_file_uploaded": "No file uploaded",
+    "removed_success": "File removed",
+    "upload_file": "Upload file",
+    "uploaded": "Uploaded"
+  },
+  "go_back": "Go back",
   "good_to_know": {
-    "title": "Handy during your thesis"
+    "title_one": "Handy during your thesis",
+    "title_other": "[{{count}}x] Handy during your thesis"
   },
+  "home": "Home",
+  "how_to_choose_a_subject": {
+    "title": "How to choose a subject"
+  },
+  "instance": {
+    "summary": {
+      "edit_page": "Edit page",
+      "no_answer": "No answer provided",
+      "title": "Summary"
+    },
+    "workflowInstance": "Workflow Instance"
+  },
+  "optional": "(optional)",
   "progress": {
     "label": "Here's where you are in the process",
     "title": "Progress"
+  },
+  "screens": {
+    "students": "Students"
+  },
+  "step_card": {
+    "are_you_sure": "Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "studentCard": {
+    "noStudentInfo": "No student information available",
+    "student": "Student"
+  },
+  "submit": "Submit",
+  "user_picker": {
+    "no_results": "No users found",
+    "search_hint_one": "Search for a user",
+    "search_hint_other": "Search for users",
+    "search_placeholder": "Search for a user...",
+    "selected_users_one": "{{count}} user selected",
+    "selected_users_other": "{{count}} users selected",
+    "title": "Search user"
+  },
+  "version_card": {
+    "no_answer": "No answer provided",
+    "submitted": "Submitted",
+    "version_nr": "Version #{{versionNumber}}"
   }
 }

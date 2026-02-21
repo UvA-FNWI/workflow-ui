@@ -9,12 +9,12 @@ import { loadSprite, SPRITE_ID } from './spriteData';
 const iconVariants = cva('ui:inline-block', {
   variants: {
     size: {
-      xs: 'ui:w-3 ui:h-3', // 12px
-      sm: 'ui:w-4 ui:h-4', // 16px
-      md: 'ui:w-5 ui:h-5', // 20px
-      lg: 'ui:w-6 ui:h-6', // 24px
-      xl: 'ui:w-8 ui:h-8', // 32px
-      '2xl': 'ui:w-10 ui:h-10', // 40px
+      xs: 'ui:h-3 ui:w-3', // 12px
+      sm: 'ui:h-4 ui:w-4', // 16px
+      md: 'ui:h-5 ui:w-5', // 20px
+      lg: 'ui:h-6 ui:w-6', // 24px
+      xl: 'ui:h-8 ui:w-8', // 32px
+      '2xl': 'ui:h-10 ui:w-10', // 40px
     },
     color: {
       current: 'ui:text-current',

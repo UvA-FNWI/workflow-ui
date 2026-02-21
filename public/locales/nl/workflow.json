@@ -1,12 +1,73 @@
 {
-  "first_help": {
-    "title": "Eerste hulp bij scripties"
+  "admin": {
+    "impersonate_role_button": "Impersoneer",
+    "impersonate_role_placeholder": "Selecteer een rol",
+    "impersonate_role_title": "Impersoneer als",
+    "stop_impersonating_button": "Stop impersoneren",
+    "title": "Admin"
   },
+  "cancel": "Annuleren",
+  "close": "Sluiten",
+  "confirm": "Bevestigen",
+  "continue": "Doorgaan",
+  "file_upload": {
+    "description": "Beschrijving",
+    "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
+    "error_remove_failed": "Verwijderen van bestand mislukt. Probeer het opnieuw.",
+    "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
+    "max_file_size": "Max. {{size}} per bestand",
+    "no_file_uploaded": "Geen bestand geüpload",
+    "removed_success": "Bestand verwijderd",
+    "upload_file": "Upload bestand",
+    "uploaded": "Geüpload"
+  },
+  "go_back": "Terug",
   "good_to_know": {
-    "title": "Handig tijdens je scriptie"
+    "title_one": "Handig tijdens je scriptie",
+    "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
+  "home": "Home",
+  "how_to_choose_a_subject": {
+    "title": "Zo kies je een goed scriptieonderwerp"
+  },
+  "instance": {
+    "summary": {
+      "edit_page": "Pagina bewerken",
+      "no_answer": "Geen antwoord gegeven",
+      "title": "Samenvatting"
+    },
+    "workflowInstance": "Workflow"
+  },
+  "optional": "(optioneel)",
   "progress": {
     "label": "Hier ben je in het proces",
     "title": "Voortgang"
+  },
+  "screens": {
+    "students": "Studenten"
+  },
+  "step_card": {
+    "are_you_sure": "Weet je het zeker?",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen"
+  },
+  "studentCard": {
+    "noStudentInfo": "Geen studentinformatie beschikbaar",
+    "student": "Student"
+  },
+  "submit": "Indienen",
+  "user_picker": {
+    "no_results": "Geen medewerkers gevonden",
+    "search_hint_one": "Zoek een medewerker",
+    "search_hint_other": "Zoek medewerkers",
+    "search_placeholder": "Zoek een medewerker...",
+    "selected_users_one": "{{count}} gebruiker geselecteerd",
+    "selected_users_other": "{{count}} gebruikers geselecteerd",
+    "title": "Zoek medewerker"
+  },
+  "version_card": {
+    "no_answer": "Geen antwoord gegeven",
+    "submitted": "Ingeleverd",
+    "version_nr": "Versie #{{versionNumber}}"
   }
 }

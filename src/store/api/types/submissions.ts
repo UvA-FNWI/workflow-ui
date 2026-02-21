@@ -27,7 +27,9 @@ export type StoredFile = {
 export type Form = {
     name: string;
     title: LocalString;
+    layout: FormLayout;
     pages: Page[];
+    step?: string;
 };
 
 export type Page = {
@@ -46,7 +48,7 @@ export type Question = {
     isRequired: boolean;
     isArray: boolean;
     choices: Choice[];
-    entityType?: string;
+    workflowDefinition?: string;
     hideInResults: boolean;
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
@@ -82,3 +84,9 @@ export type DataType =
     | "Reference"
     | "Int";
 export type ChoiceLayoutType = "Dropdown" | "RadioList";
+export type FormLayout = "Normal" | "SinglePage" | "Modal";
+
+export type ImpersonationRole = {
+    name: string;
+    title: LocalString;
+};
