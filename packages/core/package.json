@@ -10,11 +10,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/core.es.js",
       "require": "./dist/core.umd.js"
-    },
-    "./redux": {
-      "types": "./dist/redux/index.d.ts",
-      "import": "./dist/redux/redux.es.js",
-      "require": "./dist/redux/redux.umd.js"
     }
   },
   "files": [
@@ -33,14 +28,7 @@
     "react": "^19",
     "react-dom": "^19"
   },
-  "peerDependenciesMeta": {
-    "redux": {
-      "optional": true
-    },
-    "@reduxjs/toolkit": {
-      "optional": true
-    }
-  },
+  "peerDependenciesMeta": {},
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.0",
