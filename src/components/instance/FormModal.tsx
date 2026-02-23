@@ -40,7 +40,8 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
             </Modal.Body>
             <Modal.Footer>
                 <Button
-                    intent="destructivePrimary"
+                    intent="primary"
+                    variant="destructive"
                     isLoading={isLoading}
                     onClick={async () => {
                         const res = await submitSubmission({instanceId, submissionId});
