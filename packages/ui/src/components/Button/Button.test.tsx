@@ -45,7 +45,11 @@ describe('Button', () => {
     });
 
     it('applies destructive primary intent styles', () => {
-      render(<Button intent="destructivePrimary">Delete</Button>);
+      render(
+        <Button intent="primary" variant="destructive">
+          Delete
+        </Button>
+      );
       const button = screen.getByRole('button');
       expect(button).toHaveClass(
         'ui:bg-red-600',
@@ -105,7 +109,7 @@ describe('Button', () => {
   describe('Shape variants', () => {
     it('applies rounded shape (default)', () => {
       render(<Button intent="primary">Rounded</Button>);
-      expect(screen.getByRole('button')).toHaveClass('ui:rounded-md');
+      expect(screen.getByRole('button')).toHaveClass('ui:rounded-xs');
     });
 
     it('applies circular shape', () => {
@@ -115,15 +119,6 @@ describe('Button', () => {
         </Button>
       );
       expect(screen.getByRole('button')).toHaveClass('ui:rounded-full');
-    });
-
-    it('applies square shape', () => {
-      render(
-        <Button intent="primary" shape="square">
-          Square
-        </Button>
-      );
-      expect(screen.getByRole('button')).toHaveClass('ui:rounded-none');
     });
   });
 
@@ -153,10 +148,7 @@ describe('Button', () => {
       );
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
-      expect(button).toHaveClass(
-        'ui:disabled:cursor-not-allowed',
-        'ui:disabled:opacity-50'
-      );
+      expect(button).toHaveClass('ui:disabled:cursor-not-allowed');
     });
   });
 
@@ -169,10 +161,7 @@ describe('Button', () => {
       );
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
-      expect(button).toHaveClass(
-        'ui:disabled:cursor-not-allowed',
-        'ui:disabled:opacity-50'
-      );
+      expect(button).toHaveClass('ui:disabled:cursor-not-allowed');
     });
 
     it('shows loading text when provided', () => {

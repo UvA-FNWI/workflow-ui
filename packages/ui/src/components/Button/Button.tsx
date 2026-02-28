@@ -9,20 +9,17 @@ import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 
 const buttonClassGenerator = cva(
   // Base styles
-  'ui:font-inherit ui:leading-inherit ui:relative ui:m-0 ui:inline-flex ui:cursor-pointer ui:appearance-none ui:items-center ui:justify-center ui:gap-1 ui:overflow-hidden ui:border ui:bg-transparent ui:text-ellipsis ui:whitespace-nowrap ui:transition-colors ui:duration-150 ui:ease-in-out',
+  'ui:font-inherit ui:leading-inherit ui:relative ui:m-0 ui:inline-flex ui:cursor-pointer ui:appearance-none ui:items-center ui:justify-center ui:gap-1 ui:overflow-hidden ui:border ui:bg-transparent ui:text-ellipsis ui:whitespace-nowrap ui:transition-colors ui:duration-150 ui:ease-in-out ui:focus-visible:ring-2 ui:focus-visible:ring-navy-600 ui:focus-visible:ring-offset-2 ui:focus-visible:outline-none ui:dark:focus-visible:ring-grey-400 ui:dark:focus-visible:ring-offset-grey-900',
   {
     variants: {
       intent: {
-        primary:
-          'ui:border-black ui:bg-black ui:text-white ui:hover:enabled:bg-grey-800 ui:dark:border-grey-400 ui:dark:bg-grey-800 ui:hover:enabled:dark:bg-grey-700',
-        secondary:
-          'ui:border-black ui:bg-white ui:text-black ui:hover:enabled:bg-grey-300 ui:dark:border-grey-400 ui:dark:bg-grey-900 ui:dark:text-white ui:hover:enabled:dark:bg-grey-800',
-        destructivePrimary:
-          'ui:border-red-600 ui:bg-red-600 ui:text-white ui:hover:enabled:border-red-800 ui:hover:enabled:bg-red-800 ui:dark:border-red-400 ui:dark:bg-red-700 ui:hover:enabled:dark:border-red-500 ui:hover:enabled:dark:bg-red-600',
-        destructiveSecondary:
-          'ui:border-red-brand ui:bg-white ui:text-red-brand ui:hover:enabled:bg-grey-300 ui:dark:border-red-400 ui:dark:bg-grey-900 ui:dark:text-red-400 ui:hover:enabled:dark:bg-grey-800',
-        ghost:
-          'ui:border-transparent ui:bg-transparent ui:text-black ui:hover:enabled:bg-grey-200 ui:dark:text-grey-100 ui:hover:enabled:dark:bg-grey-800',
+        primary: '',
+        secondary: '',
+        ghost: '',
+      },
+      variant: {
+        default: '',
+        destructive: '',
       },
       size: {
         small: 'ui:h-6 ui:px-2 ui:text-xs',
@@ -31,18 +28,74 @@ const buttonClassGenerator = cva(
         square: 'ui:h-8 ui:w-8 ui:p-0',
       },
       shape: {
-        rounded: 'ui:rounded-md',
         circular: 'ui:rounded-full',
-        square: 'ui:rounded-none',
+        default: 'ui:rounded-xs',
       },
       width: {
         full: 'ui:w-full',
         regular: 'ui:w-auto',
       },
     },
+    compoundVariants: [
+      // Disabled styles (shared across variants per intent)
+      {
+        intent: ['primary', 'secondary'],
+        className:
+          'ui:disabled:border-grey-300 ui:disabled:bg-grey-300 ui:disabled:text-grey-600 ui:dark:disabled:border-grey-700 ui:dark:disabled:bg-grey-700 ui:dark:disabled:text-grey-400',
+      },
+      {
+        intent: 'ghost',
+        className:
+          'ui:disabled:bg-transparent ui:disabled:text-grey-600 ui:dark:disabled:text-grey-400',
+      },
+
+      // Default primary
+      {
+        intent: 'primary',
+        variant: 'default',
+        className:
+          'ui:border-black ui:bg-black ui:text-white ui:hover:enabled:border-grey-700 ui:hover:enabled:bg-grey-700 ui:dark:border-white ui:dark:bg-white ui:dark:text-black ui:hover:enabled:dark:border-grey-400 ui:hover:enabled:dark:bg-grey-400',
+      },
+      // Default secondary
+      {
+        intent: 'secondary',
+        variant: 'default',
+        className:
+          'ui:border-black ui:bg-white ui:text-black ui:hover:text-white ui:hover:enabled:bg-black ui:dark:border-white ui:dark:bg-grey-900 ui:dark:text-white ui:hover:enabled:dark:bg-white ui:hover:enabled:dark:text-black',
+      },
+      // Default ghost
+      {
+        intent: 'ghost',
+        variant: 'default',
+        className:
+          'ui:border-transparent ui:bg-transparent ui:text-black ui:hover:enabled:border-black ui:dark:text-white ui:hover:enabled:dark:border-white',
+      },
+      // Destructive primary
+      {
+        intent: 'primary',
+        variant: 'destructive',
+        className:
+          'ui:border-red-600 ui:bg-red-600 ui:text-white ui:hover:enabled:border-red-800 ui:hover:enabled:bg-red-800 ui:dark:text-grey-900',
+      },
+      // Destructive secondary
+      {
+        intent: 'secondary',
+        variant: 'destructive',
+        className:
+          'ui:border-red-600 ui:bg-white ui:text-red-600 ui:hover:enabled:bg-red-600 ui:hover:enabled:text-white ui:dark:bg-grey-900 ui:hover:enabled:dark:text-grey-900',
+      },
+      // Destructive ghost
+      {
+        intent: 'ghost',
+        variant: 'destructive',
+        className:
+          'ui:border-transparent ui:bg-transparent ui:text-red-600 ui:hover:enabled:border-red-600 ui:hover:enabled:dark:border-red-600',
+      },
+    ],
     defaultVariants: {
+      variant: 'default',
       size: 'medium',
-      shape: 'rounded',
+      shape: 'default',
       width: 'regular',
     },
   }
@@ -72,6 +125,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const {
       children,
       intent,
+      variant,
       size,
       shape,
       className,
@@ -104,13 +158,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           buttonClassGenerator({
             intent,
+            variant,
             size,
             shape,
             width,
           }),
           width === 'full' && 'ui:justify-between',
-          (disabled || isLoading) &&
-            'ui:disabled:cursor-not-allowed ui:disabled:opacity-50',
+          (disabled || isLoading) && 'ui:disabled:cursor-not-allowed',
           className
         )}
         disabled={disabled || isLoading}

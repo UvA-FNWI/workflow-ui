@@ -9,6 +9,7 @@ import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
+import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
 
 type Props = {
     step: WorkflowStep;
@@ -53,11 +54,7 @@ export const StepCard = ({step, instance}: Props) => {
                                 <Button
                                     key={a.id}
                                     onClick={() => setActiveAction(a)}
-                                    intent={
-                                        a.intent === "Destructive"
-                                            ? "destructivePrimary"
-                                            : "secondary"
-                                    }
+                                    {...actionIntentToButtonProps(a.intent)}
                                 >
                                     {l(a.title)}
                                 </Button>
@@ -83,7 +80,8 @@ export const StepCard = ({step, instance}: Props) => {
                                 {t("cancel")}
                             </Button>
                             <Button
-                                intent="destructivePrimary"
+                                intent="primary"
+                                variant="destructive"
                                 onClick={() => {
                                     executeAction({
                                         instanceId: instance.id,
