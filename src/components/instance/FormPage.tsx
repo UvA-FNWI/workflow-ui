@@ -84,17 +84,26 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                 />
                                 <div className="mt-4 flex justify-between gap-2">
                                     {activeTabIndex > 0 && (
-                                        <Button intent="secondary" onClick={goToPreviousTab}>
+                                        <Button
+                                            intent="secondary"
+                                            variant="destructive"
+                                            onClick={goToPreviousTab}
+                                        >
                                             {t("go_back")}
                                         </Button>
                                     )}
                                     {activeTabIndex === 0 && (
-                                        <Button intent="secondary" onClick={onClose}>
+                                        <Button
+                                            intent="secondary"
+                                            variant="destructive"
+                                            onClick={onClose}
+                                        >
                                             {t("close")}
                                         </Button>
                                     )}
                                     <Button
                                         intent="secondary"
+                                        variant="destructive"
                                         disabled={
                                             index === submission.form.pages.length - 1
                                                 ? !areAllPagesComplete

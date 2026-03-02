@@ -9,7 +9,7 @@
   "cancel": "Annuleren",
   "close": "Sluiten",
   "confirm": "Bevestigen",
-  "continue": "Doorgaan",
+  "continue": "Verder",
   "file_upload": {
     "description": "Beschrijving",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",

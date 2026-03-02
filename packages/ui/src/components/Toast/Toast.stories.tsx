@@ -160,7 +160,8 @@ const ToastControls = () => {
         </Button>
 
         <Button
-          intent="destructiveSecondary"
+          intent="secondary"
+          variant="destructive"
           onClick={showWarningToast}
           size="medium"
           leftIcon={
@@ -171,7 +172,8 @@ const ToastControls = () => {
         </Button>
 
         <Button
-          intent="destructivePrimary"
+          intent="primary"
+          variant="destructive"
           onClick={showErrorToast}
           size="medium"
           leftIcon={
@@ -250,7 +252,8 @@ export const ToastWithActions: Story = {
             </Button>
 
             <Button
-              intent="destructivePrimary"
+              intent="primary"
+              variant="destructive"
               onClick={showRetryToast}
               size="small"
             >

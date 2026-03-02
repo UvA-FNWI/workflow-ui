@@ -82,7 +82,8 @@ export function AdminCard() {
                     </Button>
                     {impersonate !== null && (
                         <Button
-                            intent="destructiveSecondary"
+                            intent="secondary"
+                            variant="destructive"
                             onClick={() => {
                                 dispatch(clearImpersonation());
                                 window.location.reload();
