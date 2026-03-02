@@ -1,8 +1,10 @@
 import {Link} from "react-router";
 
+import {Container} from "@datanose/ui";
+
 function Overview() {
     return (
-        <div>
+        <Container>
             <div
                 style={{
                     display: "flex",
@@ -15,7 +17,7 @@ function Overview() {
             <nav>
                 <Link to="/screens/project-overview">Project overview screen</Link>
             </nav>
-        </div>
+        </Container>
     );
 }
 

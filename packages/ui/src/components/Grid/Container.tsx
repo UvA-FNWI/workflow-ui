@@ -24,7 +24,7 @@ export const Container = ({
 }: PropsWithChildren<ContainerProps>) => {
   return (
     <div
-      className={cn('ui:mx-auto ui:w-full ui:px-3', className)}
+      className={cn('ui:mx-auto ui:w-full ui:px-3 ui:py-6', className)}
       style={{
         ...(maxWidth !== 'full' ? { maxWidth } : undefined),
         ...style,
