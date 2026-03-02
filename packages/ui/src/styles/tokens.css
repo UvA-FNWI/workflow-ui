@@ -2,8 +2,8 @@
 @theme {
   --font-body: var(--font-sans);
   --font-heading: var(--font-serif);
-  --font-sans: 'Source Sans Pro', system-ui, sans-serif;
-  --font-serif: 'Utopia', serif;
+  --font-sans: 'source-sans-pro', system-ui, sans-serif;
+  --font-serif: 'utopia-std', serif;
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;

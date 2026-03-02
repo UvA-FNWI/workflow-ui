@@ -1,9 +1,11 @@
+@import '../src/styles/fonts.css';
 @import '../src/styles/index.css';
 
 /* Storybook canvas background styles */
 /* Target the Storybook canvas container and story wrapper */
 .sb-story,
 .sb-story > div,
+.docs-story,
 #storybook-root,
 #storybook-root > div,
 [data-test-id='storybook-preview-wrapper'],
@@ -13,23 +15,27 @@
 
 /* Dark mode background */
 html.dark .sb-story {
-  background-color: var(--color-grey-900);
+  background-color: var(--ui-color-grey-900);
+}
+
+html.dark .docs-story {
+  background-color: var(--ui-color-grey-900);
 }
 
 html.dark #storybook-root {
-  background-color: var(--color-grey-900);
+  background-color: var(--ui-color-grey-900);
 }
 
 html.dark [data-test-id='storybook-preview-wrapper'],
 html.dark [data-test-id='storybook-preview-wrapper'] > div {
-  background-color: var(--color-grey-900);
+  background-color: var(--ui-color-grey-900);
 }
 
 /* Ensure the root element also gets the background */
 html.dark {
-  background-color: var(--color-grey-900);
+  background-color: var(--ui-color-grey-900);
 }
 
 html:not(.dark) {
-  background-color: var(--color-grey-200);
+  background-color: var(--ui-color-grey-200);
 }

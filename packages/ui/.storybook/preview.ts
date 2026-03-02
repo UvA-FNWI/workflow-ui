@@ -18,11 +18,11 @@ const preview: Preview = {
       values: [
         {
           name: 'light',
-          value: 'var(--color-grey-100)',
+          value: 'var(--ui-color-grey-100)',
         },
         {
           name: 'dark',
-          value: 'var(--color-grey-900)',
+          value: 'var(--ui-color-grey-900)',
         },
       ],
     },

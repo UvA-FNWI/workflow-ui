@@ -177,7 +177,11 @@ const AlertDialogTemplate = (args: any) => {
 
   return (
     <div className="ui:flex ui:min-h-screen ui:items-center ui:justify-center ui:p-4">
-      <Button intent="destructivePrimary" onClick={() => setIsOpen(true)}>
+      <Button
+        intent="primary"
+        variant="destructive"
+        onClick={() => setIsOpen(true)}
+      >
         Delete Item
       </Button>
       <Modal {...args} isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -192,7 +196,11 @@ const AlertDialogTemplate = (args: any) => {
           <Button intent="secondary" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
-          <Button intent="destructivePrimary" onClick={() => setIsOpen(false)}>
+          <Button
+            intent="primary"
+            variant="destructive"
+            onClick={() => setIsOpen(false)}
+          >
             Delete
           </Button>
         </Modal.Footer>

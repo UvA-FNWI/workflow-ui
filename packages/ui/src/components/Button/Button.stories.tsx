@@ -8,13 +8,13 @@ const commonArgTypes = {
     control: {
       type: 'select' as const,
     },
-    options: [
-      'primary',
-      'secondary',
-      'destructivePrimary',
-      'destructiveSecondary',
-      'ghost',
-    ],
+    options: ['primary', 'secondary', 'ghost'],
+  },
+  variant: {
+    control: {
+      type: 'select' as const,
+    },
+    options: ['default', 'destructive'],
   },
   size: {
     control: {
@@ -26,7 +26,7 @@ const commonArgTypes = {
     control: {
       type: 'select' as const,
     },
-    options: ['rounded', 'circular', 'square'],
+    options: ['circular', 'square'],
   },
   disabled: {
     control: {
@@ -57,7 +57,6 @@ export const Regular: Story = {
   args: {
     intent: 'primary',
     size: 'small',
-    shape: 'rounded',
     children: 'Button',
   },
   argTypes: commonArgTypes,
@@ -67,7 +66,6 @@ export const Disabled: Story = {
   args: {
     intent: 'primary',
     size: 'small',
-    shape: 'rounded',
     children: 'Button',
     disabled: true,
   },
@@ -78,7 +76,6 @@ export const RegularIcon: Story = {
   args: {
     intent: 'primary',
     size: 'medium',
-    shape: 'rounded',
     children: 'Button with icon',
     rightIcon: <Icon name="arrow-right-line" size="md" color="current" />,
   },
@@ -89,7 +86,6 @@ export const Loading: Story = {
   args: {
     intent: 'primary',
     size: 'large',
-    shape: 'rounded',
     children: 'Button',
     isLoading: true,
   },
@@ -100,7 +96,6 @@ export const FullWidth: Story = {
   args: {
     intent: 'primary',
     size: 'large',
-    shape: 'rounded',
     children: 'Button',
     width: 'full',
   },
@@ -142,8 +137,17 @@ export const Ghost: Story = {
   args: {
     intent: 'ghost',
     size: 'medium',
-    shape: 'rounded',
     children: 'Ghost Button',
+  },
+  argTypes: commonArgTypes,
+};
+
+export const DestructiveGhost: Story = {
+  args: {
+    intent: 'ghost',
+    variant: 'destructive',
+    size: 'medium',
+    children: 'Destructive ghost Button',
   },
   argTypes: commonArgTypes,
 };
@@ -152,7 +156,6 @@ export const GhostWithIcon: Story = {
   args: {
     intent: 'ghost',
     size: 'small',
-    shape: 'rounded',
     rightIcon: <Icon name="edit-line" size="xs" color="danger" />,
   },
   argTypes: commonArgTypes,
