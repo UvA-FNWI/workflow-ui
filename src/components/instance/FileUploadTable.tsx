@@ -148,7 +148,8 @@ export const FileUploadTable = ({
                                                 )
                                             }
                                             buttonText={t("file_upload.upload_file")}
-                                            buttonIntent="destructivePrimary"
+                                            buttonIntent="primary"
+                                            buttonVariant="destructive"
                                             isLoading={uploadingFiles[question.name]}
                                             errorMessages={{
                                                 fileSize: t("file_upload.error_max_file_size", {

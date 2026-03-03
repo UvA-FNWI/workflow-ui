@@ -64,7 +64,8 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
             {onSubmit && (
                 <div className="mt-4 flex justify-between gap-2">
                     <Button
-                        intent="destructivePrimary"
+                        intent="primary"
+                        variant="destructive"
                         className="ml-auto"
                         isLoading={isLoading}
                         onClick={async () => {
