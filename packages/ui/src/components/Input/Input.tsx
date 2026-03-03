@@ -29,6 +29,7 @@ export const Input: React.FC<InputProps> = ({
   description,
   errorMessage,
   isValid = true,
+  maxLength,
   isDisabled = false,
   className,
   ...rest
@@ -45,6 +46,7 @@ export const Input: React.FC<InputProps> = ({
         errorMessage,
         isDisabled: isDisabled ?? false,
         validationState: isValid === false ? 'invalid' : 'valid',
+        maxLength: maxLength,
       },
       ref
     );

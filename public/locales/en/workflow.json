@@ -51,6 +51,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
+  "string_validation": "Maximum number of characters {{maxInputLength}}. {{currentInputLength}} of {{maxInputLength}} remaining.",
   "studentCard": {
     "noStudentInfo": "No student information available",
     "student": "Student"
