@@ -9,6 +9,7 @@ export type AuthState = {
     providerType: ProviderType | null;
     isAuthenticated: boolean;
     isLoading: boolean;
+    isLoggingOut: boolean;
 };
 
 export const DefaultAuthState: AuthState = {
@@ -16,4 +17,5 @@ export const DefaultAuthState: AuthState = {
     providerType: null,
     isAuthenticated: false,
     isLoading: true,
+    isLoggingOut: false,
 };

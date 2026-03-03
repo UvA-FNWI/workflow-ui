@@ -6,7 +6,7 @@
   "scripts": {
     "dev:local": "vite",
     "dev": "pnpm --parallel dev:local",
-    "build": "pnpm --filter @datanose/ui build && tsc -b && vite build",
+    "build": "pnpm --filter @datanose/ui build && pnpm --filter @datanose/core build && tsc -b && vite build",
     "build:ui": "pnpm --filter @datanose/ui build",
     "lint": "eslint . --max-warnings 0",
     "format:check": "prettier --check .",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@axe-core/playwright": "^4.11.0",
+    "@datanose/core": "workspace:*",
     "@datanose/ui": "workspace:*",
     "@reduxjs/toolkit": "^2.2.7",
     "@tanstack/match-sorter-utils": "^8.19.4",

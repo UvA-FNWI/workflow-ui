@@ -8,7 +8,7 @@ export {
 } from "./Auth.selectors";
 export {authReducer} from "./Auth.reducer";
 // TODO: we may want to expose AuthState and also other types in Auth.types? See what is needed and add exports here.
-export type {CustomUserState} from "./Auth.types";
+export type {AuthEventCallbacks, CustomUserState} from "./Auth.types";
 export {AuthProvider} from "./AuthProvider";
-export * as AuthService from "./AuthService";
+export {default as AuthService} from "./AuthService";
 export {useAuth} from "./useAuth";

@@ -8,6 +8,7 @@ export default defineConfig({
         react(),
         dts({
             insertTypesEntry: true,
+            tsconfigPath: "./tsconfig.dts.json",
         }),
     ],
     build: {

@@ -17,6 +17,7 @@ import type {AuthEventCallbacks, AuthStateChangeCallback, CustomUserState} from 
 // });
 class AuthService {
     private initialized = false;
+    private loginInProgress = false;
     private logoutUri?: string;
     private updateState?: AuthStateChangeCallback;
     private userManager: UserManager;
@@ -47,29 +48,42 @@ class AuthService {
         this.initialized = true;
 
         if (authHelpers.isEmbeddedInCanvas()) {
-            this.updateState({
-                type: "auth/INITIALIZED",
-                user: this.initCanvasUser(),
-                providerType: "canvas",
-            });
+            const user = this.initCanvasUser();
+            this.updateState({type: "auth/INITIALIZED", user, providerType: "canvas"});
+            // Fire onUserLoaded for the initial page load so consumers can sync
+            // state without relying on a null-rendering React component.
+            if (user) events.onUserLoaded?.(user);
         } else {
+            const [rawUser] = await Promise.all([
+                this.userManager.getUser(),
+                this.userManager.clearStaleState(),
+            ]);
+            const validUser = rawUser && !rawUser.expired ? rawUser : null;
             this.updateState({
                 type: "auth/INITIALIZED",
-                user: await this.initSurfUser(),
+                user: authHelpers.convertUserToObject(validUser),
                 providerType: "surf",
             });
+            if (validUser) events.onUserLoaded?.(validUser);
         }
     }
 
-    public async surfStartLogin(state: CustomUserState) {
-        await this.userManager.signinRedirect({state});
-    }
+    public surfStartLogin = async (state: CustomUserState) => {
+        if (this.loginInProgress) return;
+        this.loginInProgress = true;
+        try {
+            await this.userManager.signinRedirect({state});
+        } catch (err) {
+            this.loginInProgress = false;
+            throw err;
+        }
+    };
 
-    public surfCompleteLogin() {
+    public surfCompleteLogin = () => {
         return this.userManager.signinRedirectCallback();
-    }
+    };
 
-    public canvasCompleteLogin(token: string) {
+    public canvasCompleteLogin = (token: string) => {
         const canvasData = authHelpers.getUserAndMetadataForCanvasToken(token);
         this.updateState?.({
             type: "auth/USER_LOADED",
@@ -77,24 +91,23 @@ class AuthService {
             providerType: "canvas",
         });
         return canvasData;
-    }
+    };
 
-    public async surfRenewLogin(state: CustomUserState) {
+    public surfRenewLogin = async (state: CustomUserState) => {
         // Remove current user from storage before renewed login to prevent triggering event 'AccessTokenExpiring' after login
         await this.userManager.removeUser();
         await this.surfStartLogin(state);
-    }
+    };
 
-    public async surfLogout() {
-        this.updateState?.({type: "auth/LOGOUT"});
+    public surfLogout = async () => {
+        this.updateState?.({type: "auth/LOGGING_OUT"});
         await this.userManager.removeUser();
-        await this.userManager.signoutRedirectCallback();
         if (this.logoutUri) {
             window.location.href = this.logoutUri;
         }
-    }
+    };
 
-    public async impersonateSurfUser(accessToken: string) {
+    public impersonateSurfUser = async (accessToken: string) => {
         const user = await this.userManager.getUser();
         if (!user) return;
 
@@ -106,16 +119,7 @@ class AuthService {
             // As the OIDC client is only used for SURF, any USER_LOADED event must be for SURF
             providerType: "surf",
         });
-    }
-
-    private async initSurfUser() {
-        const [user] = await Promise.all([
-            this.userManager.getUser(),
-            this.userManager.clearStaleState(),
-        ]);
-        const expired: boolean = user ? !!user.expired : false;
-        return expired ? null : authHelpers.convertUserToObject(user);
-    }
+    };
 
     private initCanvasUser = () => {
         const canvasToken = authHelpers.getCanvasTokenFromLocalStorage();

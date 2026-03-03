@@ -11,6 +11,7 @@ const authActionTypes = [
     "auth/USER_LOADED",
     "auth/LOGOUT",
     "auth/USER_UNLOADED",
+    "auth/LOGGING_OUT",
 ];
 export type AuthAction =
     | {
@@ -18,7 +19,7 @@ export type AuthAction =
           user: User | null;
           providerType: ProviderType | null;
       }
-    | {type: "auth/LOGOUT" | "auth/USER_UNLOADED"};
+    | {type: "auth/LOGOUT" | "auth/USER_UNLOADED" | "auth/LOGGING_OUT"};
 
 function isAuthAction(action: UnknownAction): action is AuthAction {
     return authActionTypes.includes(action.type);
@@ -40,6 +41,12 @@ export function authReducer(state: AuthState = DefaultAuthState, action: Unknown
                     ? !!action.user.access_token && !action.user.expired
                     : false,
                 isLoading: false,
+                isLoggingOut: false,
+            };
+        case "auth/LOGGING_OUT":
+            return {
+                ...state,
+                isLoggingOut: true,
             };
         case "auth/LOGOUT":
         case "auth/USER_UNLOADED":
@@ -47,6 +54,7 @@ export function authReducer(state: AuthState = DefaultAuthState, action: Unknown
                 ...state,
                 user: null,
                 isAuthenticated: false,
+                isLoggingOut: true,
             };
 
         default:
