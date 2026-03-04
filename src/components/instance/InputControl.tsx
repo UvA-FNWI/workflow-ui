@@ -30,7 +30,6 @@ interface InputControlProps {
     onFileSave?: (params: FileParams) => void;
     answer?: Answer;
     visibleChoices?: string[] | null;
-    maxLength?: number;
 }
 
 export const InputControl = ({
@@ -39,7 +38,6 @@ export const InputControl = ({
     onChange,
     onSave,
     visibleChoices,
-    maxLength,
 }: InputControlProps) => {
     const {t, l} = useTranslate("workflow");
 
@@ -56,10 +54,11 @@ export const InputControl = ({
     };
 
     if (question.type === "String") {
-        const lengthValidationString = maxLength
+        const lengthValidationDescription = question.maxLength
             ? t("string_validation", {
-                  maxInputLength: maxLength,
-                  remainingInputLength: maxLength - String(value).length,
+                  maxInputLength: question.maxLength,
+                  remainingInputLength:
+                      question.maxLength - (typeof value === "string" ? value.length : 0),
               })
             : "";
         return (
@@ -68,8 +67,8 @@ export const InputControl = ({
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
-                description={lengthValidationString}
-                maxLength={maxLength}
+                description={lengthValidationDescription}
+                maxLength={question.maxLength}
             />
         );
     }

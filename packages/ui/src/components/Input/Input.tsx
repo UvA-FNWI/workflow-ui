@@ -29,9 +29,9 @@ export const Input: React.FC<InputProps> = ({
   description,
   errorMessage,
   isValid = true,
-  maxLength,
   isDisabled = false,
   className,
+  maxLength,
   ...rest
 }) => {
   const ref = useRef<HTMLInputElement>(null);
