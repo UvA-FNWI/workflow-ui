@@ -60,7 +60,8 @@ function TemporaryNavbar() {
                 </label>
                 {isAuthenticated && (
                     <Button
-                        intent="destructivePrimary"
+                        intent="primary"
+                        variant="destructive"
                         onClick={() => void surfLogout()}
                         type="button"
                     >
