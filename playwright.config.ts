@@ -22,6 +22,9 @@ export default defineConfig({
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: "on-first-retry",
+
+        /* Pre-authenticated storage state so tests bypass the OIDC auth guard. */
+        storageState: "tests/auth.json",
     },
 
     /* Configure projects for major browsers */
