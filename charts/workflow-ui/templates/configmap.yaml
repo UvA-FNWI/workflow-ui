@@ -9,6 +9,5 @@ data:
             VITE_ENV: "{{ .Values.envVars.env }}",
             VITE_AUTH_AUTHORITY: "{{ .Values.envVars.authAuthority }}",
             VITE_AUTH_CLIENT_ID: "{{ .Values.envVars.authClientId }}",
-            VITE_AUTH_REDIRECT_URI: "{{ .Values.envVars.authRedirectUri }}",
             VITE_AUTH_LOGOUT_URL: "{{ .Values.envVars.authLogoutUrl }}"
         };

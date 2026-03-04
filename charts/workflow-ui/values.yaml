@@ -9,5 +9,4 @@ envVars:
     env: "development"
     authAuthority: ""
     authClientId: ""
-    authRedirectUri: ""
     authLogoutUrl: ""

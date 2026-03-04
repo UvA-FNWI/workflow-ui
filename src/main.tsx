@@ -12,7 +12,6 @@ import {
     VITE_AUTH_AUTHORITY,
     VITE_AUTH_CLIENT_ID,
     VITE_AUTH_LOGOUT_URL,
-    VITE_AUTH_REDIRECT_URI,
 } from "./helpers/Environment";
 import "./i18n";
 import "./index.css";
@@ -23,7 +22,7 @@ import {store} from "./store/store";
 const authConfig = {
     authority: VITE_AUTH_AUTHORITY ?? "",
     clientId: VITE_AUTH_CLIENT_ID ?? "",
-    redirectUri: VITE_AUTH_REDIRECT_URI ?? `${window.location.origin}/callback`,
+    redirectUri: `${window.location.origin}/callback`,
     logoutUri: VITE_AUTH_LOGOUT_URL ?? "",
 };
 
