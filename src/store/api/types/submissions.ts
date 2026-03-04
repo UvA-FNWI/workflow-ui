@@ -52,6 +52,7 @@ export type Question = {
     hideInResults: boolean;
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
+    weight: number;
 };
 
 export type StringLayoutOptions = {

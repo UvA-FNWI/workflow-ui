@@ -110,6 +110,7 @@ export const PageControl = ({
                                         <div className="mb-4">
                                             <div key={question.name}>
                                                 {l(question.text)}
+                                                {question.weight && ` (${question.weight}%)`}
                                                 {!question.isRequired && ` ${t("optional")}`}
                                             </div>
                                             <InputControl
