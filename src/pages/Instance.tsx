@@ -31,11 +31,11 @@ function Instance() {
         <Container maxWidth={1280}>
             <InstanceHeader courseName={courseName} isLoading={isLoading} />
             <Grid>
-                <GridItem span={12} spanSm={8} className="flex flex-col gap-8">
+                <GridItem span={{base: 12, sm: 8}} className="flex flex-col gap-8">
                     <ProgressCard isLoading={isLoading} />
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </GridItem>
-                <GridItem span={12} spanSm={4} className="flex flex-col gap-6">
+                <GridItem span={{base: 12, sm: 4}} className="flex flex-col gap-6">
                     <StudentCard
                         studentEmail={studentEmail}
                         studentName={studentName}
