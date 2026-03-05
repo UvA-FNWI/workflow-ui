@@ -38,6 +38,24 @@ const interpolateBetween = (
     }
 };
 
+/**
+ * Calculates the horizontal position (as a percentage between MIN_POSITION and MAX_POSITION)
+ * for each step along the progress bar.
+ *
+ * Position strategy:
+ * - If there are fewer than 2 steps with deadlines, all steps are spaced evenly.
+ * - If all deadlines are identical, all steps are spaced evenly.
+ * - Otherwise, steps that have a deadline are positioned proportionally to their deadline
+ *   timestamp: the earliest deadline maps to the left anchor and the latest to the right anchor.
+ *   The anchors themselves are derived from evenly-spaced positions so that steps without
+ *   deadlines at the edges still get reasonable padding.
+ * - Steps without a deadline that fall between two deadline-anchored steps are linearly
+ *   interpolated between those two anchors.
+ * - Steps without a deadline before the first deadline-anchored step are interpolated between
+ *   MIN_POSITION and that anchor.
+ * - Steps without a deadline after the last deadline-anchored step are interpolated between
+ *   that anchor and MAX_POSITION.
+ */
 const getStepPositions = (steps: WorkflowStep[]): number[] => {
     if (steps.length <= 1) return steps.map(() => MIN_POSITION);
 
@@ -99,7 +117,7 @@ const getStepPositions = (steps: WorkflowStep[]): number[] => {
         interpolateBetween(positions, lastIdx, positions[lastIdx]!, steps.length - 1, MAX_POSITION);
     }
 
-    return positions as number[];
+    return positions.map((position, i) => position ?? getEvenPosition(i, steps.length));
 };
 
 const getProgressPercentage = (positions: number[], currentStepIndex: number): number => {
