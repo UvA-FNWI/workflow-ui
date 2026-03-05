@@ -135,39 +135,45 @@ Any combination of spans that add up to 12 works:
 
 ### Responsive spans
 
-Override the span at each breakpoint:
+Pass a breakpoint object to `span` to override the column count at different screen sizes:
 
 <table>
   <thead>
     <tr>
-      <th>Prop</th>
+      <th>Key</th>
       <th>Breakpoint</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>
-        <code>span</code>
+        <code>base</code>
       </td>
       <td>Default (all screens)</td>
     </tr>
     <tr>
       <td>
-        <code>spanSm</code>
+        <code>sm</code>
       </td>
       <td>≥ 640px</td>
     </tr>
     <tr>
       <td>
-        <code>spanMd</code>
+        <code>md</code>
       </td>
       <td>≥ 768px</td>
     </tr>
     <tr>
       <td>
-        <code>spanLg</code>
+        <code>lg</code>
       </td>
       <td>≥ 1024px</td>
+    </tr>
+    <tr>
+      <td>
+        <code>xl</code>
+      </td>
+      <td>≥ 1280px</td>
     </tr>
   </tbody>
 </table>
@@ -175,13 +181,20 @@ Override the span at each breakpoint:
 ```tsx
 <Grid>
   {/* Stacks on mobile, side-by-side from md upwards */}
-  <GridItem span={12} spanMd={6}>
+  <GridItem span={{ base: 12, md: 6 }}>
     Left
   </GridItem>
-  <GridItem span={12} spanMd={6}>
+  <GridItem span={{ base: 12, md: 6 }}>
     Right
   </GridItem>
 </Grid>
+```
+
+Only the keys you provide are applied — omitted breakpoints inherit from the previous value (standard CSS cascade):
+
+```tsx
+// 12 columns on mobile, 4 from lg onwards — sm and md are not set
+<GridItem span={{ base: 12, lg: 4 }}>...</GridItem>
 ```
 
 ### Row gaps
@@ -243,10 +256,10 @@ function PageLayout() {
   return (
     <Container>
       <Grid>
-        <GridItem span={12} spanMd={3}>
+        <GridItem span={{ base: 12, md: 3 }}>
           <Sidebar />
         </GridItem>
-        <GridItem span={12} spanMd={9}>
+        <GridItem span={{ base: 12, md: 9 }}>
           <MainContent />
         </GridItem>
       </Grid>
