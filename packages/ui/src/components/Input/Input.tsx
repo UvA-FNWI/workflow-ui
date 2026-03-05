@@ -31,6 +31,7 @@ export const Input: React.FC<InputProps> = ({
   isValid = true,
   isDisabled = false,
   className,
+  maxLength,
   ...rest
 }) => {
   const ref = useRef<HTMLInputElement>(null);
@@ -45,6 +46,7 @@ export const Input: React.FC<InputProps> = ({
         errorMessage,
         isDisabled: isDisabled ?? false,
         validationState: isValid === false ? 'invalid' : 'valid',
+        maxLength: maxLength,
       },
       ref
     );
