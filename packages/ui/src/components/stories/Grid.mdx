@@ -1,0 +1,295 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Grid" />
+
+# Grid System
+
+Layout foundation for all UvA DataNose applications. Based on a 12-column grid with consistent margins and gutters.
+
+## Specs
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Columns</td>
+      <td>12 (or any even divisor, e.g. 6 like Tailwind)</td>
+    </tr>
+    <tr>
+      <td>Side margins</td>
+      <td>12px</td>
+    </tr>
+    <tr>
+      <td>Column gutters</td>
+      <td>24px</td>
+    </tr>
+    <tr>
+      <td>Container max-width</td>
+      <td>944px (default, customisable)</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Container
+
+`Container` centers content horizontally and applies the 12px side margins. Use it to constrain content to the design system's maximum width.
+
+```tsx
+import { Container } from '@datanose/ui';
+
+// Default — constrained to 944px, centered
+<Container>
+  <p>Page content</p>
+</Container>
+
+// Custom max-width
+<Container maxWidth={1200}>
+  <p>Wider content</p>
+</Container>
+
+// Full-width — no max-width constraint
+<Container maxWidth="full">
+  <p>Edge-to-edge content</p>
+</Container>
+```
+
+### When to use each
+
+<table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>Use case</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>maxWidth={944}</code> (default)
+      </td>
+      <td>Standard page content, forms, article layouts</td>
+    </tr>
+    <tr>
+      <td>
+        <code>maxWidth="full"</code>
+      </td>
+      <td>
+        Hero sections, full-bleed images, dashboards that stretch on large
+        screens
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>maxWidth={'{n}'}</code>
+      </td>
+      <td>When a specific team's layout requires a different breakpoint</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Grid & GridItem
+
+`Grid` sets up the 12-column grid with 24px column gutters. `GridItem` controls how many columns a child spans.
+
+```tsx
+import { Grid, GridItem } from '@datanose/ui';
+
+<Grid>
+  <GridItem span={6}>Left half</GridItem>
+  <GridItem span={6}>Right half</GridItem>
+</Grid>
+```
+
+### Column spans
+
+Any combination of spans that add up to 12 works:
+
+```tsx
+// Three equal columns
+<Grid>
+  <GridItem span={4}>One third</GridItem>
+  <GridItem span={4}>One third</GridItem>
+  <GridItem span={4}>One third</GridItem>
+</Grid>
+
+// Sidebar + content
+<Grid>
+  <GridItem span={3}>Sidebar (3/12)</GridItem>
+  <GridItem span={9}>Content (9/12)</GridItem>
+</Grid>
+
+// Full-width item
+<Grid>
+  <GridItem span={12}>Full width</GridItem>
+</Grid>
+```
+
+### Responsive spans
+
+Pass a breakpoint object to `span` to override the column count at different screen sizes:
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Breakpoint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>base</code>
+      </td>
+      <td>Default (all screens)</td>
+    </tr>
+    <tr>
+      <td>
+        <code>sm</code>
+      </td>
+      <td>≥ 640px</td>
+    </tr>
+    <tr>
+      <td>
+        <code>md</code>
+      </td>
+      <td>≥ 768px</td>
+    </tr>
+    <tr>
+      <td>
+        <code>lg</code>
+      </td>
+      <td>≥ 1024px</td>
+    </tr>
+    <tr>
+      <td>
+        <code>xl</code>
+      </td>
+      <td>≥ 1280px</td>
+    </tr>
+  </tbody>
+</table>
+
+```tsx
+<Grid>
+  {/* Stacks on mobile, side-by-side from md upwards */}
+  <GridItem span={{ base: 12, md: 6 }}>
+    Left
+  </GridItem>
+  <GridItem span={{ base: 12, md: 6 }}>
+    Right
+  </GridItem>
+</Grid>
+```
+
+Only the keys you provide are applied — omitted breakpoints inherit from the previous value (standard CSS cascade):
+
+```tsx
+// 12 columns on mobile, 4 from lg onwards — sm and md are not set
+<GridItem span={{ base: 12, lg: 4 }}>...</GridItem>
+```
+
+### Row gaps
+
+The `Grid` component has a `rowGap` prop to control vertical spacing between rows:
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>none</code>
+      </td>
+      <td>0px</td>
+    </tr>
+    <tr>
+      <td>
+        <code>sm</code>
+      </td>
+      <td>12px</td>
+    </tr>
+    <tr>
+      <td>
+        <code>md</code>
+      </td>
+      <td>24px (default)</td>
+    </tr>
+    <tr>
+      <td>
+        <code>lg</code>
+      </td>
+      <td>48px</td>
+    </tr>
+  </tbody>
+</table>
+
+```tsx
+<Grid rowGap="lg">
+  <GridItem span={12}>First row</GridItem>
+  <GridItem span={12}>Second row — 48px below the first</GridItem>
+</Grid>
+```
+
+---
+
+## Combining Container and Grid
+
+The typical pattern is to wrap a `Grid` in a `Container`:
+
+```tsx
+import { Container, Grid, GridItem } from '@datanose/ui';
+
+function PageLayout() {
+  return (
+    <Container>
+      <Grid>
+        <GridItem span={{ base: 12, md: 3 }}>
+          <Sidebar />
+        </GridItem>
+        <GridItem span={{ base: 12, md: 9 }}>
+          <MainContent />
+        </GridItem>
+      </Grid>
+    </Container>
+  );
+}
+```
+
+For full-width sections that break out of the container (e.g. a hero banner), apply the `Container` separately per section:
+
+```tsx
+{/* Full-bleed hero */}
+<HeroBanner />
+
+{/* Constrained body */}
+<Container>
+  <Grid>
+    <GridItem span={12}>
+      <ArticleBody />
+    </GridItem>
+  </Grid>
+</Container>
+```
+
+---
+
+## Implementation notes
+
+- The grid is built with CSS Grid (`display: grid`, `grid-template-columns: repeat(12, minmax(0, 1fr))`).
+- Gutters use `gap-x` only — vertical spacing is controlled via `rowGap` on `Grid` or margin/padding on `GridItem` children.
+- The `Container`'s 12px side margins use Tailwind's `px-3` (3 × 4px = 12px).
+- The 24px gutter uses Tailwind's `gap-x-6` (6 × 4px = 24px).
+- All classes use the `ui:` prefix to avoid conflicts with consuming app styles.
