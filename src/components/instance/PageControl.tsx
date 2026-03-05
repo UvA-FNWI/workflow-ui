@@ -94,6 +94,7 @@ export const PageControl = ({
                     {showTitle && (
                         <Heading size="sm" className="uppercase" fontType="body">
                             {l(page.title)}
+                            {page.weight > 0 && ` (${page.weight}%)`}
                         </Heading>
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
@@ -151,6 +152,14 @@ export const PageControl = ({
                             />
                         )}
                     </form>
+                </div>
+                <div>
+                    {submission?.averageResults[page.title.en] && (
+                        <Heading>
+                            Gem. Cijfer [{page.title.en}]:{" "}
+                            {submission.averageResults[page.title.en].toFixed(2)}
+                        </Heading>
+                    )}
                 </div>
             </div>
         </>
