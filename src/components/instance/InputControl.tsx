@@ -39,7 +39,7 @@ export const InputControl = ({
     onSave,
     visibleChoices,
 }: InputControlProps) => {
-    const {l} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
 
     const save = useCallback(
         (value: unknown) => {
@@ -58,12 +58,21 @@ export const InputControl = ({
     };
 
     if (question.type === "String") {
+        const lengthValidationDescription = question.maxLength
+            ? t("string_validation", {
+                  maxInputLength: question.maxLength,
+                  remainingInputLength:
+                      question.maxLength - (typeof value === "string" ? value.length : 0),
+              })
+            : "";
         return (
             <Input
                 value={(value as string) || ""}
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
+                description={lengthValidationDescription}
+                maxLength={question.maxLength}
             />
         );
     }
@@ -134,6 +143,21 @@ export const InputControl = ({
                 >
                     {choices.map((choice) => (
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
+                    ))}
+                </Select>
+            );
+        }
+
+        if (question.layout && "type" in question.layout && question.layout.type === "Dropdown") {
+            return (
+                <Select
+                    value={(value as string) || ""}
+                    onChange={(selectedValue) => debouncedChange(selectedValue)}
+                >
+                    {choices.map((choice) => (
+                        <SelectItem key={choice.name} title={l(choice.text) ?? choice.name}>
+                            {l(choice.text) ?? choice.name}
+                        </SelectItem>
                     ))}
                 </Select>
             );

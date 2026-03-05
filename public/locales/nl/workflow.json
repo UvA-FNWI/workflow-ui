@@ -9,7 +9,7 @@
   "cancel": "Annuleren",
   "close": "Sluiten",
   "confirm": "Bevestigen",
-  "continue": "Doorgaan",
+  "continue": "Verder",
   "file_upload": {
     "description": "Beschrijving",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
@@ -51,6 +51,7 @@
     "cancel": "Annuleren",
     "confirm": "Bevestigen"
   },
+  "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
   "studentCard": {
     "noStudentInfo": "Geen studentinformatie beschikbaar",
     "student": "Student"

@@ -31,12 +31,9 @@ export interface FileUploadProps {
   /** Button text */
   buttonText?: string;
   /** Button intent */
-  buttonIntent?:
-    | 'primary'
-    | 'secondary'
-    | 'destructivePrimary'
-    | 'destructiveSecondary'
-    | 'ghost';
+  buttonIntent?: 'primary' | 'secondary' | 'ghost';
+  /** Button variant */
+  buttonVariant?: 'default' | 'destructive';
   /** Show selected file name */
   showFileName?: boolean;
   /** External file name to display (e.g., from backend) */
@@ -60,6 +57,7 @@ export const FileUpload = ({
   className,
   buttonText = 'Upload File',
   buttonIntent = 'secondary',
+  buttonVariant = 'default',
   showFileName = true,
   fileName,
   errorMessages = {},
@@ -168,6 +166,7 @@ export const FileUpload = ({
       {showUploadButton && (
         <Button
           intent={buttonIntent}
+          variant={buttonVariant}
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
           leftIcon={<Icon name="upload-line" size="sm" color="current" />}
