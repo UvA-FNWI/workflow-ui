@@ -9,7 +9,9 @@ import {InputControl} from "./InputControl";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
+import {calculationsApi} from "~/store/api/calculationsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
+import type {Results} from "~/store/api/types/calculations.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 
@@ -87,6 +89,12 @@ export const PageControl = ({
         control: form.control,
     });
 
+    const {data: calculations} = calculationsApi.endpoints.getAverages.useQuery({
+        instanceId,
+        submissionId,
+    });
+    const calculationsCurrentPage = calculations?.results[page.title.en] as Results[];
+
     return (
         <>
             <div className="mb-4 flex flex-col gap-4 pt-4">
@@ -94,7 +102,8 @@ export const PageControl = ({
                     {showTitle && (
                         <Heading size="sm" className="uppercase" fontType="body">
                             {l(page.title)}
-                            {page.weight > 0 && ` (${page.weight}%)`}
+                            {calculationsCurrentPage &&
+                                ` (${calculationsCurrentPage.reduce((sum, q) => sum + q.percentage, 0)}%)`}
                         </Heading>
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
@@ -111,7 +120,10 @@ export const PageControl = ({
                                         <div className="mb-4">
                                             <div key={question.name}>
                                                 {l(question.text)}
-                                                {question.weight && ` (${question.weight}%)`}
+                                                {calculationsCurrentPage?.find(
+                                                    (q) => q.questionName == question.name,
+                                                ) &&
+                                                    ` (${calculationsCurrentPage.find((q) => q.questionName == question.name)?.percentage}%)`}
                                                 {!question.isRequired && ` ${t("optional")}`}
                                             </div>
                                             <InputControl
@@ -154,10 +166,10 @@ export const PageControl = ({
                     </form>
                 </div>
                 <div>
-                    {submission?.averageResults[page.title.en] && (
+                    {calculations?.weightedAverages[page.title.en] && (
                         <Heading>
-                            Gem. Cijfer [{page.title.en}]:{" "}
-                            {submission.averageResults[page.title.en].toFixed(2)}
+                            Gem. Cijfer [{page.title.en}]:
+                            {calculations?.weightedAverages[page.title.en].toFixed(2)}
                         </Heading>
                     )}
                 </div>

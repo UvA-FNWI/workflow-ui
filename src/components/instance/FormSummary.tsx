@@ -3,6 +3,7 @@ import {Button, Icon, Text} from "@datanose/ui";
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import {calculationsApi} from "~/store/api/calculationsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
 type Props = {
@@ -15,6 +16,11 @@ type Props = {
 export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
     const {t, l} = useTranslate("workflow");
 
+    const {data: calculations} = calculationsApi.endpoints.getAverages.useQuery({
+        instanceId,
+        submissionId: submission.id,
+    });
+
     return (
         <div className="flex flex-col gap-6">
             {submission.form.pages.map((page, index) => (
@@ -24,7 +30,8 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                         <div className="flex items-center gap-1">
                             <Text fontWeight="bold" size="lg">
                                 {l(page.title)}
-                                {page.weight > 0 && ` (${page.weight}%)`}
+                                {calculations?.results[page.title.en] &&
+                                    ` (${calculations?.results[page.title.en].reduce((sum, q) => sum + q.percentage, 0)})%`}
                             </Text>
                             {onEditPage && (
                                 <Button
@@ -41,9 +48,9 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             )}
                         </div>
                         <div>
-                            {submission.averageResults[page.title.en] && (
+                            {calculations?.weightedAverages[page.title.en] && (
                                 <Text fontWeight="bold" size="lg">
-                                    {submission.averageResults[page.title.en].toFixed(2)}
+                                    {`${calculations.weightedAverages[page.title.en]}`}
                                 </Text>
                             )}
                         </div>
@@ -65,13 +72,13 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                     />
                 </div>
             ))}
-            {submission.averageResults["total"] && (
+            {calculations?.weightedAverages["total"] && (
                 <div className="grid grid-cols-2 gap-4">
                     <Text fontWeight="bold" size="lg">
                         Eindcijfer:
                     </Text>
                     <Text fontWeight="bold" size="lg">
-                        {submission.averageResults["total"].toFixed(2)}
+                        {calculations?.weightedAverages["total"].toFixed(2)}
                     </Text>
                 </div>
             )}

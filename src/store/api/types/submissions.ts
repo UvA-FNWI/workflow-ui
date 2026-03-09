@@ -6,7 +6,6 @@ export type Submission = {
     permissions: RoleAction[];
     answers: Answer[];
     form: Form;
-    averageResults: Record<string, number>;
 };
 
 export type Answer = {
@@ -39,7 +38,6 @@ export type Page = {
     introduction?: LocalString;
     layout: PageLayout;
     questions: Question[];
-    weight: number;
 };
 
 export type Question = {
@@ -54,7 +52,6 @@ export type Question = {
     hideInResults: boolean;
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
-    weight: number;
 };
 
 export type StringLayoutOptions = {
