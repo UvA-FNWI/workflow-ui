@@ -103,7 +103,7 @@ export const PageControl = ({
                         <Heading size="sm" className="uppercase" fontType="body">
                             {l(page.title)}
                             {calculationsCurrentPage &&
-                                ` (${calculationsCurrentPage.reduce((sum, q) => sum + q.percentage, 0)}%)`}
+                                ` (${calculationsCurrentPage.reduce((sum, q) => sum + q.percentage, 0).toFixed(2)}%)`}
                         </Heading>
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
