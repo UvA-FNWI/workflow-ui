@@ -1,5 +1,6 @@
 {
   "language": "Taal",
   "language_en": "Engels",
-  "language_nl": "Nederlands"
+  "language_nl": "Nederlands",
+  "number": "{{value, number}}"
 }

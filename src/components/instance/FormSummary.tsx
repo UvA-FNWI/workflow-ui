@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
-    const {t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate(["workflow", "common"]);
 
     const {data: calculations} = calculationsApi.endpoints.getAverages.useQuery({
         instanceId,
@@ -31,7 +31,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             <Text fontWeight="bold" size="lg">
                                 {l(page.title)}
                                 {calculations?.results[page.title.en] &&
-                                    ` (${calculations?.results[page.title.en].reduce((sum, q) => sum + q.percentage, 0)})%`}
+                                    ` (${t("common:number", {value: calculations?.results[page.title.en].reduce((sum, q) => sum + q.percentage, 0)})})%`}
                             </Text>
                             {onEditPage && (
                                 <Button
@@ -50,7 +50,9 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                         <div>
                             {calculations?.weightedAverages[page.title.en] && (
                                 <Text fontWeight="bold" size="lg">
-                                    {`${calculations.weightedAverages[page.title.en]}`}
+                                    {t("common:number", {
+                                        value: calculations.weightedAverages[page.title.en],
+                                    })}
                                 </Text>
                             )}
                         </div>
@@ -75,10 +77,10 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
             {calculations?.weightedAverages["total"] && (
                 <div className="grid grid-cols-2 gap-4">
                     <Text fontWeight="bold" size="lg">
-                        Eindcijfer:
+                        {t("instance.calculations.final_grade").toUpperCase()}
                     </Text>
                     <Text fontWeight="bold" size="lg">
-                        {calculations?.weightedAverages["total"].toFixed(2)}
+                        {t("common:number", {value: calculations?.weightedAverages["total"]})}
                     </Text>
                 </div>
             )}

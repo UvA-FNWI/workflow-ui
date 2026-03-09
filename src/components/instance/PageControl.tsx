@@ -168,8 +168,10 @@ export const PageControl = ({
                 <div>
                     {calculations?.weightedAverages[page.title.en] && (
                         <Heading>
-                            Gem. Cijfer [{page.title.en}]:
-                            {calculations?.weightedAverages[page.title.en].toFixed(2)}
+                            {t("instance.calculations.average_grade", {
+                                page: l(page.title),
+                                grade: calculations?.weightedAverages[page.title.en].toFixed(2),
+                            }).toUpperCase()}
                         </Heading>
                     )}
                 </div>
