@@ -3,7 +3,7 @@ import {Button, Icon, Text} from "@datanose/ui";
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {calculationsApi} from "~/store/api/calculationsApi.ts";
+import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
 type Props = {
@@ -16,10 +16,13 @@ type Props = {
 export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
     const {t, l} = useTranslate(["workflow", "common"]);
 
-    const {data: calculations} = calculationsApi.endpoints.getAverages.useQuery({
-        instanceId,
-        submissionId: submission.id,
-    });
+    const {data: calculations} = assessmentsApi.endpoints.getResults.useQuery(
+        {
+            instanceId,
+            submissionId: submission.id,
+        },
+        {skip: submission.id == "Start"},
+    );
 
     return (
         <div className="flex flex-col gap-6">
@@ -31,7 +34,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             <Text fontWeight="bold" size="lg">
                                 {l(page.title)}
                                 {calculations?.results[page.name] &&
-                                    ` (${t("common:number", {value: calculations?.results[page.name].reduce((sum, q) => sum + q.percentage, 0)})})%`}
+                                    ` (${t("common:number", {value: calculations?.results[page.name].reduce((sum, q) => sum + q.percentage, 0)})}%)`}
                             </Text>
                             {onEditPage && (
                                 <Button

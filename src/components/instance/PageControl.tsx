@@ -9,9 +9,9 @@ import {InputControl} from "./InputControl";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
-import {calculationsApi} from "~/store/api/calculationsApi.ts";
+import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {Results} from "~/store/api/types/calculations.ts";
+import type {Results} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 
@@ -33,6 +33,8 @@ export const PageControl = ({
         instanceId,
         submissionId,
     });
+
+    console.log("SubmissionId in PageControl:", submissionId);
     const answers = submission?.answers
         .filter((a) => a.isVisible)
         .reduce(
@@ -93,7 +95,7 @@ export const PageControl = ({
         data: calculations,
         isLoading: isLoadingAverages,
         isFetching: isFetchingAverages,
-    } = calculationsApi.endpoints.getAverages.useQuery({
+    } = assessmentsApi.endpoints.getResults.useQuery({
         instanceId,
         submissionId,
     });

@@ -30,7 +30,7 @@ export const answersApi = baseApi.injectEndpoints({
             },
             invalidatesTags: (_result, _error, params) => [
                 {
-                    type: "Calculations",
+                    type: "Assessments",
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },

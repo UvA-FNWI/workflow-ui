@@ -1,4 +1,4 @@
-export type Calculations = {
+export type Assessments = {
     id: string;
     results: Record<string, Results[]>;
     weightedAverages: Record<string, number>;
