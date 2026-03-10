@@ -11,7 +11,6 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {Results} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 
@@ -34,7 +33,6 @@ export const PageControl = ({
         submissionId,
     });
 
-    console.log("SubmissionId in PageControl:", submissionId);
     const answers = submission?.answers
         .filter((a) => a.isVisible)
         .reduce(
@@ -92,15 +90,14 @@ export const PageControl = ({
     });
 
     const {
-        data: calculations,
+        data: {results, weightedAverage} = {},
         isLoading: isLoadingAverages,
         isFetching: isFetchingAverages,
-    } = assessmentsApi.endpoints.getResults.useQuery({
+    } = assessmentsApi.endpoints.getResultsPage.useQuery({
         instanceId,
         submissionId,
+        pageName: page.name,
     });
-
-    const calculationsCurrentPage = calculations?.results[page.name] as Results[];
 
     return (
         <>
@@ -109,8 +106,9 @@ export const PageControl = ({
                     {showTitle && (
                         <Heading size="sm" className="uppercase" fontType="body">
                             {l(page.title)}
-                            {calculationsCurrentPage &&
-                                ` (${calculationsCurrentPage.reduce((sum, q) => sum + q.percentage, 0).toFixed(2)}%)`}
+                            {results &&
+                                results.length > 0 &&
+                                ` (${results.reduce((sum, q) => sum + q.percentage, 0).toFixed(2)}%)`}
                         </Heading>
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
@@ -127,10 +125,11 @@ export const PageControl = ({
                                         <div className="mb-4">
                                             <div key={question.name}>
                                                 {l(question.text)}
-                                                {calculationsCurrentPage?.find(
-                                                    (q) => q.questionName == question.name,
-                                                ) &&
-                                                    ` (${calculationsCurrentPage.find((q) => q.questionName == question.name)?.percentage}%)`}
+                                                {results &&
+                                                    results.find(
+                                                        (q) => q.questionName == question.name,
+                                                    ) &&
+                                                    ` (${results.find((q) => q.questionName == question.name)?.percentage}%)`}
                                                 {!question.isRequired && ` ${t("optional")}`}
                                             </div>
                                             <InputControl
@@ -173,7 +172,7 @@ export const PageControl = ({
                     </form>
                 </div>
                 <div>
-                    {calculations?.weightedAverages[page.name] && (
+                    {typeof weightedAverage == "number" && weightedAverage !== 0 && (
                         <Heading className="flex items-center gap-2">
                             {t("instance.calculations.average_grade", {
                                 page: l(page.title),
@@ -184,7 +183,7 @@ export const PageControl = ({
                             ) : (
                                 <span>
                                     {t("common:number", {
-                                        value: calculations.weightedAverages[page.name].toFixed(2),
+                                        value: weightedAverage,
                                     })}
                                 </span>
                             )}
