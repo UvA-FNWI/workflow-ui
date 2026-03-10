@@ -30,7 +30,7 @@ export function ProgressCard({isLoading, isStudent, steps, currentStep}: Progres
                     <>
                         <Heading as="h2">{t("progress.title")}</Heading>
                         <Separator />
-                        <div className="flex items-center gap-8">
+                        <div className="flex flex-col items-center gap-8 md:flex-row">
                             <Text className="whitespace-nowrap">
                                 {t(
                                     isStudent
