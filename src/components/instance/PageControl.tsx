@@ -93,7 +93,7 @@ export const PageControl = ({
         instanceId,
         submissionId,
     });
-    const calculationsCurrentPage = calculations?.results[page.title.en] as Results[];
+    const calculationsCurrentPage = calculations?.results[page.name] as Results[];
 
     return (
         <>
@@ -166,11 +166,11 @@ export const PageControl = ({
                     </form>
                 </div>
                 <div>
-                    {calculations?.weightedAverages[page.title.en] && (
+                    {calculations?.weightedAverages[page.name] && (
                         <Heading>
                             {t("instance.calculations.average_grade", {
                                 page: l(page.title),
-                                grade: calculations?.weightedAverages[page.title.en].toFixed(2),
+                                grade: calculations?.weightedAverages[page.name].toFixed(2),
                             }).toUpperCase()}
                         </Heading>
                     )}

@@ -30,8 +30,8 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                         <div className="flex items-center gap-1">
                             <Text fontWeight="bold" size="lg">
                                 {l(page.title)}
-                                {calculations?.results[page.title.en] &&
-                                    ` (${t("common:number", {value: calculations?.results[page.title.en].reduce((sum, q) => sum + q.percentage, 0)})})%`}
+                                {calculations?.results[page.name] &&
+                                    ` (${t("common:number", {value: calculations?.results[page.name].reduce((sum, q) => sum + q.percentage, 0)})})%`}
                             </Text>
                             {onEditPage && (
                                 <Button
@@ -48,10 +48,10 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             )}
                         </div>
                         <div>
-                            {calculations?.weightedAverages[page.title.en] && (
+                            {calculations?.weightedAverages[page.name] && (
                                 <Text fontWeight="bold" size="lg">
                                     {t("common:number", {
-                                        value: calculations.weightedAverages[page.title.en],
+                                        value: calculations.weightedAverages[page.name],
                                     })}
                                 </Text>
                             )}
