@@ -32,7 +32,7 @@
   },
   "instance": {
     "calculations": {
-      "average_grade": "Avg. grade [{{page}}]: {{grade, number}}",
+      "average_grade": "Avg. grade [{{page}}]:",
       "final_grade": "Final grade"
     },
     "summary": {

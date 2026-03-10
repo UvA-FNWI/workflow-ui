@@ -32,7 +32,7 @@
   },
   "instance": {
     "calculations": {
-      "average_grade": "Gem. cijfer [{{page}}]: {{grade, number}}",
+      "average_grade": "Gem. cijfer [{{page}}]:",
       "final_grade": "Eindcijfer"
     },
     "summary": {

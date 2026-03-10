@@ -2,7 +2,7 @@ import {useCallback} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Heading, Text} from "@datanose/ui";
+import {Heading, LoadingSpinner, Text} from "@datanose/ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -89,10 +89,15 @@ export const PageControl = ({
         control: form.control,
     });
 
-    const {data: calculations} = calculationsApi.endpoints.getAverages.useQuery({
+    const {
+        data: calculations,
+        isLoading: isLoadingAverages,
+        isFetching: isFetchingAverages,
+    } = calculationsApi.endpoints.getAverages.useQuery({
         instanceId,
         submissionId,
     });
+
     const calculationsCurrentPage = calculations?.results[page.name] as Results[];
 
     return (
@@ -167,11 +172,20 @@ export const PageControl = ({
                 </div>
                 <div>
                     {calculations?.weightedAverages[page.name] && (
-                        <Heading>
+                        <Heading className="flex items-center gap-2">
                             {t("instance.calculations.average_grade", {
                                 page: l(page.title),
-                                grade: calculations?.weightedAverages[page.name].toFixed(2),
                             }).toUpperCase()}
+
+                            {isLoadingAverages || isFetchingAverages ? (
+                                <LoadingSpinner size="xs" />
+                            ) : (
+                                <span>
+                                    {t("common:number", {
+                                        value: calculations.weightedAverages[page.name].toFixed(2),
+                                    })}
+                                </span>
+                            )}
                         </Heading>
                     )}
                 </div>
