@@ -11,6 +11,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
+import type {Result} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 
@@ -109,6 +110,12 @@ export const PageControl = ({
         pageName: page.name,
     });
 
+    const getTotalPercentage = (r: Result[]) =>
+        Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
+
+    const getPercentage = (r: Result[], questionName: string) =>
+        r.find((q) => q.questionName === questionName)?.percentage;
+
     return (
         <>
             <div className="mb-4 flex flex-col gap-4 pt-4">
@@ -118,7 +125,7 @@ export const PageControl = ({
                             {l(page.title)}
                             {results &&
                                 results.length > 0 &&
-                                ` (${results.reduce((sum, q) => sum + q.percentage, 0).toFixed(2)}%)`}
+                                ` (${t("common:number", {value: getTotalPercentage(results)})}%)`}
                         </Heading>
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
@@ -139,7 +146,7 @@ export const PageControl = ({
                                                     results.find(
                                                         (q) => q.questionName == question.name,
                                                     ) &&
-                                                    ` (${results.find((q) => q.questionName == question.name)?.percentage}%)`}
+                                                    ` (${t("common:number", {value: getPercentage(results, question.name)})}%)`}
                                                 {!question.isRequired && ` ${t("optional")}`}
                                             </div>
                                             <InputControl
