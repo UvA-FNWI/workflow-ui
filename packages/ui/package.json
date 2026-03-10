@@ -79,5 +79,10 @@
     "react-stately": "^3.42.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.16"
+  },
+  "pnpm": {
+    "overrides": {
+      "@microsoft/api-extractor": "7.54.0"
+    }
   }
 }

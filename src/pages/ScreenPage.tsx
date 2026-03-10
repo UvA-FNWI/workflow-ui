@@ -1,6 +1,16 @@
 import {useState} from "react";
 
-import {Card, Heading, Input, Tab, TabList, TabPanel, TabPanels, Tabs} from "@datanose/ui";
+import {
+    Card,
+    Container,
+    Heading,
+    Input,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+} from "@datanose/ui";
 
 import {ScreenTable} from "~/components/ScreenTable";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -16,7 +26,7 @@ export const ProjectScreenOverview = () => {
     }
 
     return (
-        <div>
+        <Container>
             <Card>
                 <div className="mb-4">
                     <div className="flex w-full justify-between">
@@ -50,6 +60,6 @@ export const ProjectScreenOverview = () => {
                     </TabPanels>
                 </Tabs>
             </Card>
-        </div>
+        </Container>
     );
 };

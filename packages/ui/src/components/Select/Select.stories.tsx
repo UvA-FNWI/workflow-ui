@@ -77,3 +77,11 @@ export const WithDescriptionAndError: Story = {
     isValid: false,
   },
 };
+
+export const Multiple: Story = {
+  render: BasicSelect,
+  args: {
+    label: 'Status',
+    selectionMode: 'multiple',
+  },
+};

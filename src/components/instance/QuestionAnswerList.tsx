@@ -3,12 +3,9 @@ import {Text} from "@datanose/ui";
 import {FileAnswer} from "~/components/instance/FileAnswer";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {Answer, Question} from "~/store/api/types/submissions.ts";
+import {downloadFile} from "~/utils/fileDownload";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
-
-type QuestionAnswerPair = {
-    question: Question;
-    answer: Answer | null;
-};
+import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
     questionAnswerPairs: QuestionAnswerPair[];
