@@ -11,10 +11,8 @@ export const useAuth = (): AuthContextProps => {
     const context = useContext(AuthContext);
 
     if (!context) {
-        console.warn(
-            "Error: AuthContext is undefined; useAuth can only be used in children of <AuthProvider>.",
-        );
+        throw new Error("useAuth must be used within an <AuthProvider>.");
     }
 
-    return context as AuthContextProps;
+    return context;
 };

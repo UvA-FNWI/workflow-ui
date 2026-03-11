@@ -1,12 +1,12 @@
 // React
 import React, {useEffect, useMemo, useReducer, useRef, useState} from "react";
 
-import {authReducer} from "./Auth.reducer.tsx";
-import {DefaultAuthState} from "./Auth.state.tsx";
+import {authReducer} from "./Auth.reducer";
+import {DefaultAuthState} from "./Auth.state";
 // Lib
-import type {AuthConfig, AuthEventCallbacks} from "./Auth.types.tsx";
-import {AuthContext} from "./AuthContext.tsx";
-import AuthService from "./AuthService.tsx";
+import type {AuthConfig, AuthEventCallbacks} from "./Auth.types";
+import {AuthContext} from "./AuthContext";
+import AuthService from "./AuthService";
 
 type AuthProviderProps = {
     children?: React.ReactNode;

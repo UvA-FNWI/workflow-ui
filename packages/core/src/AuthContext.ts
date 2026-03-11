@@ -6,7 +6,7 @@ import type {User} from "oidc-client-ts";
 
 // Lib
 import type {AuthState} from "./Auth.state";
-import type {CanvasUserAndMetadata, CustomUserState} from "./Auth.types.tsx";
+import type {CanvasUserAndMetadata, CustomUserState} from "./Auth.types";
 
 export interface AuthContextProps extends AuthState {
     surfStartLogin(state: CustomUserState): Promise<void>;
