@@ -39,6 +39,7 @@ export type Page = {
     introduction?: LocalString;
     layout: PageLayout;
     questions: Question[];
+    hasResults: boolean;
 };
 
 export type Question = {

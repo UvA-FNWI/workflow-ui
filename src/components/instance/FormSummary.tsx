@@ -17,13 +17,15 @@ type Props = {
 export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
     const {t, l} = useTranslate(["workflow", "common"]);
 
-    const {data: calculations} = assessmentsApi.endpoints.getResults.useQuery(
-        {
-            instanceId,
-            submissionId: submission.id,
-        },
-        {skip: submission.id == "Start"},
-    );
+    const {data: calculations} = submission.form.pages.some((p) => p.hasResults)
+        ? assessmentsApi.endpoints.getResults.useQuery(
+              {
+                  instanceId,
+                  submissionId: submission.id,
+              },
+              {skip: submission.id == "Start"},
+          )
+        : {};
 
     return (
         <div className="flex flex-col gap-6">
