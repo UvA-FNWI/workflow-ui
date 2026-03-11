@@ -18,13 +18,10 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
     const {t, l} = useTranslate(["workflow", "common"]);
 
     const {data: calculations} = submission.form.pages.some((p) => p.hasResults)
-        ? assessmentsApi.endpoints.getResults.useQuery(
-              {
-                  instanceId,
-                  submissionId: submission.id,
-              },
-              {skip: submission.id == "Start"},
-          )
+        ? assessmentsApi.endpoints.getResults.useQuery({
+              instanceId,
+              submissionId: submission.id,
+          })
         : {};
 
     return (
