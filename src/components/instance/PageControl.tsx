@@ -100,15 +100,12 @@ export const PageControl = ({
         control: form.control,
     });
 
-    const {
-        data: {results, weightedAverage} = {},
-        isLoading: isLoadingAverages,
-        isFetching: isFetchingAverages,
-    } = assessmentsApi.endpoints.getResultsPage.useQuery({
-        instanceId,
-        submissionId,
-        pageName: page.name,
-    });
+    const {data: {results, weightedAverage} = {}, isFetching: isFetchingAverages} =
+        assessmentsApi.endpoints.getResultsPage.useQuery({
+            instanceId,
+            submissionId,
+            pageName: page.name,
+        });
 
     const getTotalPercentage = (r: Result[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
@@ -195,7 +192,7 @@ export const PageControl = ({
                                 page: l(page.title),
                             }).toUpperCase()}
 
-                            {isLoadingAverages || isFetchingAverages ? (
+                            {isFetchingAverages ? (
                                 <LoadingSpinner size="xs" />
                             ) : (
                                 <span>
