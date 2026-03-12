@@ -41,49 +41,20 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const {t} = useTranslate("workflow", {keyPrefix: "user_picker"});
 
+    // Normalize value prop to array
+    const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
+
     // Get display value
     const displayValue = (() => {
-        if (!value) {
-            return "";
-        }
-
-        if (Array.isArray(value)) {
-            if (value.length === 0) {
-                return "";
-            }
-            if (value.length === 1) {
-                return value[0].displayName;
-            }
-            return t("selected_users", {count: value.length});
-        }
-
-        return value.displayName;
+        if (valueArray.length === 0) return "";
+        if (valueArray.length === 1) return valueArray[0].displayName;
+        return t("selected_users", {count: valueArray.length});
     })();
 
-    // Get initial selection
-    const initialSelection = (() => {
-        if (!value) {
-            return [];
-        }
-        if (Array.isArray(value)) {
-            return value;
-        }
-        return [value];
-    })();
+    const handleOpenModal = () => !isDisabled && setIsOpen(true);
 
-    const handleOpenModal = () => {
-        if (!isDisabled) {
-            setIsOpen(true);
-        }
-    };
-
-    const handleConfirm = (selectedUsers: UserSearchResult[]) => {
-        if (selectionMode === "single") {
-            onChange?.(selectedUsers[0] || null);
-        } else {
-            onChange?.(selectedUsers);
-        }
-    };
+    const handleConfirm = (selectedUsers: UserSearchResult[]) =>
+        onChange?.(selectionMode === "single" ? selectedUsers[0] : selectedUsers);
 
     return (
         <>
@@ -99,7 +70,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
             <UserPickerModal
                 isOpen={isOpen}
                 onOpenChange={setIsOpen}
-                initialSelection={initialSelection}
+                initialSelection={valueArray}
                 onConfirm={handleConfirm}
                 selectionMode={selectionMode}
                 title={modalTitle}
