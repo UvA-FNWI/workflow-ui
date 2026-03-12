@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 
 export const inputVariants = cva(
-  'ui:min-h-10 ui:w-full ui:rounded-md ui:border ui:px-3 ui:py-2 ui:text-base ui:transition-all ui:duration-200 ui:outline-none',
+  'ui:min-h-10 ui:w-full ui:rounded-xs ui:border ui:px-3 ui:py-2 ui:text-base ui:transition-all ui:duration-200 ui:outline-none',
   {
     variants: {
       isDisabled: {

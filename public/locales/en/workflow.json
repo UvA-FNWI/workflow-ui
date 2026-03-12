@@ -61,7 +61,7 @@
     "no_results": "No users found",
     "search_hint_one": "Search for a user",
     "search_hint_other": "Search for users",
-    "search_placeholder": "Search for a user...",
+    "search_placeholder": "Search for a user",
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search user"
