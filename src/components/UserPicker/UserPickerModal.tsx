@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {Button, Icon, Input, Item, ListBox, LoadingSpinner, Modal, Separator} from "@datanose/ui";
+import {Button, Item, ListBox, LoadingSpinner, Modal, SearchInput} from "@datanose/ui";
 
 import {useDebounce} from "../../hooks/useDebounce";
 import {useTranslate} from "../../hooks/useTranslate";
@@ -35,8 +35,9 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
-    const [triggerSearch, {data: searchResults = [], isLoading, isFetching}] =
-        useLazyFindUsersQuery();
+    const [triggerSearch, searchState] = useLazyFindUsersQuery();
+    const resetSearch = searchState.reset;
+    const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
 
     // Store all encountered users
     const usersCache = useMemo(() => {
@@ -58,8 +59,9 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setSelectedKeys(initialKeys);
             setSearchQuery("");
+            resetSearch();
         }
-    }, [initialSelection, isOpen]);
+    }, [initialSelection, isOpen, resetSearch]);
 
     // Debounced search
     const performSearch = useCallback(
@@ -99,7 +101,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     // UI states
     const showSearchHint = searchQuery.trim().length < minSearchLength;
-    const showLoading = (isLoading || isFetching) && !showSearchHint;
+    const showLoading = (searchState.isLoading || searchState.isFetching) && !showSearchHint;
     const showNoResults =
         !showLoading &&
         !showSearchHint &&
@@ -115,25 +117,12 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
-                {/* Search Input */}
-                <div className="relative mb-4">
-                    <Input
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                        placeholder={searchPlaceholderText}
-                        className="pr-12"
-                    />
-                    <div className="absolute top-0 right-0 flex h-full items-center">
-                        <Separator orientation="vertical" className="w-px" />
-                        <div className="px-3">
-                            {showLoading ? (
-                                <LoadingSpinner size="xs" />
-                            ) : (
-                                <Icon name="search-line" size="md" color="secondary" />
-                            )}
-                        </div>
-                    </div>
-                </div>
+                <SearchInput
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                    placeholder={searchPlaceholderText}
+                    autoFocus={isOpen}
+                />
 
                 {/* Search hint */}
                 {showSearchHint && (

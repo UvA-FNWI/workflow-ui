@@ -1,8 +1,9 @@
 import {useState} from "react";
 
+import {SearchInput} from "@datanose/ui";
+
 import type {UserSearchResult} from "../../store/api/types/users";
 import {UserPickerModal} from "./UserPickerModal";
-import {UserPickerTrigger} from "./UserPickerTrigger";
 import {useTranslate} from "~/hooks/useTranslate";
 
 export interface UserPickerProps {
@@ -86,12 +87,13 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
     return (
         <>
-            <UserPickerTrigger
+            <SearchInput
                 label={label}
                 placeholder={placeholder}
                 value={displayValue}
                 onClick={handleOpenModal}
                 isDisabled={isDisabled}
+                readOnly={true}
             />
 
             <UserPickerModal
