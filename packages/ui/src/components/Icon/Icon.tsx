@@ -69,10 +69,9 @@ const injectSprite = async (): Promise<void> => {
       const spriteContainer = document.createElement('div');
       spriteContainer.style.display = 'none';
       spriteContainer.setAttribute('aria-hidden', 'true');
-      spriteContainer.innerHTML = spriteContent.replace(
-        '<svg',
-        `<svg id="${SPRITE_ID}"`
-      );
+      spriteContainer.innerHTML = spriteContent
+        .replace('<svg', `<svg id="${SPRITE_ID}"`)
+        .replace(/<title>[^<]*<\/title>/g, '');
       document.body.insertBefore(spriteContainer, document.body.firstChild);
     }
     spritePromise = null; // Reset promise after completion

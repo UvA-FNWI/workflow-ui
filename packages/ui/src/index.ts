@@ -102,6 +102,7 @@ export {
 
 export { Confetti, type ConfettiProps } from './components/Confetti/Confetti';
 
+export { Tooltip, type TooltipProps } from './components/Tooltip/Tooltip';
 export {
   Container,
   type ContainerProps,
