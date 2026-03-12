@@ -1,4 +1,4 @@
-import {useCallback} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
@@ -31,19 +31,30 @@ export const PageControl = ({
         instanceId,
         submissionId,
     });
-    const answers = submission?.answers
-        .filter((a) => a.isVisible)
-        .reduce(
-            (a, v) => ({
-                ...a,
-                [v.questionName]: v.value,
-            }),
-            {},
-        ) as {[id: string]: unknown};
 
-    const form = useForm({
-        defaultValues: answers || {},
+    const answers = useMemo(() => submission?.answers ?? [], [submission]);
+    const visibleQuestions = page.questions.filter((q) => {
+        const a = answers.find((x) => x.questionName === q.name);
+        return !a || a.isVisible !== false;
     });
+    const formValues = Object.fromEntries(
+        answers.filter((a) => a.isVisible !== false).map((a) => [a.questionName, a.value]),
+    );
+
+    const form = useForm({defaultValues: formValues});
+
+    // Sync form values from submission when questions become visible again.
+    // When a conditionally hidden question's Controller unmounts, react-hook-form unregisters
+    // the field and the value is lost. When the question reappears, restore from submission data.
+    useEffect(() => {
+        const visibleAnswers = answers.filter((a) => a.isVisible !== false);
+        visibleAnswers.forEach((answer) => {
+            const valueInForm = form.getValues(answer.questionName);
+            if (valueInForm === undefined) {
+                form.setValue(answer.questionName, answer.value);
+            }
+        });
+    }, [answers, form]);
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
@@ -83,7 +94,7 @@ export const PageControl = ({
     );
 
     const {fileQuestions, regularQuestions, fileValuesMap} = useFileQuestions({
-        questions: page.questions,
+        questions: visibleQuestions,
         control: form.control,
     });
 
@@ -116,7 +127,7 @@ export const PageControl = ({
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 question={question}
-                                                onSave={(val: unknown) => save(val as AnswerInput)}
+                                                onSave={save}
                                             />
                                         </div>
                                     );

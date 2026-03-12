@@ -4,6 +4,7 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {WorkflowStepVersion} from "~/store/api/types/instances";
 import {formatDate} from "~/utils/formatDate.ts";
+import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     version: WorkflowStepVersion;
@@ -29,12 +30,10 @@ export const VersionCard = ({version, instanceId}: Props) => {
                 <div className="flex flex-col gap-6">
                     {version.submissions.map((submission) => {
                         const questions = submission.form.pages.flatMap((page) => page.questions);
-                        const questionAnswerPairs = questions.map((question) => ({
-                            question,
-                            answer:
-                                submission.answers.find((a) => a.questionName === question.name) ??
-                                null,
-                        }));
+                        const questionAnswerPairs = getVisibleQuestionAnswerPairs(
+                            questions,
+                            submission.answers,
+                        );
 
                         return (
                             <div key={submission.id} className="flex flex-col gap-2">
