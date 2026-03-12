@@ -27,7 +27,7 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       ref={ref}
       className={cn(
         'ui:cursor-pointer ui:px-4 ui:py-2 ui:transition-colors ui:duration-150 ui:outline-none',
-        isSelected && 'ui:bg-grey-100 ui:dark:bg-grey-800',
+        isSelected && 'ui:bg-grey-200 ui:dark:bg-grey-800',
         isHovered && !isSelected && 'ui:bg-grey-50 ui:dark:bg-grey-850',
         isFocusVisible &&
           'ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:ring-orange-500',

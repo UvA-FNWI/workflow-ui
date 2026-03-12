@@ -88,6 +88,12 @@ export {
 } from './components/ListBox';
 
 export {
+  SearchListBox,
+  type SearchListBoxProps,
+  type SearchListBoxValue,
+} from './components/ListBox/SearchListBox';
+
+export {
   Select,
   Item as SelectItem,
   type SelectProps,

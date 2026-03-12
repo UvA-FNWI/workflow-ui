@@ -1,11 +1,18 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {Button, Item, ListBox, LoadingSpinner, Modal, SearchInput} from "@datanose/ui";
+import {
+    Button,
+    LoadingSpinner,
+    Modal,
+    SearchInput,
+    SearchListBox,
+    type SearchListBoxValue,
+} from "@datanose/ui";
 
-import {useDebounce} from "../../hooks/useDebounce";
-import {useTranslate} from "../../hooks/useTranslate";
-import type {UserSearchResult} from "../../store/api/types/users";
-import {useLazyFindUsersQuery} from "../../store/api/usersApi";
+import {useDebounce} from "~/hooks/useDebounce";
+import {useTranslate} from "~/hooks/useTranslate";
+import type {UserSearchResult} from "~/store/api/types/users";
+import {useLazyFindUsersQuery} from "~/store/api/usersApi";
 
 // Selection type from react-stately
 type Selection = "all" | Set<string | number>;
@@ -38,6 +45,14 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
     const resetSearch = searchState.reset;
     const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
+
+    const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
+        return searchResults.map((user) => ({
+            key: user.userName,
+            primaryValue: user.displayName,
+            secondaryValue: user.faculty ?? user.email,
+        }));
+    }, [searchResults]);
 
     // Store all encountered users
     const usersCache = useMemo(() => {
@@ -140,30 +155,13 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
                 {/* User List */}
                 {showUsers && (
-                    <ListBox
-                        items={searchResults}
+                    <SearchListBox
+                        values={searchListBoxValues}
                         selectedKeys={selectedKeys}
                         onSelectionChange={setSelectedKeys}
                         selectionMode={selectionMode}
                         aria-label={modalTitle}
-                    >
-                        {(user) => (
-                            <Item key={user.userName} textValue={user.displayName}>
-                                <div className="flex items-center justify-between gap-4">
-                                    <div className="flex min-w-0 flex-col">
-                                        <span className="truncate text-black dark:text-white">
-                                            {user.displayName}
-                                        </span>
-                                        {user.email && (
-                                            <span className="truncate text-xs text-grey-500 dark:text-grey-500">
-                                                {user.email}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </Item>
-                        )}
-                    </ListBox>
+                    />
                 )}
 
                 {/* No results */}

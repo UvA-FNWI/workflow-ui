@@ -1,7 +1,7 @@
 import { AriaListBoxOptions } from 'react-aria';
 import { Item, ListProps, ListState } from 'react-stately';
 
-import { ListBox } from '../ListBox';
+import { ListBox } from './ListBox';
 
 export type SearchListBoxValue = {
   key: string;
@@ -30,9 +30,11 @@ export function SearchListBox<T extends object>(props: SearchListBoxProps<T>) {
       {(item: SearchListBoxValue) => (
         <Item key={item.key} textValue={item.primaryValue}>
           <div className="ui:flex ui:items-center ui:gap-4">
-            <span className="ui:flex-1 ui:truncate">{item.primaryValue}</span>
+            <span className="ui:flex-1 ui:truncate ui:text-grey-700 ui:dark:text-grey-600">
+              {item.primaryValue}
+            </span>
             {item.secondaryValue && (
-              <span className="ui:mx-auto ui:flex-1 ui:truncate">
+              <span className="ui:mx-auto ui:flex-1 ui:truncate ui:text-grey-700 ui:dark:text-grey-600">
                 {item.secondaryValue}
               </span>
             )}
