@@ -103,22 +103,14 @@ const SelectOption = <
       ref={ref}
       className={cn(
         'ui:flex ui:cursor-pointer ui:items-center ui:justify-between ui:gap-2 ui:rounded-sm ui:px-3 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none',
-        isSelected && 'ui:bg-grey-100 ui:dark:bg-grey-800',
-        isHovered && !isSelected && 'ui:bg-grey-50 ui:dark:bg-grey-850',
+        isSelected && 'ui:bg-navy-700 ui:text-grey-100 ui:dark:bg-sky-600',
+        isHovered && !isSelected && 'ui:bg-navy-100 ui:dark:bg-sky-900',
         isFocusVisible &&
           'ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:ring-orange-500',
         isDisabled && 'ui:cursor-not-allowed ui:bg-transparent ui:opacity-50'
       )}
     >
       <span className="ui:flex-1 ui:truncate">{item.rendered}</span>
-      {isSelected && (
-        <Icon
-          name="checkmark-small-line"
-          size="sm"
-          color="secondary"
-          aria-hidden
-        />
-      )}
     </li>
   );
 };
@@ -144,7 +136,7 @@ const SelectListBox = <
     <ul
       {...listBoxProps}
       ref={ref}
-      className="ui:max-h-64 ui:overflow-y-auto ui:rounded-md ui:border ui:border-grey-300 ui:bg-white ui:p-1 ui:text-black ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white"
+      className="ui:max-h-64 ui:overflow-y-auto ui:rounded-md ui:border ui:border-grey-300 ui:bg-white ui:p-1 ui:text-grey-900 ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white"
     >
       {[...state.collection].map(item =>
         item.type === 'item' ? (
@@ -244,7 +236,7 @@ export function Select<
       {label && (
         <span
           {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
+          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-grey-900 ui:dark:text-white"
         >
           {label}
         </span>
