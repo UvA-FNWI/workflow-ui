@@ -29,15 +29,15 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     const totalTabs = submission.form.pages.length + 1; // +1 for summary tab
 
-    const isPageComplete = (page: Page): boolean => {
-        const requiredQuestions = page.questions.filter((q) => q.isRequired);
-        return requiredQuestions.every((question) => {
-            const answer = submission.answers.find((a) => a.questionName === question.name);
-            return (
-                answer && answer.value !== null && answer.value !== undefined && answer.value !== ""
-            );
-        });
-    };
+    const isPageComplete = (page: Page): boolean =>
+        page.questions
+            .filter((q) => q.isRequired)
+            .every((question) => {
+                const answer = submission.answers.find((a) => a.questionName === question.name);
+                return (
+                    answer?.isVisible === false || (answer?.value != null && answer.value !== "")
+                ); // only consider answers with a value and are visible
+            });
 
     const areAllPagesComplete = submission.form.pages.every((page) => isPageComplete(page));
 

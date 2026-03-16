@@ -101,3 +101,14 @@ export {
 } from './components/Tabs/Tabs';
 
 export { Confetti, type ConfettiProps } from './components/Confetti/Confetti';
+
+export { Tooltip, type TooltipProps } from './components/Tooltip/Tooltip';
+export {
+  Container,
+  type ContainerProps,
+  Grid,
+  GridItem,
+  type GridProps,
+  type GridVariantProps,
+  type GridItemProps,
+} from './components/Grid';

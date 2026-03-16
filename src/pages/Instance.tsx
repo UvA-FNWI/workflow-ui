@@ -1,5 +1,7 @@
 import {useParams} from "react-router";
 
+import {Container, Grid, GridItem} from "@datanose/ui";
+
 import {AdminCard} from "~/components/instance/AdminCard";
 import {ContentCard} from "~/components/instance/ContentCard";
 import {InfoCards} from "~/components/instance/InfoCards";
@@ -26,14 +28,19 @@ function Instance() {
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
     return (
-        <div className="">
+        <Container maxWidth={1280}>
             <InstanceHeader courseName={courseName} isLoading={isLoading} />
-            <div className="flex flex-col gap-6 sm:grid sm:grid-cols-6">
-                <div className="col-span-4 flex flex-col gap-8">
-                    <ProgressCard isLoading={isLoading} />
+            <Grid>
+                <GridItem span={{base: 12, sm: 8}} className="flex flex-col gap-8">
+                    <ProgressCard
+                        isLoading={isLoading}
+                        isStudent={instance?.viewerRoles?.includes("Student") ?? false}
+                        steps={instance?.steps ?? []}
+                        currentStep={instance?.currentStep ?? ""}
+                    />
                     <ContentCard instance={instance} isLoading={isLoading} />
-                </div>
-                <div className="col-span-2 flex flex-col gap-6">
+                </GridItem>
+                <GridItem span={{base: 12, sm: 4}} className="flex flex-col gap-6">
                     <StudentCard
                         studentEmail={studentEmail}
                         studentName={studentName}
@@ -41,9 +48,9 @@ function Instance() {
                     />
                     <InfoCards isLoading={isLoading} />
                     {instance?.canUseAdminTools && <AdminCard />}
-                </div>
-            </div>
-        </div>
+                </GridItem>
+            </Grid>
+        </Container>
     );
 }
 

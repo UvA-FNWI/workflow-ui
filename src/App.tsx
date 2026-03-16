@@ -9,7 +9,7 @@ function App() {
         <div className="min-h-screen w-full bg-grey-200 text-black dark:bg-grey-900 dark:text-white">
             <TemporaryNavbar />
             <ToastRegion />
-            <main className="mx-auto w-full max-w-7xl px-6 py-8">
+            <main>
                 <Outlet />
             </main>
         </div>

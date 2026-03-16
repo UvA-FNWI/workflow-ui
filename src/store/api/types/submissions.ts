@@ -14,7 +14,7 @@ export type Answer = {
     value: unknown;
     isVisible: boolean;
     validationError?: LocalString;
-    visibleChoices?: string[];
+    visibleChoices?: string[] | null;
     files: StoredFile[];
 };
 
@@ -52,6 +52,7 @@ export type Question = {
     hideInResults: boolean;
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
+    maxLength?: number;
 };
 
 export type StringLayoutOptions = {

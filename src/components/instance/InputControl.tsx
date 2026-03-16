@@ -39,7 +39,7 @@ export const InputControl = ({
     onSave,
     visibleChoices,
 }: InputControlProps) => {
-    const {l} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
 
     const save = useCallback(
         (value: unknown) => {
@@ -52,14 +52,27 @@ export const InputControl = ({
         onChange?.(value);
         debouncedOnChange(value);
     };
+    const immediateChange = (value: unknown) => {
+        onChange?.(value);
+        save(value);
+    };
 
     if (question.type === "String") {
+        const lengthValidationDescription = question.maxLength
+            ? t("string_validation", {
+                  maxInputLength: question.maxLength,
+                  remainingInputLength:
+                      question.maxLength - (typeof value === "string" ? value.length : 0),
+              })
+            : "";
         return (
             <Input
                 value={(value as string) || ""}
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
+                description={lengthValidationDescription}
+                maxLength={question.maxLength}
             />
         );
     }
@@ -93,6 +106,47 @@ export const InputControl = ({
         const choices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
+        const isDropdown =
+            question.layout && "type" in question.layout && question.layout.type === "Dropdown";
+
+        if (isDropdown) {
+            if (question.isArray) {
+                const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
+                return (
+                    <Select
+                        selectionMode="multiple"
+                        value={selectedValues}
+                        onChange={(selectedValue) => {
+                            const normalizedValues = Array.isArray(selectedValue)
+                                ? selectedValue.map((v) => String(v))
+                                : selectedValue != null
+                                  ? [String(selectedValue)]
+                                  : [];
+                            immediateChange(normalizedValues);
+                        }}
+                    >
+                        {choices.map((choice) => (
+                            <SelectItem key={choice.name}>
+                                {l(choice.text) ?? choice.name}
+                            </SelectItem>
+                        ))}
+                    </Select>
+                );
+            }
+
+            return (
+                <Select
+                    value={typeof value === "string" ? value : null}
+                    onChange={(selectedValue) => {
+                        immediateChange(selectedValue != null ? String(selectedValue) : null);
+                    }}
+                >
+                    {choices.map((choice) => (
+                        <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
+                    ))}
+                </Select>
+            );
+        }
 
         if (question.layout && "type" in question.layout && question.layout.type === "Dropdown") {
             return (
@@ -117,7 +171,7 @@ export const InputControl = ({
                 const newValues = isSelected
                     ? [...selectedValues, choiceName]
                     : selectedValues.filter((v) => v !== choiceName);
-                debouncedChange(newValues);
+                immediateChange(newValues);
             };
 
             return (
@@ -139,7 +193,7 @@ export const InputControl = ({
             <RadioGroup
                 value={(value as string) || ""}
                 onChange={(selectedValue: string) => {
-                    debouncedChange(selectedValue);
+                    immediateChange(selectedValue);
                 }}
             >
                 {choices.map((choice) => (

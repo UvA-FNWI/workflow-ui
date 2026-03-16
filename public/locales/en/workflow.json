@@ -40,7 +40,9 @@
   },
   "optional": "(optional)",
   "progress": {
-    "label": "Here's where you are in the process",
+    "deadline": "Deadline",
+    "labelStudent": "Here's where you are in the process",
+    "labelSupervisor": "This is how far the student is",
     "title": "Progress"
   },
   "screens": {
@@ -51,6 +53,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
+  "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
   "studentCard": {
     "noStudentInfo": "No student information available",
     "student": "Student"
