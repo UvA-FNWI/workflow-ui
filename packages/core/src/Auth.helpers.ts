@@ -7,7 +7,7 @@ import type {CanvasToken, CanvasUserAndMetadata, DataNoseToken} from "./Auth.typ
 /**
  * Fetch the data part contained within a JWT.
  */
-export const getDataFromToken = <T,>(token: string): T | null => {
+export const getDataFromToken = <T>(token: string): T | null => {
     const dataPart = token?.split(".")[1];
     if (!dataPart) return null;
     const base64String = dataPart.replace(/-/g, "+").replace(/_/g, "/");
@@ -110,7 +110,7 @@ export const convertUserToObject = (user: User | null) => {
 /**
  * Checks if the current user is actually someone impersonating another user.
  */
-export const isImpersonating = async (user: User | null) => {
+export const isImpersonating = (user: User | null) => {
     const token = getDataFromToken<DataNoseToken>(user?.access_token ?? "");
     return (token?.impersonatedid ?? "") !== "";
 };

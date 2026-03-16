@@ -8,7 +8,7 @@ export type AuthConfig = {
     authority: string;
     clientId: string;
     redirectUri: string;
-    logoutUri: string;
+    logoutUri?: string;
 };
 
 export type ProviderType = "surf" | "canvas";
