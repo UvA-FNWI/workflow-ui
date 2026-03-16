@@ -11,12 +11,14 @@ export type CurrentUser = {
 };
 
 export type AuthState = {
+    accessToken: string | null;
     currentUser: CurrentUser | null;
     /** Single impersonation token. Replaced when impersonating elsewhere. Persisted to localStorage. */
     impersonation: ImpersonationResult | null;
 };
 
 const initialState: AuthState = {
+    accessToken: null,
     currentUser: null,
     impersonation: loadPersistedImpersonationToken(),
 };
@@ -25,6 +27,9 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
+        setAccessToken: (state, action: PayloadAction<string | null>) => {
+            state.accessToken = action.payload;
+        },
         setCurrentUser: (state, action: PayloadAction<CurrentUser | null>) => {
             state.currentUser = action.payload;
         },
@@ -40,9 +45,15 @@ const authSlice = createSlice({
     },
 });
 
-export const {setCurrentUser, clearCurrentUser, setImpersonation, clearImpersonation} =
-    authSlice.actions;
+export const {
+    setAccessToken,
+    setCurrentUser,
+    clearCurrentUser,
+    setImpersonation,
+    clearImpersonation,
+} = authSlice.actions;
 
+export const selectAccessToken = (state: RootState) => state.auth.accessToken;
 export const selectCurrentUser = (state: RootState) => state.auth.currentUser;
 export const selectImpersonation = (state: RootState) => state.auth.impersonation;
 export const selectImpersonationForInstance = (state: RootState, instanceId: string | undefined) =>
