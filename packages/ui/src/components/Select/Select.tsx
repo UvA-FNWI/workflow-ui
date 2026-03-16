@@ -185,7 +185,7 @@ export function Select<
     ...restProps
   } = props;
 
-  const validationState = isValid === false ? 'invalid' : 'valid';
+  const validationState = !isValid ? 'invalid' : 'valid';
   const state = useSelectState<T, M>({
     ...restProps,
     label,
@@ -225,7 +225,7 @@ export function Select<
     isDisabled,
   });
 
-  const invalid = isInvalid || isValid === false;
+  const invalid = isInvalid || !isValid;
   const triggerClasses = inputVariants({
     isDisabled,
     isFocusVisible,
