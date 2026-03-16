@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { Selection } from 'react-stately';
+
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { SearchListBox, SearchListBoxValue } from './SearchListBox';
