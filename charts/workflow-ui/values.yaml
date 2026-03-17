@@ -2,8 +2,19 @@ hostname: workflow-ui.local
 ingressClass: nginx
 image: datanosecr.azurecr.io/workflow-ui
 tag: latest
-certificateName: datanose-nl # Used later for secretproviderclass
+certificateName: milestones-fnwi-uva-nl
+contentSecurityPolicy: "default-src 'self'"
 
 envVars:
     webapiUrl: ""
     env: "development"
+
+# Azure Key Vault config for TLS certificates
+# Uncomment and configure for tst/acc/prd environments
+# azure:
+#   keyvaultName: keyvaultName
+#   resourceGroup: resourceGroupName
+#   subscriptionId: subscriptionId
+#   tenantId: tenantId
+#   clientId: clientId
+#   identityName: identityName

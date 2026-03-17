@@ -28,7 +28,22 @@ spec:
                         mountPath: /usr/share/nginx/html/environment.js
                         subPath: env-contents
                         readOnly: true
+                      # Mount CSI secrets to trigger certificate sync from Key Vault
+                      {{- if .Values.azure }}
+                      - name: secrets-store-inline
+                        mountPath: "/etc/secrets"
+                        readOnly: true
+                      {{- end }}
             volumes:
                 - name: env-file
                   configMap:
                       name: workflow-ui-configmap
+                # CSI volume for fetching TLS cert from Azure Key Vault
+                {{- if .Values.azure }}
+                - name: secrets-store-inline
+                  csi:
+                      driver: secrets-store.csi.k8s.io
+                      readOnly: true
+                      volumeAttributes:
+                          secretProviderClass: "workflow-ui-secretproviderclass"
+                {{- end }}
