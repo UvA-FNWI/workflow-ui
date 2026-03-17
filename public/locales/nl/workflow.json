@@ -51,7 +51,14 @@
   "step_card": {
     "are_you_sure": "Weet je het zeker?",
     "cancel": "Annuleren",
-    "confirm": "Bevestigen"
+    "confirm": "Bevestigen",
+    "status": {
+      "approved_on": "Goedgekeurd op",
+      "completed_on": "Voltooid op",
+      "deadline": "Deadline",
+      "rejected_on": "Afgekeurd op",
+      "submitted": "Ingeleverd"
+    }
   },
   "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
   "studentCard": {

@@ -51,7 +51,14 @@
   "step_card": {
     "are_you_sure": "Are you sure?",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "status": {
+      "approved_on": "Approved on",
+      "completed_on": "Completed on",
+      "deadline": "Deadline",
+      "rejected_on": "Rejected on",
+      "submitted": "Submitted"
+    }
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
   "studentCard": {

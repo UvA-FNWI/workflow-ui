@@ -1,6 +1,7 @@
 import {useState} from "react";
 
-import {Button, Disclosure, Heading, Modal} from "@datanose/ui";
+import {Button, Disclosure, Heading, Modal, Pill, Text} from "@datanose/ui";
+import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
@@ -10,6 +11,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
+import {formatDate} from "~/utils/formatDate.ts";
 
 type Props = {
     step: WorkflowStep;
@@ -28,10 +30,46 @@ export const StepCard = ({step, instance}: Props) => {
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep);
 
+    const stepStatus =
+        [
+            {type: "status.submitted" as const, date: step.versions?.at(-1)?.submittedAt},
+            {type: "status.deadline" as const, date: step.deadline},
+        ].find((status) => status.date) ?? null;
+
+    const approvedVersion = step.versions?.find((v) =>
+        v?.eventIds?.some((e) => e.includes("Approve")),
+    );
+    const isApproved = !!step.dateCompleted && !!approvedVersion;
+
+    const rejectedVersion = step.versions?.find((v) =>
+        v?.eventIds?.some((e) => e.includes("Reject")),
+    );
+    const isRejected = !step.dateCompleted && !!rejectedVersion;
+
     return (
         <Disclosure defaultExpanded={isCurrentStep}>
             <Disclosure.Header>
-                <Heading>{l(step.title)}</Heading>
+                <div className="flex w-full items-center justify-between">
+                    <Heading>{l(step.title)}</Heading>
+                    {isRejected && rejectedVersion.submittedAt && (
+                        <Pill variant="red">
+                            {t("status.rejected_on")}{" "}
+                            {formatDate(rejectedVersion.submittedAt, i18n.language)}
+                        </Pill>
+                    )}
+                    {isApproved && approvedVersion.submittedAt && (
+                        <Pill variant="green">
+                            {t("status.approved_on")}{" "}
+                            {formatDate(approvedVersion.submittedAt, i18n.language)}
+                        </Pill>
+                    )}
+                    {stepStatus?.date && (
+                        <Text as="span">
+                            <Text fontWeight="semibold">{t(stepStatus.type)}:</Text>{" "}
+                            {formatDate(stepStatus?.date, i18n.language)}
+                        </Text>
+                    )}
+                </div>
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
