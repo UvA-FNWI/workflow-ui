@@ -2,5 +2,9 @@
   "language": "Taal",
   "language_en": "Engels",
   "language_nl": "Nederlands",
+<<<<<<< feature/DN-3629
   "number": "{{value, number}}"
+=======
+  "logout": "Uitloggen"
+>>>>>>> main
 }

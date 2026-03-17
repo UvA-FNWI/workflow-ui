@@ -44,7 +44,9 @@
   },
   "optional": "(optional)",
   "progress": {
-    "label": "Here's where you are in the process",
+    "deadline": "Deadline",
+    "labelStudent": "Here's where you are in the process",
+    "labelSupervisor": "This is how far the student is",
     "title": "Progress"
   },
   "screens": {

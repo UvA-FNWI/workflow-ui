@@ -32,7 +32,12 @@ function Instance() {
             <InstanceHeader courseName={courseName} isLoading={isLoading} />
             <Grid>
                 <GridItem span={{base: 12, sm: 8}} className="flex flex-col gap-8">
-                    <ProgressCard isLoading={isLoading} />
+                    <ProgressCard
+                        isLoading={isLoading}
+                        isStudent={instance?.viewerRoles?.includes("Student") ?? false}
+                        steps={instance?.steps ?? []}
+                        currentStep={instance?.currentStep ?? ""}
+                    />
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </GridItem>
                 <GridItem span={{base: 12, sm: 4}} className="flex flex-col gap-6">

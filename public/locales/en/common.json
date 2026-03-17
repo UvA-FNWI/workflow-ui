@@ -2,5 +2,9 @@
   "language": "Language",
   "language_en": "English",
   "language_nl": "Dutch",
+<<<<<<< feature/DN-3629
   "number": "{{value, number}}"
+=======
+  "logout": "Logout"
+>>>>>>> main
 }

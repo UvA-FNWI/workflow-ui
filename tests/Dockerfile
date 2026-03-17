@@ -19,7 +19,7 @@ RUN pnpm exec playwright install --with-deps
 
 COPY . .
 
-RUN pnpm run build:ui
+RUN pnpm run build
 
 RUN echo "window._env = { VITE_WEBAPI_URL: 'http://localhost:5025/', };" > ./public/environment.js
 
