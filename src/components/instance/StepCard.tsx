@@ -39,12 +39,10 @@ export const StepCard = ({step, instance}: Props) => {
     const approvedVersion = step.versions?.find((v) =>
         v?.eventIds?.some((e) => e.includes("Approve")),
     );
-    const isApproved = !!approvedVersion;
 
     const rejectedVersion = step.versions?.find((v) =>
         v?.eventIds?.some((e) => e.includes("Reject")),
     );
-    const isRejected = !isApproved && !!rejectedVersion;
 
     const isDisabled =
         !isCurrentStep &&
@@ -57,7 +55,7 @@ export const StepCard = ({step, instance}: Props) => {
                 <div className="flex w-full items-center justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading>{l(step.title)}</Heading>
-                        {isRejected && rejectedVersion.submittedAt && (
+                        {!approvedVersion && !!rejectedVersion && rejectedVersion.submittedAt && (
                             <div>
                                 <Pill variant="red">
                                     {t("status.rejected_on")}{" "}
@@ -65,7 +63,7 @@ export const StepCard = ({step, instance}: Props) => {
                                 </Pill>
                             </div>
                         )}
-                        {isApproved && approvedVersion.submittedAt && (
+                        {!!approvedVersion && approvedVersion.submittedAt && (
                             <Pill variant="green">
                                 {t("status.approved_on")}{" "}
                                 {formatDateShort(approvedVersion.submittedAt, i18n.language)}

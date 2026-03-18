@@ -36,10 +36,8 @@ export type WorkflowStep = {
     versions: WorkflowStepVersion[] | null;
 };
 
-//TODO: find a way to fix the eventId/eventIds inconsistency
 export type WorkflowStepVersion = {
     versionNumber: number;
-    eventId: string;
     eventIds: string[];
     submittedAt: string;
     submissions: Submission[];
