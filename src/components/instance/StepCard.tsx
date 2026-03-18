@@ -39,15 +39,20 @@ export const StepCard = ({step, instance}: Props) => {
     const approvedVersion = step.versions?.find((v) =>
         v?.eventIds?.some((e) => e.includes("Approve")),
     );
-    const isApproved = !!step.dateCompleted && !!approvedVersion;
+    const isApproved = !!approvedVersion;
 
     const rejectedVersion = step.versions?.find((v) =>
         v?.eventIds?.some((e) => e.includes("Reject")),
     );
-    const isRejected = !step.dateCompleted && !!rejectedVersion;
+    const isRejected = !isApproved && !!rejectedVersion;
+
+    const isDisabled =
+        !isCurrentStep &&
+        instance.steps.indexOf(step) >
+            instance.steps.findIndex((s) => instance.currentStep.includes(s.id));
 
     return (
-        <Disclosure defaultExpanded={isCurrentStep}>
+        <Disclosure defaultExpanded={isCurrentStep} disabled={isDisabled}>
             <Disclosure.Header>
                 <div className="flex w-full items-center justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">

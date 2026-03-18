@@ -36,11 +36,16 @@ const disclosureVariants = cva(
         thin: 'ui:border ui:border-grey-200 ui:dark:border-grey-700',
         medium: 'ui:border-2 ui:border-grey-200 ui:dark:border-grey-700',
       },
+      disabled: {
+        true: 'ui:cursor-not-allowed ui:opacity-40',
+        false: '',
+      },
     },
     defaultVariants: {
       padding: 'none',
       shadow: 'sm',
       border: 'thin',
+      disabled: false,
     },
   }
 );
@@ -103,6 +108,7 @@ const BaseDisclosure = (props: DisclosureProps) => {
     padding,
     shadow,
     border,
+    disabled,
 
     // Styling
     className,
@@ -137,6 +143,7 @@ const BaseDisclosure = (props: DisclosureProps) => {
             padding,
             shadow,
             border,
+            disabled,
           }),
           className
         )}
@@ -181,6 +188,7 @@ const DisclosureHeader = (
         ref={ref || buttonRef}
         type="button"
         onClick={handleClick}
+        disabled
         className={cn(
           'ui:flex ui:w-full ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
           'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
