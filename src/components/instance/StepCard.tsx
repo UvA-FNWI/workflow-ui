@@ -11,7 +11,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
-import {formatDate} from "~/utils/formatDate.ts";
+import {formatDateShort} from "~/utils/formatDate.ts";
 
 type Props = {
     step: WorkflowStep;
@@ -50,23 +50,28 @@ export const StepCard = ({step, instance}: Props) => {
         <Disclosure defaultExpanded={isCurrentStep}>
             <Disclosure.Header>
                 <div className="flex w-full items-center justify-between">
-                    <Heading>{l(step.title)}</Heading>
-                    {isRejected && rejectedVersion.submittedAt && (
-                        <Pill variant="red">
-                            {t("status.rejected_on")}{" "}
-                            {formatDate(rejectedVersion.submittedAt, i18n.language)}
-                        </Pill>
-                    )}
-                    {isApproved && approvedVersion.submittedAt && (
-                        <Pill variant="green">
-                            {t("status.approved_on")}{" "}
-                            {formatDate(approvedVersion.submittedAt, i18n.language)}
-                        </Pill>
-                    )}
+                    <div className="flex w-fit flex-col gap-2 lg:flex-row lg:items-center lg:gap-4">
+                        <Heading>{l(step.title)}</Heading>
+                        {isRejected && rejectedVersion.submittedAt && (
+                            <div>
+                                <Pill variant="red">
+                                    {t("status.rejected_on")}{" "}
+                                    {formatDateShort(rejectedVersion.submittedAt, i18n.language)}
+                                </Pill>
+                            </div>
+                        )}
+                        {isApproved && approvedVersion.submittedAt && (
+                            <Pill variant="green">
+                                {t("status.approved_on")}{" "}
+                                {formatDateShort(approvedVersion.submittedAt, i18n.language)}
+                            </Pill>
+                        )}
+                    </div>
                     {stepStatus?.date && (
                         <Text as="span">
-                            <Text fontWeight="semibold">{t(stepStatus.type)}:</Text>{" "}
-                            {formatDate(stepStatus?.date, i18n.language)}
+                            <Text fontWeight="semibold">{t(stepStatus.type)}</Text>
+                            {":\t"}
+                            {formatDateShort(stepStatus?.date, i18n.language)}
                         </Text>
                     )}
                 </div>

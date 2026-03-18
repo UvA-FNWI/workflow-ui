@@ -5,14 +5,14 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const pillVariants = cva(
-  'ui:inline-flex ui:h-5 ui:min-w-5 ui:items-center ui:justify-center ui:rounded-full ui:px-1.5 ui:text-xs ui:font-medium ui:transition-colors',
+  'ui:inline-flex ui:h-5 ui:w-fit ui:min-w-5 ui:items-center ui:justify-center ui:rounded-full ui:px-3 ui:py-3 ui:text-xs ui:font-medium ui:transition-colors',
   {
     variants: {
       variant: {
         grey: 'ui:bg-grey-200 ui:text-grey-600 ui:dark:bg-grey-700 ui:dark:text-grey-400',
         red: 'ui:bg-red-700 ui:text-white ui:dark:bg-red-600',
         green:
-          'ui:bg-green-100 ui:text-green-800 ui:dark:bg-green-800 ui:dark:text-green-100',
+          'ui:bg-forest-200 ui:text-forest-800 ui:dark:bg-forest-800 ui:dark:text-forest-200',
       },
     },
     defaultVariants: {
