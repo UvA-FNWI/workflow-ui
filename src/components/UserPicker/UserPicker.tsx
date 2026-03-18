@@ -2,9 +2,9 @@ import {useState} from "react";
 
 import {SearchInput} from "@datanose/ui";
 
-import type {UserSearchResult} from "../../store/api/types/users";
 import {UserPickerModal} from "./UserPickerModal";
 import {useTranslate} from "~/hooks/useTranslate";
+import type {UserSearchResult} from "~/store/api/types/users.ts";
 
 export interface UserPickerProps {
     /** Optional label for the input */
@@ -54,7 +54,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     const handleOpenModal = () => !isDisabled && setIsOpen(true);
 
     const handleConfirm = (selectedUsers: UserSearchResult[]) =>
-        onChange?.(selectionMode === "single" ? selectedUsers[0] : selectedUsers);
+        onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
 
     return (
         <>

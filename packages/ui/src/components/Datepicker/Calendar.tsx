@@ -93,7 +93,7 @@ function CalendarLayout({
     <div
       {...calendarProps}
       ref={ref}
-      className="ui:inline-block ui:rounded-sm ui:bg-white ui:p-4 ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900"
+      className="ui:inline-block ui:rounded-xs ui:bg-white ui:p-4 ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900"
     >
       {/* Header with navigation */}
       <div className="ui:mb-4 ui:flex ui:items-center ui:justify-between">

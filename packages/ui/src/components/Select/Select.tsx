@@ -238,7 +238,7 @@ export function Select<
       {label && (
         <span
           {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-grey-900 ui:dark:text-white"
+          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
         >
           {label}
         </span>
