@@ -20,7 +20,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm build:ui && pnpm run build
+RUN pnpm run build
 
 FROM docker.io/nginx:1.29.3-alpine
 RUN apk add --no-cache bash
