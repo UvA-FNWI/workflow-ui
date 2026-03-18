@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const StepCard = ({step, instance}: Props) => {
-    const {t, l} = useTranslate("workflow", {keyPrefix: "step_card"});
+    const {t, l} = useTranslate("workflow");
     const [activeAction, setActiveAction] = useState<Action | null>(null);
 
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
@@ -33,7 +33,7 @@ export const StepCard = ({step, instance}: Props) => {
     const stepStatus =
         [
             {type: "status.submitted" as const, date: step.versions?.at(-1)?.submittedAt},
-            {type: "status.deadline" as const, date: step.deadline},
+            {type: "progress.deadline" as const, date: step.deadline},
         ].find((status) => status.date) ?? null;
 
     const approvedVersion = step.versions?.find((v) =>
