@@ -50,7 +50,7 @@ export const StepCard = ({step, instance}: Props) => {
         <Disclosure defaultExpanded={isCurrentStep}>
             <Disclosure.Header>
                 <div className="flex w-full items-center justify-between">
-                    <div className="flex w-fit flex-col gap-2 lg:flex-row lg:items-center lg:gap-4">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading>{l(step.title)}</Heading>
                         {isRejected && rejectedVersion.submittedAt && (
                             <div>
@@ -68,7 +68,7 @@ export const StepCard = ({step, instance}: Props) => {
                         )}
                     </div>
                     {stepStatus?.date && (
-                        <Text as="span">
+                        <Text as="span" className="shrink-0">
                             <Text fontWeight="semibold">{t(stepStatus.type)}</Text>
                             {":\t"}
                             {formatDateShort(stepStatus?.date, i18n.language)}
