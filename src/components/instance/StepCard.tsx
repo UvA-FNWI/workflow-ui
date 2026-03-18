@@ -50,7 +50,7 @@ export const StepCard = ({step, instance}: Props) => {
             instance.steps.findIndex((s) => instance.currentStep.includes(s.id));
 
     return (
-        <Disclosure defaultExpanded={isCurrentStep} disabled={isDisabled}>
+        <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
             <Disclosure.Header>
                 <div className="flex w-full items-center justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
