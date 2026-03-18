@@ -15,14 +15,19 @@ const meta: Meta<typeof Pill> = {
     },
     variant: {
       control: { type: 'select' },
-      options: ['grey', 'red'],
+      options: ['grey', 'red', 'green', 'orange', 'darkRed'],
       description: 'The visual style variant of the pill',
+    },
+    type: {
+      control: { type: 'select' },
+      options: ['badge', 'pill'],
+      description: 'The padding style of the pill',
     },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Pill>;
 
 export const Default: Story = {
   args: {
@@ -33,35 +38,45 @@ export const Default: Story = {
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-      <Pill variant="grey">3</Pill>
-      <Pill variant="red">7</Pill>
+      <Pill variant="darkRed" type="badge">
+        3
+      </Pill>
+      <Pill variant="red" type="pill">
+        Rejected
+      </Pill>
+      <Pill variant="green" type="pill">
+        Accepted
+      </Pill>
+      <Pill variant="orange" type="pill">
+        In progress
+      </Pill>
+      <Pill variant="grey" type="pill">
+        Waiting
+      </Pill>
     </div>
   ),
 };
 
-export const WithText: Story = {
-  render: () => (
-    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-      <Pill variant="grey">New</Pill>
-      <Pill variant="red">Hot</Pill>
-    </div>
-  ),
-};
-
-export const InContext: Story = {
+export const Notifications: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span>Notifications</span>
-        <Pill variant="red">5</Pill>
+        <Pill variant="darkRed" type="badge">
+          5
+        </Pill>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span>Messages</span>
-        <Pill variant="grey">12</Pill>
+        <Pill variant="grey" type="badge">
+          12
+        </Pill>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span>Updates</span>
-        <Pill variant="grey">0</Pill>
+        <Pill variant="grey" type="badge">
+          0
+        </Pill>
       </div>
     </div>
   ),

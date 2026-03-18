@@ -57,14 +57,14 @@ export const StepCard = ({step, instance}: Props) => {
                         <Heading>{l(step.title)}</Heading>
                         {!approvedVersion && !!rejectedVersion && rejectedVersion.submittedAt && (
                             <div>
-                                <Pill variant="red">
+                                <Pill variant="red" type="pill">
                                     {t("status.rejected_on")}{" "}
                                     {formatDateShort(rejectedVersion.submittedAt, i18n.language)}
                                 </Pill>
                             </div>
                         )}
                         {!!approvedVersion && approvedVersion.submittedAt && (
-                            <Pill variant="green">
+                            <Pill variant="green" type="pill">
                                 {t("status.approved_on")}{" "}
                                 {formatDateShort(approvedVersion.submittedAt, i18n.language)}
                             </Pill>

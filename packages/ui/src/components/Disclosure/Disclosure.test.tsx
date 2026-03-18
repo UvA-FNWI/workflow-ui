@@ -151,6 +151,19 @@ describe('Disclosure', () => {
     expect(disclosure).toHaveClass('ui:border-2');
   });
 
+  it('applies disabled prop correctly', () => {
+    const { container } = render(
+      <Disclosure isDisabled={true}>
+        <Disclosure.Header>Header</Disclosure.Header>
+        <Disclosure.Content>Content</Disclosure.Content>
+      </Disclosure>
+    );
+
+    const disclosure = container.firstChild as HTMLElement;
+    expect(disclosure).toHaveClass('ui:opacity-40');
+    expect(disclosure).toHaveClass('ui:cursor-not-allowed');
+  });
+
   it('applies custom className', () => {
     const { container } = render(
       <Disclosure className="custom-class">

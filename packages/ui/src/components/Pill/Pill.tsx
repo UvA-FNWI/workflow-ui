@@ -5,7 +5,7 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const pillVariants = cva(
-  'ui:inline-flex ui:h-5 ui:w-fit ui:min-w-5 ui:items-center ui:justify-center ui:rounded-full ui:px-3 ui:py-3 ui:text-xs ui:font-medium ui:transition-colors',
+  'ui:inline-flex ui:h-5 ui:w-fit ui:min-w-5 ui:items-center ui:justify-center ui:rounded-full ui:text-xs ui:font-medium ui:transition-colors',
   {
     variants: {
       variant: {
@@ -15,10 +15,16 @@ const pillVariants = cva(
           'ui:bg-forest-200 ui:text-forest-800 ui:dark:bg-forest-800 ui:dark:text-forest-200',
         orange:
           'ui:bg-orange-100 ui:text-orange-700 ui:dark:bg-orange-700 ui:dark:text-orange-100',
+        darkRed: 'ui:bg-red-700 ui:text-white ui:dark:bg-red-600',
+      },
+      type: {
+        badge: 'ui:px-1.5',
+        pill: 'ui:px-3 ui:py-3',
       },
     },
     defaultVariants: {
-      variant: 'grey',
+      variant: 'darkRed',
+      type: 'badge',
     },
   }
 );
@@ -35,8 +41,10 @@ export interface PillProps extends PillVariantProps {
 /**
  * A small pill/badge component for displaying counts or short labels.
  */
-export function Pill({ children, variant, className }: PillProps) {
+export function Pill({ children, variant, type, className }: PillProps) {
   return (
-    <span className={cn(pillVariants({ variant }), className)}>{children}</span>
+    <span className={cn(pillVariants({ variant, type }), className)}>
+      {children}
+    </span>
   );
 }
