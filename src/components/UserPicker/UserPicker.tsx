@@ -47,7 +47,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     // Get display value
     const displayValue = (() => {
         if (valueArray.length === 0) return "";
-        if (valueArray.length === 1) return valueArray[0].displayName;
+        if (valueArray.length === 1) return valueArray[0].displayName.trim();
         return t("selected_users", {count: valueArray.length});
     })();
 

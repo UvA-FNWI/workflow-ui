@@ -30,16 +30,13 @@ export function ListBox<T extends object>(props: ListBoxProps<T>) {
   const state = useListState(restProps);
   const ref = useRef<HTMLUListElement>(null);
   const { listBoxProps } = useListBox(restProps, state, ref);
-  const { focusProps, isFocusVisible } = useFocusRing({ within: true });
 
   return (
     <ul
-      {...mergeProps(listBoxProps, focusProps)}
+      {...mergeProps(listBoxProps)}
       ref={ref}
       className={cn(
-        'ui:max-h-[400px] ui:overflow-y-auto ui:rounded-xs ui:border ui:border-grey-300 ui:bg-white ui:text-grey-900 ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white',
-        isFocusVisible &&
-          'ui:ring-2 ui:ring-navy-600 ui:ring-offset-2 ui:dark:ring-orange-500 ui:dark:ring-offset-grey-900',
+        'ui:max-h-[200px] ui:overflow-y-auto ui:rounded-xs ui:border ui:border-grey-300 ui:bg-white ui:text-grey-900 ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white',
         className
       )}
     >

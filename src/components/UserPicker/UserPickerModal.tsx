@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {
     Button,
@@ -39,6 +39,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     minSearchLength = 2,
 }) => {
     const {t} = useTranslate("workflow");
+    const confirmButtonRef = useRef<HTMLButtonElement>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
     const [isSelected, setIsSelected] = useState(false);
@@ -132,6 +133,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 if (selected.length > 0) {
                     setSearchQuery(selected[0].displayName.trim());
                     setIsSelected(true);
+                    confirmButtonRef.current?.focus();
                 }
             }
         },
@@ -201,7 +203,12 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 <Button intent="secondary" onClick={handleCancel}>
                     {t("cancel")}
                 </Button>
-                <Button intent="primary" onClick={handleConfirm} disabled={!hasSelection}>
+                <Button
+                    intent="primary"
+                    onClick={handleConfirm}
+                    disabled={!hasSelection}
+                    ref={confirmButtonRef}
+                >
                     {t("confirm")}
                 </Button>
             </Modal.Footer>
