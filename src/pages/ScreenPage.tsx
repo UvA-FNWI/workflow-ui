@@ -5,6 +5,7 @@ import {
     Container,
     Heading,
     Input,
+    Pill,
     Tab,
     TabList,
     TabPanel,
@@ -20,6 +21,7 @@ export const ProjectScreenOverview = () => {
     const {t, l} = useTranslate("workflow", {keyPrefix: "screens"});
     const {data: screens} = screensEndpoints.getProjectsOverviewScreens.useQuery();
     const [search, setSearch] = useState("");
+    const [activeTab, setActiveTab] = useState(0);
 
     if (!screens) {
         return null;
@@ -39,11 +41,16 @@ export const ProjectScreenOverview = () => {
                         />
                     </div>
                 </div>
-                <Tabs>
+                <Tabs activeIndex={activeTab} onTabChange={setActiveTab}>
                     <TabList>
-                        {screens.groups.map((group) => (
+                        {screens.groups.map((group, index) => (
                             <Tab key={group.name}>
-                                {l(group.title)} ({group.rows.length})
+                                <div className="flex w-full justify-between gap-2">
+                                    <span>{l(group.title)}</span>
+                                    <Pill variant={activeTab === index ? "red" : "grey"}>
+                                        {group.rows.length}
+                                    </Pill>
+                                </div>
                             </Tab>
                         ))}
                     </TabList>
