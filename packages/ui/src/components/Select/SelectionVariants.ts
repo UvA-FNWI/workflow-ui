@@ -1,15 +1,15 @@
 import { cva } from 'class-variance-authority';
 
 export const selectionVariants = cva(
-  'ui:cursor-pointer ui:bg-grey-100 ui:transition-colors ui:duration-150 ui:outline-none ui:dark:bg-grey-900',
+  'ui:cursor-pointer ui:bg-white ui:transition-colors ui:duration-150 ui:outline-none ui:dark:bg-grey-900',
   {
     variants: {
       isSelected: {
-        true: 'ui:bg-navy-600 ui:text-grey-100 ui:dark:bg-sky-500',
+        true: 'ui:bg-grey-300 ui:dark:bg-grey-500',
         false: 'ui:text-grey-900 ui:dark:text-white',
       },
       isHovered: {
-        true: 'ui:bg-navy-100 ui:dark:bg-sky-900',
+        true: 'ui:bg-grey-300 ui:dark:bg-grey-900',
         false: undefined,
       },
       isDisabled: {
@@ -21,18 +21,6 @@ export const selectionVariants = cva(
         false: undefined,
       },
     },
-    compoundVariants: [
-      {
-        isHovered: true,
-        isSelected: true,
-        class: 'ui:bg-navy-700 ui:text-grey-100 ui:dark:bg-sky-600',
-      },
-      {
-        isFocusVisible: true,
-        isSelected: true,
-        class: 'ui:ring-navy-800',
-      },
-    ],
     defaultVariants: {
       isDisabled: false,
       isFocusVisible: false,
