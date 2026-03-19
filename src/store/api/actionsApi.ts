@@ -12,14 +12,24 @@ export const actionsApi = baseApi.injectEndpoints({
                 body: params,
             }),
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        () => data.instance,
-                    ),
-                );
+                try {
+                    const {data} = await queryFulfilled;
+                    dispatch(
+                        instancesApi.util.updateQueryData(
+                            "getInstance",
+                            params.instanceId,
+                            () => data.instance,
+                        ),
+                    );
+
+                    // TODO: Make something nice for this with a modal
+                    const redirectUrl = data.result.redirectUrl;
+                    if (redirectUrl) {
+                        window.location.assign(redirectUrl);
+                    }
+                } catch {
+                    return;
+                }
             },
         }),
     }),
