@@ -41,6 +41,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const {t} = useTranslate("workflow");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+    const [isSelected, setIsSelected] = useState(false);
 
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
     const resetSearch = searchState.reset;
@@ -75,6 +76,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             setSelectedKeys(initialKeys);
             setSearchQuery("");
             resetSearch();
+            setIsSelected(false);
         }
     }, [initialSelection, isOpen, resetSearch]);
 
@@ -92,10 +94,11 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const debouncedSearch = useDebounce(performSearch, 300);
 
     useEffect(() => {
-        if (searchQuery.trim().length >= minSearchLength) {
+        if (searchQuery.trim().length >= minSearchLength && !isSelected) {
+            resetSearch();
             debouncedSearch(searchQuery);
         }
-    }, [searchQuery, minSearchLength, debouncedSearch]);
+    }, [searchQuery, minSearchLength, debouncedSearch, isSelected, resetSearch]);
 
     // Get selected users from cache
     const selectedUsers = useMemo(() => {
@@ -114,15 +117,37 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         onOpenChange(false);
     }, [onOpenChange]);
 
+    const handleSearchChange = useCallback((query: string) => {
+        setSearchQuery(query);
+        setIsSelected(false);
+    }, []);
+
+    const handleSelectionChange = useCallback(
+        (keys: Selection) => {
+            setSelectedKeys(keys);
+            if (selectionMode === "single" && keys !== "all" && keys.size > 0) {
+                const selected = Array.from(keys)
+                    .map((key) => usersCache.get(key as string))
+                    .filter((user): user is UserSearchResult => user !== undefined);
+                if (selected.length > 0) {
+                    setSearchQuery(selected[0].displayName.trim());
+                    setIsSelected(true);
+                }
+            }
+        },
+        [selectionMode, usersCache],
+    );
+
     // UI states
     const showSearchHint = searchQuery.trim().length < minSearchLength;
     const showLoading = (searchState.isLoading || searchState.isFetching) && !showSearchHint;
     const showNoResults =
         !showLoading &&
         !showSearchHint &&
+        !isSelected &&
         searchResults.length === 0 &&
         searchQuery.trim().length > 0;
-    const showUsers = !showLoading && !showSearchHint && searchResults.length > 0;
+    const showUsers = !showLoading && !showSearchHint && searchResults.length > 0 && !isSelected;
     const hasSelection = selectedKeys === "all" || selectedKeys.size > 0;
 
     const modalTitle = title ?? t("user_picker.title");
@@ -134,7 +159,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             <Modal.Body>
                 <SearchInput
                     value={searchQuery}
-                    onChange={setSearchQuery}
+                    onChange={handleSearchChange}
                     placeholder={searchPlaceholderText}
                     autoFocus={isOpen}
                 />
@@ -158,7 +183,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     <SearchListBox
                         values={searchListBoxValues}
                         selectedKeys={selectedKeys}
-                        onSelectionChange={setSelectedKeys}
+                        onSelectionChange={handleSelectionChange}
                         selectionMode={selectionMode}
                         aria-label={modalTitle}
                     />
