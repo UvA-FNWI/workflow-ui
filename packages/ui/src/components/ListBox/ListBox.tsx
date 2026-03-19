@@ -1,11 +1,6 @@
 import { useRef } from 'react';
 
-import {
-  AriaListBoxOptions,
-  mergeProps,
-  useFocusRing,
-  useListBox,
-} from 'react-aria';
+import { AriaListBoxOptions, mergeProps, useListBox } from 'react-aria';
 import { ListProps, ListState, useListState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
