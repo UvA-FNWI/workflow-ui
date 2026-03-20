@@ -14,23 +14,19 @@ Shared authentication library for DataNose applications. Provides an OIDC-based 
 
 ## Installation
 
-### As a pnpm workspace dependency
+```bash
+npm install @datanose/core
+# or
+pnpm add @datanose/core
+```
+
+### As a pnpm workspace dependency (monorepo)
 
 ```json
 "dependencies": {
   "@datanose/core": "workspace:*"
 }
 ```
-
-### As a GitHub tag reference (for external consumers)
-
-```json
-"dependencies": {
-  "@datanose/core": "github:UvA-FNWI/workflow-ui#packages/core@1.0.0:packages/core"
-}
-```
-
-After updating the reference, run `pnpm install`.
 
 ## Usage
 
@@ -143,13 +139,13 @@ selectIsAuthenticated(state); // boolean
 
 1. Bump `version` in `packages/core/package.json`
 2. Commit and push to `main`
-3. Create and push a git tag:
+3. Create and push a git tag matching the new version:
     ```bash
-    git tag packages/core@1.0.0
-    git push origin packages/core@1.0.0
+    git tag packages/core@1.x.x
+    git push origin packages/core@1.x.x
     ```
-4. In the consuming app, update the dependency:
-    ```json
-    "@datanose/core": "github:UvA-FNWI/workflow-ui#packages/core@1.0.0:packages/core"
+4. The GitHub Actions publish workflow triggers automatically: it runs tests, builds the package, and publishes to npm.
+5. Consumers update via:
+    ```bash
+    pnpm add @datanose/core@latest
     ```
-    Then run `pnpm install`.
