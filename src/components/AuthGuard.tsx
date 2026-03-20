@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {Outlet} from "react-router";
 
-import {useAuth} from "@datanose/core";
+import {useAuth} from "@uva-fnwi/datanose-core";
 
 import {useAuthenticatedUser} from "../hooks/useAuthenticatedUser";
 

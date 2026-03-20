@@ -1,4 +1,4 @@
-# @datanose/core
+# @uva-fnwi/datanose-core
 
 Shared authentication library for DataNose applications. Provides an OIDC-based auth flow (via `oidc-client-ts`) with support for both SURFconext and Canvas LTI providers.
 
@@ -15,16 +15,16 @@ Shared authentication library for DataNose applications. Provides an OIDC-based 
 ## Installation
 
 ```bash
-npm install @datanose/core
+npm install @uva-fnwi/datanose-core
 # or
-pnpm add @datanose/core
+pnpm add @uva-fnwi/datanose-core
 ```
 
 ### As a pnpm workspace dependency (monorepo)
 
 ```json
 "dependencies": {
-  "@datanose/core": "workspace:*"
+  "@uva-fnwi/datanose-core": "workspace:*"
 }
 ```
 
@@ -35,7 +35,7 @@ pnpm add @datanose/core
 Wrap your app with `AuthProvider` and access auth state with `useAuth` in any child:
 
 ```tsx
-import {AuthProvider, useAuth} from "@datanose/core";
+import {AuthProvider, useAuth} from "@uva-fnwi/datanose-core";
 
 const config = {
     authority: import.meta.env.VITE_AUTH_AUTHORITY,
@@ -73,8 +73,8 @@ function Main() {
 Use this when you want auth state in your Redux store:
 
 ```ts
-import {authReducer, AuthService, selectIsAuthenticated} from "@datanose/core";
 import {configureStore} from "@reduxjs/toolkit";
+import {authReducer, AuthService, selectIsAuthenticated} from "@uva-fnwi/datanose-core";
 
 export const store = configureStore({
     reducer: {
@@ -147,5 +147,5 @@ selectIsAuthenticated(state); // boolean
 4. The GitHub Actions publish workflow triggers automatically: it runs tests, builds the package, and publishes to npm.
 5. Consumers update via:
     ```bash
-    pnpm add @datanose/core@latest
+    pnpm add @uva-fnwi/datanose-core@latest
     ```

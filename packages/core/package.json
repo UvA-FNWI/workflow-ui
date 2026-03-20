@@ -1,5 +1,5 @@
 {
-  "name": "@datanose/core",
+  "name": "@uva-fnwi/datanose-core",
   "description": "Shared OIDC authentication library for DataNose applications",
   "type": "module",
   "version": "1.0.0",

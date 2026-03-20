@@ -1,29 +1,31 @@
-name: Publish @datanose/core
+name: Publish @uva-fnwi/datanose-core
 
 on:
-  push:
-    tags:
-      - "packages/core@*"
+    push:
+        tags:
+            - "packages/core@*"
+
+permissions:
+    id-token: write
+    contents: read
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 10
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          registry-url: "https://registry.npmjs.org"
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  registry-url: "https://registry.npmjs.org"
 
-      - run: pnpm install --frozen-lockfile
+            - run: pnpm install --frozen-lockfile
 
-      - run: pnpm --filter @datanose/core test
+            - run: pnpm --filter @uva-fnwi/datanose-core test
 
-      - run: pnpm --filter @datanose/core publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+            - run: pnpm --filter @uva-fnwi/datanose-core publish --no-git-checks
