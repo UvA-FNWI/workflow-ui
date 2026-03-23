@@ -29,6 +29,10 @@ export {
   type NumberInputProps,
   type NumberInputVariantProps,
 } from './components/Input/NumberInput/NumberInput';
+export {
+  SearchInput,
+  type SearchInputProps,
+} from './components/Input/SearchInput/SearchInput';
 export { Link, type LinkProps } from './components/Link/Link';
 export {
   Separator,
