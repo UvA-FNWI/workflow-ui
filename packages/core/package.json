@@ -2,7 +2,7 @@
   "name": "@uva-fnwi/datanose-core",
   "description": "Shared OIDC authentication library for DataNose applications",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/core.umd.js",
