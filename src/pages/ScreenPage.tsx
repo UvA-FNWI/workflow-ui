@@ -4,8 +4,8 @@ import {
     Card,
     Container,
     Heading,
-    Input,
     Pill,
+    SearchInput,
     Tab,
     TabList,
     TabPanel,
@@ -18,7 +18,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {screensEndpoints} from "~/store/api/screensApi";
 
 export const ProjectScreenOverview = () => {
-    const {t, l} = useTranslate("workflow", {keyPrefix: "screens"});
+    const {t, l} = useTranslate(["workflow", "common"]);
     const {data: screens} = screensEndpoints.getProjectsOverviewScreens.useQuery();
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState(0);
@@ -32,11 +32,11 @@ export const ProjectScreenOverview = () => {
             <Card>
                 <div className="mb-4">
                     <div className="flex w-full justify-between">
-                        <Heading as="h1">{t("students")}</Heading>
-                        <Input
+                        <Heading as="h1">{t("screens.students")}</Heading>
+                        <SearchInput
                             value={search}
                             onChange={setSearch}
-                            placeholder="Search..."
+                            placeholder={t("search_placeholder", {ns: "common"})}
                             className="w-fit max-w-sm"
                         />
                     </div>
