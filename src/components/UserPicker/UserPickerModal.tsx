@@ -183,6 +183,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 {/* User List */}
                 {showUsers && (
                     <SearchListBox
+                        autoFocus={false}
                         values={searchListBoxValues}
                         selectedKeys={selectedKeys}
                         onSelectionChange={handleSelectionChange}

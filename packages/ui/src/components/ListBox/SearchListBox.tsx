@@ -23,10 +23,14 @@ export interface SearchListBoxProps<T extends object>
 }
 
 export function SearchListBox<T extends object>(props: SearchListBoxProps<T>) {
-  const { values, ...restProps } = props;
+  const { values, autoFocus = true, ...restProps } = props;
 
   return (
-    <ListBox<SearchListBoxValue> {...restProps} items={values} autoFocus>
+    <ListBox<SearchListBoxValue>
+      {...restProps}
+      items={values}
+      autoFocus={autoFocus}
+    >
       {(item: SearchListBoxValue) => (
         <Item key={item.key} textValue={item.primaryValue}>
           <div className="ui:flex ui:items-center ui:gap-4">

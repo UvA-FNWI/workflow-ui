@@ -53,6 +53,12 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
     const handleOpenModal = () => !isDisabled && setIsOpen(true);
 
+    const handleSearchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        handleOpenModal();
+    };
+
     const handleConfirm = (selectedUsers: UserSearchResult[]) =>
         onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
 
@@ -63,8 +69,11 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 placeholder={placeholder}
                 value={displayValue}
                 onClick={handleOpenModal}
+                onKeyDown={handleSearchInputKeyDown}
                 isDisabled={isDisabled}
                 readOnly={true}
+                role="button"
+                className="cursor-pointer"
             />
 
             <UserPickerModal
