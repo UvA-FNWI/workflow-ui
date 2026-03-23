@@ -2,10 +2,10 @@ name: Publish @uva-fnwi/datanose-core
 
 on:
     push
-        # branches:
-        #     - main
-        # paths:
-        #     - "packages/core/package.json"
+    #     branches:
+    #         - main
+    #     paths:
+    #         - "packages/core/package.json"
 
 permissions:
     id-token: write
@@ -23,7 +23,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 22
+                  node-version: 24
                   registry-url: "https://registry.npmjs.org"
 
             - run: pnpm install --frozen-lockfile
