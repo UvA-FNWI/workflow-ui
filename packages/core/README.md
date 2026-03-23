@@ -137,15 +137,22 @@ selectIsAuthenticated(state); // boolean
 
 ## Release process
 
-1. Bump `version` in `packages/core/package.json`
-2. Commit and push to `main`
-3. Create and push a git tag matching the new version:
-    ```bash
-    git tag packages/core@1.x.x
-    git push origin packages/core@1.x.x
-    ```
-4. The GitHub Actions publish workflow triggers automatically: it runs tests, builds the package, and publishes to npm.
-5. Consumers update via:
-    ```bash
-    pnpm add @uva-fnwi/datanose-core@latest
-    ```
+This package lives in a monorepo; `main` is protected, so you do the version bump on a branch and open a PR.
+
+From the repo root:
+
+```bash
+pnpm --filter @uva-fnwi/datanose-core version patch   # 1.0.0 -> 1.0.1
+pnpm --filter @uva-fnwi/datanose-core version minor   # 1.0.0 -> 1.1.0
+pnpm --filter @uva-fnwi/datanose-core version major   # 1.0.0 -> 2.0.0
+```
+
+That updates `packages/core/package.json`, creates a commit, and creates the git tag for the new version (same as `npm version`). Push your branch with `git push --follow-tags` if you want the tag on the remote.
+
+Open a PR against `main` and merge it. The publish workflow runs when `packages/core/package.json` changes on `main`; it doesn’t use tags.
+
+After release, consumers can pull the new version with:
+
+```bash
+pnpm add @uva-fnwi/datanose-core@latest
+```
