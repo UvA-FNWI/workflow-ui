@@ -51,6 +51,7 @@
   },
   "status": {
     "approved_on": "Approved on",
+    "completed_on": "Completed on",
     "rejected_on": "Rejected on",
     "submitted": "Submitted"
   },

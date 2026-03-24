@@ -36,14 +36,6 @@ export const StepCard = ({step, instance}: Props) => {
             {type: "progress.deadline" as const, date: step.deadline},
         ].find((status) => status.date) ?? null;
 
-    const approvedVersion = step.versions?.find((v) =>
-        v?.eventIds?.some((e) => e.includes("Approve")),
-    );
-
-    const rejectedVersion = step.versions?.find((v) =>
-        v?.eventIds?.some((e) => e.includes("Reject")),
-    );
-
     const isDisabled =
         !isCurrentStep &&
         instance.steps.indexOf(step) >
@@ -55,18 +47,10 @@ export const StepCard = ({step, instance}: Props) => {
                 <div className="flex w-full items-center justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading>{l(step.title)}</Heading>
-                        {!approvedVersion && !!rejectedVersion && rejectedVersion.submittedAt && (
-                            <div>
-                                <Pill variant="red" type="pill">
-                                    {t("status.rejected_on")}{" "}
-                                    {formatDateShort(rejectedVersion.submittedAt, i18n.language)}
-                                </Pill>
-                            </div>
-                        )}
-                        {!!approvedVersion && approvedVersion.submittedAt && (
+                        {step.dateCompleted && (
                             <Pill variant="green" type="pill">
-                                {t("status.approved_on")}{" "}
-                                {formatDateShort(approvedVersion.submittedAt, i18n.language)}
+                                {t("status.completed_on")}{" "}
+                                {formatDateShort(step.dateCompleted, i18n.language)}
                             </Pill>
                         )}
                     </div>
