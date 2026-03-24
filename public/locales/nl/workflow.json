@@ -50,9 +50,7 @@
     "students": "Studenten"
   },
   "status": {
-    "approved_on": "Goedgekeurd op",
     "completed_on": "Voltooid op",
-    "rejected_on": "Afgekeurd op",
     "submitted": "Ingeleverd"
   },
   "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",

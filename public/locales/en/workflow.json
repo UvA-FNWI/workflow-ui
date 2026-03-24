@@ -50,9 +50,7 @@
     "students": "Students"
   },
   "status": {
-    "approved_on": "Approved on",
     "completed_on": "Completed on",
-    "rejected_on": "Rejected on",
     "submitted": "Submitted"
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
