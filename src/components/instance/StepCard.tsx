@@ -48,7 +48,7 @@ export const StepCard = ({step, instance}: Props) => {
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading>{l(step.title)}</Heading>
                         {step.dateCompleted && (
-                            <Pill variant="green" type="pill">
+                            <Pill variant="green">
                                 {t("status.completed_on")}{" "}
                                 {formatDateShort(step.dateCompleted, i18n.language)}
                             </Pill>
