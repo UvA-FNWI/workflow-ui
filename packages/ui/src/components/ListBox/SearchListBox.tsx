@@ -33,10 +33,10 @@ export function SearchListBox<T extends object>(props: SearchListBoxProps<T>) {
     >
       {(item: SearchListBoxValue) => (
         <Item key={item.key} textValue={item.primaryValue}>
-          <div className="ui:flex ui:items-center ui:gap-4">
+          <div className="ui:flex ui:items-center">
             <span className="ui:flex-1 ui:truncate">{item.primaryValue}</span>
             {item.secondaryValue && (
-              <span className="ui:mx-auto ui:flex-1 ui:truncate">
+              <span className="ui:flex-1 ui:truncate">
                 {item.secondaryValue}
               </span>
             )}

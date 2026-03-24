@@ -38,10 +38,10 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       )}
     >
       <div className="ui:flex ui:items-center ui:gap-2">
-        <div className="ui:w-3">
+        <div className="ui:w-3 ui:flex-none">
           {isSelected && <Icon name="checkmark-solid" size="sm" />}
         </div>
-        <div>{item.rendered}</div>
+        <div className="ui:w-full">{item.rendered}</div>
       </div>
     </li>
   );
