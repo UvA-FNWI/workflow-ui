@@ -5,11 +5,11 @@ export const selectionVariants = cva(
   {
     variants: {
       isSelected: {
-        true: 'ui:bg-grey-300 ui:dark:bg-grey-500',
+        true: 'ui:bg-grey-300 ui:dark:bg-grey-700',
         false: 'ui:text-grey-900 ui:dark:text-white',
       },
       isHovered: {
-        true: 'ui:bg-grey-300 ui:dark:bg-grey-900',
+        true: 'ui:bg-grey-300 ui:dark:bg-grey-700',
         false: undefined,
       },
       isDisabled: {

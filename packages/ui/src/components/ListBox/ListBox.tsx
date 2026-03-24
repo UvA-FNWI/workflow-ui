@@ -36,7 +36,7 @@ export function ListBox<T extends object>(props: ListBoxProps<T>) {
       )}
     >
       {[...state.collection].map(item => (
-        <div className="ui:border-b ui:border-gray-300">
+        <div className="ui:border-b ui:border-grey-300 ui:dark:border-grey-700">
           <ListBoxItem key={item.key} item={item} state={state} />
         </div>
       ))}

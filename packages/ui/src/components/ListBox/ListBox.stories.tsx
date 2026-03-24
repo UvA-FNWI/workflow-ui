@@ -59,7 +59,7 @@ const InteractiveListBox = (args: any) => {
           </Item>
         )}
       </ListBox>
-      <div className="mt-4 text-sm">
+      <div className="ui:mt-4 ui:text-sm ui:text-black ui:dark:text-white">
         <strong>Selected:</strong> {getSelectedItemNames(selectedKeys)}
       </div>
     </div>
@@ -115,7 +115,7 @@ const DisabledItemsComponent = () => {
         <Item key="4">Item Four (disabled)</Item>
         <Item key="5">Item Five</Item>
       </ListBox>
-      <div className="mt-4 text-sm">
+      <div className="ui:mt-4 ui:text-sm ui:text-black ui:dark:text-white">
         <strong>Selected:</strong> {getSelectedItemNames(selectedKeys)}
       </div>
     </div>
