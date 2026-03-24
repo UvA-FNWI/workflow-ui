@@ -93,7 +93,7 @@ export const WithManyItems: Story = {
       description: `Description ${i + 1}`,
     })),
     selectionMode: 'single',
-    'aria-label': 'Select from many items',
+    'aria-label': 'Select multiple items',
   },
 };
 
