@@ -28,7 +28,7 @@ export const PageControl = ({
     page,
     showTitle = true,
 }: PageControlProps) => {
-    const {l, t} = useTranslate("workflow");
+    const {l, t, i18n} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
         submissionId,
@@ -127,7 +127,7 @@ export const PageControl = ({
                             {l(page.title)}
                             {results &&
                                 results.length > 0 &&
-                                ` (${t("common:number", {value: getTotalPercentage(results)})}%)`}
+                                ` (${getTotalPercentage(results).toLocaleString(i18n.language)}%)`}
                         </Heading>
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
@@ -148,7 +148,7 @@ export const PageControl = ({
                                                     results.find(
                                                         (q) => q.questionName == question.name,
                                                     ) &&
-                                                    ` (${t("common:number", {value: getPercentage(results, question.name)})}%)`}
+                                                    ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
                                                 {!question.isRequired && ` ${t("optional")}`}
                                             </div>
                                             <InputControl
@@ -200,11 +200,7 @@ export const PageControl = ({
                             {isFetchingAverages ? (
                                 <LoadingSpinner size="xs" />
                             ) : (
-                                <span>
-                                    {t("common:number", {
-                                        value: weightedAverage,
-                                    })}
-                                </span>
+                                <span>{weightedAverage.toLocaleString(i18n.language)}</span>
                             )}
                         </Heading>
                     )}

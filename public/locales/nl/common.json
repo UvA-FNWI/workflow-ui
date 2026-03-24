@@ -2,6 +2,5 @@
   "language": "Taal",
   "language_en": "Engels",
   "language_nl": "Nederlands",
-  "logout": "Uitloggen",
-  "number": "{{value, number}}"
+  "logout": "Uitloggen"
 }

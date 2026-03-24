@@ -2,6 +2,5 @@
   "language": "Language",
   "language_en": "English",
   "language_nl": "Dutch",
-  "logout": "Logout",
-  "number": "{{value, number}}"
+  "logout": "Logout"
 }

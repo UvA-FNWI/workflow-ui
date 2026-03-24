@@ -15,14 +15,19 @@ type Props = {
 };
 
 export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
-    const {t, l} = useTranslate(["workflow", "common"]);
+    const {t, l, i18n} = useTranslate("workflow");
 
-    const {data: calculations} = submission.form.pages.some((p) => p.hasResults)
-        ? assessmentsApi.endpoints.getResults.useQuery({
-              instanceId,
-              submissionId: submission.id,
-          })
-        : {};
+    const hasResults = submission.form.pages.some((p) => p.hasResults);
+
+    const {data: calculations} = assessmentsApi.endpoints.getResults.useQuery(
+        {
+            instanceId,
+            submissionId: submission.id,
+        },
+        {
+            skip: !hasResults,
+        },
+    );
 
     return (
         <div className="flex flex-col gap-6">
@@ -34,7 +39,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             <Text fontWeight="bold" size="lg">
                                 {l(page.title)}
                                 {calculations?.results[page.name] &&
-                                    ` (${t("common:number", {value: calculations?.results[page.name].reduce((sum, q) => sum + q.percentage, 0)})}%)`}
+                                    ` (${calculations?.results[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                             </Text>
                             {onEditPage && (
                                 <Button
@@ -53,9 +58,9 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                         <div>
                             {calculations?.weightedAverages[page.name] && (
                                 <Text fontWeight="bold" size="lg">
-                                    {t("common:number", {
-                                        value: calculations.weightedAverages[page.name],
-                                    })}
+                                    {calculations.weightedAverages[page.name].toLocaleString(
+                                        i18n.language,
+                                    )}
                                 </Text>
                             )}
                         </div>
@@ -78,7 +83,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                         {t("instance.calculations.final_grade").toUpperCase()}
                     </Text>
                     <Text fontWeight="bold" size="lg">
-                        {t("common:number", {value: calculations?.weightedAverages["total"]})}
+                        {calculations?.weightedAverages["total"].toLocaleString(i18n.language)}
                     </Text>
                 </div>
             )}
