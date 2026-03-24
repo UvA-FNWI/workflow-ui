@@ -1,14 +1,8 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {
-    Button,
-    LoadingSpinner,
-    Modal,
-    SearchInput,
-    SearchListBox,
-    type SearchListBoxValue,
-} from "@datanose/ui";
+import {Button, LoadingSpinner, Modal, SearchInput} from "@datanose/ui";
 
+import {SearchListBox, type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users";
@@ -184,7 +178,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 {showUsers && (
                     <SearchListBox
                         autoFocus={false}
-                        values={searchListBoxValues}
+                        items={searchListBoxValues}
                         selectedKeys={selectedKeys}
                         onSelectionChange={handleSelectionChange}
                         selectionMode={selectionMode}

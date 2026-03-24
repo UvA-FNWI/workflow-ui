@@ -29,6 +29,13 @@ const sampleItems: ListItem[] = [
   { id: '5', name: 'Item Five', description: 'Fifth item' },
 ];
 
+const getSelectedItemNames = (selected: Selection) =>
+  selected === 'all'
+    ? 'All items'
+    : Array.from(selected)
+        .map(id => sampleItems.find(item => item.id === id)?.name)
+        .join(', ');
+
 const InteractiveListBox = (args: any) => {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
@@ -41,10 +48,10 @@ const InteractiveListBox = (args: any) => {
       >
         {(item: ListItem) => (
           <Item key={item.id} textValue={item.name}>
-            <div className="flex items-center justify-between">
-              <span className="text-black dark:text-white">{item.name}</span>
+            <div className="ui:flex ui:items-center ui:gap-2">
+              <span className="ui:flex-1 ui:truncate">{item.name}</span>
               {item.description && (
-                <span className="text-grey-600 dark:text-grey-400 text-sm">
+                <span className="ui:flex-1 ui:truncate">
                   {item.description}
                 </span>
               )}
@@ -53,10 +60,7 @@ const InteractiveListBox = (args: any) => {
         )}
       </ListBox>
       <div className="mt-4 text-sm">
-        <strong>Selected:</strong>{' '}
-        {selectedKeys === 'all'
-          ? 'All items'
-          : Array.from(selectedKeys).join(', ')}
+        <strong>Selected:</strong> {getSelectedItemNames(selectedKeys)}
       </div>
     </div>
   );
@@ -112,10 +116,7 @@ const DisabledItemsComponent = () => {
         <Item key="5">Item Five</Item>
       </ListBox>
       <div className="mt-4 text-sm">
-        <strong>Selected:</strong>{' '}
-        {selectedKeys === 'all'
-          ? 'All items'
-          : Array.from(selectedKeys).join(', ')}
+        <strong>Selected:</strong> {getSelectedItemNames(selectedKeys)}
       </div>
     </div>
   );
