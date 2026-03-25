@@ -1,3 +1,4 @@
+import {setConfettiActive} from "../confettiSlice";
 import {baseApi} from "./baseApi";
 import type {Submission} from "./types/submissions";
 import {instancesApi} from "~/store/api/instancesApi.ts";
@@ -34,6 +35,10 @@ export const submissionsApi = baseApi.injectEndpoints({
                         () => data.submission,
                     ),
                 );
+
+                if (data.effectResult.showConfetti) {
+                    dispatch(setConfettiActive(data.effectResult.showConfetti));
+                }
             },
         }),
     }),
