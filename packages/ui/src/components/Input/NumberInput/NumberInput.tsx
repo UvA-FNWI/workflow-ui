@@ -26,6 +26,7 @@ export interface NumberInputProps
   description?: string;
   errorMessage?: string;
   isValid?: boolean;
+  locale?: string;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
@@ -40,6 +41,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   errorMessage,
   isValid = true,
   isDisabled = false,
+  locale = 'en-US',
   className,
   ...rest
 }) => {
@@ -52,7 +54,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     step,
     isDisabled: isDisabled ?? false,
     label,
-    locale: 'en-US',
+    locale,
     description,
     errorMessage,
     validationState: isValid === false ? 'invalid' : 'valid',
