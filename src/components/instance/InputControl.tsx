@@ -39,7 +39,7 @@ export const InputControl = ({
     onSave,
     visibleChoices,
 }: InputControlProps) => {
-    const {t, l} = useTranslate("workflow");
+    const {t, l, i18n} = useTranslate("workflow");
 
     const save = useCallback(
         (value: unknown) => {
@@ -76,14 +76,15 @@ export const InputControl = ({
             />
         );
     }
-    if (question.type === "Int") {
+    if (question.type === "Int" || question.type === "Double") {
         return (
             <NumberInput
                 value={(value as number) || 0}
-                step={1}
+                step={question.type === "Int" ? 1 : 0.01}
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
+                locale={i18n.language}
             />
         );
     }

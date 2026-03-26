@@ -2,14 +2,16 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Heading, Text} from "@datanose/ui";
+import {Heading, LoadingSpinner, Text} from "@datanose/ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
+import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
+import type {Result} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 
@@ -26,7 +28,7 @@ export const PageControl = ({
     page,
     showTitle = true,
 }: PageControlProps) => {
-    const {l, t} = useTranslate("workflow");
+    const {l, t, i18n} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
         submissionId,
@@ -98,6 +100,24 @@ export const PageControl = ({
         control: form.control,
     });
 
+    const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getResultsPage.useQuery(
+        {
+            instanceId,
+            submissionId,
+            pageName: page.name,
+        },
+        {
+            skip: !page.hasResults,
+        },
+    );
+    const {results, weightedAverage} = data ?? {};
+
+    const getTotalPercentage = (r: Result[]) =>
+        Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
+
+    const getPercentage = (r: Result[], questionName: string) =>
+        r.find((q) => q.questionName === questionName)?.percentage;
+
     return (
         <>
             <div className="mb-4 flex flex-col gap-4 pt-4">
@@ -105,6 +125,9 @@ export const PageControl = ({
                     {showTitle && (
                         <Heading size="sm" className="uppercase" fontType="body">
                             {l(page.title)}
+                            {results &&
+                                results.length > 0 &&
+                                ` (${getTotalPercentage(results).toLocaleString(i18n.language)}%)`}
                         </Heading>
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
@@ -121,6 +144,11 @@ export const PageControl = ({
                                         <div className="mb-4">
                                             <div key={question.name}>
                                                 {l(question.text)}
+                                                {results &&
+                                                    results.find(
+                                                        (q) => q.questionName == question.name,
+                                                    ) &&
+                                                    ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
                                                 {!question.isRequired && ` ${t("optional")}`}
                                             </div>
                                             <InputControl
@@ -161,6 +189,21 @@ export const PageControl = ({
                             />
                         )}
                     </form>
+                </div>
+                <div>
+                    {typeof weightedAverage == "number" && weightedAverage !== 0 && (
+                        <Heading className="flex items-center gap-2">
+                            {t("instance.calculations.average_grade", {
+                                page: l(page.title),
+                            }).toUpperCase()}
+
+                            {isFetchingAverages ? (
+                                <LoadingSpinner size="xs" />
+                            ) : (
+                                <span>{weightedAverage.toLocaleString(i18n.language)}</span>
+                            )}
+                        </Heading>
+                    )}
                 </div>
             </div>
         </>
