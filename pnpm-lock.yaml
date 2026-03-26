@@ -14,9 +14,6 @@ importers:
       '@axe-core/playwright':
         specifier: ^4.11.0
         version: 4.11.0(playwright-core@1.57.0)
-      '@datanose/core':
-        specifier: workspace:*
-        version: link:packages/core
       '@datanose/ui':
         specifier: workspace:*
         version: link:packages/ui
@@ -32,6 +29,9 @@ importers:
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^5.2.2
         version: 5.2.2(prettier@3.6.2)
+      '@uva-fnwi/datanose-core':
+        specifier: workspace:*
+        version: link:packages/core
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -147,9 +147,6 @@ importers:
 
   packages/core:
     dependencies:
-      oidc-client-ts:
-        specifier: ^2.4.0
-        version: 2.5.0
       react:
         specifier: ^19
         version: 19.2.3
@@ -193,6 +190,9 @@ importers:
       jsdom:
         specifier: ^27.0.1
         version: 27.0.1(postcss@8.5.6)
+      oidc-client-ts:
+        specifier: ^2.4.0
+        version: 2.5.0
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
