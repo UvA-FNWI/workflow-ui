@@ -38,6 +38,7 @@ export type Page = {
     title: LocalString;
     introduction?: LocalString;
     layout: PageLayout;
+    type: PageType;
     questions: Question[];
     hasResults: boolean;
 };
@@ -73,6 +74,7 @@ export type Choice = {
 };
 
 export type PageLayout = "Normal" | "Condensed";
+export type PageType = "Normal" | "AssessmentOverview";
 export type RoleAction = "ViewAdminTools" | "View" | "Edit" | "Submit";
 export type DataType =
     | "File"

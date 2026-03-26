@@ -4,7 +4,7 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
-import type {Submission} from "~/store/api/types/submissions.ts";
+import type {PageType, Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -12,9 +12,16 @@ type Props = {
     submission: Submission;
     onEditPage?: (index: number) => void;
     onSubmit?: () => void;
+    pageType?: PageType;
 };
 
-export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
+export const FormSummary = ({
+    instanceId,
+    submission,
+    onEditPage,
+    onSubmit,
+    pageType = "Normal",
+}: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
     const hasResults = submission.form.pages.some((p) => p.hasResults);
@@ -41,7 +48,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                                 {calculations?.results[page.name] &&
                                     ` (${calculations?.results[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                             </Text>
-                            {onEditPage && (
+                            {onEditPage && pageType === "Normal" && (
                                 <Button
                                     intent="ghost"
                                     size="small"
@@ -55,6 +62,8 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                                 ></Button>
                             )}
                         </div>
+
+                        {/*THIS IS PER USER*/}
                         <div>
                             {calculations?.weightedAverages[page.name] && (
                                 <Text fontWeight="bold" size="lg">
@@ -65,6 +74,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             )}
                         </div>
                     </div>
+                    {/*CHANGE THIS FOR PER USER OR SOMETHING*/}
                     {/* Questions and answers */}
                     <QuestionAnswerList
                         questionAnswerPairs={getVisibleQuestionAnswerPairs(
