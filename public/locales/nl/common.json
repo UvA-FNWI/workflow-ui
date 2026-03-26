@@ -2,5 +2,6 @@
   "language": "Taal",
   "language_en": "Engels",
   "language_nl": "Nederlands",
-  "logout": "Uitloggen"
+  "logout": "Uitloggen",
+  "search_placeholder": "Zoeken..."
 }
