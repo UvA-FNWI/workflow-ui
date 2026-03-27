@@ -32,7 +32,6 @@ export {
 export {
   SearchInput,
   type SearchInputProps,
-  type SearchInputVariantProps,
 } from './components/Input/SearchInput/SearchInput';
 export { Link, type LinkProps } from './components/Link/Link';
 export {

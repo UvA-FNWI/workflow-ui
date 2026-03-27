@@ -2,8 +2,8 @@ import {useEffect} from "react";
 
 import {useNavigate} from "react-router";
 
-import {useAuth} from "@datanose/core";
-import type {CustomUserState} from "@datanose/core";
+import {useAuth} from "@uva-fnwi/datanose-core";
+import type {CustomUserState} from "@uva-fnwi/datanose-core";
 
 function AuthCallback() {
     const {surfCompleteLogin} = useAuth();

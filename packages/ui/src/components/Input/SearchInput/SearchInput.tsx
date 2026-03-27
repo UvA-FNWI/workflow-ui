@@ -74,7 +74,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   });
 
   return (
-    <div className="ui:w-full">
+    <div>
       {label && (
         <label
           {...labelProps}

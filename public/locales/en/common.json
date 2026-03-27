@@ -2,5 +2,6 @@
   "language": "Language",
   "language_en": "English",
   "language_nl": "Dutch",
-  "logout": "Logout"
+  "logout": "Logout",
+  "search_placeholder": "Search..."
 }

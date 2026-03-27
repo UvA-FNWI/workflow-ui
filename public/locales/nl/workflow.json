@@ -31,6 +31,10 @@
     "title": "Zo kies je een goed scriptieonderwerp"
   },
   "instance": {
+    "calculations": {
+      "average_grade": "Gem. cijfer [{{page}}]:",
+      "final_grade": "Eindcijfer"
+    },
     "summary": {
       "edit_page": "Pagina bewerken",
       "no_answer": "Geen antwoord gegeven",

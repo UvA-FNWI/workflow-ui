@@ -31,6 +31,10 @@
     "title": "How to choose a subject"
   },
   "instance": {
+    "calculations": {
+      "average_grade": "Avg. grade [{{page}}]:",
+      "final_grade": "Final grade"
+    },
     "summary": {
       "edit_page": "Edit page",
       "no_answer": "No answer provided",
