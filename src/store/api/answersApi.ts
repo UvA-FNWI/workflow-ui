@@ -28,6 +28,13 @@ export const answersApi = baseApi.injectEndpoints({
                     ),
                 );
             },
+            invalidatesTags: (_result, _error, params) => [
+                {
+                    type: "Assessments",
+                    instanceId: params.instanceId,
+                    submissionId: params.submissionId,
+                },
+            ],
         }),
         saveFile: build.mutation<{success: boolean}, SaveFileParams>({
             query: (params) => {

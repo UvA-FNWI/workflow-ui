@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {Outlet} from "react-router";
 
-import {getCanvasTokenFromLocalStorage, isEmbeddedInCanvas, useAuth} from "@datanose/core";
+import {getCanvasTokenFromLocalStorage, isEmbeddedInCanvas, useAuth} from "@uva-fnwi/datanose-core";
 
 import {useAuthenticatedUser} from "../hooks/useAuthenticatedUser";
 
