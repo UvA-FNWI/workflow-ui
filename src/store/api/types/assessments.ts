@@ -1,14 +1,12 @@
-export type Assessments = {
+export type AssessmentGroup = {
+    id: string;
+    forms: Assessment[];
+};
+
+export type Assessment = {
     id: string;
     results: Record<string, Result[]>;
     weightedAverages: Record<string, number>;
-};
-
-export type AssessmentPage = {
-    id: string;
-    pageName: string;
-    results: Result[];
-    weightedAverage: number;
 };
 
 export type Result = {

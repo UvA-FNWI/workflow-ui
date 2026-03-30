@@ -110,7 +110,10 @@ export const PageControl = ({
             skip: !page.hasResults,
         },
     );
-    const {results, weightedAverage} = data ?? {};
+    const formForPage = data?.forms?.[0]; // form for the current page
+    const results = formForPage?.results?.[page.name];
+    const weightedAverage = formForPage?.weightedAverages?.[page.name] ?? 0;
+    console.log("PageControl results", results, "weightedAverage", weightedAverage);
 
     const getTotalPercentage = (r: Result[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
