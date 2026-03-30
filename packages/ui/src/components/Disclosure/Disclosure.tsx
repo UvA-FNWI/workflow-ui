@@ -36,11 +36,16 @@ const disclosureVariants = cva(
         thin: 'ui:border ui:border-grey-200 ui:dark:border-grey-700',
         medium: 'ui:border-2 ui:border-grey-200 ui:dark:border-grey-700',
       },
+      isDisabled: {
+        true: 'ui:cursor-not-allowed ui:opacity-40',
+        false: '',
+      },
     },
     defaultVariants: {
       padding: 'none',
       shadow: 'sm',
       border: 'thin',
+      isDisabled: false,
     },
   }
 );
@@ -55,6 +60,7 @@ export interface DisclosureProps extends DisclosureVariantProps {
   isExpanded?: boolean;
   defaultExpanded?: boolean;
   onExpandedChange?: (isExpanded: boolean) => void;
+  isDisabled?: boolean;
 
   // Styling
   className?: string;
@@ -75,6 +81,7 @@ interface DisclosureContextValue {
   panelRef: React.RefObject<HTMLDivElement | null>;
   buttonProps: ReturnType<typeof useDisclosure>['buttonProps'];
   panelProps: ReturnType<typeof useDisclosure>['panelProps'];
+  isDisabled?: boolean;
 }
 
 const DisclosureContext = createContext<DisclosureContextValue | null>(null);
@@ -98,6 +105,7 @@ const BaseDisclosure = (props: DisclosureProps) => {
     isExpanded,
     defaultExpanded = false,
     onExpandedChange,
+    isDisabled,
 
     // Variants
     padding,
@@ -128,7 +136,14 @@ const BaseDisclosure = (props: DisclosureProps) => {
 
   return (
     <DisclosureContext.Provider
-      value={{ state, buttonRef, panelRef, buttonProps, panelProps }}
+      value={{
+        state,
+        buttonRef,
+        panelRef,
+        buttonProps,
+        panelProps,
+        isDisabled,
+      }}
     >
       <div
         ref={ref}
@@ -137,6 +152,7 @@ const BaseDisclosure = (props: DisclosureProps) => {
             padding,
             shadow,
             border,
+            isDisabled,
           }),
           className
         )}
@@ -166,7 +182,7 @@ const DisclosureHeader = (
     ref,
     ...restProps
   } = props;
-  const { state, buttonRef, buttonProps } = useDisclosureContext();
+  const { state, buttonRef, buttonProps, isDisabled } = useDisclosureContext();
 
   // Merge onClick handlers
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -181,6 +197,7 @@ const DisclosureHeader = (
         ref={ref || buttonRef}
         type="button"
         onClick={handleClick}
+        disabled={isDisabled}
         className={cn(
           'ui:flex ui:w-full ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
           'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
