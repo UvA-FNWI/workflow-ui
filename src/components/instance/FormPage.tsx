@@ -25,6 +25,27 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     if (!submission) return <div>Loading...</div>;
 
+    const isAssessmentOverviewPage = submission.form.pages.some(
+        (page) => page.type === "AssessmentOverview",
+    );
+
+    if (isAssessmentOverviewPage) {
+        return (
+            <>
+                <Heading size="sm" className="uppercase" fontType="body">
+                    {t("instance.summary.title")}
+                </Heading>
+                <FormSummary
+                    submission={submission}
+                    instanceId={instanceId}
+                    onSubmit={onClose}
+                    onEditPage={() => {}}
+                    pageType="AssessmentOverview"
+                />
+            </>
+        );
+    }
+
     const showTabView = submission.form.pages.length > 1; // only show tabs and summary when there is more than one page
 
     const totalTabs = submission.form.pages.length + 1; // +1 for summary tab

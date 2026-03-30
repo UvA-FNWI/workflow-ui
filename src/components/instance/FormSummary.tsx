@@ -37,15 +37,39 @@ export const FormSummary = ({
         },
     );
 
-    const resultsForPage = assessmentResults?.forms?.[0];
+    const assessmentForms = (assessmentResults?.forms ?? []).filter(
+        (f) =>
+            Object.keys(f.results ?? {}).length > 0 &&
+            Object.values(f.results ?? {}).some((pageResults) =>
+                pageResults.some((result) => result.answer !== 0),
+            ),
+    );
+
+    const resultsForPage = assessmentForms.find((f) => f.id === submission.id);
+
+    console.log("assessmentForms", assessmentForms);
+    console.log("resultsForPage", resultsForPage);
+
+    const pages = pageType === "AssessmentOverview" ? submission.form.pages : submission.form.pages;
+    console.log("pages", pages);
+
+    const colsMap: Record<number, string> = {
+        1: "grid-cols-1",
+        2: "grid-cols-2",
+        3: "grid-cols-3",
+        4: "grid-cols-4",
+        5: "grid-cols-5",
+    };
+
+    const colsClass = colsMap[(assessmentForms?.length ?? 0) + 1] || "grid-cols-1";
 
     return (
         <div className="flex flex-col gap-6">
             {submission.form.pages.map((page, index) => (
-                <div key={index} className="flex flex-col gap-3">
+                <div key={index} className="contents">
                     {/* Page title with edit button */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center gap-1">
+                    <div className={`grid gap-4 ${colsClass}`}>
+                        <div>
                             <Text fontWeight="bold" size="lg">
                                 {l(page.title)}
                                 {resultsForPage?.results[page.name] &&
@@ -66,16 +90,21 @@ export const FormSummary = ({
                             )}
                         </div>
 
-                        {/*THIS IS PER USER*/}
-                        <div>
-                            {resultsForPage?.weightedAverages[page.name] && (
-                                <Text fontWeight="bold" size="lg">
-                                    {resultsForPage.weightedAverages[page.name].toLocaleString(
-                                        i18n.language,
-                                    )}
-                                </Text>
-                            )}
-                        </div>
+                        {assessmentForms.map((assessment) => (
+                            <div>
+                                {assessment?.weightedAverages[page.name] ? (
+                                    <Text fontWeight="bold" size="lg">
+                                        {assessment.weightedAverages[page.name].toLocaleString(
+                                            i18n.language,
+                                        )}
+                                    </Text>
+                                ) : (
+                                    <Text fontWeight="bold" size="lg">
+                                        -
+                                    </Text>
+                                )}
+                            </div>
+                        ))}
                     </div>
                     {/*CHANGE THIS FOR PER USER OR SOMETHING*/}
                     {/* Questions and answers */}
@@ -90,14 +119,17 @@ export const FormSummary = ({
                     />
                 </div>
             ))}
-            {resultsForPage?.weightedAverages["total"] && (
-                <div className="grid grid-cols-2 gap-4">
+
+            {assessmentForms && (
+                <div className={`grid gap-4 ${colsClass}`}>
                     <Text fontWeight="bold" size="lg">
                         {t("instance.calculations.final_grade").toUpperCase()}
                     </Text>
-                    <Text fontWeight="bold" size="lg">
-                        {resultsForPage?.weightedAverages["total"].toLocaleString(i18n.language)}
-                    </Text>
+                    {assessmentForms.map((assessment) => (
+                        <Text fontWeight="bold" size="lg">
+                            {assessment?.weightedAverages["total"].toLocaleString(i18n.language)}
+                        </Text>
+                    ))}
                 </div>
             )}
 
