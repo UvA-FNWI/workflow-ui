@@ -5,7 +5,7 @@ import {Link} from "react-router";
 import {type ColumnDef} from "@tanstack/react-table";
 
 import {DataTable} from "~/components/Table";
-import {useTranslate} from "~/hooks/useTranslate";
+import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
 
 type ScreenTableProps = {
@@ -15,7 +15,7 @@ type ScreenTableProps = {
 };
 
 export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps) => {
-    const {l} = useTranslate();
+    const {i18n, l} = useTranslate();
 
     const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(
         () =>
@@ -27,7 +27,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                     header: () => l(col.title),
                     cell: (info) => {
                         const value = info.getValue();
-                        const formattedValue = formatCellValue(value, col.dataType);
+                        const formattedValue = formatCellValue(value, col.dataType, i18n.language);
 
                         if (col.link) {
                             const rowId = info.row.original.id;
@@ -46,13 +46,13 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                     },
                     enableSorting: true,
                 })),
-        [columns, l],
+        [columns, i18n.language, l],
     );
 
     return <DataTable data={rows} columns={tableColumns} globalFilter={globalFilter} />;
 };
 
-function formatCellValue(value: unknown, dataType: string): React.ReactNode {
+function formatCellValue(value: unknown, dataType: string, locale: string): React.ReactNode {
     if (value === null || value === undefined) {
         return "—";
     }
@@ -68,6 +68,8 @@ function formatCellValue(value: unknown, dataType: string): React.ReactNode {
             return typeof value === "number" ? value.toLocaleString() : String(value);
         case "Int":
             return typeof value === "number" ? value.toLocaleString() : String(value);
+        case "LocalString":
+            return typeof value === "object" && (value as LocalString)[locale as keyof LocalString];
         default:
             return String(value);
     }

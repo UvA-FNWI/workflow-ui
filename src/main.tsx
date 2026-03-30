@@ -4,9 +4,9 @@ import {createRoot} from "react-dom/client";
 import {Provider} from "react-redux";
 import {RouterProvider} from "react-router";
 
-import {AuthProvider} from "@datanose/core";
-import type {AuthEventCallbacks} from "@datanose/core";
 import {ThemeProvider, ToastProvider} from "@datanose/ui";
+import {AuthProvider} from "@uva-fnwi/datanose-core";
+import type {AuthEventCallbacks} from "@uva-fnwi/datanose-core";
 
 import {
     VITE_AUTH_AUTHORITY,

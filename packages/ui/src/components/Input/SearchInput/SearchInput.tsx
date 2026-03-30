@@ -1,77 +1,61 @@
 import { useRef } from 'react';
 
-import { mergeProps, useFocusRing, useHover, useNumberField } from 'react-aria';
-import { useNumberFieldState } from 'react-stately';
+import { mergeProps, useFocusRing, useHover, useSearchField } from 'react-aria';
+import { useSearchFieldState } from 'react-stately';
 
-import { VariantProps } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../../utils/cn';
+import { Icon } from '../../Icon';
 import { inputVariants } from '../InputVariant';
 
-export type NumberInputVariantProps = VariantProps<typeof inputVariants>;
+export type SearchInputVariantProps = VariantProps<typeof inputVariants>;
 
-export interface NumberInputProps
-  extends Omit<
-      React.ComponentPropsWithoutRef<'input'>,
-      'onChange' | 'value' | 'defaultValue' | 'type'
-    >,
-    NumberInputVariantProps {
-  value?: number;
-  defaultValue?: number;
-  onChange?: (value: number | undefined) => void;
-  minValue?: number;
-  maxValue?: number;
-  step?: number;
+export interface SearchInputProps
+  extends Omit<React.ComponentPropsWithoutRef<'input'>, 'onChange'>,
+    SearchInputVariantProps {
+  value?: string;
+  defaultValue?: string;
+  type?: string;
+  onChange?: (value: string) => void;
   label?: string;
   description?: string;
   errorMessage?: string;
   isValid?: boolean;
-  locale?: string;
 }
 
-export const NumberInput: React.FC<NumberInputProps> = ({
+export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   defaultValue,
   onChange,
-  minValue,
-  maxValue,
-  step,
   label,
   description,
   errorMessage,
   isValid = true,
   isDisabled = false,
-  locale = 'en-US',
   className,
   ...rest
 }) => {
-  const state = useNumberFieldState({
+  const state = useSearchFieldState({
     value,
     defaultValue,
     onChange,
-    minValue,
-    maxValue,
-    step,
     isDisabled: isDisabled ?? false,
     label,
-    locale,
     description,
     errorMessage,
-    validationState: isValid === false ? 'invalid' : 'valid',
+    validationState: isValid ? 'valid' : 'invalid',
   });
 
   const ref = useRef<HTMLInputElement>(null);
   const { inputProps, labelProps, descriptionProps, errorMessageProps } =
-    useNumberField(
+    useSearchField(
       {
         label,
         description,
         errorMessage,
-        minValue,
-        maxValue,
-        step,
         isDisabled: isDisabled ?? false,
-        validationState: isValid === false ? 'invalid' : 'valid',
+        validationState: isValid ? 'valid' : 'invalid',
       },
       state,
       ref
@@ -89,9 +73,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     isValid,
   });
 
-  // TODO: Add buttons for increment and decrement via react-aria
   return (
-    <div className="ui:w-full">
+    <div>
       {label && (
         <label
           {...labelProps}
@@ -100,11 +83,20 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           {label}
         </label>
       )}
-      <input
-        {...mergeProps(inputProps, focusProps, hoverProps, rest)}
-        ref={ref}
-        className={cn(inputClasses, className)}
-      />
+      <div className="ui:relative">
+        <input
+          {...mergeProps(inputProps, focusProps, hoverProps, rest)}
+          ref={ref}
+          className={cn(inputClasses, className, 'ui:pr-12')}
+          type="text"
+        />
+        <div className="ui:pointer-events-none ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-center">
+          <div className="ui:h-1/2 ui:w-px ui:bg-grey-600" />
+          <div className="ui:px-2">
+            <Icon name="search-line" size="md" color="primary" />
+          </div>
+        </div>
+      </div>
       {description && (
         <div
           {...descriptionProps}
@@ -113,7 +105,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           {description}
         </div>
       )}
-      {errorMessage && isValid === false && (
+      {errorMessage && !isValid && (
         <div
           {...errorMessageProps}
           className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"
