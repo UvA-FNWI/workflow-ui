@@ -65,6 +65,19 @@ export const FormSummary = ({
 
     return (
         <div className="flex flex-col gap-6">
+            {/* Assessment columns header */}
+            {assessmentForms.length > 1 && (
+                <div className={`grid gap-4 ${colsClass}`}>
+                    <div></div>
+                    {assessmentForms.map((assessment) => (
+                        <div key={assessment.id}>
+                            <Text fontWeight="bold" size="lg">
+                                {l(assessment.formTitle)}
+                            </Text>
+                        </div>
+                    ))}
+                </div>
+            )}
             {submission.form.pages.map((page, index) => (
                 <div key={index} className="contents">
                     {/* Page title with edit button */}
