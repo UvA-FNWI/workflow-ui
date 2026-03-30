@@ -65,7 +65,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     locale,
     description,
     errorMessage,
-    validationState: isValid === false ? 'invalid' : 'valid',
+    validationState: !isValid ? 'invalid' : 'valid',
   });
 
   const ref = useRef<HTMLInputElement>(null);
@@ -89,7 +89,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       maxValue,
       step,
       isDisabled: isDisabled ?? false,
-      validationState: isValid === false ? 'invalid' : 'valid',
+      validationState: !isValid ? 'invalid' : 'valid',
     },
     state,
     ref
