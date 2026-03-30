@@ -8,20 +8,23 @@ export type SearchListBoxValue = {
     secondaryValue?: string;
 };
 
-export type SearchListBoxProps = Omit<ListBoxProps<SearchListBoxValue>, "children"> & {
-    items: SearchListBoxValue[];
-};
-
 // Selection type from react-stately
 type Selection = "all" | Set<string | number>;
+
+export type SearchListBoxProps = Omit<ListBoxProps<SearchListBoxValue>, "children"> & {
+    items: SearchListBoxValue[];
+    selectedKeys?: Selection;
+};
 
 export function SearchListBox({
     items,
     onSelectionChange,
     selectionMode = "single",
     "aria-label": ariaLabel = "Search results",
+    selectedKeys: initialSelectedKeys,
 }: SearchListBoxProps) {
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(initialSelectedKeys ?? new Set());
+    console.log("Selected keys:", selectedKeys);
 
     const handleSelectionChange = (selected: Selection) => {
         setSelectedKeys(selected);
