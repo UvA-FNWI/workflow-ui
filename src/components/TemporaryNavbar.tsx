@@ -1,7 +1,8 @@
 import {type ChangeEvent, useEffect} from "react";
 
-import {useAuth} from "@datanose/core";
 import {Button, useTheme} from "@datanose/ui";
+import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
+import {useAuth} from "@uva-fnwi/datanose-core";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -29,6 +30,9 @@ function TemporaryNavbar() {
         const newLanguage = event.target.value as Language;
         i18n.changeLanguage(newLanguage);
     };
+    if (isEmbeddedInCanvas()) {
+        return null;
+    }
 
     return (
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">

@@ -1,4 +1,4 @@
-# @datanose/core
+# @uva-fnwi/datanose-core
 
 Shared authentication library for DataNose applications. Provides an OIDC-based auth flow (via `oidc-client-ts`) with support for both SURFconext and Canvas LTI providers.
 
@@ -14,23 +14,19 @@ Shared authentication library for DataNose applications. Provides an OIDC-based 
 
 ## Installation
 
-### As a pnpm workspace dependency
+```bash
+npm install @uva-fnwi/datanose-core
+# or
+pnpm add @uva-fnwi/datanose-core
+```
+
+### As a pnpm workspace dependency (monorepo)
 
 ```json
 "dependencies": {
-  "@datanose/core": "workspace:*"
+  "@uva-fnwi/datanose-core": "workspace:*"
 }
 ```
-
-### As a GitHub tag reference (for external consumers)
-
-```json
-"dependencies": {
-  "@datanose/core": "github:UvA-FNWI/workflow-ui#packages/core@1.0.0:packages/core"
-}
-```
-
-After updating the reference, run `pnpm install`.
 
 ## Usage
 
@@ -39,7 +35,7 @@ After updating the reference, run `pnpm install`.
 Wrap your app with `AuthProvider` and access auth state with `useAuth` in any child:
 
 ```tsx
-import {AuthProvider, useAuth} from "@datanose/core";
+import {AuthProvider, useAuth} from "@uva-fnwi/datanose-core";
 
 const config = {
     authority: import.meta.env.VITE_AUTH_AUTHORITY,
@@ -77,8 +73,8 @@ function Main() {
 Use this when you want auth state in your Redux store:
 
 ```ts
-import {authReducer, AuthService, selectIsAuthenticated} from "@datanose/core";
 import {configureStore} from "@reduxjs/toolkit";
+import {authReducer, AuthService, selectIsAuthenticated} from "@uva-fnwi/datanose-core";
 
 export const store = configureStore({
     reducer: {
@@ -141,15 +137,22 @@ selectIsAuthenticated(state); // boolean
 
 ## Release process
 
-1. Bump `version` in `packages/core/package.json`
-2. Commit and push to `main`
-3. Create and push a git tag:
-    ```bash
-    git tag packages/core@1.0.0
-    git push origin packages/core@1.0.0
-    ```
-4. In the consuming app, update the dependency:
-    ```json
-    "@datanose/core": "github:UvA-FNWI/workflow-ui#packages/core@1.0.0:packages/core"
-    ```
-    Then run `pnpm install`.
+This package lives in a monorepo; `main` is protected, so you do the version bump on a branch and open a PR.
+
+From the repo root:
+
+```bash
+pnpm --filter @uva-fnwi/datanose-core version patch   # 1.0.0 -> 1.0.1
+pnpm --filter @uva-fnwi/datanose-core version minor   # 1.0.0 -> 1.1.0
+pnpm --filter @uva-fnwi/datanose-core version major   # 1.0.0 -> 2.0.0
+```
+
+That updates `packages/core/package.json`, creates a commit, and creates the git tag for the new version (same as `npm version`). Push your branch with `git push --follow-tags` if you want the tag on the remote.
+
+Open a PR against `main` and merge it. The publish workflow runs when `packages/core/package.json` changes on `main`; it doesn’t use tags.
+
+After release, consumers can pull the new version with:
+
+```bash
+pnpm add @uva-fnwi/datanose-core@latest
+```

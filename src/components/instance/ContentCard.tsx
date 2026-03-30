@@ -21,9 +21,12 @@ export function ContentCard({instance, isLoading}: ContentCardProps) {
 
     return (
         <>
-            {instance?.steps.map((step) => (
-                <StepCard step={step} instance={instance} key={step.id} />
-            ))}
+            {instance?.steps
+                .slice()
+                .reverse()
+                .map((step) => (
+                    <StepCard step={step} instance={instance} key={step.id} />
+                ))}
         </>
     );
 }

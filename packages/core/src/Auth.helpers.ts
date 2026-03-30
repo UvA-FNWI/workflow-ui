@@ -47,19 +47,22 @@ export const isEmbedded = (): boolean => {
  * Checks if the application is embedded in Canvas.
  */
 export const isEmbeddedInCanvas = () => {
-    if (!isEmbedded() || !document.referrer) return false;
+    if (!isEmbedded()) return false;
 
-    try {
-        const {host} = new URL(document.referrer);
+    const canvasPatterns = [
+        /^uvadlo-.*\.instructure\.com$/,
+        /^uvadlo-.*\.test\.instructure\.com$/,
+        /^canvas\.instructure\.com$/,
+    ];
 
-        return [
-            /^uvadlo-.*\.instructure\.com$/,
-            /^uvadlo-.*\.test\.instructure\.com$/,
-            /^canvas\.instructure\.com$/,
-        ].some((r) => r.test(host));
-    } catch {
-        return false;
-    }
+    return Array.from(window.location.ancestorOrigins).some((origin) => {
+        try {
+            const {host} = new URL(origin);
+            return canvasPatterns.some((r) => r.test(host));
+        } catch {
+            return false;
+        }
+    });
 };
 
 /**

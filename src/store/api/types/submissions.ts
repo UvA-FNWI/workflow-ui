@@ -39,10 +39,12 @@ export type Form = {
 
 export type Page = {
     index: number;
+    name: string;
     title: LocalString;
     introduction?: LocalString;
     layout: PageLayout;
     questions: Question[];
+    hasResults: boolean;
 };
 
 export type Question = {

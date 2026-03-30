@@ -38,7 +38,7 @@ export type WorkflowStep = {
 
 export type WorkflowStepVersion = {
     versionNumber: number;
-    eventId: string;
+    eventIds: string[];
     submittedAt: string;
     submissions: Submission[];
 };

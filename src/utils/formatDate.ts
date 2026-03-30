@@ -26,7 +26,9 @@ export function formatDate(
             ...options,
         };
 
-        return new Intl.DateTimeFormat(locale, defaultOptions).format(dateObj);
+        return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : locale, defaultOptions).format(
+            dateObj,
+        );
     } catch (error) {
         console.error("Error formatting date:", error);
         return "Invalid date";
@@ -42,8 +44,10 @@ export function formatDate(
 export function formatDateShort(date: string | Date, locale: string = "en"): string {
     return formatDate(date, locale, {
         year: "numeric",
-        month: "numeric",
-        day: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: undefined,
+        minute: undefined,
     });
 }
 
