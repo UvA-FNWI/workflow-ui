@@ -7,7 +7,7 @@ import {
     isEmbeddedInCanvas,
     setCanvasTokenInLocalStorage,
     useAuth,
-} from "@datanose/core";
+} from "@uva-fnwi/datanose-core";
 
 import i18n from "../i18n";
 import {setAccessToken} from "../store/authSlice";
