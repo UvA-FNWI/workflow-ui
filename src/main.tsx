@@ -5,8 +5,8 @@ import {Provider} from "react-redux";
 import {RouterProvider} from "react-router";
 
 import {ThemeProvider, ToastProvider} from "@datanose/ui";
-import {AuthProvider} from "@uva-fnwi/datanose-core";
-import type {AuthEventCallbacks} from "@uva-fnwi/datanose-core";
+import "@datanose/ui/styles";
+import {type AuthEventCallbacks, AuthProvider} from "@uva-fnwi/datanose-core";
 
 import {
     VITE_AUTH_AUTHORITY,
