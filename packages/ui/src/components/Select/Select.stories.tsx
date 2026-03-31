@@ -85,3 +85,17 @@ export const Multiple: Story = {
     selectionMode: 'multiple',
   },
 };
+
+export const Number: Story = {
+  render: (args: any) => (
+    <Select {...args} className="ui:w-24 ui:items-center">
+      {Array.from({ length: 11 }, (_, i) => (
+        <Item key={i}>{i}</Item>
+      ))}
+    </Select>
+  ),
+  args: {
+    label: 'Number',
+    placeholder: '0-10',
+  },
+};

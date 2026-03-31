@@ -110,7 +110,7 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
     ...props,
     isDisabled,
   });
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   const {
     groupProps,
     labelProps,
@@ -141,7 +141,6 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
       )}
       <div
         {...groupProps}
-        ref={ref}
         className={cn(
           inputClasses,
           'ui:flex ui:items-center ui:justify-between',
@@ -149,10 +148,14 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
         )}
       >
         <DateField {...fieldProps} />
-        <CalendarButton {...buttonProps} isDisabled={isDisabled} />
+        <CalendarButton {...buttonProps} isDisabled={isDisabled} ref={ref} />
       </div>
       {state.isOpen && (
-        <Popover state={state} triggerRef={ref as React.RefObject<HTMLElement>}>
+        <Popover
+          state={state}
+          triggerRef={ref as React.RefObject<HTMLElement>}
+          placement="top end"
+        >
           <DismissButton onDismiss={state.close} />
           <div {...dialogProps}>
             <Calendar {...calendarProps} />
@@ -168,7 +171,7 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
           {description}
         </div>
       )}
-      {errorMessage && isValid === false && (
+      {errorMessage && !isValid && (
         <div
           {...errorMessageProps}
           className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"

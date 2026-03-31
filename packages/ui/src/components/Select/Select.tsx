@@ -22,6 +22,7 @@ import type { Node, SelectState } from 'react-stately';
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 import { inputVariants } from '../Input/InputVariant';
+import { selectionVariants } from './SelectionVariants';
 
 type SelectSelectionMode = 'single' | 'multiple';
 
@@ -65,7 +66,7 @@ const SelectPopover = <
         {...popoverProps}
         ref={popoverRef}
         style={popoverStyle}
-        className="ui:absolute ui:z-50 ui:mt-1"
+        className="ui:absolute ui:z-50 ui:mt-1 ui:bg-grey-100"
       >
         {children}
       </div>
@@ -102,23 +103,16 @@ const SelectOption = <
       {...mergeProps(optionProps, hoverProps, focusProps)}
       ref={ref}
       className={cn(
-        'ui:flex ui:cursor-pointer ui:items-center ui:justify-between ui:gap-2 ui:rounded-sm ui:px-3 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none',
-        isSelected && 'ui:bg-grey-100 ui:dark:bg-grey-800',
-        isHovered && !isSelected && 'ui:bg-grey-50 ui:dark:bg-grey-850',
-        isFocusVisible &&
-          'ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:ring-orange-500',
-        isDisabled && 'ui:cursor-not-allowed ui:bg-transparent ui:opacity-50'
+        'ui:text-md ui:flex ui:items-center ui:justify-between ui:gap-2 ui:rounded-sm ui:px-3 ui:py-2 ui:transition-colors ui:duration-150 ui:outline-none',
+        selectionVariants({
+          isSelected,
+          isHovered,
+          isDisabled,
+          isFocusVisible,
+        })
       )}
     >
       <span className="ui:flex-1 ui:truncate">{item.rendered}</span>
-      {isSelected && (
-        <Icon
-          name="checkmark-small-line"
-          size="sm"
-          color="secondary"
-          aria-hidden
-        />
-      )}
     </li>
   );
 };
@@ -144,7 +138,7 @@ const SelectListBox = <
     <ul
       {...listBoxProps}
       ref={ref}
-      className="ui:max-h-64 ui:overflow-y-auto ui:rounded-md ui:border ui:border-grey-300 ui:bg-white ui:p-1 ui:text-black ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white"
+      className="ui:max-h-64 ui:overflow-y-auto ui:rounded-xs ui:border ui:border-grey-300 ui:bg-grey-100 ui:p-1 ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900"
     >
       {[...state.collection].map(item =>
         item.type === 'item' ? (
@@ -191,7 +185,7 @@ export function Select<
     ...restProps
   } = props;
 
-  const validationState = isValid === false ? 'invalid' : 'valid';
+  const validationState = !isValid ? 'invalid' : 'valid';
   const state = useSelectState<T, M>({
     ...restProps,
     label,
@@ -231,7 +225,7 @@ export function Select<
     isDisabled,
   });
 
-  const invalid = isInvalid || isValid === false;
+  const invalid = isInvalid || !isValid;
   const triggerClasses = inputVariants({
     isDisabled,
     isFocusVisible,
