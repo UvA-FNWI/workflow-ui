@@ -15,14 +15,14 @@ const meta: Meta<typeof Pill> = {
     },
     variant: {
       control: { type: 'select' },
-      options: ['grey', 'red'],
+      options: ['grey', 'red', 'green', 'orange', 'darkRed'],
       description: 'The visual style variant of the pill',
     },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Pill>;
 
 export const Default: Story = {
   args: {
@@ -33,27 +33,21 @@ export const Default: Story = {
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-      <Pill variant="grey">3</Pill>
-      <Pill variant="red">7</Pill>
+      <Pill variant="darkRed">3</Pill>
+      <Pill variant="red">Rejected</Pill>
+      <Pill variant="green">Accepted</Pill>
+      <Pill variant="orange">In progress</Pill>
+      <Pill variant="grey">Waiting</Pill>
     </div>
   ),
 };
 
-export const WithText: Story = {
-  render: () => (
-    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-      <Pill variant="grey">New</Pill>
-      <Pill variant="red">Hot</Pill>
-    </div>
-  ),
-};
-
-export const InContext: Story = {
+export const Notifications: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span>Notifications</span>
-        <Pill variant="red">5</Pill>
+        <Pill variant="darkRed">5</Pill>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span>Messages</span>
