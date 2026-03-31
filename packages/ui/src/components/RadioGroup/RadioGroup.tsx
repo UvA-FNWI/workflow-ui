@@ -59,7 +59,7 @@ const radioItemVariants = cva(
 
 // Radio circle variants
 const radioCircleVariants = cva(
-  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:rounded-full ui:border-2 ui:outline-6 ui:outline-transparent ui:transition-all ui:duration-200',
+  'ui:relative ui:inline-flex ui:h-5 ui:w-5 ui:items-center ui:justify-center ui:rounded-full ui:border-2 ui:outline-6 ui:outline-transparent ui:transition-all ui:duration-200',
   {
     variants: {
       isSelected: {

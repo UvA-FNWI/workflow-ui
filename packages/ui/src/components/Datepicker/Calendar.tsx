@@ -93,18 +93,18 @@ function CalendarLayout({
     <div
       {...calendarProps}
       ref={ref}
-      className="ui:inline-block ui:rounded-lg ui:bg-white ui:p-4 ui:shadow-lg ui:dark:bg-grey-900"
+      className="ui:inline-block ui:rounded-xs ui:bg-white ui:p-4 ui:shadow-2xl ui:outline-none ui:dark:bg-grey-900"
     >
       {/* Header with navigation */}
       <div className="ui:mb-4 ui:flex ui:items-center ui:justify-between">
         <CalendarNavButton onPress={onPressPrev} isDisabled={isPrevDisabled}>
-          <Icon name="chevron-left-line" className="ui:h-5 ui:w-5" />
+          <Icon name="chevron-left-line" size="md" type="primary" />
         </CalendarNavButton>
-        <h2 className="ui:text-lg ui:font-semibold ui:text-black ui:dark:text-white">
+        <h2 className="ui:text-lg ui:font-semibold ui:text-grey-900 ui:dark:text-white">
           {title}
         </h2>
         <CalendarNavButton onPress={onPressNext} isDisabled={isNextDisabled}>
-          <Icon name="chevron-right-line" className="ui:h-5 ui:w-5" />
+          <Icon name="chevron-right-line" size="md" type="primary" />
         </CalendarNavButton>
       </div>
       {/* Calendar Grid */}

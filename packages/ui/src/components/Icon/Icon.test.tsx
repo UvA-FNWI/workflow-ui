@@ -105,7 +105,7 @@ describe('Icon Component', () => {
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
-        expect(svg).toHaveClass('ui:text-grey-900');
+        expect(svg).toHaveClass('ui:text-black');
       });
     });
 
