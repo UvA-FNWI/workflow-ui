@@ -314,3 +314,14 @@ export const WithBorder: Story = {
     children: null,
   },
 };
+
+export const Disabled: Story = {
+  render: BasicTemplate,
+  args: {
+    padding: 'none',
+    shadow: 'none',
+    border: 'none',
+    children: null,
+    isDisabled: true,
+  },
+};

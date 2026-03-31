@@ -6,6 +6,7 @@
     "stop_impersonating_button": "Stop impersoneren",
     "title": "Admin"
   },
+  "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "close": "Sluiten",
   "confirm": "Bevestigen",
@@ -52,10 +53,9 @@
   "screens": {
     "students": "Studenten"
   },
-  "step_card": {
-    "are_you_sure": "Weet je het zeker?",
-    "cancel": "Annuleren",
-    "confirm": "Bevestigen"
+  "status": {
+    "completed_on": "Voltooid op",
+    "submitted": "Ingeleverd"
   },
   "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
   "studentCard": {
@@ -74,7 +74,6 @@
   },
   "version_card": {
     "no_answer": "Geen antwoord gegeven",
-    "submitted": "Ingeleverd",
     "version_nr": "Versie #{{versionNumber}}"
   }
 }
