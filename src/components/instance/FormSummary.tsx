@@ -1,4 +1,4 @@
-import {Button, Icon, Text} from "@datanose/ui";
+import {Button, Icon, Separator, Text} from "@datanose/ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
@@ -129,6 +129,9 @@ export const FormSummary = ({
                         noAnswerText={t("instance.summary.no_answer")}
                         instanceId={instanceId}
                         submissionId={submission.id}
+                    />
+                    <Separator
+                        weight={index == submission.form.pages.length - 1 ? "bold" : "normal"}
                     />
                 </div>
             ))}
