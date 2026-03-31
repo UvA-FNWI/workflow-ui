@@ -7,6 +7,7 @@ import {baseApi} from "./api/baseApi";
 import {usersApi} from "./api/usersApi";
 import {setAccessToken, setCurrentUser} from "./authSlice";
 import authReducer from "./authSlice";
+import effectsReducer from "./effectsSlice";
 import {impersonationPersistMiddleware} from "./impersonation";
 
 const listenerMiddleware = createListenerMiddleware();
@@ -32,6 +33,7 @@ listenerMiddleware.startListening({
 export const store = configureStore({
     reducer: {
         auth: authReducer,
+        effects: effectsReducer,
         [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

@@ -66,7 +66,11 @@ export const StepCard = ({step, instance}: Props) => {
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
                     {submissions.map((submission) => (
-                        <FormSummary instanceId={instance.id} submission={submission} />
+                        <FormSummary
+                            key={submission.id}
+                            instanceId={instance.id}
+                            submission={submission}
+                        />
                     ))}
 
                     {isFormOpen && (
