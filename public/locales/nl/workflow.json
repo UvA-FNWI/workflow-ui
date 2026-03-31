@@ -37,7 +37,9 @@
     },
     "summary": {
       "edit_page": "Pagina bewerken",
+      "hide_answers": "Verberg onderdelen en toelichting",
       "no_answer": "Geen antwoord gegeven",
+      "show_answers": "Toon onderdelen en toelichting",
       "title": "Samenvatting"
     },
     "workflowInstance": "Workflow"

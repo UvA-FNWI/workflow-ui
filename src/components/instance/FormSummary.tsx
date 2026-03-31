@@ -5,7 +5,7 @@ import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import type {PageType, Submission} from "~/store/api/types/submissions.ts";
-import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
+import {flattenPagesAndQuestions, getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
@@ -45,13 +45,9 @@ export const FormSummary = ({
             ),
     );
 
-    const resultsForPage = assessmentForms.find((f) => f.id === submission.id);
-
-    console.log("assessmentForms", assessmentForms);
-    console.log("resultsForPage", resultsForPage);
-
-    const pages = pageType === "AssessmentOverview" ? submission.form.pages : submission.form.pages;
-    console.log("pages", pages);
+    const assessmentPagesAndQuestions =
+        assessmentForms.find((f) => f.id === submission.id)?.results ??
+        flattenPagesAndQuestions(assessmentForms);
 
     const colsMap: Record<number, string> = {
         1: "grid-cols-1",
@@ -71,8 +67,8 @@ export const FormSummary = ({
                     <div></div>
                     {assessmentForms.map((assessment) => (
                         <div key={assessment.id}>
-                            <Text fontWeight="bold" size="lg">
-                                {l(assessment.formTitle)}
+                            <Text fontWeight="normal" size="lg" intent="error">
+                                {l(assessment.formTitle)?.toUpperCase()}
                             </Text>
                         </div>
                     ))}
@@ -83,10 +79,10 @@ export const FormSummary = ({
                     {/* Page title with edit button */}
                     <div className={`grid gap-4 ${colsClass}`}>
                         <div>
-                            <Text fontWeight="bold" size="lg">
-                                {l(page.title)}
-                                {resultsForPage?.results[page.name] &&
-                                    ` (${resultsForPage?.results[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
+                            <Text fontWeight="semibold" size="lg">
+                                {l(page.title)?.toUpperCase()}
+                                {assessmentPagesAndQuestions[page.name] &&
+                                    ` (${assessmentPagesAndQuestions[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                             </Text>
                             {onEditPage && pageType === "Normal" && (
                                 <Button
@@ -125,10 +121,12 @@ export const FormSummary = ({
                         questionAnswerPairs={getVisibleQuestionAnswerPairs(
                             page.questions,
                             submission.answers,
+                            assessmentPagesAndQuestions[page.name],
                         )}
                         noAnswerText={t("instance.summary.no_answer")}
                         instanceId={instanceId}
                         submissionId={submission.id}
+                        colsClass={colsClass}
                     />
                     <Separator
                         weight={index == submission.form.pages.length - 1 ? "bold" : "normal"}
