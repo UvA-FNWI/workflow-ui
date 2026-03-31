@@ -25,11 +25,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     if (!submission) return <div>Loading...</div>;
 
-    const isAssessmentOverviewPage = submission.form.pages.some(
-        (page) => page.type === "AssessmentOverview",
-    );
-
-    if (isAssessmentOverviewPage) {
+    if (submission.form.formType === "AssessmentOverview") {
         return (
             <>
                 <Heading size="sm" className="uppercase" fontType="body">
@@ -40,7 +36,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                     instanceId={instanceId}
                     onSubmit={onClose}
                     onEditPage={() => {}}
-                    pageType="AssessmentOverview"
+                    formType="AssessmentOverview"
                 />
             </>
         );

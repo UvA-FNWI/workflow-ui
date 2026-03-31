@@ -4,7 +4,7 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
-import type {PageType, Submission} from "~/store/api/types/submissions.ts";
+import type {FormType, Submission} from "~/store/api/types/submissions.ts";
 import {flattenPagesAndQuestions, getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
     submission: Submission;
     onEditPage?: (index: number) => void;
     onSubmit?: () => void;
-    pageType?: PageType;
+    formType?: FormType;
 };
 
 export const FormSummary = ({
@@ -20,17 +20,17 @@ export const FormSummary = ({
     submission,
     onEditPage,
     onSubmit,
-    pageType = "Normal",
+    formType = "Normal",
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
     const hasResults =
-        pageType === "AssessmentOverview" || submission.form.pages.some((p) => p.hasResults);
+        formType === "AssessmentOverview" || submission.form.pages.some((p) => p.hasResults);
 
     const {data: assessmentResults} = assessmentsApi.endpoints.getResults.useQuery(
         {
             instanceId,
-            submissionId: pageType == "AssessmentOverview" ? submission.form.name : submission.id,
+            submissionId: formType == "AssessmentOverview" ? submission.form.name : submission.id,
         },
         {
             skip: !hasResults,
@@ -84,7 +84,7 @@ export const FormSummary = ({
                                 {assessmentPagesAndQuestions[page.name] &&
                                     ` (${assessmentPagesAndQuestions[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                             </Text>
-                            {onEditPage && pageType === "Normal" && (
+                            {onEditPage && formType === "Normal" && (
                                 <Button
                                     intent="ghost"
                                     size="small"
