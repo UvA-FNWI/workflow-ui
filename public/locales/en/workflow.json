@@ -11,6 +11,14 @@
   "close": "Close",
   "confirm": "Confirm",
   "continue": "Continue",
+  "external_user_add": {
+    "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
+    "email": "Email address",
+    "institute": "Institute (university/company)",
+    "institute_new": "New institute",
+    "name": "Name",
+    "title": "Add external user"
+  },
   "file_upload": {
     "description": "Description",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
@@ -65,6 +73,7 @@
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
+    "not_in_list": "Not in list",
     "search_hint_one": "Search for a user",
     "search_hint_other": "Search for users",
     "search_placeholder": "Search for a user",

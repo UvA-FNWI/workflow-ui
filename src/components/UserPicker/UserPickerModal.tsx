@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {Button, LoadingSpinner, Modal, SearchInput} from "@datanose/ui";
+import {Button, Icon, LoadingSpinner, Modal, SearchInput} from "@datanose/ui";
 
 import {SearchListBox, type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 import {useDebounce} from "~/hooks/useDebounce";
@@ -195,16 +195,28 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             </Modal.Body>
 
             <Modal.Footer>
-                <Button intent="secondary" onClick={handleCancel}>
-                    {t("cancel")}
-                </Button>
                 <Button
                     intent="primary"
+                    variant="destructive"
                     onClick={handleConfirm}
                     disabled={!hasSelection}
                     ref={confirmButtonRef}
                 >
                     {t("confirm")}
+                </Button>
+                <Button
+                    intent="secondary"
+                    leftIcon={<Icon name="user-add-line" className="text-inherit" />}
+                >
+                    {t("user_picker.not_in_list")}{" "}
+                </Button>
+                <Button
+                    intent="secondary"
+                    variant="destructive"
+                    onClick={handleCancel}
+                    className="ml-auto"
+                >
+                    {t("cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>

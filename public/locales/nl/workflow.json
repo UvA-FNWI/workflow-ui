@@ -11,6 +11,14 @@
   "close": "Sluiten",
   "confirm": "Bevestigen",
   "continue": "Verder",
+  "external_user_add": {
+    "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
+    "email": "E-mailadres",
+    "institute": "Instituut (universiteit/bedrijf)",
+    "institute_new": "Nieuw instituut",
+    "name": "Naam",
+    "title": "Voeg externe gebruiker toe"
+  },
   "file_upload": {
     "description": "Beschrijving",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
@@ -65,6 +73,7 @@
   "submit": "Indienen",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
+    "not_in_list": "Niet in lijst",
     "search_hint_one": "Zoek een medewerker",
     "search_hint_other": "Zoek medewerkers",
     "search_placeholder": "Zoek een medewerker",
