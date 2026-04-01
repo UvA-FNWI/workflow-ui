@@ -1,4 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate.ts";
+import type {Answer} from "~/store/api/types/submissions.ts";
 
 export type AssessmentGroup = {
     id: string;
@@ -10,6 +11,7 @@ export type Assessment = {
     formTitle: LocalString;
     results: Record<string, Result[]>;
     weightedAverages: Record<string, number>;
+    answers: Answer[];
 };
 
 export type Result = {

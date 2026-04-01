@@ -4,7 +4,6 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
-import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {FormType, Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
@@ -46,16 +45,6 @@ export const FormSummary = ({
             ),
     );
 
-    const {data: allSubmissionsForForm} = submissionsApi.endpoints.getMultipleSubmissions.useQuery(
-        {
-            instanceId,
-            submissionIds: assessmentForms.map((f) => f.id) ?? [],
-        },
-        {
-            skip: !hasResults || formType !== "AssessmentOverview",
-        },
-    );
-
     const colsMap: Record<number, string> = {
         1: "grid-cols-1",
         2: "grid-cols-2",
@@ -82,13 +71,11 @@ export const FormSummary = ({
                 </div>
             )}
             {submission.form.pages.map((page, index) => {
-                const allSubmissions = allSubmissionsForForm ?? [submission];
-
-                const allQuestionAnswerPairs = allSubmissions.map((sub) =>
+                const allQuestionAnswerPairs = assessmentForms.map((a) =>
                     getVisibleQuestionAnswerPairs(
                         page.questions,
-                        sub.answers,
-                        assessmentForms.find((f) => f.id === sub.id)?.results?.[page.name],
+                        a.answers,
+                        assessmentForms.find((f) => f.id === a.id)?.results?.[page.name],
                     ),
                 );
                 return (

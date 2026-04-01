@@ -4,7 +4,6 @@ import {instancesApi} from "~/store/api/instancesApi.ts";
 import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
 
 type SubmissionParams = {instanceId: string; submissionId: string};
-type MultipleSubmissionsParams = {instanceId: string; submissionIds: string[]};
 
 export const submissionsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -13,19 +12,6 @@ export const submissionsApi = baseApi.injectEndpoints({
             providesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Submission", instanceId, submissionId},
             ],
-        }),
-        getMultipleSubmissions: builder.query<Submission[], MultipleSubmissionsParams>({
-            query: ({instanceId, submissionIds}) => {
-                const params = new URLSearchParams();
-                submissionIds.forEach((id) => params.append("submissionIds", id));
-                return `/Submissions/${instanceId}?${params.toString()}`;
-            },
-            providesTags: (_result, _error, {instanceId, submissionIds}) =>
-                submissionIds.map((submissionId) => ({
-                    type: "Submission",
-                    instanceId,
-                    submissionId,
-                })),
         }),
         submitSubmission: builder.mutation<SubmitSubmissionResult, SubmissionParams>({
             query: (params) => ({
