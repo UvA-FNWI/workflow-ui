@@ -4,8 +4,9 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
+import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {FormType, Submission} from "~/store/api/types/submissions.ts";
-import {flattenPagesAndQuestions, getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
+import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
@@ -45,9 +46,15 @@ export const FormSummary = ({
             ),
     );
 
-    const assessmentPagesAndQuestions =
-        assessmentForms.find((f) => f.id === submission.id)?.results ??
-        flattenPagesAndQuestions(assessmentForms);
+    const {data: allSubmissionsForForm} = submissionsApi.endpoints.getMultipleSubmissions.useQuery(
+        {
+            instanceId,
+            submissionIds: assessmentForms.map((f) => f.id) ?? [],
+        },
+        {
+            skip: !hasResults || formType !== "AssessmentOverview",
+        },
+    );
 
     const colsMap: Record<number, string> = {
         1: "grid-cols-1",
@@ -74,65 +81,73 @@ export const FormSummary = ({
                     ))}
                 </div>
             )}
-            {submission.form.pages.map((page, index) => (
-                <div key={index} className="contents">
-                    {/* Page title with edit button */}
-                    <div className={`grid gap-4 ${colsClass}`}>
-                        <div>
-                            <Text fontWeight="semibold" size="lg">
-                                {l(page.title)?.toUpperCase()}
-                                {assessmentPagesAndQuestions[page.name] &&
-                                    ` (${assessmentPagesAndQuestions[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
-                            </Text>
-                            {onEditPage && formType === "Normal" && (
-                                <Button
-                                    intent="ghost"
-                                    size="small"
-                                    shape="circular"
-                                    className="ui:border-0 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                    onClick={() => onEditPage(index)}
-                                    rightIcon={<Icon name="edit-line" size="xs" color="danger" />}
-                                    aria-label={t("instance.summary.edit_page", {
-                                        pageTitle: l(page.title),
-                                    })}
-                                ></Button>
-                            )}
-                        </div>
+            {submission.form.pages.map((page, index) => {
+                const allSubmissions = allSubmissionsForForm ?? [submission];
 
-                        {assessmentForms.map((assessment) => (
+                const allQuestionAnswerPairs = allSubmissions.map((sub) =>
+                    getVisibleQuestionAnswerPairs(
+                        page.questions,
+                        sub.answers,
+                        assessmentForms.find((f) => f.id === sub.id)?.results?.[page.name],
+                    ),
+                );
+                return (
+                    <div key={index} className="contents">
+                        {/* Page title with edit button */}
+                        <div className={`grid gap-4 ${colsClass}`}>
                             <div>
-                                {assessment?.weightedAverages[page.name] ? (
-                                    <Text fontWeight="bold" size="lg">
-                                        {assessment.weightedAverages[page.name].toLocaleString(
-                                            i18n.language,
-                                        )}
-                                    </Text>
-                                ) : (
-                                    <Text fontWeight="bold" size="lg">
-                                        -
-                                    </Text>
+                                <Text fontWeight="semibold" size="lg">
+                                    {l(page.title)?.toUpperCase()}
+                                    {assessmentForms[0]?.results?.[page.name]?.length &&
+                                        ` (${assessmentForms[0].results?.[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
+                                </Text>
+                                {onEditPage && formType === "Normal" && (
+                                    <Button
+                                        intent="ghost"
+                                        size="small"
+                                        shape="circular"
+                                        className="ui:border-0 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                        onClick={() => onEditPage(index)}
+                                        rightIcon={
+                                            <Icon name="edit-line" size="xs" color="danger" />
+                                        }
+                                        aria-label={t("instance.summary.edit_page", {
+                                            pageTitle: l(page.title),
+                                        })}
+                                    ></Button>
                                 )}
                             </div>
-                        ))}
+
+                            {assessmentForms.map((assessment) => (
+                                <div>
+                                    {assessment?.weightedAverages[page.name] ? (
+                                        <Text fontWeight="bold" size="lg">
+                                            {assessment.weightedAverages[page.name].toLocaleString(
+                                                i18n.language,
+                                            )}
+                                        </Text>
+                                    ) : (
+                                        <Text fontWeight="bold" size="lg">
+                                            -
+                                        </Text>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        {/* Questions and answers */}
+                        <QuestionAnswerList
+                            questionAnswerPairs={allQuestionAnswerPairs}
+                            noAnswerText={t("instance.summary.no_answer")}
+                            instanceId={instanceId}
+                            submissionId={submission.id}
+                            colsClass={colsClass}
+                        />
+                        <Separator
+                            weight={index == submission.form.pages.length - 1 ? "bold" : "normal"}
+                        />
                     </div>
-                    {/*CHANGE THIS FOR PER USER OR SOMETHING*/}
-                    {/* Questions and answers */}
-                    <QuestionAnswerList
-                        questionAnswerPairs={getVisibleQuestionAnswerPairs(
-                            page.questions,
-                            submission.answers,
-                            assessmentPagesAndQuestions[page.name],
-                        )}
-                        noAnswerText={t("instance.summary.no_answer")}
-                        instanceId={instanceId}
-                        submissionId={submission.id}
-                        colsClass={colsClass}
-                    />
-                    <Separator
-                        weight={index == submission.form.pages.length - 1 ? "bold" : "normal"}
-                    />
-                </div>
-            ))}
+                );
+            })}
 
             {assessmentForms && (
                 <div className={`grid gap-4 ${colsClass}`}>
