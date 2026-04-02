@@ -1,4 +1,4 @@
-import type {Answer, Submission} from "./submissions";
+import type {Answer, EffectResult, Submission} from "./submissions";
 import type {LocalString} from "~/hooks/useTranslate.ts";
 import type {ActionType, WorkflowInstance} from "~/store/api/types/instances.ts";
 
@@ -16,6 +16,7 @@ export type ExecuteActionResult = {
 };
 
 export type SubmitSubmissionResult = {
+    effectResult: EffectResult;
     submission: Submission;
     updatedInstance?: WorkflowInstance;
     validationErrors: ValidationError[];

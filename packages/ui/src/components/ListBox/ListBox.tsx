@@ -1,18 +1,13 @@
 import { useRef } from 'react';
 
-import {
-  AriaListBoxOptions,
-  mergeProps,
-  useFocusRing,
-  useListBox,
-} from 'react-aria';
+import { AriaListBoxOptions, mergeProps, useListBox } from 'react-aria';
 import { ListProps, ListState, useListState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
 import { ListBoxItem } from './ListBoxItem';
 
 export interface ListBoxProps<T extends object>
-  extends Omit<ListProps<T>, 'children'>,
+  extends Omit<ListProps<T>, 'children' | 'filter' | 'collection'>,
     Pick<
       AriaListBoxOptions<T>,
       'autoFocus' | 'shouldFocusWrap' | 'shouldSelectOnPressUp' | 'linkBehavior'
@@ -30,21 +25,20 @@ export function ListBox<T extends object>(props: ListBoxProps<T>) {
   const state = useListState(restProps);
   const ref = useRef<HTMLUListElement>(null);
   const { listBoxProps } = useListBox(restProps, state, ref);
-  const { focusProps, isFocusVisible } = useFocusRing({ within: true });
 
   return (
     <ul
-      {...mergeProps(listBoxProps, focusProps)}
+      {...mergeProps(listBoxProps)}
       ref={ref}
       className={cn(
-        'ui:max-h-[400px] ui:overflow-y-auto ui:rounded-md ui:border ui:border-grey-300 ui:bg-white ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900',
-        isFocusVisible &&
-          'ui:ring-2 ui:ring-navy-600 ui:ring-offset-2 ui:dark:ring-orange-500 ui:dark:ring-offset-grey-900',
+        'ui:max-h-[200px] ui:overflow-y-auto ui:rounded-xs ui:border ui:border-grey-300 ui:bg-white ui:text-grey-900 ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white',
         className
       )}
     >
       {[...state.collection].map(item => (
-        <ListBoxItem key={item.key} item={item} state={state} />
+        <div className="ui:border-b ui:border-grey-300 ui:dark:border-grey-700">
+          <ListBoxItem key={item.key} item={item} state={state} />
+        </div>
       ))}
     </ul>
   );
