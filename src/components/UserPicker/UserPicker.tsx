@@ -74,6 +74,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
+        onChange?.(null);
         toast.info(t("external_user_add.success_toast"));
     };
 

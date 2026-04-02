@@ -1,4 +1,5 @@
 {
+  "add_new": "Add new",
   "admin": {
     "impersonate_role_button": "Impersonate",
     "impersonate_role_placeholder": "Select a role",
@@ -16,7 +17,6 @@
     "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
     "email_error": "Please enter a valid email address",
     "institute": "Institute (university/company)",
-    "institute_new": "New institute",
     "new_institute_option": "Add new institute",
     "success_toast": "The added external user received an email to confirm their account.",
     "title": "Add external user"
