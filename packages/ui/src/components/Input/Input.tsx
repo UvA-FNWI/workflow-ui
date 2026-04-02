@@ -5,6 +5,7 @@ import { mergeProps, useFocusRing, useHover, useTextField } from 'react-aria';
 import { VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
+import { InputLabel } from './InputLabel';
 import { inputVariants } from './InputVariant';
 
 export type InputVariantProps = VariantProps<typeof inputVariants>;
@@ -65,14 +66,7 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <div>
-      {label && (
-        <label
-          {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
-        >
-          {label}
-        </label>
-      )}
+      {label && <InputLabel {...labelProps}>{label}</InputLabel>}
       <input
         {...mergeProps(inputProps, focusProps, hoverProps, rest)}
         ref={ref}

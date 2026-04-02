@@ -25,6 +25,10 @@ export {
   type InputVariantProps,
 } from './components/Input/Input';
 export {
+  InputLabel,
+  type InputLabelProps,
+} from './components/Input/InputLabel';
+export {
   NumberInput,
   type NumberInputProps,
   type NumberInputVariantProps,

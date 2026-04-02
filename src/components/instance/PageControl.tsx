@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Heading, LoadingSpinner, Text} from "@datanose/ui";
+import {Heading, InputLabel, LoadingSpinner, Text} from "@datanose/ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -37,10 +37,10 @@ export const PageControl = ({
     const answers = useMemo(() => submission?.answers ?? [], [submission]);
     const visibleQuestions = page.questions.filter((q) => {
         const a = answers.find((x) => x.questionName === q.name);
-        return !a || a.isVisible !== false;
+        return !a || a.isVisible;
     });
     const formValues = Object.fromEntries(
-        answers.filter((a) => a.isVisible !== false).map((a) => [a.questionName, a.value]),
+        answers.filter((a) => a.isVisible).map((a) => [a.questionName, a.value]),
     );
 
     const form = useForm({defaultValues: formValues});
@@ -49,7 +49,7 @@ export const PageControl = ({
     // When a conditionally hidden question's Controller unmounts, react-hook-form unregisters
     // the field and the value is lost. When the question reappears, restore from submission data.
     useEffect(() => {
-        const visibleAnswers = answers.filter((a) => a.isVisible !== false);
+        const visibleAnswers = answers.filter((a) => a.isVisible);
         visibleAnswers.forEach((answer) => {
             const valueInForm = form.getValues(answer.questionName);
             if (valueInForm === undefined) {
@@ -142,7 +142,7 @@ export const PageControl = ({
                                 render={({field}) => {
                                     return (
                                         <div className="mb-4">
-                                            <div key={question.name}>
+                                            <InputLabel key={question.name}>
                                                 {l(question.text)}
                                                 {results &&
                                                     results.find(
@@ -150,7 +150,7 @@ export const PageControl = ({
                                                     ) &&
                                                     ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
                                                 {!question.isRequired && ` ${t("optional")}`}
-                                            </div>
+                                            </InputLabel>
                                             <InputControl
                                                 value={field.value}
                                                 onChange={field.onChange}
