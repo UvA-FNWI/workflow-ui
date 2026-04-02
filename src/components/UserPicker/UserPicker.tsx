@@ -1,8 +1,10 @@
 import {useState} from "react";
 
 import {SearchInput} from "@datanose/ui";
+import {useToast} from "@datanose/ui";
 
 import {UserPickerModal} from "./UserPickerModal";
+import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
 
@@ -38,8 +40,10 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     searchPlaceholder,
     minSearchLength,
 }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const {t} = useTranslate("workflow", {keyPrefix: "user_picker"});
+    const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
+    const [isOpenExternal, setIsOpenExternal] = useState(false);
+    const {t} = useTranslate("workflow");
+    const toast = useToast();
 
     // Normalize value prop to array
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
@@ -48,19 +52,30 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     const displayValue = (() => {
         if (valueArray.length === 0) return "";
         if (valueArray.length === 1) return valueArray[0].displayName.trim();
-        return t("selected_users", {count: valueArray.length});
+        return t("user_picker.selected_users", {count: valueArray.length});
     })();
 
-    const handleOpenModal = () => !isDisabled && setIsOpen(true);
+    const handleOpenUserPickerModal = () => !isDisabled && setIsOpenUserPicker(true);
+
+    const handleOpenExternalUserModal = () => !isDisabled && setIsOpenExternal(true);
 
     const handleSearchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key !== "Enter") return;
         e.preventDefault();
-        handleOpenModal();
+        handleOpenUserPickerModal();
     };
 
-    const handleConfirm = (selectedUsers: UserSearchResult[]) =>
+    const handleConfirmUserPicker = (selectedUsers: UserSearchResult[]) =>
         onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
+
+    const handleConfirmExternalUser = (newUser: UserSearchResult) => {
+        console.log("New external user added:");
+        console.log(JSON.stringify(newUser, null, 2));
+
+        setIsOpenExternal(false);
+        setIsOpenUserPicker(false);
+        toast.info(t("external_user_add.success_toast"));
+    };
 
     return (
         <>
@@ -68,7 +83,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 label={label}
                 placeholder={placeholder}
                 value={displayValue}
-                onClick={handleOpenModal}
+                onClick={handleOpenUserPickerModal}
                 onKeyDown={handleSearchInputKeyDown}
                 isDisabled={isDisabled}
                 readOnly={true}
@@ -77,14 +92,21 @@ export const UserPicker: React.FC<UserPickerProps> = ({
             />
 
             <UserPickerModal
-                isOpen={isOpen}
-                onOpenChange={setIsOpen}
+                isOpen={isOpenUserPicker}
+                onOpenChange={setIsOpenUserPicker}
                 initialSelection={valueArray}
-                onConfirm={handleConfirm}
+                onConfirm={handleConfirmUserPicker}
+                onAddExternalUser={handleOpenExternalUserModal}
                 selectionMode={selectionMode}
                 title={modalTitle}
                 searchPlaceholder={searchPlaceholder}
                 minSearchLength={minSearchLength}
+            />
+
+            <AddExternalUserModal
+                isOpen={isOpenExternal}
+                onOpenChange={setIsOpenExternal}
+                onConfirm={handleConfirmExternalUser}
             />
         </>
     );

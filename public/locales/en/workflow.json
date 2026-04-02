@@ -11,12 +11,14 @@
   "close": "Close",
   "confirm": "Confirm",
   "continue": "Continue",
+  "email": "Email address",
   "external_user_add": {
     "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
-    "email": "Email address",
+    "email_error": "Please enter a valid email address",
     "institute": "Institute (university/company)",
     "institute_new": "New institute",
-    "name": "Name",
+    "new_institute_option": "Add new institute",
+    "success_toast": "The added external user received an email to confirm their account.",
     "title": "Add external user"
   },
   "file_upload": {
@@ -51,6 +53,7 @@
     },
     "workflowInstance": "Workflow Instance"
   },
+  "name": "Name",
   "optional": "(optional)",
   "progress": {
     "deadline": "Deadline",

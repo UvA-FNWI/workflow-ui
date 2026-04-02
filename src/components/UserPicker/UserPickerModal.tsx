@@ -16,6 +16,7 @@ export interface UserPickerModalProps {
     onOpenChange: (isOpen: boolean) => void;
     initialSelection?: UserSearchResult[];
     onConfirm: (users: UserSearchResult[]) => void;
+    onAddExternalUser?: () => void;
     selectionMode?: "single" | "multiple";
     title?: string;
     searchPlaceholder?: string;
@@ -27,6 +28,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     onOpenChange,
     initialSelection = [],
     onConfirm,
+    onAddExternalUser,
     selectionMode = "single",
     title,
     searchPlaceholder,
@@ -46,7 +48,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: user.faculty ?? user.email,
+            secondaryValue: user.institute ?? user.email,
         }));
     }, [searchResults]);
 
@@ -206,6 +208,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 </Button>
                 <Button
                     intent="secondary"
+                    onClick={onAddExternalUser}
                     leftIcon={<Icon name="user-add-line" className="text-inherit" />}
                 >
                     {t("user_picker.not_in_list")}{" "}

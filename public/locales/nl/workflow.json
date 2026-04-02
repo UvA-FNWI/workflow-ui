@@ -11,12 +11,14 @@
   "close": "Sluiten",
   "confirm": "Bevestigen",
   "continue": "Verder",
+  "email": "E-mailadres",
   "external_user_add": {
     "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
-    "email": "E-mailadres",
+    "email_error": "Vul een geldig e-mailadres in",
     "institute": "Instituut (universiteit/bedrijf)",
     "institute_new": "Nieuw instituut",
-    "name": "Naam",
+    "new_institute_option": "Voeg nieuw instituut toe",
+    "success_toast": "De toegevoegde externe medewerker kreeg een mail om diens account te bevestigen.",
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
@@ -51,6 +53,7 @@
     },
     "workflowInstance": "Workflow"
   },
+  "name": "Naam",
   "optional": "(optioneel)",
   "progress": {
     "deadline": "Deadline",
