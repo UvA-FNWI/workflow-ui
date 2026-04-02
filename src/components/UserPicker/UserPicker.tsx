@@ -1,7 +1,6 @@
 import {useState} from "react";
 
-import {SearchInput} from "@datanose/ui";
-import {useToast} from "@datanose/ui";
+import {Callout, SearchInput} from "@datanose/ui";
 
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
@@ -42,8 +41,8 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
     const [isOpenExternal, setIsOpenExternal] = useState(false);
+    const [showCallout, setShowCallout] = useState(false);
     const {t} = useTranslate("workflow");
-    const toast = useToast();
 
     // Normalize value prop to array
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
@@ -75,7 +74,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
         onChange?.(null);
-        toast.info(t("external_user_add.success_toast"));
+        setShowCallout(true);
     };
 
     return (
@@ -91,6 +90,9 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 role="button"
                 className="cursor-pointer"
             />
+            {showCallout && (
+                <Callout className="mt-1" header={t("external_user_add.success_toast")} />
+            )}
 
             <UserPickerModal
                 isOpen={isOpenUserPicker}
