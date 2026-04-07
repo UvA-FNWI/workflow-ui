@@ -16,7 +16,7 @@ import { Icon } from '../Icon';
 import { Separator } from '../Separator/Separator';
 
 const disclosureVariants = cva(
-  'ui:rounded-lg ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
+  'ui:rounded-xs ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
   {
     variants: {
       padding: {

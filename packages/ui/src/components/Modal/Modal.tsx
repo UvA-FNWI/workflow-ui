@@ -234,12 +234,12 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
       <header
         ref={ref}
         className={cn(
-          'ui:flex ui:items-center ui:justify-between ui:border-b ui:border-grey-200 ui:px-6 ui:py-4 ui:dark:border-grey-800',
+          'ui:flex ui:items-center ui:justify-between ui:px-6 ui:pt-6 ui:pb-2',
           className
         )}
         {...props}
       >
-        <h2 className="ui:text-lg ui:font-semibold ui:text-grey-900 ui:dark:text-white">
+        <h2 className="ui:text-xl ui:font-semibold ui:text-grey-900 ui:dark:text-white">
           {children}
         </h2>
         {showCloseButton && (
@@ -266,7 +266,7 @@ const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        'ui:px-6 ui:py-4 ui:text-black ui:dark:text-white',
+        'ui:px-6 ui:py-2 ui:text-black ui:dark:text-white',
         className
       )}
       {...props}
@@ -283,7 +283,7 @@ const ModalFooter = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
     <footer
       ref={ref}
       className={cn(
-        'ui:flex ui:items-center ui:justify-end ui:gap-3 ui:border-t ui:border-grey-200 ui:px-6 ui:py-4 ui:dark:border-grey-800',
+        'ui:flex ui:items-center ui:justify-end ui:gap-3 ui:px-6 ui:py-4',
         className
       )}
       {...props}

@@ -16,7 +16,7 @@
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
     "error_remove_failed": "Verwijderen van bestand mislukt. Probeer het opnieuw.",
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
-    "max_file_size": "Max. {{size}} per bestand",
+    "max_file_size": "Maximaal {{size}} per bestand.",
     "no_file_uploaded": "Geen bestand geüpload",
     "removed_success": "Bestand verwijderd",
     "upload_file": "Upload bestand",
