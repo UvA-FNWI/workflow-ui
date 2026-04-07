@@ -26,6 +26,8 @@ export interface UserPickerProps {
     searchPlaceholder?: string;
     /** Minimum search length before triggering API call */
     minSearchLength?: number;
+    /** Whether to allow adding external users */
+    allowsExternalUsers?: boolean;
 }
 
 export const UserPicker: React.FC<UserPickerProps> = ({
@@ -38,6 +40,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     modalTitle,
     searchPlaceholder,
     minSearchLength,
+    allowsExternalUsers = false,
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
     const [isOpenExternal, setIsOpenExternal] = useState(false);
@@ -104,6 +107,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 title={modalTitle}
                 searchPlaceholder={searchPlaceholder}
                 minSearchLength={minSearchLength}
+                allowsExternalUsers={allowsExternalUsers}
             />
 
             <AddExternalUserModal

@@ -21,6 +21,7 @@ export interface UserPickerModalProps {
     title?: string;
     searchPlaceholder?: string;
     minSearchLength?: number;
+    allowsExternalUsers?: boolean;
 }
 
 export const UserPickerModal: React.FC<UserPickerModalProps> = ({
@@ -32,6 +33,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     selectionMode = "single",
     title,
     searchPlaceholder,
+    allowsExternalUsers,
 }) => {
     const {t} = useTranslate("workflow");
     const confirmButtonRef = useRef<HTMLButtonElement>(null);
@@ -140,13 +142,15 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 >
                     {t("confirm")}
                 </Button>
-                <Button
-                    intent="secondary"
-                    onClick={onAddExternalUser}
-                    leftIcon={<Icon name="user-add-line" className="text-inherit" />}
-                >
-                    {t("user_picker.not_in_list")}{" "}
-                </Button>
+                {allowsExternalUsers && (
+                    <Button
+                        intent="secondary"
+                        onClick={onAddExternalUser}
+                        leftIcon={<Icon name="user-add-line" className="text-inherit" />}
+                    >
+                        {t("user_picker.not_in_list")}{" "}
+                    </Button>
+                )}
                 <Button
                     intent="secondary"
                     variant="destructive"

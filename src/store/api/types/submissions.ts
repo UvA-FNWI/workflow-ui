@@ -60,6 +60,7 @@ export type Question = {
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
+    allowsExternalUsers: boolean;
 };
 
 export type StringLayoutOptions = {

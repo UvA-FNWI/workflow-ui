@@ -99,6 +99,7 @@ export const InputControl = ({
             <UserPicker
                 value={value as UserSearchResult | UserSearchResult[] | null | undefined}
                 onChange={(newValue) => debouncedChange(newValue)}
+                allowsExternalUsers={question.allowsExternalUsers}
             />
         );
     }
