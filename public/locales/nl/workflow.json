@@ -60,14 +60,14 @@
     "labelSupervisor": "Zo ver is de student",
     "title": "Voortgang"
   },
+  "screens": {
+    "students": "Studenten"
+  },
   "search_and_select": {
     "add_new": "Voeg nieuw toe",
     "no_results": "Geen resultaten gevonden",
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
-  },
-  "screens": {
-    "students": "Studenten"
   },
   "status": {
     "completed_on": "Voltooid op",

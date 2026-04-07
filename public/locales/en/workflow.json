@@ -1,5 +1,4 @@
 {
-  "add_new": "Add new",
   "admin": {
     "impersonate_role_button": "Impersonate",
     "impersonate_role_placeholder": "Select a role",
@@ -61,14 +60,14 @@
     "labelSupervisor": "This is how far the student is",
     "title": "Progress"
   },
-  "search_and_select": {
-    "add_new": "Add new",
-    "search_placeholder": "Search...",
-    "no_results": "No results found",
-    "search_hint": "Type to search"
-  },
   "screens": {
     "students": "Students"
+  },
+  "search_and_select": {
+    "add_new": "Add new",
+    "no_results": "No results found",
+    "search_hint": "Type to search",
+    "search_placeholder": "Search..."
   },
   "status": {
     "completed_on": "Completed on",
