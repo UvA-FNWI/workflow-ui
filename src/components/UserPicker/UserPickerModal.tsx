@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {Button, Icon, Modal} from "@datanose/ui";
 
-import {SearchAndSelect} from "~/components/instance/SearchAndSelect/SearchAndSelect.tsx";
+import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users";
@@ -117,9 +117,6 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
                 <SearchAndSelect
-                    searchValue={
-                        selectedUsers.length > 0 ? selectedUsers[0].displayName : undefined
-                    }
                     items={searchListBoxValues}
                     selectedKeys={selectedKeys}
                     onSelect={handleSelectionChange}
@@ -129,6 +126,12 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     autoFocus={isOpen}
                     selectionMode={selectionMode}
                     isLoading={searchState.isLoading || searchState.isFetching}
+                    noResultsText={t("user_picker.no_results")}
+                    searchHintText={
+                        selectionMode == "single"
+                            ? t("user_picker.search_hint_one")
+                            : t("user_picker.search_hint_other")
+                    }
                 />
             </Modal.Body>
 

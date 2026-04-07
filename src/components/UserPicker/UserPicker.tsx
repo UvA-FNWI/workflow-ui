@@ -76,7 +76,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
-        onChange?.(null);
+        onChange?.(newUser);
         setShowCallout(true);
     };
 

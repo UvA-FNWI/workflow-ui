@@ -11,7 +11,6 @@ type Selection = "all" | Set<string | number>;
 
 type SearchAndSelectProps = {
     label?: string;
-    searchValue?: string;
     placeholder?: string;
     items: SearchListBoxValue[];
     selectedKeys: Selection;
@@ -19,17 +18,17 @@ type SearchAndSelectProps = {
     onSelect: (selection: Selection) => void;
     onSearch: (query: string) => void;
     resetSearch: () => void;
-    newItemKey?: string; // e.g. "new-institute"
-    newItemLabel?: string;
     minSearchLength?: number;
     isLoading?: boolean;
     autoFocus?: boolean;
     addNewItemVisible?: boolean;
+    showSearchHint?: boolean;
+    searchHintText?: string;
+    noResultsText?: string;
 };
 
 export function SearchAndSelect({
     label,
-    searchValue,
     placeholder,
     items,
     selectedKeys,
@@ -41,16 +40,20 @@ export function SearchAndSelect({
     isLoading = false,
     autoFocus = false,
     addNewItemVisible = false,
+    showSearchHint: showSearchHintEnabled = true,
+    searchHintText,
+    noResultsText,
 }: SearchAndSelectProps) {
     const {t} = useTranslate("workflow");
     const [searchQuery, setSearchQuery] = useState("");
     const [isSelected, setIsSelected] = useState(false);
+    const [isPendingSearch, setIsPendingSearch] = useState(false);
 
     const listItems = addNewItemVisible
         ? [
               {
                   key: "new-item",
-                  primaryValue: t("add_new"),
+                  primaryValue: t("search_and_select.add_new"),
               } as SearchListBoxValue,
               ...items,
           ]
@@ -61,6 +64,7 @@ export function SearchAndSelect({
             if (query.trim().length >= minSearchLength) {
                 onSearch(query);
             }
+            setIsPendingSearch(false);
         },
         [minSearchLength, onSearch],
     );
@@ -73,10 +77,14 @@ export function SearchAndSelect({
         }
     }, [searchQuery, minSearchLength, debouncedSearch, isSelected, resetSearch]);
 
-    const handleSearchChange = useCallback((query: string) => {
-        setSearchQuery(query);
-        setIsSelected(false);
-    }, []);
+    const handleSearchChange = useCallback(
+        (query: string) => {
+            setSearchQuery(query);
+            setIsSelected(false);
+            setIsPendingSearch(query.trim().length >= minSearchLength);
+        },
+        [minSearchLength],
+    );
 
     const handleSelectionChange = useCallback(
         (keys: Selection) => {
@@ -85,49 +93,55 @@ export function SearchAndSelect({
 
             if (keys !== "all") {
                 const firstKey = Array.from(keys)[0];
-                const selectedItem = items.find((i) => i.key === firstKey);
-                setSearchQuery(selectedItem?.primaryValue ?? "");
+                if (firstKey === "new-item") {
+                    setSearchQuery(t("search_and_select.add_new"));
+                } else {
+                    const selectedItem = items.find((i) => i.key === firstKey);
+                    setSearchQuery(selectedItem?.primaryValue ?? "");
+                }
             }
         },
-        [onSelect, items],
+        [onSelect, t, items],
     );
 
-    const inputValue = isSelected ? (searchValue ?? "") : searchQuery;
-    const showSearchHint = searchQuery.trim().length < minSearchLength;
-    const showLoading = isLoading && !showSearchHint;
-    const showNoResults =
-        !showLoading &&
-        !showSearchHint &&
-        !isSelected &&
-        items.length === 0 &&
-        searchQuery.trim().length > 0;
-    const showUsers = !showLoading && !showSearchHint && items.length > 0 && !isSelected;
+    const getPickerState = () => {
+        const trimmed = searchQuery.trim().length;
+        const meetsMinSearchLength = trimmed >= minSearchLength;
+
+        if (isSelected) return "selected";
+        if (showSearchHintEnabled && !meetsMinSearchLength) return "hint";
+        if (isLoading || isPendingSearch) return "loading";
+        if (meetsMinSearchLength && (items.length > 0 || addNewItemVisible)) return "results";
+        if (meetsMinSearchLength && items.length === 0) return "no-results";
+    };
+
+    const state = getPickerState();
 
     return (
         <div>
             <SearchInput
                 label={label}
-                placeholder={placeholder}
+                placeholder={placeholder ?? t("search_and_select.search_placeholder")}
                 onChange={handleSearchChange}
-                value={inputValue}
+                value={searchQuery}
                 autoFocus={autoFocus}
             />
 
             {/* Search hint */}
-            {showSearchHint && (
+            {state === "hint" && (
                 <div className="py-8 text-center text-grey-600 dark:text-grey-400">
-                    {t("user_picker.search_hint", {count: minSearchLength})}
+                    {searchHintText ?? t("search_and_select.search_hint")}
                 </div>
             )}
 
             {/* Loading */}
-            {showLoading && (
+            {state === "loading" && (
                 <div className="flex items-center justify-center py-8">
                     <LoadingSpinner size="sm" />
                 </div>
             )}
 
-            {showUsers && (
+            {state === "results" && (
                 <SearchListBox
                     autoFocus={false}
                     items={listItems}
@@ -138,9 +152,9 @@ export function SearchAndSelect({
                 />
             )}
             {/* No results */}
-            {showNoResults && (
+            {state === "no-results" && (
                 <div className="py-8 text-center text-grey-600 dark:text-grey-400">
-                    {t("user_picker.no_results")}
+                    {noResultsText ?? t("search_and_select.no_results")}
                 </div>
             )}
         </div>

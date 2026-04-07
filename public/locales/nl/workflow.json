@@ -1,5 +1,4 @@
 {
-  "add_new": "Voeg nieuw toe",
   "admin": {
     "impersonate_role_button": "Impersoneer",
     "impersonate_role_placeholder": "Selecteer een rol",
@@ -17,7 +16,7 @@
     "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
     "email_error": "Vul een geldig e-mailadres in",
     "institute": "Instituut (universiteit/bedrijf)",
-    "new_institute_option": "Voeg nieuw instituut toe",
+    "new_institute": "Nieuw instituut",
     "success_toast": "De toegevoegde externe medewerker kreeg een mail om diens account te bevestigen.",
     "title": "Voeg externe gebruiker toe"
   },
@@ -60,6 +59,12 @@
     "labelStudent": "Hier ben je in het proces",
     "labelSupervisor": "Zo ver is de student",
     "title": "Voortgang"
+  },
+  "search_and_select": {
+    "add_new": "Voeg nieuw toe",
+    "no_results": "Geen resultaten gevonden",
+    "search_hint": "Typ om te zoeken",
+    "search_placeholder": "Zoeken..."
   },
   "screens": {
     "students": "Studenten"

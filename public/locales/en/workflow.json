@@ -17,7 +17,7 @@
     "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
     "email_error": "Please enter a valid email address",
     "institute": "Institute (university/company)",
-    "new_institute_option": "Add new institute",
+    "new_institute": "New institute",
     "success_toast": "The added external user received an email to confirm their account.",
     "title": "Add external user"
   },
@@ -60,6 +60,12 @@
     "labelStudent": "Here's where you are in the process",
     "labelSupervisor": "This is how far the student is",
     "title": "Progress"
+  },
+  "search_and_select": {
+    "add_new": "Add new",
+    "search_placeholder": "Search...",
+    "no_results": "No results found",
+    "search_hint": "Type to search"
   },
   "screens": {
     "students": "Students"

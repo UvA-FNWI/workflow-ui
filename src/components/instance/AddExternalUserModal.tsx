@@ -2,7 +2,7 @@ import {useCallback, useMemo, useRef, useState} from "react";
 
 import {Button, Input, Modal, Text} from "@datanose/ui";
 
-import {SearchAndSelect} from "~/components/instance/SearchAndSelect/SearchAndSelect.tsx";
+import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {useMockLazyFindInstitutesQuery} from "~/hooks/useMockLazyFindInstitutesQuery.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
@@ -43,12 +43,14 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         onOpenChange(false);
         setNewExternalUser(emptyExternalUser);
         setSelectedInstitute(new Set());
+        setShowNewInstituteInput(false);
     }, [onConfirm, onOpenChange, newExternalUser]);
 
     const handleCancel = useCallback(() => {
         onOpenChange(false);
         setNewExternalUser(emptyExternalUser);
         setSelectedInstitute(new Set());
+        setShowNewInstituteInput(false);
     }, [onOpenChange]);
 
     const handleSelectInstituteChange = useCallback(
@@ -56,8 +58,12 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             setSelectedInstitute(selected);
             const selectedInstitute: string = [...selected][0] as string;
 
-            if (selectedInstitute === "new-institute") {
+            if (selectedInstitute === "new-item") {
                 setShowNewInstituteInput(true);
+                setNewExternalUser((prev) => ({
+                    ...prev,
+                    institute: "",
+                }));
                 return;
             }
 
@@ -70,15 +76,9 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         [setNewExternalUser],
     );
 
-    const selectedInstituteName = useMemo(() => {
-        if (selectedInstitute === "all" || selectedInstitute.size === 0) return "";
-        const selectedKey: string = [...selectedInstitute][0] as string;
-        const found = searchResults.find((i) => i.key === selectedKey);
-        return found ? (found.primaryValue as string) : "";
-    }, [selectedInstitute, searchResults]);
-
     const isValidEmail =
-        newExternalUser.email != "" && /^\S+@\S+\.\S+$/.test(newExternalUser.email);
+        newExternalUser.email != "" &&
+        /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(newExternalUser.email);
     const isCompleted =
         isValidEmail &&
         !!newExternalUser.displayName &&
@@ -116,7 +116,6 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
 
                 <SearchAndSelect
                     label={t("external_user_add.institute")}
-                    searchValue={selectedInstituteName}
                     items={searchResults}
                     selectedKeys={selectedInstitute}
                     onSelect={handleSelectInstituteChange}
@@ -124,11 +123,12 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     resetSearch={resetSearch}
                     isLoading={searchState.isLoading || searchState.isFetching}
                     addNewItemVisible={true}
+                    showSearchHint={false}
                 />
 
                 {showNewInstituteInput && (
                     <Input
-                        label={t("external_user_add.institute_new")}
+                        label={t("external_user_add.new_institute")}
                         type="text"
                         onChange={(value) =>
                             setNewExternalUser((prev) => ({
