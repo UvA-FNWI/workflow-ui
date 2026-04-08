@@ -50,7 +50,7 @@ export type Action = {
     form?: string;
     title: LocalString;
     mail?: string;
-    step?: string;
+    steps: string[];
     intent: ActionIntent;
     formLayout: FormLayout;
 };
