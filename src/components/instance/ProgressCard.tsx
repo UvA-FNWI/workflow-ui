@@ -36,7 +36,7 @@ export function ProgressCard({isLoading, isStudent, steps, currentStep}: Progres
                                         : "progress.titleSupervisor",
                                 )}
                             </Heading>
-                            <Separator />
+                            <Separator className="mt-2" />
                         </div>
                         <WorkflowProgressBar steps={steps} currentStep={currentStep} />
                     </>

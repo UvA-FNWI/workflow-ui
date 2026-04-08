@@ -191,7 +191,7 @@ const DisclosureHeader = (
   };
 
   return (
-    <div className="ui:flex ui:w-full ui:flex-col ui:gap-4 ui:px-6 ui:py-4">
+    <div className="ui:flex ui:w-full ui:flex-col ui:gap-4 ui:px-6 ui:py-6">
       <button
         {...buttonProps}
         ref={ref || buttonRef}
@@ -201,6 +201,7 @@ const DisclosureHeader = (
         className={cn(
           'ui:flex ui:w-full ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
           'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
+          isDisabled ? 'ui:cursor-not-allowed' : 'ui:cursor-pointer',
           className
         )}
         {...restProps}
@@ -215,7 +216,7 @@ const DisclosureHeader = (
           />
         )}
       </button>
-      {state.isExpanded && <Separator />}
+      {state.isExpanded && <Separator className="mt-2" />}
     </div>
   );
 };

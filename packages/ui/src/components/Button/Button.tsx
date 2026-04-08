@@ -41,12 +41,12 @@ const buttonClassGenerator = cva(
       {
         intent: ['primary', 'secondary'],
         className:
-          'ui:disabled:border-grey-300 ui:disabled:bg-grey-300 ui:disabled:text-grey-600 ui:dark:disabled:border-grey-700 ui:dark:disabled:bg-grey-700 ui:dark:disabled:text-grey-400',
+          'ui:disabled:border-grey-400 ui:disabled:bg-grey-400 ui:disabled:text-grey-700 ui:dark:disabled:border-grey-700 ui:dark:disabled:bg-grey-700 ui:dark:disabled:text-grey-400',
       },
       {
         intent: 'ghost',
         className:
-          'ui:disabled:bg-transparent ui:disabled:text-grey-600 ui:dark:disabled:text-grey-400',
+          'ui:disabled:bg-transparent ui:disabled:text-grey-700 ui:dark:disabled:text-grey-400',
       },
 
       // Default primary
