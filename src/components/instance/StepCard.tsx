@@ -31,6 +31,8 @@ export const StepCard = ({step, instance}: Props) => {
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep);
+    const studentName = instance.fields.find((field) => field.key == "Student.DisplayName")
+        ?.value as string;
 
     const stepStatus =
         [
@@ -106,18 +108,25 @@ export const StepCard = ({step, instance}: Props) => {
                     isOpen={activeAction?.type === "Execute"}
                     onOpenChange={() => setActiveAction(null)}
                 >
-                    <Modal.Header>{activeAction && l(activeAction.title)}</Modal.Header>
-                    <Modal.Body className="mt-2 mb-4">
-                        <p>{t("are_you_sure")}</p>
+                    <Modal.Header className="pb-0 text-2xl font-semibold">
+                        {activeAction && `${l(activeAction.title)} ${l(step.title)?.toLowerCase()}`}
+                    </Modal.Header>
+                    <Modal.Body className="mt-2 text-lg">
+                        <p>
+                            {t("are_you_sure_with_data", {
+                                actionName: l(activeAction?.title)?.toLowerCase(),
+                                studentName: studentName,
+                                stepName: l(step.title)?.toLowerCase(),
+                                defaultValue: t("are_you_sure"),
+                            })}
+                        </p>
                     </Modal.Body>
                     {activeAction && (
-                        <Modal.Footer className="mt-2 flex gap-2">
-                            <Button intent="secondary" onClick={() => setActiveAction(null)}>
-                                {t("cancel")}
-                            </Button>
+                        <Modal.Footer>
                             <Button
                                 intent="primary"
                                 variant="destructive"
+                                size="large"
                                 onClick={() => {
                                     executeAction({
                                         instanceId: instance.id,
@@ -128,6 +137,14 @@ export const StepCard = ({step, instance}: Props) => {
                                 }}
                             >
                                 {t("confirm")}
+                            </Button>
+                            <Button
+                                intent="secondary"
+                                variant="destructive"
+                                size="large"
+                                onClick={() => setActiveAction(null)}
+                            >
+                                {t("cancel")}
                             </Button>
                         </Modal.Footer>
                     )}

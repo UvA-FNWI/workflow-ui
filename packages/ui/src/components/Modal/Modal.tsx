@@ -283,7 +283,7 @@ const ModalFooter = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
     <footer
       ref={ref}
       className={cn(
-        'ui:flex ui:items-center ui:justify-end ui:gap-3 ui:px-6 ui:py-4',
+        'ui:flex ui:items-center ui:justify-start ui:gap-3 ui:px-6 ui:py-4',
         className
       )}
       {...props}

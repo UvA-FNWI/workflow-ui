@@ -27,8 +27,10 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose}>
-            <Modal.Header>{l(submission?.form.title)}</Modal.Header>
-            <Modal.Body>
+            <Modal.Header className="pb-0 text-2xl font-semibold">
+                {l(submission?.form.title)}
+            </Modal.Header>
+            <Modal.Body className="mt-2 text-lg">
                 {submission && (
                     <PageControl
                         showTitle={false}
@@ -42,6 +44,7 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
                 <Button
                     intent="primary"
                     variant="destructive"
+                    size="large"
                     isLoading={isLoading}
                     onClick={async () => {
                         const res = await submitSubmission({instanceId, submissionId});
@@ -60,7 +63,13 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
                 >
                     {t("confirm")}
                 </Button>
-                <Button intent="secondary" disabled={isLoading} onClick={onClose}>
+                <Button
+                    intent="secondary"
+                    variant="destructive"
+                    size="large"
+                    disabled={isLoading}
+                    onClick={onClose}
+                >
                     {t("cancel")}
                 </Button>
             </Modal.Footer>

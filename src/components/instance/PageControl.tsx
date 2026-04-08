@@ -190,8 +190,9 @@ export const PageControl = ({
                         )}
                     </form>
                 </div>
-                <div>
-                    {typeof weightedAverage == "number" && weightedAverage !== 0 && (
+
+                {typeof weightedAverage == "number" && weightedAverage !== 0 && (
+                    <div>
                         <Heading className="flex items-center gap-2">
                             {t("instance.calculations.average_grade", {
                                 page: l(page.title),
@@ -203,8 +204,8 @@ export const PageControl = ({
                                 <span>{weightedAverage.toLocaleString(i18n.language)}</span>
                             )}
                         </Heading>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </>
     );
