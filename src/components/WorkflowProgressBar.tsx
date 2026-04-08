@@ -1,4 +1,4 @@
-import {Icon, Tooltip} from "@datanose/ui";
+import {Icon, Text, Tooltip} from "@datanose/ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowStep} from "~/store/api/types/instances";
@@ -195,6 +195,16 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                         style={{width: `${progress}%`}}
                     />
                 )}
+            </div>
+
+            <div className="relative mb-1">
+                <Text
+                    className="absolute -translate-x-1/2 whitespace-nowrap text-grey-600"
+                    style={{left: `${positions[currentStepIndex]}%`}}
+                    size="sm"
+                >
+                    {l(steps[currentStepIndex].title) ?? steps[currentStepIndex].id}
+                </Text>
             </div>
         </div>
     );

@@ -46,9 +46,8 @@
   "optional": "(optional)",
   "progress": {
     "deadline": "Deadline",
-    "labelStudent": "Here's where you are in the process",
-    "labelSupervisor": "This is how far the student is",
-    "title": "Progress"
+    "titleStudent": "Your progress",
+    "titleSupervisor": "Student's progress"
   },
   "screens": {
     "students": "Students"

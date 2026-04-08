@@ -28,7 +28,7 @@ export const ProjectScreenOverview = () => {
     }
 
     return (
-        <Container>
+        <Container maxWidth={1280}>
             <Card>
                 <div className="mb-4">
                     <div className="flex w-full justify-between">
@@ -47,7 +47,7 @@ export const ProjectScreenOverview = () => {
                             <Tab key={group.name}>
                                 <div className="flex w-full justify-between gap-2">
                                     <span>{l(group.title)}</span>
-                                    <Pill variant={activeTab === index ? "red" : "grey"}>
+                                    <Pill variant={activeTab === index ? "darkRed" : "grey"}>
                                         {group.rows.length}
                                     </Pill>
                                 </div>

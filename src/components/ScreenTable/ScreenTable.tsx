@@ -1,7 +1,8 @@
 import {useMemo} from "react";
 
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 
+import {Button, Icon} from "@datanose/ui";
 import {type ColumnDef} from "@tanstack/react-table";
 
 import {DataTable} from "~/components/Table";
@@ -16,10 +17,11 @@ type ScreenTableProps = {
 
 export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps) => {
     const {i18n, l} = useTranslate();
+    const navigate = useNavigate();
 
     const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(
-        () =>
-            columns
+        () => [
+            ...columns
                 .filter((col) => col.displayType !== "ExportOnly")
                 .map((col) => ({
                     id: String(col.id),
@@ -31,12 +33,8 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
 
                         if (col.link) {
                             const rowId = info.row.original.id;
-                            // TODO: Replace with Link component perhaps
                             return (
-                                <Link
-                                    to={`/instance/${rowId}`}
-                                    className="text-blue-600 hover:text-blue-800 hover:underline"
-                                >
+                                <Link to={`/instance/${rowId}`} className="hover:underline">
                                     {formattedValue}
                                 </Link>
                             );
@@ -46,7 +44,29 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                     },
                     enableSorting: true,
                 })),
-        [columns, i18n.language, l],
+            {
+                id: "actions",
+                header: () => null,
+                enableSorting: false,
+                cell: ({row}) => {
+                    const rowId = row.original.id;
+
+                    return (
+                        <div className="flex w-auto justify-end p-0">
+                            <Button
+                                intent="primary"
+                                variant="destructive"
+                                className="flex items-center justify-center rounded-sm px-1 py-2 text-white"
+                                onClick={() => navigate(`/instance/${rowId}`)}
+                            >
+                                <Icon name="visible-line" color="current" />
+                            </Button>
+                        </div>
+                    );
+                },
+            },
+        ],
+        [columns, i18n.language, l, navigate],
     );
 
     return <DataTable data={rows} columns={tableColumns} globalFilter={globalFilter} />;

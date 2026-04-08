@@ -46,9 +46,8 @@
   "optional": "(optioneel)",
   "progress": {
     "deadline": "Deadline",
-    "labelStudent": "Hier ben je in het proces",
-    "labelSupervisor": "Zo ver is de student",
-    "title": "Voortgang"
+    "titleStudent": "Jouw voortgang",
+    "titleSupervisor": "Voortgang van de student",
   },
   "screens": {
     "students": "Studenten"
