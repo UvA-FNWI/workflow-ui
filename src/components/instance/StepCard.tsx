@@ -25,7 +25,9 @@ export const StepCard = ({step, instance}: Props) => {
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
     const stepIds = [step.id, ...(step.children?.map((s) => s.id) ?? [])];
-    const actions = instance.actions.filter((a) => a.step && stepIds.includes(a.step));
+    const actions = instance.actions.filter((action) =>
+        action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
+    );
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep);
