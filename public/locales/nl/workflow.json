@@ -25,6 +25,8 @@
   },
   "go_back": "Terug",
   "good_to_know": {
+    "show_all": "Toon alles",
+    "show_less": "Toon minder",
     "title_one": "Handig tijdens je scriptie",
     "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },

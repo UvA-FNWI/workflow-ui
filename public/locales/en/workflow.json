@@ -25,6 +25,8 @@
   },
   "go_back": "Go back",
   "good_to_know": {
+    "show_all": "Show all",
+    "show_less": "Show less",
     "title_one": "Handy during your thesis",
     "title_other": "[{{count}}x] Handy during your thesis"
   },

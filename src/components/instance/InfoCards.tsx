@@ -1,6 +1,8 @@
-import {Card, Heading, Icon, Link, Skeleton, Text} from "@datanose/ui";
+import {useState} from "react";
 
-import {mockHelpfulLinks, mockSubjectTips} from "./InfoCardsMockData";
+import {Card, Heading, Icon, Link, Skeleton} from "@datanose/ui";
+
+import {mockHelpfulLinks} from "./InfoCardsMockData";
 import {useTranslate} from "~/hooks/useTranslate";
 
 interface InfoCardsProps {
@@ -9,6 +11,9 @@ interface InfoCardsProps {
 
 export function InfoCards({isLoading}: InfoCardsProps) {
     const {t, l} = useTranslate("workflow");
+    const [isOpen, setIsOpen] = useState(false);
+
+    const visibleLinks = isOpen ? mockHelpfulLinks : mockHelpfulLinks.slice(0, 3);
 
     return (
         <>
@@ -20,7 +25,7 @@ export function InfoCards({isLoading}: InfoCardsProps) {
                         <Heading as="h3" size="sm" className="mb-3">
                             {t("good_to_know.title", {count: mockHelpfulLinks.length})}
                         </Heading>
-                        {mockHelpfulLinks.map((link, index) => (
+                        {visibleLinks.map((link, index) => (
                             <div key={index} className="flex items-center gap-1">
                                 <Icon
                                     name={link.type === "download" ? "download-line" : "link-line"}
@@ -31,25 +36,15 @@ export function InfoCards({isLoading}: InfoCardsProps) {
                                 </Link>
                             </div>
                         ))}
-                    </div>
-                )}
-            </Card>
-            <Card>
-                {isLoading ? (
-                    <Skeleton className="h-5 w-24" />
-                ) : (
-                    <div className="flex flex-col gap-4">
-                        <Heading as="h3" size="sm">
-                            {t("how_to_choose_a_subject.title")}
-                        </Heading>
-                        {mockSubjectTips.map((tip, index) => (
-                            <span key={index}>
-                                <Text fontWeight="semibold">
-                                    {index + 1}. {l(tip.title)}
-                                </Text>
-                                <Text>{l(tip.text)}</Text>
-                            </span>
-                        ))}
+                        {mockHelpfulLinks.length > 3 && (
+                            <Link
+                                intent="destructive"
+                                onClick={() => setIsOpen((prev) => !prev)}
+                                className="underline"
+                            >
+                                {isOpen ? t("good_to_know.show_less") : t("good_to_know.show_all")}
+                            </Link>
+                        )}
                     </div>
                 )}
             </Card>
