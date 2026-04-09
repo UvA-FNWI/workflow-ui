@@ -71,8 +71,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
         onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
 
     const handleConfirmExternalUser = (newUser: UserSearchResult) => {
-        console.log("New external user added:");
-        console.log(JSON.stringify(newUser, null, 2));
+        newUser.userName ||= newUser.displayName.replace(/\s/g, "-").toLowerCase();
 
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
