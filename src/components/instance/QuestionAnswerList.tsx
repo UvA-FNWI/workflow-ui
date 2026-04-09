@@ -14,6 +14,7 @@ type Props = {
     submissionId: string;
     isOpen?: boolean;
     colsClass?: string;
+    collapseAnswers?: boolean;
 };
 
 export const QuestionAnswerList = ({
@@ -23,11 +24,12 @@ export const QuestionAnswerList = ({
     submissionId,
     isOpen: initialIsOpen = false,
     colsClass = "grid-cols-2",
+    collapseAnswers = false,
 }: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
 
-    if (!isOpen) {
+    if (collapseAnswers && !isOpen) {
         return (
             <Link intent="destructive" underline onClick={() => setIsOpen(true)}>
                 {t("instance.summary.show_answers")}
@@ -37,7 +39,7 @@ export const QuestionAnswerList = ({
 
     const arrayOfPairs: QuestionAnswerPair[][] = Array.isArray(questionAnswerPairs[0])
         ? (questionAnswerPairs as QuestionAnswerPair[][])
-        : (questionAnswerPairs as QuestionAnswerPair[]).map((pair) => [pair]);
+        : [questionAnswerPairs as QuestionAnswerPair[]];
 
     // Use the first submission's questions as the row definitions
     const questions = arrayOfPairs[0] ?? [];
@@ -84,9 +86,11 @@ export const QuestionAnswerList = ({
                     })}
                 </div>
             ))}
-            <Link intent="destructive" underline onClick={() => setIsOpen(false)}>
-                {t("instance.summary.hide_answers")}
-            </Link>
+            {collapseAnswers && (
+                <Link intent="destructive" underline onClick={() => setIsOpen(false)}>
+                    {t("instance.summary.hide_answers")}
+                </Link>
+            )}
         </div>
     );
 };

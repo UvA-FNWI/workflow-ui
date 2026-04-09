@@ -4,7 +4,6 @@ import {Button, Disclosure, Heading, Modal} from "@datanose/ui";
 
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
-import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
@@ -24,7 +23,6 @@ export const StepCard = ({step, instance}: Props) => {
 
     const stepIds = [step.id, ...(step.children?.map((s) => s.id) ?? [])];
     const actions = instance.actions.filter((a) => a.step && stepIds.includes(a.step));
-    const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep);
 
@@ -35,10 +33,6 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
-                    {submissions.map((submission) => (
-                        <FormSummary instanceId={instance.id} submission={submission} />
-                    ))}
-
                     {isFormOpen && (
                         <FormPage
                             instanceId={instance.id}

@@ -41,6 +41,7 @@ export type Page = {
     layout: PageLayout;
     questions: Question[];
     hasResults: boolean;
+    isInCurrentForm: boolean;
 };
 
 export type Question = {

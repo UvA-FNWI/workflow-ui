@@ -13,6 +13,7 @@ type Props = {
     onEditPage?: (index: number) => void;
     onSubmit?: () => void;
     formType?: FormType;
+    collapseAnswers?: boolean;
 };
 
 export const FormSummary = ({
@@ -71,17 +72,18 @@ export const FormSummary = ({
                         assessmentForms.find((f) => f.id === a.id)?.results?.[page.name],
                     ),
                 );
+
                 return (
                     <div key={index} className="contents">
                         {/* Page title with edit button */}
                         <div className={`grid gap-4 ${colsClass}`}>
-                            <div>
+                            <div className="flex items-center">
                                 <Text fontWeight="semibold" size="lg">
                                     {l(page.title)?.toUpperCase()}
                                     {assessmentForms[0]?.results?.[page.name]?.length &&
                                         ` (${assessmentForms[0].results?.[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                                 </Text>
-                                {onEditPage && formType === "Normal" && (
+                                {onEditPage && formType === "Normal" && page.isInCurrentForm && (
                                     <Button
                                         intent="ghost"
                                         size="small"
@@ -99,7 +101,7 @@ export const FormSummary = ({
                             </div>
 
                             {assessmentForms.map((assessment) => (
-                                <div>
+                                <div key={assessment.id}>
                                     {assessment?.weightedAverages[page.name] ? (
                                         <Text fontWeight="bold" size="lg">
                                             {assessment.weightedAverages[page.name].toLocaleString(
@@ -115,13 +117,16 @@ export const FormSummary = ({
                             ))}
                         </div>
                         {/* Questions and answers */}
-                        <QuestionAnswerList
-                            questionAnswerPairs={allQuestionAnswerPairs}
-                            noAnswerText={t("instance.summary.no_answer")}
-                            instanceId={instanceId}
-                            submissionId={submission.id}
-                            colsClass={colsClass}
-                        />
+                        {allQuestionAnswerPairs.flat().length > 0 && (
+                            <QuestionAnswerList
+                                questionAnswerPairs={allQuestionAnswerPairs}
+                                noAnswerText={t("instance.summary.no_answer")}
+                                instanceId={instanceId}
+                                submissionId={submission.id}
+                                colsClass={colsClass}
+                                collapseAnswers={hasResults}
+                            />
+                        )}
                         <Separator
                             weight={index == submission.form.pages.length - 1 ? "bold" : "normal"}
                         />
@@ -129,13 +134,13 @@ export const FormSummary = ({
                 );
             })}
 
-            {assessmentForms && (
+            {assessmentForms.length > 0 && (
                 <div className={`grid gap-4 ${colsClass}`}>
                     <Text fontWeight="bold" size="lg">
                         {t("instance.calculations.final_grade").toUpperCase()}
                     </Text>
                     {assessmentForms.map((assessment) => (
-                        <Text fontWeight="bold" size="lg">
+                        <Text fontWeight="bold" size="lg" key={assessment.id}>
                             {assessment?.weightedAverages["total"].toLocaleString(i18n.language)}
                         </Text>
                     ))}
