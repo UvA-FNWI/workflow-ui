@@ -12,15 +12,17 @@ type Props = {
 };
 
 export const VersionCard = ({version, instanceId}: Props) => {
-    const {t, i18n} = useTranslate("workflow", {keyPrefix: "version_card"});
+    const {t, i18n} = useTranslate("workflow");
 
     return (
         <Disclosure key={version.versionNumber}>
             <Disclosure.Header>
                 <div className="flex w-full items-center justify-between">
-                    <Heading>{t("version_nr", {versionNumber: version.versionNumber})}</Heading>
+                    <Heading>
+                        {t("version_card.version_nr", {versionNumber: version.versionNumber})}
+                    </Heading>
                     <Text as="span">
-                        <Text fontWeight="semibold">{t("submitted")}:</Text>{" "}
+                        <Text fontWeight="semibold">{t("status.submitted")}:</Text>{" "}
                         {formatDate(version.submittedAt, i18n.language)}
                     </Text>
                 </div>
@@ -49,7 +51,7 @@ export const VersionCard = ({version, instanceId}: Props) => {
                                         )}
                                         <QuestionAnswerList
                                             questionAnswerPairs={questionAnswerPairs}
-                                            noAnswerText={t("no_answer")}
+                                            noAnswerText={t("version_card.no_answer")}
                                             instanceId={instanceId}
                                             submissionId={submission.id}
                                         />

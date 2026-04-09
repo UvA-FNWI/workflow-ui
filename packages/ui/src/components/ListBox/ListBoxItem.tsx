@@ -4,6 +4,8 @@ import { mergeProps, useFocusRing, useHover, useOption } from 'react-aria';
 import { ListState, Node } from 'react-stately';
 
 import { cn } from '../../utils/cn';
+import { Icon } from '../Icon';
+import { selectionVariants } from '../Select/SelectionVariants';
 
 interface ListBoxItemProps<T> {
   item: Node<T>;
@@ -26,15 +28,21 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       {...mergeProps(optionProps, focusProps, hoverProps)}
       ref={ref}
       className={cn(
-        'ui:cursor-pointer ui:px-4 ui:py-2 ui:transition-colors ui:duration-150 ui:outline-none',
-        isSelected && 'ui:bg-grey-100 ui:dark:bg-grey-800',
-        isHovered && !isSelected && 'ui:bg-grey-50 ui:dark:bg-grey-850',
-        isFocusVisible &&
-          'ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:ring-orange-500',
-        isDisabled && 'ui:cursor-not-allowed ui:bg-transparent ui:opacity-50'
+        'ui:justify-between ui:gap-2 ui:px-2 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none',
+        selectionVariants({
+          isSelected,
+          isHovered,
+          isDisabled,
+          isFocusVisible,
+        })
       )}
     >
-      {item.rendered}
+      <div className="ui:flex ui:items-center ui:gap-2">
+        <div className="ui:w-3 ui:flex-none">
+          {isSelected && <Icon name="checkmark-solid" size="sm" />}
+        </div>
+        <div className="ui:w-full">{item.rendered}</div>
+      </div>
     </li>
   );
 }

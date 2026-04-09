@@ -38,7 +38,7 @@ export type WorkflowStep = {
 
 export type WorkflowStepVersion = {
     versionNumber: number;
-    eventId: string;
+    eventIds: string[];
     submittedAt: string;
     submissions: Submission[];
 };
@@ -50,7 +50,7 @@ export type Action = {
     form?: string;
     title: LocalString;
     mail?: string;
-    step?: string;
+    steps: string[];
     intent: ActionIntent;
     formLayout: FormLayout;
 };

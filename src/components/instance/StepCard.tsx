@@ -1,6 +1,7 @@
 import {useState} from "react";
 
-import {Button, Disclosure, Heading, Modal} from "@datanose/ui";
+import {Button, Disclosure, Heading, Modal, Pill, Text} from "@datanose/ui";
+import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
@@ -9,6 +10,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
+import {formatDateShort} from "~/utils/formatDate.ts";
 
 type Props = {
     step: WorkflowStep;
@@ -16,20 +18,50 @@ type Props = {
 };
 
 export const StepCard = ({step, instance}: Props) => {
-    const {t, l} = useTranslate("workflow", {keyPrefix: "step_card"});
+    const {t, l} = useTranslate("workflow");
     const [activeAction, setActiveAction] = useState<Action | null>(null);
 
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
     const stepIds = [step.id, ...(step.children?.map((s) => s.id) ?? [])];
-    const actions = instance.actions.filter((a) => a.step && stepIds.includes(a.step));
+    const actions = instance.actions.filter((action) =>
+        action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
+    );
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep);
 
+    const stepStatus =
+        [
+            {type: "status.submitted" as const, date: step.versions?.at(-1)?.submittedAt},
+            {type: "progress.deadline" as const, date: step.deadline},
+        ].find((status) => status.date) ?? null;
+
+    const isDisabled =
+        !isCurrentStep &&
+        instance.steps.indexOf(step) >
+            instance.steps.findIndex((s) => instance.currentStep.includes(s.id));
+
     return (
-        <Disclosure defaultExpanded={isCurrentStep}>
+        <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
             <Disclosure.Header>
-                <Heading>{l(step.title)}</Heading>
+                <div className="flex w-full items-center justify-between">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                        <Heading>{l(step.title)}</Heading>
+                        {step.dateCompleted && (
+                            <Pill variant="green">
+                                {t("status.completed_on")}{" "}
+                                {formatDateShort(step.dateCompleted, i18n.language)}
+                            </Pill>
+                        )}
+                    </div>
+                    {stepStatus?.date && (
+                        <Text as="span" className="shrink-0">
+                            <Text fontWeight="semibold">{t(stepStatus.type)}</Text>
+                            {":\t"}
+                            {formatDateShort(stepStatus?.date, i18n.language)}
+                        </Text>
+                    )}
+                </div>
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">

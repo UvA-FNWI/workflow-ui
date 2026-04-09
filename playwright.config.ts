@@ -40,6 +40,9 @@ export default defineConfig({
             command: "pnpm run dev:local --host 0.0.0.0",
             port: 5173,
             reuseExistingServer: !process.env.CI,
+            env: {
+                VITE_WEBAPI_URL: "http://localhost:5025/",
+            },
         },
         {
             command: "tsx tests/dummy-api.ts",

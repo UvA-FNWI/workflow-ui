@@ -8,6 +8,11 @@ export type Submission = {
     form: Form;
 };
 
+export type EffectResult = {
+    redirectUrl?: string;
+    showConfetti?: boolean;
+};
+
 export type Answer = {
     id: string;
     questionName: string;

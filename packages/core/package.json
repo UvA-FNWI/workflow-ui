@@ -1,7 +1,9 @@
 {
-  "name": "@datanose/core",
+  "name": "@uva-fnwi/datanose-core",
+  "description": "Shared OIDC authentication library for DataNose applications",
   "type": "module",
   "version": "1.0.0",
+  "license": "MIT",
   "sideEffects": false,
   "main": "dist/core.umd.js",
   "module": "dist/core.es.js",
@@ -16,7 +18,23 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "oidc",
+    "auth",
+    "react",
+    "datanose"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UvA-FNWI/workflow-ui",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "scripts": {
+    "prepublishOnly": "pnpm build",
     "dev": "vite build --watch",
     "dev:local": "vite build --watch",
     "build": "vite build",
@@ -49,10 +67,8 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.3",
     "vite": "^7.2.2",
+    "oidc-client-ts": "^2.4.0",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.4"
-  },
-  "dependencies": {
-    "oidc-client-ts": "^2.4.0"
   }
 }
