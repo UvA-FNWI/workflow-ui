@@ -1,4 +1,4 @@
-import {Button, Icon, Separator, Text} from "@datanose/ui";
+import {Button, Heading, Icon, Separator, Text} from "@datanose/ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
@@ -46,8 +46,45 @@ export const FormSummary = ({
             ),
     );
 
+    const hasAssessmentResults = assessmentForms.length > 0;
     const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
-    const colsClass = colsList[assessmentForms?.length ?? 0];
+    const colsClass = hasAssessmentResults ? colsList[assessmentForms?.length] : colsList[1];
+
+    if (!hasAssessmentResults) {
+        return (
+            <div key={submission.id} className="flex flex-col gap-2">
+                {submission.form.pages.map((page) => {
+                    const questionAnswerPairs = getVisibleQuestionAnswerPairs(
+                        page.questions,
+                        submission.answers,
+                    );
+
+                    return (
+                        <div key={page.name} className="py-2">
+                            {submission.form.pages.length > 1 && (
+                                <Heading as="h4" size="xs" className="pb-1 font-semibold">
+                                    {page.name}
+                                </Heading>
+                            )}
+                            <QuestionAnswerList
+                                questionAnswerPairs={questionAnswerPairs}
+                                noAnswerText={t("version_card.no_answer")}
+                                instanceId={instanceId}
+                                submissionId={submission.id}
+                            />
+                        </div>
+                    );
+                })}
+                {onSubmit && (
+                    <FormSubmitButton
+                        instanceId={instanceId}
+                        submission={submission}
+                        onSubmit={onSubmit}
+                    />
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col gap-6">

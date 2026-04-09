@@ -5,6 +5,7 @@ import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
+import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
@@ -27,6 +28,7 @@ export const StepCard = ({step, instance}: Props) => {
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
     );
+    const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep);
 
@@ -65,6 +67,15 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
+                    {!step.versions &&
+                        submissions.map((submission) => (
+                            <FormSummary
+                                key={submission.id}
+                                instanceId={instance.id}
+                                submission={submission}
+                            />
+                        ))}
+
                     {isFormOpen && (
                         <FormPage
                             instanceId={instance.id}
