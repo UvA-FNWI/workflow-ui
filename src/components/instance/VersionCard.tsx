@@ -9,16 +9,22 @@ import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 type Props = {
     version: WorkflowStepVersion;
     instanceId: string;
+    isExpandedByDefault?: boolean;
 };
 
-export const VersionCard = ({version, instanceId}: Props) => {
+export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) => {
     const {t, i18n, l} = useTranslate("workflow");
 
     return (
-        <Disclosure key={version.versionNumber}>
-            <Disclosure.Header>
+        <Disclosure
+            key={version.versionNumber}
+            border="none"
+            shadow="none"
+            defaultExpanded={isExpandedByDefault}
+        >
+            <Disclosure.Header nested={true}>
                 <div className="flex w-full items-center justify-between">
-                    <Heading>
+                    <Heading fontType="heading" className="text-lg font-semibold">
                         {t("version_card.version_nr", {versionNumber: version.versionNumber})}
                     </Heading>
                     <Text as="span">
@@ -27,9 +33,9 @@ export const VersionCard = ({version, instanceId}: Props) => {
                     </Text>
                 </div>
             </Disclosure.Header>
-            <Disclosure.Content>
+            <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6 pb-4">
                     {version.submissions.map((submission) => {
                         const questions = submission.form.pages.flatMap((page) => page.questions);
                         const questionAnswerPairs = getVisibleQuestionAnswerPairs(

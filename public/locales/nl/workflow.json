@@ -76,6 +76,6 @@
   },
   "version_card": {
     "no_answer": "Geen antwoord gegeven",
-    "version_nr": "Versie #{{versionNumber}}"
+    "version_nr": "Versie {{versionNumber}}"
   }
 }

@@ -1,6 +1,7 @@
 import {useState} from "react";
 
 import {Button, Disclosure, Heading, Modal, Pill, Text} from "@datanose/ui";
+import {Separator} from "@datanose/ui";
 import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
@@ -86,7 +87,7 @@ export const StepCard = ({step, instance}: Props) => {
                     )}
 
                     {/* Action buttons */}
-                    {!isFormOpen && (
+                    {!isFormOpen && actions.length > 0 && (
                         <div className="flex gap-2 pt-2">
                             {actions.map((a) => (
                                 <Button
@@ -99,9 +100,18 @@ export const StepCard = ({step, instance}: Props) => {
                             ))}
                         </div>
                     )}
-                    {step.versions?.map((v) => (
-                        <VersionCard key={v.versionNumber} version={v} instanceId={instance.id} />
-                    ))}
+                    <div className="flex flex-col">
+                        {step.versions?.map((v, index) => (
+                            <div key={v.versionNumber}>
+                                <VersionCard
+                                    version={v}
+                                    instanceId={instance.id}
+                                    isExpandedByDefault={index === 0}
+                                />
+                                <Separator />
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <Modal

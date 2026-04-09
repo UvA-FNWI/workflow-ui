@@ -171,6 +171,7 @@ const DisclosureHeader = (
   props: HTMLAttributes<HTMLButtonElement> & {
     children: ReactNode;
     showChevron?: boolean;
+    nested?: boolean;
     ref?: React.Ref<HTMLButtonElement>;
   }
 ) => {
@@ -178,6 +179,7 @@ const DisclosureHeader = (
     children,
     className,
     showChevron = true,
+    nested = false,
     onClick,
     ref,
     ...restProps
@@ -190,8 +192,16 @@ const DisclosureHeader = (
     onClick?.(e);
   };
 
+  const openedIcon = nested ? 'minus-small-line' : 'chevron-up-line';
+  const closedIcon = nested ? 'plus-small-line' : 'chevron-down-line';
+
   return (
-    <div className="ui:flex ui:w-full ui:flex-col ui:gap-4 ui:px-6 ui:py-6">
+    <div
+      className={cn(
+        'ui:flex ui:w-full ui:flex-col',
+        nested ? 'ui:px-0 ui:py-4' : 'ui:px-6 ui:pt-6 ui:pb-0'
+      )}
+    >
       <button
         {...buttonProps}
         ref={ref || buttonRef}
@@ -202,6 +212,7 @@ const DisclosureHeader = (
           'ui:flex ui:w-full ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
           'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
           isDisabled ? 'ui:cursor-not-allowed' : 'ui:cursor-pointer',
+          !nested && 'ui:pb-6',
           className
         )}
         {...restProps}
@@ -209,14 +220,14 @@ const DisclosureHeader = (
         <div className="ui:flex-1">{children}</div>
         {showChevron && (
           <Icon
-            name={state.isExpanded ? 'chevron-up-line' : 'chevron-down-line'}
+            name={state.isExpanded ? openedIcon : closedIcon}
             size="sm"
             color="primary"
             className="ui:transition-transform ui:duration-200"
           />
         )}
       </button>
-      {state.isExpanded && <Separator className="mt-2" />}
+      {state.isExpanded && !nested && <Separator />}
     </div>
   );
 };

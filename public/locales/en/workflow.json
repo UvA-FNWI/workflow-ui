@@ -76,6 +76,6 @@
   },
   "version_card": {
     "no_answer": "No answer provided",
-    "version_nr": "Version #{{versionNumber}}"
+    "version_nr": "Version {{versionNumber}}"
   }
 }
