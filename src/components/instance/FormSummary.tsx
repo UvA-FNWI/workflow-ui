@@ -23,7 +23,7 @@ export const FormSummary = ({
     onSubmit,
     formType = "Normal",
 }: Props) => {
-    const {t} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
 
     const hasResults =
         formType === "AssessmentOverview" || submission.form.pages.some((p) => p.hasResults);
@@ -60,7 +60,7 @@ export const FormSummary = ({
                     <div key={page.name} className="py-2">
                         {submission.form.pages.length > 1 && (
                             <Heading as="h4" size="xs" className="pb-1 font-semibold">
-                                {page.name}
+                                {l(page.title)}
                             </Heading>
                         )}
                         <QuestionAnswerList

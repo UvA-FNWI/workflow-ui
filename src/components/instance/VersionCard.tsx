@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const VersionCard = ({version, instanceId}: Props) => {
-    const {t, i18n} = useTranslate("workflow");
+    const {t, l, i18n} = useTranslate("workflow");
 
     return (
         <Disclosure key={version.versionNumber}>
@@ -41,12 +41,8 @@ export const VersionCard = ({version, instanceId}: Props) => {
                                 return (
                                     <div key={page.name} className="py-2">
                                         {submission.form.pages.length > 1 && (
-                                            <Heading
-                                                as="h4"
-                                                size="xs"
-                                                className="pb-1 font-semibold"
-                                            >
-                                                {page.name}
+                                            <Heading size="xs" className="pb-1 font-semibold">
+                                                {l(page.title)}
                                             </Heading>
                                         )}
                                         <QuestionAnswerList
