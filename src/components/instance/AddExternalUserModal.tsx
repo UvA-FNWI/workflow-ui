@@ -91,24 +91,14 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                 <Input
                     label={t("name")}
                     type="text"
-                    onChange={(value) =>
-                        setNewExternalUser((prev) => ({
-                            ...prev,
-                            displayName: value,
-                        }))
-                    }
+                    onChange={(value) => updateExternalUser({displayName: value})}
                 />
                 <Input
                     label={t("email")}
                     type="email"
                     isValid={newExternalUser.email === "" || isValidEmail}
                     errorMessage={t("external_user_add.email_error")}
-                    onChange={(value) =>
-                        setNewExternalUser((prev) => ({
-                            ...prev,
-                            email: value,
-                        }))
-                    }
+                    onChange={(value) => updateExternalUser({email: value})}
                 />
 
                 <SearchAndSelect
@@ -128,10 +118,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                         label={t("external_user_add.new_institute")}
                         type="text"
                         onChange={(value) =>
-                            setNewExternalUser((prev) => ({
-                                ...prev,
-                                institute: value.replace(/\s/g, "-").toLowerCase(),
-                            }))
+                            updateExternalUser({institute: value.replace(/\s/g, "-").toLowerCase()})
                         }
                     />
                 )}
