@@ -71,11 +71,13 @@ export const StepCard = ({step, instance}: Props) => {
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
                     {submissions.map((submission) => (
-                        <FormSummary
-                            key={submission.id}
-                            instanceId={instance.id}
-                            submission={submission}
-                        />
+                        <div className="py-4">
+                            <FormSummary
+                                key={submission.id}
+                                instanceId={instance.id}
+                                submission={submission}
+                            />
+                        </div>
                     ))}
 
                     {isFormOpen && (
@@ -100,20 +102,24 @@ export const StepCard = ({step, instance}: Props) => {
                             ))}
                         </div>
                     )}
-                    <div className="flex flex-col">
-                        {step.versions?.map((v, index) => (
-                            <div key={v.versionNumber}>
-                                <VersionCard
-                                    version={v}
-                                    instanceId={instance.id}
-                                    isExpandedByDefault={index === 0}
-                                />
-                                <Separator />
-                            </div>
-                        ))}
-                    </div>
+                    {step.versions?.some((version) => version.submissions?.length > 0) && (
+                        <div className="flex flex-col">
+                            {step.versions?.map(
+                                (v, index) =>
+                                    v.submissions.length > 0 && (
+                                        <div key={v.versionNumber}>
+                                            <VersionCard
+                                                version={v}
+                                                instanceId={instance.id}
+                                                isExpandedByDefault={index === 0}
+                                            />
+                                            <Separator />
+                                        </div>
+                                    ),
+                            )}
+                        </div>
+                    )}
                 </div>
-
                 <Modal
                     isOpen={activeAction?.type === "Execute"}
                     onOpenChange={() => setActiveAction(null)}
