@@ -41,7 +41,7 @@ export const StepCard = ({step, instance}: Props) => {
     const isDisabled =
         !isCurrentStep &&
         instance.steps.indexOf(step) >
-            instance.steps.findIndex((s) => instance.currentStep.includes(s.id));
+            instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
