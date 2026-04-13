@@ -49,7 +49,7 @@ export const StepCard = ({step, instance}: Props) => {
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
             <Disclosure.Header>
-                <div className="flex w-full items-center justify-between">
+                <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading>{l(step.title)}</Heading>
                         {step.dateCompleted && (

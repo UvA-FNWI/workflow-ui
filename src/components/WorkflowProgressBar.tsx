@@ -141,76 +141,78 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
         });
 
     return (
-        <div className="flex w-full flex-col gap-2">
-            <div className="relative h-8">
-                {steps.map((step, index) => {
-                    const isCompleted = index < currentStepIndex;
-                    const position = positions[index];
+        <div className="w-full overflow-x-auto overflow-y-visible">
+            <div className="flex min-w-md flex-col gap-2">
+                <div className="relative h-8">
+                    {steps.map((step, index) => {
+                        const isCompleted = index < currentStepIndex;
+                        const position = positions[index];
 
-                    return (
-                        <div
-                            key={step.id}
-                            className="absolute -translate-x-1/2"
-                            style={{left: `${position}%`}}
-                        >
-                            <Tooltip
-                                content={
-                                    <span className="flex flex-col items-center">
-                                        <span>{l(step.title) ?? step.id}</span>
-                                        {step.deadline && (
-                                            <span>
-                                                {t("progress.deadline")}:{" "}
-                                                {formatDeadline(step.deadline)}
-                                            </span>
-                                        )}
-                                    </span>
-                                }
+                        return (
+                            <div
+                                key={step.id}
+                                className="absolute -translate-x-1/2"
+                                style={{left: `${position}%`}}
                             >
-                                <span
-                                    className={`flex items-center justify-center rounded-full border p-1 ${
-                                        isCompleted
-                                            ? "border-red-brand bg-red-brand text-white"
-                                            : "border-red-brand bg-white text-red-brand"
-                                    }`}
+                                <Tooltip
+                                    content={
+                                        <span className="flex flex-col items-center">
+                                            <span>{l(step.title) ?? step.id}</span>
+                                            {step.deadline && (
+                                                <span>
+                                                    {t("progress.deadline")}:{" "}
+                                                    {formatDeadline(step.deadline)}
+                                                </span>
+                                            )}
+                                        </span>
+                                    }
                                 >
-                                    <Icon
-                                        name={
-                                            (step.icon as Parameters<typeof Icon>[0]["name"]) ??
-                                            (isCompleted ? "checkmark-solid" : "circle-solid")
-                                        }
-                                        size="sm"
-                                        color="current"
-                                        decorative
-                                    />
-                                </span>
-                            </Tooltip>
-                        </div>
-                    );
-                })}
-            </div>
-            <div className="flex h-2 w-full overflow-hidden rounded-full bg-grey-200">
-                {progress > 0 && (
-                    <div
-                        className="bg-red-brand transition-all duration-300"
-                        style={{width: `${progress}%`}}
-                    />
-                )}
-            </div>
+                                    <span
+                                        className={`flex items-center justify-center rounded-full border p-1 ${
+                                            isCompleted
+                                                ? "border-red-brand bg-red-brand text-white"
+                                                : "border-red-brand bg-white text-red-brand"
+                                        }`}
+                                    >
+                                        <Icon
+                                            name={
+                                                (step.icon as Parameters<typeof Icon>[0]["name"]) ??
+                                                (isCompleted ? "checkmark-solid" : "circle-solid")
+                                            }
+                                            size="sm"
+                                            color="current"
+                                            decorative
+                                        />
+                                    </span>
+                                </Tooltip>
+                            </div>
+                        );
+                    })}
+                </div>
+                <div className="flex h-2 w-full overflow-hidden rounded-full bg-grey-200">
+                    {progress > 0 && (
+                        <div
+                            className="bg-red-brand transition-all duration-300"
+                            style={{width: `${progress}%`}}
+                        />
+                    )}
+                </div>
 
-            <div className="relative mb-1">
-                <Text
-                    className={`absolute whitespace-nowrap text-grey-600 ${currentStepIndex >= 0 ? "-translate-x-1/2" : ""}`}
-                    style={
-                        currentStepIndex >= 0
-                            ? {left: `${positions[currentStepIndex]}%`}
-                            : {right: "0%"}
-                    }
-                    size="sm"
-                >
-                    {currentStepIndex >= 0
-                        ? (l(steps[currentStepIndex]?.title) ?? steps[currentStepIndex]?.id)
-                        : t("progress.completed")}
-                </Text>
+                <div className="relative mb-1 h-6">
+                    <Text
+                        className={`absolute whitespace-nowrap text-grey-600 ${currentStepIndex >= 0 ? "-translate-x-1/2" : ""}`}
+                        style={
+                            currentStepIndex >= 0
+                                ? {left: `${positions[currentStepIndex]}%`}
+                                : {right: "0%"}
+                        }
+                        size="sm"
+                    >
+                        {currentStepIndex >= 0
+                            ? (l(steps[currentStepIndex]?.title) ?? steps[currentStepIndex]?.id)
+                            : t("progress.completed")}
+                    </Text>
+                </div>
             </div>
         </div>
     );
