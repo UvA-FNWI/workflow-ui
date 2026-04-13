@@ -24,7 +24,7 @@ describe('Callout Component', () => {
 
   describe('Type Variants', () => {
     test.each([
-      ['info', 'ui:bg-sky-200 ui:border-l-sky-600'],
+      ['info', 'ui:bg-navy-200 ui:border-l-navy-600'],
       ['error', 'ui:bg-red-200 ui:border-l-red-600'],
       ['warning', 'ui:bg-orange-200 ui:border-l-orange-600'],
       ['success', 'ui:bg-forest-200 ui:border-l-forest-600'],

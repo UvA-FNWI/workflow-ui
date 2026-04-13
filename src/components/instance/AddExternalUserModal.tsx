@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useRef, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 
 import {Button, Input, Modal, Text} from "@datanose/ui";
 
@@ -29,51 +29,48 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     onConfirm,
 }) => {
     const {t} = useTranslate("workflow");
-    const confirmButtonRef = useRef<HTMLButtonElement>(null);
-    const [showNewInstituteInput, setShowNewInstituteInput] = useState(false);
     const [selectedInstitute, setSelectedInstitute] = useState<Selection>(new Set());
     const [newExternalUser, setNewExternalUser] = useState<UserSearchResult>(emptyExternalUser);
 
     const [triggerSearch, searchState, resetSearch] = useMockLazyFindInstitutesQuery();
     const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
 
-    const handleConfirm = useCallback(() => {
-        if (!newExternalUser) return;
-        onConfirm(newExternalUser);
-        onOpenChange(false);
-        setNewExternalUser(emptyExternalUser);
-        setSelectedInstitute(new Set());
-        setShowNewInstituteInput(false);
-    }, [onConfirm, onOpenChange, newExternalUser]);
+    const updateExternalUser = useCallback((updates: Partial<UserSearchResult>) => {
+        setNewExternalUser((prev) => ({
+            ...prev,
+            ...updates,
+        }));
+    }, []);
 
-    const handleCancel = useCallback(() => {
-        onOpenChange(false);
-        setNewExternalUser(emptyExternalUser);
-        setSelectedInstitute(new Set());
-        setShowNewInstituteInput(false);
-    }, [onOpenChange]);
+    const handleModalOpenChange = useCallback(
+        (nextIsOpen: boolean) => {
+            if (!nextIsOpen) {
+                setNewExternalUser(emptyExternalUser);
+                setSelectedInstitute(new Set());
+            }
+            onOpenChange(nextIsOpen);
+        },
+        [onOpenChange],
+    );
+
+    const handleConfirm = useCallback(() => {
+        onConfirm(newExternalUser);
+        handleModalOpenChange(false);
+    }, [onConfirm, handleModalOpenChange, newExternalUser]);
 
     const handleSelectInstituteChange = useCallback(
         (selected: Selection) => {
             setSelectedInstitute(selected);
-            const selectedInstitute: string = [...selected][0] as string;
+            const selectedInstitute = [...selected][0] as string;
 
             if (selectedInstitute === "new-item") {
-                setShowNewInstituteInput(true);
-                setNewExternalUser((prev) => ({
-                    ...prev,
-                    institute: "",
-                }));
+                updateExternalUser({institute: ""});
                 return;
             }
 
-            setNewExternalUser((prev) => ({
-                ...prev,
-                institute: selectedInstitute || "",
-            }));
-            setShowNewInstituteInput(false);
+            updateExternalUser({institute: selectedInstitute || ""});
         },
-        [setNewExternalUser],
+        [updateExternalUser],
     );
 
     const isValidEmail =
@@ -126,7 +123,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     showSearchHint={false}
                 />
 
-                {showNewInstituteInput && (
+                {selectedInstitute instanceof Set && selectedInstitute.has("new-item") && (
                     <Input
                         label={t("external_user_add.new_institute")}
                         type="text"
@@ -145,11 +142,14 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     variant="destructive"
                     onClick={handleConfirm}
                     disabled={!isCompleted}
-                    ref={confirmButtonRef}
                 >
                     {t("confirm")}
                 </Button>
-                <Button intent="secondary" variant="destructive" onClick={handleCancel}>
+                <Button
+                    intent="secondary"
+                    variant="destructive"
+                    onClick={() => handleModalOpenChange(false)}
+                >
                     {t("cancel")}
                 </Button>
             </Modal.Footer>

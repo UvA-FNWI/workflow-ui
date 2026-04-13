@@ -8,14 +8,14 @@ import { Icon } from '../Icon';
 const defaultType = 'info';
 
 const calloutVariants = cva(
-  'ui:relative ui:grid ui:w-full ui:grid-cols-[auto_1fr_auto] ui:items-center ui:gap-3 ui:border-l-2 ui:p-2 ui:break-words ui:text-grey-900',
+  'ui:relative ui:grid ui:w-max ui:grid-cols-[auto_1fr_auto] ui:items-center ui:gap-3 ui:border-l-4 ui:p-4 ui:break-words ui:text-grey-900',
   {
     variants: {
       type: {
         note: 'ui:border-l-grey-600 ui:bg-grey-300',
         error: 'ui:border-l-red-600 ui:bg-red-200',
         warning: 'ui:border-l-orange-600 ui:bg-orange-200',
-        info: 'ui:border-l-sky-600 ui:bg-sky-200',
+        info: 'ui:border-l-navy-600 ui:bg-navy-200',
         success: 'ui:border-l-forest-600 ui:bg-forest-200',
       },
     },

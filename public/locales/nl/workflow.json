@@ -17,7 +17,7 @@
     "email_error": "Vul een geldig e-mailadres in",
     "institute": "Instituut (universiteit/bedrijf)",
     "new_institute": "Nieuw instituut",
-    "success_toast": "De toegevoegde externe medewerker kreeg een mail om diens account te bevestigen.",
+    "success_toast": "De externe medewerker heeft een automatische mail gekregen om het account te bevestigen.",
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {

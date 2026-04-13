@@ -33,6 +33,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     selectionMode = "single",
     title,
     searchPlaceholder,
+    minSearchLength,
     allowsExternalUsers,
 }) => {
     const {t} = useTranslate("workflow");
@@ -125,6 +126,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     placeholder={searchPlaceholderText}
                     autoFocus={isOpen}
                     selectionMode={selectionMode}
+                    minSearchLength={minSearchLength}
                     isLoading={searchState.isLoading || searchState.isFetching}
                     noResultsText={t("user_picker.no_results")}
                     searchHintText={
@@ -151,7 +153,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                         onClick={onAddExternalUser}
                         leftIcon={<Icon name="user-add-line" className="text-inherit" />}
                     >
-                        {t("user_picker.not_in_list")}{" "}
+                        {t("user_picker.not_in_list")}
                     </Button>
                 )}
                 <Button
