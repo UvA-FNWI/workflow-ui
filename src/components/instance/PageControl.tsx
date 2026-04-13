@@ -142,14 +142,23 @@ export const PageControl = ({
                                 render={({field}) => {
                                     return (
                                         <div className="mb-4">
-                                            <div key={question.name}>
-                                                {l(question.text)}
-                                                {results &&
-                                                    results.find(
-                                                        (q) => q.questionName == question.name,
-                                                    ) &&
-                                                    ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
-                                                {!question.isRequired && ` ${t("optional")}`}
+                                            <div className="flex justify-between">
+                                                <div key={question.name}>
+                                                    {l(question.text)}
+                                                    {results &&
+                                                        results.find(
+                                                            (q) => q.questionName == question.name,
+                                                        ) &&
+                                                        ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
+                                                </div>
+                                                {!question.isRequired && (
+                                                    <Text
+                                                        className="text-grey-900 italic"
+                                                        size="sm"
+                                                    >
+                                                        {t("optional")}
+                                                    </Text>
+                                                )}
                                             </div>
                                             <InputControl
                                                 value={field.value}

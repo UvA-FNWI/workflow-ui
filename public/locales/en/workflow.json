@@ -46,7 +46,7 @@
     },
     "workflowInstance": "Workflow Instance"
   },
-  "optional": "(optional)",
+  "optional": "* Not required",
   "progress": {
     "completed": "Completed",
     "deadline": "Deadline",

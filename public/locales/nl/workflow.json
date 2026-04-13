@@ -46,7 +46,7 @@
     },
     "workflowInstance": "Workflow"
   },
-  "optional": "(optioneel)",
+  "optional": "* Niet verplicht",
   "progress": {
     "completed": "Voltooid",
     "deadline": "Deadline",
