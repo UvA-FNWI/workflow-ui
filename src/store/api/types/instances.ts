@@ -15,7 +15,7 @@ export type WorkflowInstanceField = {
 export type WorkflowInstance = {
     id: string;
     title: LocalString | null;
-    currentStep: string;
+    currentStep: string | null;
     fields: WorkflowInstanceField[];
     steps: WorkflowStep[];
     submissions: Submission[];

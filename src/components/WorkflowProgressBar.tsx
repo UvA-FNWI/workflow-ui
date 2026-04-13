@@ -122,7 +122,7 @@ const getStepPositions = (steps: WorkflowStep[]): number[] => {
 
 const getProgressPercentage = (positions: number[], currentStepIndex: number): number => {
     if (positions.length === 0) return 0;
-    if (currentStepIndex === -1) return 0;
+    if (currentStepIndex === -1) return 100;
 
     return Math.round(positions[currentStepIndex]);
 };
@@ -199,11 +199,17 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
 
             <div className="relative mb-1">
                 <Text
-                    className="absolute -translate-x-1/2 whitespace-nowrap text-grey-600"
-                    style={{left: `${positions[currentStepIndex]}%`}}
+                    className={`absolute whitespace-nowrap text-grey-600 ${currentStepIndex >= 0 ? "-translate-x-1/2" : ""}`}
+                    style={
+                        currentStepIndex >= 0
+                            ? {left: `${positions[currentStepIndex]}%`}
+                            : {right: "0%"}
+                    }
                     size="sm"
                 >
-                    {l(steps[currentStepIndex].title) ?? steps[currentStepIndex].id}
+                    {currentStepIndex >= 0
+                        ? (l(steps[currentStepIndex]?.title) ?? steps[currentStepIndex]?.id)
+                        : t("progress.completed")}
                 </Text>
             </div>
         </div>

@@ -48,6 +48,7 @@
   },
   "optional": "(optional)",
   "progress": {
+    "completed": "Completed",
     "deadline": "Deadline",
     "titleStudent": "Your progress",
     "titleSupervisor": "Student's progress"

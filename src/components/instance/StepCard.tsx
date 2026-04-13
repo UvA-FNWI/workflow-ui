@@ -31,7 +31,7 @@ export const StepCard = ({step, instance}: Props) => {
     );
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
-    const isCurrentStep = stepIds.includes(instance.currentStep);
+    const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
     const studentName = instance.fields.find((field) => field.key == "Student.DisplayName")
         ?.value as string;
 
@@ -44,7 +44,7 @@ export const StepCard = ({step, instance}: Props) => {
     const isDisabled =
         !isCurrentStep &&
         instance.steps.indexOf(step) >
-            instance.steps.findIndex((s) => instance.currentStep.includes(s.id));
+            instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
