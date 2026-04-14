@@ -2,6 +2,10 @@
   "language": "Language",
   "language_en": "English",
   "language_nl": "Dutch",
+  "login": "Login",
   "logout": "Logout",
-  "search_placeholder": "Search..."
+  "search_placeholder": "Search...",
+  "session_expired_canvas_body": "The session has expired. Click the refresh button in your browser to refresh the session.",
+  "session_expired_surf_body": "The session has expired. Click the button to login again.",
+  "session_expired_title": "Session expired"
 }
