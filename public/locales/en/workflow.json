@@ -50,6 +50,7 @@
     "titleSupervisor": "Student's progress"
   },
   "screens": {
+    "actions": "Actions",
     "students": "Students"
   },
   "status": {

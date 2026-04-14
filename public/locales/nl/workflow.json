@@ -50,6 +50,7 @@
     "titleSupervisor": "Voortgang van de student"
   },
   "screens": {
+    "actions": "Acties",
     "students": "Studenten"
   },
   "status": {

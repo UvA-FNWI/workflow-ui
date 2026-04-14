@@ -16,7 +16,7 @@ type ScreenTableProps = {
 };
 
 export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps) => {
-    const {i18n, l} = useTranslate();
+    const {i18n, l, t} = useTranslate("workflow");
     const navigate = useNavigate();
 
     const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(
@@ -46,7 +46,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                 })),
             {
                 id: "actions",
-                header: () => null,
+                header: () => <span className="sr-only">{t("screens.actions")}</span>,
                 enableSorting: false,
                 cell: ({row}) => {
                     const rowId = row.original.id;
@@ -66,7 +66,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                 },
             },
         ],
-        [columns, i18n.language, l, navigate],
+        [columns, i18n.language, l, t, navigate],
     );
 
     return <DataTable data={rows} columns={tableColumns} globalFilter={globalFilter} />;
