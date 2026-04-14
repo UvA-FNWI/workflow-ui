@@ -9,7 +9,6 @@
   "are_you_sure": "Weet je het zeker?",
   "are_you_sure_with_data": "Weet je zeker dat je {{stepName}} voor {{studentName}} wil {{actionName}}?",
   "cancel": "Annuleren",
-  "close": "Sluiten",
   "confirm": "Bevestigen",
   "continue": "Verder",
   "file_upload": {
@@ -31,9 +30,6 @@
     "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
-  "how_to_choose_a_subject": {
-    "title": "Zo kies je een goed scriptieonderwerp"
-  },
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",

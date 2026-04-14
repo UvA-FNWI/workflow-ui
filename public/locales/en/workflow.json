@@ -9,7 +9,6 @@
   "are_you_sure": "Are you sure?",
   "are_you_sure_with_data": "Are you sure you want to {{actionName}} {{stepName}} for {{studentName}}?",
   "cancel": "Cancel",
-  "close": "Close",
   "confirm": "Confirm",
   "continue": "Continue",
   "file_upload": {
@@ -31,9 +30,6 @@
     "title_other": "[{{count}}x] Handy during your thesis"
   },
   "home": "Home",
-  "how_to_choose_a_subject": {
-    "title": "How to choose a subject"
-  },
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
