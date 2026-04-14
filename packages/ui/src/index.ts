@@ -25,9 +25,9 @@ export {
   type InputVariantProps,
 } from './components/Input/Input';
 export {
-  Textarea,
-  type TextareaProps,
-} from './components/Input/Textarea/Textarea';
+  TextArea,
+  type TextAreaProps,
+} from './components/Input/TextArea/TextArea';
 export {
   NumberInput,
   type NumberInputProps,

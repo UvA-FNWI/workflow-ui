@@ -6,12 +6,13 @@ import { cn } from '../../../utils/cn';
 import { InputLabel } from '../InputLabel';
 import { type InputVariantProps, inputVariants } from '../InputVariant';
 
-export interface TextareaProps
+export interface TextAreaProps
   extends Omit<
       React.ComponentPropsWithoutRef<'textarea'>,
       'onChange' | 'disabled'
     >,
     InputVariantProps {
+  isDisabled?: boolean;
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
@@ -21,7 +22,7 @@ export interface TextareaProps
   isValid?: boolean;
 }
 
-export const Textarea: React.FC<TextareaProps> = ({
+export const TextArea: React.FC<TextAreaProps> = ({
   value,
   defaultValue,
   onChange,
@@ -37,7 +38,6 @@ export const Textarea: React.FC<TextareaProps> = ({
   'aria-labelledby': ariaLabelledBy,
   ...rest
 }) => {
-  const fieldIsDisabled = isDisabled ?? false;
   const ref = useRef<HTMLTextAreaElement>(null);
   const { inputProps, labelProps, descriptionProps, errorMessageProps } =
     useTextField(
@@ -50,8 +50,8 @@ export const Textarea: React.FC<TextareaProps> = ({
         errorMessage,
         'aria-label': ariaLabel,
         'aria-labelledby': ariaLabelledBy,
-        isDisabled: fieldIsDisabled,
-        validationState: isValid === false ? 'invalid' : 'valid',
+        isDisabled,
+        validationState: !isValid ? 'invalid' : 'valid',
         maxLength,
         inputElementType: 'textarea',
       },
@@ -60,11 +60,11 @@ export const Textarea: React.FC<TextareaProps> = ({
 
   const { focusProps, isFocusVisible } = useFocusRing();
   const { hoverProps, isHovered } = useHover({
-    isDisabled: fieldIsDisabled,
+    isDisabled,
   });
 
   const textareaClasses = inputVariants({
-    isDisabled: fieldIsDisabled,
+    isDisabled,
     isFocusVisible,
     isHovered,
     isValid,
@@ -87,7 +87,7 @@ export const Textarea: React.FC<TextareaProps> = ({
           {description}
         </div>
       )}
-      {errorMessage && isValid === false && (
+      {errorMessage && !isValid && (
         <div
           {...errorMessageProps}
           className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"

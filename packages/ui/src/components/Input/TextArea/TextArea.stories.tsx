@@ -2,27 +2,27 @@ import { type ComponentProps, useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Textarea } from './Textarea';
+import { TextArea } from './TextArea';
 
-const meta: Meta<typeof Textarea> = {
-  title: 'Components/Textarea',
-  component: Textarea,
+const meta: Meta<typeof TextArea> = {
+  title: 'Components/TextArea',
+  component: TextArea,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Textarea>;
+type Story = StoryObj<typeof TextArea>;
 
-const InteractiveTextarea = (args: ComponentProps<typeof Textarea>) => {
+const InteractiveTextArea = (args: ComponentProps<typeof TextArea>) => {
   const [value, setValue] = useState(args.value ?? '');
 
-  return <Textarea {...args} value={value} onChange={setValue} />;
+  return <TextArea {...args} value={value} onChange={setValue} />;
 };
 
 export const Default: Story = {
-  render: InteractiveTextarea,
+  render: InteractiveTextArea,
   args: {
-    label: 'Textarea label',
+    label: 'Text area label',
     placeholder: 'Type a longer response...',
     description: 'This is a helper description for the textarea.',
     isDisabled: false,
@@ -31,7 +31,7 @@ export const Default: Story = {
 };
 
 export const Invalid: Story = {
-  render: InteractiveTextarea,
+  render: InteractiveTextArea,
   args: {
     label: 'Invalid textarea',
     placeholder: 'Type a longer response...',
@@ -43,7 +43,7 @@ export const Invalid: Story = {
 };
 
 export const Disabled: Story = {
-  render: InteractiveTextarea,
+  render: InteractiveTextArea,
   args: {
     label: 'Disabled textarea',
     placeholder: 'Cannot type here',
@@ -54,7 +54,7 @@ export const Disabled: Story = {
 };
 
 export const LongContent: Story = {
-  render: InteractiveTextarea,
+  render: InteractiveTextArea,
   args: {
     label: 'Long content',
     description: 'Use this state to review multiline editing behavior.',

@@ -2,15 +2,15 @@ import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { Textarea } from './Textarea';
+import { TextArea } from './TextArea';
 
-describe('Textarea Component', () => {
+describe('TextArea Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   test('renders a textarea instead of an input', () => {
-    render(<Textarea label="Notes" />);
+    render(<TextArea label="Notes" />);
 
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('textbox').tagName).toBe('TEXTAREA');
@@ -19,7 +19,7 @@ describe('Textarea Component', () => {
 
   test('calls onChange with the updated string value', () => {
     const onChange = vi.fn();
-    render(<Textarea label="Notes" onChange={onChange} value="" />);
+    render(<TextArea label="Notes" onChange={onChange} value="" />);
 
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'Updated content' },
@@ -30,7 +30,7 @@ describe('Textarea Component', () => {
 
   test('wires label, description, and error message correctly', () => {
     render(
-      <Textarea
+      <TextArea
         label="Notes"
         description="Add more detail"
         errorMessage="This field is required"
@@ -44,7 +44,7 @@ describe('Textarea Component', () => {
   });
 
   test('applies invalid and disabled styling correctly', () => {
-    render(<Textarea aria-label="Notes" isDisabled={true} isValid={false} />);
+    render(<TextArea aria-label="Notes" isDisabled={true} isValid={false} />);
 
     expect(screen.getByRole('textbox')).toHaveClass(
       'ui:cursor-not-allowed',
@@ -55,7 +55,7 @@ describe('Textarea Component', () => {
 
   test('forwards rows, maxLength, and custom className', () => {
     render(
-      <Textarea
+      <TextArea
         aria-label="Notes"
         rows={6}
         maxLength={250}

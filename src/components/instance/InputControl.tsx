@@ -8,7 +8,7 @@ import {
     RadioGroup,
     Select,
     SelectItem,
-    Textarea,
+    TextArea,
 } from "@datanose/ui";
 import {parseISO} from "date-fns";
 
@@ -80,7 +80,7 @@ export const InputControl = ({
               })
             : "";
 
-        const StringField = isMultilineString ? Textarea : Input;
+        const StringField = isMultilineString ? TextArea : Input;
 
         return (
             <StringField

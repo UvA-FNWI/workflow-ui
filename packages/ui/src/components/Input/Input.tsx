@@ -14,6 +14,7 @@ export interface InputProps
       'onChange' | 'disabled'
     >,
     InputVariantProps {
+  isDisabled?: boolean;
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
@@ -38,7 +39,6 @@ export const Input: React.FC<InputProps> = ({
   'aria-labelledby': ariaLabelledBy,
   ...rest
 }) => {
-  const fieldIsDisabled = isDisabled ?? false;
   const ref = useRef<HTMLInputElement>(null);
   const { inputProps, labelProps, descriptionProps, errorMessageProps } =
     useTextField(
@@ -51,7 +51,7 @@ export const Input: React.FC<InputProps> = ({
         errorMessage,
         'aria-label': ariaLabel,
         'aria-labelledby': ariaLabelledBy,
-        isDisabled: fieldIsDisabled,
+        isDisabled,
         validationState: isValid === false ? 'invalid' : 'valid',
         maxLength: maxLength,
       },
@@ -60,11 +60,11 @@ export const Input: React.FC<InputProps> = ({
 
   const { focusProps, isFocusVisible } = useFocusRing();
   const { hoverProps, isHovered } = useHover({
-    isDisabled: fieldIsDisabled,
+    isDisabled,
   });
 
   const inputClasses = inputVariants({
-    isDisabled: fieldIsDisabled,
+    isDisabled,
     isFocusVisible,
     isHovered,
     isValid,
