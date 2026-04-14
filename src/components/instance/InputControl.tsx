@@ -1,6 +1,15 @@
 import {useCallback} from "react";
 
-import {Checkbox, Input, NumberInput, Radio, RadioGroup, Select, SelectItem} from "@datanose/ui";
+import {
+    Checkbox,
+    Input,
+    NumberInput,
+    Radio,
+    RadioGroup,
+    Select,
+    SelectItem,
+    Textarea,
+} from "@datanose/ui";
 import {parseISO} from "date-fns";
 
 import {UserPicker} from "../UserPicker/UserPicker";
@@ -58,6 +67,11 @@ export const InputControl = ({
     };
 
     if (question.type === "String") {
+        const isMultilineString =
+            question.type === "String" &&
+            question.layout != null &&
+            "multiline" in question.layout &&
+            question.layout.multiline === true;
         const lengthValidationDescription = question.maxLength
             ? t("string_validation", {
                   maxInputLength: question.maxLength,
@@ -65,8 +79,11 @@ export const InputControl = ({
                       question.maxLength - (typeof value === "string" ? value.length : 0),
               })
             : "";
+
+        const StringField = isMultilineString ? Textarea : Input;
+
         return (
-            <Input
+            <StringField
                 value={(value as string) || ""}
                 onChange={(value) => {
                     debouncedChange(value);
