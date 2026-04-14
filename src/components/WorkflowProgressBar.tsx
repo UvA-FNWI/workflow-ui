@@ -200,7 +200,7 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
 
                 <div className="relative mb-1 h-6">
                     <Text
-                        className={`absolute whitespace-nowrap text-grey-600 ${currentStepIndex >= 0 ? "-translate-x-1/2" : ""}`}
+                        className={`absolute whitespace-nowrap text-grey-600 dark:text-grey-400 ${currentStepIndex >= 0 ? "-translate-x-1/2" : ""}`}
                         style={
                             currentStepIndex >= 0
                                 ? {left: `${positions[currentStepIndex]}%`}
