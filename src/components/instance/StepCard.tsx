@@ -32,8 +32,9 @@ export const StepCard = ({step, instance}: Props) => {
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
-    const studentName = instance.fields.find((field) => field.key == "Student.DisplayName")
-        ?.value as string;
+    const studentName =
+        (instance.fields?.find((field) => field.key == "Student.DisplayName")?.value as string) ??
+        t("confirm_dialog.the_student");
 
     const stepStatus =
         [
@@ -144,11 +145,11 @@ export const StepCard = ({step, instance}: Props) => {
                     </Modal.Header>
                     <Modal.Body className="mt-2 text-lg">
                         <p>
-                            {t("are_you_sure_with_data", {
+                            {t("confirm_dialog.are_you_sure_with_data", {
                                 actionName: l(activeAction?.title)?.toLowerCase(),
                                 studentName: studentName,
                                 stepName: l(step.title)?.toLowerCase(),
-                                defaultValue: t("are_you_sure"),
+                                defaultValue: t("confirm_dialog.are_you_sure"),
                             })}
                         </p>
                     </Modal.Body>

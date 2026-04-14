@@ -6,10 +6,13 @@
     "stop_impersonating_button": "Stop impersonating",
     "title": "Admin"
   },
-  "are_you_sure": "Are you sure?",
-  "are_you_sure_with_data": "Are you sure you want to {{actionName}} {{stepName}} for {{studentName}}?",
   "cancel": "Cancel",
   "confirm": "Confirm",
+  "confirm_dialog": {
+    "are_you_sure": "Are you sure?",
+    "are_you_sure_with_data": "Are you sure you want to {{actionName}} {{stepName}} for {{studentName}}?",
+    "the_student": "the student"
+  },
   "continue": "Continue",
   "file_upload": {
     "description": "Description",
