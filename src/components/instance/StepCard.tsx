@@ -33,7 +33,7 @@ export const StepCard = ({step, instance}: Props) => {
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
     const studentName =
-        (instance.fields?.find((field) => field.key == "Student.DisplayName")?.value as string) ??
+        (instance.fields.find((field) => field.key == "Student.DisplayName")?.value as string) ??
         t("confirm_dialog.the_student");
 
     const stepStatus =
