@@ -199,7 +199,7 @@ const DisclosureHeader = (
     <div
       className={cn(
         'ui:flex ui:w-full ui:flex-col',
-        nested ? 'ui:px-0 ui:py-4' : 'ui:px-6 ui:pt-6 ui:pb-0'
+        nested ? 'ui:px-0 ui:py-4' : 'ui:px-6 ui:py-6'
       )}
     >
       <button
@@ -212,7 +212,6 @@ const DisclosureHeader = (
           'ui:flex ui:w-full ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
           'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
           isDisabled ? 'ui:cursor-not-allowed' : 'ui:cursor-pointer',
-          !nested && 'ui:pb-6',
           className
         )}
         {...restProps}
@@ -227,7 +226,6 @@ const DisclosureHeader = (
           />
         )}
       </button>
-      {state.isExpanded && !nested && <Separator />}
     </div>
   );
 };
@@ -245,7 +243,7 @@ const DisclosureContent = (
   const { state, panelRef, panelProps } = useDisclosureContext();
 
   const paddingClasses = {
-    none: 'ui:p-0',
+    none: 'ui:px-0 ui:py-2',
     sm: 'ui:px-6 ui:pb-4',
     md: 'ui:px-6 ui:pb-6',
     lg: 'ui:px-6 ui:pb-8',
@@ -257,12 +255,17 @@ const DisclosureContent = (
       ref={ref || panelRef}
       className={cn(
         state.isExpanded && paddingClasses[padding],
-        'ui:text-grey-900 ui:dark:text-white',
+        'ui:py-0 ui:text-grey-900 ui:dark:text-white',
         className
       )}
       {...restProps}
     >
-      {children}
+      <Separator />
+      <div
+        className={cn(state.isExpanded && paddingClasses[padding], 'ui:px-0')}
+      >
+        {children}
+      </div>
     </div>
   );
 };

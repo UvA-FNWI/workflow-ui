@@ -35,7 +35,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
             </Disclosure.Header>
             <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
-                <div className="flex flex-col gap-6 pb-4">
+                <div className="flex flex-col gap-6">
                     {version.submissions.map((submission) => {
                         const questions = submission.form.pages.flatMap((page) => page.questions);
                         const questionAnswerPairs = getVisibleQuestionAnswerPairs(

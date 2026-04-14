@@ -46,6 +46,15 @@ export const StepCard = ({step, instance}: Props) => {
         instance.steps.indexOf(step) >
             instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
+    const showVersionCardDividerTop = submissions.length > 0 || actions.length > 0;
+    const hasMultipleVersions = (step.versions?.length ?? 0) > 1;
+    const submissionsToShow =
+        submissions.length > 0
+            ? submissions
+            : step.versions?.length == 1
+              ? step.versions[0].submissions
+              : [];
+
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
             <Disclosure.Header>
@@ -70,7 +79,7 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
-                    {submissions.map((submission) => (
+                    {submissionsToShow.map((submission) => (
                         <div className="py-4">
                             <FormSummary
                                 key={submission.id}
@@ -81,11 +90,13 @@ export const StepCard = ({step, instance}: Props) => {
                     ))}
 
                     {isFormOpen && (
-                        <FormPage
-                            instanceId={instance.id}
-                            submissionId={activeAction?.form ?? ""}
-                            onClose={() => setActiveAction(null)}
-                        />
+                        <div className="py-4">
+                            <FormPage
+                                instanceId={instance.id}
+                                submissionId={activeAction?.form ?? ""}
+                                onClose={() => setActiveAction(null)}
+                            />
+                        </div>
                     )}
 
                     {/* Action buttons */}
@@ -102,23 +113,27 @@ export const StepCard = ({step, instance}: Props) => {
                             ))}
                         </div>
                     )}
-                    {step.versions?.some((version) => version.submissions?.length > 0) && (
-                        <div className="flex flex-col">
-                            {step.versions?.map(
-                                (v, index) =>
-                                    v.submissions.length > 0 && (
-                                        <div key={v.versionNumber}>
-                                            <VersionCard
-                                                version={v}
-                                                instanceId={instance.id}
-                                                isExpandedByDefault={index === 0}
-                                            />
-                                            <Separator />
-                                        </div>
-                                    ),
-                            )}
-                        </div>
-                    )}
+                    {hasMultipleVersions &&
+                        step.versions?.some((version) => version.submissions?.length > 0) && (
+                            <div className="flex flex-col">
+                                {step.versions?.map(
+                                    (v, index) =>
+                                        v.submissions.length > 0 && (
+                                            <div key={v.versionNumber}>
+                                                {showVersionCardDividerTop && <Separator />}
+                                                <VersionCard
+                                                    version={v}
+                                                    instanceId={instance.id}
+                                                    isExpandedByDefault={index === 0}
+                                                />
+                                                {index === v.submissions.length - 1 && (
+                                                    <Separator />
+                                                )}
+                                            </div>
+                                        ),
+                                )}
+                            </div>
+                        )}
                 </div>
                 <Modal
                     isOpen={activeAction?.type === "Execute"}
