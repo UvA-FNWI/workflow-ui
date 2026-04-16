@@ -27,8 +27,8 @@ const toastClassGenerator = cva(
         note: 'ui:bg-grey-300 ui:text-grey-900 ui:before:bg-grey-600',
         error: 'ui:bg-red-200 ui:text-grey-900 ui:before:bg-red-600',
         warning: 'ui:bg-orange-200 ui:text-grey-900 ui:before:bg-orange-600',
-        info: 'ui:bg-navy-200 ui:text-grey-900 ui:before:bg-navy-700',
-        success: 'ui:bg-forest-200 ui:text-grey-900 ui:before:bg-forest-800',
+        info: 'ui:bg-navy-200 ui:text-grey-900 ui:before:bg-navy-600',
+        success: 'ui:bg-forest-200 ui:text-grey-900 ui:before:bg-forest-600',
       },
     },
   }
@@ -73,13 +73,15 @@ export function Toast({ toast, state }: ToastProps) {
         {getIcon(toast.content.type)}
       </div>
       <div className="ui:flex ui:flex-col ui:gap-1">
-        <h1
-          {...titleProps}
-          className="ui:m-0 ui:text-sm ui:leading-tight ui:font-semibold"
-        >
-          {toast.content.label}
-        </h1>
-        <span {...descriptionProps} className="ui:text-sm ui:leading-normal">
+        {toast.content.label && (
+          <h1
+            {...titleProps}
+            className="ui:m-0 ui:text-sm ui:leading-none ui:font-semibold"
+          >
+            {toast.content.label}
+          </h1>
+        )}
+        <span {...descriptionProps} className="ui:text-sm ui:leading-none">
           {toast.content.message}
         </span>
         {toast.content.actionLabel && (
@@ -95,7 +97,7 @@ export function Toast({ toast, state }: ToastProps) {
         )}
       </div>
       <div
-        className="ui:flex ui:cursor-pointer ui:items-center ui:justify-center ui:p-2"
+        className="ui:flex ui:cursor-pointer ui:items-center ui:justify-center ui:p-0"
         onClick={() => state.close(toast.key)}
       >
         <Icon name="cross-line" size="sm" color="current" />

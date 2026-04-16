@@ -10,13 +10,11 @@ export type SaveAnswerResult = {
 export type ExecuteActionResult = {
     type: ActionType;
     instance?: WorkflowInstance;
-    result: {
-        redirectUrl: string | null;
-    };
+    result: EffectResult;
 };
 
 export type SubmitSubmissionResult = {
-    effectResult: EffectResult;
+    effectResult?: EffectResult;
     submission: Submission;
     updatedInstance?: WorkflowInstance;
     validationErrors: ValidationError[];
