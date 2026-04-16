@@ -2,15 +2,13 @@ import { useRef } from 'react';
 
 import { mergeProps, useFocusRing, useHover, useTextField } from 'react-aria';
 
-import { cn } from '../../utils/cn';
-import { InputLabel } from './InputLabel';
-import { type InputVariantProps, inputVariants } from './InputVariant';
+import { cn } from '../../../utils/cn';
+import { InputLabel } from '../InputLabel';
+import { type InputVariantProps, inputVariants } from '../InputVariant';
 
-export type { InputVariantProps };
-
-export interface InputProps
+export interface TextAreaProps
   extends Omit<
-      React.ComponentPropsWithoutRef<'input'>,
+      React.ComponentPropsWithoutRef<'textarea'>,
       'onChange' | 'disabled'
     >,
     InputVariantProps {
@@ -24,7 +22,7 @@ export interface InputProps
   isValid?: boolean;
 }
 
-export const Input: React.FC<InputProps> = ({
+export const TextArea: React.FC<TextAreaProps> = ({
   value,
   defaultValue,
   onChange,
@@ -35,11 +33,12 @@ export const Input: React.FC<InputProps> = ({
   isDisabled = false,
   className,
   maxLength,
+  rows = 4,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...rest
 }) => {
-  const ref = useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLTextAreaElement>(null);
   const { inputProps, labelProps, descriptionProps, errorMessageProps } =
     useTextField(
       {
@@ -52,8 +51,9 @@ export const Input: React.FC<InputProps> = ({
         'aria-label': ariaLabel,
         'aria-labelledby': ariaLabelledBy,
         isDisabled,
-        validationState: isValid === false ? 'invalid' : 'valid',
-        maxLength: maxLength,
+        validationState: !isValid ? 'invalid' : 'valid',
+        maxLength,
+        inputElementType: 'textarea',
       },
       ref
     );
@@ -63,7 +63,7 @@ export const Input: React.FC<InputProps> = ({
     isDisabled,
   });
 
-  const inputClasses = inputVariants({
+  const textareaClasses = inputVariants({
     isDisabled,
     isFocusVisible,
     isHovered,
@@ -73,10 +73,11 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div>
       {label && <InputLabel {...labelProps}>{label}</InputLabel>}
-      <input
+      <textarea
         {...mergeProps(inputProps, focusProps, hoverProps, rest)}
         ref={ref}
-        className={cn(inputClasses, className)}
+        rows={rows}
+        className={cn(textareaClasses, 'ui:min-h-28 ui:resize-y', className)}
       />
       {description && (
         <div
@@ -86,7 +87,7 @@ export const Input: React.FC<InputProps> = ({
           {description}
         </div>
       )}
-      {errorMessage && isValid === false && (
+      {errorMessage && !isValid && (
         <div
           {...errorMessageProps}
           className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"

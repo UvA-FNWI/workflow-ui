@@ -1,4 +1,4 @@
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 export const inputVariants = cva(
   'ui:min-h-10 ui:w-full ui:rounded-xs ui:border ui:px-3 ui:py-2 ui:text-base ui:transition-all ui:duration-200 ui:outline-none ui:dark:text-white',
@@ -41,3 +41,5 @@ export const inputVariants = cva(
     },
   }
 );
+
+export type InputVariantProps = VariantProps<typeof inputVariants>;
