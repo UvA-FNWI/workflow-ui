@@ -120,6 +120,6 @@ describe('Toast', () => {
 
     const toastElement = container.firstChild as HTMLElement;
     expect(toastElement.className).toContain('ui:bg-forest-200');
-    expect(toastElement.className).toContain('ui:before:bg-forest-800');
+    expect(toastElement.className).toContain('ui:before:bg-forest-600');
   });
 });

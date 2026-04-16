@@ -14,7 +14,7 @@ export type ExecuteActionResult = {
 };
 
 export type SubmitSubmissionResult = {
-    effectResult: EffectResult;
+    effectResult?: EffectResult;
     submission: Submission;
     updatedInstance?: WorkflowInstance;
     validationErrors: ValidationError[];

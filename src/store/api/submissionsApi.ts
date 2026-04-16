@@ -36,7 +36,9 @@ export const submissionsApi = baseApi.injectEndpoints({
                     ),
                 );
 
-                dispatch(applyEffectResult(data.effectResult));
+                if (data.effectResult) {
+                    dispatch(applyEffectResult(data.effectResult));
+                }
             },
         }),
     }),

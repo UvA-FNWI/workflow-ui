@@ -11,7 +11,7 @@ export type Submission = {
 export type EffectResult = {
     redirectUrl?: string;
     showConfetti?: boolean;
-    showToast?: ToastEffect;
+    toast?: ToastEffect;
 };
 
 export type ToastEffect = {

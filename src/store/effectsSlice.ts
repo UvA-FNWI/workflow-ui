@@ -6,18 +6,14 @@ import type {RootState} from "./store";
 const initialState: EffectResult = {
     redirectUrl: undefined,
     showConfetti: false,
-    showToast: undefined,
+    toast: undefined,
 };
 
 const effectsSlice = createSlice({
     name: "effects",
     initialState,
     reducers: {
-        applyEffectResult: (state, action: PayloadAction<EffectResult | undefined>) => {
-            if (!action.payload) {
-                return;
-            }
-
+        applyEffectResult: (state, action: PayloadAction<EffectResult>) => {
             if (action.payload.redirectUrl !== undefined) {
                 state.redirectUrl = action.payload.redirectUrl;
             }
@@ -26,8 +22,8 @@ const effectsSlice = createSlice({
                 state.showConfetti = action.payload.showConfetti;
             }
 
-            if (action.payload.showToast !== undefined) {
-                state.showToast = action.payload.showToast;
+            if (action.payload.toast !== undefined) {
+                state.toast = action.payload.toast;
             }
         },
         setShowConfetti: (state, action: PayloadAction<boolean>) => {
@@ -36,17 +32,17 @@ const effectsSlice = createSlice({
         clearRedirectUrl: (state) => {
             state.redirectUrl = undefined;
         },
-        clearShowToast: (state) => {
-            state.showToast = undefined;
+        clearToast: (state) => {
+            state.toast = undefined;
         },
     },
 });
 
-export const {applyEffectResult, clearRedirectUrl, clearShowToast, setShowConfetti} =
+export const {applyEffectResult, clearRedirectUrl, clearToast, setShowConfetti} =
     effectsSlice.actions;
 
 export const selectRedirectUrl = (state: RootState) => state.effects.redirectUrl;
 export const selectShowConfetti = (state: RootState) => state.effects.showConfetti;
-export const selectShowToast = (state: RootState) => state.effects.showToast;
+export const selectToast = (state: RootState) => state.effects.toast;
 
 export default effectsSlice.reducer;
