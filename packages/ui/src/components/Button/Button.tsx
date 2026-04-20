@@ -114,7 +114,7 @@ export interface ButtonProps
   isLoading?: boolean;
   loadingText?: ReactNode;
   type?: 'button' | 'submit' | 'reset';
-  width?: 'full' | 'regular';
+  width?: 'full' | 'regular' | 'none';
 
   // Icons
   leftIcon?: ReactNode;
