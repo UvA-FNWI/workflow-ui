@@ -132,73 +132,81 @@ export const PageControl = ({
                     )}
                     {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
                 </div>
-                <div>
-                    <form>
-                        {regularQuestions.map((question) => (
-                            <Controller
-                                key={question.name}
-                                control={form.control}
-                                name={question.name}
-                                render={({field}) => {
-                                    return (
-                                        <div className="mb-4">
-                                            <div className="flex justify-between">
-                                                <div key={question.name}>
-                                                    {l(question.text)}
-                                                    {results &&
-                                                        results.find(
-                                                            (q) => q.questionName == question.name,
-                                                        ) &&
-                                                        ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
+                {regularQuestions.length > 0 ||
+                    (fileQuestions.length > 0 && (
+                        <div>
+                            <form>
+                                {regularQuestions.map((question) => (
+                                    <Controller
+                                        key={question.name}
+                                        control={form.control}
+                                        name={question.name}
+                                        render={({field}) => {
+                                            return (
+                                                <div className="mb-4">
+                                                    <div className="flex justify-between">
+                                                        <div key={question.name}>
+                                                            {l(question.text)}
+                                                            {results &&
+                                                                results.find(
+                                                                    (q) =>
+                                                                        q.questionName ==
+                                                                        question.name,
+                                                                ) &&
+                                                                ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
+                                                        </div>
+                                                        {!question.isRequired && (
+                                                            <Text
+                                                                className="text-grey-900 italic"
+                                                                size="sm"
+                                                            >
+                                                                {t("optional")}
+                                                            </Text>
+                                                        )}
+                                                    </div>
+                                                    <InputControl
+                                                        value={field.value}
+                                                        onChange={field.onChange}
+                                                        question={question}
+                                                        onSave={save}
+                                                    />
                                                 </div>
-                                                {!question.isRequired && (
-                                                    <Text
-                                                        className="text-grey-900 italic"
-                                                        size="sm"
-                                                    >
-                                                        {t("optional")}
-                                                    </Text>
-                                                )}
-                                            </div>
-                                            <InputControl
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                question={question}
-                                                onSave={save}
-                                            />
-                                        </div>
-                                    );
-                                }}
-                            />
-                        ))}
+                                            );
+                                        }}
+                                    />
+                                ))}
 
-                        {fileQuestions.length > 0 && (
-                            <FileUploadTable
-                                instanceId={instanceId}
-                                submissionId={submissionId}
-                                questions={fileQuestions}
-                                values={fileValuesMap}
-                                answers={submission?.answers}
-                                onFileSelect={async (questionName, file) => {
-                                    // Always update form value (file or null)
-                                    form.setValue(questionName, file);
+                                {fileQuestions.length > 0 && (
+                                    <FileUploadTable
+                                        instanceId={instanceId}
+                                        submissionId={submissionId}
+                                        questions={fileQuestions}
+                                        values={fileValuesMap}
+                                        answers={submission?.answers}
+                                        onFileSelect={async (questionName, file) => {
+                                            // Always update form value (file or null)
+                                            form.setValue(questionName, file);
 
-                                    if (file) {
-                                        const result = await saveFileAnswer(questionName, file);
-                                        // Clear local file on error
-                                        if (!result.success) {
-                                            form.setValue(questionName, null);
-                                        }
-                                        return result;
-                                    }
+                                            if (file) {
+                                                const result = await saveFileAnswer(
+                                                    questionName,
+                                                    file,
+                                                );
+                                                // Clear local file on error
+                                                if (!result.success) {
+                                                    form.setValue(questionName, null);
+                                                }
+                                                return result;
+                                            }
 
-                                    return {success: true, error: null};
-                                }}
-                                onRemoveStoredFile={removeFileAnswer}
-                            />
-                        )}
-                    </form>
-                </div>
+                                            return {success: true, error: null};
+                                        }}
+                                        onRemoveStoredFile={removeFileAnswer}
+                                    />
+                                )}
+                            </form>
+                        </div>
+                    ))}
 
                 {typeof weightedAverage == "number" && weightedAverage !== 0 && (
                     <div>

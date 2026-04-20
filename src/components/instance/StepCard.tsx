@@ -12,7 +12,6 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
-import {getStringField} from "~/utils/fieldUtils.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 
 type Props = {
@@ -33,8 +32,6 @@ export const StepCard = ({step, instance}: Props) => {
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
-    const studentName =
-        getStringField(instance?.fields, "Student.DisplayName") ?? t("confirm_dialog.the_student");
 
     const stepStatus =
         [
@@ -47,7 +44,6 @@ export const StepCard = ({step, instance}: Props) => {
         instance.steps.indexOf(step) >
             instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
-    const showVersionCardDividerTop = submissions.length > 0 || actions.length > 0;
     const hasMultipleVersions = (step.versions?.length ?? 0) > 1;
     const submissionsToShow =
         submissions.length > 0
@@ -81,12 +77,8 @@ export const StepCard = ({step, instance}: Props) => {
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
                     {submissionsToShow.map((submission) => (
-                        <div className="py-4">
-                            <FormSummary
-                                key={submission.id}
-                                instanceId={instance.id}
-                                submission={submission}
-                            />
+                        <div key={submission.id} className="py-4">
+                            <FormSummary instanceId={instance.id} submission={submission} />
                         </div>
                     ))}
 
@@ -117,22 +109,25 @@ export const StepCard = ({step, instance}: Props) => {
                     {hasMultipleVersions &&
                         step.versions?.some((version) => version.submissions?.length > 0) && (
                             <div className="flex flex-col">
-                                {step.versions?.map(
-                                    (v, index) =>
-                                        v.submissions.length > 0 && (
-                                            <div key={v.versionNumber}>
-                                                {showVersionCardDividerTop && <Separator />}
-                                                <VersionCard
-                                                    version={v}
-                                                    instanceId={instance.id}
-                                                    isExpandedByDefault={index === 0}
-                                                />
-                                                {index === v.submissions.length - 1 && (
-                                                    <Separator />
-                                                )}
-                                            </div>
-                                        ),
-                                )}
+                                {step.versions
+                                    .filter((v) => v.submissions.length > 0)
+                                    .map(
+                                        (v, index, arr) =>
+                                            v.submissions.length > 0 && (
+                                                <div key={v.versionNumber}>
+                                                    {index > 0 && <Separator />}
+                                                    <VersionCard
+                                                        version={v}
+                                                        instanceId={instance.id}
+                                                        isExpandedByDefault={
+                                                            submissionsToShow.length === 0 &&
+                                                            index === 0
+                                                        }
+                                                    />
+                                                    {index === arr.length - 1 && <Separator />}
+                                                </div>
+                                            ),
+                                    )}
                             </div>
                         )}
                 </div>
@@ -141,17 +136,10 @@ export const StepCard = ({step, instance}: Props) => {
                     onOpenChange={() => setActiveAction(null)}
                 >
                     <Modal.Header className="pb-0 text-2xl font-semibold">
-                        {activeAction && `${l(activeAction.title)} ${l(step.title)?.toLowerCase()}`}
+                        {activeAction && l(activeAction.title)}
                     </Modal.Header>
                     <Modal.Body className="mt-2 text-lg">
-                        <p>
-                            {t("confirm_dialog.are_you_sure_with_data", {
-                                actionName: l(activeAction?.title)?.toLowerCase(),
-                                studentName: studentName,
-                                stepName: l(step.title)?.toLowerCase(),
-                                defaultValue: t("confirm_dialog.are_you_sure"),
-                            })}
-                        </p>
+                        <p>{t("are_you_sure")}</p>
                     </Modal.Body>
                     {activeAction && (
                         <Modal.Footer>
