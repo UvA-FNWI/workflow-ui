@@ -34,6 +34,7 @@ const buttonClassGenerator = cva(
       width: {
         full: 'ui:w-full',
         regular: 'ui:w-auto',
+        none: '',
       },
     },
     compoundVariants: [

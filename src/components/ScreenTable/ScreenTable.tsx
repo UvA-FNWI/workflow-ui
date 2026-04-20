@@ -2,7 +2,7 @@ import {useMemo} from "react";
 
 import {Link, useNavigate} from "react-router";
 
-import {Button, Icon} from "@datanose/ui";
+import {Button, Icon, linkClassGenerator} from "@datanose/ui";
 import {type ColumnDef} from "@tanstack/react-table";
 
 import {DataTable} from "~/components/Table";
@@ -23,27 +23,40 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
         () => [
             ...columns
                 .filter((col) => col.displayType !== "ExportOnly")
-                .map((col) => ({
-                    id: String(col.id),
-                    accessorFn: (row) => row.values[col.id],
-                    header: () => l(col.title),
-                    cell: (info) => {
-                        const value = info.getValue();
-                        const formattedValue = formatCellValue(value, col.dataType, i18n.language);
-
-                        if (col.link) {
-                            const rowId = info.row.original.id;
-                            return (
-                                <Link to={`/instance/${rowId}`} className="hover:underline">
-                                    {formattedValue}
-                                </Link>
+                .map(
+                    (col): ColumnDef<ScreenRow> => ({
+                        id: String(col.id),
+                        accessorFn: (row) => row.values[col.id],
+                        header: () => l(col.title),
+                        cell: (info) => {
+                            const value = info.getValue();
+                            const formattedValue = formatCellValue(
+                                value,
+                                col.dataType,
+                                i18n.language,
                             );
-                        }
 
-                        return formattedValue;
-                    },
-                    enableSorting: true,
-                })),
+                            if (col.link) {
+                                const rowId = info.row.original.id;
+                                return (
+                                    <Link
+                                        to={`/instance/${rowId}`}
+                                        className={linkClassGenerator({
+                                            intent: "primary",
+                                            underline: true,
+                                            size: "sm",
+                                        })}
+                                    >
+                                        {formattedValue}
+                                    </Link>
+                                );
+                            }
+
+                            return formattedValue;
+                        },
+                        enableSorting: true,
+                    }),
+                ),
             {
                 id: "actions",
                 header: () => <span className="sr-only">{t("screens.actions")}</span>,
@@ -56,7 +69,9 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                             <Button
                                 intent="primary"
                                 variant="destructive"
-                                className="flex items-center justify-center rounded-sm px-1 py-2 text-white"
+                                size="square"
+                                width="none"
+                                className="flex items-center justify-center rounded-sm text-white"
                                 onClick={() => navigate(`/instance/${rowId}`)}
                             >
                                 <Icon name="visible-line" color="current" />

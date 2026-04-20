@@ -21,8 +21,8 @@ export function formatDate(
             year: "numeric",
             month: "long",
             day: "numeric",
-            hour: undefined,
-            minute: undefined,
+            hour: "2-digit",
+            minute: "2-digit",
             ...options,
         };
 

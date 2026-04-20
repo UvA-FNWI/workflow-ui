@@ -12,6 +12,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
+import {getStringField} from "~/utils/fieldUtils.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 
 type Props = {
@@ -33,8 +34,7 @@ export const StepCard = ({step, instance}: Props) => {
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
     const studentName =
-        (instance.fields.find((field) => field.key == "Student.DisplayName")?.value as string) ??
-        t("confirm_dialog.the_student");
+        getStringField(instance?.fields, "Student.DisplayName") ?? t("confirm_dialog.the_student");
 
     const stepStatus =
         [

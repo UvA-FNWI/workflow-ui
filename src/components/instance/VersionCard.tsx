@@ -3,7 +3,7 @@ import {Disclosure, Heading, Text} from "@datanose/ui";
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {WorkflowStepVersion} from "~/store/api/types/instances";
-import {formatDate} from "~/utils/formatDate.ts";
+import {formatDateShort} from "~/utils/formatDate.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -29,7 +29,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                     </Heading>
                     <Text as="span">
                         <Text fontWeight="semibold">{t("status.submitted")}:</Text>{" "}
-                        {formatDate(version.submittedAt, i18n.language)}
+                        {formatDateShort(version.submittedAt, i18n.language)}
                     </Text>
                 </div>
             </Disclosure.Header>
