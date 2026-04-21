@@ -1,9 +1,13 @@
 import {type ChangeEvent, useEffect} from "react";
 
 import {Button, useTheme} from "@datanose/ui";
+import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
+import {useAuth} from "@uva-fnwi/datanose-core";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
+import {selectCurrentUser} from "~/store/authSlice";
+import {useAppSelector} from "~/store/store";
 
 type Language = "en" | "nl";
 
@@ -11,7 +15,8 @@ type Language = "en" | "nl";
 function TemporaryNavbar() {
     const {resolvedTheme, setTheme} = useTheme();
     const {i18n, t} = useTranslate("common");
-
+    const {isAuthenticated, surfLogout} = useAuth();
+    const user = useAppSelector(selectCurrentUser);
     useEffect(() => {
         document.documentElement.setAttribute("lang", i18n.language);
     }, [i18n.language]);
@@ -25,6 +30,9 @@ function TemporaryNavbar() {
         const newLanguage = event.target.value as Language;
         i18n.changeLanguage(newLanguage);
     };
+    if (isEmbeddedInCanvas()) {
+        return null;
+    }
 
     return (
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
@@ -54,6 +62,16 @@ function TemporaryNavbar() {
                         <option value="nl">{t("language_nl")}</option>
                     </select>
                 </label>
+                {isAuthenticated && (
+                    <Button
+                        intent="primary"
+                        variant="destructive"
+                        onClick={() => void surfLogout()}
+                        type="button"
+                    >
+                        {t("logout")} ({user?.displayName})
+                    </Button>
+                )}
             </div>
         </nav>
     );

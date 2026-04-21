@@ -2,16 +2,19 @@ import { useRef } from 'react';
 
 import { mergeProps, useFocusRing, useHover, useTextField } from 'react-aria';
 
-import { VariantProps } from 'class-variance-authority';
-
 import { cn } from '../../utils/cn';
-import { inputVariants } from './InputVariant';
+import { InputLabel } from './InputLabel';
+import { type InputVariantProps, inputVariants } from './InputVariant';
 
-export type InputVariantProps = VariantProps<typeof inputVariants>;
+export type { InputVariantProps };
 
 export interface InputProps
-  extends Omit<React.ComponentPropsWithoutRef<'input'>, 'onChange'>,
+  extends Omit<
+      React.ComponentPropsWithoutRef<'input'>,
+      'onChange' | 'disabled'
+    >,
     InputVariantProps {
+  isDisabled?: boolean;
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
@@ -32,6 +35,8 @@ export const Input: React.FC<InputProps> = ({
   isDisabled = false,
   className,
   maxLength,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   ...rest
 }) => {
   const ref = useRef<HTMLInputElement>(null);
@@ -44,7 +49,9 @@ export const Input: React.FC<InputProps> = ({
         label,
         description,
         errorMessage,
-        isDisabled: isDisabled ?? false,
+        'aria-label': ariaLabel,
+        'aria-labelledby': ariaLabelledBy,
+        isDisabled,
         validationState: isValid === false ? 'invalid' : 'valid',
         maxLength: maxLength,
       },
@@ -53,7 +60,7 @@ export const Input: React.FC<InputProps> = ({
 
   const { focusProps, isFocusVisible } = useFocusRing();
   const { hoverProps, isHovered } = useHover({
-    isDisabled: isDisabled ?? false,
+    isDisabled,
   });
 
   const inputClasses = inputVariants({
@@ -65,14 +72,7 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <div>
-      {label && (
-        <label
-          {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
-        >
-          {label}
-        </label>
-      )}
+      {label && <InputLabel {...labelProps}>{label}</InputLabel>}
       <input
         {...mergeProps(inputProps, focusProps, hoverProps, rest)}
         ref={ref}

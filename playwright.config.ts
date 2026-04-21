@@ -22,6 +22,9 @@ export default defineConfig({
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: "on-first-retry",
+
+        /* Pre-authenticated storage state so tests bypass the OIDC auth guard. */
+        storageState: "tests/auth.json",
     },
 
     /* Configure projects for major browsers */
@@ -37,6 +40,9 @@ export default defineConfig({
             command: "pnpm run dev:local --host 0.0.0.0",
             port: 5173,
             reuseExistingServer: !process.env.CI,
+            env: {
+                VITE_WEBAPI_URL: "http://localhost:5025/",
+            },
         },
         {
             command: "tsx tests/dummy-api.ts",

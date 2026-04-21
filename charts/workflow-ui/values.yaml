@@ -8,7 +8,10 @@ contentSecurityPolicy: "default-src 'self'"
 envVars:
     webapiUrl: ""
     env: "development"
-
+    authAuthority: ""
+    authClientId: ""
+    authLogoutUrl: ""
+    
 # Azure Key Vault config for TLS certificates
 # Uncomment and configure for tst/acc/prd environments
 # azure:

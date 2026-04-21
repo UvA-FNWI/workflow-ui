@@ -6,6 +6,7 @@
     "stop_impersonating_button": "Stop impersonating",
     "title": "Admin"
   },
+  "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "close": "Close",
   "confirm": "Confirm",
@@ -31,6 +32,10 @@
     "title": "How to choose a subject"
   },
   "instance": {
+    "calculations": {
+      "average_grade": "Avg. grade [{{page}}]:",
+      "final_grade": "Final grade"
+    },
     "summary": {
       "edit_page": "Edit page",
       "no_answer": "No answer provided",
@@ -48,10 +53,9 @@
   "screens": {
     "students": "Students"
   },
-  "step_card": {
-    "are_you_sure": "Are you sure?",
-    "cancel": "Cancel",
-    "confirm": "Confirm"
+  "status": {
+    "completed_on": "Completed on",
+    "submitted": "Submitted"
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
   "studentCard": {
@@ -63,14 +67,13 @@
     "no_results": "No users found",
     "search_hint_one": "Search for a user",
     "search_hint_other": "Search for users",
-    "search_placeholder": "Search for a user...",
+    "search_placeholder": "Search for a user",
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search user"
   },
   "version_card": {
     "no_answer": "No answer provided",
-    "submitted": "Submitted",
     "version_nr": "Version #{{versionNumber}}"
   }
 }

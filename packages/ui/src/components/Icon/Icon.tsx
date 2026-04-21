@@ -18,7 +18,7 @@ const iconVariants = cva('ui:inline-block', {
     },
     color: {
       current: 'ui:text-current',
-      primary: 'ui:text-grey-900 ui:dark:text-grey-100',
+      primary: 'ui:text-black ui:dark:text-grey-100',
       secondary: 'ui:text-grey-600 ui:dark:text-grey-400',
       success: 'ui:text-green-600 ui:dark:text-green-400',
       warning: 'ui:text-yellow-600 ui:dark:text-yellow-400',

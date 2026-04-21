@@ -1,11 +1,11 @@
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 export const inputVariants = cva(
-  'ui:min-h-10 ui:w-full ui:rounded-md ui:border ui:px-3 ui:py-2 ui:text-base ui:transition-all ui:duration-200 ui:outline-none',
+  'ui:min-h-10 ui:w-full ui:rounded-xs ui:border ui:px-3 ui:py-2 ui:text-base ui:transition-all ui:duration-200 ui:outline-none ui:dark:text-white',
   {
     variants: {
       isDisabled: {
-        true: 'ui:cursor-not-allowed ui:bg-grey-100 ui:opacity-60 ui:dark:bg-grey-800',
+        true: 'ui:cursor-not-allowed ui:bg-grey-400 ui:opacity-60 ui:dark:border-grey-700 ui:dark:bg-grey-700',
         false: 'ui:bg-grey-100 ui:dark:bg-grey-900',
       },
       isFocusVisible: {
@@ -41,3 +41,5 @@ export const inputVariants = cva(
     },
   }
 );
+
+export type InputVariantProps = VariantProps<typeof inputVariants>;

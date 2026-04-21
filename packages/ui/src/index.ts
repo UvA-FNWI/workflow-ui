@@ -25,10 +25,18 @@ export {
   type InputVariantProps,
 } from './components/Input/Input';
 export {
+  TextArea,
+  type TextAreaProps,
+} from './components/Input/TextArea/TextArea';
+export {
   NumberInput,
   type NumberInputProps,
   type NumberInputVariantProps,
 } from './components/Input/NumberInput/NumberInput';
+export {
+  SearchInput,
+  type SearchInputProps,
+} from './components/Input/SearchInput/SearchInput';
 export { Link, type LinkProps } from './components/Link/Link';
 export {
   Separator,

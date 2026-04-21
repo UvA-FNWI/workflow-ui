@@ -77,7 +77,7 @@ const calendarCellVariants = cva(
       {
         isSelected: true,
         isSingleSelection: true,
-        class: 'ui:rounded-md ui:bg-navy-600 ui:text-white ui:dark:bg-sky-500',
+        class: 'ui:rounded-sm ui:bg-navy-600 ui:text-white ui:dark:bg-sky-500',
       },
       // Single selection hover
       {
@@ -99,7 +99,7 @@ const calendarCellVariants = cva(
         isSelected: false,
         isHovered: true,
         isDisabled: false,
-        class: 'ui:rounded-md ui:bg-navy-100 ui:dark:bg-sky-900',
+        class: 'ui:rounded-sm ui:bg-navy-100 ui:dark:bg-sky-900',
       },
       // Selection edge hover
       {
@@ -112,7 +112,7 @@ const calendarCellVariants = cva(
         isSelected: false,
         isToday: true,
         class:
-          'ui:rounded-md ui:border ui:border-navy-600 ui:text-navy-600 ui:dark:border-sky-500 ui:dark:text-sky-500',
+          'ui:rounded-sm ui:border ui:border-navy-600 ui:text-navy-600 ui:dark:border-sky-500 ui:dark:text-sky-500',
       },
       // Outside month opacity
       {

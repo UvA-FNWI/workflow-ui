@@ -1,11 +1,19 @@
 import { useRef } from 'react';
 
-import { mergeProps, useFocusRing, useHover, useNumberField } from 'react-aria';
+import {
+  mergeProps,
+  useButton,
+  useFocusRing,
+  useHover,
+  useNumberField,
+} from 'react-aria';
 import { useNumberFieldState } from 'react-stately';
 
 import { VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../../utils/cn';
+import { Button } from '../../Button/Button';
+import { Icon } from '../../Icon';
 import { inputVariants } from '../InputVariant';
 
 export type NumberInputVariantProps = VariantProps<typeof inputVariants>;
@@ -26,6 +34,7 @@ export interface NumberInputProps
   description?: string;
   errorMessage?: string;
   isValid?: boolean;
+  locale?: string;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
@@ -40,6 +49,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   errorMessage,
   isValid = true,
   isDisabled = false,
+  locale = 'en-US',
   className,
   ...rest
 }) => {
@@ -52,28 +62,47 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     step,
     isDisabled: isDisabled ?? false,
     label,
-    locale: 'en-US',
+    locale,
     description,
     errorMessage,
-    validationState: isValid === false ? 'invalid' : 'valid',
+    validationState: !isValid ? 'invalid' : 'valid',
   });
 
   const ref = useRef<HTMLInputElement>(null);
-  const { inputProps, labelProps, descriptionProps, errorMessageProps } =
-    useNumberField(
-      {
-        label,
-        description,
-        errorMessage,
-        minValue,
-        maxValue,
-        step,
-        isDisabled: isDisabled ?? false,
-        validationState: isValid === false ? 'invalid' : 'valid',
-      },
-      state,
-      ref
-    );
+  const incrementRef = useRef<HTMLButtonElement>(null);
+  const decrementRef = useRef<HTMLButtonElement>(null);
+
+  const {
+    inputProps,
+    labelProps,
+    descriptionProps,
+    errorMessageProps,
+    incrementButtonProps,
+    decrementButtonProps,
+    groupProps,
+  } = useNumberField(
+    {
+      label,
+      description,
+      errorMessage,
+      minValue,
+      maxValue,
+      step,
+      isDisabled: isDisabled ?? false,
+      validationState: !isValid ? 'invalid' : 'valid',
+    },
+    state,
+    ref
+  );
+
+  const { buttonProps: incrementProps } = useButton(
+    incrementButtonProps,
+    incrementRef
+  );
+  const { buttonProps: decrementProps } = useButton(
+    decrementButtonProps,
+    decrementRef
+  );
 
   const { focusProps, isFocusVisible } = useFocusRing();
   const { hoverProps, isHovered } = useHover({
@@ -87,7 +116,6 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     isValid,
   });
 
-  // TODO: Add buttons for increment and decrement via react-aria
   return (
     <div className="ui:w-full">
       {label && (
@@ -98,11 +126,33 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           {label}
         </label>
       )}
-      <input
-        {...mergeProps(inputProps, focusProps, hoverProps, rest)}
-        ref={ref}
-        className={cn(inputClasses, className)}
-      />
+      <div {...groupProps} className="ui:relative">
+        <input
+          {...mergeProps(rest, inputProps, focusProps, hoverProps)}
+          ref={ref}
+          className={cn(inputClasses, className)}
+        />
+        <div className="ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-center">
+          <div className="ui:flex ui:h-1/2 ui:flex-col">
+            <Button
+              {...incrementProps}
+              ref={incrementRef}
+              type="button"
+              intent="ghost"
+            >
+              <Icon name="chevron-up-small-solid" size="lg" aria-hidden />
+            </Button>
+            <Button
+              {...decrementProps}
+              ref={decrementRef}
+              type="button"
+              intent="ghost"
+            >
+              <Icon name="chevron-down-small-solid" size="lg" aria-hidden />
+            </Button>
+          </div>
+        </div>
+      </div>
       {description && (
         <div
           {...descriptionProps}
@@ -111,7 +161,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           {description}
         </div>
       )}
-      {errorMessage && isValid === false && (
+      {errorMessage && !isValid && (
         <div
           {...errorMessageProps}
           className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"

@@ -1,11 +1,12 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {Button, Icon, Input, Item, ListBox, LoadingSpinner, Modal, Separator} from "@datanose/ui";
+import {Button, LoadingSpinner, Modal, SearchInput} from "@datanose/ui";
 
-import {useDebounce} from "../../hooks/useDebounce";
-import {useTranslate} from "../../hooks/useTranslate";
-import type {UserSearchResult} from "../../store/api/types/users";
-import {useLazyFindUsersQuery} from "../../store/api/usersApi";
+import {SearchListBox, type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
+import {useDebounce} from "~/hooks/useDebounce";
+import {useTranslate} from "~/hooks/useTranslate";
+import type {UserSearchResult} from "~/store/api/types/users";
+import {useLazyFindUsersQuery} from "~/store/api/usersApi";
 
 // Selection type from react-stately
 type Selection = "all" | Set<string | number>;
@@ -32,11 +33,22 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     minSearchLength = 2,
 }) => {
     const {t} = useTranslate("workflow");
+    const confirmButtonRef = useRef<HTMLButtonElement>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+    const [isSelected, setIsSelected] = useState(false);
 
-    const [triggerSearch, {data: searchResults = [], isLoading, isFetching}] =
-        useLazyFindUsersQuery();
+    const [triggerSearch, searchState] = useLazyFindUsersQuery();
+    const resetSearch = searchState.reset;
+    const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
+
+    const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
+        return searchResults.map((user) => ({
+            key: user.userName,
+            primaryValue: user.displayName,
+            secondaryValue: user.faculty ?? user.email,
+        }));
+    }, [searchResults]);
 
     // Store all encountered users
     const usersCache = useMemo(() => {
@@ -58,8 +70,10 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setSelectedKeys(initialKeys);
             setSearchQuery("");
+            resetSearch();
+            setIsSelected(false);
         }
-    }, [initialSelection, isOpen]);
+    }, [initialSelection, isOpen, resetSearch]);
 
     // Debounced search
     const performSearch = useCallback(
@@ -75,10 +89,11 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const debouncedSearch = useDebounce(performSearch, 300);
 
     useEffect(() => {
-        if (searchQuery.trim().length >= minSearchLength) {
+        if (searchQuery.trim().length >= minSearchLength && !isSelected) {
+            resetSearch();
             debouncedSearch(searchQuery);
         }
-    }, [searchQuery, minSearchLength, debouncedSearch]);
+    }, [searchQuery, minSearchLength, debouncedSearch, isSelected, resetSearch]);
 
     // Get selected users from cache
     const selectedUsers = useMemo(() => {
@@ -97,15 +112,38 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         onOpenChange(false);
     }, [onOpenChange]);
 
+    const handleSearchChange = useCallback((query: string) => {
+        setSearchQuery(query);
+        setIsSelected(false);
+    }, []);
+
+    const handleSelectionChange = useCallback(
+        (keys: Selection) => {
+            setSelectedKeys(keys);
+            if (selectionMode === "single" && keys !== "all" && keys.size > 0) {
+                const selected = Array.from(keys)
+                    .map((key) => usersCache.get(key as string))
+                    .filter((user): user is UserSearchResult => user !== undefined);
+                if (selected.length > 0) {
+                    setSearchQuery(selected[0].displayName.trim());
+                    setIsSelected(true);
+                    confirmButtonRef.current?.focus();
+                }
+            }
+        },
+        [selectionMode, usersCache],
+    );
+
     // UI states
     const showSearchHint = searchQuery.trim().length < minSearchLength;
-    const showLoading = (isLoading || isFetching) && !showSearchHint;
+    const showLoading = (searchState.isLoading || searchState.isFetching) && !showSearchHint;
     const showNoResults =
         !showLoading &&
         !showSearchHint &&
+        !isSelected &&
         searchResults.length === 0 &&
         searchQuery.trim().length > 0;
-    const showUsers = !showLoading && !showSearchHint && searchResults.length > 0;
+    const showUsers = !showLoading && !showSearchHint && searchResults.length > 0 && !isSelected;
     const hasSelection = selectedKeys === "all" || selectedKeys.size > 0;
 
     const modalTitle = title ?? t("user_picker.title");
@@ -115,25 +153,12 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
-                {/* Search Input */}
-                <div className="relative mb-4">
-                    <Input
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                        placeholder={searchPlaceholderText}
-                        className="pr-12"
-                    />
-                    <div className="absolute top-0 right-0 flex h-full items-center">
-                        <Separator orientation="vertical" className="w-px" />
-                        <div className="px-3">
-                            {showLoading ? (
-                                <LoadingSpinner size="xs" />
-                            ) : (
-                                <Icon name="search-line" size="md" color="secondary" />
-                            )}
-                        </div>
-                    </div>
-                </div>
+                <SearchInput
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    placeholder={searchPlaceholderText}
+                    autoFocus={isOpen}
+                />
 
                 {/* Search hint */}
                 {showSearchHint && (
@@ -151,30 +176,14 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
                 {/* User List */}
                 {showUsers && (
-                    <ListBox
-                        items={searchResults}
+                    <SearchListBox
+                        autoFocus={false}
+                        items={searchListBoxValues}
                         selectedKeys={selectedKeys}
-                        onSelectionChange={setSelectedKeys}
+                        onSelectionChange={handleSelectionChange}
                         selectionMode={selectionMode}
                         aria-label={modalTitle}
-                    >
-                        {(user) => (
-                            <Item key={user.userName} textValue={user.displayName}>
-                                <div className="flex items-center justify-between gap-4">
-                                    <div className="flex min-w-0 flex-col">
-                                        <span className="truncate text-black dark:text-white">
-                                            {user.displayName}
-                                        </span>
-                                        {user.email && (
-                                            <span className="truncate text-xs text-grey-500 dark:text-grey-500">
-                                                {user.email}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </Item>
-                        )}
-                    </ListBox>
+                    />
                 )}
 
                 {/* No results */}
@@ -189,7 +198,12 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 <Button intent="secondary" onClick={handleCancel}>
                     {t("cancel")}
                 </Button>
-                <Button intent="primary" onClick={handleConfirm} disabled={!hasSelection}>
+                <Button
+                    intent="primary"
+                    onClick={handleConfirm}
+                    disabled={!hasSelection}
+                    ref={confirmButtonRef}
+                >
                     {t("confirm")}
                 </Button>
             </Modal.Footer>

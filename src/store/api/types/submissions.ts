@@ -8,6 +8,19 @@ export type Submission = {
     form: Form;
 };
 
+export type EffectResult = {
+    redirectUrl?: string;
+    showConfetti?: boolean;
+    toast?: ToastEffect;
+};
+
+export type ToastEffect = {
+    type: ToastType;
+    message: LocalString;
+};
+
+export type ToastType = "Success" | "Error" | "Info" | "Warning" | "Note";
+
 export type Answer = {
     id: string;
     questionName: string;
@@ -34,10 +47,12 @@ export type Form = {
 
 export type Page = {
     index: number;
+    name: string;
     title: LocalString;
     introduction?: LocalString;
     layout: PageLayout;
     questions: Question[];
+    hasResults: boolean;
 };
 
 export type Question = {

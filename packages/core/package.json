@@ -1,0 +1,74 @@
+{
+  "name": "@uva-fnwi/datanose-core",
+  "description": "Shared OIDC authentication library for DataNose applications",
+  "type": "module",
+  "version": "1.0.0",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "dist/core.umd.js",
+  "module": "dist/core.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/core.es.js",
+      "require": "./dist/core.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "oidc",
+    "auth",
+    "react",
+    "datanose"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UvA-FNWI/workflow-ui",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "prepublishOnly": "pnpm build",
+    "dev": "vite build --watch",
+    "dev:local": "vite build --watch",
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "peerDependenciesMeta": {},
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "@vitest/browser": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "jsdom": "^27.0.1",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.3",
+    "vite": "^7.2.2",
+    "oidc-client-ts": "^2.4.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^4.0.4"
+  }
+}
