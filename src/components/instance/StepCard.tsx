@@ -61,7 +61,8 @@ export const StepCard = ({step, instance}: Props) => {
                 <div className="flex w-full items-center justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading>{l(step.title)}</Heading>
-                        {step.dateCompleted && (
+                        {/* If we don't have a header status, we can show the date completed */}
+                        {step.dateCompleted && !step.headerStatus && (
                             <Pill variant="green">
                                 {t("status.completed_on")}{" "}
                                 {formatDateShort(step.dateCompleted, i18n.language)}
