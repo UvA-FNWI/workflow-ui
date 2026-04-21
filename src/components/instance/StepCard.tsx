@@ -1,6 +1,7 @@
 import {useState} from "react";
 
 import {Button, Disclosure, Heading, Modal, Pill, Text} from "@datanose/ui";
+import type {PillVariantProps} from "@datanose/ui";
 import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
@@ -9,9 +10,24 @@ import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
-import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
+import type {
+    Action,
+    StepHeaderStatus,
+    WorkflowInstance,
+    WorkflowStep,
+} from "~/store/api/types/instances.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
+
+const HEADER_STATUS_VARIANT: Record<StepHeaderStatus["type"], PillVariantProps["variant"]> = {
+    Info: "grey",
+    Attention: "orange",
+    Success: "green",
+};
+
+function mapHeaderStatusType(type: StepHeaderStatus["type"]): PillVariantProps["variant"] {
+    return HEADER_STATUS_VARIANT[type];
+}
 
 type Props = {
     step: WorkflowStep;
@@ -32,11 +48,7 @@ export const StepCard = ({step, instance}: Props) => {
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep);
 
-    const stepStatus =
-        [
-            {type: "status.submitted" as const, date: step.versions?.at(-1)?.submittedAt},
-            {type: "progress.deadline" as const, date: step.deadline},
-        ].find((status) => status.date) ?? null;
+    const deadlineDate = step.deadline ?? null;
 
     const isDisabled =
         !isCurrentStep &&
@@ -55,12 +67,17 @@ export const StepCard = ({step, instance}: Props) => {
                                 {formatDateShort(step.dateCompleted, i18n.language)}
                             </Pill>
                         )}
+                        {step.headerStatus && (
+                            <Pill variant={mapHeaderStatusType(step.headerStatus.type)}>
+                                {l(step.headerStatus.label)}
+                            </Pill>
+                        )}
                     </div>
-                    {stepStatus?.date && (
+                    {deadlineDate && (
                         <Text as="span" className="shrink-0">
-                            <Text fontWeight="semibold">{t(stepStatus.type)}</Text>
+                            <Text fontWeight="semibold">{t("progress.deadline")}</Text>
                             {":\t"}
-                            {formatDateShort(stepStatus?.date, i18n.language)}
+                            {formatDateShort(deadlineDate, i18n.language)}
                         </Text>
                     )}
                 </div>
