@@ -2,6 +2,7 @@ import {baseApi} from "~/store/api/baseApi.ts";
 import {instancesApi} from "~/store/api/instancesApi.ts";
 import type {ExecuteActionParams} from "~/store/api/types/params.ts";
 import type {ExecuteActionResult} from "~/store/api/types/returnTypes.ts";
+import {applyEffectResult} from "~/store/effectsSlice.ts";
 
 export const actionsApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
@@ -20,6 +21,7 @@ export const actionsApi = baseApi.injectEndpoints({
                         () => data.instance,
                     ),
                 );
+                dispatch(applyEffectResult(data.result));
             },
         }),
     }),

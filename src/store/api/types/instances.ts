@@ -25,6 +25,11 @@ export type WorkflowInstance = {
     viewerRoles: string[];
 };
 
+export type StepHeaderStatus = {
+    type: "Info" | "Attention" | "Success";
+    label: LocalString;
+};
+
 export type WorkflowStep = {
     id: string;
     title: LocalString;
@@ -34,6 +39,7 @@ export type WorkflowStep = {
     deadline: string | null;
     children: WorkflowStep[] | null;
     versions: WorkflowStepVersion[] | null;
+    headerStatus: StepHeaderStatus | null;
 };
 
 export type WorkflowStepVersion = {
@@ -50,7 +56,7 @@ export type Action = {
     form?: string;
     title: LocalString;
     mail?: string;
-    step?: string;
+    steps: string[];
     intent: ActionIntent;
     formLayout: FormLayout;
 };

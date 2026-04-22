@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import '../../../i18n/index';
 import { ToasterType } from '../Toast';
 // App
-import { ToastContent, useToastContext } from '../ToastProvider';
+import { useToastContext } from '../ToastProvider';
 
 type ToastOptions = {
   /** Custom title for the toast **/
@@ -31,6 +31,8 @@ type ToastMethods = {
   warning: (message: string, options?: ToastOptions) => void;
   /** Show a note toast **/
   note: (message: string, options?: ToastOptions) => void;
+  /** Show a toast with an explicit type, and without a default title **/
+  custom: (type: ToasterType, message: string, options?: ToastOptions) => void;
 };
 
 /**
@@ -50,11 +52,9 @@ type ToastMethods = {
  * });
  */
 export function useToast(): ToastMethods {
-  // Hooks
   const { addToast } = useToastContext();
   const { t } = useTranslation('common');
 
-  // Variables
   const defaultTitles = {
     success: t('toast.titles.success'),
     error: t('toast.titles.error'),
@@ -63,52 +63,35 @@ export function useToast(): ToastMethods {
     note: t('toast.titles.note'),
   };
 
-  // Functions
   const createToast = (
     type: ToasterType,
     message: string,
-    options: ToastOptions = {}
+    options: ToastOptions = {},
+    defaultTitle = ''
   ) => {
     const { title, actionLabel, onAction, lifetime } = options;
-
-    const toastContent: ToastContent = {
+    addToast({
       type,
-      label: title || defaultTitles[type],
+      label: title ?? defaultTitle,
       message,
       lifetime,
       ...(actionLabel && onAction
         ? { actionLabel, onAction }
         : { actionLabel: undefined, onAction: undefined }),
-    };
-
-    addToast(toastContent);
-  };
-
-  const success = (message: string, options?: ToastOptions) => {
-    createToast('success', message, options);
-  };
-
-  const error = (message: string, options?: ToastOptions) => {
-    createToast('error', message, options);
-  };
-
-  const info = (message: string, options?: ToastOptions) => {
-    createToast('info', message, options);
-  };
-
-  const warning = (message: string, options?: ToastOptions) => {
-    createToast('warning', message, options);
-  };
-
-  const note = (message: string, options?: ToastOptions) => {
-    createToast('note', message, options);
+    });
   };
 
   return {
-    success,
-    error,
-    info,
-    warning,
-    note,
+    success: (message, options) =>
+      createToast('success', message, options, defaultTitles.success),
+    error: (message, options) =>
+      createToast('error', message, options, defaultTitles.error),
+    info: (message, options) =>
+      createToast('info', message, options, defaultTitles.info),
+    warning: (message, options) =>
+      createToast('warning', message, options, defaultTitles.warning),
+    note: (message, options) =>
+      createToast('note', message, options, defaultTitles.note),
+    custom: (type, message, options) => createToast(type, message, options),
   };
 }

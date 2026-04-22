@@ -30,6 +30,10 @@ export {
   type InputLabelProps,
 } from './components/Input/InputLabel';
 export {
+  TextArea,
+  type TextAreaProps,
+} from './components/Input/TextArea/TextArea';
+export {
   NumberInput,
   type NumberInputProps,
   type NumberInputVariantProps,

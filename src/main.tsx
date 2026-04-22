@@ -8,6 +8,7 @@ import {ThemeProvider, ToastProvider} from "@datanose/ui";
 import "@datanose/ui/styles";
 import {type AuthEventCallbacks, AuthProvider, isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 
+import SessionExpiredModal from "./components/SessionExpiredModal";
 import {
     VITE_AUTH_AUTHORITY,
     VITE_AUTH_CLIENT_ID,
@@ -16,7 +17,7 @@ import {
 import "./i18n";
 import "./index.css";
 import router from "./router/routes.tsx";
-import {clearCurrentUser, setAccessToken} from "./store/authSlice";
+import {clearCurrentUser, openSessionExpiredModal, setAccessToken} from "./store/authSlice";
 import {store} from "./store/store";
 
 const authConfig = {
@@ -27,6 +28,8 @@ const authConfig = {
 };
 
 const authEvents: AuthEventCallbacks = {
+    onAccessTokenExpired: () => store.dispatch(openSessionExpiredModal()),
+    onAccessTokenExpiring: () => store.dispatch(openSessionExpiredModal()),
     onUserLoaded: (user) => store.dispatch(setAccessToken(user.access_token)),
     onUserUnloaded: () => {
         store.dispatch(setAccessToken(null));
@@ -45,6 +48,7 @@ createRoot(document.getElementById("root")!).render(
                     })}
                 >
                     <ToastProvider>
+                        <SessionExpiredModal />
                         <RouterProvider router={router} />
                     </ToastProvider>
                 </ThemeProvider>
