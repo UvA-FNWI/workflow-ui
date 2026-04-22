@@ -112,26 +112,30 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 <Callout className="mt-1" header={t("external_user_add.success_toast")} />
             )}
 
-            <UserPickerModal
-                isOpen={isOpenUserPicker}
-                onOpenChange={setIsOpenUserPicker}
-                initialSelection={valueArray}
-                onConfirm={handleConfirmUserPicker}
-                onAddExternalUser={handleOpenExternalUserModal}
-                selectionMode={selectionMode}
-                title={modalTitle}
-                searchPlaceholder={searchPlaceholder}
-                minSearchLength={minSearchLength}
-                allowsExternalUsers={allowsExternalUsers}
-            />
+            {isOpenUserPicker && (
+                <UserPickerModal
+                    isOpen={isOpenUserPicker}
+                    onOpenChange={setIsOpenUserPicker}
+                    initialSelection={valueArray}
+                    onConfirm={handleConfirmUserPicker}
+                    onAddExternalUser={handleOpenExternalUserModal}
+                    selectionMode={selectionMode}
+                    title={modalTitle}
+                    searchPlaceholder={searchPlaceholder}
+                    minSearchLength={minSearchLength}
+                    allowsExternalUsers={allowsExternalUsers}
+                />
+            )}
 
-            <AddExternalUserModal
-                isOpen={isOpenExternal}
-                onOpenChange={setIsOpenExternal}
-                onConfirm={handleConfirmExternalUser}
-                onBackToSearch={() => setIsOpenUserPicker(true)}
-                initialUser={addedExternalUser}
-            />
+            {isOpenExternal && (
+                <AddExternalUserModal
+                    isOpen={isOpenExternal}
+                    onOpenChange={setIsOpenExternal}
+                    onConfirm={handleConfirmExternalUser}
+                    onBackToSearch={() => setIsOpenUserPicker(true)}
+                    initialUser={addedExternalUser}
+                />
+            )}
         </>
     );
 };
