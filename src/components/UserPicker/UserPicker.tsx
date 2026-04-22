@@ -44,6 +44,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
     const [isOpenExternal, setIsOpenExternal] = useState(false);
+    const [addedExternalUser, setAddedExternalUser] = useState<UserSearchResult | null>(null);
     const [showCallout, setShowCallout] = useState(false);
     const {t} = useTranslate("workflow");
 
@@ -52,14 +53,26 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
     // Get display value
     const displayValue = (() => {
+        if (addedExternalUser)
+            return `${addedExternalUser.displayName.trim()} | ${addedExternalUser.email.trim()} ${addedExternalUser.organization && ` | ${addedExternalUser.organization?.name.trim()}`}`;
         if (valueArray.length === 0) return "";
         if (valueArray.length === 1) return valueArray[0].displayName.trim();
         return t("user_picker.selected_users", {count: valueArray.length});
     })();
 
-    const handleOpenUserPickerModal = () => !isDisabled && setIsOpenUserPicker(true);
+    const handleOpenUserPickerModal = () => {
+        if (!isDisabled) {
+            if (addedExternalUser) setIsOpenExternal(true);
+            else setIsOpenUserPicker(true);
+        }
+    };
 
-    const handleOpenExternalUserModal = () => !isDisabled && setIsOpenExternal(true);
+    const handleOpenExternalUserModal = () => {
+        if (!isDisabled) {
+            setIsOpenExternal(true);
+            setIsOpenUserPicker(false);
+        }
+    };
 
     const handleSearchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key !== "Enter") return;
@@ -67,8 +80,10 @@ export const UserPicker: React.FC<UserPickerProps> = ({
         handleOpenUserPickerModal();
     };
 
-    const handleConfirmUserPicker = (selectedUsers: UserSearchResult[]) =>
+    const handleConfirmUserPicker = (selectedUsers: UserSearchResult[]) => {
         onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
+        setAddedExternalUser(null);
+    };
 
     const handleConfirmExternalUser = (newUser: UserSearchResult) => {
         newUser.userName ||= newUser.displayName.replace(/\s/g, "-").toLowerCase();
@@ -76,6 +91,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
         onChange?.(newUser);
+        setAddedExternalUser(newUser);
         setShowCallout(true);
     };
 
@@ -113,6 +129,8 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 isOpen={isOpenExternal}
                 onOpenChange={setIsOpenExternal}
                 onConfirm={handleConfirmExternalUser}
+                onBackToSearch={() => setIsOpenUserPicker(true)}
+                initialUser={addedExternalUser}
             />
         </>
     );

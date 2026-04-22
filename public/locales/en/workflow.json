@@ -13,10 +13,11 @@
   "continue": "Continue",
   "email": "Email address",
   "external_user_add": {
+    "back_to_search": "Back to search",
     "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
     "email_error": "Please enter a valid email address",
-    "institute": "Institute (university/company)",
-    "new_institute": "New institute",
+    "organization": "Organization",
+    "organization_name": "Organization name",
     "success_toast": "The external user has received an automatic email to confirm the account.",
     "title": "Add external user"
   },
@@ -64,7 +65,7 @@
     "students": "Students"
   },
   "search_and_select": {
-    "add_new": "Add new",
+    "add_new": "Add",
     "no_results": "No results found",
     "search_hint": "Type to search",
     "search_placeholder": "Search..."

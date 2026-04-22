@@ -2,7 +2,7 @@ import {useCallback, useState} from "react";
 
 import type {SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 
-const mockInstitutes: SearchListBoxValue[] = [
+const mockOrganizations: SearchListBoxValue[] = [
     {
         key: "amsterdam-center-applied-data-research",
         primaryValue: "Amsterdam Center for Applied Data Research",
@@ -70,7 +70,7 @@ const initialState = {
     isLoading: false,
     isFetching: false,
 };
-export function useMockLazyFindInstitutesQuery() {
+export function useMockLazyFindOrganizationsQuery() {
     const [state, setState] = useState(initialState);
 
     const trigger = useCallback(async (query: string) => {
@@ -79,7 +79,7 @@ export function useMockLazyFindInstitutesQuery() {
         // Simulate network delay
         await new Promise((res) => setTimeout(res, 200));
 
-        const filtered = mockInstitutes.filter((inst) =>
+        const filtered = mockOrganizations.filter((inst) =>
             inst.primaryValue.toLowerCase().includes(query.toLowerCase()),
         );
 

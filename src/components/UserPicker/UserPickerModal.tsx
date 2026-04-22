@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useMemo, useRef, useState} from "react";
 
 import {Button, Icon, Modal} from "@datanose/ui";
 
@@ -48,7 +48,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: user.institute ?? user.email,
+            secondaryValue: user.organization?.name ?? user.email,
         }));
     }, [searchResults]);
 
@@ -64,16 +64,6 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
         return cache;
     }, [searchResults, initialSelection]);
-
-    // Reset selection when modal opens
-    useEffect(() => {
-        if (isOpen) {
-            const initialKeys = new Set(initialSelection.map((u) => u.userName));
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setSelectedKeys(initialKeys);
-            resetSearch();
-        }
-    }, [initialSelection, isOpen, resetSearch]);
 
     // Get selected users from cache
     const selectedUsers = useMemo(() => {
@@ -128,6 +118,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     selectionMode={selectionMode}
                     minSearchLength={minSearchLength}
                     isLoading={searchState.isLoading || searchState.isFetching}
+                    initialSearchQuery={initialSelection[0]?.displayName}
                     noResultsText={t("user_picker.no_results")}
                     searchHintText={
                         selectionMode == "single"

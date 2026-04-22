@@ -3,7 +3,7 @@ import {useCallback, useMemo, useState} from "react";
 import {Button, Input, Modal, Text} from "@datanose/ui";
 
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
-import {useMockLazyFindInstitutesQuery} from "~/hooks/useMockLazyFindInstitutesQuery.ts";
+import {useMockLazyFindOrganizationsQuery} from "~/hooks/useMockLazyFindOrganizationsQuery.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
 
@@ -14,25 +14,33 @@ export interface AddExternalUserModalProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
     onConfirm: (newUser: UserSearchResult) => void;
+    onBackToSearch: () => void;
+    initialUser?: UserSearchResult | null;
 }
 
 const emptyExternalUser: UserSearchResult = {
     displayName: "",
     userName: "",
     email: "",
-    institute: "",
+    organization: undefined,
 };
 
 export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     isOpen,
     onOpenChange,
     onConfirm,
+    onBackToSearch,
+    initialUser,
 }) => {
     const {t} = useTranslate("workflow");
-    const [selectedInstitute, setSelectedInstitute] = useState<Selection>(new Set());
-    const [newExternalUser, setNewExternalUser] = useState<UserSearchResult>(emptyExternalUser);
+    const [selectedOrganization, setSelectedOrganization] = useState<Selection>(
+        initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
+    );
+    const [newExternalUser, setNewExternalUser] = useState<UserSearchResult>(
+        initialUser ?? emptyExternalUser,
+    );
 
-    const [triggerSearch, searchState, resetSearch] = useMockLazyFindInstitutesQuery();
+    const [triggerSearch, searchState, resetSearch] = useMockLazyFindOrganizationsQuery();
     const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
 
     const updateExternalUser = useCallback((updates: Partial<UserSearchResult>) => {
@@ -44,13 +52,15 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
 
     const handleModalOpenChange = useCallback(
         (nextIsOpen: boolean) => {
-            if (!nextIsOpen) {
-                setNewExternalUser(emptyExternalUser);
-                setSelectedInstitute(new Set());
+            if (nextIsOpen) {
+                setNewExternalUser(initialUser ?? emptyExternalUser);
+                setSelectedOrganization(
+                    initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
+                );
             }
             onOpenChange(nextIsOpen);
         },
-        [onOpenChange],
+        [onOpenChange, initialUser],
     );
 
     const handleConfirm = useCallback(() => {
@@ -58,32 +68,42 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         handleModalOpenChange(false);
     }, [onConfirm, handleModalOpenChange, newExternalUser]);
 
-    const handleSelectInstituteChange = useCallback(
-        (selected: Selection) => {
-            setSelectedInstitute(selected);
-            const selectedInstitute = [...selected][0] as string;
+    const handleBackToSearch = useCallback(() => {
+        handleModalOpenChange(false);
+        onBackToSearch();
+    }, [handleModalOpenChange, onBackToSearch]);
 
-            if (selectedInstitute === "new-item") {
-                updateExternalUser({institute: ""});
+    const handleSelectOrganizationChange = useCallback(
+        (selected: Selection) => {
+            setSelectedOrganization(selected);
+            if (selected === "all" || selected.size === 0) return;
+            const selectedOrganizationId = [...selected][0] as string;
+
+            if (selectedOrganizationId === "new-item") {
+                updateExternalUser({organization: undefined});
                 return;
             }
 
-            updateExternalUser({institute: selectedInstitute || ""});
+            const foundOrganization = searchResults.find(
+                (inst) => inst.key === selectedOrganizationId,
+            );
+            updateExternalUser({
+                organization: foundOrganization
+                    ? {id: foundOrganization.key, name: foundOrganization.primaryValue}
+                    : undefined,
+            });
         },
-        [updateExternalUser],
+        [searchResults, updateExternalUser],
     );
 
     const isValidEmail =
         newExternalUser.email != "" &&
         /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(newExternalUser.email);
     const isCompleted =
-        isValidEmail &&
-        !!newExternalUser.displayName &&
-        !!newExternalUser.email &&
-        !!newExternalUser.institute;
+        isValidEmail && !!newExternalUser.displayName && !!newExternalUser.organization;
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal isOpen={isOpen} onOpenChange={handleModalOpenChange}>
             <Modal.Header>{t("external_user_add.title")}</Modal.Header>
             <Modal.Body className="flex flex-col gap-4">
                 <Text>{t("external_user_add.description")}</Text>
@@ -91,34 +111,47 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                 <Input
                     label={t("name")}
                     type="text"
+                    value={newExternalUser.displayName}
                     onChange={(value) => updateExternalUser({displayName: value})}
                 />
                 <Input
                     label={t("email")}
                     type="email"
+                    value={newExternalUser.email}
                     isValid={newExternalUser.email === "" || isValidEmail}
                     errorMessage={t("external_user_add.email_error")}
                     onChange={(value) => updateExternalUser({email: value})}
                 />
 
                 <SearchAndSelect
-                    label={t("external_user_add.institute")}
+                    label={t("external_user_add.organization")}
                     items={searchResults}
-                    selectedKeys={selectedInstitute}
-                    onSelect={handleSelectInstituteChange}
+                    selectedKeys={selectedOrganization}
+                    onSelect={handleSelectOrganizationChange}
                     onSearch={triggerSearch}
                     resetSearch={resetSearch}
                     isLoading={searchState.isLoading || searchState.isFetching}
                     addNewItemVisible={true}
                     showSearchHint={false}
+                    initialSearchQuery={
+                        initialUser?.organization?.id === "new-item"
+                            ? t("search_and_select.add_new")
+                            : (initialUser?.organization?.name ?? "")
+                    }
                 />
 
-                {selectedInstitute instanceof Set && selectedInstitute.has("new-item") && (
+                {selectedOrganization instanceof Set && selectedOrganization.has("new-item") && (
                     <Input
-                        label={t("external_user_add.new_institute")}
+                        label={t("external_user_add.organization_name")}
                         type="text"
+                        value={newExternalUser.organization?.name}
                         onChange={(value) =>
-                            updateExternalUser({institute: value.replace(/\s/g, "-").toLowerCase()})
+                            updateExternalUser({
+                                organization: {
+                                    id: "new-item",
+                                    name: value,
+                                },
+                            })
                         }
                     />
                 )}
@@ -131,6 +164,9 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     disabled={!isCompleted}
                 >
                     {t("confirm")}
+                </Button>
+                <Button intent="secondary" variant="destructive" onClick={handleBackToSearch}>
+                    {t("external_user_add.back_to_search")}
                 </Button>
                 <Button
                     intent="secondary"

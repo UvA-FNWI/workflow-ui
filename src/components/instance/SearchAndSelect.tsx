@@ -25,6 +25,7 @@ type SearchAndSelectProps = {
     showSearchHint?: boolean;
     searchHintText?: string;
     noResultsText?: string;
+    initialSearchQuery?: string;
 };
 
 export function SearchAndSelect({
@@ -43,10 +44,11 @@ export function SearchAndSelect({
     showSearchHint: showSearchHintEnabled = true,
     searchHintText,
     noResultsText,
+    initialSearchQuery = "",
 }: SearchAndSelectProps) {
     const {t} = useTranslate("workflow");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [isSelected, setIsSelected] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+    const [isSelected, setIsSelected] = useState(initialSearchQuery != "");
     const [isPendingSearch, setIsPendingSearch] = useState(false);
 
     const listItems = addNewItemVisible
@@ -62,11 +64,12 @@ export function SearchAndSelect({
     const performSearch = useCallback(
         (query: string) => {
             if (query.trim().length >= minSearchLength) {
+                onSelect(new Set());
                 onSearch(query);
             }
             setIsPendingSearch(false);
         },
-        [minSearchLength, onSearch],
+        [minSearchLength, onSearch, onSelect],
     );
     const debouncedSearch = useDebounce(performSearch as (...args: unknown[]) => void, 300);
 
@@ -111,7 +114,9 @@ export function SearchAndSelect({
         if (isSelected) return "selected";
         if (showSearchHintEnabled && !meetsMinSearchLength) return "hint";
         if (isLoading || isPendingSearch) return "loading";
-        if (meetsMinSearchLength && (items.length > 0 || addNewItemVisible)) return "results";
+        if (meetsMinSearchLength && items.length > 0) return "results";
+        if (meetsMinSearchLength && addNewItemVisible && items.length === 0)
+            return "no-results-add-new";
         if (meetsMinSearchLength && items.length === 0) return "no-results";
     };
 
@@ -141,7 +146,7 @@ export function SearchAndSelect({
                 </div>
             )}
 
-            {state === "results" && (
+            {(state === "results" || state === "no-results-add-new") && (
                 <SearchListBox
                     autoFocus={false}
                     items={listItems}
@@ -152,7 +157,7 @@ export function SearchAndSelect({
                 />
             )}
             {/* No results */}
-            {state === "no-results" && (
+            {(state === "no-results" || state === "no-results-add-new") && (
                 <div className="py-8 text-center text-grey-600 dark:text-grey-400">
                     {noResultsText ?? t("search_and_select.no_results")}
                 </div>

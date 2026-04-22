@@ -13,10 +13,11 @@
   "continue": "Verder",
   "email": "E-mailadres",
   "external_user_add": {
+    "back_to_search": "Terug naar zoeken",
     "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
     "email_error": "Vul een geldig e-mailadres in",
-    "institute": "Instituut (universiteit/bedrijf)",
-    "new_institute": "Nieuw instituut",
+    "organization": "Organisatie",
+    "organization_name": "Naam organisatie",
     "success_toast": "De externe medewerker heeft een automatische mail gekregen om het account te bevestigen.",
     "title": "Voeg externe gebruiker toe"
   },
@@ -64,7 +65,7 @@
     "students": "Studenten"
   },
   "search_and_select": {
-    "add_new": "Voeg nieuw toe",
+    "add_new": "Voeg toe",
     "no_results": "Geen resultaten gevonden",
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
