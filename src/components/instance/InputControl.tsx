@@ -120,6 +120,16 @@ export const InputControl = ({
         );
     }
 
+    if (question.type === "Boolean") {
+        return (
+            <Checkbox
+                label={l(question.text) ?? ""}
+                isSelected={value as boolean}
+                onChange={(newValue) => debouncedChange(newValue)}
+            />
+        );
+    }
+
     if (question.type === "Choice") {
         const choices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))

@@ -142,15 +142,17 @@ export const PageControl = ({
                                 render={({field}) => {
                                     return (
                                         <div className="mb-4">
-                                            <div key={question.name}>
-                                                {l(question.text)}
-                                                {results &&
-                                                    results.find(
-                                                        (q) => q.questionName == question.name,
-                                                    ) &&
-                                                    ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
-                                                {!question.isRequired && ` ${t("optional")}`}
-                                            </div>
+                                            {question.type !== "Boolean" && (
+                                                <div key={question.name}>
+                                                    {l(question.text)}
+                                                    {results &&
+                                                        results.find(
+                                                            (q) => q.questionName == question.name,
+                                                        ) &&
+                                                        ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
+                                                    {!question.isRequired && ` ${t("optional")}`}
+                                                </div>
+                                            )}
                                             <InputControl
                                                 value={field.value}
                                                 onChange={field.onChange}
