@@ -120,7 +120,7 @@ export const PageControl = ({
 
     return (
         <>
-            <div className="mb-4 flex flex-col gap-4 pt-4">
+            <div className="flex flex-col gap-4">
                 <div>
                     {showTitle && (
                         <Heading size="sm" className="uppercase" fontType="body">
@@ -190,21 +190,19 @@ export const PageControl = ({
                         )}
                     </form>
                 </div>
-                <div>
-                    {typeof weightedAverage == "number" && weightedAverage !== 0 && (
-                        <Heading className="flex items-center gap-2">
-                            {t("instance.calculations.average_grade", {
-                                page: l(page.title),
-                            }).toUpperCase()}
+                {typeof weightedAverage == "number" && weightedAverage !== 0 && (
+                    <Heading className="flex items-center gap-2">
+                        {t("instance.calculations.average_grade", {
+                            page: l(page.title),
+                        }).toUpperCase()}
 
-                            {isFetchingAverages ? (
-                                <LoadingSpinner size="xs" />
-                            ) : (
-                                <span>{weightedAverage.toLocaleString(i18n.language)}</span>
-                            )}
-                        </Heading>
-                    )}
-                </div>
+                        {isFetchingAverages ? (
+                            <LoadingSpinner size="xs" />
+                        ) : (
+                            <span>{weightedAverage.toLocaleString(i18n.language)}</span>
+                        )}
+                    </Heading>
+                )}
             </div>
         </>
     );
