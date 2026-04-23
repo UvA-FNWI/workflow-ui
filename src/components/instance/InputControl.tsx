@@ -12,8 +12,8 @@ import {
 } from "@datanose/ui";
 import {parseISO} from "date-fns";
 
-import {UserPicker} from "../UserPicker/UserPicker";
 import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
@@ -71,7 +71,7 @@ export const InputControl = ({
             question.type === "String" &&
             question.layout != null &&
             "multiline" in question.layout &&
-            question.layout.multiline === true;
+            question.layout.multiline;
         const lengthValidationDescription = question.maxLength
             ? t("string_validation", {
                   maxInputLength: question.maxLength,
