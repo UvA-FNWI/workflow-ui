@@ -8,6 +8,7 @@ import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page} from "~/store/api/types/submissions";
+import {isPageComplete as isPageCompleteUtil} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
@@ -29,15 +30,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     const totalTabs = submission.form.pages.length + 1; // +1 for summary tab
 
-    const isPageComplete = (page: Page): boolean =>
-        page.questions
-            .filter((q) => q.isRequired)
-            .every((question) => {
-                const answer = submission.answers.find((a) => a.questionName === question.name);
-                return (
-                    answer?.isVisible === false || (answer?.value != null && answer.value !== "")
-                ); // only consider answers with a value and are visible
-            });
+    const isPageComplete = (page: Page): boolean => isPageCompleteUtil(page, submission);
 
     const areAllPagesComplete = submission.form.pages.every((page) => isPageComplete(page));
 
@@ -81,11 +74,13 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                         {[
                             ...submission.form.pages.map((page, index) => (
                                 <TabPanel key={index}>
-                                    <PageControl
-                                        instanceId={instanceId}
-                                        submissionId={submissionId}
-                                        page={page}
-                                    />
+                                    <div className="mb-4 pt-4">
+                                        <PageControl
+                                            instanceId={instanceId}
+                                            submissionId={submissionId}
+                                            page={page}
+                                        />
+                                    </div>
                                     <div className="mt-4 flex justify-start gap-3">
                                         <Button
                                             intent="secondary"
@@ -129,17 +124,21 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                 </Tabs>
             ) : (
                 <>
-                    <PageControl
-                        instanceId={instanceId}
-                        submissionId={submissionId}
-                        page={submission.form.pages[0]}
-                    />
-                    <FormSubmitButton
-                        instanceId={instanceId}
-                        submission={submission}
-                        disabled={!isPageComplete(submission.form.pages[0])}
-                        onSubmit={onClose}
-                    />
+                    <div className="mb-4 pt-4">
+                        <PageControl
+                            instanceId={instanceId}
+                            submissionId={submissionId}
+                            page={submission.form.pages[0]}
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <FormSubmitButton
+                            instanceId={instanceId}
+                            submission={submission}
+                            disabled={!isPageComplete(submission.form.pages[0])}
+                            onSubmit={onClose}
+                        />
+                    </div>
                 </>
             )}
         </div>

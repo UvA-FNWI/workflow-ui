@@ -19,33 +19,29 @@ export const FormSubmitButton = ({instanceId, submission, onSubmit, disabled}: P
     const [submitSubmission, {isLoading}] = submissionsEndpoints.submitSubmission.useMutation();
 
     return (
-        <div className="mt-4 flex justify-between gap-2">
-            <Button
-                intent="primary"
-                variant="destructive"
-                className="ml-auto"
-                disabled={disabled}
-                isLoading={isLoading}
-                onClick={async () => {
-                    const res = await submitSubmission({
-                        instanceId,
-                        submissionId: submission.id,
-                    });
-                    const errorResult = (res.error as FetchBaseQueryError)
-                        ?.data as SubmitSubmissionResult;
-                    if (errorResult?.validationErrors.length) {
-                        // TODO: validation (DN-3424)
-                        const question = errorResult.validationErrors[0];
-                        alert(
-                            `Not valid! ${question.questionName}: ${l(question.validationMessage)}`,
-                        );
-                        return;
-                    }
-                    onSubmit();
-                }}
-            >
-                {t("submit")}
-            </Button>
-        </div>
+        <Button
+            intent="primary"
+            variant="destructive"
+            className="ml-auto"
+            disabled={disabled}
+            isLoading={isLoading}
+            onClick={async () => {
+                const res = await submitSubmission({
+                    instanceId,
+                    submissionId: submission.id,
+                });
+                const errorResult = (res.error as FetchBaseQueryError)
+                    ?.data as SubmitSubmissionResult;
+                if (errorResult?.validationErrors.length) {
+                    // TODO: validation (DN-3424)
+                    const question = errorResult.validationErrors[0];
+                    alert(`Not valid! ${question.questionName}: ${l(question.validationMessage)}`);
+                    return;
+                }
+                onSubmit();
+            }}
+        >
+            {t("submit")}
+        </Button>
     );
 };
