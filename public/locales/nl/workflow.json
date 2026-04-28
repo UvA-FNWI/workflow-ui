@@ -9,7 +9,7 @@
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
-  "continue": "Verder",
+  "continue": "Volgende",
   "file_upload": {
     "description": "Beschrijving",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
@@ -21,7 +21,7 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "go_back": "Terug",
+  "go_back": "Vorige",
   "good_to_know": {
     "show_all": "Toon alles",
     "show_less": "Toon minder",

@@ -11,9 +11,16 @@ type Props = {
     submission: Submission;
     onSubmit: () => void;
     disabled?: boolean;
+    size?: "small" | "medium" | "large";
 };
 
-export const FormSubmitButton = ({instanceId, submission, onSubmit, disabled}: Props) => {
+export const FormSubmitButton = ({
+    instanceId,
+    submission,
+    onSubmit,
+    disabled,
+    size = "medium",
+}: Props) => {
     const {t, l} = useTranslate("workflow");
 
     const [submitSubmission, {isLoading}] = submissionsEndpoints.submitSubmission.useMutation();
@@ -23,6 +30,7 @@ export const FormSubmitButton = ({instanceId, submission, onSubmit, disabled}: P
             intent="primary"
             variant="destructive"
             className="ml-auto"
+            size={size}
             disabled={disabled}
             isLoading={isLoading}
             onClick={async () => {
