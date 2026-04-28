@@ -16,8 +16,8 @@
     "back_to_search": "Back to search",
     "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
     "email_error": "Please enter a valid email address",
-    "organization": "Organization",
-    "organization_name": "Organization name",
+    "organization": "Organisation",
+    "organization_name": "Organisation name",
     "success_toast": "The external user has received an automatic email to confirm the account.",
     "title": "Add external user"
   },
