@@ -179,9 +179,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             isLoading && loadingText && 'ui:hidden'
           )}
         >
-          <div className="ui:flex ui:items-center ui:gap-1">
+          <div className="ui:flex ui:min-w-0 ui:items-center ui:gap-1">
             {leftIcon && <span className="ui:mr-1">{leftIcon}</span>}
-            {children}
+            <span className="ui:min-w-0 ui:truncate">{children}</span>
           </div>
 
           {rightIcon && <span>{rightIcon}</span>}

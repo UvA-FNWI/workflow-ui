@@ -44,7 +44,9 @@ export const StepCard = ({step, instance}: Props) => {
         instance.steps.indexOf(step) >
             instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
-    const hasMultipleVersions = (step.versions?.length ?? 0) > 1;
+    const hasMultipleVersions =
+        (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
+
     const submissionsToShow =
         submissions.length > 0
             ? submissions
