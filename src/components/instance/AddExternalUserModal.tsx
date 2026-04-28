@@ -23,6 +23,7 @@ const emptyExternalUser: UserSearchResult = {
     userName: "",
     email: "",
     organization: undefined,
+    isExternal: true,
 };
 
 export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
@@ -64,7 +65,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     );
 
     const handleConfirm = useCallback(() => {
-        onConfirm(newExternalUser);
+        onConfirm({...newExternalUser, isExternal: true});
         handleModalOpenChange(false);
     }, [onConfirm, handleModalOpenChange, newExternalUser]);
 

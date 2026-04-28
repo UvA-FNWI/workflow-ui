@@ -44,25 +44,27 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
     const [isOpenExternal, setIsOpenExternal] = useState(false);
-    const [addedExternalUser, setAddedExternalUser] = useState<UserSearchResult | null>(null);
     const [showCallout, setShowCallout] = useState(false);
     const {t} = useTranslate("workflow");
 
     // Normalize value prop to array
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
 
+    const getDisplayString = (user: UserSearchResult) =>
+        user.isExternal
+            ? `${user.displayName.trim()} | ${user.email.trim()} ${user.organization ? ` | ${user.organization?.name.trim()}` : ""}`
+            : user.displayName.trim();
+
     // Get display value
     const displayValue = (() => {
-        if (addedExternalUser)
-            return `${addedExternalUser.displayName.trim()} | ${addedExternalUser.email.trim()} ${addedExternalUser.organization && ` | ${addedExternalUser.organization?.name.trim()}`}`;
         if (valueArray.length === 0) return "";
-        if (valueArray.length === 1) return valueArray[0].displayName.trim();
+        if (valueArray.length === 1) return getDisplayString(valueArray[0]);
         return t("user_picker.selected_users", {count: valueArray.length});
     })();
 
     const handleOpenUserPickerModal = () => {
         if (!isDisabled) {
-            if (addedExternalUser) setIsOpenExternal(true);
+            if (valueArray.length === 1 && valueArray[0].organization) setIsOpenExternal(true);
             else setIsOpenUserPicker(true);
         }
     };
@@ -82,16 +84,15 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
     const handleConfirmUserPicker = (selectedUsers: UserSearchResult[]) => {
         onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
-        setAddedExternalUser(null);
     };
 
     const handleConfirmExternalUser = (newUser: UserSearchResult) => {
-        newUser.userName ||= newUser.displayName.replace(/\s/g, "-").toLowerCase();
+        const id = new Date().toISOString().replace(/[-:.TZ]/g, "");
+        newUser.userName = `${newUser.displayName.replace(/\s/g, "-").toLowerCase()}_${id}`;
 
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
         onChange?.(newUser);
-        setAddedExternalUser(newUser);
         setShowCallout(true);
     };
 
@@ -112,30 +113,26 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 <Callout className="mt-1" header={t("external_user_add.success_toast")} />
             )}
 
-            {isOpenUserPicker && (
-                <UserPickerModal
-                    isOpen={isOpenUserPicker}
-                    onOpenChange={setIsOpenUserPicker}
-                    initialSelection={valueArray}
-                    onConfirm={handleConfirmUserPicker}
-                    onAddExternalUser={handleOpenExternalUserModal}
-                    selectionMode={selectionMode}
-                    title={modalTitle}
-                    searchPlaceholder={searchPlaceholder}
-                    minSearchLength={minSearchLength}
-                    allowsExternalUsers={allowsExternalUsers}
-                />
-            )}
+            <UserPickerModal
+                isOpen={isOpenUserPicker}
+                onOpenChange={setIsOpenUserPicker}
+                initialSelection={valueArray}
+                onConfirm={handleConfirmUserPicker}
+                onAddExternalUser={handleOpenExternalUserModal}
+                selectionMode={selectionMode}
+                title={modalTitle}
+                searchPlaceholder={searchPlaceholder}
+                minSearchLength={minSearchLength}
+                allowsExternalUsers={allowsExternalUsers}
+            />
 
-            {isOpenExternal && (
-                <AddExternalUserModal
-                    isOpen={isOpenExternal}
-                    onOpenChange={setIsOpenExternal}
-                    onConfirm={handleConfirmExternalUser}
-                    onBackToSearch={() => setIsOpenUserPicker(true)}
-                    initialUser={addedExternalUser}
-                />
-            )}
+            <AddExternalUserModal
+                isOpen={isOpenExternal}
+                onOpenChange={setIsOpenExternal}
+                onConfirm={handleConfirmExternalUser}
+                onBackToSearch={() => setIsOpenUserPicker(true)}
+                initialUser={valueArray.length === 1 ? valueArray[0] : undefined}
+            />
         </>
     );
 };

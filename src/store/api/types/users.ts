@@ -3,6 +3,7 @@ export interface UserSearchResult {
     displayName: string;
     email: string;
     organization?: Organization;
+    isExternal: boolean;
 }
 
 export interface Organization {
