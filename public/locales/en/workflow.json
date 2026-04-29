@@ -18,7 +18,7 @@
     "email_error": "Please enter a valid email address",
     "organization": "Organisation",
     "organization_name": "Organisation name",
-    "success_toast": "The external user has received an automatic email to confirm the account.",
+    "success_toast": "The external user will receive an automatic email after submitting.",
     "title": "Add external user"
   },
   "file_upload": {

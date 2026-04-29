@@ -22,6 +22,7 @@ const emptyExternalUser: UserSearchResult = {
     displayName: "",
     userName: "",
     email: "",
+    searchSource: "EduId",
     organization: undefined,
 };
 

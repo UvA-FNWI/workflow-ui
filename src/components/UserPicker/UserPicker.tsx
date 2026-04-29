@@ -86,12 +86,19 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     };
 
     const handleConfirmExternalUser = (newUser: UserSearchResult) => {
-        newUser.userName ||= newUser.displayName.replace(/\s/g, "-").toLowerCase();
+        const email = newUser.email.trim();
+        const externalUser: UserSearchResult = {
+            ...newUser,
+            userName: email.toLowerCase(),
+            email,
+            displayName: newUser.displayName.trim(),
+            searchSource: "EduId",
+        };
 
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
-        onChange?.(newUser);
-        setAddedExternalUser(newUser);
+        onChange?.(externalUser);
+        setAddedExternalUser(externalUser);
         setShowCallout(true);
     };
 

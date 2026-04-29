@@ -18,7 +18,7 @@
     "email_error": "Vul een geldig e-mailadres in",
     "organization": "Organisatie",
     "organization_name": "Naam organisatie",
-    "success_toast": "De externe medewerker heeft een automatische mail gekregen om het account te bevestigen.",
+    "success_toast": "De externe medewerker krijgt na indienen automatisch een mail om het account te bevestigen.",
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
