@@ -11,7 +11,15 @@ export type Submission = {
 export type EffectResult = {
     redirectUrl?: string;
     showConfetti?: boolean;
+    toast?: ToastEffect;
 };
+
+export type ToastEffect = {
+    type: ToastType;
+    message: LocalString;
+};
+
+export type ToastType = "Success" | "Error" | "Info" | "Warning" | "Note";
 
 export type Answer = {
     id: string;

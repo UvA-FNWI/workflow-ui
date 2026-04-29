@@ -1,5 +1,5 @@
 import type {Result} from "~/store/api/types/assessments.ts";
-import type {Answer, Question} from "~/store/api/types/submissions.ts";
+import type {Answer, Page, Question, Submission} from "~/store/api/types/submissions.ts";
 
 export type QuestionAnswerPair = {
     question: Question;
@@ -21,4 +21,18 @@ export function getVisibleQuestionAnswerPairs(
                 percentages?.find((p) => p.questionName === question.name)?.percentage ?? null,
         }))
         .filter((pair) => pair.answer?.isVisible !== false);
+}
+
+export function isPageComplete(page: Page, submission: Submission): boolean {
+    return page.questions
+        .filter((q) => q.isRequired)
+        .every((question) => {
+            const answer = submission.answers.find((a) => a.questionName === question.name);
+            return (
+                answer?.isVisible === false ||
+                (answer?.value != null &&
+                    answer.value !== "" &&
+                    (!Array.isArray(answer.value) || answer.value.length > 0))
+            );
+        });
 }

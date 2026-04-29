@@ -332,7 +332,7 @@ export const formSubmitted = {
                                     nl: "Onderwerp",
                                 },
                                 layout: {
-                                    multiline: "true",
+                                    multiline: true,
                                 },
                                 subProperties: null,
                                 hideInResults: false,
