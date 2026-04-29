@@ -11,13 +11,3 @@ envVars:
     authAuthority: ""
     authClientId: ""
     authLogoutUrl: ""
-    
-# Azure Key Vault config for TLS certificates
-# Uncomment and configure for tst/acc/prd environments
-# azure:
-#   keyvaultName: keyvaultName
-#   resourceGroup: resourceGroupName
-#   subscriptionId: subscriptionId
-#   tenantId: tenantId
-#   clientId: clientId
-#   identityName: identityName
