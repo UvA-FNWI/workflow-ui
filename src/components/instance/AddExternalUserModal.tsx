@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {Button, Input, Modal, Text} from "@datanose/ui";
 
@@ -51,28 +51,25 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         }));
     }, []);
 
-    const handleModalOpenChange = useCallback(
-        (nextIsOpen: boolean) => {
-            if (nextIsOpen) {
-                setNewExternalUser(initialUser ?? emptyExternalUser);
-                setSelectedOrganization(
-                    initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
-                );
-            }
-            onOpenChange(nextIsOpen);
-        },
-        [onOpenChange, initialUser],
-    );
+    useEffect(() => {
+        if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setNewExternalUser(initialUser ?? emptyExternalUser);
+            setSelectedOrganization(
+                initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
+            );
+        }
+    }, [isOpen, initialUser]);
 
     const handleConfirm = useCallback(() => {
         onConfirm({...newExternalUser, isExternal: true});
-        handleModalOpenChange(false);
-    }, [onConfirm, handleModalOpenChange, newExternalUser]);
+        onOpenChange(false);
+    }, [onConfirm, onOpenChange, newExternalUser]);
 
     const handleBackToSearch = useCallback(() => {
-        handleModalOpenChange(false);
+        onOpenChange(false);
         onBackToSearch();
-    }, [handleModalOpenChange, onBackToSearch]);
+    }, [onOpenChange, onBackToSearch]);
 
     const handleSelectOrganizationChange = useCallback(
         (selected: Selection) => {
@@ -104,7 +101,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         isValidEmail && !!newExternalUser.displayName && !!newExternalUser.organization;
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={handleModalOpenChange}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <Modal.Header>{t("external_user_add.title")}</Modal.Header>
             <Modal.Body className="flex flex-col gap-4">
                 <Text>{t("external_user_add.description")}</Text>
@@ -172,7 +169,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                 <Button
                     intent="secondary"
                     variant="destructive"
-                    onClick={() => handleModalOpenChange(false)}
+                    onClick={() => onOpenChange(false)}
                 >
                     {t("cancel")}
                 </Button>

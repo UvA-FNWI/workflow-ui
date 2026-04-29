@@ -116,7 +116,9 @@ export const UserPicker: React.FC<UserPickerProps> = ({
             <UserPickerModal
                 isOpen={isOpenUserPicker}
                 onOpenChange={setIsOpenUserPicker}
-                initialSelection={valueArray}
+                initialSelection={
+                    valueArray.length === 1 && valueArray[0].isExternal ? undefined : valueArray
+                }
                 onConfirm={handleConfirmUserPicker}
                 onAddExternalUser={handleOpenExternalUserModal}
                 selectionMode={selectionMode}
@@ -131,7 +133,9 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 onOpenChange={setIsOpenExternal}
                 onConfirm={handleConfirmExternalUser}
                 onBackToSearch={() => setIsOpenUserPicker(true)}
-                initialUser={valueArray.length === 1 ? valueArray[0] : undefined}
+                initialUser={
+                    valueArray.length === 1 && valueArray[0].isExternal ? valueArray[0] : undefined
+                }
             />
         </>
     );
