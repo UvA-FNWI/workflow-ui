@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {Button, Input, Modal, Text} from "@datanose/ui";
 
@@ -34,6 +34,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     initialUser,
 }) => {
     const {t} = useTranslate("workflow");
+    const prevIsOpen = useRef(false);
     const [selectedOrganization, setSelectedOrganization] = useState<Selection>(
         initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
     );
@@ -52,13 +53,13 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     }, []);
 
     useEffect(() => {
-        if (isOpen) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (!prevIsOpen.current && isOpen) {
             setNewExternalUser(initialUser ?? emptyExternalUser);
             setSelectedOrganization(
                 initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
             );
         }
+        prevIsOpen.current = isOpen;
     }, [isOpen, initialUser]);
 
     const handleConfirm = useCallback(() => {
