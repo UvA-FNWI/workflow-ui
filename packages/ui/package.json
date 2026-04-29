@@ -18,6 +18,10 @@
     "./tokens": "./src/styles/tokens.css",
     "./fonts": "./src/styles/fonts.css"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "files": [
     "dist",
     "src/styles"

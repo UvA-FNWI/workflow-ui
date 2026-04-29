@@ -45,6 +45,7 @@ export {
 export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';
 export { Icon } from './components/Icon/Icon';
+export { type IconType } from './components/Icon/IconTypes';
 export {
   LoadingSpinner,
   type LoadingSpinnerProps,
