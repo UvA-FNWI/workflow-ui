@@ -89,11 +89,13 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
             )}
 
             {onSubmit && (
-                <FormSubmitButton
-                    instanceId={instanceId}
-                    submission={submission}
-                    onSubmit={onSubmit}
-                />
+                <div className="mt-4">
+                    <FormSubmitButton
+                        instanceId={instanceId}
+                        submission={submission}
+                        onSubmit={onSubmit}
+                    />
+                </div>
             )}
         </div>
     );
