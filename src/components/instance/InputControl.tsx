@@ -21,12 +21,12 @@ import type {Answer, Question} from "~/store/api/types/submissions";
 import type {UserSearchResult} from "~/store/api/types/users";
 
 const toDate = (value: unknown) => {
-    if (!value) return undefined;
+    if (value == null) return null;
     try {
         const date = typeof value === "string" ? parseISO(value) : value;
-        return date instanceof Date ? date : undefined;
+        return date instanceof Date ? date : null;
     } catch {
-        return undefined;
+        return null;
     }
 };
 

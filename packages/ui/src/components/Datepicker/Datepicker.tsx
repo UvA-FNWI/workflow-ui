@@ -49,7 +49,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   // Convert Date to DateValue if needed
   const internalValue = useMemo(() => {
-    if (!value) return undefined;
+    if (value === undefined) return undefined;
+    if (value === null) return null;
     return value instanceof Date ? dateToDateValue(value) : value;
   }, [value]);
 
