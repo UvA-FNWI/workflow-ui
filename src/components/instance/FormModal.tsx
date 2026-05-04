@@ -1,10 +1,10 @@
 import {Button, Modal} from "@datanose/ui";
-import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 
+import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
-import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
+import {isPageComplete} from "~/utils/submissionUtils.ts";
 
 type FormModalProps = {
     isOpen: boolean;
@@ -23,7 +23,8 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
         },
         {skip: !isOpen},
     );
-    const [submitSubmission, {isLoading}] = submissionsEndpoints.submitSubmission.useMutation();
+
+    if (!submission) return isOpen ? <div>Loading...</div> : null;
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose}>
@@ -39,28 +40,13 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
                 )}
             </Modal.Body>
             <Modal.Footer>
-                <Button
-                    intent="primary"
-                    variant="destructive"
-                    isLoading={isLoading}
-                    onClick={async () => {
-                        const res = await submitSubmission({instanceId, submissionId});
-                        const errorResult = (res.error as FetchBaseQueryError)
-                            ?.data as SubmitSubmissionResult;
-                        if (errorResult?.validationErrors.length) {
-                            // TODO: validation (DN-3424)
-                            const question = errorResult.validationErrors[0];
-                            alert(
-                                `Not valid! ${question.questionName}: ${l(question.validationMessage)}`,
-                            );
-                            return;
-                        }
-                        onClose();
-                    }}
-                >
-                    {t("confirm")}
-                </Button>
-                <Button intent="secondary" disabled={isLoading} onClick={onClose}>
+                <FormSubmitButton
+                    instanceId={instanceId}
+                    submission={submission}
+                    disabled={!isPageComplete(submission.form.pages[0], submission)}
+                    onSubmit={onClose}
+                />
+                <Button intent="secondary" onClick={onClose}>
                     {t("cancel")}
                 </Button>
             </Modal.Footer>
