@@ -35,6 +35,9 @@ export const FormSummaryAssessment = ({
             ),
     );
 
+    const hasTotalWeightedAverage =
+        assessmentForms.length > 0 && (assessmentResults?.totalWeightedAverage ?? 0) > 0;
+
     const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
     const colsClass = colsList[assessmentForms?.length ?? 1];
 
@@ -132,18 +135,14 @@ export const FormSummaryAssessment = ({
                     );
                 })}
 
-                {assessmentForms.length > 0 && (
+                {hasTotalWeightedAverage && (
                     <div className={`grid gap-4 ${colsClass}`}>
                         <Text fontWeight="bold" size="lg">
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
-                        {assessmentForms.map((assessment) => (
-                            <Text fontWeight="bold" size="lg" key={assessment.id}>
-                                {assessment?.weightedAverages["total"].toLocaleString(
-                                    i18n.language,
-                                )}
-                            </Text>
-                        ))}
+                        <Text fontWeight="bold" size="lg">
+                            {assessmentResults?.totalWeightedAverage?.toLocaleString(i18n.language)}
+                        </Text>
                     </div>
                 )}
             </div>

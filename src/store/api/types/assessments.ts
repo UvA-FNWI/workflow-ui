@@ -4,6 +4,7 @@ import type {Answer} from "~/store/api/types/submissions.ts";
 export type AssessmentGroup = {
     id: string;
     forms: Assessment[];
+    totalWeightedAverage: number;
 };
 
 export type Assessment = {
