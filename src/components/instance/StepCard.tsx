@@ -56,8 +56,7 @@ export const StepCard = ({step, instance}: Props) => {
         instance.steps.indexOf(step) >
             instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
-    const hasMultipleVersions =
-        (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
+    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
     const submissionsToShow =
         submissions.length > 0
@@ -126,7 +125,7 @@ export const StepCard = ({step, instance}: Props) => {
                             ))}
                         </div>
                     )}
-                    {hasMultipleVersions &&
+                    {showVersionCards &&
                         step.versions?.some((version) => version.submissions?.length > 0) && (
                             <div className="flex flex-col">
                                 {step.versions
