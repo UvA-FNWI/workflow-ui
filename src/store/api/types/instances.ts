@@ -30,10 +30,15 @@ export type StepHeaderStatus = {
     label: LocalString;
 };
 
+export type IconVariant = {
+    type: string;
+    color: string;
+};
+
 export type WorkflowStep = {
     id: string;
     title: LocalString;
-    icon: string | null;
+    icon: IconVariant | null;
     event: string;
     dateCompleted: string | null;
     deadline: string | null;
