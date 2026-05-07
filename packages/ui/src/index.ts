@@ -1,6 +1,7 @@
 import './styles/index.css';
 
 export { Button, type ButtonProps } from './components/Button/Button';
+export { Callout, type CalloutProps } from './components/Callout/Callout';
 export { Card, type CardVariantProps } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
 export { DatePicker, type DatePickerProps } from './components/Datepicker';
@@ -24,6 +25,10 @@ export {
   type InputProps,
   type InputVariantProps,
 } from './components/Input/Input';
+export {
+  InputLabel,
+  type InputLabelProps,
+} from './components/Input/InputLabel';
 export {
   TextArea,
   type TextAreaProps,

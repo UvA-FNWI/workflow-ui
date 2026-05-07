@@ -8,7 +8,7 @@ import { Icon } from '../Icon';
 const defaultType = 'info';
 
 const calloutVariants = cva(
-  'ui:relative ui:grid ui:w-full ui:grid-cols-[auto_1fr_auto] ui:items-start ui:gap-3 ui:border-l-2 ui:p-4 ui:break-words ui:text-grey-900',
+  'ui:relative ui:grid ui:w-max ui:grid-cols-[auto_1fr_auto] ui:items-center ui:gap-3 ui:border-l-4 ui:p-4 ui:break-words ui:text-grey-900',
   {
     variants: {
       type: {
@@ -61,13 +61,13 @@ export const Callout = ({
 
   return show ? (
     <div className={cn(calloutVariants({ type }), className)} {...otherProps}>
-      <div className="ui:flex ui:items-center ui:justify-center ui:text-xl ui:text-black">
+      <div className="ui:flex ui:justify-center ui:text-xl ui:text-black">
         {calloutIcon}
       </div>
 
       <div className="ui:flex ui:flex-col ui:gap-1">
         {header && (
-          <div className="ui:text-base ui:leading-tight ui:font-semibold">
+          <div className="ui:text-base ui:leading-tight ui:font-normal">
             {header}
           </div>
         )}
@@ -81,10 +81,10 @@ export const Callout = ({
 
       {isCloseable && (
         <div
-          className="ui:flex ui:cursor-pointer ui:items-center ui:justify-center ui:p-2"
+          className="ui:flex ui:cursor-pointer ui:justify-center"
           onClick={() => setShow(false)}
         >
-          <Icon name="cross-line" color="current" />
+          <Icon name="cross-line" color="current" size="md" />
         </div>
       )}
     </div>
