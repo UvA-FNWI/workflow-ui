@@ -106,6 +106,7 @@ export function formatAnswer(value: unknown, type: DataType, locale: string = "e
         default:
             // Default string formatting
             if (typeof value === "boolean") {
+                if (locale === "nl") return value ? "Ja" : "Nee";
                 return value ? "Yes" : "No";
             }
             if (Array.isArray(value)) {

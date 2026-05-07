@@ -12,8 +12,8 @@ import {
 } from "@datanose/ui";
 import {parseISO} from "date-fns";
 
-import {UserPicker} from "../UserPicker/UserPicker";
 import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
@@ -21,12 +21,12 @@ import type {Answer, Question} from "~/store/api/types/submissions";
 import type {UserSearchResult} from "~/store/api/types/users";
 
 const toDate = (value: unknown) => {
-    if (!value) return undefined;
+    if (value == null) return null;
     try {
         const date = typeof value === "string" ? parseISO(value) : value;
-        return date instanceof Date ? date : undefined;
+        return date instanceof Date ? date : null;
     } catch {
-        return undefined;
+        return null;
     }
 };
 
@@ -71,7 +71,7 @@ export const InputControl = ({
             question.type === "String" &&
             question.layout != null &&
             "multiline" in question.layout &&
-            question.layout.multiline === true;
+            question.layout.multiline;
         const lengthValidationDescription = question.maxLength
             ? t("string_validation", {
                   maxInputLength: question.maxLength,
@@ -115,6 +115,16 @@ export const InputControl = ({
         return (
             <UserPicker
                 value={value as UserSearchResult | UserSearchResult[] | null | undefined}
+                onChange={(newValue) => debouncedChange(newValue)}
+            />
+        );
+    }
+
+    if (question.type === "Boolean") {
+        return (
+            <Checkbox
+                label={l(question.text) ?? ""}
+                isSelected={value as boolean}
                 onChange={(newValue) => debouncedChange(newValue)}
             />
         );
