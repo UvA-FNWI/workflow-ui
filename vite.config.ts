@@ -17,5 +17,12 @@ export default defineConfig({
         alias: {
             "~": path.resolve(__dirname, "src"),
         },
+        dedupe: [
+            "react",
+            "react/jsx-runtime",
+            "react/jsx-dev-runtime",
+            "react-dom",
+            "react-dom/client",
+        ],
     },
 });
