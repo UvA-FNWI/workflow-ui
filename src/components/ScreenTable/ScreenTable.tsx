@@ -73,7 +73,6 @@ function formatCellValue(value: unknown, dataType: string, locale: string): Reac
     if (value === null || value === undefined) {
         return "—";
     }
-    console.log("value", value, "datatype", dataType);
 
     switch (dataType) {
         case "Date":
