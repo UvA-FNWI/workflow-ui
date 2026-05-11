@@ -75,6 +75,11 @@
   "pnpm": {
     "overrides": {
       "@microsoft/api-extractor": "7.54.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@swc/core",
+      "esbuild"
+    ]
   }
 }
