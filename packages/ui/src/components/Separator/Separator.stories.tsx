@@ -26,9 +26,9 @@ export const Horizontal: Story = {
     orientation: 'horizontal',
   },
   render: args => (
-    <div className="w-64">
+    <div className="ui:w-64">
       <Text>Content above</Text>
-      <Separator {...args} className="my-4" />
+      <Separator {...args} className="ui:my-4" />
       <Text>Content below</Text>
     </div>
   ),
@@ -39,7 +39,7 @@ export const Vertical: Story = {
     orientation: 'vertical',
   },
   render: args => (
-    <div className="flex h-32 items-center gap-4">
+    <div className="ui:flex ui:h-32 ui:items-center ui:gap-4">
       <Text>Left content</Text>
       <Separator {...args} />
       <Text>Right content</Text>
@@ -47,11 +47,25 @@ export const Vertical: Story = {
   ),
 };
 
+export const Bold: Story = {
+  args: {
+    orientation: 'horizontal',
+    weight: 'bold',
+  },
+  render: args => (
+    <div className="ui:w-64">
+      <Text>Content above</Text>
+      <Separator {...args} className="ui:my-4" />
+      <Text>Content below</Text>
+    </div>
+  ),
+};
+
 export const Default: Story = {
   render: () => (
-    <div className="w-64">
+    <div className="ui:w-64">
       <Text>Content above</Text>
-      <Separator className="my-4" />
+      <Separator className="ui:my-4" />
       <Text>Content below</Text>
     </div>
   ),

@@ -1,9 +1,9 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useMemo, useRef, useState} from "react";
 
-import {Button, LoadingSpinner, Modal, SearchInput} from "@datanose/ui";
+import {Button, Icon, Modal} from "@datanose/ui";
 
-import {SearchListBox, type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
-import {useDebounce} from "~/hooks/useDebounce";
+import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
+import {type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users";
 import {useLazyFindUsersQuery} from "~/store/api/usersApi";
@@ -16,10 +16,12 @@ export interface UserPickerModalProps {
     onOpenChange: (isOpen: boolean) => void;
     initialSelection?: UserSearchResult[];
     onConfirm: (users: UserSearchResult[]) => void;
+    onAddExternalUser?: () => void;
     selectionMode?: "single" | "multiple";
     title?: string;
     searchPlaceholder?: string;
     minSearchLength?: number;
+    allowsExternalUsers?: boolean;
 }
 
 export const UserPickerModal: React.FC<UserPickerModalProps> = ({
@@ -27,16 +29,16 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     onOpenChange,
     initialSelection = [],
     onConfirm,
+    onAddExternalUser,
     selectionMode = "single",
     title,
     searchPlaceholder,
-    minSearchLength = 2,
+    minSearchLength,
+    allowsExternalUsers,
 }) => {
     const {t} = useTranslate("workflow");
     const confirmButtonRef = useRef<HTMLButtonElement>(null);
-    const [searchQuery, setSearchQuery] = useState("");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-    const [isSelected, setIsSelected] = useState(false);
 
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
     const resetSearch = searchState.reset;
@@ -46,7 +48,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: user.faculty ?? user.email,
+            secondaryValue: user.organization?.name ?? user.email,
         }));
     }, [searchResults]);
 
@@ -62,38 +64,6 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
         return cache;
     }, [searchResults, initialSelection]);
-
-    // Reset selection when modal opens
-    useEffect(() => {
-        if (isOpen) {
-            const initialKeys = new Set(initialSelection.map((u) => u.userName));
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setSelectedKeys(initialKeys);
-            setSearchQuery("");
-            resetSearch();
-            setIsSelected(false);
-        }
-    }, [initialSelection, isOpen, resetSearch]);
-
-    // Debounced search
-    const performSearch = useCallback(
-        (...args: unknown[]) => {
-            const query = args[0] as string;
-            if (query.trim().length >= minSearchLength) {
-                triggerSearch(query);
-            }
-        },
-        [minSearchLength, triggerSearch],
-    );
-
-    const debouncedSearch = useDebounce(performSearch, 300);
-
-    useEffect(() => {
-        if (searchQuery.trim().length >= minSearchLength && !isSelected) {
-            resetSearch();
-            debouncedSearch(searchQuery);
-        }
-    }, [searchQuery, minSearchLength, debouncedSearch, isSelected, resetSearch]);
 
     // Get selected users from cache
     const selectedUsers = useMemo(() => {
@@ -112,11 +82,6 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         onOpenChange(false);
     }, [onOpenChange]);
 
-    const handleSearchChange = useCallback((query: string) => {
-        setSearchQuery(query);
-        setIsSelected(false);
-    }, []);
-
     const handleSelectionChange = useCallback(
         (keys: Selection) => {
             setSelectedKeys(keys);
@@ -125,8 +90,6 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     .map((key) => usersCache.get(key as string))
                     .filter((user): user is UserSearchResult => user !== undefined);
                 if (selected.length > 0) {
-                    setSearchQuery(selected[0].displayName.trim());
-                    setIsSelected(true);
                     confirmButtonRef.current?.focus();
                 }
             }
@@ -135,15 +98,6 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     );
 
     // UI states
-    const showSearchHint = searchQuery.trim().length < minSearchLength;
-    const showLoading = (searchState.isLoading || searchState.isFetching) && !showSearchHint;
-    const showNoResults =
-        !showLoading &&
-        !showSearchHint &&
-        !isSelected &&
-        searchResults.length === 0 &&
-        searchQuery.trim().length > 0;
-    const showUsers = !showLoading && !showSearchHint && searchResults.length > 0 && !isSelected;
     const hasSelection = selectedKeys === "all" || selectedKeys.size > 0;
 
     const modalTitle = title ?? t("user_picker.title");
@@ -153,58 +107,53 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
-                <SearchInput
-                    value={searchQuery}
-                    onChange={handleSearchChange}
+                <SearchAndSelect
+                    items={searchListBoxValues}
+                    selectedKeys={selectedKeys}
+                    onSelect={handleSelectionChange}
+                    onSearch={triggerSearch}
+                    resetSearch={resetSearch}
                     placeholder={searchPlaceholderText}
                     autoFocus={isOpen}
+                    selectionMode={selectionMode}
+                    minSearchLength={minSearchLength}
+                    isLoading={searchState.isLoading || searchState.isFetching}
+                    initialSearchQuery={initialSelection[0]?.displayName}
+                    noResultsText={t("user_picker.no_results")}
+                    searchHintText={
+                        selectionMode == "single"
+                            ? t("user_picker.search_hint_one")
+                            : t("user_picker.search_hint_other")
+                    }
                 />
-
-                {/* Search hint */}
-                {showSearchHint && (
-                    <div className="py-8 text-center text-grey-600 dark:text-grey-400">
-                        {t("user_picker.search_hint", {count: minSearchLength})}
-                    </div>
-                )}
-
-                {/* Loading */}
-                {showLoading && (
-                    <div className="flex items-center justify-center py-8">
-                        <LoadingSpinner size="sm" />
-                    </div>
-                )}
-
-                {/* User List */}
-                {showUsers && (
-                    <SearchListBox
-                        autoFocus={false}
-                        items={searchListBoxValues}
-                        selectedKeys={selectedKeys}
-                        onSelectionChange={handleSelectionChange}
-                        selectionMode={selectionMode}
-                        aria-label={modalTitle}
-                    />
-                )}
-
-                {/* No results */}
-                {showNoResults && (
-                    <div className="py-8 text-center text-grey-600 dark:text-grey-400">
-                        {t("user_picker.no_results")}
-                    </div>
-                )}
             </Modal.Body>
 
             <Modal.Footer>
-                <Button intent="secondary" onClick={handleCancel}>
-                    {t("cancel")}
-                </Button>
                 <Button
                     intent="primary"
+                    variant="destructive"
                     onClick={handleConfirm}
                     disabled={!hasSelection}
                     ref={confirmButtonRef}
                 >
                     {t("confirm")}
+                </Button>
+                {allowsExternalUsers && (
+                    <Button
+                        intent="secondary"
+                        onClick={onAddExternalUser}
+                        leftIcon={<Icon name="user-add-line" className="text-inherit" />}
+                    >
+                        {t("user_picker.not_in_list")}
+                    </Button>
+                )}
+                <Button
+                    intent="secondary"
+                    variant="destructive"
+                    onClick={handleCancel}
+                    className="ml-auto"
+                >
+                    {t("cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>

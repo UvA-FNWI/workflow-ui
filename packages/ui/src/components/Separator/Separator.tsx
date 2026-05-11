@@ -4,17 +4,20 @@ import { cva, VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
 
-export type SeparatorVariantProps = VariantProps<typeof separatorVariants>;
-
-const separatorVariants = cva('ui:bg-grey-300 ui:dark:bg-grey-600', {
+const separatorVariants = cva('', {
   variants: {
     orientation: {
       horizontal: 'ui:h-[2px] ui:w-full',
       vertical: 'ui:h-full ui:w-[2px]',
     },
+    weight: {
+      bold: 'ui:bg-grey-700 ui:dark:bg-grey-400',
+      normal: 'ui:bg-grey-300 ui:dark:bg-grey-600',
+    },
   },
   defaultVariants: {
     orientation: 'horizontal',
+    weight: 'normal',
   },
 });
 
@@ -25,15 +28,13 @@ export interface SeparatorProps
 export const Separator = ({
   className = '',
   orientation = 'horizontal',
+  weight = 'normal',
   ...otherProps
 }: SeparatorProps) => {
-  const finalOrientation = orientation || 'horizontal';
+  const variantClasses = separatorVariants({ orientation, weight });
   return (
     <div
-      className={cn(
-        separatorVariants({ orientation: finalOrientation }),
-        className
-      )}
+      className={cn(variantClasses, className)}
       role="separator"
       {...otherProps}
     />

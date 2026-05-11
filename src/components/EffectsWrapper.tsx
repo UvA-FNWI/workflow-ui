@@ -37,7 +37,14 @@ function EffectsWrapper() {
             return;
         }
 
-        navigate(redirectUrl);
+        const url = new URL(redirectUrl, window.location.href);
+
+        if (url.origin === window.location.origin) {
+            navigate(`${url.pathname}${url.search}${url.hash}`);
+        } else {
+            window.location.assign(redirectUrl);
+        }
+
         dispatch(clearRedirectUrl());
     }, [dispatch, navigate, redirectUrl]);
 

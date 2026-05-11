@@ -28,7 +28,7 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       {...mergeProps(optionProps, focusProps, hoverProps)}
       ref={ref}
       className={cn(
-        'ui:justify-between ui:gap-2 ui:px-2 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none',
+        'ui:flex ui:items-center ui:justify-between ui:gap-2 ui:px-2 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none',
         selectionVariants({
           isSelected,
           isHovered,
@@ -38,8 +38,11 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       )}
     >
       <div className="ui:flex ui:items-center ui:gap-2">
-        <div className="ui:w-3 ui:flex-none">
+        <div className="ui:flex ui:h-4 ui:w-4 ui:flex-none ui:items-center ui:justify-center">
           {isSelected && <Icon name="checkmark-solid" size="sm" />}
+          {!isSelected && item.key === 'new-item' && (
+            <Icon name="plus-solid" size="sm" />
+          )}
         </div>
         <div className="ui:w-full">{item.rendered}</div>
       </div>
