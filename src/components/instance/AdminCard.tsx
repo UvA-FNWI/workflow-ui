@@ -2,7 +2,7 @@ import {useState} from "react";
 
 import {useParams} from "react-router";
 
-import {Button, Card, Heading, Icon, Select, SelectItem, Skeleton} from "@datanose/ui";
+import {Button, Card, Heading, Icon, Select, SelectItem, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";

@@ -1,5 +1,5 @@
 {
-  "name": "@datanose/ui",
+  "name": "@uva-fnwi/datanose-ui",
   "type": "module",
   "version": "0.1.0",
   "main": "dist/datanose-ui.umd.js",

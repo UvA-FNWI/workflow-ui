@@ -1,4 +1,4 @@
-name: Publish @datanose/ui
+name: Publish @uva-fnwi/datanose-ui
 
 on:
     push:
@@ -28,8 +28,8 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
-            - run: pnpm --filter @datanose/ui build
+            - run: pnpm --filter @uva-fnwi/datanose-ui build
 
-            - run: pnpm --filter @datanose/ui test
+            - run: pnpm --filter @uva-fnwi/datanose-ui test
 
-            - run: pnpm --filter @datanose/ui publish --no-git-checks
+            - run: pnpm --filter @uva-fnwi/datanose-ui publish --no-git-checks

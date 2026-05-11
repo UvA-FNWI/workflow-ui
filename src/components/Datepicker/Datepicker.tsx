@@ -1,7 +1,10 @@
 import {useTranslation} from "react-i18next";
 
-import {DatePicker as UIDatePicker, DateRangePicker as UIDateRangePicker} from "@datanose/ui";
-import type {DatePickerProps, DateRangePickerProps} from "@datanose/ui";
+import {
+    DatePicker as UIDatePicker,
+    DateRangePicker as UIDateRangePicker,
+} from "@uva-fnwi/datanose-ui";
+import type {DatePickerProps, DateRangePickerProps} from "@uva-fnwi/datanose-ui";
 
 /**
  * Locale-aware DatePicker wrapper that automatically syncs with i18n language

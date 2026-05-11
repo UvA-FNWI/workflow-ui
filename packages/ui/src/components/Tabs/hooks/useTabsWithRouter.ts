@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
  * This hook provides URL synchronization for tab state
  *
  * @example
- * import { useTabsWithRouter } from '@datanose/ui';
+ * import { useTabsWithRouter } from '@uva-fnwi/datanose-ui';
  *
  * function MyPage() {
  *   const tabRouterProps = useTabsWithRouter({
@@ -98,7 +98,7 @@ export function useTabsWithRouter({
  * by providing more generic URL synchronization utilities
  *
  * @example
- * import { useTabsWithUrl } from '@datanose/ui';
+ * import { useTabsWithUrl } from '@uva-fnwi/datanose-ui';
  *
  * function MyPage() {
  *   const tabProps = useTabsWithUrl({

@@ -7,7 +7,7 @@ The Tabs component has been refactored to follow the controlled component patter
 ### Before (Router-dependent)
 
 ```tsx
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@datanose/ui';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@uva-fnwi/datanose-ui';
 
 // Component was tightly coupled to React Router
 <Tabs baseUrl="/admin">
@@ -25,7 +25,7 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@datanose/ui';
 ### After (Controlled Component)
 
 ```tsx
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@datanose/ui';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@uva-fnwi/datanose-ui';
 
 // Option 1: Uncontrolled (simplest)
 <Tabs defaultActiveIndex={0}>
@@ -70,7 +70,7 @@ import {
   TabPanels,
   Tabs,
   useTabsWithRouter,
-} from '@datanose/ui';
+} from '@uva-fnwi/datanose-ui';
 
 function MyPage() {
   const tabProps = useTabsWithRouter({
