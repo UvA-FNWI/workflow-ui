@@ -29,6 +29,23 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                         const value = info.getValue();
                         const formattedValue = formatCellValue(value, col.dataType, i18n.language);
 
+                        // Custom formatting for the progress column
+                        if (col.dataType === "Object") {
+                            const obj = value as Record<string, unknown>;
+                            if ("progressText" in obj && "isStudentAction" in obj) {
+                                const isStudentAction = obj["isStudentAction"] as boolean;
+                                const progressText = obj["progressText"] as LocalString | undefined;
+                                return (
+                                    <div className="flex items-baseline gap-2">
+                                        <div
+                                            className={`h-2 w-2 rounded-full ${isStudentAction ? "bg-green-600" : "bg-red-600"}`}
+                                        />
+                                        <span>{l(progressText)}</span>
+                                    </div>
+                                );
+                            }
+                        }
+
                         if (col.link) {
                             const rowId = info.row.original.id;
                             // TODO: Replace with Link component perhaps
@@ -56,6 +73,7 @@ function formatCellValue(value: unknown, dataType: string, locale: string): Reac
     if (value === null || value === undefined) {
         return "—";
     }
+    console.log("value", value, "datatype", dataType);
 
     switch (dataType) {
         case "Date":
@@ -70,6 +88,15 @@ function formatCellValue(value: unknown, dataType: string, locale: string): Reac
             return typeof value === "number" ? value.toLocaleString() : String(value);
         case "LocalString":
             return typeof value === "object" && (value as LocalString)[locale as keyof LocalString];
+        case "Object": {
+            if (typeof value === "object") {
+                const localString = getLocalStringFromObject(value as object);
+                if (localString) {
+                    return localString[locale as keyof LocalString] ?? "—";
+                }
+            }
+            return String(value);
+        }
         default:
             return String(value);
     }
@@ -103,4 +130,16 @@ function formatCurrency(value: unknown): string {
         }).format(value);
     }
     return String(value);
+}
+
+function getLocalStringFromObject(value: object): LocalString | null {
+    for (const field of Object.values(value)) {
+        if (typeof field === "object" && field !== null && !Array.isArray(field)) {
+            const keys = Object.keys(field);
+            if (keys.some((k) => /^[a-z]{2}(-[A-Z]{2})?$/.test(k))) {
+                return field as LocalString;
+            }
+        }
+    }
+    return null;
 }

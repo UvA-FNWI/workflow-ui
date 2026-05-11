@@ -99,7 +99,8 @@ export type DataType =
     | "Double"
     | "Reference"
     | "Int"
-    | "Boolean";
+    | "Boolean"
+    | "Object";
 export type ChoiceLayoutType = "Dropdown" | "RadioList";
 export type FormLayout = "Normal" | "SinglePage" | "Modal";
 
