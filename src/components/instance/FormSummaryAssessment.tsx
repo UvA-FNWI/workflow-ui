@@ -1,4 +1,4 @@
-import {Button, Icon, Separator, Text} from "@datanose/ui";
+import {Button, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
