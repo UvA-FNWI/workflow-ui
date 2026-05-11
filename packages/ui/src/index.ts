@@ -45,7 +45,7 @@ export {
 export { Link, type LinkProps } from './components/Link/Link';
 export {
   Separator,
-  type SeparatorVariantProps,
+  type SeparatorProps,
 } from './components/Separator/Separator';
 export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';

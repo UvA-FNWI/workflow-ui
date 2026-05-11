@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@microsoft/api-extractor': 7.54.0
-
 importers:
 
   .:

@@ -53,7 +53,7 @@ export const StepCard = ({step, instance}: Props) => {
     const isDisabled =
         !isCurrentStep &&
         instance.steps.indexOf(step) >
-            instance.steps.findIndex((s) => instance.currentStep.includes(s.id));
+            instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
@@ -85,13 +85,14 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
-                    {submissions.map((submission) => (
-                        <FormSummary
-                            key={submission.id}
-                            instanceId={instance.id}
-                            submission={submission}
-                        />
-                    ))}
+                    {!step.versions &&
+                        submissions.map((submission) => (
+                            <FormSummary
+                                key={submission.id}
+                                instanceId={instance.id}
+                                submission={submission}
+                            />
+                        ))}
 
                     {isFormOpen && (
                         <FormPage

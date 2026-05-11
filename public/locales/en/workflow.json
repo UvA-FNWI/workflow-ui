@@ -48,7 +48,9 @@
     },
     "summary": {
       "edit_page": "Edit page",
+      "hide_answers": "Hide parts and explanations",
       "no_answer": "No answer provided",
+      "show_answers": "Show parts and explanations",
       "title": "Summary"
     },
     "workflowInstance": "Workflow Instance"

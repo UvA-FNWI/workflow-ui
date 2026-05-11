@@ -1,14 +1,18 @@
-export type Assessments = {
+import type {LocalString} from "~/hooks/useTranslate.ts";
+import type {Answer} from "~/store/api/types/submissions.ts";
+
+export type AssessmentGroup = {
     id: string;
-    results: Record<string, Result[]>;
-    weightedAverages: Record<string, number>;
+    forms: Assessment[];
+    totalWeightedAverage: number;
 };
 
-export type AssessmentPage = {
+export type Assessment = {
     id: string;
-    pageName: string;
-    results: Result[];
-    weightedAverage: number;
+    formTitle: LocalString;
+    results: Record<string, Result[]>;
+    weightedAverages: Record<string, number>;
+    answers: Answer[];
 };
 
 export type Result = {
