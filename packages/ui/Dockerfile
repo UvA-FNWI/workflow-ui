@@ -8,7 +8,7 @@ FROM base AS build
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package.json pnpm-workspace.yaml ./
 
 RUN pnpm fetch
 

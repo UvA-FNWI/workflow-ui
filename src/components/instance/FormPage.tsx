@@ -26,6 +26,23 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     if (!submission) return <div>Loading...</div>;
 
+    if (submission.form.formType === "AssessmentOverview") {
+        return (
+            <>
+                <Heading size="sm" className="uppercase" fontType="body">
+                    {t("instance.summary.title")}
+                </Heading>
+                <FormSummary
+                    submission={submission}
+                    instanceId={instanceId}
+                    onSubmit={onClose}
+                    onEditPage={() => {}}
+                    formType="AssessmentOverview"
+                />
+            </>
+        );
+    }
+
     const showTabView = submission.form.pages.length > 1; // only show tabs and summary when there is more than one page
 
     const totalTabs = submission.form.pages.length + 1; // +1 for summary tab
@@ -34,16 +51,20 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     const areAllPagesComplete = submission.form.pages.every((page) => isPageComplete(page));
 
-    const goToNextTab = () => {
-        if (activeTabIndex < totalTabs - 1) {
-            setActiveTabIndex(activeTabIndex + 1);
-        }
-    };
+    // For some assessment forms not all tabs are enabled
+    const goToNextEnabledTab = (current: number, direction: 1 | -1) => {
+        const pages = submission.form.pages;
 
-    const goToPreviousTab = () => {
-        if (activeTabIndex > 0) {
-            setActiveTabIndex(activeTabIndex - 1);
-        }
+        const isEnabled = (i: number) =>
+            i < pages.length ? pages[i].isInCurrentForm : i === pages.length && areAllPagesComplete;
+
+        const nextIndex =
+            Array.from({length: totalTabs}, (_, i) => i)
+                .filter((i) => (direction === 1 ? i > current : i < current))
+                .sort((a, b) => direction * (a - b))
+                .find((i) => isEnabled(i)) ?? current;
+
+        setActiveTabIndex(nextIndex);
     };
 
     return (
@@ -53,7 +74,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                     <TabList>
                         {[
                             ...submission.form.pages.map((page, index) => (
-                                <Tab key={index}>
+                                <Tab key={index} disabled={!page.isInCurrentForm}>
                                     {l(page.title)}
                                     {isPageComplete(page) && (
                                         <Icon
@@ -86,7 +107,9 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                             <Button
                                                 intent="secondary"
                                                 variant="destructive"
-                                                onClick={goToPreviousTab}
+                                                onClick={() =>
+                                                    goToNextEnabledTab(activeTabIndex, -1)
+                                                }
                                             >
                                                 {t("go_back")}
                                             </Button>
@@ -108,7 +131,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                                     ? !areAllPagesComplete
                                                     : !isPageComplete(page)
                                             }
-                                            onClick={goToNextTab}
+                                            onClick={() => goToNextEnabledTab(activeTabIndex, 1)}
                                         >
                                             {t("continue")}
                                         </Button>

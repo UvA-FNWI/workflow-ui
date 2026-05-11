@@ -42,6 +42,7 @@ export type Form = {
     title: LocalString;
     layout: FormLayout;
     pages: Page[];
+    formType: FormType;
     step?: string;
 };
 
@@ -53,6 +54,7 @@ export type Page = {
     layout: PageLayout;
     questions: Question[];
     hasResults: boolean;
+    isInCurrentForm: boolean;
 };
 
 export type Question = {
@@ -68,6 +70,7 @@ export type Question = {
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
+    allowsExternalUsers: boolean;
 };
 
 export type StringLayoutOptions = {
@@ -86,6 +89,7 @@ export type Choice = {
 };
 
 export type PageLayout = "Normal" | "Condensed";
+export type FormType = "Normal" | "AssessmentOverview";
 export type RoleAction = "ViewAdminTools" | "View" | "Edit" | "Submit";
 export type DataType =
     | "File"

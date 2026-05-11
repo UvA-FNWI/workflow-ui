@@ -24,7 +24,6 @@ export function SearchListBox({
     selectedKeys: initialSelectedKeys,
 }: SearchListBoxProps) {
     const [selectedKeys, setSelectedKeys] = useState<Selection>(initialSelectedKeys ?? new Set());
-    console.log("Selected keys:", selectedKeys);
 
     const handleSelectionChange = (selected: Selection) => {
         setSelectedKeys(selected);
