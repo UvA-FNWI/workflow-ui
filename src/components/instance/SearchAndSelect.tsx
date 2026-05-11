@@ -15,9 +15,9 @@ type SearchAndSelectProps = {
     items: SearchListBoxValue[];
     selectedKeys: Selection;
     selectionMode?: "single" | "multiple";
-    onSelect: (selection: Selection) => void;
+    onSelect: (selection: Selection, searchQuery: string) => void;
     onSearch: (query: string) => void;
-    resetSearch: () => void;
+    resetSearch?: () => void;
     minSearchLength?: number;
     isLoading?: boolean;
     autoFocus?: boolean;
@@ -64,7 +64,7 @@ export function SearchAndSelect({
     const performSearch = useCallback(
         (query: string) => {
             if (query.trim().length >= minSearchLength) {
-                onSelect(new Set());
+                onSelect(new Set(), query);
                 onSearch(query);
             }
             setIsPendingSearch(false);
@@ -75,7 +75,7 @@ export function SearchAndSelect({
 
     useEffect(() => {
         if (searchQuery.trim().length >= minSearchLength && !isSelected) {
-            resetSearch();
+            resetSearch?.();
             debouncedSearch(searchQuery);
         }
     }, [searchQuery, minSearchLength, debouncedSearch, isSelected, resetSearch]);
@@ -91,7 +91,7 @@ export function SearchAndSelect({
 
     const handleSelectionChange = useCallback(
         (keys: Selection) => {
-            onSelect(keys);
+            onSelect(keys, searchQuery);
             setIsSelected(true);
 
             if (keys !== "all") {
