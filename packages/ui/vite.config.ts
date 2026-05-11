@@ -20,11 +20,22 @@ export default defineConfig({
       fileName: format => `datanose-ui.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react-aria', 'react-stately'],
+      external: [
+        'react',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        'react-dom',
+        'react-dom/client',
+        'react-aria',
+        'react-stately',
+      ],
       output: {
         globals: {
           react: 'React',
+          'react/jsx-runtime': 'React',
+          'react/jsx-dev-runtime': 'React',
           'react-dom': 'ReactDOM',
+          'react-dom/client': 'ReactDOM',
           'react-aria': 'ReactAria',
           'react-stately': 'ReactStately',
         },
