@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 
-import {Button, Modal} from "@datanose/ui";
 import {useAuth} from "@uva-fnwi/datanose-core";
+import {Button, Modal} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {openSessionExpiredModal, selectShowSessionExpiredModal} from "~/store/authSlice";

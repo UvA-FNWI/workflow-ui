@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Item, ListBox, type ListBoxProps} from "@datanose/ui";
+import {Item, ListBox, type ListBoxProps} from "@uva-fnwi/datanose-ui";
 
 export type SearchListBoxValue = {
     key: string;

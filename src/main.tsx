@@ -4,9 +4,9 @@ import {createRoot} from "react-dom/client";
 import {Provider} from "react-redux";
 import {RouterProvider} from "react-router";
 
-import {ThemeProvider, ToastProvider} from "@datanose/ui";
-import "@datanose/ui/styles";
 import {type AuthEventCallbacks, AuthProvider, isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
+import {ThemeProvider, ToastProvider} from "@uva-fnwi/datanose-ui";
+import "@uva-fnwi/datanose-ui/styles";
 
 import SessionExpiredModal from "./components/SessionExpiredModal";
 import {

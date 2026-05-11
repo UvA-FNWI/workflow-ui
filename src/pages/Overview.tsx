@@ -1,6 +1,6 @@
 import {Link} from "react-router";
 
-import {Container} from "@datanose/ui";
+import {Container} from "@uva-fnwi/datanose-ui";
 
 function Overview() {
     return (

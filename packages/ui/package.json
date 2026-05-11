@@ -1,5 +1,5 @@
 {
-  "name": "@datanose/ui",
+  "name": "@uva-fnwi/datanose-ui",
   "type": "module",
   "version": "0.1.0",
   "main": "dist/datanose-ui.umd.js",
@@ -17,6 +17,10 @@
     },
     "./tokens": "./src/styles/tokens.css",
     "./fonts": "./src/styles/fonts.css"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "files": [
     "dist",

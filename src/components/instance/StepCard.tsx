@@ -1,7 +1,7 @@
 import {useState} from "react";
 
-import {Button, Disclosure, Heading, Modal, Pill, Text} from "@datanose/ui";
-import type {PillVariantProps} from "@datanose/ui";
+import {Button, Disclosure, Heading, Modal, Pill, Text} from "@uva-fnwi/datanose-ui";
+import type {PillVariantProps} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
