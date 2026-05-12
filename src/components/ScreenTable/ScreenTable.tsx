@@ -2,8 +2,8 @@ import {useMemo} from "react";
 
 import {Link, useNavigate} from "react-router";
 
-import {Button, Icon, linkClassGenerator} from "@datanose/ui";
 import {type ColumnDef} from "@tanstack/react-table";
+import {Button, Icon, linkClassGenerator} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
