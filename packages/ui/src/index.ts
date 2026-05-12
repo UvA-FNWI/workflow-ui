@@ -11,6 +11,11 @@ export {
   type DateRange,
 } from './components/Datepicker';
 export {
+  Popover,
+  usePopoverState,
+  type PopoverState,
+} from './components/Popover/Popover';
+export {
   RadioGroup,
   Radio,
   type RadioGroupProps,
@@ -91,6 +96,7 @@ export {
 
 export {
   ListBox,
+  ListBoxItem,
   Item,
   type ListBoxProps,
   type ListState,

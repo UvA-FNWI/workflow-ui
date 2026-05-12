@@ -71,6 +71,13 @@ export type Question = {
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
     allowsExternalUsers: boolean;
+    rubric?: RubricEntry[];
+};
+
+export type RubricEntry = {
+    name: string;
+    description: LocalString;
+    grades: string[];
 };
 
 export type StringLayoutOptions = {
@@ -104,7 +111,7 @@ export type DataType =
     | "Reference"
     | "Int"
     | "Boolean";
-export type ChoiceLayoutType = "Dropdown" | "RadioList";
+export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric";
 export type FormLayout = "Normal" | "SinglePage" | "Modal";
 
 export type ImpersonationRole = {

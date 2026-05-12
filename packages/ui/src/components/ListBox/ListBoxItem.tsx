@@ -10,9 +10,14 @@ import { selectionVariants } from '../Select/SelectionVariants';
 interface ListBoxItemProps<T> {
   item: Node<T>;
   state: ListState<T>;
+  className?: string;
 }
 
-export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
+export function ListBoxItem<T>({
+  item,
+  state,
+  className,
+}: ListBoxItemProps<T>) {
   const ref = useRef<HTMLLIElement>(null);
   const { optionProps, isSelected, isDisabled } = useOption(
     { key: item.key },
@@ -34,7 +39,8 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
           isHovered,
           isDisabled,
           isFocusVisible,
-        })
+        }),
+        className
       )}
     >
       <div className="ui:flex ui:items-center ui:gap-2">

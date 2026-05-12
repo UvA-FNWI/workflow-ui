@@ -13,6 +13,7 @@ import {
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {RubricSelect} from "~/components/instance/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -132,13 +133,13 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
+        const isChoiceType = (choiceType: string) =>
+            question.layout && "type" in question.layout && question.layout.type === choiceType;
         const choices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
-        const isDropdown =
-            question.layout && "type" in question.layout && question.layout.type === "Dropdown";
 
-        if (isDropdown) {
+        if (isChoiceType("Dropdown")) {
             if (question.isArray) {
                 const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
                 return (
@@ -177,19 +178,8 @@ export const InputControl = ({
             );
         }
 
-        if (question.layout && "type" in question.layout && question.layout.type === "Dropdown") {
-            return (
-                <Select
-                    value={(value as string) || ""}
-                    onChange={(selectedValue) => debouncedChange(selectedValue)}
-                >
-                    {choices.map((choice) => (
-                        <SelectItem key={choice.name} title={l(choice.text) ?? choice.name}>
-                            {l(choice.text) ?? choice.name}
-                        </SelectItem>
-                    ))}
-                </Select>
-            );
+        if (isChoiceType("Rubric")) {
+            return <RubricSelect rubrics={question.rubric ?? []} />;
         }
 
         if (question.isArray) {
