@@ -168,6 +168,12 @@ export interface SelectProps<
   isValid?: boolean;
   /** Select options */
   children: AriaSelectProps<T, M>['children'];
+
+  customPopover?: (props: {
+    state: SelectState<T, M>;
+    triggerRef: React.RefObject<HTMLButtonElement | null>;
+    menuProps: AriaListBoxOptions<T>;
+  }) => React.ReactNode;
 }
 
 export function Select<
@@ -182,6 +188,7 @@ export function Select<
     isValid = true,
     isDisabled = false,
     placeholder,
+    customPopover,
     ...restProps
   } = props;
 
@@ -280,18 +287,21 @@ export function Select<
         />
       </button>
 
-      {state.isOpen && (
-        <SelectPopover
-          state={state}
-          triggerRef={triggerRef as React.RefObject<HTMLElement>}
-          placement="bottom start"
-          shouldFlip
-        >
-          <DismissButton onDismiss={state.close} />
-          <SelectListBox state={state} {...menuProps} />
-          <DismissButton onDismiss={state.close} />
-        </SelectPopover>
-      )}
+      {state.isOpen &&
+        (customPopover ? (
+          customPopover({ state, triggerRef, menuProps })
+        ) : (
+          <SelectPopover
+            state={state}
+            triggerRef={triggerRef as React.RefObject<HTMLElement>}
+            placement="bottom start"
+            shouldFlip
+          >
+            <DismissButton onDismiss={state.close} />
+            <SelectListBox state={state} {...menuProps} />
+            <DismissButton onDismiss={state.close} />
+          </SelectPopover>
+        ))}
 
       {description && (
         <div

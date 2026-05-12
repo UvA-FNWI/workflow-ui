@@ -1,6 +1,4 @@
-import {useRef} from "react";
-
-import {Button, InputLabel, Select, SelectItem, usePopoverState} from "@uva-fnwi/datanose-ui";
+import {InputLabel, Select, SelectItem} from "@uva-fnwi/datanose-ui";
 
 import {RubricPopover} from "~/components/instance/RubricPopover.tsx";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
@@ -10,30 +8,30 @@ interface RubricSelectProps {
     rubrics: RubricEntry[];
 }
 
+type Selection = "all" | Set<string | number>;
+
 export function RubricSelect({label, rubrics}: RubricSelectProps) {
-    const ref = useRef<HTMLButtonElement>(null);
-    const popoverState = usePopoverState();
+    const onGradeSelect = (selected: Selection) => {
+        console.log("Selected grades:", selected);
+    };
 
     return (
         <div>
             {label && <InputLabel>{label}</InputLabel>}
-            <Select>
+            <Select
+                customPopover={({state, triggerRef}) => (
+                    <RubricPopover
+                        rubrics={rubrics}
+                        state={state}
+                        triggerRef={triggerRef as React.RefObject<HTMLButtonElement>}
+                        onSelectionChange={onGradeSelect}
+                    />
+                )}
+            >
                 {rubrics.map((rubricEntry) => (
-                    <SelectItem key={rubricEntry.name} title={rubricEntry.name}>
-                        {rubricEntry.name}
-                    </SelectItem>
+                    <SelectItem key={rubricEntry.name}>{rubricEntry.name}</SelectItem>
                 ))}
             </Select>
-            <Button ref={ref} onClick={popoverState.toggle} intent="primary">
-                Open popover
-            </Button>
-            {popoverState.isOpen && (
-                <RubricPopover
-                    rubrics={rubrics}
-                    state={popoverState}
-                    triggerRef={ref as React.RefObject<HTMLButtonElement>}
-                />
-            )}
         </div>
     );
 }

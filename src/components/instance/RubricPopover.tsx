@@ -13,7 +13,7 @@ import type {RubricEntry} from "~/store/api/types/submissions.ts";
 
 interface RubricPopoverProps {
     rubrics: RubricEntry[];
-    triggerRef: React.RefObject<HTMLButtonElement>;
+    triggerRef: React.RefObject<HTMLButtonElement> | null;
     state: PopoverState;
     onSelectionChange?: (selected: Selection) => void;
 }
@@ -28,7 +28,7 @@ export function RubricPopover({rubrics, state, triggerRef, onSelectionChange}: R
     return (
         <Popover
             state={state}
-            triggerRef={triggerRef}
+            triggerRef={triggerRef as React.RefObject<HTMLElement>}
             className="w-200 bg-grey-200 dark:bg-grey-900"
         >
             <Grid>
