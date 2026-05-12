@@ -14,6 +14,7 @@ import { VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 import { Button } from '../../Button/Button';
 import { Icon } from '../../Icon';
+import { InputLabel } from '../InputLabel';
 import { inputVariants } from '../InputVariant';
 
 export type NumberInputVariantProps = VariantProps<typeof inputVariants>;
@@ -118,14 +119,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   return (
     <div className="ui:w-full">
-      {label && (
-        <label
-          {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
-        >
-          {label}
-        </label>
-      )}
+      {label && <InputLabel {...labelProps}>{label}</InputLabel>}
       <div {...groupProps} className="ui:relative">
         <input
           {...mergeProps(rest, inputProps, focusProps, hoverProps)}

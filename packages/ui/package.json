@@ -1,5 +1,5 @@
 {
-  "name": "@datanose/ui",
+  "name": "@uva-fnwi/datanose-ui",
   "type": "module",
   "version": "0.1.0",
   "main": "dist/datanose-ui.umd.js",
@@ -17,6 +17,10 @@
     },
     "./tokens": "./src/styles/tokens.css",
     "./fonts": "./src/styles/fonts.css"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "files": [
     "dist",
@@ -37,55 +41,50 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix"
   },
   "devDependencies": {
-    "@eslint/js": "^9.37.0",
+    "@eslint/js": "^9.39.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@storybook/addon-docs": "^10.0.1",
-    "@storybook/react": "^10.0.1",
-    "@storybook/react-vite": "^10.0.1",
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/react": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
     "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
+    "@testing-library/react": "^16.3.2",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
-    "@typescript-eslint/parser": "^8.46.2",
-    "@vitejs/plugin-react": "^5.0.4",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9.37.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
+    "@typescript-eslint/parser": "^8.59.1",
+    "@vitejs/plugin-react": "^5.2.0",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-storybook": "^10.0.1",
-    "jsdom": "^27.0.1",
-    "prettier": "^3.6.2",
-    "sass": "^1.93.2",
-    "semantic-release": "^25.0.1",
-    "storybook": "^10.0.1",
+    "eslint-plugin-storybook": "^10.3.5",
+    "jsdom": "^27.4.0",
+    "prettier": "^3.8.3",
+    "sass": "^1.99.0",
+    "semantic-release": "^25.0.3",
+    "storybook": "^10.3.5",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.0",
-    "vite": "^7.1.9",
+    "typescript-eslint": "^8.59.1",
+    "vite": "^7.3.2",
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.0.4"
+    "vitest": "^4.1.5"
   },
   "peerDependencies": {
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "dependencies": {
-    "@internationalized/date": "^3.5.6",
-    "@tailwindcss/vite": "^4.1.16",
+    "@internationalized/date": "^3.12.1",
+    "@tailwindcss/vite": "^4.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "i18next": "^25.6.2",
-    "react-aria": "^3.44.0",
-    "react-i18next": "^16.2.4",
-    "react-stately": "^3.42.0",
-    "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.16"
-  },
-  "pnpm": {
-    "overrides": {
-      "@microsoft/api-extractor": "7.54.0"
-    }
+    "i18next": "^25.10.10",
+    "react-aria": "^3.48.0",
+    "react-i18next": "^16.6.6",
+    "react-stately": "^3.46.0",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.4"
   }
 }

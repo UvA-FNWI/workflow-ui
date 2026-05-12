@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Heading, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
+import {Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -110,7 +110,9 @@ export const PageControl = ({
             skip: !page.hasResults,
         },
     );
-    const {results, weightedAverage} = data ?? {};
+    const formForPage = data?.forms?.[0]; // form for the current page
+    const results = formForPage?.results?.[page.name];
+    const weightedAverage = formForPage?.weightedAverages?.[page.name] ?? 0;
 
     const getTotalPercentage = (r: Result[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
@@ -145,7 +147,7 @@ export const PageControl = ({
                                             <div className="mb-4">
                                                 <div className="flex justify-between">
                                                     {question.type !== "Boolean" && (
-                                                        <div key={question.name}>
+                                                        <InputLabel key={question.name}>
                                                             {l(question.text)}
                                                             {results &&
                                                                 results.find(
@@ -154,7 +156,7 @@ export const PageControl = ({
                                                                         question.name,
                                                                 ) &&
                                                                 ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
-                                                        </div>
+                                                        </InputLabel>
                                                     )}
                                                     {!question.isRequired && (
                                                         <Text

@@ -36,27 +36,32 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
             <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
                 <div className="flex flex-col gap-6">
-                    {version.submissions.map((submission) => {
-                        const questions = submission.form.pages.flatMap((page) => page.questions);
-                        const questionAnswerPairs = getVisibleQuestionAnswerPairs(
-                            questions,
-                            submission.answers,
-                        );
+                    {version.submissions.map((submission) => (
+                        <div key={submission.id} className="flex flex-col gap-2">
+                            {submission.form.pages.map((page) => {
+                                const questionAnswerPairs = getVisibleQuestionAnswerPairs(
+                                    page.questions,
+                                    submission.answers,
+                                );
 
-                        return (
-                            <div key={submission.id} className="flex flex-col gap-2">
-                                <Heading as="h3" size="sm">
-                                    {l(submission.form.title)}
-                                </Heading>
-                                <QuestionAnswerList
-                                    questionAnswerPairs={questionAnswerPairs}
-                                    noAnswerText={t("version_card.no_answer")}
-                                    instanceId={instanceId}
-                                    submissionId={submission.id}
-                                />
-                            </div>
-                        );
-                    })}
+                                return (
+                                    <div key={page.name} className="py-2">
+                                        {submission.form.pages.length > 1 && (
+                                            <Heading size="xs" className="pb-1 font-semibold">
+                                                {l(page.title)}
+                                            </Heading>
+                                        )}
+                                        <QuestionAnswerList
+                                            questionAnswerPairs={questionAnswerPairs}
+                                            noAnswerText={t("version_card.no_answer")}
+                                            instanceId={instanceId}
+                                            submissionId={submission.id}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ))}
                 </div>
             </Disclosure.Content>
         </Disclosure>

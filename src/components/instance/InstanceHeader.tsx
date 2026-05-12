@@ -1,6 +1,6 @@
 import {Link} from "react-router";
 
-import {Heading, Icon, Skeleton} from "@datanose/ui";
+import {Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 

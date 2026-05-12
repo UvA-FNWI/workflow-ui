@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {useNavigate} from "react-router";
 
-import {Confetti, useToast} from "@datanose/ui";
+import {Confetti, useToast} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {
@@ -37,7 +37,14 @@ function EffectsWrapper() {
             return;
         }
 
-        navigate(redirectUrl);
+        const url = new URL(redirectUrl, window.location.href);
+
+        if (url.origin === window.location.origin) {
+            navigate(`${url.pathname}${url.search}${url.hash}`);
+        } else {
+            window.location.assign(redirectUrl);
+        }
+
         dispatch(clearRedirectUrl());
     }, [dispatch, navigate, redirectUrl]);
 

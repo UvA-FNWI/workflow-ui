@@ -1,8 +1,8 @@
 import {type ChangeEvent, useEffect} from "react";
 
-import {Button, useTheme} from "@datanose/ui";
 import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
+import {Button, useTheme} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";

@@ -9,7 +9,7 @@ import {
     Select,
     SelectItem,
     TextArea,
-} from "@datanose/ui";
+} from "@uva-fnwi/datanose-ui";
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";
@@ -116,6 +116,7 @@ export const InputControl = ({
             <UserPicker
                 value={value as UserSearchResult | UserSearchResult[] | null | undefined}
                 onChange={(newValue) => debouncedChange(newValue)}
+                allowsExternalUsers={question.allowsExternalUsers}
             />
         );
     }

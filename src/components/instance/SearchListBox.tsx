@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Item, ListBox, type ListBoxProps} from "@datanose/ui";
+import {Item, ListBox, type ListBoxProps} from "@uva-fnwi/datanose-ui";
 
 export type SearchListBoxValue = {
     key: string;
@@ -24,7 +24,6 @@ export function SearchListBox({
     selectedKeys: initialSelectedKeys,
 }: SearchListBoxProps) {
     const [selectedKeys, setSelectedKeys] = useState<Selection>(initialSelectedKeys ?? new Set());
-    console.log("Selected keys:", selectedKeys);
 
     const handleSelectionChange = (selected: Selection) => {
         setSelectedKeys(selected);

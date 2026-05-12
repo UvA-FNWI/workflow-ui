@@ -1,5 +1,5 @@
-import {Button} from "@datanose/ui";
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
+import {Button} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";

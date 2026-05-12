@@ -1,6 +1,7 @@
 import './styles/index.css';
 
 export { Button, type ButtonProps } from './components/Button/Button';
+export { Callout, type CalloutProps } from './components/Callout/Callout';
 export { Card, type CardVariantProps } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
 export { DatePicker, type DatePickerProps } from './components/Datepicker';
@@ -25,6 +26,10 @@ export {
   type InputVariantProps,
 } from './components/Input/Input';
 export {
+  InputLabel,
+  type InputLabelProps,
+} from './components/Input/InputLabel';
+export {
   TextArea,
   type TextAreaProps,
 } from './components/Input/TextArea/TextArea';
@@ -44,11 +49,12 @@ export {
 } from './components/Link/Link';
 export {
   Separator,
-  type SeparatorVariantProps,
+  type SeparatorProps,
 } from './components/Separator/Separator';
 export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';
 export { Icon } from './components/Icon/Icon';
+export { type IconType } from './components/Icon/IconTypes';
 export {
   LoadingSpinner,
   type LoadingSpinnerProps,

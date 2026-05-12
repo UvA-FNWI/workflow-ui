@@ -7,6 +7,7 @@ import type { VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../../utils/cn';
 import { Icon } from '../../Icon';
+import { InputLabel } from '../InputLabel';
 import { inputVariants } from '../InputVariant';
 
 export type SearchInputVariantProps = VariantProps<typeof inputVariants>;
@@ -75,14 +76,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
   return (
     <div>
-      {label && (
-        <label
-          {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
-        >
-          {label}
-        </label>
-      )}
+      {label && <InputLabel {...labelProps}>{label}</InputLabel>}
       <div className="ui:relative">
         <input
           {...mergeProps(inputProps, focusProps, hoverProps, rest)}

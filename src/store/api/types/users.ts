@@ -2,5 +2,11 @@ export interface UserSearchResult {
     userName: string;
     displayName: string;
     email: string;
-    faculty?: string;
+    organization?: Organization;
+    isExternal: boolean;
+}
+
+export interface Organization {
+    id: string;
+    name: string;
 }

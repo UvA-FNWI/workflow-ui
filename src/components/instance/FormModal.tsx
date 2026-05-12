@@ -1,4 +1,4 @@
-import {Button, Modal} from "@datanose/ui";
+import {Button, Modal} from "@uva-fnwi/datanose-ui";
 
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";

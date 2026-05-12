@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {FileUpload, Text, useToast} from "@datanose/ui";
+import {FileUpload, Text, useToast} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";

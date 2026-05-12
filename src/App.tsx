@@ -1,6 +1,6 @@
 import {Outlet} from "react-router";
 
-import {ToastRegion} from "@datanose/ui";
+import {ToastRegion} from "@uva-fnwi/datanose-ui";
 
 import EffectsWrapper from "./components/EffectsWrapper";
 import TemporaryNavbar from "./components/TemporaryNavbar";

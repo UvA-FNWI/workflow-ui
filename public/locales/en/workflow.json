@@ -10,6 +10,16 @@
   "cancel": "Cancel",
   "confirm": "Confirm",
   "continue": "Continue",
+  "email": "Email address",
+  "external_user_add": {
+    "back_to_search": "Back to search",
+    "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
+    "email_error": "Please enter a valid email address",
+    "organization": "Organisation",
+    "organization_name": "Organisation name",
+    "success_toast": "The external user has received an automatic email to confirm the account.",
+    "title": "Add external user"
+  },
   "file_upload": {
     "description": "Description",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
@@ -36,11 +46,14 @@
     },
     "summary": {
       "edit_page": "Edit page",
+      "hide_answers": "Hide parts and explanations",
       "no_answer": "No answer provided",
+      "show_answers": "Show parts and explanations",
       "title": "Summary"
     },
     "workflowInstance": "Workflow Instance"
   },
+  "name": "Name",
   "optional": "* Not required",
   "progress": {
     "completed": "Completed",
@@ -51,6 +64,12 @@
   "screens": {
     "actions": "Actions",
     "students": "Students"
+  },
+  "search_and_select": {
+    "add_new": "Add",
+    "no_results": "No results found",
+    "search_hint": "Type to search",
+    "search_placeholder": "Search..."
   },
   "status": {
     "completed_on": "Completed on",
@@ -64,6 +83,7 @@
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
+    "not_in_list": "Not in list",
     "search_hint_one": "Search for a user",
     "search_hint_other": "Search for users",
     "search_placeholder": "Search for a user",

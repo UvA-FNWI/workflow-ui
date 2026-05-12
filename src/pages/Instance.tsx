@@ -1,6 +1,6 @@
 import {useParams} from "react-router";
 
-import {Container, Grid, GridItem} from "@datanose/ui";
+import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
 import {AdminCard} from "~/components/instance/AdminCard";
 import {ContentCard} from "~/components/instance/ContentCard";

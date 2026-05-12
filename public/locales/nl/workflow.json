@@ -10,6 +10,16 @@
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
   "continue": "Volgende",
+  "email": "E-mailadres",
+  "external_user_add": {
+    "back_to_search": "Terug naar zoeken",
+    "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
+    "email_error": "Vul een geldig e-mailadres in",
+    "organization": "Organisatie",
+    "organization_name": "Naam organisatie",
+    "success_toast": "De externe medewerker heeft een automatische mail gekregen om het account te bevestigen.",
+    "title": "Voeg externe gebruiker toe"
+  },
   "file_upload": {
     "description": "Beschrijving",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
@@ -36,11 +46,14 @@
     },
     "summary": {
       "edit_page": "Pagina bewerken",
+      "hide_answers": "Verberg onderdelen en toelichting",
       "no_answer": "Geen antwoord gegeven",
+      "show_answers": "Toon onderdelen en toelichting",
       "title": "Samenvatting"
     },
     "workflowInstance": "Workflow"
   },
+  "name": "Naam",
   "optional": "* Niet verplicht",
   "progress": {
     "completed": "Voltooid",
@@ -51,6 +64,12 @@
   "screens": {
     "actions": "Acties",
     "students": "Studenten"
+  },
+  "search_and_select": {
+    "add_new": "Voeg toe",
+    "no_results": "Geen resultaten gevonden",
+    "search_hint": "Typ om te zoeken",
+    "search_placeholder": "Zoeken..."
   },
   "status": {
     "completed_on": "Voltooid op",
@@ -64,6 +83,7 @@
   "submit": "Indienen",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
+    "not_in_list": "Niet in lijst",
     "search_hint_one": "Zoek een medewerker",
     "search_hint_other": "Zoek medewerkers",
     "search_placeholder": "Zoek een medewerker",

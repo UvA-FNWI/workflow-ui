@@ -21,7 +21,7 @@ The UI kit provides a flexible theming system that supports:
 Wrap your application with the `ThemeProvider` component:
 
 ```tsx
-import { ThemeProvider } from '@datanose/ui';
+import { ThemeProvider } from '@uva-fnwi/datanose-ui';
 
 function App() {
   return (
@@ -37,7 +37,7 @@ function App() {
 All UI kit components support theming:
 
 ```tsx
-import { Checkbox, Text } from '@datanose/ui';
+import { Checkbox, Text } from '@uva-fnwi/datanose-ui';
 
 function MyComponent() {
   return (
@@ -54,7 +54,7 @@ function MyComponent() {
 Use the `useTheme` hook for programmatic theme control:
 
 ```tsx
-import { useTheme } from '@datanose/ui';
+import { useTheme } from '@uva-fnwi/datanose-ui';
 
 function CustomThemeControl() {
   const { theme, setTheme, resolvedTheme } = useTheme();
