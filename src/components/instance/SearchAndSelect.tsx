@@ -104,7 +104,7 @@ export function SearchAndSelect({
                 }
             }
         },
-        [onSelect, t, items],
+        [onSelect, t, items, searchQuery],
     );
 
     const getPickerState = () => {

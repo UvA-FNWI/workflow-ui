@@ -84,20 +84,16 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             const res = await createOrganization({name: newExternalUser.organization.name});
 
             if (res.error) {
-                alert(`Error: ${res.error}`);
+                alert(`Error: ${JSON.stringify(res.error)}`);
                 return;
             }
-
-            // console.log("handleConfirm::",res.data);
-            // updateExternalUser({organization: res.data});
-            // setSelectedOrganization(new Set([res.data.id]));
 
             onConfirm({...newExternalUser, ...{organization: res.data}, isExternal: true});
         } else {
             onConfirm({...newExternalUser, isExternal: true});
         }
         onOpenChange(false);
-    }, [onConfirm, onOpenChange, newExternalUser, updateExternalUser, setSelectedOrganization]);
+    }, [onConfirm, onOpenChange, newExternalUser, createOrganization]);
 
     const handleBackToSearch = useCallback(() => {
         onOpenChange(false);
