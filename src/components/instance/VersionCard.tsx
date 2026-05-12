@@ -1,4 +1,4 @@
-import {Disclosure, Heading, Text} from "@datanose/ui";
+import {Disclosure, Heading, Text} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";

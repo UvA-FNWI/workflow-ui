@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Link, Text} from "@datanose/ui";
+import {Link, Text} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {downloadFile} from "~/utils/fileDownload";

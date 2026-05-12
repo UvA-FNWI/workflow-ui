@@ -42,7 +42,7 @@ Layout foundation for all UvA DataNose applications. Based on a 12-column grid w
 `Container` centers content horizontally and applies the 12px side margins. Use it to constrain content to the design system's maximum width.
 
 ```tsx
-import { Container } from '@datanose/ui';
+import { Container } from '@uva-fnwi/datanose-ui';
 
 // Default — constrained to 944px, centered
 <Container>
@@ -101,7 +101,7 @@ import { Container } from '@datanose/ui';
 `Grid` sets up the 12-column grid with 24px column gutters. `GridItem` controls how many columns a child spans.
 
 ```tsx
-import { Grid, GridItem } from '@datanose/ui';
+import { Grid, GridItem } from '@uva-fnwi/datanose-ui';
 
 <Grid>
   <GridItem span={6}>Left half</GridItem>
@@ -250,7 +250,7 @@ The `Grid` component has a `rowGap` prop to control vertical spacing between row
 The typical pattern is to wrap a `Grid` in a `Container`:
 
 ```tsx
-import { Container, Grid, GridItem } from '@datanose/ui';
+import { Container, Grid, GridItem } from '@uva-fnwi/datanose-ui';
 
 function PageLayout() {
   return (

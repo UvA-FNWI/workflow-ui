@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {useNavigate} from "react-router";
 
-import {Confetti, useToast} from "@datanose/ui";
+import {Confetti, useToast} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {

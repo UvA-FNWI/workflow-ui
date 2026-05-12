@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useRef, useState} from "react";
 
-import {Button, Icon, Modal} from "@datanose/ui";
+import {Button, Icon, Modal} from "@uva-fnwi/datanose-ui";
 
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";

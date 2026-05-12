@@ -1,6 +1,5 @@
 import {useState} from "react";
 
-import {Icon} from "@datanose/ui";
 import {rankItem} from "@tanstack/match-sorter-utils";
 import {
     type ColumnDef,
@@ -15,6 +14,7 @@ import {
     type SortingState,
     useReactTable,
 } from "@tanstack/react-table";
+import {Icon} from "@uva-fnwi/datanose-ui";
 
 type DataTableProps<TData> = {
     data: TData[];

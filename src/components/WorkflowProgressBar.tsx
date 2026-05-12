@@ -1,4 +1,4 @@
-import {Icon, Tooltip} from "@datanose/ui";
+import {Icon, Tooltip} from "@uva-fnwi/datanose-ui";
 import {cva} from "class-variance-authority";
 
 import {useTranslate} from "~/hooks/useTranslate";

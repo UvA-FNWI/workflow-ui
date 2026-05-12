@@ -1,4 +1,4 @@
-import {Heading} from "@datanose/ui";
+import {Heading} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
