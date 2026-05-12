@@ -70,7 +70,6 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
 
     useEffect(() => {
         if (!prevIsOpen.current && isOpen) {
-            console.log("Setting initialUser:", initialUser);
             setNewExternalUser(initialUser ?? emptyExternalUser);
             setSelectedOrganization(
                 initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
