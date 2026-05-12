@@ -14,6 +14,8 @@ export interface ListBoxProps<T extends object>
     > {
   /** CSS class name for the listbox container */
   className?: string;
+  /** CSS class name for the listboxitems */
+  itemClassName?: string;
   /** Accessible label for the listbox */
   'aria-label'?: string;
   /** Render function for each item */
@@ -37,7 +39,12 @@ export function ListBox<T extends object>(props: ListBoxProps<T>) {
     >
       {[...state.collection].map(item => (
         <div className="ui:border-b ui:border-grey-300 ui:dark:border-grey-700">
-          <ListBoxItem key={item.key} item={item} state={state} />
+          <ListBoxItem
+            className={props.itemClassName}
+            key={item.key}
+            item={item}
+            state={state}
+          />
         </div>
       ))}
     </ul>

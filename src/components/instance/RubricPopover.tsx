@@ -1,4 +1,12 @@
-import {Item, ListBox, Popover, type PopoverState} from "@uva-fnwi/datanose-ui";
+import {
+    Grid,
+    GridItem,
+    Item,
+    ListBox,
+    Popover,
+    type PopoverState,
+    Text,
+} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
@@ -15,46 +23,44 @@ type Selection = "all" | Set<string | number>;
 
 export function RubricPopover({rubrics, state, triggerRef, onSelectionChange}: RubricPopoverProps) {
     const {l} = useTranslate("workflow");
-    const ROW_HEIGHT = 36;
     const allGrades = rubrics.flatMap((rubricEntry) => rubricEntry.grades);
     console.log(rubrics);
     return (
-        <Popover state={state} triggerRef={triggerRef} className="max-h-full w-200">
-            <div className="overflow-hidden rounded border border-gray-200 bg-white shadow-md">
-                <div
-                    className="flex flex-row border-b border-gray-200 last:border-b-0"
-                    style={{height: allGrades.length * ROW_HEIGHT}}
-                >
+        <Popover
+            state={state}
+            triggerRef={triggerRef}
+            className="w-200 bg-grey-200 dark:bg-grey-900"
+        >
+            <Grid>
+                <GridItem span={2}>
                     <ListBox
                         aria-label="grades"
                         selectionMode="single"
                         onSelectionChange={onSelectionChange}
-                        className="h-full max-h-full flex-2/10 bg-red-brand"
+                        className="max-h-full p-0"
+                        itemClassName="bg-red-brand text-white hover:bg-grey-600"
                     >
                         {allGrades.map((grade, index) => (
                             <Item key={index} textValue={grade}>
-                                <div
-                                    className="flex items-center px-2"
-                                    style={{height: ROW_HEIGHT}}
-                                >
-                                    {grade}
-                                </div>
+                                {grade}
                             </Item>
                         ))}
                     </ListBox>
-                    <div className="flex-9/10 gap-2 p-3 text-sm text-gray-600">
+                </GridItem>
+                <GridItem span={10}>
+                    <div className="flex h-full flex-col text-sm text-gray-600">
                         {rubrics.map((rubricEntry, index) => (
                             <div
                                 key={index}
-                                className="flex flex-col justify-center border-b border-gray-200 p-3 last:border-b-0"
-                                style={{height: rubricEntry.grades.length * ROW_HEIGHT}}
+                                className="mr-2 flex items-center border-b border-black last:border-b-0"
+                                style={{flex: rubricEntry.grades.length}}
                             >
-                                {l(rubricEntry.description)}
+                                <Text className="p-2">{l(rubricEntry.description)}</Text>
                             </div>
                         ))}
                     </div>
-                </div>
-            </div>
+                </GridItem>
+            </Grid>
         </Popover>
     );
 }

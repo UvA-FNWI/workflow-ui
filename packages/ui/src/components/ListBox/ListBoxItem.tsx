@@ -45,9 +45,11 @@ export function ListBoxItem<T>({
     >
       <div className="ui:flex ui:items-center ui:gap-2">
         <div className="ui:flex ui:h-4 ui:w-4 ui:flex-none ui:items-center ui:justify-center">
-          {isSelected && <Icon name="checkmark-solid" size="sm" />}
+          {isSelected && (
+            <Icon name="checkmark-solid" size="sm" color="current" />
+          )}
           {!isSelected && item.key === 'new-item' && (
-            <Icon name="plus-solid" size="sm" />
+            <Icon name="plus-solid" size="sm" color="current" />
           )}
         </div>
         <div className="ui:w-full">{item.rendered}</div>
