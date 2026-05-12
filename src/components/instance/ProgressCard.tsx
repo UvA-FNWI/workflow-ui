@@ -1,4 +1,4 @@
-import {Card, Heading, Separator, Skeleton} from "@datanose/ui";
+import {Card, Heading, Separator, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {WorkflowProgressBar} from "~/components/WorkflowProgressBar";
 import {useTranslate} from "~/hooks/useTranslate";

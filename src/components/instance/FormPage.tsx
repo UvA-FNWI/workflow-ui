@@ -1,6 +1,15 @@
 import {useState} from "react";
 
-import {Button, Heading, Icon, Tab, TabList, TabPanel, TabPanels, Tabs} from "@datanose/ui";
+import {
+    Button,
+    Heading,
+    Icon,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+} from "@uva-fnwi/datanose-ui";
 
 import {PageControl} from "./PageControl";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";

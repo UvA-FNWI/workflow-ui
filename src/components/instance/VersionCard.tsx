@@ -1,4 +1,4 @@
-import {Disclosure, Heading, Text} from "@datanose/ui";
+import {Disclosure, Heading, Text} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) => {
-    const {t, i18n, l} = useTranslate("workflow");
+    const {t, l, i18n} = useTranslate("workflow");
 
     return (
         <Disclosure

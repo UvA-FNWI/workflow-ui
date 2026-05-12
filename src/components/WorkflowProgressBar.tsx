@@ -1,4 +1,4 @@
-import {Icon, Text, Tooltip} from "@datanose/ui";
+import {Icon, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowStep} from "~/store/api/types/instances";

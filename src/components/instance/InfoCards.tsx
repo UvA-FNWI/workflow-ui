@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Card, Heading, Icon, Link, Skeleton} from "@datanose/ui";
+import {Card, Heading, Icon, Link, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {mockHelpfulLinks} from "./InfoCardsMockData";
 import {useTranslate} from "~/hooks/useTranslate";
