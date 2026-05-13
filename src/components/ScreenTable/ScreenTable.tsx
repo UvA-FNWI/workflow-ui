@@ -30,15 +30,15 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                         const formattedValue = formatCellValue(value, col.dataType, i18n.language);
 
                         // Custom formatting for the progress column
-                        if (col.dataType === "Object") {
+                        if (col.isCurrentStep && col.dataType === "Object") {
                             const obj = value as Record<string, unknown>;
-                            if ("progressText" in obj && "isStudentAction" in obj) {
-                                const isStudentAction = obj["isStudentAction"] as boolean;
-                                const progressText = obj["progressText"] as LocalString | undefined;
+                            if ("text" in obj && "color" in obj) {
+                                const progressText = obj["text"] as LocalString | undefined;
+                                const progressColor = obj["color"] as string | undefined;
                                 return (
                                     <div className="flex items-baseline gap-2">
                                         <div
-                                            className={`h-2 w-2 rounded-full ${isStudentAction ? "bg-green-600" : "bg-red-600"}`}
+                                            className={`h-2 w-2 rounded-full ${progressColor?.toLowerCase() == "green" ? "bg-green-600" : "bg-red-600"}`}
                                         />
                                         <span>{l(progressText)}</span>
                                     </div>
