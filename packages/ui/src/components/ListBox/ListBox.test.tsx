@@ -1,20 +1,32 @@
+import { ListState } from 'react-stately';
+
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { Item, ListBox } from './ListBox';
+import { ListBox } from './ListBox';
+import { ListBoxItem } from './ListBoxItem';
 
 describe('ListBox', () => {
+  type SampleItem = { id: string; name: string };
+
   const sampleItems = [
-    { id: '1', name: 'Item One' },
-    { id: '2', name: 'Item Two' },
-    { id: '3', name: 'Item Three' },
+    { id: '1', name: 'Item One', textValue: 'Item One' },
+    { id: '2', name: 'Item Two', textValue: 'Item Two' },
+    { id: '3', name: 'Item Three', textValue: 'Item Three' },
   ];
+
+  const renderItems = (state: ListState<SampleItem>) =>
+    [...state.collection].map(item => (
+      <ListBoxItem key={item.key} item={item} state={state}>
+        {(item.value as SampleItem).name}
+      </ListBoxItem>
+    ));
 
   describe('Basic rendering', () => {
     it('renders with items', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {item => <Item key={item.id}>{item.name}</Item>}
+          {renderItems}
         </ListBox>
       );
 
@@ -26,7 +38,7 @@ describe('ListBox', () => {
     it('renders as list element', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {item => <Item key={item.id}>{item.name}</Item>}
+          {renderItems}
         </ListBox>
       );
 
@@ -41,7 +53,7 @@ describe('ListBox', () => {
           aria-label="Test listbox"
           className="custom-class"
         >
-          {item => <Item key={item.id}>{item.name}</Item>}
+          {renderItems}
         </ListBox>
       );
 
@@ -57,7 +69,7 @@ describe('ListBox', () => {
           selectionMode="single"
           aria-label="Single select"
         >
-          {item => <Item key={item.id}>{item.name}</Item>}
+          {renderItems}
         </ListBox>
       );
 
@@ -72,7 +84,7 @@ describe('ListBox', () => {
           selectionMode="multiple"
           aria-label="Multi select"
         >
-          {item => <Item key={item.id}>{item.name}</Item>}
+          {renderItems}
         </ListBox>
       );
 
@@ -85,7 +97,7 @@ describe('ListBox', () => {
     it('has correct ARIA role', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {item => <Item key={item.id}>{item.name}</Item>}
+          {renderItems}
         </ListBox>
       );
 
@@ -95,7 +107,7 @@ describe('ListBox', () => {
     it('applies aria-label', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {item => <Item key={item.id}>{item.name}</Item>}
+          {renderItems}
         </ListBox>
       );
 

@@ -4,7 +4,8 @@ import { Selection } from 'react-stately';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Item, ListBox } from './ListBox';
+import { ListBox } from './ListBox';
+import { ListBoxItem } from './ListBoxItem';
 
 const meta: Meta<typeof ListBox> = {
   title: 'Components/ListBox',
@@ -46,18 +47,23 @@ const InteractiveListBox = (args: any) => {
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
       >
-        {(item: ListItem) => (
-          <Item key={item.id} textValue={item.name}>
-            <div className="ui:flex ui:items-center ui:gap-2">
-              <span className="ui:flex-1 ui:truncate">{item.name}</span>
-              {item.description && (
-                <span className="ui:flex-1 ui:truncate">
-                  {item.description}
-                </span>
-              )}
-            </div>
-          </Item>
-        )}
+        {state =>
+          [...state.collection].map(item => {
+            const value = item.value as ListItem;
+            return (
+              <ListBoxItem key={item.key} item={item} state={state}>
+                <div className="ui:flex ui:items-center ui:gap-2">
+                  <span className="ui:flex-1 ui:truncate">{value.name}</span>
+                  {value.description && (
+                    <span className="ui:flex-1 ui:truncate">
+                      {value.description}
+                    </span>
+                  )}
+                </div>
+              </ListBoxItem>
+            );
+          })
+        }
       </ListBox>
       <div className="ui:mt-4 ui:text-sm ui:text-black ui:dark:text-white">
         <strong>Selected:</strong> {getSelectedItemNames(selectedKeys)}
@@ -97,6 +103,14 @@ export const WithManyItems: Story = {
   },
 };
 
+const disabledItems: ListItem[] = [
+  { id: '1', name: 'Item One' },
+  { id: '2', name: 'Item Two (disabled)' },
+  { id: '3', name: 'Item Three' },
+  { id: '4', name: 'Item Four (disabled)' },
+  { id: '5', name: 'Item Five' },
+];
+
 const DisabledItemsComponent = () => {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
@@ -108,12 +122,15 @@ const DisabledItemsComponent = () => {
         onSelectionChange={setSelectedKeys}
         disabledKeys={['2', '4']}
         aria-label="Select with disabled items"
+        items={disabledItems}
       >
-        <Item key="1">Item One</Item>
-        <Item key="2">Item Two (disabled)</Item>
-        <Item key="3">Item Three</Item>
-        <Item key="4">Item Four (disabled)</Item>
-        <Item key="5">Item Five</Item>
+        {state =>
+          [...state.collection].map(item => (
+            <ListBoxItem key={item.key} item={item} state={state}>
+              {(item.value as ListItem).name}
+            </ListBoxItem>
+          ))
+        }
       </ListBox>
       <div className="ui:mt-4 ui:text-sm ui:text-black ui:dark:text-white">
         <strong>Selected:</strong> {getSelectedItemNames(selectedKeys)}
