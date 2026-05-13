@@ -15,9 +15,9 @@
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
     "description": "Vul onderstaande gegevens in om deze gebruiker handmatig toe te voegen.",
+    "email_error": "Vul een geldig e-mailadres in",
     "manual_user_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres. Gebruik de zoekfunctie om de gebruiker te vinden",
     "manual_user_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden. Gebruik de zoekfunctie om de gebruiker te vinden",
-    "email_error": "Vul een geldig e-mailadres in",
     "organization": "Organisatie",
     "organization_name": "Naam organisatie",
     "title": "Voeg externe gebruiker toe"
