@@ -6,20 +6,16 @@ import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {useManualUserEmailVerification} from "~/hooks/useManualUserEmailVerification.ts";
 import {useMockLazyFindOrganizationsQuery} from "~/hooks/useMockLazyFindOrganizationsQuery.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {UserSearchResult} from "~/store/api/types/users.ts";
+import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
 type Selection = "all" | Set<string | number>;
-
-const MANUAL_EXTERNAL_USER_KEYS = {
-    sourceKey: "repository",
-    providerKey: "eduid",
-} as const;
 
 export interface AddExternalUserModalProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
-    onConfirm: (newUser: UserSearchResult) => void;
+    onConfirm: (newUser: CreateExternalUserInput) => Promise<void>;
     onBackToSearch: () => void;
+    isSaving?: boolean;
     initialUser?: UserSearchResult | null;
 }
 
@@ -29,7 +25,6 @@ const emptyExternalUser: UserSearchResult = {
     email: "",
     organization: undefined,
     isExternal: true,
-    ...MANUAL_EXTERNAL_USER_KEYS,
 };
 
 export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
@@ -37,6 +32,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     onOpenChange,
     onConfirm,
     onBackToSearch,
+    isSaving = false,
     initialUser,
 }) => {
     const {t} = useTranslate("workflow");
@@ -54,6 +50,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         isVerifyingEmail,
         clearEmailValidation,
         resetEmailVerification,
+        setEmailValidationError,
         validateEmail,
         wasEmailVerified,
     } = useManualUserEmailVerification();
@@ -71,7 +68,6 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                 initialUser
                     ? {
                           ...initialUser,
-                          ...MANUAL_EXTERNAL_USER_KEYS,
                           isExternal: true,
                       }
                     : emptyExternalUser,
@@ -111,6 +107,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     const normalizedDisplayName = newExternalUser.displayName.trim();
     const hasOrganization = !!newExternalUser.organization?.name?.trim();
     const isCompleted = normalizedEmail !== "" && normalizedDisplayName !== "" && hasOrganization;
+    const isEmailVerified = wasEmailVerified(normalizedEmail);
 
     const handleConfirm = useCallback(async () => {
         const isVerified =
@@ -119,21 +116,21 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             return;
         }
 
-        onConfirm({
-            ...newExternalUser,
-            displayName: normalizedDisplayName,
-            email: normalizedEmail,
-            userName: normalizedEmail,
-            isExternal: true,
-            ...MANUAL_EXTERNAL_USER_KEYS,
-        });
-        onOpenChange(false);
+        try {
+            await onConfirm({
+                displayName: normalizedDisplayName,
+                email: normalizedEmail,
+                organization: newExternalUser.organization ?? null,
+            });
+        } catch (error) {
+            setEmailValidationError(error);
+        }
     }, [
-        newExternalUser,
+        newExternalUser.organization,
         normalizedDisplayName,
         normalizedEmail,
         onConfirm,
-        onOpenChange,
+        setEmailValidationError,
         validateEmail,
         wasEmailVerified,
     ]);
@@ -218,7 +215,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     onClick={() => {
                         void handleConfirm();
                     }}
-                    disabled={!isCompleted || isVerifyingEmail || emailError != null}
+                    disabled={!isCompleted || !isEmailVerified || isVerifyingEmail || isSaving}
                 >
                     {t("confirm")}
                 </Button>

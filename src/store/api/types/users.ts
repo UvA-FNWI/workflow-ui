@@ -5,7 +5,6 @@ export interface UserSearchResult {
     organization?: Organization | null;
     isExternal: boolean;
     sourceKey?: string | null;
-    providerKey?: string | null;
 }
 
 export interface Organization {
@@ -20,4 +19,10 @@ export interface VerifyEmailRequest {
 export interface VerifyEmailResponse {
     email: string;
     status: string;
+}
+
+export interface CreateExternalUserInput {
+    displayName: string;
+    email: string;
+    organization?: Organization | null;
 }

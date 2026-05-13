@@ -5,7 +5,7 @@ import {SearchInput} from "@datanose/ui";
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {UserSearchResult} from "~/store/api/types/users.ts";
+import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
 export interface UserPickerProps {
     /** Optional label for the input */
@@ -28,6 +28,7 @@ export interface UserPickerProps {
     minSearchLength?: number;
     /** Whether to allow adding external users */
     allowsExternalUsers?: boolean;
+    onCreateExternalUser: (newUser: CreateExternalUserInput) => Promise<void>;
 }
 
 export const UserPicker: React.FC<UserPickerProps> = ({
@@ -41,9 +42,11 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     searchPlaceholder,
     minSearchLength,
     allowsExternalUsers = false,
+    onCreateExternalUser,
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
     const [isOpenExternal, setIsOpenExternal] = useState(false);
+    const [isCreatingExternalUser, setIsCreatingExternalUser] = useState(false);
     const {t} = useTranslate("workflow");
 
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
@@ -85,10 +88,15 @@ export const UserPicker: React.FC<UserPickerProps> = ({
         onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
     };
 
-    const handleConfirmExternalUser = (newUser: UserSearchResult) => {
-        setIsOpenExternal(false);
-        setIsOpenUserPicker(false);
-        onChange?.(newUser);
+    const handleConfirmExternalUser = async (newUser: CreateExternalUserInput) => {
+        setIsCreatingExternalUser(true);
+        try {
+            await onCreateExternalUser(newUser);
+            setIsOpenExternal(false);
+            setIsOpenUserPicker(false);
+        } finally {
+            setIsCreatingExternalUser(false);
+        }
     };
 
     return (
@@ -125,6 +133,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 onOpenChange={setIsOpenExternal}
                 onConfirm={handleConfirmExternalUser}
                 onBackToSearch={() => setIsOpenUserPicker(true)}
+                isSaving={isCreatingExternalUser}
                 initialUser={
                     valueArray.length === 1 && valueArray[0].isExternal ? valueArray[0] : undefined
                 }

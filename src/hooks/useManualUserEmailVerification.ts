@@ -34,7 +34,7 @@ export function useManualUserEmailVerification() {
                 case "InvalidEmailAddress":
                     return t("external_user_add.email_error");
                 default:
-                    return null;
+                    return t("external_user_add.email_error");
             }
         },
         [t],
@@ -61,6 +61,14 @@ export function useManualUserEmailVerification() {
         setVerifiedEmail(null);
     }, []);
 
+    const setEmailValidationError = useCallback(
+        (error: unknown) => {
+            setVerifiedEmail(null);
+            setEmailError(getEmailErrorMessage(getApiErrorCode(error)));
+        },
+        [getEmailErrorMessage],
+    );
+
     const {reset: resetVerifyMutation, isLoading: isVerifyingEmail} = verifyEmailState;
 
     const resetEmailVerification = useCallback(() => {
@@ -78,6 +86,7 @@ export function useManualUserEmailVerification() {
         isVerifyingEmail,
         clearEmailValidation,
         resetEmailVerification,
+        setEmailValidationError,
         validateEmail,
         wasEmailVerified,
     };
