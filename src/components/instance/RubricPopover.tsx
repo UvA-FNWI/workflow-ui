@@ -1,12 +1,4 @@
-import {
-    Grid,
-    GridItem,
-    Item,
-    ListBox,
-    Popover,
-    type PopoverState,
-    Text,
-} from "@uva-fnwi/datanose-ui";
+import {Grid, GridItem, Popover, type PopoverState, Text} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
@@ -21,45 +13,38 @@ interface RubricPopoverProps {
 // Selection type from react-stately
 type Selection = "all" | Set<string | number>;
 
-export function RubricPopover({rubrics, state, triggerRef, onSelectionChange}: RubricPopoverProps) {
+export function RubricPopover({rubrics, state, triggerRef}: RubricPopoverProps) {
     const {l} = useTranslate("workflow");
-    const allGrades = rubrics.flatMap((rubricEntry) => rubricEntry.grades);
     console.log(rubrics);
     return (
         <Popover
             state={state}
             triggerRef={triggerRef as React.RefObject<HTMLElement>}
-            className="w-200 bg-grey-200 dark:bg-grey-800"
+            className="max-h-[80vh] w-200 overflow-y-auto bg-grey-200 dark:bg-grey-800"
         >
-            <Grid>
-                <GridItem span={2}>
-                    <ListBox
-                        aria-label="grades"
-                        selectionMode="single"
-                        onSelectionChange={onSelectionChange}
-                        className="flex h-full max-h-full flex-col bg-amber-400 p-0"
-                        itemClassName="flex-1 bg-red-brand text-white hover:bg-grey-600"
-                    >
-                        {allGrades.map((grade, index) => (
-                            <Item key={index} textValue={grade}>
-                                {grade}
-                            </Item>
-                        ))}
-                    </ListBox>
-                </GridItem>
-                <GridItem span={10}>
-                    <div className="flex h-full flex-col text-sm text-gray-600">
-                        {rubrics.map((rubricEntry, index) => (
-                            <div
-                                key={index}
-                                className="mr-2 flex items-center border-b border-grey-800 last:border-b-0 dark:border-grey-200"
-                                style={{flex: rubricEntry.grades.length}}
-                            >
+            <Grid rowGap="none" className="p-2">
+                {rubrics.map((rubricEntry, index) => (
+                    <GridItem key={index} span={12} className="h-full">
+                        <div className="flex h-full items-stretch gap-x-2">
+                            {/* Left: grades stacked */}
+                            <div className="flex h-full max-w-20 min-w-15 flex-col justify-between">
+                                {rubricEntry.grades.map((grade, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex min-h-8 flex-1 items-center justify-center bg-red-brand text-sm text-white last:mb-0"
+                                    >
+                                        {grade}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Right: description, same height as grade stack */}
+                            <div className="flex-1 border-b border-grey-800 dark:border-grey-200">
                                 <Text className="p-2">{l(rubricEntry.description)}</Text>
                             </div>
-                        ))}
-                    </div>
-                </GridItem>
+                        </div>
+                    </GridItem>
+                ))}
             </Grid>
         </Popover>
     );
