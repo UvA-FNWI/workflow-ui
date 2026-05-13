@@ -179,7 +179,15 @@ export const InputControl = ({
         }
 
         if (isChoiceType("Rubric")) {
-            return <RubricSelect rubrics={question.rubric ?? []} />;
+            return (
+                <RubricSelect
+                    value={typeof value === "string" ? value : undefined}
+                    onChange={(selectedValue) => {
+                        immediateChange(selectedValue != null ? String(selectedValue) : null);
+                    }}
+                    rubrics={question.rubric ?? []}
+                />
+            );
         }
 
         if (question.isArray) {

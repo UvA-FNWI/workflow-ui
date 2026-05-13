@@ -1,5 +1,3 @@
-import {useState} from "react";
-
 import {
     Grid,
     GridItem,
@@ -18,7 +16,8 @@ interface RubricPopoverProps {
     rubrics: RubricEntry[];
     triggerRef: React.RefObject<HTMLButtonElement> | null;
     state: PopoverState;
-    onSelectionChange?: (selected: Selection) => void;
+    onSelectionChange?: (selected: string) => void;
+    selectedKey?: string;
 }
 
 // Selection type from react-stately
@@ -26,12 +25,25 @@ type Selection = "all" | Set<string | number>;
 
 type GradeItem = {key: number; grade: string};
 
-export function RubricPopover({rubrics, state, triggerRef}: RubricPopoverProps) {
+export function RubricPopover({
+    rubrics,
+    state,
+    triggerRef,
+    onSelectionChange,
+    selectedKey,
+}: RubricPopoverProps) {
     const {l} = useTranslate("workflow");
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+
+    const allGrades = rubrics.flatMap((r) => r.grades);
 
     const handleSelectionChange = (selected: Selection) => {
-        setSelectedKeys(selected);
+        if (!onSelectionChange || selected === "all" || selected.size === 0) return;
+        const index = Number([...selected][0]);
+        const grade = allGrades[index];
+        if (grade !== undefined) {
+            onSelectionChange(grade);
+            state.close();
+        }
     };
 
     return (
@@ -41,11 +53,10 @@ export function RubricPopover({rubrics, state, triggerRef}: RubricPopoverProps) 
             className="max-h-[80vh] w-200 overflow-y-auto bg-grey-200 dark:bg-grey-800"
         >
             <ListBox<GradeItem>
-                items={rubrics
-                    .flatMap((rubricEntry) => rubricEntry.grades)
-                    .map((g, i) => ({key: i, grade: g}))}
-                selectedKeys={selectedKeys}
+                items={allGrades.map((g, i) => ({key: i, grade: g}))}
+                selectedKeys={selectedKey}
                 onSelectionChange={handleSelectionChange}
+                selectionMode="single"
             >
                 {(listState: ListState<GradeItem>) => (
                     <Grid rowGap="none" className="p-2">
@@ -68,7 +79,7 @@ export function RubricPopover({rubrics, state, triggerRef}: RubricPopoverProps) 
 
                                             return (
                                                 <ListBoxItem
-                                                    key={i}
+                                                    key={globalIndex}
                                                     item={item}
                                                     state={listState}
                                                     className="flex min-h-8 flex-1 items-center justify-center bg-red-brand text-sm text-white last:mb-0 hover:bg-grey-600"
