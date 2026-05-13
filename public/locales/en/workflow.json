@@ -14,7 +14,7 @@
   "email": "Email address",
   "external_user_add": {
     "back_to_search": "Back to search",
-    "description": "Fill in the details below to add this user manually.",
+    "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
     "email_error": "Please enter a valid email address",
     "manual_user_email_already_exists": "A user with this email address already exists. Use the search function to find the user",
     "manual_user_internal_email": "Users with UvA mail address cannot be added manually. Use the search function to find the user",
