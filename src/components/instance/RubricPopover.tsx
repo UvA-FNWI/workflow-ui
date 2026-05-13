@@ -29,7 +29,7 @@ export function RubricPopover({rubrics, state, triggerRef, onSelectionChange}: R
         <Popover
             state={state}
             triggerRef={triggerRef as React.RefObject<HTMLElement>}
-            className="w-200 bg-grey-200 dark:bg-grey-900"
+            className="w-200 bg-grey-200 dark:bg-grey-800"
         >
             <Grid>
                 <GridItem span={2}>
@@ -37,8 +37,8 @@ export function RubricPopover({rubrics, state, triggerRef, onSelectionChange}: R
                         aria-label="grades"
                         selectionMode="single"
                         onSelectionChange={onSelectionChange}
-                        className="max-h-full p-0"
-                        itemClassName="bg-red-brand text-white hover:bg-grey-600"
+                        className="flex h-full max-h-full flex-col bg-amber-400 p-0"
+                        itemClassName="flex-1 bg-red-brand text-white hover:bg-grey-600"
                     >
                         {allGrades.map((grade, index) => (
                             <Item key={index} textValue={grade}>
@@ -52,7 +52,7 @@ export function RubricPopover({rubrics, state, triggerRef, onSelectionChange}: R
                         {rubrics.map((rubricEntry, index) => (
                             <div
                                 key={index}
-                                className="mr-2 flex items-center border-b border-black last:border-b-0"
+                                className="mr-2 flex items-center border-b border-grey-800 last:border-b-0 dark:border-grey-200"
                                 style={{flex: rubricEntry.grades.length}}
                             >
                                 <Text className="p-2">{l(rubricEntry.description)}</Text>

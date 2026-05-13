@@ -38,14 +38,15 @@ export function ListBox<T extends object>(props: ListBoxProps<T>) {
       )}
     >
       {[...state.collection].map(item => (
-        <div className="ui:border-b ui:border-grey-300 ui:dark:border-grey-700">
-          <ListBoxItem
-            className={props.itemClassName}
-            key={item.key}
-            item={item}
-            state={state}
-          />
-        </div>
+        <ListBoxItem
+          className={cn(
+            'ui:border-b ui:border-grey-300 ui:dark:border-grey-700',
+            props.itemClassName
+          )}
+          key={item.key}
+          item={item}
+          state={state}
+        />
       ))}
     </ul>
   );
