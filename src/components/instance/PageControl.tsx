@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Heading, InputLabel, LoadingSpinner, Text} from "@datanose/ui";
+import {Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";

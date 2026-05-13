@@ -11,7 +11,7 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
-} from "@datanose/ui";
+} from "@uva-fnwi/datanose-ui";
 
 import {ScreenTable} from "~/components/ScreenTable";
 import {useTranslate} from "~/hooks/useTranslate";

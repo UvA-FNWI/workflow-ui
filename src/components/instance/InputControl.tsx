@@ -9,7 +9,7 @@ import {
     Select,
     SelectItem,
     TextArea,
-} from "@datanose/ui";
+} from "@uva-fnwi/datanose-ui";
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";

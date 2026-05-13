@@ -35,5 +35,5 @@ jobs:
                     pr=${BASH_REMATCH[1]}
                     curl --fail --no-progress-meter "https://api-v2-tst.datanose.nl/gitops-updater?name=workflow-ui-pr&secret=${UPDATER_SECRET}&version=${VERSION}&id=${PR_NUMBER}&target=https://workflow-api-pr-${pr}.datanose.nl"
                   else
-                    curl --fail --no-progress-meter "https://api-v2-tst.datanose.nl/gitops-updater?name=workflow-ui-pr&secret=${UPDATER_SECRET}&version=${VERSION}&id=${PR_NUMBER}&target=https://workflow-api-tst.datanose.nl/"
+                    curl --fail --no-progress-meter "https://api-v2-tst.datanose.nl/gitops-updater?name=workflow-ui-pr&secret=${UPDATER_SECRET}&version=${VERSION}&id=${PR_NUMBER}&target=https://api.milestones-tst.fnwi.uva.nl/"
                   fi

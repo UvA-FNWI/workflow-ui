@@ -1,4 +1,4 @@
-import {Card, Heading, Icon, Link, Skeleton, Text} from "@datanose/ui";
+import {Card, Heading, Icon, Link, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 

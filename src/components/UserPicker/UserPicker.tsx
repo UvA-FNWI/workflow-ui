@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {SearchInput} from "@datanose/ui";
+import {SearchInput} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
