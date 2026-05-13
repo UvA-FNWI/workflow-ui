@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Callout, SearchInput} from "@datanose/ui";
+import {SearchInput} from "@datanose/ui";
 
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
@@ -44,18 +44,17 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
     const [isOpenExternal, setIsOpenExternal] = useState(false);
-    const [showCallout, setShowCallout] = useState(false);
     const {t} = useTranslate("workflow");
 
-    // Normalize value prop to array
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
 
     const getDisplayString = (user: UserSearchResult) =>
         user.isExternal
-            ? `${user.displayName.trim()} | ${user.email.trim()} ${user.organization ? ` | ${user.organization?.name.trim()}` : ""}`
+            ? `${user.displayName.trim()} | ${user.email.trim()}${
+                  user.organization ? ` | ${user.organization.name.trim()}` : ""
+              }`
             : user.displayName.trim();
 
-    // Get display value
     const displayValue = (() => {
         if (valueArray.length === 0) return "";
         if (valueArray.length === 1) return getDisplayString(valueArray[0]);
@@ -64,7 +63,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
     const handleOpenUserPickerModal = () => {
         if (!isDisabled) {
-            if (valueArray.length === 1 && valueArray[0].organization) setIsOpenExternal(true);
+            if (valueArray.length === 1 && valueArray[0].isExternal) setIsOpenExternal(true);
             else setIsOpenUserPicker(true);
         }
     };
@@ -87,13 +86,9 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     };
 
     const handleConfirmExternalUser = (newUser: UserSearchResult) => {
-        const id = new Date().toISOString().replace(/[-:.TZ]/g, "");
-        newUser.userName = `${newUser.displayName.replace(/\s/g, "-").toLowerCase()}_${id}`;
-
         setIsOpenExternal(false);
         setIsOpenUserPicker(false);
         onChange?.(newUser);
-        setShowCallout(true);
     };
 
     return (
@@ -109,9 +104,6 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 role="button"
                 className="cursor-pointer"
             />
-            {showCallout && (
-                <Callout className="mt-1" header={t("external_user_add.success_toast")} />
-            )}
 
             <UserPickerModal
                 isOpen={isOpenUserPicker}

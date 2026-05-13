@@ -1,5 +1,5 @@
 import {baseApi} from "./baseApi";
-import type {UserSearchResult} from "./types/users";
+import type {UserSearchResult, VerifyEmailRequest, VerifyEmailResponse} from "./types/users";
 
 export const usersApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -12,7 +12,19 @@ export const usersApi = baseApi.injectEndpoints({
                 params: {query: searchQuery},
             }),
         }),
+        verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({
+            query: (body) => ({
+                url: "/Users/verify-email",
+                method: "POST",
+                body,
+            }),
+        }),
     }),
 });
 
-export const {useGetCurrentUserQuery, useFindUsersQuery, useLazyFindUsersQuery} = usersApi;
+export const {
+    useGetCurrentUserQuery,
+    useFindUsersQuery,
+    useLazyFindUsersQuery,
+    useVerifyEmailMutation,
+} = usersApi;
