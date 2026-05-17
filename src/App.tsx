@@ -7,7 +7,7 @@ import TemporaryNavbar from "./components/TemporaryNavbar";
 
 function App() {
     return (
-        <div className="min-h-screen w-full bg-grey-200 text-black dark:bg-grey-900 dark:text-white">
+        <div className="min-h-screen w-full bg-grey-300 text-black dark:bg-stone-900 dark:text-white">
             <TemporaryNavbar />
             <EffectsWrapper />
 

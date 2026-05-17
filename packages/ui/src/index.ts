@@ -42,7 +42,11 @@ export {
   SearchInput,
   type SearchInputProps,
 } from './components/Input/SearchInput/SearchInput';
-export { Link, type LinkProps } from './components/Link/Link';
+export {
+  Link,
+  linkClassGenerator,
+  type LinkProps,
+} from './components/Link/Link';
 export {
   Separator,
   type SeparatorProps,

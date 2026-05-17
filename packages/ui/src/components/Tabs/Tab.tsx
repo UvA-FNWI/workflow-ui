@@ -8,7 +8,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const tabClassGenerator = cva(
-  'ui:flex ui:cursor-pointer ui:items-center ui:border-b ui:border-transparent ui:bg-transparent ui:p-3 ui:text-sm ui:transition-colors ui:duration-150 ui:ease-in-out',
+  'ui:flex ui:cursor-pointer ui:items-center ui:border-b ui:border-transparent ui:bg-transparent ui:px-6 ui:py-3 ui:text-sm ui:transition-colors ui:duration-150 ui:ease-in-out',
   {
     variants: {
       isActive: {
