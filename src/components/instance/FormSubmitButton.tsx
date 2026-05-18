@@ -40,7 +40,7 @@ export const FormSubmitButton = ({
                 });
                 const errorResult = (res.error as FetchBaseQueryError)
                     ?.data as SubmitSubmissionResult;
-                if (errorResult?.validationErrors.length) {
+                if (errorResult?.validationErrors?.length) {
                     // TODO: validation (DN-3424)
                     const question = errorResult.validationErrors[0];
                     alert(`Not valid! ${question.questionName}: ${l(question.validationMessage)}`);

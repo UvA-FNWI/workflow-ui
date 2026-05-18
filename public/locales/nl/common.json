@@ -1,4 +1,8 @@
 {
+  "error_modal": {
+    "title": "Er is een fout opgetreden",
+    "message": "Er is een fout opgetreden. Neem contact op met een beheerder."
+  },
   "language": "Taal",
   "language_en": "Engels",
   "language_nl": "Nederlands",

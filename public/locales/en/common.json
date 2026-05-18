@@ -1,4 +1,8 @@
 {
+  "error_modal": {
+    "title": "An error has occurred",
+    "message": "An error has occurred. Please contact an administrator."
+  },
   "language": "Language",
   "language_en": "English",
   "language_nl": "Dutch",
