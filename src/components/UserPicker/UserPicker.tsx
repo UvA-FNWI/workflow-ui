@@ -56,7 +56,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
             ? `${user.displayName.trim()} | ${user.email.trim()}${
                   user.organization ? ` | ${user.organization.name.trim()}` : ""
               }`
-            : user.displayName.trim();
+            : `${user.displayName.trim()} | ${user.email.trim()}`;
 
     const displayValue = (() => {
         if (valueArray.length === 0) return "";

@@ -44,13 +44,17 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const resetSearch = searchState.reset;
     const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
 
+    const getSecondaryValue = useCallback((user: UserSearchResult) => {
+        return [user.email, user.organization?.name].filter(Boolean).join(" | ");
+    }, []);
+
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: user.organization?.name ?? user.email,
+            secondaryValue: getSecondaryValue(user),
         }));
-    }, [searchResults]);
+    }, [getSecondaryValue, searchResults]);
 
     // Store all encountered users
     const usersCache = useMemo(() => {
