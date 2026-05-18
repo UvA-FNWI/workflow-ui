@@ -1,10 +1,11 @@
 {
   "name": "@uva-fnwi/datanose-ui",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/datanose-ui.umd.js",
   "module": "dist/datanose-ui.es.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/UvA-FNWI/workflow-ui",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -72,8 +73,8 @@
     "vitest": "^4.1.5"
   },
   "peerDependencies": {
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.1",

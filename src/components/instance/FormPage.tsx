@@ -111,27 +111,15 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                             page={page}
                                         />
                                     </div>
-                                    <div className="mt-4 flex justify-between gap-2">
-                                        {activeTabIndex > 0 && (
-                                            <Button
-                                                intent="secondary"
-                                                variant="destructive"
-                                                onClick={() =>
-                                                    goToNextEnabledTab(activeTabIndex, -1)
-                                                }
-                                            >
-                                                {t("go_back")}
-                                            </Button>
-                                        )}
-                                        {activeTabIndex === 0 && (
-                                            <Button
-                                                intent="secondary"
-                                                variant="destructive"
-                                                onClick={onClose}
-                                            >
-                                                {t("close")}
-                                            </Button>
-                                        )}
+                                    <div className="mt-4 flex justify-start gap-3">
+                                        <Button
+                                            intent="secondary"
+                                            variant="destructive"
+                                            onClick={() => goToNextEnabledTab(activeTabIndex, -1)}
+                                            disabled={activeTabIndex === 0}
+                                        >
+                                            {t("go_back")}
+                                        </Button>
                                         <Button
                                             intent="secondary"
                                             variant="destructive"

@@ -203,10 +203,12 @@ export const FileUpload = ({
               intent="ghost"
               disabled={disabled}
               onClick={handleRemoveFile}
-              leftIcon={<Icon name="trash-line" size="sm" color="current" />}
               aria-label="Remove file"
-              className="ui:ml-1"
-            />
+              size="square"
+              className="ui:ml-4 ui:p-1"
+            >
+              <Icon name="trash-line" size="md" color="current" />
+            </Button>
           )}
         </div>
       )}

@@ -14,7 +14,7 @@ describe('Disclosure', () => {
 
     expect(screen.getByText('Header')).toBeInTheDocument();
     // Content is hidden by default with React Aria
-    const content = screen.getByText('Content');
+    const content = screen.getByText('Content').parentElement;
     expect(content).toHaveAttribute('hidden');
   });
 
@@ -27,7 +27,7 @@ describe('Disclosure', () => {
     );
 
     expect(screen.getByText('Header')).toBeInTheDocument();
-    const content = screen.getByText('Content');
+    const content = screen.getByText('Content').parentElement;
     expect(content).not.toHaveAttribute('hidden');
   });
 
@@ -40,7 +40,7 @@ describe('Disclosure', () => {
     );
 
     const header = screen.getByRole('button');
-    const content = screen.getByText('Content');
+    const content = screen.getByText('Content').parentElement;
 
     // Initially closed
     expect(content).toHaveAttribute('hidden', 'until-found');
@@ -85,7 +85,7 @@ describe('Disclosure', () => {
       </Disclosure>
     );
 
-    const content = screen.getByText('Content');
+    const content = screen.getByText('Content').parentElement;
     expect(content).toHaveAttribute('hidden', 'until-found');
 
     const header = screen.getByRole('button');

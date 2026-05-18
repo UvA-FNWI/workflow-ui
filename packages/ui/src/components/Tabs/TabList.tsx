@@ -7,7 +7,9 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { TabProps } from './Tab';
 
-const tabListClassGenerator = cva('ui:flex ui:border-b ui:border-grey-500');
+const tabListClassGenerator = cva(
+  'ui:flex ui:w-max ui:border-b ui:border-grey-500'
+);
 
 export type TabListProps = {
   // Only accepts Tab components as children
