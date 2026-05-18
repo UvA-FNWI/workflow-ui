@@ -37,7 +37,7 @@ export const Popover: React.FC<PopoverProps> = ({
       <div
         {...popoverProps}
         ref={popoverRef}
-        className={cn('ui:absolute ui:z-50 ui:mt-2', className)}
+        className={cn('ui:absolute ui:z-50 ui:my-2', className)}
       >
         {children}
       </div>
