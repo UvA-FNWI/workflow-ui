@@ -64,9 +64,12 @@ export const UserPicker: React.FC<UserPickerProps> = ({
         return t("user_picker.selected_users", {count: valueArray.length});
     })();
 
+    const shouldOpenExternalModal =
+        allowsExternalUsers && valueArray.length === 1 && valueArray[0].isExternal;
+
     const handleOpenUserPickerModal = () => {
         if (!isDisabled) {
-            if (valueArray.length === 1 && valueArray[0].isExternal) setIsOpenExternal(true);
+            if (shouldOpenExternalModal) setIsOpenExternal(true);
             else setIsOpenUserPicker(true);
         }
     };
