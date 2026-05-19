@@ -4,7 +4,8 @@ import { AriaListBoxOptions, useListBox } from 'react-aria';
 import { Item, ListProps, ListState, useListState } from 'react-stately';
 
 interface ListItem {
-  key: string | number;
+  key?: string | number;
+  id?: string;
   textValue?: string;
 }
 
@@ -43,7 +44,10 @@ export function ListBox<T extends ListItem>({
     onSelectionChange,
     items,
     children: item => (
-      <Item key={item.key} textValue={item.textValue ?? String(item.key)}>
+      <Item
+        key={item.key ?? item.id}
+        textValue={item.textValue ?? String(item.id ?? item.key)}
+      >
         {item.key}
       </Item>
     ),
