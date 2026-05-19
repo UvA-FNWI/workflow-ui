@@ -1,6 +1,5 @@
 import {useState} from "react";
 
-import {Icon} from "@datanose/ui";
 import {rankItem} from "@tanstack/match-sorter-utils";
 import {
     type ColumnDef,
@@ -15,6 +14,7 @@ import {
     type SortingState,
     useReactTable,
 } from "@tanstack/react-table";
+import {Icon} from "@uva-fnwi/datanose-ui";
 
 type DataTableProps<TData> = {
     data: TData[];
@@ -80,13 +80,13 @@ export function DataTable<TData>({
     return (
         <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
-                <thead className="border-b border-gray-200">
+                <thead className="border-b border-grey-300">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <th
                                     key={header.id}
-                                    className={`px-4 py-3 text-left font-medium whitespace-nowrap text-gray-500 dark:text-gray-300 ${
+                                    className={`px-4 py-3 text-left font-body font-semibold whitespace-nowrap text-black dark:text-white ${
                                         header.column.getCanSort()
                                             ? "cursor-pointer select-none"
                                             : ""
@@ -100,7 +100,11 @@ export function DataTable<TData>({
                                                   header.column.columnDef.header,
                                                   header.getContext(),
                                               )}
-                                        <SortIndicator direction={header.column.getIsSorted()} />
+                                        {header.column.getCanSort() && (
+                                            <SortIndicator
+                                                direction={header.column.getIsSorted()}
+                                            />
+                                        )}
                                     </div>
                                 </th>
                             ))}
@@ -109,12 +113,12 @@ export function DataTable<TData>({
                 </thead>
                 <tbody>
                     {table.getRowModel().rows.map((row) => (
-                        <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                        <tr
+                            key={row.id}
+                            className="hover:bg-grey-50 border-b border-grey-300 dark:border-grey-600 dark:hover:bg-grey-800"
+                        >
                             {row.getVisibleCells().map((cell) => (
-                                <td
-                                    key={cell.id}
-                                    className="border-b border-gray-100 px-4 py-3 dark:border-gray-600"
-                                >
+                                <td key={cell.id} className="px-4 py-2">
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}

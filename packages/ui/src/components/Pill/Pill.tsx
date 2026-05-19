@@ -9,12 +9,12 @@ const pillVariants = cva(
   {
     variants: {
       variant: {
-        grey: 'ui:bg-grey-200 ui:text-grey-700 ui:dark:bg-grey-700 ui:dark:text-grey-400',
-        red: 'ui:bg-red-100 ui:text-red-700 ui:dark:bg-red-700 ui:dark:text-red-100',
+        grey: 'ui:bg-grey-300 ui:text-grey-700 ui:dark:bg-grey-700 ui:dark:text-grey-300',
+        red: 'ui:bg-red-200 ui:text-red-700 ui:dark:bg-red-700 ui:dark:text-red-200',
         green:
           'ui:bg-forest-200 ui:text-forest-800 ui:dark:bg-forest-800 ui:dark:text-forest-200',
         orange:
-          'ui:bg-orange-100 ui:text-orange-700 ui:dark:bg-orange-700 ui:dark:text-orange-100',
+          'ui:bg-orange-200 ui:text-orange-900 ui:dark:bg-orange-900 ui:dark:text-orange-200',
         darkRed: 'ui:bg-red-700 ui:text-white ui:dark:bg-red-600',
       },
     },

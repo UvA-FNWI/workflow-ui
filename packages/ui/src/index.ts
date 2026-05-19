@@ -42,7 +42,11 @@ export {
   SearchInput,
   type SearchInputProps,
 } from './components/Input/SearchInput/SearchInput';
-export { Link, type LinkProps } from './components/Link/Link';
+export {
+  Link,
+  linkClassGenerator,
+  type LinkProps,
+} from './components/Link/Link';
 export {
   Separator,
   type SeparatorProps,
@@ -50,6 +54,7 @@ export {
 export { Skeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { Text } from './components/Text/Text';
 export { Icon } from './components/Icon/Icon';
+export { type IconType } from './components/Icon/IconTypes';
 export {
   LoadingSpinner,
   type LoadingSpinnerProps,

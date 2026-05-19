@@ -1,4 +1,4 @@
-import {Card, Skeleton} from "@datanose/ui";
+import {Card, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {StepCard} from "~/components/instance/StepCard";
 import type {WorkflowInstance} from "~/store/api/types/instances";

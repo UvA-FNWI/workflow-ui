@@ -36,6 +36,40 @@ export const formSubmitted = {
             id: "Execute_ApproveSubject",
         },
     ],
+    fields: [
+        {
+            key: "Course.Name",
+            title: {
+                en: "Course",
+                nl: "Course",
+            },
+            value: null,
+        },
+        {
+            key: "Student.DisplayName",
+            title: {
+                en: "Student",
+                nl: "Student",
+            },
+            value: "Jan Janssen",
+        },
+        {
+            key: "Student.Email",
+            title: {
+                en: "Email",
+                nl: "Email",
+            },
+            value: "jan.janssen@test.nl",
+        },
+        {
+            key: "Title",
+            title: {
+                en: "Working title",
+                nl: "Werktitel",
+            },
+            value: "Test working title",
+        },
+    ],
     steps: [
         {
             id: "Subject",

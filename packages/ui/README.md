@@ -1,23 +1,23 @@
-# @datanose/ui
+# @uva-fnwi/datanose-ui
 
 Reusable UI component library for DataNose and Thesis Workflow.
 
 ## Installation
 
 ```bash
-pnpm add @datanose/ui
+pnpm add @uva-fnwi/datanose-ui
 ```
 
 or
 
 ```bash
-npm add @datanose/ui
+npm add @uva-fnwi/datanose-ui
 ```
 
 ## Usage
 
 ```tsx
-import { Checkbox } from '@datanose/ui';
+import { Checkbox } from '@uva-fnwi/datanose-ui';
 ```
 
 ## Development

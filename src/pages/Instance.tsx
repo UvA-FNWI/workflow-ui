@@ -1,6 +1,6 @@
 import {useParams} from "react-router";
 
-import {Container, Grid, GridItem} from "@datanose/ui";
+import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
 import {AdminCard} from "~/components/instance/AdminCard";
 import {ContentCard} from "~/components/instance/ContentCard";
@@ -31,7 +31,7 @@ function Instance() {
         <Container maxWidth={1280}>
             <InstanceHeader courseName={courseName} isLoading={isLoading} />
             <Grid>
-                <GridItem span={{base: 12, sm: 8}} className="flex flex-col gap-8">
+                <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">
                     <ProgressCard
                         isLoading={isLoading}
                         isStudent={instance?.viewerRoles?.includes("Student") ?? false}
@@ -40,7 +40,7 @@ function Instance() {
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </GridItem>
-                <GridItem span={{base: 12, sm: 4}} className="flex flex-col gap-6">
+                <GridItem span={{base: 12, sm: 3}} className="flex flex-col gap-6">
                     <StudentCard
                         studentEmail={studentEmail}
                         studentName={studentName}

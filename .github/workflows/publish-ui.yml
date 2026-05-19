@@ -1,11 +1,11 @@
-name: Publish @uva-fnwi/datanose-core
+name: Publish @uva-fnwi/datanose-ui
 
 on:
     push:
         branches:
             - main
         paths:
-            - "packages/core/package.json"
+            - "packages/ui/package.json"
 
 permissions:
     id-token: write
@@ -28,6 +28,8 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
-            - run: pnpm --filter @uva-fnwi/datanose-core test
+            - run: pnpm --filter @uva-fnwi/datanose-ui build
 
-            - run: pnpm --filter @uva-fnwi/datanose-core publish --no-git-checks
+            - run: pnpm --filter @uva-fnwi/datanose-ui test
+
+            - run: pnpm --filter @uva-fnwi/datanose-ui publish --no-git-checks

@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 
-import {LoadingSpinner, SearchInput} from "@datanose/ui";
+import {LoadingSpinner, SearchInput} from "@uva-fnwi/datanose-ui";
 
 import {SearchListBox, type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 import {useDebounce} from "~/hooks/useDebounce.ts";

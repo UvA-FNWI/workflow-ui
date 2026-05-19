@@ -1,1 +1,1 @@
-// Type declaration for the @datanose/ui/styles CSS side-effect import
+// Type declaration for the @uva-fnwi/datanose-ui/styles CSS side-effect import

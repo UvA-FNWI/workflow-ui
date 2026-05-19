@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {FileUpload, Text, useToast} from "@datanose/ui";
+import {FileUpload, Text, useToast} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
@@ -81,11 +81,13 @@ export const FileUploadTable = ({
             <table className="border-collapse">
                 <thead>
                     <tr className="border-b border-grey-300 dark:border-grey-600">
-                        <th className="w-8 p-2"></th>
-                        <th className="p-2 text-left font-semibold">
+                        <th className="w-8 px-2"></th>
+                        <th className="px-2 text-left font-semibold">
                             {t("file_upload.description")}
                         </th>
-                        <th className="p-2 text-left font-semibold">{t("file_upload.uploaded")}</th>
+                        <th className="px-2 text-left font-semibold">
+                            {t("file_upload.uploaded")}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,7 +112,7 @@ export const FileUploadTable = ({
                             >
                                 <td className="align-center p-2">
                                     <div
-                                        className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-500" : "bg-red-500"}`}
+                                        className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-600" : "bg-red-brand"}`}
                                         aria-label={
                                             hasValidFile
                                                 ? t("file_upload.uploaded")
