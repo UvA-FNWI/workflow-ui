@@ -50,7 +50,7 @@ export function RubricPopover({
         <Popover
             state={state}
             triggerRef={triggerRef as React.RefObject<HTMLElement>}
-            className="max-h-[80vh] max-w-200 overflow-y-auto bg-grey-300 shadow-xl outline-none dark:bg-grey-700"
+            className="max-h-[80vh] max-w-200 overflow-y-auto border border-grey-500 bg-grey-200 shadow-md outline-none dark:bg-grey-700"
         >
             <ListBox<GradeItem>
                 items={allGrades.map((g, i) => ({key: i, grade: g}))}
@@ -62,14 +62,7 @@ export function RubricPopover({
                     <Grid rowGap="none">
                         {rubrics.map((rubricEntry, index) => (
                             <GridItem key={index} span={12} className="h-full">
-                                <div className="flex h-full items-stretch gap-x-2 pl-4">
-                                    <div
-                                        className={`flex-1 border-grey-800 dark:border-grey-200 ${index === rubrics.length - 1 ? "border-b-0" : "border-b"}`}
-                                    >
-                                        <Text className="px-2 py-4">
-                                            {l(rubricEntry.description)}
-                                        </Text>
-                                    </div>
+                                <div className="flex h-full items-stretch gap-x-2 pr-4">
                                     <div className="flex h-full max-w-20 min-w-15 flex-col justify-between">
                                         {rubricEntry.grades.map((grade, i) => {
                                             const globalIndex =
@@ -89,12 +82,19 @@ export function RubricPopover({
                                                     key={globalIndex}
                                                     item={item}
                                                     state={listState}
-                                                    className="flex min-h-8 flex-1 items-center justify-center border-b border-grey-200 bg-red-brand text-sm text-white hover:bg-grey-600"
+                                                    className="flex min-h-8 flex-1 items-center justify-center border-b border-grey-200 bg-red-600 text-sm text-white hover:bg-red-brand"
                                                 >
                                                     {grade}
                                                 </ListBoxItem>
                                             );
                                         })}
+                                    </div>{" "}
+                                    <div
+                                        className={`flex-1 border-grey-800 dark:border-grey-200 ${index === rubrics.length - 1 ? "border-b-0" : "border-b"}`}
+                                    >
+                                        <Text className="px-2 py-4">
+                                            {l(rubricEntry.description)}
+                                        </Text>
                                     </div>
                                 </div>
                             </GridItem>
