@@ -8,9 +8,30 @@ import {
     type PopoverState,
     Text,
 } from "@uva-fnwi/datanose-ui";
+import {cva} from "class-variance-authority";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
+
+const listItemStyleGenerator = cva(
+    "flex min-h-8 flex-1 items-center justify-center text-sm text-white hover:bg-red-brand",
+    {
+        variants: {
+            isSelected: {
+                true: "bg-black",
+                false: "bg-red-600",
+            },
+            isLastItem: {
+                true: "border-b-0",
+                false: "border-b border-grey-200",
+            },
+        },
+        defaultVariants: {
+            isSelected: false,
+            isLastItem: false,
+        },
+    },
+);
 
 interface RubricPopoverProps {
     rubrics: RubricEntry[];
@@ -50,7 +71,7 @@ export function RubricPopover({
         <Popover
             state={state}
             triggerRef={triggerRef as React.RefObject<HTMLElement>}
-            className="max-h-[80vh] max-w-200 overflow-y-auto border border-grey-500 bg-grey-200 shadow-md outline-none dark:bg-grey-700"
+            className="max-h-[80vh] max-w-200 overflow-y-auto border border-grey-500 bg-grey-200 shadow-md outline-none dark:bg-grey-800"
         >
             <ListBox<GradeItem>
                 items={allGrades.map((g, i) => ({key: i, grade: g}))}
@@ -77,12 +98,21 @@ export function RubricPopover({
 
                                             if (!item) return null;
 
+                                            const isSelected =
+                                                listState.selectionManager.isSelected(grade);
+                                            const isLastItem =
+                                                index === rubrics.length - 1 &&
+                                                i === rubricEntry.grades.length - 1;
+
                                             return (
                                                 <ListBoxItem
                                                     key={globalIndex}
                                                     item={item}
                                                     state={listState}
-                                                    className="flex min-h-8 flex-1 items-center justify-center border-b border-grey-200 bg-red-600 text-sm text-white hover:bg-red-brand"
+                                                    className={listItemStyleGenerator({
+                                                        isSelected,
+                                                        isLastItem,
+                                                    })}
                                                 >
                                                     {grade}
                                                 </ListBoxItem>

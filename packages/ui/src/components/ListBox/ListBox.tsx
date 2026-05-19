@@ -27,9 +27,13 @@ export function ListBox<T extends object>({
   children,
   'aria-label': ariaLabel = 'Listbox',
 }: ListBoxProps<T>) {
+  // Normalize selectedKeys: wrap strings in an array to prevent character splitting
+  const normalizedSelectedKeys =
+    typeof selectedKeys === 'string' ? [selectedKeys] : selectedKeys;
+
   const state = useListState({
     selectionMode,
-    selectedKeys,
+    selectedKeys: normalizedSelectedKeys,
     disabledKeys,
     onSelectionChange,
     items,
