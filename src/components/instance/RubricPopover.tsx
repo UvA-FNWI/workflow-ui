@@ -71,7 +71,8 @@ export function RubricPopover({
         <Popover
             state={state}
             triggerRef={triggerRef as React.RefObject<HTMLElement>}
-            className="max-h-[80vh] max-w-200 overflow-y-auto border border-grey-500 bg-grey-200 shadow-md outline-none dark:bg-grey-800"
+            placement="top end"
+            className="my-0 max-h-[80vh] max-w-200 overflow-y-auto border border-grey-500 bg-grey-200 shadow-md outline-none dark:bg-grey-800"
         >
             <ListBox<GradeItem>
                 items={allGrades.map((g, i) => ({key: i, grade: g}))}

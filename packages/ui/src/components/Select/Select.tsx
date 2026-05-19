@@ -241,7 +241,7 @@ export function Select<
   });
 
   return (
-    <div className="ui:w-full">
+    <div>
       {label && (
         <span
           {...labelProps}

@@ -112,7 +112,7 @@ export type DataType =
     | "Int"
     | "Boolean";
 export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric";
-export type FormLayout = "Normal" | "SinglePage" | "Modal";
+export type FormLayout = "Normal" | "Compact" | "Modal";
 
 export type ImpersonationRole = {
     name: string;

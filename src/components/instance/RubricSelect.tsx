@@ -3,6 +3,7 @@ import {useCallback, useState} from "react";
 import {InputLabel, Select, SelectItem} from "@uva-fnwi/datanose-ui";
 
 import {RubricPopover} from "~/components/instance/RubricPopover.tsx";
+import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
 
 interface RubricSelectProps {
@@ -13,6 +14,7 @@ interface RubricSelectProps {
 }
 
 export function RubricSelect({label, rubrics, onChange, value}: RubricSelectProps) {
+    const {t} = useTranslate("workflow");
     const [selectedGrade, setSelectedGrade] = useState<string>(value ?? "");
 
     const handleGradeSelect = useCallback(
@@ -37,6 +39,7 @@ export function RubricSelect({label, rubrics, onChange, value}: RubricSelectProp
                         selectedKey={selectedGrade}
                     />
                 )}
+                placeholder={t("select")}
             >
                 {rubrics.flatMap((rubricEntry) =>
                     rubricEntry.grades.map((grade) => <SelectItem key={grade}>{grade}</SelectItem>),

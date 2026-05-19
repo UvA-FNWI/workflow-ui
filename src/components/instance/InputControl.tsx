@@ -154,6 +154,7 @@ export const InputControl = ({
                                   : [];
                             immediateChange(normalizedValues);
                         }}
+                        placeholder={t("select")}
                     >
                         {choices.map((choice) => (
                             <SelectItem key={choice.name}>
@@ -170,6 +171,7 @@ export const InputControl = ({
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
                     }}
+                    placeholder={t("select")}
                 >
                     {choices.map((choice) => (
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
