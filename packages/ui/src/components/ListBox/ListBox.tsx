@@ -3,6 +3,11 @@ import { useRef } from 'react';
 import { AriaListBoxOptions, useListBox } from 'react-aria';
 import { Item, ListProps, ListState, useListState } from 'react-stately';
 
+interface ListItem {
+  key: string | number;
+  textValue?: string;
+}
+
 export interface ListBoxProps<T extends object>
   extends Omit<ListProps<T>, 'children' | 'filter' | 'collection'>,
     Pick<
@@ -17,7 +22,7 @@ export interface ListBoxProps<T extends object>
   children: (state: ListState<T>) => React.ReactNode;
 }
 
-export function ListBox<T extends object>({
+export function ListBox<T extends ListItem>({
   selectionMode,
   selectedKeys,
   onSelectionChange,
@@ -38,11 +43,8 @@ export function ListBox<T extends object>({
     onSelectionChange,
     items,
     children: item => (
-      <Item
-        key={(item as any).key}
-        textValue={(item as any).textValue ?? (item as any).id}
-      >
-        {(item as any).key}
+      <Item key={item.key} textValue={item.textValue ?? String(item.key)}>
+        {item.key}
       </Item>
     ),
   });

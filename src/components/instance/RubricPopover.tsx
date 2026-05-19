@@ -14,7 +14,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
 
 const listItemStyleGenerator = cva(
-    "flex min-h-8 flex-1 items-center justify-center text-sm text-white hover:bg-red-brand",
+    "flex min-h-8 flex-1 items-center justify-center text-sm text-white hover:bg-red-brand focus:ring-offset-1",
     {
         variants: {
             isSelected: {
