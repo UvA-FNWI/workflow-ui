@@ -116,7 +116,7 @@ describe('Card Component', () => {
       expect(card).toHaveClass(
         // Base classes
         'ui:bg-white',
-        'ui:rounded-lg',
+        'ui:rounded-xs',
         'ui:transition-colors',
         // Variant classes
         'ui:p-8', // lg padding

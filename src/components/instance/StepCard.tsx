@@ -1,7 +1,15 @@
 import {useState} from "react";
 
-import {Button, Disclosure, Heading, Modal, Pill, Text} from "@uva-fnwi/datanose-ui";
-import type {PillVariantProps} from "@uva-fnwi/datanose-ui";
+import {
+    Button,
+    Disclosure,
+    Heading,
+    Modal,
+    Pill,
+    type PillVariantProps,
+    Separator,
+    Text,
+} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
@@ -46,7 +54,7 @@ export const StepCard = ({step, instance}: Props) => {
     );
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
     const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
-    const isCurrentStep = stepIds.includes(instance.currentStep);
+    const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
 
     const deadlineDate = step.deadline ?? null;
 
@@ -55,10 +63,19 @@ export const StepCard = ({step, instance}: Props) => {
         instance.steps.indexOf(step) >
             instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
+    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
+
+    const submissionsToShow =
+        submissions.length > 0
+            ? submissions
+            : step.versions?.length == 1
+              ? step.versions[0].submissions
+              : [];
+
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
             <Disclosure.Header>
-                <div className="flex w-full items-center justify-between">
+                <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading>{l(step.title)}</Heading>
                         {/* If we don't have a header status, we can show the date completed */}
@@ -85,25 +102,24 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
-                    {!step.versions &&
-                        submissions.map((submission) => (
-                            <FormSummary
-                                key={submission.id}
-                                instanceId={instance.id}
-                                submission={submission}
-                            />
-                        ))}
+                    {submissionsToShow.map((submission) => (
+                        <div key={submission.id} className="py-4">
+                            <FormSummary instanceId={instance.id} submission={submission} />
+                        </div>
+                    ))}
 
                     {isFormOpen && (
-                        <FormPage
-                            instanceId={instance.id}
-                            submissionId={activeAction?.form ?? ""}
-                            onClose={() => setActiveAction(null)}
-                        />
+                        <div className="py-4">
+                            <FormPage
+                                instanceId={instance.id}
+                                submissionId={activeAction?.form ?? ""}
+                                onClose={() => setActiveAction(null)}
+                            />
+                        </div>
                     )}
 
                     {/* Action buttons */}
-                    {!isFormOpen && (
+                    {!isFormOpen && actions.length > 0 && (
                         <div className="flex gap-2 pt-2">
                             {actions.map((a) => (
                                 <Button
@@ -116,27 +132,47 @@ export const StepCard = ({step, instance}: Props) => {
                             ))}
                         </div>
                     )}
-                    {step.versions?.map((v) => (
-                        <VersionCard key={v.versionNumber} version={v} instanceId={instance.id} />
-                    ))}
+                    {showVersionCards &&
+                        step.versions?.some((version) => version.submissions?.length > 0) && (
+                            <div className="flex flex-col">
+                                {step.versions
+                                    .filter((v) => v.submissions.length > 0)
+                                    .map(
+                                        (v, index, arr) =>
+                                            v.submissions.length > 0 && (
+                                                <div key={v.versionNumber}>
+                                                    {index > 0 && <Separator />}
+                                                    <VersionCard
+                                                        version={v}
+                                                        instanceId={instance.id}
+                                                        isExpandedByDefault={
+                                                            submissionsToShow.length === 0 &&
+                                                            index === 0
+                                                        }
+                                                    />
+                                                    {index === arr.length - 1 && <Separator />}
+                                                </div>
+                                            ),
+                                    )}
+                            </div>
+                        )}
                 </div>
-
                 <Modal
                     isOpen={activeAction?.type === "Execute"}
                     onOpenChange={() => setActiveAction(null)}
                 >
-                    <Modal.Header>{activeAction && l(activeAction.title)}</Modal.Header>
-                    <Modal.Body className="mt-2 mb-4">
+                    <Modal.Header className="pb-0 text-2xl font-semibold">
+                        {activeAction && l(activeAction.title)}
+                    </Modal.Header>
+                    <Modal.Body className="mt-2 text-lg">
                         <p>{t("are_you_sure")}</p>
                     </Modal.Body>
                     {activeAction && (
-                        <Modal.Footer className="mt-2 flex gap-2">
-                            <Button intent="secondary" onClick={() => setActiveAction(null)}>
-                                {t("cancel")}
-                            </Button>
+                        <Modal.Footer>
                             <Button
                                 intent="primary"
                                 variant="destructive"
+                                size="large"
                                 onClick={() => {
                                     executeAction({
                                         instanceId: instance.id,
@@ -147,6 +183,14 @@ export const StepCard = ({step, instance}: Props) => {
                                 }}
                             >
                                 {t("confirm")}
+                            </Button>
+                            <Button
+                                intent="secondary"
+                                variant="destructive"
+                                size="large"
+                                onClick={() => setActiveAction(null)}
+                            >
+                                {t("cancel")}
                             </Button>
                         </Modal.Footer>
                     )}

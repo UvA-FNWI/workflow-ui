@@ -8,9 +8,8 @@
   },
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
-  "close": "Sluiten",
   "confirm": "Bevestigen",
-  "continue": "Verder",
+  "continue": "Volgende",
   "email": "E-mailadres",
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
@@ -26,21 +25,20 @@
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
     "error_remove_failed": "Verwijderen van bestand mislukt. Probeer het opnieuw.",
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
-    "max_file_size": "Max. {{size}} per bestand",
+    "max_file_size": "Maximaal {{size}} per bestand.",
     "no_file_uploaded": "Geen bestand geüpload",
     "removed_success": "Bestand verwijderd",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "go_back": "Terug",
+  "go_back": "Vorige",
   "good_to_know": {
+    "show_all": "Toon alles",
+    "show_less": "Toon minder",
     "title_one": "Handig tijdens je scriptie",
     "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
-  "how_to_choose_a_subject": {
-    "title": "Zo kies je een goed scriptieonderwerp"
-  },
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
@@ -56,14 +54,15 @@
     "workflowInstance": "Workflow"
   },
   "name": "Naam",
-  "optional": "(optioneel)",
+  "optional": "* Niet verplicht",
   "progress": {
+    "completed": "Voltooid",
     "deadline": "Deadline",
-    "labelStudent": "Hier ben je in het proces",
-    "labelSupervisor": "Zo ver is de student",
-    "title": "Voortgang"
+    "titleStudent": "Jouw voortgang",
+    "titleSupervisor": "Voortgang van de student"
   },
   "screens": {
+    "actions": "Acties",
     "students": "Studenten"
   },
   "search_and_select": {
@@ -94,6 +93,6 @@
   },
   "version_card": {
     "no_answer": "Geen antwoord gegeven",
-    "version_nr": "Versie #{{versionNumber}}"
+    "version_nr": "Versie {{versionNumber}}"
   }
 }

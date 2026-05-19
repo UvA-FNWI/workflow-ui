@@ -7,7 +7,7 @@ import { cn } from '../../utils/cn';
 export type CardVariantProps = VariantProps<typeof cardVariants>;
 
 const cardVariants = cva(
-  'ui:overflow-hidden ui:rounded-lg ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
+  'ui:overflow-hidden ui:rounded-xs ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
   {
     variants: {
       padding: {

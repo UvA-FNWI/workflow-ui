@@ -1,8 +1,9 @@
 import {useMemo} from "react";
 
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 
 import {type ColumnDef} from "@tanstack/react-table";
+import {Button, Icon, linkClassGenerator} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
@@ -15,55 +16,89 @@ type ScreenTableProps = {
 };
 
 export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps) => {
-    const {i18n, l} = useTranslate();
+    const {i18n, l, t} = useTranslate("workflow");
+    const navigate = useNavigate();
 
     const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(
-        () =>
-            columns
+        () => [
+            ...columns
                 .filter((col) => col.displayType !== "ExportOnly")
-                .map((col) => ({
-                    id: String(col.id),
-                    accessorFn: (row) => row.values[col.id],
-                    header: () => l(col.title),
-                    cell: (info) => {
-                        const value = info.getValue();
-                        const formattedValue = formatCellValue(value, col.dataType, i18n.language);
+                .map(
+                    (col): ColumnDef<ScreenRow> => ({
+                        id: String(col.id),
+                        accessorFn: (row) => row.values[col.id],
+                        header: () => l(col.title),
+                        cell: (info) => {
+                            const value = info.getValue();
+                            const formattedValue = formatCellValue(
+                                value,
+                                col.dataType,
+                                i18n.language,
+                            );
 
-                        // Custom formatting for the progress column
-                        if (col.isCurrentStep && col.dataType === "Object") {
-                            const obj = value as Record<string, unknown>;
-                            if ("text" in obj && "color" in obj) {
-                                const progressText = obj["text"] as LocalString | undefined;
-                                const progressColor = obj["color"] as string | undefined;
+                            // Custom formatting for the progress column
+                            if (col.isCurrentStep && col.dataType === "Object") {
+                                const obj = value as Record<string, unknown>;
+                                if ("text" in obj && "color" in obj) {
+                                    const progressText = obj["text"] as LocalString | undefined;
+                                    const progressColor = obj["color"] as string | undefined;
+                                    return (
+                                        <div className="flex items-baseline gap-2">
+                                            <div
+                                                className={`h-2 w-2 rounded-full ${progressColor?.toLowerCase() == "green" ? "bg-green-600" : "bg-red-600"}`}
+                                            />
+                                            <span>{l(progressText)}</span>
+                                        </div>
+                                    );
+                                }
+                            }
+
+                            if (col.link) {
+                                const rowId = info.row.original.id;
                                 return (
-                                    <div className="flex items-baseline gap-2">
-                                        <div
-                                            className={`h-2 w-2 rounded-full ${progressColor?.toLowerCase() == "green" ? "bg-green-600" : "bg-red-600"}`}
-                                        />
-                                        <span>{l(progressText)}</span>
-                                    </div>
+                                    <Link
+                                        to={`/instance/${rowId}`}
+                                        className={linkClassGenerator({
+                                            intent: "primary",
+                                            underline: true,
+                                            size: "sm",
+                                        })}
+                                    >
+                                        {formattedValue}
+                                    </Link>
                                 );
                             }
-                        }
 
-                        if (col.link) {
-                            const rowId = info.row.original.id;
-                            // TODO: Replace with Link component perhaps
-                            return (
-                                <Link
-                                    to={`/instance/${rowId}`}
-                                    className="text-blue-600 hover:text-blue-800 hover:underline"
-                                >
-                                    {formattedValue}
-                                </Link>
-                            );
-                        }
+                            return formattedValue;
+                        },
+                        enableSorting: true,
+                    }),
+                ),
+            {
+                id: "actions",
+                header: () => <span className="sr-only">{t("screens.actions")}</span>,
+                enableSorting: false,
+                cell: ({row}) => {
+                    const rowId = row.original.id;
 
-                        return formattedValue;
-                    },
-                    enableSorting: true,
-                })),
-        [columns, i18n.language, l],
+                    return (
+                        <div className="flex w-auto justify-end p-0">
+                            <Button
+                                intent="primary"
+                                variant="destructive"
+                                size="square"
+                                width="none"
+                                className="flex items-center justify-center rounded-sm text-white"
+                                onClick={() => navigate(`/instance/${rowId}`)}
+                            >
+                                <Icon name="visible-line" color="current" />
+                            </Button>
+                        </div>
+                    );
+                },
+            },
+        ],
+        [columns, i18n.language, l, t, navigate],
     );
 
     return <DataTable data={rows} columns={tableColumns} globalFilter={globalFilter} />;
