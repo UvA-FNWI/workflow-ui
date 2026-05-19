@@ -62,7 +62,7 @@ export const PageControl = ({
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
 
     const save = useCallback(
-        (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}),
+        (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}).unwrap(),
         [instanceId, submissionId, saveAnswer],
     );
 
