@@ -10,6 +10,7 @@ interface ListBoxItemProps<T> {
   item: Node<T>;
   state: ListState<T>;
   className?: string;
+  intent?: 'default' | 'danger';
   children?: React.ReactNode;
 }
 
@@ -17,6 +18,7 @@ export function ListBoxItem<T>({
   item,
   state,
   className,
+  intent = 'default',
   children,
 }: ListBoxItemProps<T>) {
   const ref = useRef(null);
@@ -38,6 +40,7 @@ export function ListBoxItem<T>({
           isHovered,
           isDisabled,
           isFocusVisible,
+          intent,
         }),
         className
       )}

@@ -36,7 +36,7 @@ export function RubricSelect({label, rubrics, onChange, value}: RubricSelectProp
                         state={state}
                         triggerRef={triggerRef as React.RefObject<HTMLButtonElement>}
                         onSelectionChange={handleGradeSelect}
-                        selectedKey={selectedGrade}
+                        selectedGrade={selectedGrade}
                     />
                 )}
                 placeholder={t("select")}

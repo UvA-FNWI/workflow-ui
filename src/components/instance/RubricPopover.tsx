@@ -17,7 +17,7 @@ interface RubricPopoverProps {
     triggerRef: React.RefObject<HTMLButtonElement> | null;
     state: PopoverState;
     onSelectionChange?: (selected: string) => void;
-    selectedKey?: string;
+    selectedGrade?: string;
 }
 
 // Selection type from react-stately
@@ -30,11 +30,14 @@ export function RubricPopover({
     state,
     triggerRef,
     onSelectionChange,
-    selectedKey,
+    selectedGrade,
 }: RubricPopoverProps) {
     const {l} = useTranslate("workflow");
 
     const allGrades = rubrics.flatMap((r) => r.grades);
+    const selectedIndex = selectedGrade !== undefined ? allGrades.indexOf(selectedGrade) : -1;
+    const selectedKeys =
+        selectedIndex >= 0 ? new Set([selectedIndex.toString()]) : new Set<string>();
 
     const handleSelectionChange = (selected: Selection) => {
         if (!onSelectionChange || selected === "all" || selected.size === 0) return;
@@ -55,7 +58,7 @@ export function RubricPopover({
         >
             <ListBox<GradeItem>
                 items={allGrades.map((g, i) => ({key: i, grade: g}))}
-                selectedKeys={selectedKey}
+                selectedKeys={selectedKeys}
                 onSelectionChange={handleSelectionChange}
                 selectionMode="single"
             >
@@ -78,21 +81,19 @@ export function RubricPopover({
 
                                             if (!item) return null;
 
-                                            const isSelected =
-                                                listState.selectionManager.isSelected(grade);
+                                            // const isSelected =
+                                            //     listState.selectionManager.isSelected(grade);
                                             const isLastItem =
                                                 index === rubrics.length - 1 &&
                                                 i === rubricEntry.grades.length - 1;
-
-                                            const listItemClasses = `flex min-h-8 flex-1 items-center justify-center text-sm text-white hover:bg-red-brand 
-                                            focus:ring-offset-1 border-grey-200 ${isSelected ? "bg-black" : "bg-red-600"} ${isLastItem ? "border-b-0" : "border-b"}`;
 
                                             return (
                                                 <ListBoxItem
                                                     key={globalIndex}
                                                     item={item}
                                                     state={listState}
-                                                    className={listItemClasses}
+                                                    className={`flex min-h-8 flex-1 items-center justify-center border-grey-200 text-sm focus:ring-offset-1 ${isLastItem ? "border-b-0" : "border-b"}`}
+                                                    intent="danger"
                                                 >
                                                     {grade}
                                                 </ListBoxItem>
