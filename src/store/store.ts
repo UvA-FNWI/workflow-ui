@@ -8,8 +8,8 @@ import {usersApi} from "./api/usersApi";
 import {setAccessToken, setCurrentUser} from "./authSlice";
 import authReducer from "./authSlice";
 import effectsReducer from "./effectsSlice";
+import errorReducer from "./errorSlice";
 import {impersonationPersistMiddleware} from "./impersonation";
-import {errorModalSlice} from "~/store/ErrorModalSlice.ts";
 
 const listenerMiddleware = createListenerMiddleware();
 
@@ -35,7 +35,7 @@ export const store = configureStore({
     reducer: {
         auth: authReducer,
         effects: effectsReducer,
-        errorModal: errorModalSlice.reducer,
+        apiError: errorReducer,
         [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

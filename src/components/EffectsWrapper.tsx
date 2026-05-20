@@ -4,7 +4,6 @@ import {useNavigate} from "react-router";
 
 import {Confetti, useToast} from "@uva-fnwi/datanose-ui";
 
-import {ErrorModal} from "~/components/ErrorModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {
     clearRedirectUrl,
@@ -60,13 +59,7 @@ function EffectsWrapper() {
     }, [dispatch, l, toast, workflowToast]);
 
     return (
-        <>
-            <Confetti
-                isActive={!!showConfetti}
-                onComplete={() => dispatch(setShowConfetti(false))}
-            />
-            <ErrorModal />
-        </>
+        <Confetti isActive={!!showConfetti} onComplete={() => dispatch(setShowConfetti(false))} />
     );
 }
 

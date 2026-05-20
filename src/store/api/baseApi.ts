@@ -4,7 +4,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {VITE_WEBAPI_URL} from "../../helpers/Environment";
 import {selectAccessToken, selectImpersonationToken} from "../authSlice";
 import type {RootState} from "../store";
-import {openErrorModal} from "~/store/ErrorModalSlice.ts";
+import {triggerApiError} from "~/store/errorSlice.ts";
 
 const rawBaseQuery = fetchBaseQuery({
     baseUrl: VITE_WEBAPI_URL,
@@ -24,7 +24,8 @@ export const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOp
     const result = await rawBaseQuery(args, api, extraOptions);
 
     if (result.error) {
-        api.dispatch(openErrorModal("An unexpected error occurred. Please try again later."));
+        const data = result.error.data as {code?: number} | undefined;
+        api.dispatch(triggerApiError(data?.code ?? -1));
     }
 
     return result;
