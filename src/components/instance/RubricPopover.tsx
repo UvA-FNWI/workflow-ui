@@ -8,30 +8,9 @@ import {
     type PopoverState,
     Text,
 } from "@uva-fnwi/datanose-ui";
-import {cva} from "class-variance-authority";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
-
-const listItemStyleGenerator = cva(
-    "flex min-h-8 flex-1 items-center justify-center text-sm text-white hover:bg-red-brand focus:ring-offset-1",
-    {
-        variants: {
-            isSelected: {
-                true: "bg-black",
-                false: "bg-red-600",
-            },
-            isLastItem: {
-                true: "border-b-0",
-                false: "border-b border-grey-200",
-            },
-        },
-        defaultVariants: {
-            isSelected: false,
-            isLastItem: false,
-        },
-    },
-);
 
 interface RubricPopoverProps {
     rubrics: RubricEntry[];
@@ -105,15 +84,15 @@ export function RubricPopover({
                                                 index === rubrics.length - 1 &&
                                                 i === rubricEntry.grades.length - 1;
 
+                                            const listItemClasses = `flex min-h-8 flex-1 items-center justify-center text-sm text-white hover:bg-red-brand 
+                                            focus:ring-offset-1 border-grey-200 ${isSelected ? "bg-black" : "bg-red-600"} ${isLastItem ? "border-b-0" : "border-b"}`;
+
                                             return (
                                                 <ListBoxItem
                                                     key={globalIndex}
                                                     item={item}
                                                     state={listState}
-                                                    className={listItemStyleGenerator({
-                                                        isSelected,
-                                                        isLastItem,
-                                                    })}
+                                                    className={listItemClasses}
                                                 >
                                                     {grade}
                                                 </ListBoxItem>
