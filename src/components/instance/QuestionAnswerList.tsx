@@ -58,7 +58,12 @@ export const QuestionAnswerList = ({
                         const {answer} = pair;
                         const formattedValue =
                             answer != null
-                                ? formatAnswer(answer.value, question.type, i18n.language)
+                                ? formatAnswer(
+                                      answer.value,
+                                      question.type,
+                                      i18n.language,
+                                      question.choices,
+                                  )
                                 : noAnswerText;
 
                         return question.type === "File" && answer != null ? (
