@@ -37,11 +37,11 @@ const getSelectedItemNames = (selected: Selection) =>
         .map(id => sampleItems.find(item => item.id === id)?.name)
         .join(', ');
 
-const InteractiveListBox = (args: any) => {
+const InteractiveListBox = ({ intent, className, ...args }: any) => {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
   return (
-    <div className="max-w-md">
+    <div className="ui:max-w-md">
       <ListBox
         {...args}
         selectedKeys={selectedKeys}
@@ -51,7 +51,13 @@ const InteractiveListBox = (args: any) => {
           [...state.collection].map(item => {
             const value = item.value as ListItem;
             return (
-              <ListBoxItem key={item.key} item={item} state={state}>
+              <ListBoxItem
+                key={item.key}
+                item={item}
+                state={state}
+                intent={intent}
+                className={className}
+              >
                 <div className="ui:flex ui:items-center ui:gap-2">
                   <span className="ui:flex-1 ui:truncate">{value.name}</span>
                   {value.description && (
@@ -141,4 +147,15 @@ const DisabledItemsComponent = () => {
 
 export const DisabledItems: Story = {
   render: DisabledItemsComponent,
+};
+
+export const DangerSelectionVariant: Story = {
+  render: InteractiveListBox,
+  args: {
+    items: sampleItems,
+    selectionMode: 'single',
+    'aria-label': 'Select a danger item',
+    ...({ intent: 'danger' } as any),
+    ...({ className: 'ui:border-b ui:border-grey-200' } as any),
+  },
 };
