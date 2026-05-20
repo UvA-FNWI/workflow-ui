@@ -28,8 +28,10 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose}>
-            <Modal.Header>{l(submission?.form.title)}</Modal.Header>
-            <Modal.Body>
+            <Modal.Header className="pb-0 text-2xl font-semibold">
+                {l(submission?.form.title)}
+            </Modal.Header>
+            <Modal.Body className="mt-2 text-lg">
                 {submission && (
                     <PageControl
                         showTitle={false}
@@ -45,8 +47,9 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
                     submission={submission}
                     disabled={!isPageComplete(submission.form.pages[0], submission)}
                     onSubmit={onClose}
+                    size="large"
                 />
-                <Button intent="secondary" onClick={onClose}>
+                <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
                     {t("cancel")}
                 </Button>
             </Modal.Footer>

@@ -1,4 +1,4 @@
-import {Card, Heading, Separator, Skeleton, Text} from "@uva-fnwi/datanose-ui";
+import {Card, Heading, Separator, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {WorkflowProgressBar} from "~/components/WorkflowProgressBar";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -28,19 +28,17 @@ export function ProgressCard({isLoading, isStudent, steps, currentStep}: Progres
                     </>
                 ) : (
                     <>
-                        <Heading as="h2">{t("progress.title")}</Heading>
-                        <Separator />
-                        <div className="flex flex-col items-center gap-8 md:flex-row">
-                            <Text className="whitespace-nowrap">
+                        <div className="flex flex-col gap-4">
+                            <Heading as="h2">
                                 {t(
                                     isStudent
-                                        ? "progress.labelStudent"
-                                        : "progress.labelSupervisor",
+                                        ? "progress.titleStudent"
+                                        : "progress.titleSupervisor",
                                 )}
-                                :
-                            </Text>
-                            <WorkflowProgressBar steps={steps} currentStep={currentStep} />
+                            </Heading>
+                            <Separator className="mt-2" />
                         </div>
+                        <WorkflowProgressBar steps={steps} currentStep={currentStep} />
                     </>
                 )}
             </div>

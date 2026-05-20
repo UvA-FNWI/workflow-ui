@@ -34,6 +34,7 @@ const buttonClassGenerator = cva(
       width: {
         full: 'ui:w-full',
         regular: 'ui:w-auto',
+        none: '',
       },
     },
     compoundVariants: [
@@ -41,12 +42,12 @@ const buttonClassGenerator = cva(
       {
         intent: ['primary', 'secondary'],
         className:
-          'ui:disabled:border-grey-300 ui:disabled:bg-grey-300 ui:disabled:text-grey-600 ui:dark:disabled:border-grey-700 ui:dark:disabled:bg-grey-700 ui:dark:disabled:text-grey-400',
+          'ui:disabled:border-grey-400 ui:disabled:bg-grey-400 ui:disabled:text-grey-700 ui:dark:disabled:border-grey-700 ui:dark:disabled:bg-grey-700 ui:dark:disabled:text-grey-400',
       },
       {
         intent: 'ghost',
         className:
-          'ui:disabled:bg-transparent ui:disabled:text-grey-600 ui:dark:disabled:text-grey-400',
+          'ui:disabled:bg-transparent ui:disabled:text-grey-700 ui:dark:disabled:text-grey-400',
       },
 
       // Default primary
@@ -113,7 +114,7 @@ export interface ButtonProps
   isLoading?: boolean;
   loadingText?: ReactNode;
   type?: 'button' | 'submit' | 'reset';
-  width?: 'full' | 'regular';
+  width?: 'full' | 'regular' | 'none';
 
   // Icons
   leftIcon?: ReactNode;
@@ -178,9 +179,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             isLoading && loadingText && 'ui:hidden'
           )}
         >
-          <div className="ui:flex ui:items-center ui:gap-1">
+          <div className="ui:flex ui:min-w-0 ui:items-center ui:gap-1">
             {leftIcon && <span className="ui:mr-1">{leftIcon}</span>}
-            {children}
+            <span className="ui:min-w-0 ui:truncate">{children}</span>
           </div>
 
           {rightIcon && <span>{rightIcon}</span>}

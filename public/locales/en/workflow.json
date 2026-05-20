@@ -8,7 +8,6 @@
   },
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
-  "close": "Close",
   "confirm": "Confirm",
   "continue": "Continue",
   "email": "Email address",
@@ -27,7 +26,7 @@
     "error_max_file_size": "File exceeds maximum size of {{size}}",
     "error_remove_failed": " Failed to remove file. Please try again.",
     "error_upload_failed": "Failed to upload file. Please try again.",
-    "max_file_size": "Max. {{size}} per file",
+    "max_file_size": "Maximum {{size}} per file.",
     "no_file_uploaded": "No file uploaded",
     "removed_success": "File removed",
     "upload_file": "Upload file",
@@ -35,13 +34,12 @@
   },
   "go_back": "Go back",
   "good_to_know": {
+    "show_all": "Show all",
+    "show_less": "Show less",
     "title_one": "Handy during your thesis",
     "title_other": "[{{count}}x] Handy during your thesis"
   },
   "home": "Home",
-  "how_to_choose_a_subject": {
-    "title": "How to choose a subject"
-  },
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
@@ -57,14 +55,15 @@
     "workflowInstance": "Workflow Instance"
   },
   "name": "Name",
-  "optional": "(optional)",
+  "optional": "* Not required",
   "progress": {
+    "completed": "Completed",
     "deadline": "Deadline",
-    "labelStudent": "Here's where you are in the process",
-    "labelSupervisor": "This is how far the student is",
-    "title": "Progress"
+    "titleStudent": "Your progress",
+    "titleSupervisor": "Student's progress"
   },
   "screens": {
+    "actions": "Actions",
     "students": "Students"
   },
   "search_and_select": {
@@ -95,6 +94,6 @@
   },
   "version_card": {
     "no_answer": "No answer provided",
-    "version_nr": "Version #{{versionNumber}}"
+    "version_nr": "Version {{versionNumber}}"
   }
 }

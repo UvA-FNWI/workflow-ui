@@ -3,31 +3,37 @@ import {Disclosure, Heading, Text} from "@uva-fnwi/datanose-ui";
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {WorkflowStepVersion} from "~/store/api/types/instances";
-import {formatDate} from "~/utils/formatDate.ts";
+import {formatDateShort} from "~/utils/formatDate.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     version: WorkflowStepVersion;
     instanceId: string;
+    isExpandedByDefault?: boolean;
 };
 
-export const VersionCard = ({version, instanceId}: Props) => {
+export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
     return (
-        <Disclosure key={version.versionNumber}>
-            <Disclosure.Header>
-                <div className="flex w-full items-center justify-between">
-                    <Heading>
+        <Disclosure
+            key={version.versionNumber}
+            border="none"
+            shadow="none"
+            defaultExpanded={isExpandedByDefault}
+        >
+            <Disclosure.Header nested={true}>
+                <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading fontType="heading" className="text-lg font-semibold">
                         {t("version_card.version_nr", {versionNumber: version.versionNumber})}
                     </Heading>
                     <Text as="span">
                         <Text fontWeight="semibold">{t("status.submitted")}:</Text>{" "}
-                        {formatDate(version.submittedAt, i18n.language)}
+                        {formatDateShort(version.submittedAt, i18n.language)}
                     </Text>
                 </div>
             </Disclosure.Header>
-            <Disclosure.Content>
+            <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
                 <div className="flex flex-col gap-6">
                     {version.submissions.map((submission) => (

@@ -16,7 +16,7 @@ import { Icon } from '../Icon';
 import { Separator } from '../Separator/Separator';
 
 const disclosureVariants = cva(
-  'ui:rounded-lg ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
+  'ui:rounded-xs ui:bg-white ui:transition-colors ui:dark:bg-grey-800',
   {
     variants: {
       padding: {
@@ -171,6 +171,7 @@ const DisclosureHeader = (
   props: HTMLAttributes<HTMLButtonElement> & {
     children: ReactNode;
     showChevron?: boolean;
+    nested?: boolean;
     ref?: React.Ref<HTMLButtonElement>;
   }
 ) => {
@@ -178,6 +179,7 @@ const DisclosureHeader = (
     children,
     className,
     showChevron = true,
+    nested = false,
     onClick,
     ref,
     ...restProps
@@ -190,8 +192,16 @@ const DisclosureHeader = (
     onClick?.(e);
   };
 
+  const openedIcon = nested ? 'minus-small-line' : 'chevron-up-line';
+  const closedIcon = nested ? 'plus-small-line' : 'chevron-down-line';
+
   return (
-    <div className="ui:flex ui:w-full ui:flex-col ui:gap-4 ui:px-6 ui:py-4">
+    <div
+      className={cn(
+        'ui:flex ui:w-full ui:flex-col',
+        nested ? 'ui:px-0 ui:py-4' : 'ui:px-6 ui:py-6'
+      )}
+    >
       <button
         {...buttonProps}
         ref={ref || buttonRef}
@@ -201,6 +211,7 @@ const DisclosureHeader = (
         className={cn(
           'ui:flex ui:w-full ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
           'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
+          isDisabled ? 'ui:cursor-not-allowed' : 'ui:cursor-pointer',
           className
         )}
         {...restProps}
@@ -208,14 +219,13 @@ const DisclosureHeader = (
         <div className="ui:flex-1">{children}</div>
         {showChevron && (
           <Icon
-            name={state.isExpanded ? 'chevron-up-line' : 'chevron-down-line'}
+            name={state.isExpanded ? openedIcon : closedIcon}
             size="sm"
             color="primary"
             className="ui:transition-transform ui:duration-200"
           />
         )}
       </button>
-      {state.isExpanded && <Separator />}
     </div>
   );
 };
@@ -233,7 +243,7 @@ const DisclosureContent = (
   const { state, panelRef, panelProps } = useDisclosureContext();
 
   const paddingClasses = {
-    none: 'ui:p-0',
+    none: 'ui:px-0 ui:py-2',
     sm: 'ui:px-6 ui:pb-4',
     md: 'ui:px-6 ui:pb-6',
     lg: 'ui:px-6 ui:pb-8',
@@ -245,12 +255,17 @@ const DisclosureContent = (
       ref={ref || panelRef}
       className={cn(
         state.isExpanded && paddingClasses[padding],
-        'ui:text-grey-900 ui:dark:text-white',
+        'ui:py-0 ui:text-grey-900 ui:dark:text-white',
         className
       )}
       {...restProps}
     >
-      {children}
+      <Separator />
+      <div
+        className={cn(state.isExpanded && paddingClasses[padding], 'ui:px-0')}
+      >
+        {children}
+      </div>
     </div>
   );
 };

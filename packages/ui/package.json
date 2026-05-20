@@ -5,6 +5,7 @@
   "main": "dist/datanose-ui.umd.js",
   "module": "dist/datanose-ui.es.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/UvA-FNWI/workflow-ui",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
