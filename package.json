@@ -28,6 +28,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@uva-fnwi/datanose-core": "workspace:*",
+    "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
     "i18next": "^25.10.10",
     "i18next-browser-languagedetector": "^8.2.1",
