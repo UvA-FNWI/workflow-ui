@@ -45,13 +45,15 @@ function TemporaryNavbar() {
                 </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
-                <Button
-                    intent="secondary"
-                    onClick={() => setIsCreateInstanceOpen(true)}
-                    type="button"
-                >
-                    {t("create_instance")}
-                </Button>
+                {isAuthenticated && (
+                    <Button
+                        intent="secondary"
+                        onClick={() => setIsCreateInstanceOpen(true)}
+                        type="button"
+                    >
+                        {t("create_instance")}
+                    </Button>
+                )}
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
                     {/* Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode */}
                     {resolvedTheme === "light" ? (
