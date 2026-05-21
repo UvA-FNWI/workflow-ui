@@ -1,7 +1,9 @@
 {
-  "error_modal": {
-    "title": "Er is een fout opgetreden",
-    "message": "Neem contact op met een beheerder via milestones@uva.nl."
+  "errors": {
+    "error_title": "Er is een fout opgetreden",
+    "error_message": "Neem contact op met een beheerder via milestones@uva.nl.",
+    "warning_title": "Er is iets mis gegaan",
+    "warning_message": "Het formulier is succesvol ingeleverd, maar een achtergrondtaak is mislukt. Neem contact op met een beheerder via milestones@uva.nl."
   },
   "language": "Taal",
   "language_en": "Engels",

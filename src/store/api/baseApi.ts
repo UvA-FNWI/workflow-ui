@@ -1,10 +1,15 @@
-import type {BaseQueryFn} from "@reduxjs/toolkit/query";
+import type {
+    BaseQueryFn,
+    FetchBaseQueryError,
+    FetchBaseQueryMeta,
+    QueryReturnValue,
+} from "@reduxjs/toolkit/query";
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 import {VITE_WEBAPI_URL} from "../../helpers/Environment";
 import {selectAccessToken, selectImpersonationToken} from "../authSlice";
 import type {RootState} from "../store";
-import {triggerApiError} from "~/store/errorSlice.ts";
+import {type ApiErrorState, triggerApiError} from "~/store/errorSlice.ts";
 
 const rawBaseQuery = fetchBaseQuery({
     baseUrl: VITE_WEBAPI_URL,
@@ -24,8 +29,7 @@ export const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOp
     const result = await rawBaseQuery(args, api, extraOptions);
 
     if (result.error) {
-        const errorCode = typeof result.error.status === "number" ? result.error.status : -1;
-        api.dispatch(triggerApiError(errorCode));
+        api.dispatch(triggerApiError(getErrorData(result)));
     }
 
     return result;
@@ -37,3 +41,30 @@ export const baseApi = createApi({
     tagTypes: ["Workflow", "Instance", "Submission", "Assessments"],
     endpoints: () => ({}),
 });
+
+function getErrorData(
+    result: QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>,
+): ApiErrorState {
+    const url = result.meta?.request?.url ?? "";
+
+    const instanceId = (() => {
+        try {
+            return new URL(url).pathname.split("/").filter(Boolean).at(1);
+        } catch {
+            return undefined;
+        }
+    })();
+
+    const errorCode = typeof result.error?.status === "number" ? result.error.status : -1;
+    const data = result.error?.data;
+    const errorMessage: string =
+        typeof data === "object" && data !== null && "error" in data
+            ? (data.error as string)
+            : "Unknown error";
+
+    return {
+        code: errorCode,
+        message: errorMessage,
+        instanceId,
+    };
+}

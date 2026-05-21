@@ -1,7 +1,9 @@
 {
-  "error_modal": {
-    "title": "An error has occurred",
-    "message": "Contact an administrator at milestones@uva.nl."
+  "errors": {
+    "error_title": "An error has occurred",
+    "error_message": "Contact an administrator at milestones@uva.nl.",
+    "warning_title": "Something went wrong",
+    "warning_message": "The form was submitted successfully, but a background task has failed. Contact an administrator at milestones@uva.nl."
   },
   "language": "Language",
   "language_en": "English",
