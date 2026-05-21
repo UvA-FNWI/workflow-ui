@@ -7,6 +7,7 @@ const initialState: EffectResult = {
     redirectUrl: undefined,
     showConfetti: false,
     toast: undefined,
+    error: undefined,
 };
 
 const effectsSlice = createSlice({

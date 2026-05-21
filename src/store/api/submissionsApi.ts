@@ -3,6 +3,7 @@ import {baseApi} from "./baseApi";
 import type {Submission} from "./types/submissions";
 import {instancesApi} from "~/store/api/instancesApi.ts";
 import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
+import {triggerApiError} from "~/store/errorSlice.ts";
 
 type SubmissionParams = {instanceId: string; submissionId: string};
 
@@ -38,6 +39,16 @@ export const submissionsApi = baseApi.injectEndpoints({
 
                 if (data.effectResult) {
                     dispatch(applyEffectResult(data.effectResult));
+
+                    if (data.effectResult.error) {
+                        dispatch(
+                            triggerApiError({
+                                code: data.effectResult.error.code,
+                                message: data.effectResult.error.message,
+                                instanceId: params.instanceId,
+                            }),
+                        );
+                    }
                 }
             },
         }),

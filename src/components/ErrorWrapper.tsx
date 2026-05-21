@@ -17,7 +17,7 @@ export const ErrorWrapper = () => {
     useEffect(() => {
         if (code === 0) return;
 
-        if (code === 500 && message === "Job failed") {
+        if (code === 500 && message === "An external job effect failed") {
             toast.warning(t("errors.warning_message"), {
                 title: t("errors.warning_title"),
             });

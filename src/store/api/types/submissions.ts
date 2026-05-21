@@ -8,10 +8,16 @@ export type Submission = {
     form: Form;
 };
 
+export type EffectError = {
+    code: number;
+    message: string;
+};
+
 export type EffectResult = {
     redirectUrl?: string;
     showConfetti?: boolean;
     toast?: ToastEffect;
+    error?: EffectError;
 };
 
 export type ToastEffect = {
