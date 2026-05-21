@@ -24,3 +24,5 @@ export const {
     VITE_AUTH_CLIENT_ID,
     VITE_AUTH_LOGOUT_URL,
 } = env;
+
+export const IS_PRODUCTION_ENV = VITE_ENV?.toLowerCase() === "production";

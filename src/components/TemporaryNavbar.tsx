@@ -4,7 +4,7 @@ import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
 import {Button, useTheme} from "@uva-fnwi/datanose-ui";
 
-import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
+import {IS_PRODUCTION_ENV, VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
 import {selectCurrentUser} from "~/store/authSlice";
 import {useAppSelector} from "~/store/store";
@@ -38,9 +38,11 @@ function TemporaryNavbar() {
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
                 <p className="text-base font-semibold">Workflow UI</p>
-                <p className="text-xs text-grey-700 dark:text-grey-300">
-                    {VITE_ENV} | {VITE_WEBAPI_URL}
-                </p>
+                {!IS_PRODUCTION_ENV && (
+                    <p className="text-xs text-grey-700 dark:text-grey-300">
+                        {VITE_ENV} | {VITE_WEBAPI_URL}
+                    </p>
+                )}
             </div>
             <div className="flex flex-wrap items-center gap-4">
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
