@@ -1,10 +1,11 @@
-import {type ChangeEvent, useEffect} from "react";
+import {type ChangeEvent, useEffect, useState} from "react";
 
 import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
-import {Button, useTheme} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, useTheme} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
+import {CreateWorkflowInstanceModal} from "./instance/CreateWorkflowInstanceModal";
 import {useTranslate} from "~/hooks/useTranslate";
 import {selectCurrentUser} from "~/store/authSlice";
 import {useAppSelector} from "~/store/store";
@@ -13,6 +14,7 @@ type Language = "en" | "nl";
 
 // Temporary navbar for quick theme & language switching during development.
 function TemporaryNavbar() {
+    const [isCreateInstanceOpen, setIsCreateInstanceOpen] = useState(false);
     const {resolvedTheme, setTheme} = useTheme();
     const {i18n, t} = useTranslate("common");
     const {isAuthenticated, surfLogout} = useAuth();
@@ -43,8 +45,20 @@ function TemporaryNavbar() {
                 </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
+                <Button
+                    intent="secondary"
+                    onClick={() => setIsCreateInstanceOpen(true)}
+                    type="button"
+                >
+                    {t("create_instance")}
+                </Button>
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
-                    Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode
+                    {/* Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode */}
+                    {resolvedTheme === "light" ? (
+                        <Icon name="moon-line" color="current" />
+                    ) : (
+                        <Icon name="sun-line" color="current" />
+                    )}
                 </Button>
                 <label
                     className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200"
@@ -73,6 +87,10 @@ function TemporaryNavbar() {
                     </Button>
                 )}
             </div>
+            <CreateWorkflowInstanceModal
+                isOpen={isCreateInstanceOpen}
+                onOpenChange={setIsCreateInstanceOpen}
+            />
         </nav>
     );
 }

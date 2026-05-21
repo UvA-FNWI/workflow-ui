@@ -1,5 +1,6 @@
 import {setImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
+import type {CreateWorkflowInstanceParams} from "./types/definitions";
 import type {ImpersonationResult, WorkflowInstance} from "./types/instances";
 import type {ImpersonationRole} from "./types/submissions";
 
@@ -16,6 +17,14 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getImpersonationRoles: builder.query<ImpersonationRole[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/roles`,
+        }),
+        createWorkflowInstance: builder.mutation<WorkflowInstance, CreateWorkflowInstanceParams>({
+            query: (body) => ({
+                url: "/WorkflowInstances",
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: ["Instance"],
         }),
         impersonateRole: builder.mutation<
             ImpersonationResult,
