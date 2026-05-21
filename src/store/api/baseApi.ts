@@ -24,8 +24,8 @@ export const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOp
     const result = await rawBaseQuery(args, api, extraOptions);
 
     if (result.error) {
-        const data = result.error.data as {code?: number} | undefined;
-        api.dispatch(triggerApiError(data?.code ?? -1));
+        const errorCode = typeof result.error.status === "number" ? result.error.status : -1;
+        api.dispatch(triggerApiError(errorCode));
     }
 
     return result;
