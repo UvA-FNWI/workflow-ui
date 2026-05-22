@@ -1,13 +1,13 @@
-import {type ChangeEvent, useEffect, useState} from "react";
+import {type ChangeEvent, useCallback, useEffect, useState} from "react";
 
 import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
-import {Button, Icon, useTheme} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, useTheme, useToast} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {CreateWorkflowInstanceModal} from "./instance/CreateWorkflowInstanceModal";
 import {useTranslate} from "~/hooks/useTranslate";
-import {selectCurrentUser} from "~/store/authSlice";
+import {selectAccessToken, selectCurrentUser} from "~/store/authSlice";
 import {useAppSelector} from "~/store/store";
 
 type Language = "en" | "nl";
@@ -18,7 +18,23 @@ function TemporaryNavbar() {
     const {resolvedTheme, setTheme} = useTheme();
     const {i18n, t} = useTranslate("common");
     const {isAuthenticated, surfLogout} = useAuth();
+    const toast = useToast();
     const user = useAppSelector(selectCurrentUser);
+    const accessToken = useAppSelector(selectAccessToken);
+
+    const handleCopyBearerToken = useCallback(async () => {
+        if (!accessToken) {
+            toast.error(t("copy_token_unavailable"));
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(accessToken);
+            toast.success(t("copy_token_success"));
+        } catch {
+            toast.error(t("copy_token_failed"));
+        }
+    }, [accessToken, t, toast]);
     useEffect(() => {
         document.documentElement.setAttribute("lang", i18n.language);
     }, [i18n.language]);
@@ -46,13 +62,24 @@ function TemporaryNavbar() {
             </div>
             <div className="flex flex-wrap items-center gap-4">
                 {isAuthenticated && (
-                    <Button
-                        intent="secondary"
-                        onClick={() => setIsCreateInstanceOpen(true)}
-                        type="button"
-                    >
-                        {t("create_instance")}
-                    </Button>
+                    <>
+                        <Button
+                            intent="secondary"
+                            onClick={() => setIsCreateInstanceOpen(true)}
+                            type="button"
+                        >
+                            {t("create_instance")}
+                        </Button>
+                        <Button
+                            intent="secondary"
+                            onClick={() => handleCopyBearerToken()}
+                            type="button"
+                            aria-label={t("copy_token")}
+                            title={t("copy_token")}
+                        >
+                            <Icon name="copy-line" color="current" />
+                        </Button>
+                    </>
                 )}
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
                     {/* Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode */}
