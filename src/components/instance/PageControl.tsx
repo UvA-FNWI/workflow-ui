@@ -149,32 +149,41 @@ export const PageControl = ({
                                         render={({field}) => {
                                             return (
                                                 <div
-                                                    className={`mb-4 ${showCompact && "flex flex-row justify-between"}`}
+                                                    className={`mb-4 ${showCompact && "flex flex-row items-start justify-between"}`}
                                                 >
-                                                    <div className="flex justify-between">
-                                                        {question.type !== "Boolean" && (
-                                                            <InputLabel key={question.name}>
-                                                                {l(question.text)}
-                                                                {results &&
-                                                                    results.find(
-                                                                        (q) =>
-                                                                            q.questionName ==
-                                                                            question.name,
-                                                                    ) &&
-                                                                    ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
-                                                            </InputLabel>
-                                                        )}
-                                                        {!question.isRequired && (
-                                                            <Text
-                                                                className="text-grey-900 italic"
-                                                                size="sm"
-                                                            >
-                                                                {t("optional")}
-                                                            </Text>
+                                                    <div>
+                                                        <div className="flex justify-between">
+                                                            {question.type !== "Boolean" && (
+                                                                <InputLabel key={question.name}>
+                                                                    {l(question.text)}
+                                                                    {results &&
+                                                                        results.find(
+                                                                            (q) =>
+                                                                                q.questionName ==
+                                                                                question.name,
+                                                                        ) &&
+                                                                        ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
+                                                                </InputLabel>
+                                                            )}
+                                                            {!question.isRequired && (
+                                                                <Text
+                                                                    className="text-grey-900 italic"
+                                                                    size="sm"
+                                                                >
+                                                                    {t("optional")}
+                                                                </Text>
+                                                            )}
+                                                        </div>
+                                                        {question.description && (
+                                                            <div className="mr-2 mb-1 text-sm text-grey-600 dark:text-grey-400">
+                                                                {l(question.description)}
+                                                            </div>
                                                         )}
                                                     </div>
                                                     <div
-                                                        className={showCompact ? "w-24" : "w-full"}
+                                                        className={
+                                                            showCompact ? "w-24 shrink-0" : "w-full"
+                                                        }
                                                     >
                                                         <InputControl
                                                             value={field.value}
@@ -189,7 +198,6 @@ export const PageControl = ({
                                     />
                                 );
                             })}
-
                             {fileQuestions.length > 0 && (
                                 <FileUploadTable
                                     instanceId={instanceId}
