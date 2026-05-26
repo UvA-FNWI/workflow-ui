@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
+import {cn, Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -149,7 +149,11 @@ export const PageControl = ({
                                         render={({field}) => {
                                             return (
                                                 <div
-                                                    className={`mb-4 ${showCompact && "flex flex-row items-start justify-between"}`}
+                                                    className={cn(
+                                                        "mb-4",
+                                                        showCompact &&
+                                                            "flex flex-row items-start justify-between",
+                                                    )}
                                                 >
                                                     <div>
                                                         <div className="flex justify-between">

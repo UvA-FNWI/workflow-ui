@@ -138,3 +138,5 @@ export {
 } from './components/Grid';
 
 export { MarkdownRenderer } from './components/MarkdownRenderer/MarkdownRenderer';
+
+export { cn } from './utils/cn';
