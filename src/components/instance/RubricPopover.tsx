@@ -4,9 +4,9 @@ import {
     ListBox,
     ListBoxItem,
     type ListState,
+    MarkdownRenderer,
     Popover,
     type PopoverState,
-    Text,
 } from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -81,8 +81,6 @@ export function RubricPopover({
 
                                             if (!item) return null;
 
-                                            // const isSelected =
-                                            //     listState.selectionManager.isSelected(grade);
                                             const isLastItem =
                                                 index === rubrics.length - 1 &&
                                                 i === rubricEntry.grades.length - 1;
@@ -103,9 +101,11 @@ export function RubricPopover({
                                     <div
                                         className={`flex-1 border-grey-800 dark:border-grey-200 ${index === rubrics.length - 1 ? "border-b-0" : "border-b"}`}
                                     >
-                                        <Text className="px-2 py-4">
-                                            {l(rubricEntry.description)}
-                                        </Text>
+                                        <div className="px-2 py-2">
+                                            <MarkdownRenderer>
+                                                {l(rubricEntry.description) ?? ""}
+                                            </MarkdownRenderer>
+                                        </div>
                                     </div>
                                 </div>
                             </GridItem>

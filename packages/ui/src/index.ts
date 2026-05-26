@@ -136,3 +136,5 @@ export {
   type GridVariantProps,
   type GridItemProps,
 } from './components/Grid';
+
+export { MarkdownRenderer } from './components/MarkdownRenderer/MarkdownRenderer';
