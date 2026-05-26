@@ -111,6 +111,8 @@ export {
   Item as SelectItem,
   type SelectProps,
   type SelectState,
+  SelectInput,
+  useSelectControl,
 } from './components/Select/Select';
 
 export {

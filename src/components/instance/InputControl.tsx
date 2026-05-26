@@ -13,7 +13,7 @@ import {
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";
-import {RubricSelect} from "~/components/instance/RubricSelect.tsx";
+import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
