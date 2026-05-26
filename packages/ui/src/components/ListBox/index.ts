@@ -1,2 +1,8 @@
-export { ListBox, Item, type ListBoxProps, type ListState } from './ListBox';
-export { ListBoxItem } from './ListBoxItem';
+export {
+  ListBox,
+  ListBoxWrapper,
+  Item,
+  type ListBoxProps,
+  type ListState,
+} from './ListBox';
+export { ListBoxItem, useListBoxItem } from './ListBoxItem';

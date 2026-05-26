@@ -1,20 +1,15 @@
 import { cva } from 'class-variance-authority';
 
 export const selectionVariants = cva(
-  'ui:cursor-pointer ui:transition-colors ui:duration-150 ui:outline-none',
+  'ui:cursor-pointer ui:bg-white ui:transition-colors ui:duration-150 ui:outline-none ui:dark:bg-grey-900',
   {
     variants: {
-      intent: {
-        default:
-          'ui:bg-white ui:text-grey-900 ui:dark:bg-grey-900 ui:dark:text-white',
-        danger: 'ui:bg-red-600 ui:text-white',
-      },
       isSelected: {
-        true: undefined,
-        false: undefined,
+        true: 'ui:bg-grey-300 ui:dark:bg-grey-700',
+        false: 'ui:text-grey-900 ui:dark:text-white',
       },
       isHovered: {
-        true: undefined,
+        true: 'ui:bg-grey-300 ui:dark:bg-grey-700',
         false: undefined,
       },
       isDisabled: {
@@ -26,30 +21,7 @@ export const selectionVariants = cva(
         false: undefined,
       },
     },
-    compoundVariants: [
-      {
-        intent: 'default',
-        isSelected: true,
-        className: 'ui:bg-grey-300 ui:dark:bg-grey-700',
-      },
-      {
-        intent: 'danger',
-        isSelected: true,
-        className: 'ui:bg-black',
-      },
-      {
-        intent: 'default',
-        isHovered: true,
-        className: 'ui:bg-grey-300 ui:dark:bg-grey-700',
-      },
-      {
-        intent: 'danger',
-        isHovered: true,
-        className: 'ui:bg-red-700',
-      },
-    ],
     defaultVariants: {
-      intent: 'default',
       isDisabled: false,
       isFocusVisible: false,
       isHovered: false,

@@ -100,10 +100,12 @@ export {
 
 export {
   ListBox,
+  ListBoxWrapper,
   ListBoxItem,
   Item,
   type ListBoxProps,
   type ListState,
+  useListBoxItem,
 } from './components/ListBox';
 
 export {
