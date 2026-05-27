@@ -39,6 +39,20 @@
     "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
+  "instance": {
+    "calculations": {
+      "average_grade": "Gem. cijfer [{{page}}]:",
+      "final_grade": "Eindcijfer"
+    },
+    "summary": {
+      "edit_page": "Pagina bewerken",
+      "hide_answers": "Verberg onderdelen en toelichting",
+      "no_answer": "Geen antwoord gegeven",
+      "show_answers": "Toon onderdelen en toelichting",
+      "title": "Samenvatting"
+    },
+    "workflowInstance": "Workflow"
+  },
   "jobs": {
     "backToInstance": "Terug naar instance",
     "columns": {
@@ -79,20 +93,6 @@
     },
     "title": "Jobs",
     "viewJobs": "Bekijk jobs"
-  },
-  "instance": {
-    "calculations": {
-      "average_grade": "Gem. cijfer [{{page}}]:",
-      "final_grade": "Eindcijfer"
-    },
-    "summary": {
-      "edit_page": "Pagina bewerken",
-      "hide_answers": "Verberg onderdelen en toelichting",
-      "no_answer": "Geen antwoord gegeven",
-      "show_answers": "Toon onderdelen en toelichting",
-      "title": "Samenvatting"
-    },
-    "workflowInstance": "Workflow"
   },
   "name": "Naam",
   "optional": "* Niet verplicht",
