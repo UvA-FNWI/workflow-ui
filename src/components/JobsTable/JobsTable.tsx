@@ -3,8 +3,8 @@ import {useMemo, useState} from "react";
 import {type ColumnDef} from "@tanstack/react-table";
 import {Pill} from "@uva-fnwi/datanose-ui";
 
+import {JOB_STATUS_VARIANT} from "../../utils/jobsUtils";
 import {JobModal} from "./JobModal";
-import {STATUS_VARIANT} from "./jobsTableUtils";
 import {DataTable} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Job, JobStatus} from "~/store/api/types/jobs";
@@ -34,7 +34,7 @@ export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps)
                 header: () => t("jobs.columns.status"),
                 cell: ({getValue}) => {
                     const status = getValue<JobStatus>();
-                    return <Pill variant={STATUS_VARIANT[status]}>{status}</Pill>;
+                    return <Pill variant={JOB_STATUS_VARIANT[status]}>{status}</Pill>;
                 },
                 enableSorting: true,
             },

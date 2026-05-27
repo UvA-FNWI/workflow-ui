@@ -2,11 +2,11 @@ import {type ReactNode} from "react";
 
 import {Button, Heading, Modal, Pill, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
-import {STATUS_VARIANT} from "./jobsTableUtils";
 import {useTranslate} from "~/hooks/useTranslate";
 import {jobsEndpoints} from "~/store/api/jobsApi";
 import type {Job, JobStep} from "~/store/api/types/jobs";
 import {formatDate} from "~/utils/formatDate";
+import {JOB_STATUS_VARIANT} from "~/utils/jobsUtils";
 
 type JobModalProps = {
     jobId: string | null;
@@ -81,7 +81,7 @@ const JobDetails = ({job, locale}: JobDetailsProps) => {
             <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Property label={t("jobs.modal.properties.id")} value={job.id} />
                 <Property label={t("jobs.modal.properties.status")}>
-                    <Pill variant={STATUS_VARIANT[job.status]}>{job.status}</Pill>
+                    <Pill variant={JOB_STATUS_VARIANT[job.status]}>{job.status}</Pill>
                 </Property>
                 <Property label={t("jobs.modal.properties.sourceType")} value={job.sourceType} />
                 <Property label={t("jobs.modal.properties.sourceName")} value={job.sourceName} />
