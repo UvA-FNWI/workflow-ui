@@ -28,7 +28,7 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       {...mergeProps(optionProps, focusProps, hoverProps)}
       ref={ref}
       className={cn(
-        'ui:flex ui:items-center ui:justify-between ui:gap-2 ui:px-2 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none',
+        'ui:flex ui:items-center ui:justify-between ui:gap-2 ui:border-b ui:border-grey-300 ui:px-2 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none ui:dark:border-grey-700',
         selectionVariants({
           isSelected,
           isHovered,
