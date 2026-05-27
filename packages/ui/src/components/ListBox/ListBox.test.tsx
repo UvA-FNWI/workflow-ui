@@ -4,25 +4,17 @@ import { describe, expect, it } from 'vitest';
 import { Item, ListBox } from './ListBox';
 
 describe('ListBox', () => {
-  type SampleItem = { id: string; name: string };
-
   const sampleItems = [
-    { id: '1', name: 'Item One', textValue: 'Item One' },
-    { id: '2', name: 'Item Two', textValue: 'Item Two' },
-    { id: '3', name: 'Item Three', textValue: 'Item Three' },
+    { id: '1', name: 'Item One' },
+    { id: '2', name: 'Item Two' },
+    { id: '3', name: 'Item Three' },
   ];
-
-  const renderItem = (item: SampleItem) => (
-    <Item key={item.id} textValue={item.name}>
-      {item.name}
-    </Item>
-  );
 
   describe('Basic rendering', () => {
     it('renders with items', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {renderItem}
+          {item => <Item key={item.id}>{item.name}</Item>}
         </ListBox>
       );
 
@@ -34,7 +26,7 @@ describe('ListBox', () => {
     it('renders as list element', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {renderItem}
+          {item => <Item key={item.id}>{item.name}</Item>}
         </ListBox>
       );
 
@@ -49,7 +41,7 @@ describe('ListBox', () => {
           aria-label="Test listbox"
           className="custom-class"
         >
-          {renderItem}
+          {item => <Item key={item.id}>{item.name}</Item>}
         </ListBox>
       );
 
@@ -65,7 +57,7 @@ describe('ListBox', () => {
           selectionMode="single"
           aria-label="Single select"
         >
-          {renderItem}
+          {item => <Item key={item.id}>{item.name}</Item>}
         </ListBox>
       );
 
@@ -80,7 +72,7 @@ describe('ListBox', () => {
           selectionMode="multiple"
           aria-label="Multi select"
         >
-          {renderItem}
+          {item => <Item key={item.id}>{item.name}</Item>}
         </ListBox>
       );
 
@@ -93,7 +85,7 @@ describe('ListBox', () => {
     it('has correct ARIA role', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {renderItem}
+          {item => <Item key={item.id}>{item.name}</Item>}
         </ListBox>
       );
 
@@ -103,7 +95,7 @@ describe('ListBox', () => {
     it('applies aria-label', () => {
       render(
         <ListBox items={sampleItems} aria-label="Test listbox">
-          {renderItem}
+          {item => <Item key={item.id}>{item.name}</Item>}
         </ListBox>
       );
 

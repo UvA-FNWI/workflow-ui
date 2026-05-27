@@ -125,14 +125,3 @@ const DisabledItemsComponent = () => {
 export const DisabledItems: Story = {
   render: DisabledItemsComponent,
 };
-
-export const DangerSelectionVariant: Story = {
-  render: InteractiveListBox,
-  args: {
-    items: sampleItems,
-    selectionMode: 'single',
-    'aria-label': 'Select a danger item',
-    ...({ intent: 'danger' } as any),
-    ...({ className: 'ui:border-b ui:border-grey-200' } as any),
-  },
-};

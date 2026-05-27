@@ -282,7 +282,7 @@ export function Select<
     descriptionProps,
     errorMessageProps,
     hiddenSelectProps,
-    isInvalid,
+    isInvalid: isInvalidFromState,
   } = useSelect<T, M>(
     {
       ...restProps,
@@ -296,7 +296,7 @@ export function Select<
     state,
     triggerRef
   );
-  const invalid = isInvalid || !isValid;
+  const invalid = !isValid || isInvalidFromState;
 
   return (
     <div>
