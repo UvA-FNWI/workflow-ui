@@ -39,6 +39,20 @@
     "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
+  "jobs": {
+    "backToInstance": "Terug naar instance",
+    "columns": {
+      "createdBy": "Aangemaakt door",
+      "executedOn": "Uitgevoerd op",
+      "message": "Bericht",
+      "source": "Bron",
+      "startOn": "Start op",
+      "status": "Status"
+    },
+    "error": "Fout bij laden van jobs",
+    "title": "Jobs",
+    "viewJobs": "Bekijk jobs"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",

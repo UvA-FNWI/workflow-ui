@@ -39,6 +39,20 @@
     "title_other": "[{{count}}x] Handy during your thesis"
   },
   "home": "Home",
+  "jobs": {
+    "backToInstance": "Back to instance",
+    "columns": {
+      "createdBy": "Created by",
+      "executedOn": "Executed on",
+      "message": "Message",
+      "source": "Source",
+      "startOn": "Start on",
+      "status": "Status"
+    },
+    "error": "Error loading jobs",
+    "title": "Jobs",
+    "viewJobs": "View jobs"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",

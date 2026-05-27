@@ -1,19 +1,34 @@
 import {Link} from "react-router";
 
-import {Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
 interface InstanceHeaderProps {
     courseName?: LocalString | string | null;
+    instanceId?: string;
+    canUseAdminTools?: boolean;
     isLoading: boolean;
 }
 
-export function InstanceHeader({courseName, isLoading}: InstanceHeaderProps) {
+export function InstanceHeader({
+    courseName,
+    instanceId,
+    canUseAdminTools = false,
+    isLoading,
+}: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
 
     if (isLoading) {
-        return <Skeleton className="mb-8 h-8 w-48" />;
+        return (
+            <div className="mb-8 flex flex-col gap-2">
+                <Skeleton className="h-4 w-24" />
+                <div className="flex items-center justify-between gap-4">
+                    <Skeleton className="h-8 w-48" />
+                    {canUseAdminTools && <Skeleton className="h-10 w-28" />}
+                </div>
+            </div>
+        );
     }
 
     const displayTitle =
@@ -26,9 +41,18 @@ export function InstanceHeader({courseName, isLoading}: InstanceHeaderProps) {
                 <Icon name="arrow-left-line" size={"xs"} className="mr-1" color={"current"} />
                 {t("home")}
             </Link>
-            <Heading as="h1" size="lg">
-                {displayTitle}
-            </Heading>
+            <div className="flex items-center justify-between gap-4">
+                <Heading as="h1" size="lg">
+                    {displayTitle}
+                </Heading>
+                {canUseAdminTools && instanceId && (
+                    <Link to={`/instance/${instanceId}/jobs`}>
+                        <Button intent="secondary" type="button">
+                            {t("jobs.viewJobs")}
+                        </Button>
+                    </Link>
+                )}
+            </div>
         </div>
     );
 }
