@@ -59,18 +59,12 @@ importers:
       react-i18next:
         specifier: ^16.6.6
         version: 16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3)
-      react-markdown:
-        specifier: ^10.1.0
-        version: 10.1.0(@types/react@19.2.14)(react@19.2.6)
       react-redux:
         specifier: ^9.2.0
         version: 9.2.0(@types/react@19.2.14)(react@19.2.6)(redux@5.0.1)
       react-router:
         specifier: ^7.14.2
         version: 7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      rehype-raw:
-        specifier: ^7.0.0
-        version: 7.0.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.4
@@ -247,9 +241,15 @@ importers:
       react-i18next:
         specifier: ^16.6.6
         version: 16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3)
+      react-markdown:
+        specifier: ^10.1.0
+        version: 10.1.0(@types/react@19.2.14)(react@19.2.6)
       react-stately:
         specifier: ^3.46.0
         version: 3.46.0(react@19.2.6)
+      rehype-raw:
+        specifier: ^7.0.0
+        version: 7.0.0
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.6.0
