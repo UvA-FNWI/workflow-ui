@@ -22,12 +22,12 @@
   },
   "dependencies": {
     "@axe-core/playwright": "^4.11.2",
-    "@uva-fnwi/datanose-ui": "workspace:*",
     "@reduxjs/toolkit": "^2.11.2",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.21.3",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@uva-fnwi/datanose-core": "workspace:*",
+    "@uva-fnwi/datanose-ui": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
     "i18next": "^25.10.10",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/vite": "^4.2.4",
     "@types/express": "^5.0.6",
     "@types/lodash-es": "^4.17.12",
