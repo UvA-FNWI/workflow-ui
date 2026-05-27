@@ -51,6 +51,7 @@
     },
     "error": "Fout bij laden van jobs",
     "modal": {
+      "confirmRunMessage": "Dit zal de job opnieuw in de wachtrij zetten om uit te voeren.",
       "error": "Fout bij laden van jobdetails",
       "no": "Nee",
       "noSteps": "Geen stappen geregistreerd",

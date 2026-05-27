@@ -51,6 +51,7 @@
     },
     "error": "Error loading jobs",
     "modal": {
+      "confirmRunMessage": "This will enqueue the job to run again.",
       "error": "Error loading job details",
       "no": "No",
       "noSteps": "No steps recorded",

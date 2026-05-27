@@ -1,4 +1,4 @@
-import {type ReactNode} from "react";
+import {type ReactNode, useState} from "react";
 
 import {Button, Heading, Modal, Pill, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
@@ -17,6 +17,7 @@ type JobModalProps = {
 
 export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) => {
     const {t, i18n} = useTranslate("workflow");
+    const [isRunConfirmOpen, setIsRunConfirmOpen] = useState(false);
 
     const {
         data: job,
@@ -33,6 +34,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
             return;
         }
         void runJob({jobId, instanceId});
+        setIsRunConfirmOpen(false);
     };
 
     const handleOpenChange = (open: boolean) => {
@@ -44,27 +46,48 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
     const title = job?.sourceName ?? job?.sourceType ?? job?.id ?? t("jobs.modal.title");
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={handleOpenChange} size="xl">
-            <Modal.Header>{title}</Modal.Header>
-            <Modal.Body className="flex flex-col gap-6">
-                {isLoading && <Skeleton className="h-48 w-full" />}
-                {isError && <Text>{t("jobs.modal.error")}</Text>}
-                {job && <JobDetails job={job} locale={i18n.language} />}
-            </Modal.Body>
-            <Modal.Footer>
-                <Button
-                    intent="primary"
-                    size="large"
-                    onClick={handleRun}
-                    disabled={!jobId || job?.status === "Running" || isRunning || isLoading}
-                >
-                    {t("jobs.modal.run")}
-                </Button>
-                <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
-                    {t("cancel")}
-                </Button>
-            </Modal.Footer>
-        </Modal>
+        <>
+            <Modal isOpen={isOpen} onOpenChange={handleOpenChange} size="xl">
+                <Modal.Header>{title}</Modal.Header>
+                <Modal.Body className="flex flex-col gap-6">
+                    {isLoading && <Skeleton className="h-48 w-full" />}
+                    {isError && <Text>{t("jobs.modal.error")}</Text>}
+                    {job && <JobDetails job={job} locale={i18n.language} />}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        intent="primary"
+                        size="large"
+                        onClick={() => setIsRunConfirmOpen(true)}
+                        disabled={!jobId || job?.status === "Running" || isRunning || isLoading}
+                    >
+                        {t("jobs.modal.run")}
+                    </Button>
+                    <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
+                        {t("cancel")}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal isOpen={isRunConfirmOpen} onOpenChange={setIsRunConfirmOpen} size="sm">
+                <Modal.Header>{t("are_you_sure")}</Modal.Header>
+                <Modal.Body>
+                    <Text>{t("jobs.modal.confirmRunMessage")}</Text>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button intent="primary" onClick={handleRun} disabled={isRunning}>
+                        {t("confirm")}
+                    </Button>
+                    <Button
+                        intent="secondary"
+                        variant="destructive"
+                        onClick={() => setIsRunConfirmOpen(false)}
+                    >
+                        {t("cancel")}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 };
 
