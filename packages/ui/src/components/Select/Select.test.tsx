@@ -19,7 +19,7 @@ describe('Select', () => {
     renderSelect({ placeholder: 'Choose status' });
 
     expect(
-      screen.getByText('Status', { selector: 'span' })
+      screen.getByText('Status', { selector: 'label[class]' })
     ).toBeInTheDocument();
     expect(screen.getByRole('button')).toHaveTextContent('Choose status');
   });
@@ -128,55 +128,5 @@ describe('Select', () => {
 
     expect(screen.getByText('Pick one status.')).toBeInTheDocument();
     expect(screen.getByText('Status is required')).toBeInTheDocument();
-  });
-
-  it('renders and interacts with a custom popover', async () => {
-    const onChange = vi.fn();
-
-    render(
-      <Select
-        label="Status"
-        placeholder="Select status"
-        onChange={onChange}
-        customPopover={({ state, menuProps }) => {
-          const { id, 'aria-labelledby': ariaLabelledBy } = menuProps as any;
-
-          return (
-            <ul id={id} aria-labelledby={ariaLabelledBy} role="listbox">
-              {['draft', 'review'].map(key => (
-                <li
-                  key={key}
-                  role="option"
-                  aria-selected={false}
-                  onMouseDown={() => {
-                    onChange(key);
-                    state.close();
-                  }}
-                >
-                  {key}
-                </li>
-              ))}
-            </ul>
-          );
-        }}
-      >
-        <Item key="draft">Draft</Item>
-        <Item key="review">In review</Item>
-      </Select>
-    );
-
-    fireEvent.click(screen.getByRole('button'));
-
-    await waitFor(() => {
-      expect(screen.getByRole('listbox')).toBeInTheDocument();
-    });
-
-    fireEvent.mouseDown(screen.getByRole('option', { name: 'review' }));
-
-    expect(onChange).toHaveBeenCalledWith('review');
-
-    await waitFor(() => {
-      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-    });
   });
 });

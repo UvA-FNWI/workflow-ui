@@ -311,6 +311,7 @@ export function Select<
         valueProps={valueProps}
         className={className}
         placeholder={placeholder}
+        isDisabled={isDisabled}
         isValid={!invalid}
       />
 

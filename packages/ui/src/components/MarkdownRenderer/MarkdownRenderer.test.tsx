@@ -14,14 +14,14 @@ describe('MarkdownRenderer', () => {
       render(<MarkdownRenderer>{'**bold text**'}</MarkdownRenderer>);
       const strong = screen.getByText('bold text');
       expect(strong.tagName).toBe('STRONG');
-      expect(strong).toHaveClass('font-semibold');
+      expect(strong).toHaveClass('ui:font-semibold');
     });
 
     it('renders unordered list', () => {
       render(<MarkdownRenderer>{'- item one\n- item two'}</MarkdownRenderer>);
       const list = screen.getByRole('list');
       expect(list.tagName).toBe('UL');
-      expect(list).toHaveClass('list-disc', 'pl-5', 'my-1');
+      expect(list).toHaveClass('ui:list-disc', 'ui:pl-5', 'ui:my-1');
       expect(screen.getByText('item one')).toBeInTheDocument();
       expect(screen.getByText('item two')).toBeInTheDocument();
     });
@@ -30,7 +30,7 @@ describe('MarkdownRenderer', () => {
       render(<MarkdownRenderer>{'1. first\n2. second'}</MarkdownRenderer>);
       const list = screen.getByRole('list');
       expect(list.tagName).toBe('OL');
-      expect(list).toHaveClass('list-decimal', 'pl-5', 'my-1');
+      expect(list).toHaveClass('ui:list-decimal', 'ui:pl-5', 'ui:my-1');
     });
   });
 
