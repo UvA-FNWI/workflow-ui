@@ -59,9 +59,11 @@ export const StepCard = ({step, instance}: Props) => {
     const deadlineDate = step.deadline ?? null;
 
     const isDisabled =
-        !isCurrentStep &&
-        instance.steps.indexOf(step) >
-            instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
+        instance.currentStep == null
+            ? false
+            : !isCurrentStep &&
+              instance.steps.indexOf(step) >
+                  instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
 
     const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
