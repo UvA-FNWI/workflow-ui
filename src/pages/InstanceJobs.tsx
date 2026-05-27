@@ -6,12 +6,18 @@ import {Card, Container, Heading, Icon, SearchInput, Skeleton} from "@uva-fnwi/d
 
 import {JobsTable} from "~/components/JobsTable";
 import {useTranslate} from "~/hooks/useTranslate";
+import {instancesEndpoints} from "~/store/api/instancesApi";
 import {jobsEndpoints} from "~/store/api/jobsApi";
+import {getLocalStringField} from "~/utils/fieldUtils";
 
 function InstanceJobs() {
     const {id} = useParams<{id: string}>();
-    const {t} = useTranslate(["workflow", "common"]);
+    const {t, l} = useTranslate(["workflow", "common"]);
     const [search, setSearch] = useState("");
+
+    const {data: instance} = instancesEndpoints.getInstance.useQuery(id ?? "", {
+        skip: !id,
+    });
 
     const {
         data: jobs,
@@ -29,6 +35,11 @@ function InstanceJobs() {
         return <div>{t("jobs.error")}</div>;
     }
 
+    const courseName = getLocalStringField(instance?.fields, "Course.Name");
+    const displayTitle =
+        (typeof courseName === "string" ? courseName : l(courseName)) ||
+        t("instance.workflowInstance");
+
     return (
         <Container maxWidth={1280}>
             <div className="mb-8 flex flex-col gap-2">
@@ -37,7 +48,7 @@ function InstanceJobs() {
                     {t("jobs.backToInstance")}
                 </Link>
                 <Heading as="h1" size="lg">
-                    {t("jobs.title")}
+                    {displayTitle} | {t("jobs.title")}
                 </Heading>
             </div>
             <Card>
@@ -52,7 +63,7 @@ function InstanceJobs() {
                 {isLoading ? (
                     <Skeleton className="h-64 w-full" />
                 ) : (
-                    <JobsTable jobs={jobs ?? []} globalFilter={search} />
+                    <JobsTable jobs={jobs ?? []} instanceId={id} globalFilter={search} />
                 )}
             </Card>
         </Container>

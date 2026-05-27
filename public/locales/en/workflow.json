@@ -50,6 +50,32 @@
       "status": "Status"
     },
     "error": "Error loading jobs",
+    "modal": {
+      "error": "Error loading job details",
+      "no": "No",
+      "noSteps": "No steps recorded",
+      "properties": {
+        "claimedUntil": "Claimed until",
+        "createdBy": "Created by",
+        "executedOn": "Executed on",
+        "id": "ID",
+        "instanceId": "Instance ID",
+        "isSynchronous": "Synchronous",
+        "message": "Message",
+        "sourceName": "Source name",
+        "sourceType": "Source type",
+        "startOn": "Start on",
+        "status": "Status",
+        "workerGroup": "Worker group"
+      },
+      "run": "Run",
+      "stepMessage": "Message",
+      "stepNumber": "Step {{number}}",
+      "stepOutputs": "Outputs",
+      "steps": "Steps",
+      "title": "Job",
+      "yes": "Yes"
+    },
     "title": "Jobs",
     "viewJobs": "View jobs"
   },

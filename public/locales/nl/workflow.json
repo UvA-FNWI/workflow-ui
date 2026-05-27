@@ -50,6 +50,32 @@
       "status": "Status"
     },
     "error": "Fout bij laden van jobs",
+    "modal": {
+      "error": "Fout bij laden van jobdetails",
+      "no": "Nee",
+      "noSteps": "Geen stappen geregistreerd",
+      "properties": {
+        "claimedUntil": "Geclaimd tot",
+        "createdBy": "Aangemaakt door",
+        "executedOn": "Uitgevoerd op",
+        "id": "ID",
+        "instanceId": "Instance ID",
+        "isSynchronous": "Synchroon",
+        "message": "Bericht",
+        "sourceName": "Bronnaam",
+        "sourceType": "Brontype",
+        "startOn": "Start op",
+        "status": "Status",
+        "workerGroup": "Worker group"
+      },
+      "run": "Uitvoeren",
+      "stepMessage": "Bericht",
+      "stepNumber": "Stap {{number}}",
+      "stepOutputs": "Outputs",
+      "steps": "Stappen",
+      "title": "Job",
+      "yes": "Ja"
+    },
     "title": "Jobs",
     "viewJobs": "Bekijk jobs"
   },

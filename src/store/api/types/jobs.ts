@@ -15,6 +15,7 @@ export type Job = {
     sourceName: string | null;
     startOn: string;
     createdBy: string | null;
+    createdByDisplayName: string | null;
     executedOn: string | null;
     status: JobStatus;
     steps: JobStep[] | null;

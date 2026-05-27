@@ -1,8 +1,10 @@
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 
 import {type ColumnDef} from "@tanstack/react-table";
-import {Pill, type PillVariantProps} from "@uva-fnwi/datanose-ui";
+import {Pill} from "@uva-fnwi/datanose-ui";
 
+import {JobModal} from "./JobModal";
+import {STATUS_VARIANT} from "./jobsTableUtils";
 import {DataTable} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Job, JobStatus} from "~/store/api/types/jobs";
@@ -10,18 +12,13 @@ import {formatDate} from "~/utils/formatDate";
 
 type JobsTableProps = {
     jobs: Job[];
+    instanceId: string;
     globalFilter?: string;
 };
 
-const STATUS_VARIANT: Record<JobStatus, PillVariantProps["variant"]> = {
-    Pending: "grey",
-    Running: "orange",
-    Completed: "green",
-    Failed: "red",
-};
-
-export const JobsTable = ({jobs, globalFilter = ""}: JobsTableProps) => {
+export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps) => {
     const {t, i18n} = useTranslate("workflow");
+    const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
     const columns = useMemo<ColumnDef<Job>[]>(
         () => [
@@ -60,7 +57,7 @@ export const JobsTable = ({jobs, globalFilter = ""}: JobsTableProps) => {
             },
             {
                 id: "createdBy",
-                accessorKey: "createdBy",
+                accessorFn: (row) => row.createdByDisplayName ?? row.createdBy,
                 header: () => t("jobs.columns.createdBy"),
                 cell: ({getValue}) => getValue<string | null>() ?? "—",
                 enableSorting: true,
@@ -76,12 +73,27 @@ export const JobsTable = ({jobs, globalFilter = ""}: JobsTableProps) => {
         [i18n.language, t],
     );
 
+    const handleRowClick = (job: Job) => {
+        if (job.id) {
+            setSelectedJobId(job.id);
+        }
+    };
+
     return (
-        <DataTable
-            data={jobs}
-            columns={columns}
-            globalFilter={globalFilter}
-            getRowId={(row) => row.id ?? `${row.sourceType}-${row.startOn}`}
-        />
+        <>
+            <DataTable
+                data={jobs}
+                columns={columns}
+                globalFilter={globalFilter}
+                getRowId={(row) => row.id ?? `${row.sourceType}-${row.startOn}`}
+                onRowClick={handleRowClick}
+            />
+            <JobModal
+                jobId={selectedJobId}
+                instanceId={instanceId}
+                isOpen={selectedJobId !== null}
+                onClose={() => setSelectedJobId(null)}
+            />
+        </>
     );
 };
