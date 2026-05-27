@@ -65,6 +65,9 @@ importers:
       react-router:
         specifier: ^7.14.2
         version: 7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      react-stately:
+        specifier: ^3.46.0
+        version: 3.46.0(react@19.2.6)
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.4
