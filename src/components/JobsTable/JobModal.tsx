@@ -177,16 +177,18 @@ const JobStepCard = ({step, index}: {step: JobStep; index: number}) => {
             </Text>
             {step.message && (
                 <div className="mb-2">
-                    <Text className="text-sm font-medium text-grey-700 dark:text-grey-300">
-                        {t("jobs.modal.stepMessage")}
+                    <Text className="mb-1 text-sm font-medium text-grey-700 dark:text-grey-300">
+                        {t("jobs.modal.stepMessage")}:
                     </Text>
-                    <Text className="text-sm">{step.message}</Text>
+                    <pre className="tmax-h-48 overflow-auto rounded bg-grey-100 p-2 text-xs dark:bg-grey-800">
+                        {step.message}
+                    </pre>
                 </div>
             )}
             {step.outputs && Object.keys(step.outputs).length > 0 && (
                 <div>
                     <Text className="mb-1 text-sm font-medium text-grey-700 dark:text-grey-300">
-                        {t("jobs.modal.stepOutputs")}
+                        {t("jobs.modal.stepOutputs")}:
                     </Text>
                     <pre className="max-h-48 overflow-auto rounded bg-grey-100 p-2 text-xs dark:bg-grey-800">
                         {JSON.stringify(step.outputs, null, 2)}
