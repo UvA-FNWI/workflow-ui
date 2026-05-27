@@ -84,7 +84,9 @@
     "i18next": "^25.10.10",
     "react-aria": "^3.48.0",
     "react-i18next": "^16.6.6",
+    "react-markdown": "^10.1.0",
     "react-stately": "^3.46.0",
+    "rehype-raw": "^7.0.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.4"
   }
