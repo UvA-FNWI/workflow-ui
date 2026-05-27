@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Link, useParams} from "react-router";
+import {Link, Navigate, useParams} from "react-router";
 
 import {Card, Container, Heading, Icon, SearchInput, Skeleton} from "@uva-fnwi/datanose-ui";
 
@@ -15,9 +15,12 @@ function InstanceJobs() {
     const {t, l} = useTranslate(["workflow", "common"]);
     const [search, setSearch] = useState("");
 
-    const {data: instance} = instancesEndpoints.getInstance.useQuery(id ?? "", {
-        skip: !id,
-    });
+    const {data: instance, isLoading: isLoadingInstance} = instancesEndpoints.getInstance.useQuery(
+        id ?? "",
+        {
+            skip: !id,
+        },
+    );
 
     const {
         data: jobs,
@@ -33,6 +36,10 @@ function InstanceJobs() {
 
     if (isError) {
         return <div>{t("jobs.error")}</div>;
+    }
+
+    if (!isLoadingInstance && instance && !instance.canUseAdminTools) {
+        return <Navigate to={`/instance/${id}`} replace />;
     }
 
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
