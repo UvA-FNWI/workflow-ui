@@ -87,6 +87,7 @@ export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps)
                 globalFilter={globalFilter}
                 getRowId={(row) => row.id ?? `${row.sourceType}-${row.startOn}`}
                 onRowClick={handleRowClick}
+                rowClassName="hover:bg-red-50 dark:hover:bg-red-900/20"
             />
             <JobModal
                 jobId={selectedJobId}
