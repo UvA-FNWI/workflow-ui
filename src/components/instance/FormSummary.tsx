@@ -4,7 +4,7 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {FormSummaryAssessment} from "~/components/instance/FormSummaryAssessment.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {FormType, Submission} from "~/store/api/types/submissions.ts";
+import type {FormType, RoleAction, Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -14,6 +14,7 @@ type Props = {
     onSubmit?: () => void;
     formType?: FormType;
     collapseAnswers?: boolean;
+    permissions?: RoleAction[];
 };
 
 export const FormSummary = ({
@@ -22,8 +23,12 @@ export const FormSummary = ({
     onEditPage,
     onSubmit,
     formType = "Normal",
+    permissions,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
+
+    const effectivePermissions = permissions ?? submission.permissions;
+    const canEdit = effectivePermissions.includes("Edit") && submission.dateSubmitted != null;
 
     const hasResults =
         formType === "AssessmentOverview" || submission.form.pages.some((p) => p.hasResults);
@@ -68,6 +73,7 @@ export const FormSummary = ({
                             noAnswerText={t("version_card.no_answer")}
                             instanceId={instanceId}
                             submissionId={submission.id}
+                            canEdit={canEdit}
                         />
                     </div>
                 );

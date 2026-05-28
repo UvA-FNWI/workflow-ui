@@ -45,7 +45,9 @@
       "final_grade": "Eindcijfer"
     },
     "summary": {
+      "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
+      "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "hide_answers": "Verberg onderdelen en toelichting",
       "no_answer": "Geen antwoord gegeven",
       "show_answers": "Toon onderdelen en toelichting",
@@ -80,6 +82,7 @@
     "noStudentInfo": "Geen studentinformatie beschikbaar",
     "student": "Student"
   },
+  "save": "Opslaan",
   "submit": "Indienen",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",

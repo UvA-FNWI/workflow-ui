@@ -45,7 +45,9 @@
       "final_grade": "Final grade"
     },
     "summary": {
+      "edit_answer": "Edit answer",
       "edit_page": "Edit page",
+      "save_error": "Failed to save. Please try again.",
       "hide_answers": "Hide parts and explanations",
       "no_answer": "No answer provided",
       "show_answers": "Show parts and explanations",
@@ -80,6 +82,7 @@
     "noStudentInfo": "No student information available",
     "student": "Student"
   },
+  "save": "Save",
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
