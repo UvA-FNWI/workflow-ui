@@ -1,8 +1,7 @@
 {
   "errors": {
-    "error_message": "Contact an administrator at milestones@uva.nl.",
+    "contact_message": "Contact an administrator at milestones@uva.nl.",
     "error_title": "An error has occurred",
-    "warning_message": "The form was submitted successfully, but a background task has failed. Contact an administrator at milestones@uva.nl.",
     "warning_title": "Something went wrong"
   },
   "language": "Language",

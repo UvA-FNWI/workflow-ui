@@ -26,6 +26,12 @@ const effectsSlice = createSlice({
             if (action.payload.toast !== undefined) {
                 state.toast = action.payload.toast;
             }
+            if (action.payload.error !== undefined && action.payload.error !== null) {
+                state.error = {
+                    type: "warning",
+                    ...action.payload.error,
+                };
+            }
         },
         setShowConfetti: (state, action: PayloadAction<boolean>) => {
             state.showConfetti = action.payload;
@@ -36,14 +42,17 @@ const effectsSlice = createSlice({
         clearToast: (state) => {
             state.toast = undefined;
         },
+        clearEffectError: (state) => {
+            state.error = undefined;
+        },
     },
 });
 
-export const {applyEffectResult, clearRedirectUrl, clearToast, setShowConfetti} =
+export const {applyEffectResult, clearRedirectUrl, clearToast, clearEffectError, setShowConfetti} =
     effectsSlice.actions;
 
 export const selectRedirectUrl = (state: RootState) => state.effects.redirectUrl;
 export const selectShowConfetti = (state: RootState) => state.effects.showConfetti;
 export const selectToast = (state: RootState) => state.effects.toast;
-
+export const selectEffectError = (state: RootState) => state.effects.error;
 export default effectsSlice.reducer;

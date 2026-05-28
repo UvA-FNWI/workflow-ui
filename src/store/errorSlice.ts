@@ -1,19 +1,27 @@
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 
-export type ApiErrorState = {code: number; message?: string; instanceId?: string};
-const initialState: ApiErrorState = {code: 0, message: undefined, instanceId: undefined};
+import type {ApiErrorState} from "~/store/api/types/returnTypes.ts";
+
+const initialState: ApiErrorState = {
+    type: undefined,
+    code: undefined,
+    message: undefined,
+    instanceId: undefined,
+};
 
 export const errorSlice = createSlice({
     name: "apiError",
     initialState,
     reducers: {
         triggerApiError: (state, action: PayloadAction<ApiErrorState>) => {
+            state.type = action.payload.type;
             state.code = action.payload.code;
             state.message = action.payload.message;
             state.instanceId = action.payload.instanceId;
         },
         resetApiError: (state) => {
-            state.code = 0;
+            state.type = undefined;
+            state.code = undefined;
             state.message = undefined;
             state.instanceId = undefined;
         },

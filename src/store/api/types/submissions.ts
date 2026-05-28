@@ -1,4 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate";
+import type {ApiErrorState} from "~/store/api/types/returnTypes.ts";
 
 export type Submission = {
     id: string;
@@ -8,16 +9,11 @@ export type Submission = {
     form: Form;
 };
 
-export type EffectError = {
-    code: number;
-    message: string;
-};
-
 export type EffectResult = {
     redirectUrl?: string;
     showConfetti?: boolean;
     toast?: ToastEffect;
-    error?: EffectError;
+    error?: ApiErrorState;
 };
 
 export type ToastEffect = {
