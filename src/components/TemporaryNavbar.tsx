@@ -1,41 +1,24 @@
-import {type ChangeEvent, useCallback, useEffect, useState} from "react";
+import {type ChangeEvent, useEffect} from "react";
 
 import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
-import {Button, Icon, useTheme, useToast} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, useTheme} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
-import {CreateWorkflowInstanceModal} from "./instance/CreateWorkflowInstanceModal";
 import {TemporaryNavbarActionsMenu} from "./TemporaryNavbarActionsMenu";
 import {useTranslate} from "~/hooks/useTranslate";
-import {selectAccessToken, selectCurrentUser} from "~/store/authSlice";
+import {selectCurrentUser} from "~/store/authSlice";
 import {useAppSelector} from "~/store/store";
 
 type Language = "en" | "nl";
 
 // Temporary navbar for quick theme & language switching during development.
 function TemporaryNavbar() {
-    const [isCreateInstanceOpen, setIsCreateInstanceOpen] = useState(false);
     const {resolvedTheme, setTheme} = useTheme();
     const {i18n, t} = useTranslate("common");
     const {isAuthenticated, surfLogout} = useAuth();
-    const toast = useToast();
     const user = useAppSelector(selectCurrentUser);
-    const accessToken = useAppSelector(selectAccessToken);
 
-    const handleCopyBearerToken = useCallback(async () => {
-        if (!accessToken) {
-            toast.error(t("copy_token_unavailable"));
-            return;
-        }
-
-        try {
-            await navigator.clipboard.writeText(accessToken);
-            toast.success(t("copy_token_success"));
-        } catch {
-            toast.error(t("copy_token_failed"));
-        }
-    }, [accessToken, t, toast]);
     useEffect(() => {
         document.documentElement.setAttribute("lang", i18n.language);
     }, [i18n.language]);
@@ -62,7 +45,7 @@ function TemporaryNavbar() {
                     {VITE_ENV} |{" "}
                     {VITE_WEBAPI_URL && (
                         <a
-                            href={VITE_WEBAPI_URL}
+                            href={`${VITE_WEBAPI_URL}/swagger`}
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="Open server URL"
@@ -90,15 +73,7 @@ function TemporaryNavbar() {
                         <option value="nl">{t("language_nl")}</option>
                     </select>
                 </label>
-                {isAuthenticated && (
-                    <TemporaryNavbarActionsMenu
-                        isAuthenticated={isAuthenticated}
-                        onCreateInstance={() => setIsCreateInstanceOpen(true)}
-                        onCopyToken={() => {
-                            void handleCopyBearerToken();
-                        }}
-                    />
-                )}
+                {isAuthenticated && <TemporaryNavbarActionsMenu />}
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
                     {resolvedTheme === "light" ? (
                         <Icon name="moon-line" color="current" />
@@ -117,10 +92,6 @@ function TemporaryNavbar() {
                     </Button>
                 )}
             </div>
-            <CreateWorkflowInstanceModal
-                isOpen={isCreateInstanceOpen}
-                onOpenChange={setIsCreateInstanceOpen}
-            />
         </nav>
     );
 }
