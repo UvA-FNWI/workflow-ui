@@ -6,6 +6,7 @@ import {Button, Icon, useTheme, useToast} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {CreateWorkflowInstanceModal} from "./instance/CreateWorkflowInstanceModal";
+import {TemporaryNavbarActionsMenu} from "./TemporaryNavbarActionsMenu";
 import {useTranslate} from "~/hooks/useTranslate";
 import {selectAccessToken, selectCurrentUser} from "~/store/authSlice";
 import {useAppSelector} from "~/store/store";
@@ -39,15 +40,16 @@ function TemporaryNavbar() {
         document.documentElement.setAttribute("lang", i18n.language);
     }, [i18n.language]);
 
+    const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        const newLanguage = event.target.value as Language;
+        i18n.changeLanguage(newLanguage);
+    };
+
     const handleThemeToggle = () => {
         const nextTheme = resolvedTheme === "light" ? "dark" : "light";
         setTheme(nextTheme);
     };
 
-    const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        const newLanguage = event.target.value as Language;
-        i18n.changeLanguage(newLanguage);
-    };
     if (isEmbeddedInCanvas()) {
         return null;
     }
@@ -56,39 +58,22 @@ function TemporaryNavbar() {
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
                 <p className="text-base font-semibold">Workflow UI</p>
-                <p className="text-xs text-grey-700 dark:text-grey-300">
-                    {VITE_ENV} | {VITE_WEBAPI_URL}
+                <p className="flex items-center gap-2 text-xs text-grey-700 dark:text-grey-300">
+                    {VITE_ENV} |{" "}
+                    {VITE_WEBAPI_URL && (
+                        <a
+                            href={VITE_WEBAPI_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Open server URL"
+                            className="inline-flex items-center text-grey-700 hover:text-grey-900 dark:text-grey-300 dark:hover:text-grey-100"
+                        >
+                            {VITE_WEBAPI_URL}
+                        </a>
+                    )}
                 </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
-                {isAuthenticated && (
-                    <>
-                        <Button
-                            intent="secondary"
-                            onClick={() => setIsCreateInstanceOpen(true)}
-                            type="button"
-                        >
-                            {t("create_instance")}
-                        </Button>
-                        <Button
-                            intent="secondary"
-                            onClick={() => handleCopyBearerToken()}
-                            type="button"
-                            aria-label={t("copy_token")}
-                            title={t("copy_token")}
-                        >
-                            <Icon name="copy-line" color="current" />
-                        </Button>
-                    </>
-                )}
-                <Button intent="secondary" onClick={handleThemeToggle} type="button">
-                    {/* Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode */}
-                    {resolvedTheme === "light" ? (
-                        <Icon name="moon-line" color="current" />
-                    ) : (
-                        <Icon name="sun-line" color="current" />
-                    )}
-                </Button>
                 <label
                     className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200"
                     htmlFor="temporary-language-select"
@@ -105,6 +90,22 @@ function TemporaryNavbar() {
                         <option value="nl">{t("language_nl")}</option>
                     </select>
                 </label>
+                {isAuthenticated && (
+                    <TemporaryNavbarActionsMenu
+                        isAuthenticated={isAuthenticated}
+                        onCreateInstance={() => setIsCreateInstanceOpen(true)}
+                        onCopyToken={() => {
+                            void handleCopyBearerToken();
+                        }}
+                    />
+                )}
+                <Button intent="secondary" onClick={handleThemeToggle} type="button">
+                    {resolvedTheme === "light" ? (
+                        <Icon name="moon-line" color="current" />
+                    ) : (
+                        <Icon name="sun-line" color="current" />
+                    )}
+                </Button>
                 {isAuthenticated && (
                     <Button
                         intent="primary"
