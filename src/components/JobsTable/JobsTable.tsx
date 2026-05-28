@@ -1,7 +1,7 @@
 import {useMemo, useState} from "react";
 
 import {type ColumnDef} from "@tanstack/react-table";
-import {Pill} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, linkClassGenerator, Pill} from "@uva-fnwi/datanose-ui";
 
 import {JOB_STATUS_VARIANT} from "../../utils/jobsUtils";
 import {JobModal} from "./JobModal";
@@ -26,6 +26,28 @@ export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps)
                 id: "sourceName",
                 accessorFn: (row) => row.sourceName ?? row.sourceType,
                 header: () => t("jobs.columns.source"),
+                cell: ({row, getValue}) => {
+                    const rowId = row.original.id;
+                    const sourceValue = String(getValue<unknown>());
+
+                    if (!rowId) {
+                        return sourceValue;
+                    }
+
+                    return (
+                        <button
+                            type="button"
+                            onClick={() => setSelectedJobId(rowId)}
+                            className={linkClassGenerator({
+                                intent: "primary",
+                                underline: true,
+                                size: "sm",
+                            })}
+                        >
+                            {sourceValue}
+                        </button>
+                    );
+                },
                 enableSorting: true,
             },
             {
@@ -69,15 +91,33 @@ export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps)
                 cell: ({getValue}) => getValue<string | null>() ?? "—",
                 enableSorting: true,
             },
+            {
+                id: "actions",
+                header: () => <span className="sr-only">{t("screens.actions")}</span>,
+                enableSorting: false,
+                cell: ({row}) => {
+                    const rowId = row.original.id;
+
+                    return (
+                        <div className="flex w-auto justify-end p-0">
+                            <Button
+                                intent="primary"
+                                variant="destructive"
+                                size="square"
+                                width="none"
+                                className="flex items-center justify-center rounded-sm text-white"
+                                onClick={() => rowId && setSelectedJobId(rowId)}
+                                disabled={!rowId}
+                            >
+                                <Icon name="visible-line" color="current" />
+                            </Button>
+                        </div>
+                    );
+                },
+            },
         ],
         [i18n.language, t],
     );
-
-    const handleRowClick = (job: Job) => {
-        if (job.id) {
-            setSelectedJobId(job.id);
-        }
-    };
 
     return (
         <>
@@ -86,8 +126,6 @@ export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps)
                 columns={columns}
                 globalFilter={globalFilter}
                 getRowId={(row) => row.id ?? `${row.sourceType}-${row.startOn}`}
-                onRowClick={handleRowClick}
-                rowClassName="hover:bg-red-50 dark:hover:bg-red-900/20"
             />
             <JobModal
                 jobId={selectedJobId}

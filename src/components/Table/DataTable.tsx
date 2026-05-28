@@ -29,8 +29,6 @@ type DataTableProps<TData> = {
     filterFns?: FilterFns;
     initialSorting?: SortingState;
     onSortingChange?: (sorting: SortingState) => void;
-    onRowClick?: (row: TData) => void;
-    rowClassName?: string;
 };
 
 export function DataTable<TData>({
@@ -42,8 +40,6 @@ export function DataTable<TData>({
     filterFns,
     initialSorting = [],
     onSortingChange,
-    onRowClick,
-    rowClassName = "",
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
@@ -119,10 +115,7 @@ export function DataTable<TData>({
                     {table.getRowModel().rows.map((row) => (
                         <tr
                             key={row.id}
-                            className={`hover:bg-grey-50 border-b border-grey-300 dark:border-grey-600 dark:hover:bg-grey-800 ${
-                                onRowClick ? "cursor-pointer" : ""
-                            } ${rowClassName}`}
-                            onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                            className={`hover:bg-grey-50 border-b border-grey-300 dark:border-grey-600 dark:hover:bg-grey-800`}
                         >
                             {row.getVisibleCells().map((cell) => (
                                 <td key={cell.id} className="px-4 py-2">
