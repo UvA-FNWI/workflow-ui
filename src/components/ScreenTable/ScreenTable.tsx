@@ -1,12 +1,12 @@
 import {useMemo} from "react";
 
-import {Link, useNavigate} from "react-router";
-
 import {type ColumnDef} from "@tanstack/react-table";
 import {Button, Icon, linkClassGenerator} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table";
+import {VersionedLink} from "~/components/VersionedLink";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
+import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
 
 type ScreenTableProps = {
@@ -17,7 +17,7 @@ type ScreenTableProps = {
 
 export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps) => {
     const {i18n, l, t} = useTranslate("workflow");
-    const navigate = useNavigate();
+    const navigate = useVersionedNavigate();
 
     const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(
         () => [
@@ -56,7 +56,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                             if (col.link) {
                                 const rowId = info.row.original.id;
                                 return (
-                                    <Link
+                                    <VersionedLink
                                         to={`/instance/${rowId}`}
                                         className={linkClassGenerator({
                                             intent: "primary",
@@ -65,7 +65,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                                         })}
                                     >
                                         {formattedValue}
-                                    </Link>
+                                    </VersionedLink>
                                 );
                             }
 

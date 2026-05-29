@@ -10,6 +10,14 @@
   "cancel": "Cancel",
   "confirm": "Confirm",
   "continue": "Continue",
+  "develop": {
+    "load_error": "Could not load instances",
+    "loading": "Loading…",
+    "new": "New {{name}}",
+    "no_definitions": "No project types available",
+    "no_instances": "No instances yet",
+    "title": "Develop"
+  },
   "email": "Email address",
   "external_user_add": {
     "back_to_search": "Back to search",

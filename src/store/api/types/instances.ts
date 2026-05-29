@@ -25,6 +25,12 @@ export type WorkflowInstance = {
     viewerRoles: string[];
 };
 
+/**
+ * A row from the instances-list endpoint. Keys are the requested property names (plus "Id"); the
+ * endpoint projects properties on demand, so the shape beyond Id is dynamic.
+ */
+export type InstanceSummary = {Id: string} & Record<string, unknown>;
+
 export type StepHeaderStatus = {
     type: "Info" | "Attention" | "Success";
     label: LocalString;

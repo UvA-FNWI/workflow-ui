@@ -5,6 +5,7 @@ import AuthGuard from "../components/AuthGuard";
 import AuthCallback from "../pages/AuthCallback";
 import CanvasCallback from "../pages/CanvasCallback";
 import Overview from "../pages/Overview";
+import {developRoutes} from "./developRoutes";
 import {instanceRoutes} from "./instanceRoutes";
 import screenRoutes from "./screenRoutes";
 import {workflowRoutes} from "./workflowRoutes";
@@ -34,7 +35,7 @@ const routes: RouteObject[] = [
             {
                 path: "/",
                 element: <App />,
-                children: [...instanceRoutes, ...workflowRoutes, ...screenRoutes],
+                children: [...instanceRoutes, ...workflowRoutes, ...screenRoutes, ...developRoutes],
             },
         ],
     },
