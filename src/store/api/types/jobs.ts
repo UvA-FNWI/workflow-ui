@@ -8,6 +8,11 @@ export type JobStep = {
     outputs: Record<string, unknown> | null;
 };
 
+export type JobParams = {
+    instanceId: string;
+    jobId: string;
+};
+
 export type Job = {
     id: string | null;
     instanceId: string | null;

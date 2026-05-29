@@ -23,9 +23,12 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
         data: job,
         isLoading,
         isError,
-    } = jobsEndpoints.getJob.useQuery(jobId ?? "", {
-        skip: !isOpen || !jobId,
-    });
+    } = jobsEndpoints.getJob.useQuery(
+        {instanceId, jobId: jobId ?? ""},
+        {
+            skip: !isOpen || !jobId,
+        },
+    );
 
     const [runJob, {isLoading: isRunning}] = jobsEndpoints.runJob.useMutation();
 
@@ -33,7 +36,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
         if (!jobId) {
             return;
         }
-        void runJob({jobId, instanceId});
+        void runJob({instanceId, jobId});
         setIsRunConfirmOpen(false);
     };
 
