@@ -52,7 +52,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
         <>
             <Modal isOpen={isOpen} onOpenChange={handleOpenChange} size="xl">
                 <Modal.Header>{title}</Modal.Header>
-                <Modal.Body className="flex flex-col gap-6">
+                <Modal.Body className="flex flex-col gap-6 overflow-auto">
                     {isLoading && <Skeleton className="h-48 w-full" />}
                     {isError && <Text>{t("jobs.modal.error")}</Text>}
                     {job && <JobDetails job={job} locale={i18n.language} />}
