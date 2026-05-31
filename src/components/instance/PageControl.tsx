@@ -2,7 +2,14 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {cn, Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
+import {
+    cn,
+    Heading,
+    InputLabel,
+    LoadingSpinner,
+    MarkdownRenderer,
+    Text,
+} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -180,7 +187,9 @@ export const PageControl = ({
                                                         </div>
                                                         {question.description && (
                                                             <div className="mr-2 mb-1 text-sm text-grey-600 dark:text-grey-400">
-                                                                {l(question.description)}
+                                                                <MarkdownRenderer>
+                                                                    {l(question.description) ?? ""}
+                                                                </MarkdownRenderer>
                                                             </div>
                                                         )}
                                                     </div>
