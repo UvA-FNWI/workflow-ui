@@ -11,8 +11,6 @@ type StaffCardProps = {
 export function StaffCard({relatedUserGroups}: StaffCardProps) {
     const {t, l} = useTranslate("workflow");
 
-    if (relatedUserGroups.length === 0) return;
-
     return (
         <Disclosure>
             <Disclosure.Header>
@@ -24,16 +22,17 @@ export function StaffCard({relatedUserGroups}: StaffCardProps) {
                 </div>
             </Disclosure.Header>
             <Disclosure.Content>
-                {relatedUserGroups.map((group, group_index) => (
-                    <div key={group_index}>
-                        <Heading size="sm" className="mt-4">
-                            {l(group.title)}
-                        </Heading>
-                        {group.users.map((relatedUser, user_index) => (
-                            <RelatedStaffInfo key={user_index} {...relatedUser} />
-                        ))}
-                    </div>
-                ))}
+                {relatedUserGroups.length > 0 &&
+                    relatedUserGroups.map((group, group_index) => (
+                        <div key={group_index}>
+                            <Heading size="sm" className="mt-4">
+                                {l(group.title)}
+                            </Heading>
+                            {group.users.map((relatedUser, user_index) => (
+                                <RelatedStaffInfo key={user_index} {...relatedUser} />
+                            ))}
+                        </div>
+                    ))}
 
                 <div className="flex flex-row items-center gap-1">
                     <Text fontWeight="semibold">{t("staff_card.confidential_advisers")}</Text>

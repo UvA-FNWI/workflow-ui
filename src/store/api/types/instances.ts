@@ -24,7 +24,7 @@ export type WorkflowInstance = {
     permissions: RoleAction[];
     canUseAdminTools: boolean;
     viewerRoles: string[];
-    relatedUsers: RelatedUserGroups;
+    relatedUserGroups: RelatedUserGroups;
 };
 
 export type StepHeaderStatus = {
