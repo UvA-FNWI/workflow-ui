@@ -13,12 +13,6 @@ export type WorkflowInstanceField = {
     value: string | string[] | LocalString | null;
 };
 
-export type StaffMember = {
-    type: "primary" | "support";
-    role: LocalString;
-    user: UserSearchResult;
-};
-
 export type WorkflowInstance = {
     id: string;
     title: LocalString | null;
@@ -30,7 +24,7 @@ export type WorkflowInstance = {
     permissions: RoleAction[];
     canUseAdminTools: boolean;
     viewerRoles: string[];
-    staff: StaffMember[];
+    relatedUsers: RelatedUserGroups;
 };
 
 export type StepHeaderStatus = {
@@ -82,4 +76,19 @@ export type ImpersonationResult = {
     role: ImpersonationRole;
     token: string;
     expiresAtUtc: string;
+};
+
+export type RelatedUser = {
+    title: LocalString;
+    user: UserSearchResult;
+};
+
+export type RelatedUserGroup = {
+    name: string;
+    title: LocalString;
+    users: RelatedUser[];
+};
+
+export type RelatedUserGroups = {
+    groups: RelatedUserGroup[];
 };

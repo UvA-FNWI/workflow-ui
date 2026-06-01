@@ -47,7 +47,7 @@ function Instance() {
                         studentName={studentName}
                         isLoading={isLoading}
                     />
-                    <StaffCard />
+                    <StaffCard relatedUserGroups={instance?.relatedUsers.groups ?? []} />
                     <InfoCards isLoading={isLoading} />
                     {instance?.canUseAdminTools && <AdminCard />}
                 </GridItem>

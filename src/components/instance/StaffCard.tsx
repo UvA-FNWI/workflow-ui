@@ -1,57 +1,16 @@
 import {Button, Disclosure, Heading, Icon, Link, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {StaffMember} from "~/store/api/types/instances.ts";
+import type {RelatedUser, RelatedUserGroup} from "~/store/api/types/instances.ts";
 
-export function StaffCard() {
-    const {t} = useTranslate("workflow");
+type StaffCardProps = {
+    relatedUserGroups: RelatedUserGroup[];
+};
 
-    const dummyStaff: StaffMember[] = [
-        {
-            type: "primary",
-            role: {en: "Supervisor", nl: "Begeleider"},
-            user: {
-                userName: "john.doe",
-                displayName: "John Doe",
-                email: "john.doe@example.com",
-                isExternal: true,
-                organization: {
-                    id: "test",
-                    name: "Test Organization",
-                },
-            },
-        },
-        {
-            type: "primary",
-            role: {en: "Examiner", nl: "Examinator"},
-            user: {
-                userName: "jane.smith",
-                displayName: "Jane Smith",
-                email: "jane.smith@example.com",
-                isExternal: false,
-            },
-        },
-        {
-            type: "support",
-            role: {en: "Thesis Coordinator", nl: "Scriptiecoördinator"},
-            user: {
-                userName: "michael.brown",
-                displayName: "Michael Brown",
-                email: "michael.brown@example.com",
-                isExternal: false,
-            },
-        },
-        {
-            type: "support",
-            role: {en: "Study Advisor", nl: "Studieadviseur"},
-            user: {
-                userName: "emily.johnson",
-                displayName: "Emily Johnson",
-                email: "emily.johnson@example.com",
-                isExternal: false,
-            },
-        },
-    ];
+export function StaffCard({relatedUserGroups}: StaffCardProps) {
+    const {t, l} = useTranslate("workflow");
+
+    if (relatedUserGroups.length === 0) return;
 
     return (
         <Disclosure>
@@ -64,19 +23,17 @@ export function StaffCard() {
                 </div>
             </Disclosure.Header>
             <Disclosure.Content>
-                {dummyStaff
-                    .filter((s) => s.type === "primary")
-                    .map((staffMember, index) => (
-                        <StaffMember key={index} {...staffMember} />
-                    ))}
-                <Heading size="sm" className="mt-4">
-                    {t("staff_card.other_staff")}
-                </Heading>
-                {dummyStaff
-                    .filter((s) => s.type === "support")
-                    .map((staffMember, index) => (
-                        <StaffMember key={index} {...staffMember} />
-                    ))}
+                {relatedUserGroups.map((group, group_index) => (
+                    <div key={group_index}>
+                        <Heading size="sm" className="mt-4">
+                            {l(group.title)}
+                        </Heading>
+                        {group.users.map((relatedUser, user_index) => (
+                            <RelatedStaffInfo key={user_index} {...relatedUser} />
+                        ))}
+                    </div>
+                ))}
+
                 <div className="flex flex-row items-center gap-1">
                     <Text fontWeight="semibold">{t("staff_card.confidential_advisers")}</Text>
                     <Tooltip
@@ -111,7 +68,7 @@ export function StaffCard() {
     );
 }
 
-function StaffMember({user, role}: StaffMember) {
+function RelatedStaffInfo({title, user}: RelatedUser) {
     const {l} = useTranslate("workflow");
     return (
         <div className="flex flex-col py-4">
@@ -120,7 +77,7 @@ function StaffMember({user, role}: StaffMember) {
                     {user.displayName.charAt(0)}
                 </span>
             </div>
-            <Text fontWeight="semibold">{l(role)}</Text>
+            <Text fontWeight="semibold">{l(title)}</Text>
             <Text>{user.displayName}</Text>
             {user.organization && <Text>{user.organization?.name}</Text>}
             <div className="flex flex-row items-end gap-2">
