@@ -32,11 +32,11 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
 
     const [runJob, {isLoading: isRunning}] = jobsEndpoints.runJob.useMutation();
 
-    const handleRun = () => {
+    const handleRun = async () => {
         if (!jobId) {
             return;
         }
-        void runJob({instanceId, jobId});
+        await runJob({instanceId, jobId});
         setIsRunConfirmOpen(false);
         onClose(true);
     };
@@ -67,7 +67,12 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
                     >
                         {t("jobs.modal.run")}
                     </Button>
-                    <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
+                    <Button
+                        intent="secondary"
+                        variant="destructive"
+                        size="large"
+                        onClick={() => onClose(false)}
+                    >
                         {t("cancel")}
                     </Button>
                 </Modal.Footer>
