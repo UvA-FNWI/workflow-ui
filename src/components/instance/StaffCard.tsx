@@ -1,5 +1,6 @@
 import {Button, Disclosure, Heading, Icon, Link, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
+import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RelatedUser, RelatedUserGroup} from "~/store/api/types/instances.ts";
 
@@ -72,11 +73,7 @@ function RelatedStaffInfo({title, user}: RelatedUser) {
     const {l} = useTranslate("workflow");
     return (
         <div className="flex flex-col py-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
-                <span className="text-xl font-medium text-gray-600">
-                    {user.displayName.charAt(0)}
-                </span>
-            </div>
+            <UserAvatar userName={user.displayName} />
             <Text fontWeight="semibold">{l(title)}</Text>
             <Text>{user.displayName}</Text>
             {user.organization && <Text>{user.organization?.name}</Text>}
