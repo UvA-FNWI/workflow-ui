@@ -59,6 +59,7 @@ export const StepCard = ({step, instance}: Props) => {
     const deadlineDate = step.deadline ?? null;
 
     const isDisabled =
+        !!instance.currentStep &&
         !isCurrentStep &&
         instance.steps.indexOf(step) >
             instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
