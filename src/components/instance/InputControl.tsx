@@ -18,7 +18,7 @@ import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
-import type {Answer, Question} from "~/store/api/types/submissions";
+import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
 import type {UserSearchResult} from "~/store/api/types/users";
 
 const toDate = (value: unknown) => {
@@ -133,7 +133,7 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
-        const isChoiceType = (choiceType: string) =>
+        const isChoiceType = (choiceType: ChoiceLayoutType) =>
             question.layout && "type" in question.layout && question.layout.type === choiceType;
         const choices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
