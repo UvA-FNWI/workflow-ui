@@ -14,15 +14,6 @@ interface ProgressCardProps {
 export function ProgressCard({isLoading, isStudent, steps, currentStep}: ProgressCardProps) {
     const {t} = useTranslate("workflow");
 
-    const flattenedSteps = steps.flatMap((step) =>
-        step.children?.length ? [...step.children] : [step],
-    );
-    // Parallel workflows report the active child step as the current step, so the progress bar
-    // needs the flattened child list in that case. For regular workflows the current step still
-    // points at a top-level step, so we keep the original structure to avoid losing parent steps.
-    const progressSteps = flattenedSteps.some((step) => step.id === currentStep)
-        ? flattenedSteps
-        : steps;
     return (
         <Card>
             <div className="flex flex-col gap-4">
@@ -47,7 +38,7 @@ export function ProgressCard({isLoading, isStudent, steps, currentStep}: Progres
                             </Heading>
                             <Separator className="mt-2" />
                         </div>
-                        <WorkflowProgressBar steps={progressSteps} currentStep={currentStep} />
+                        <WorkflowProgressBar steps={steps} currentStep={currentStep} />
                     </>
                 )}
             </div>
