@@ -47,9 +47,9 @@
     "summary": {
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
-      "save_error": "Failed to save. Please try again.",
       "hide_answers": "Hide parts and explanations",
       "no_answer": "No answer provided",
+      "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "title": "Summary"
     },
@@ -63,6 +63,7 @@
     "titleStudent": "Your progress",
     "titleSupervisor": "Student's progress"
   },
+  "save": "Save",
   "screens": {
     "actions": "Actions",
     "students": "Students"
@@ -82,7 +83,6 @@
     "noStudentInfo": "No student information available",
     "student": "Student"
   },
-  "save": "Save",
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
