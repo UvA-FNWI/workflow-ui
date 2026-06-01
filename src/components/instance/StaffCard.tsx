@@ -79,7 +79,18 @@ export function StaffCard() {
                     ))}
                 <div className="flex flex-row items-center gap-1">
                     <Text fontWeight="semibold">{t("staff_card.confidential_advisers")}</Text>
-                    <Tooltip content={t("staff_card.info_tooltip")}>
+                    <Tooltip
+                        content={
+                            <Text
+                                size="sm"
+                                color="white"
+                                className="inline-flex text-center text-wrap"
+                            >
+                                {t("staff_card.info_tooltip")}
+                            </Text>
+                        }
+                        className="w-50 overflow-visible"
+                    >
                         <Icon name="square-info-line" className="cursor-pointer" />
                     </Tooltip>
                 </div>
