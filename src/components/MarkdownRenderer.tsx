@@ -11,15 +11,15 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
         <Markdown
             rehypePlugins={[rehypeRaw]}
             components={{
-                p: ({children}) => <p className="ui:my-3">{children}</p>,
+                p: ({children}) => <p className="my-3">{children}</p>,
                 ul: ({children: nodeChildren}) => (
-                    <ul className="ui:my-1 ui:list-disc ui:pl-5">{nodeChildren}</ul>
+                    <ul className="my-1 list-disc pl-5">{nodeChildren}</ul>
                 ),
                 ol: ({children: nodeChildren}) => (
-                    <ol className="ui:my-1 ui:list-decimal ui:pl-5">{nodeChildren}</ol>
+                    <ol className="my-1 list-decimal pl-5">{nodeChildren}</ol>
                 ),
                 strong: ({children: nodeChildren}) => (
-                    <strong className="ui:font-semibold">{nodeChildren}</strong>
+                    <strong className="font-semibold">{nodeChildren}</strong>
                 ),
             }}
         >
