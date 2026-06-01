@@ -2,17 +2,11 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {
-    cn,
-    Heading,
-    InputLabel,
-    LoadingSpinner,
-    MarkdownRenderer,
-    Text,
-} from "@uva-fnwi/datanose-ui";
+import {cn, Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
+import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";

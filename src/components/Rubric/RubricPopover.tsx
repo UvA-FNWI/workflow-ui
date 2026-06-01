@@ -4,11 +4,11 @@ import {
     Item,
     ListBoxWrapper,
     type ListState,
-    MarkdownRenderer,
     Popover,
     type PopoverState,
 } from "@uva-fnwi/datanose-ui";
 
+import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {GradeListBoxItem} from "~/components/Rubric/GradeListBoxItem.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
