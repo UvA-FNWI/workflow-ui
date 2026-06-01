@@ -71,6 +71,13 @@
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
   },
+  "staff_card": {
+    "confidential_advisers": "Vertrouwenspersonen",
+    "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
+    "info_tooltip": "Deze informatie is alleen voor de betrokkenen van de student. Deze informatie is niet openbaar en kan niet worden gebruikt door de student.",
+    "other_staff": "Andere betrokkenen",
+    "title": "Medewerkers"
+  },
   "status": {
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"

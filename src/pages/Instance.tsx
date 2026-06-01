@@ -7,6 +7,7 @@ import {ContentCard} from "~/components/instance/ContentCard";
 import {InfoCards} from "~/components/instance/InfoCards";
 import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
+import {StaffCard} from "~/components/instance/StaffCard.tsx";
 import {StudentCard} from "~/components/instance/StudentCard";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
@@ -46,6 +47,7 @@ function Instance() {
                         studentName={studentName}
                         isLoading={isLoading}
                     />
+                    <StaffCard />
                     <InfoCards isLoading={isLoading} />
                     {instance?.canUseAdminTools && <AdminCard />}
                 </GridItem>

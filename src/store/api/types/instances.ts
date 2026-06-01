@@ -5,11 +5,18 @@ import type {
     RoleAction,
     Submission,
 } from "~/store/api/types/submissions.ts";
+import type {UserSearchResult} from "~/store/api/types/users.ts";
 
 export type WorkflowInstanceField = {
     key: string | null;
     title: LocalString;
     value: string | string[] | LocalString | null;
+};
+
+export type StaffMember = {
+    type: "primary" | "support";
+    role: LocalString;
+    user: UserSearchResult;
 };
 
 export type WorkflowInstance = {
@@ -23,6 +30,7 @@ export type WorkflowInstance = {
     permissions: RoleAction[];
     canUseAdminTools: boolean;
     viewerRoles: string[];
+    staff: StaffMember[];
 };
 
 export type StepHeaderStatus = {
