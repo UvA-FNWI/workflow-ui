@@ -1,11 +1,12 @@
 import {useState} from "react";
 
-import {Item, ListBox, type ListBoxProps} from "@uva-fnwi/datanose-ui";
+import {Item, ListBox, type ListBoxProps, Text} from "@uva-fnwi/datanose-ui";
 
 export type SearchListBoxValue = {
     key: string;
     primaryValue: string;
     secondaryValue?: string;
+    tertiaryValue?: string;
 };
 
 // Selection type from react-stately
@@ -40,11 +41,14 @@ export function SearchListBox({
         >
             {(item) => (
                 <Item key={item.key} textValue={item.primaryValue}>
-                    <div className="flex items-center gap-2">
-                        <span className="flex-1 truncate">{item.primaryValue}</span>
-                        {item.secondaryValue && (
-                            <span className="flex-1 truncate">{item.secondaryValue}</span>
-                        )}
+                    <div className="grid min-w-0 grid-cols-[2fr_2fr_1fr] items-center gap-2">
+                        <Text truncate>{item.primaryValue}</Text>
+                        <Text intent="secondary" truncate>
+                            {item.secondaryValue}
+                        </Text>
+                        <Text intent="secondary" truncate>
+                            {item.tertiaryValue}
+                        </Text>
                     </div>
                 </Item>
             )}

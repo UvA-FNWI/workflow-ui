@@ -48,7 +48,8 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: user.organization?.name ?? user.email,
+            secondaryValue: user.email,
+            tertiaryValue: user.organization?.name,
         }));
     }, [searchResults]);
 
@@ -104,7 +105,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     const searchPlaceholderText = searchPlaceholder ?? t("user_picker.search_placeholder");
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
                 <SearchAndSelect
