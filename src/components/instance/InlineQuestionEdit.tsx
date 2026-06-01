@@ -27,15 +27,13 @@ export const InlineQuestionEdit = ({
     const [saveAnswer, {isLoading, isError}] = answersApi.endpoints.saveAnswer.useMutation();
 
     const handleSave = async () => {
-        try {
-            await saveAnswer({
-                instanceId,
-                submissionId,
-                answer: {questionName: question.name, value: localValue},
-            }).unwrap();
+        const result = await saveAnswer({
+            instanceId,
+            submissionId,
+            answer: {questionName: question.name, value: localValue},
+        });
+        if (!("error" in result)) {
             onClose();
-        } catch {
-            // isError state is set automatically by RTK Query
         }
     };
 
