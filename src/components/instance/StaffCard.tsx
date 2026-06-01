@@ -69,7 +69,23 @@ export function StaffCard({relatedUserGroups}: StaffCardProps) {
 }
 
 function RelatedStaffInfo({title, user}: RelatedUser) {
-    const {l} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
+
+    if (!user)
+        return (
+            <div className="flex flex-col py-4">
+                <Text fontWeight="semibold">{l(title)}</Text>
+                <Button
+                    intent="secondary"
+                    variant="destructive"
+                    size="large"
+                    className="mt-2 w-fit"
+                    leftIcon={<Icon name="plus-solid" color="current" />}
+                >
+                    {t("add_new")}
+                </Button>
+            </div>
+        );
     return (
         <div className="flex flex-col py-4">
             <UserAvatar userName={user.displayName} />
