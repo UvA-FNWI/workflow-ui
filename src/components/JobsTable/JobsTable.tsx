@@ -14,9 +14,10 @@ type JobsTableProps = {
     jobs: Job[];
     instanceId: string;
     globalFilter?: string;
+    refetch?: () => void;
 };
 
-export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps) => {
+export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTableProps) => {
     const {t, i18n} = useTranslate("workflow");
     const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
@@ -88,7 +89,16 @@ export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps)
                 id: "message",
                 accessorKey: "message",
                 header: () => t("jobs.columns.message"),
-                cell: ({getValue}) => getValue<string | null>() ?? "—",
+                cell: ({getValue}) => {
+                    const message = getValue<string | null>();
+                    const display = message ?? "—";
+
+                    return (
+                        <span className="block max-w-xs truncate" title={message ?? undefined}>
+                            {display}
+                        </span>
+                    );
+                },
                 enableSorting: true,
             },
             {
@@ -131,7 +141,12 @@ export const JobsTable = ({jobs, instanceId, globalFilter = ""}: JobsTableProps)
                 jobId={selectedJobId}
                 instanceId={instanceId}
                 isOpen={selectedJobId !== null}
-                onClose={() => setSelectedJobId(null)}
+                onClose={(ranTask?: boolean) => {
+                    setSelectedJobId(null);
+                    if (ranTask) {
+                        refetch?.();
+                    }
+                }}
             />
         </>
     );

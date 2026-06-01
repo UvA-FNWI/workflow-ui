@@ -12,7 +12,7 @@ type JobModalProps = {
     jobId: string | null;
     instanceId: string;
     isOpen: boolean;
-    onClose: () => void;
+    onClose: (ranTask?: boolean) => void;
 };
 
 export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) => {
@@ -38,6 +38,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
         }
         void runJob({instanceId, jobId});
         setIsRunConfirmOpen(false);
+        onClose(true);
     };
 
     const handleOpenChange = (open: boolean) => {
@@ -127,14 +128,26 @@ const JobDetails = ({job, locale}: JobDetailsProps) => {
                     label={t("jobs.modal.properties.isSynchronous")}
                     value={job.isSynchronous ? t("jobs.modal.yes") : t("jobs.modal.no")}
                 />
-                <Property label={t("jobs.modal.properties.message")} value={job.message} />
                 <Property label={t("jobs.modal.properties.workerGroup")} value={job.workerGroup} />
                 <Property
                     label={t("jobs.modal.properties.claimedUntil")}
                     value={job.claimedUntil ? formatDate(job.claimedUntil, locale) : null}
                 />
                 <Property label={t("jobs.modal.properties.instanceId")} value={job.instanceId} />
+                {job.message ? (
+                    <div />
+                ) : (
+                    <Property label={t("jobs.modal.properties.message")} value={null} />
+                )}
             </dl>
+
+            {job.message ? (
+                <Property label={t("jobs.modal.properties.message")}>
+                    <pre className="tmax-h-48 overflow-auto rounded bg-grey-100 p-2 text-xs dark:bg-grey-800">
+                        {job.message}
+                    </pre>
+                </Property>
+            ) : null}
 
             <section>
                 <Heading as="h3" size="sm" className="mb-3">

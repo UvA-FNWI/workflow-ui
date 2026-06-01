@@ -26,6 +26,7 @@ function InstanceJobs() {
         data: jobs,
         isLoading,
         isError,
+        refetch: refetchJobs,
     } = jobsEndpoints.getJobs.useQuery(id ?? "", {
         skip: !id,
     });
@@ -70,7 +71,12 @@ function InstanceJobs() {
                 {isLoading ? (
                     <Skeleton className="h-64 w-full" />
                 ) : (
-                    <JobsTable jobs={jobs ?? []} instanceId={id} globalFilter={search} />
+                    <JobsTable
+                        jobs={jobs ?? []}
+                        instanceId={id}
+                        globalFilter={search}
+                        refetch={refetchJobs}
+                    />
                 )}
             </Card>
         </Container>
