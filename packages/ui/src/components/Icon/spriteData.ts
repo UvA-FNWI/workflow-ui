@@ -41,7 +41,8 @@ export const loadSprite = async (): Promise<string> => {
   }
 
   loadPromise = (async (): Promise<string> => {
-    const path = new URL('./assets/icons.svg', import.meta.url).href;
+    const path = new URL('./assets/svg-ui-spritesheet.svg', import.meta.url)
+      .href;
     const response = await fetch(path);
 
     if (response.ok) {

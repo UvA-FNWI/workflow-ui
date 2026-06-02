@@ -26,6 +26,7 @@ export type ScreenColumn = {
     filterType: FilterType;
     displayType: DisplayType;
     defaultSort?: SortDirection;
+    isCurrentStep: boolean;
     link: boolean;
     dataType: DataType;
 };

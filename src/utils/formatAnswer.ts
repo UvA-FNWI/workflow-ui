@@ -1,5 +1,5 @@
 import {formatDate} from "./formatDate";
-import type {DataType} from "~/store/api/types/submissions";
+import type {Choice, DataType} from "~/store/api/types/submissions";
 
 /**
  * Format an answer value based on its data type
@@ -8,7 +8,12 @@ import type {DataType} from "~/store/api/types/submissions";
  * @param locale - The locale for formatting (e.g., 'en', 'nl')
  * @returns Formatted answer string
  */
-export function formatAnswer(value: unknown, type: DataType, locale: string = "en"): string {
+export function formatAnswer(
+    value: unknown,
+    type: DataType,
+    locale: string = "en",
+    choices?: Choice[],
+): string {
     // Handle null/undefined
     if (value == null) {
         return "";
@@ -72,14 +77,20 @@ export function formatAnswer(value: unknown, type: DataType, locale: string = "e
             return String(value);
 
         case "Choice":
-            // Handle choice - could be string or object
-            if (typeof value === "object" && value !== null) {
-                const choiceObj = value as Record<string, unknown>;
-                if ("text" in choiceObj) {
-                    return String(choiceObj.text);
+            if (choices) {
+                if (Array.isArray(value)) {
+                    return value
+                        .map((v) => {
+                            const choice = choices.find((c) => c.name === v);
+                            return (
+                                (locale === "nl" ? choice?.text.nl : choice?.text.en) ?? String(v)
+                            );
+                        })
+                        .join(", ");
                 }
-                if ("name" in choiceObj) {
-                    return String(choiceObj.name);
+                const choice = choices.find((c) => c.name === value);
+                if (choice) {
+                    return (locale === "nl" ? choice.text.nl : choice.text.en) ?? String(value);
                 }
             }
             return String(value);
