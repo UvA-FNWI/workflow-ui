@@ -28,7 +28,7 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       {...mergeProps(optionProps, focusProps, hoverProps)}
       ref={ref}
       className={cn(
-        'ui:flex ui:items-center ui:justify-between ui:gap-2 ui:px-2 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none',
+        'ui:flex ui:items-center ui:justify-between ui:gap-2 ui:border-b ui:border-grey-300 ui:px-2 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150 ui:outline-none ui:dark:border-grey-700',
         selectionVariants({
           isSelected,
           isHovered,
@@ -37,7 +37,7 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
         })
       )}
     >
-      <div className="ui:flex ui:items-center ui:gap-2">
+      <div className="ui:flex ui:w-full ui:items-center ui:gap-2">
         <div className="ui:flex ui:h-4 ui:w-4 ui:flex-none ui:items-center ui:justify-center">
           {isSelected && <Icon name="checkmark-solid" size="sm" />}
           {!isSelected && item.key === 'new-item' && (
@@ -48,4 +48,41 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
       </div>
     </li>
   );
+}
+
+export function useListBoxItem<T>(
+  item: Node<T>,
+  state: ListState<T>,
+  ref: React.RefObject<HTMLLIElement>
+): {
+  optionProps: React.HTMLAttributes<HTMLElement>;
+  hoverProps: React.HTMLAttributes<HTMLElement>;
+  isSelected: boolean;
+  isDisabled: boolean;
+  isFocused: boolean;
+  isHovered: boolean;
+} {
+  // Core option behavior (selection, focus, keyboard, press)
+  const { optionProps, isSelected, isDisabled, isFocused } = useOption(
+    {
+      key: item.key,
+      isDisabled: state.disabledKeys.has(item.key),
+    },
+    state,
+    ref
+  );
+
+  // Hover behavior
+  const { hoverProps, isHovered } = useHover({
+    isDisabled,
+  });
+
+  return {
+    optionProps,
+    hoverProps,
+    isSelected,
+    isDisabled,
+    isFocused,
+    isHovered,
+  };
 }

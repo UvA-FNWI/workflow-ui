@@ -11,10 +11,10 @@ import { useDateRangePickerState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
 import { inputVariants } from '../Input/InputVariant';
+import { Popover } from '../Popover/Popover';
 import { RangeCalendar } from './Calendar';
 import { CalendarButton } from './CalendarButton';
 import { DateField } from './DateField';
-import { Popover } from './Popover';
 import {
   DateRange,
   dateRangeToDateValueRange,
