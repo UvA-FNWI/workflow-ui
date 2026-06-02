@@ -4,6 +4,7 @@ export interface UserSearchResult {
     email: string;
     organization?: Organization;
     isExternal: boolean;
+    isPending: boolean;
 }
 
 export interface Organization {

@@ -89,7 +89,21 @@ function RelatedStaffInfo({title, user}: RelatedUser) {
     return (
         <div className="flex flex-col py-4">
             <UserAvatar userName={user.displayName} />
-            <Text fontWeight="semibold">{l(title)}</Text>
+            <div className="flex gap-2">
+                <Text fontWeight="semibold">{l(title)}</Text>
+                {user.isPending && (
+                    <Button
+                        intent="ghost"
+                        size="small"
+                        shape="circular"
+                        className="ui:border-0 ui:px-1 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                        onClick={() => console.log("Edit pending user")}
+                        aria-label={t("instance.summary.edit_answer")}
+                    >
+                        <Icon name="edit-line" size="xs" color="danger" />
+                    </Button>
+                )}
+            </div>
             <Text>{user.displayName}</Text>
             {user.organization && <Text>{user.organization?.name}</Text>}
             <div className="flex flex-row items-end gap-2">
