@@ -23,7 +23,12 @@ const rawBaseQuery = fetchBaseQuery({
 export const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOptions) => {
     const result = await rawBaseQuery(args, api, extraOptions);
 
-    if (result.error) {
+    if (
+        result.error &&
+        typeof result.error.status == "number" &&
+        result.error.status > 500 &&
+        result.error.status < 600
+    ) {
         api.dispatch(
             triggerApiError({
                 type: "error",
