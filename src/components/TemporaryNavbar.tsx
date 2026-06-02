@@ -23,9 +23,9 @@ function TemporaryNavbar() {
     const {isAuthenticated, surfLogout} = useAuth();
     const user = useAppSelector(selectCurrentUser);
     // The Develop page and version switching are developer/admin functionality, locked behind
-    // admin rights (see /Users/me isAdmin).
-    const isAdmin = user?.isAdmin ?? false;
-    const {data: versions} = useGetVersionsQuery(undefined, {skip: !isAdmin});
+    // super-admin rights (see /Users/Me isSuperAdmin).
+    const isSuperAdmin = user?.isSuperAdmin ?? false;
+    const {data: versions} = useGetVersionsQuery(undefined, {skip: !isSuperAdmin});
     const currentVersion = new URLSearchParams(window.location.search).get("version") ?? "";
     useEffect(() => {
         document.documentElement.setAttribute("lang", i18n.language);
@@ -61,7 +61,7 @@ function TemporaryNavbar() {
                 </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
-                {isAdmin && (
+                {isSuperAdmin && (
                     <VersionedLink to="/develop" className="text-sm font-medium underline">
                         {t("develop")}
                     </VersionedLink>
@@ -69,7 +69,7 @@ function TemporaryNavbar() {
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
                     Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode
                 </Button>
-                {isAdmin && (
+                {isSuperAdmin && (
                     <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
                         {t("version")}
                         <div className="w-36">

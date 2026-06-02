@@ -8,7 +8,7 @@ export type CurrentUser = {
     userName: string;
     displayName: string;
     email: string;
-    isAdmin: boolean;
+    isSuperAdmin: boolean;
 };
 
 export type AuthState = {

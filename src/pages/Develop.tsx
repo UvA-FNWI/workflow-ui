@@ -26,7 +26,7 @@ function Develop() {
     if (isUserLoading) {
         return null;
     }
-    if (!currentUser?.isAdmin) {
+    if (!currentUser?.isSuperAdmin) {
         return <Navigate to="/" replace />;
     }
 
