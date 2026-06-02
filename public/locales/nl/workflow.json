@@ -9,7 +9,6 @@
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
-  "continue": "Volgende",
   "email": "E-mailadres",
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
@@ -31,7 +30,6 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "go_back": "Vorige",
   "good_to_know": {
     "show_all": "Toon alles",
     "show_less": "Toon minder",
@@ -54,7 +52,9 @@
     "workflowInstance": "Workflow"
   },
   "name": "Naam",
+  "next": "Volgende",
   "optional": "* Niet verplicht",
+  "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",
     "deadline": "Deadline",
@@ -81,7 +81,7 @@
     "noStudentInfo": "Geen studentinformatie beschikbaar",
     "student": "Student"
   },
-  "submit": "Indienen",
+  "submit": "Inleveren",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",
