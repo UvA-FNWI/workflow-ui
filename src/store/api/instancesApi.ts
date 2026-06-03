@@ -10,8 +10,10 @@ export const instancesApi = baseApi.injectEndpoints({
             providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
         }),
         getInstances: builder.query<InstanceSummary[], string>({
-            query: (workflowDefinition: string) =>
-                `/WorkflowInstances/instances/${workflowDefinition}`,
+            query: (workflowDefinition: string) => ({
+                url: `/WorkflowInstances/instances/${workflowDefinition}`,
+                params: {includeTitle: true},
+            }),
             providesTags: ["Instance"],
         }),
         createInstance: builder.mutation<WorkflowInstance, {workflowDefinition: string}>({

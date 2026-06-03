@@ -11,6 +11,11 @@
   "confirm": "Confirm",
   "continue": "Continue",
   "develop": {
+    "columns": {
+      "created": "Created",
+      "id": "ID",
+      "title": "Title"
+    },
     "load_error": "Could not load instances",
     "loading": "Loading…",
     "new": "New {{name}}",

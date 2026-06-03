@@ -2,7 +2,6 @@ import {useState} from "react";
 
 import {rankItem} from "@tanstack/match-sorter-utils";
 import {
-    type ColumnDef,
     type FilterFn,
     type FilterFns,
     flexRender,
@@ -12,13 +11,14 @@ import {
     type OnChangeFn,
     type Row,
     type SortingState,
+    type TableOptions,
     useReactTable,
 } from "@tanstack/react-table";
 import {Icon} from "@uva-fnwi/datanose-ui";
 
 type DataTableProps<TData> = {
     data: TData[];
-    columns: ColumnDef<TData, unknown>[];
+    columns: TableOptions<TData>["columns"];
     getRowId?: (originalRow: TData, index: number, parent?: Row<TData>) => string;
     globalFilter?: string;
     /** Override the default fuzzy global filter. */

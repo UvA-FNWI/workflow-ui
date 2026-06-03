@@ -62,39 +62,40 @@ function TemporaryNavbar() {
             </div>
             <div className="flex flex-wrap items-center gap-4">
                 {isSuperAdmin && (
-                    <VersionedLink to="/develop" className="text-sm font-medium underline">
-                        {t("develop")}
-                    </VersionedLink>
+                    <div className="flex items-center gap-4">
+                        <VersionedLink to="/develop" className="text-sm font-medium underline">
+                            {t("develop")}
+                        </VersionedLink>
+                        <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
+                            {t("version")}
+                            <div className="w-36">
+                                <Select
+                                    aria-label={t("version")}
+                                    selectedKey={selectedVersionKey}
+                                    onChange={(key) => {
+                                        const version =
+                                            key === DEFAULT_VERSION_KEY ? "" : String(key);
+                                        const params = new URLSearchParams(window.location.search);
+                                        if (version) {
+                                            params.set("version", version);
+                                        } else {
+                                            params.delete("version");
+                                        }
+                                        // Full reload so every cached query refetches under the new version.
+                                        window.location.search = params.toString();
+                                    }}
+                                >
+                                    {versionOptions.map((option) => (
+                                        <SelectItem key={option.key}>{option.label}</SelectItem>
+                                    ))}
+                                </Select>
+                            </div>
+                        </label>
+                    </div>
                 )}
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
                     Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode
                 </Button>
-                {isSuperAdmin && (
-                    <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
-                        {t("version")}
-                        <div className="w-36">
-                            <Select
-                                aria-label={t("version")}
-                                selectedKey={selectedVersionKey}
-                                onChange={(key) => {
-                                    const version = key === DEFAULT_VERSION_KEY ? "" : String(key);
-                                    const params = new URLSearchParams(window.location.search);
-                                    if (version) {
-                                        params.set("version", version);
-                                    } else {
-                                        params.delete("version");
-                                    }
-                                    // Full reload so every cached query refetches under the new version.
-                                    window.location.search = params.toString();
-                                }}
-                            >
-                                {versionOptions.map((option) => (
-                                    <SelectItem key={option.key}>{option.label}</SelectItem>
-                                ))}
-                            </Select>
-                        </div>
-                    </label>
-                )}
                 <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
                     {t("language")}
                     <div className="w-32">

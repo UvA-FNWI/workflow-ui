@@ -11,6 +11,11 @@
   "confirm": "Bevestigen",
   "continue": "Volgende",
   "develop": {
+    "columns": {
+      "created": "Aangemaakt",
+      "id": "ID",
+      "title": "Titel"
+    },
     "load_error": "Kon instanties niet laden",
     "loading": "Laden…",
     "new": "Nieuw {{name}}",
