@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
 import {Item, ListBox, type ListBoxProps, Text} from "@uva-fnwi/datanose-ui";
 
@@ -31,6 +31,17 @@ export function SearchListBox({
         onSelectionChange?.(selected);
     };
 
+    const hasSecondary = useMemo(() => items.some((item) => item.secondaryValue), [items]);
+    const hasTertiary = useMemo(() => items.some((item) => item.tertiaryValue), [items]);
+
+    const columnCount = 1 + (hasSecondary ? 1 : 0) + (hasTertiary ? 1 : 0);
+    const gridColsClass =
+        columnCount === 3
+            ? "grid-cols-[1fr_1fr_1fr]"
+            : columnCount === 2
+              ? "grid-cols-[1fr_1fr]"
+              : "";
+
     return (
         <ListBox
             items={items}
@@ -41,14 +52,20 @@ export function SearchListBox({
         >
             {(item) => (
                 <Item key={item.key} textValue={item.primaryValue}>
-                    <div className="grid min-w-0 grid-cols-[2fr_2fr_1fr] items-center gap-2">
+                    <div
+                        className={`min-w-0 items-center gap-2 ${gridColsClass && `grid ${gridColsClass}`}`}
+                    >
                         <Text truncate>{item.primaryValue}</Text>
-                        <Text intent="secondary" truncate>
-                            {item.secondaryValue}
-                        </Text>
-                        <Text intent="secondary" truncate>
-                            {item.tertiaryValue}
-                        </Text>
+                        {hasSecondary && (
+                            <Text intent="secondary" truncate>
+                                {item.secondaryValue}
+                            </Text>
+                        )}
+                        {hasTertiary && (
+                            <Text intent="secondary" truncate>
+                                {item.tertiaryValue}
+                            </Text>
+                        )}
                     </div>
                 </Item>
             )}
