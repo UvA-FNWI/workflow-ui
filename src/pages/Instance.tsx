@@ -46,7 +46,7 @@ function Instance() {
                         studentName={studentName}
                         isLoading={isLoading}
                     />
-                    <InfoCards isLoading={isLoading} />
+                    <InfoCards isLoading={isLoading} fields={instance?.fields} />
                     {instance?.canUseAdminTools && <AdminCard />}
                 </GridItem>
             </Grid>
