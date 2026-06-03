@@ -1,4 +1,5 @@
 {
+  "develop": "Develop",
   "language": "Language",
   "language_en": "English",
   "language_nl": "Dutch",
@@ -7,5 +8,7 @@
   "search_placeholder": "Search...",
   "session_expired_canvas_body": "The session has expired. Click the refresh button in your browser to refresh the session.",
   "session_expired_surf_body": "The session has expired. Click the button to login again.",
-  "session_expired_title": "Session expired"
+  "session_expired_title": "Session expired",
+  "version": "Version",
+  "version_default": "default"
 }
