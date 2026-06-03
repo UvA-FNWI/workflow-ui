@@ -44,6 +44,7 @@
       "average_grade": "Avg. grade [{{page}}]:",
       "final_grade": "Final grade"
     },
+    "empty_step": "Nothing has been submitted yet.",
     "summary": {
       "edit_page": "Edit page",
       "hide_answers": "Hide parts and explanations",
