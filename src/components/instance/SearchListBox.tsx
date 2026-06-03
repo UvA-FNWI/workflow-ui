@@ -38,7 +38,7 @@ export function SearchListBox({
             selectionMode={selectionMode}
             aria-label={ariaLabel}
         >
-            {(item) => (
+            {(item: SearchListBoxValue) => (
                 <Item key={item.key} textValue={item.primaryValue}>
                     <div className="flex items-center gap-2">
                         <span className="flex-1 truncate">{item.primaryValue}</span>
