@@ -15,6 +15,7 @@ import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Result} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
+import {isPageComplete} from "~/utils/submissionUtils.ts";
 
 type PageControlProps = {
     instanceId: string;
@@ -101,6 +102,11 @@ export const PageControl = ({
         control: form.control,
     });
 
+    const areWeightedQuestionsComplete = useMemo(
+        () => !!submission && isPageComplete(page, submission, true),
+        [submission, page],
+    );
+
     const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getResultsPage.useQuery(
         {
             instanceId,
@@ -108,12 +114,16 @@ export const PageControl = ({
             pageName: page.name,
         },
         {
-            skip: !page.hasResults,
+            skip: !page.hasResults || !areWeightedQuestionsComplete,
         },
     );
     const formForPage = data?.forms?.[0]; // form for the current page
     const results = formForPage?.results?.[page.name];
     const weightedAverage = formForPage?.weightedAverages?.[page.name] ?? 0;
+    const averageGradeContent =
+        typeof weightedAverage == "number" && weightedAverage !== 0
+            ? weightedAverage.toLocaleString(i18n.language)
+            : t("instance.calculations.grading_incomplete");
 
     const getTotalPercentage = (r: Result[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
@@ -234,7 +244,7 @@ export const PageControl = ({
                     </div>
                 )}
 
-                {typeof weightedAverage == "number" && weightedAverage !== 0 && (
+                {page.hasResults && (
                     <div>
                         <Heading className="flex items-center gap-2">
                             {t("instance.calculations.average_grade", {
@@ -244,7 +254,7 @@ export const PageControl = ({
                             {isFetchingAverages ? (
                                 <LoadingSpinner size="xs" />
                             ) : (
-                                <span>{weightedAverage.toLocaleString(i18n.language)}</span>
+                                <span>{averageGradeContent}</span>
                             )}
                         </Heading>
                     </div>

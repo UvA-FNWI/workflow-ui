@@ -70,6 +70,7 @@ export type Question = {
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
+    weight?: number;
     allowsExternalUsers: boolean;
     rubric?: RubricEntry[];
 };
