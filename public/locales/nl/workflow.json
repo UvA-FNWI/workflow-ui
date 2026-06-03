@@ -10,6 +10,14 @@
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
   "continue": "Volgende",
+  "develop": {
+    "load_error": "Kon instanties niet laden",
+    "loading": "Laden…",
+    "new": "Nieuw {{name}}",
+    "no_definitions": "Geen projecttypes beschikbaar",
+    "no_instances": "Nog geen instanties",
+    "title": "Ontwikkelen"
+  },
   "email": "E-mailadres",
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
@@ -71,6 +79,7 @@
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
   },
+  "select": "Kies",
   "status": {
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"

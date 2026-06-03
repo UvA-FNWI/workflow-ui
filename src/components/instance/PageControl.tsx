@@ -2,10 +2,11 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
+import {cn, Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
+import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
@@ -137,48 +138,73 @@ export const PageControl = ({
                 {(regularQuestions.length > 0 || fileQuestions.length > 0) && (
                     <div>
                         <form>
-                            {regularQuestions.map((question) => (
-                                <Controller
-                                    key={question.name}
-                                    control={form.control}
-                                    name={question.name}
-                                    render={({field}) => {
-                                        return (
-                                            <div className="mb-4">
-                                                <div className="flex justify-between">
-                                                    {question.type !== "Boolean" && (
-                                                        <InputLabel key={question.name}>
-                                                            {l(question.text)}
-                                                            {results &&
-                                                                results.find(
-                                                                    (q) =>
-                                                                        q.questionName ==
-                                                                        question.name,
-                                                                ) &&
-                                                                ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
-                                                        </InputLabel>
+                            {regularQuestions.map((question) => {
+                                const showCompact =
+                                    submission?.form.layout === "Compact" &&
+                                    question.type === "Choice";
+                                return (
+                                    <Controller
+                                        key={question.name}
+                                        control={form.control}
+                                        name={question.name}
+                                        render={({field}) => {
+                                            return (
+                                                <div
+                                                    className={cn(
+                                                        "mb-4",
+                                                        showCompact &&
+                                                            "flex flex-row items-start justify-between",
                                                     )}
-                                                    {!question.isRequired && (
-                                                        <Text
-                                                            className="text-grey-900 italic"
-                                                            size="sm"
-                                                        >
-                                                            {t("optional")}
-                                                        </Text>
-                                                    )}
+                                                >
+                                                    <div>
+                                                        <div className="flex justify-between">
+                                                            {question.type !== "Boolean" && (
+                                                                <InputLabel key={question.name}>
+                                                                    {l(question.text)}
+                                                                    {results &&
+                                                                        results.find(
+                                                                            (q) =>
+                                                                                q.questionName ==
+                                                                                question.name,
+                                                                        ) &&
+                                                                        ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
+                                                                </InputLabel>
+                                                            )}
+                                                            {!question.isRequired && (
+                                                                <Text
+                                                                    className="text-grey-900 italic"
+                                                                    size="sm"
+                                                                >
+                                                                    {t("optional")}
+                                                                </Text>
+                                                            )}
+                                                        </div>
+                                                        {question.description && (
+                                                            <div className="mr-2 mb-1 text-sm text-grey-600 dark:text-grey-400">
+                                                                <MarkdownRenderer>
+                                                                    {l(question.description) ?? ""}
+                                                                </MarkdownRenderer>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div
+                                                        className={
+                                                            showCompact ? "w-24 shrink-0" : "w-full"
+                                                        }
+                                                    >
+                                                        <InputControl
+                                                            value={field.value}
+                                                            onChange={field.onChange}
+                                                            question={question}
+                                                            onSave={save}
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <InputControl
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                    question={question}
-                                                    onSave={save}
-                                                />
-                                            </div>
-                                        );
-                                    }}
-                                />
-                            ))}
-
+                                            );
+                                        }}
+                                    />
+                                );
+                            })}
                             {fileQuestions.length > 0 && (
                                 <FileUploadTable
                                     instanceId={instanceId}

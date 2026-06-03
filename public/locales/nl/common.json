@@ -1,4 +1,5 @@
 {
+  "develop": "Ontwikkelen",
   "errors": {
     "contact_message": "Neem contact op met een beheerder via milestones@uva.nl.",
     "error_title": "Er is een fout opgetreden",
@@ -12,5 +13,7 @@
   "search_placeholder": "Zoeken...",
   "session_expired_canvas_body": "De sessie is verlopen. Klik op de refresh knop in uw browser om de sessie te verversen.",
   "session_expired_surf_body": "De sessie is verlopen. Klik op de knop om opnieuw in te loggen.",
-  "session_expired_title": "Sessie verlopen"
+  "session_expired_title": "Sessie verlopen",
+  "version": "Versie",
+  "version_default": "standaard"
 }
