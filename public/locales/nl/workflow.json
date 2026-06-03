@@ -79,6 +79,7 @@
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
   },
+  "select": "Kies",
   "status": {
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"

@@ -1,0 +1,5 @@
+Contact: mailto:cert@uva.nl
+Expires: 2027-06-01T22:00:00.000Z
+Acknowledgments: https://www.uva.nl/en/content/a-z/coordinated-vulnerability-disclosure/hall-of-fame/hall-of-fame.html
+Preferred-Languages: en, nl
+Policy: https://www.uva.nl/en/content/a-z/coordinated-vulnerability-disclosure/coordinated-vulnerability-disclosure.html

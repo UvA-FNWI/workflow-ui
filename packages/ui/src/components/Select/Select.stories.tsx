@@ -49,7 +49,7 @@ const ControlledSelect = () => {
     <div className="max-w-sm space-y-4">
       <Select
         label="Status"
-        selectedKey={value}
+        value={value}
         onChange={key => setValue((key as string | null) ?? null)}
       >
         <Item key="draft">Draft</Item>

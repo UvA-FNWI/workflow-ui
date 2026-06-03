@@ -79,6 +79,7 @@
     "search_hint": "Type to search",
     "search_placeholder": "Search..."
   },
+  "select": "Select",
   "status": {
     "completed_on": "Completed on",
     "submitted": "Submitted"
