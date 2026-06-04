@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {cn, Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
+import {cn, Heading, InputLabel, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -123,10 +123,10 @@ export const PageControl = ({
 
     return (
         <>
-            <div className="mb-4 flex flex-col gap-4 pt-4">
+            <div className="mb-4 flex flex-col gap-4">
                 <div>
                     {showTitle && (
-                        <Heading size="sm" className="uppercase" fontType="body">
+                        <Heading size="sm" className="pb-2">
                             {l(page.title)}
                             {results &&
                                 results.length > 0 &&
@@ -151,7 +151,7 @@ export const PageControl = ({
                                             return (
                                                 <div
                                                     className={cn(
-                                                        "mb-4",
+                                                        "mb-6",
                                                         showCompact &&
                                                             "flex flex-row items-start justify-between",
                                                     )}
@@ -236,7 +236,12 @@ export const PageControl = ({
 
                 {typeof weightedAverage == "number" && weightedAverage !== 0 && (
                     <div>
-                        <Heading className="flex items-center gap-2">
+                        <Separator weight="bold" color="black" className="mb-4" />
+                        <Text
+                            size="xl"
+                            fontWeight="semibold"
+                            className="flex items-center justify-between gap-2 pr-12"
+                        >
                             {t("instance.calculations.average_grade", {
                                 page: l(page.title),
                             }).toUpperCase()}
@@ -246,7 +251,7 @@ export const PageControl = ({
                             ) : (
                                 <span>{weightedAverage.toLocaleString(i18n.language)}</span>
                             )}
-                        </Heading>
+                        </Text>
                     </div>
                 )}
             </div>

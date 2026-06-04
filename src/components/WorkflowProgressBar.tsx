@@ -42,11 +42,14 @@ interface WorkflowProgressBarProps {
     currentStep: string;
 }
 
+/** True if `currentStep` is this step or any descendant, at any depth. */
+const containsStep = (step: WorkflowStep, currentStep: string): boolean =>
+    step.id === currentStep ||
+    (step.children?.some((child) => containsStep(child, currentStep)) ?? false);
+
+/** Index of the top-level step whose subtree contains the current step. */
 const getCurrentStepIndex = (steps: WorkflowStep[], currentStep: string): number =>
-    steps.findIndex(
-        (step) =>
-            step.id === currentStep || step.children?.some((child) => child.id === currentStep),
-    );
+    steps.findIndex((step) => containsStep(step, currentStep));
 
 const getEvenPosition = (index: number, totalSteps: number): number => {
     if (totalSteps <= 1) return MIN_POSITION;
