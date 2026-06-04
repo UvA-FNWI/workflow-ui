@@ -7,6 +7,10 @@ export interface UserSearchResult {
     sourceKey?: string | null;
 }
 
+export interface CurrentUserResponse extends UserSearchResult {
+    isSuperAdmin: boolean;
+}
+
 export interface Organization {
     id: string;
     name: string;

@@ -1,10 +1,9 @@
-import { useRef } from 'react';
-
-import { AriaListBoxOptions, mergeProps, useListBox } from 'react-aria';
-import { ListProps, ListState, useListState } from 'react-stately';
+import { AriaListBoxOptions } from 'react-aria';
+import { ListProps, ListState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
 import { ListBoxItem } from './ListBoxItem';
+import { ListBoxWrapper } from './ListBoxWrapper';
 
 export interface ListBoxProps<T extends object>
   extends Omit<ListProps<T>, 'children' | 'filter' | 'collection'>,
@@ -21,26 +20,23 @@ export interface ListBoxProps<T extends object>
 }
 
 export function ListBox<T extends object>(props: ListBoxProps<T>) {
-  const { className, ...restProps } = props;
-  const state = useListState(restProps);
-  const ref = useRef<HTMLUListElement>(null);
-  const { listBoxProps } = useListBox(restProps, state, ref);
+  const { className, children, ...restProps } = props;
 
   return (
-    <ul
-      {...mergeProps(listBoxProps)}
-      ref={ref}
+    <ListBoxWrapper
+      {...restProps}
       className={cn(
         'ui:max-h-[200px] ui:overflow-y-auto ui:rounded-xs ui:border ui:border-grey-300 ui:bg-white ui:text-grey-900 ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900 ui:dark:text-white',
         className
       )}
+      itemRenderer={children}
     >
-      {[...state.collection].map(item => (
-        <div className="ui:border-b ui:border-grey-300 ui:dark:border-grey-700">
-          <ListBoxItem key={item.key} item={item} state={state} />
-        </div>
-      ))}
-    </ul>
+      {(state: ListState<T>) =>
+        [...state.collection].map(item => (
+          <ListBoxItem item={item} state={state} key={item.key} />
+        ))
+      }
+    </ListBoxWrapper>
   );
 }
 

@@ -1,4 +1,5 @@
 import {Icon, Text, Tooltip} from "@uva-fnwi/datanose-ui";
+import {cva} from "class-variance-authority";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowStep} from "~/store/api/types/instances";
@@ -6,6 +7,35 @@ import type {WorkflowStep} from "~/store/api/types/instances";
 const MIN_POSITION = 10;
 const MAX_POSITION = 90;
 const POSITION_RANGE = MAX_POSITION - MIN_POSITION;
+
+const iconClassGenerator = cva("flex items-center justify-center rounded-full border p-1", {
+    variants: {
+        color: {
+            danger: "",
+            success: "",
+        },
+        completed: {
+            true: "",
+            false: "border-red-brand bg-white text-red-brand",
+        },
+    },
+    compoundVariants: [
+        {
+            color: "danger",
+            completed: true,
+            className: "border-red-brand bg-red-brand text-white",
+        },
+        {
+            color: "success",
+            completed: true,
+            className: "border-green-600 bg-green-600 text-white",
+        },
+    ],
+    defaultVariants: {
+        color: "danger",
+        completed: false,
+    },
+});
 
 interface WorkflowProgressBarProps {
     steps: WorkflowStep[];
@@ -139,6 +169,12 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
             month: "long",
             year: "numeric",
         });
+    const getIconColor = (step: WorkflowStep) => {
+        if (!step.icon) return undefined;
+        if (step.icon.color === "Red") return "danger";
+        if (step.icon.color === "Green") return "success";
+        return undefined;
+    };
 
     return (
         <div className="w-full overflow-x-auto overflow-y-visible">
@@ -168,15 +204,16 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                                     }
                                 >
                                     <span
-                                        className={`flex items-center justify-center rounded-full border p-1 ${
-                                            isCompleted
-                                                ? "border-red-brand bg-red-brand text-white"
-                                                : "border-red-brand bg-white text-red-brand"
-                                        }`}
+                                        className={iconClassGenerator({
+                                            color: getIconColor(step),
+                                            completed: isCompleted,
+                                        })}
                                     >
                                         <Icon
                                             name={
-                                                (step.icon as Parameters<typeof Icon>[0]["name"]) ??
+                                                (step.icon?.type as Parameters<
+                                                    typeof Icon
+                                                >[0]["name"]) ??
                                                 (isCompleted ? "checkmark-solid" : "circle-solid")
                                             }
                                             size="sm"
@@ -197,7 +234,6 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                         />
                     )}
                 </div>
-
                 <div className="relative mb-1 h-6">
                     <Text
                         className={`absolute whitespace-nowrap text-grey-700 dark:text-grey-400 ${currentStepIndex >= 0 ? "-translate-x-1/2" : ""}`}

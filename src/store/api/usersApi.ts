@@ -1,5 +1,10 @@
 import {baseApi} from "./baseApi";
-import type {UserSearchResult, VerifyEmailRequest, VerifyEmailResponse} from "./types/users";
+import type {
+    CurrentUserResponse,
+    UserSearchResult,
+    VerifyEmailRequest,
+    VerifyEmailResponse,
+} from "./types/users";
 
 export type FindUsersParams = {
     query: string;
@@ -8,7 +13,7 @@ export type FindUsersParams = {
 
 export const usersApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getCurrentUser: builder.query<UserSearchResult, void>({
+        getCurrentUser: builder.query<CurrentUserResponse, void>({
             query: () => "/Users/Me",
         }),
         findUsers: builder.query<UserSearchResult[], FindUsersParams>({
