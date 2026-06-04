@@ -114,16 +114,15 @@ export const PageControl = ({
             pageName: page.name,
         },
         {
-            skip: !page.hasResults || !areWeightedQuestionsComplete,
+            skip: !page.hasResults,
         },
     );
     const formForPage = data?.forms?.[0]; // form for the current page
     const results = formForPage?.results?.[page.name];
     const weightedAverage = formForPage?.weightedAverages?.[page.name] ?? 0;
-    const averageGradeContent =
-        typeof weightedAverage == "number" && weightedAverage !== 0
-            ? weightedAverage.toLocaleString(i18n.language)
-            : t("instance.calculations.grading_incomplete");
+    const averageGradeContent = areWeightedQuestionsComplete
+        ? weightedAverage.toLocaleString(i18n.language)
+        : t("instance.calculations.grading_incomplete");
 
     const getTotalPercentage = (r: Result[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
