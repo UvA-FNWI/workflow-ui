@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
-import {Button, Select, SelectItem, useTheme} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Select, SelectItem, useTheme} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {VersionedLink} from "~/components/VersionedLink";
@@ -55,10 +55,12 @@ function TemporaryNavbar() {
     return (
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
-                <p className="text-base font-semibold">Workflow UI</p>
-                <p className="text-xs text-grey-700 dark:text-grey-300">
-                    {VITE_ENV} | {VITE_WEBAPI_URL}
-                </p>
+                <Heading size="sm">Milestones (pilot)</Heading>
+                {VITE_ENV !== "production" && (
+                    <p className="text-xs text-grey-700 dark:text-grey-300">
+                        {VITE_ENV} | {VITE_WEBAPI_URL}
+                    </p>
+                )}
             </div>
             <div className="flex flex-wrap items-center gap-4">
                 {isSuperAdmin && (

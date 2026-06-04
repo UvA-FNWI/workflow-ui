@@ -48,6 +48,7 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
                     disabled={!isPageComplete(submission.form.pages[0], submission)}
                     onSubmit={onClose}
                     size="large"
+                    text={t("confirm")}
                 />
                 <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
                     {t("cancel")}

@@ -23,9 +23,13 @@ export function getVisibleQuestionAnswerPairs(
         .filter((pair) => pair.answer?.isVisible !== false);
 }
 
-export function isPageComplete(page: Page, submission: Submission): boolean {
+export function isPageComplete(
+    page: Page,
+    submission: Submission,
+    weightedOnly?: boolean,
+): boolean {
     return page.questions
-        .filter((q) => q.isRequired)
+        .filter((q) => q.isRequired && (!weightedOnly || (q.weight && q.weight > 0)))
         .every((question) => {
             const answer = submission.answers.find((a) => a.questionName === question.name);
             return (
