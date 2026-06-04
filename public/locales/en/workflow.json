@@ -48,7 +48,8 @@
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
-      "final_grade": "Final grade"
+      "final_grade": "Final grade",
+      "grading_incomplete": "Grading not yet complete"
     },
     "empty_step": "Nothing has been submitted yet.",
     "summary": {

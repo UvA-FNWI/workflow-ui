@@ -48,7 +48,8 @@
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
-      "final_grade": "Eindcijfer"
+      "final_grade": "Eindcijfer",
+      "grading_incomplete": "Beoordeling nog niet volledig"
     },
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
