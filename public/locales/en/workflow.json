@@ -9,6 +9,15 @@
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "confirm": "Confirm",
+  "continue": "Continue",
+  "develop": {
+    "load_error": "Could not load instances",
+    "loading": "Loading…",
+    "new": "New {{name}}",
+    "no_definitions": "No project types available",
+    "no_instances": "No instances yet",
+    "title": "Develop"
+  },
   "email": "Email address",
   "external_user_add": {
     "back_to_search": "Back to search",
@@ -33,8 +42,8 @@
   "good_to_know": {
     "show_all": "Show all",
     "show_less": "Show less",
-    "title_one": "Handy during your thesis",
-    "title_other": "[{{count}}x] Handy during your thesis"
+    "title_one": "Useful during your thesis",
+    "title_other": "[{{count}}x] Useful during your thesis"
   },
   "home": "Home",
   "instance": {
@@ -42,6 +51,7 @@
       "average_grade": "Avg. grade [{{page}}]:",
       "final_grade": "Final grade"
     },
+    "empty_step": "Nothing has been submitted yet.",
     "summary": {
       "edit_page": "Edit page",
       "hide_answers": "Hide parts and explanations",

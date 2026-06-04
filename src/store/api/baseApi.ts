@@ -18,6 +18,12 @@ export const baseApi = createApi({
             if (impersonationToken) {
                 headers.set("X-Workflow-Impersonation", impersonationToken);
             }
+            // The workflow version lives in the URL (?version=) so each tab is independent and
+            // it survives the page reloads triggered by impersonation and the auth redirect.
+            const version = new URLSearchParams(window.location.search).get("version");
+            if (version !== null) {
+                headers.set("Workflow-Version", version);
+            }
             return headers;
         },
     }),
