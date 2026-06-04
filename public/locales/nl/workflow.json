@@ -52,6 +52,7 @@
       "average_grade": "Gem. cijfer [{{page}}]:",
       "final_grade": "Eindcijfer"
     },
+    "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
       "edit_page": "Pagina bewerken",
       "hide_answers": "Verberg onderdelen en toelichting",
