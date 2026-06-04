@@ -1,11 +1,11 @@
-import {Link} from "react-router";
+import {VersionedLink} from "~/components/VersionedLink";
 
 function WorkflowList() {
     return (
         <div>
             <h1>Workflows</h1>
             <nav>
-                <Link to="/">← Overview</Link>
+                <VersionedLink to="/">← Overview</VersionedLink>
             </nav>
             Workflows list here
         </div>

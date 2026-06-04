@@ -9,7 +9,14 @@
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
-  "continue": "Volgende",
+  "develop": {
+    "load_error": "Kon instanties niet laden",
+    "loading": "Laden…",
+    "new": "Nieuw {{name}}",
+    "no_definitions": "Geen projecttypes beschikbaar",
+    "no_instances": "Nog geen instanties",
+    "title": "Ontwikkelen"
+  },
   "email": "E-mailadres",
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
@@ -31,7 +38,6 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "go_back": "Vorige",
   "good_to_know": {
     "show_all": "Toon alles",
     "show_less": "Toon minder",
@@ -42,8 +48,10 @@
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
-      "final_grade": "Eindcijfer"
+      "final_grade": "Eindcijfer",
+      "grading_incomplete": "Beoordeling nog niet volledig"
     },
+    "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
       "edit_page": "Pagina bewerken",
       "hide_answers": "Verberg onderdelen en toelichting",
@@ -95,7 +103,9 @@
     "viewJobs": "Bekijk jobs"
   },
   "name": "Naam",
+  "next": "Volgende",
   "optional": "* Niet verplicht",
+  "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",
     "deadline": "Deadline",
@@ -112,6 +122,7 @@
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
   },
+  "select": "Kies",
   "status": {
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"
@@ -121,7 +132,7 @@
     "noStudentInfo": "Geen studentinformatie beschikbaar",
     "student": "Student"
   },
-  "submit": "Indienen",
+  "submit": "Inleveren",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",

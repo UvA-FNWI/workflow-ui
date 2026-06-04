@@ -9,7 +9,14 @@
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "confirm": "Confirm",
-  "continue": "Continue",
+  "develop": {
+    "load_error": "Could not load instances",
+    "loading": "Loading…",
+    "new": "New {{name}}",
+    "no_definitions": "No project types available",
+    "no_instances": "No instances yet",
+    "title": "Develop"
+  },
   "email": "Email address",
   "external_user_add": {
     "back_to_search": "Back to search",
@@ -31,19 +38,20 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
-  "go_back": "Go back",
   "good_to_know": {
     "show_all": "Show all",
     "show_less": "Show less",
-    "title_one": "Handy during your thesis",
-    "title_other": "[{{count}}x] Handy during your thesis"
+    "title_one": "Useful during your thesis",
+    "title_other": "[{{count}}x] Useful during your thesis"
   },
   "home": "Home",
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
-      "final_grade": "Final grade"
+      "final_grade": "Final grade",
+      "grading_incomplete": "Grading not yet complete"
     },
+    "empty_step": "Nothing has been submitted yet.",
     "summary": {
       "edit_page": "Edit page",
       "hide_answers": "Hide parts and explanations",
@@ -95,7 +103,9 @@
     "viewJobs": "View jobs"
   },
   "name": "Name",
+  "next": "Next",
   "optional": "* Not required",
+  "previous": "Previous",
   "progress": {
     "completed": "Completed",
     "deadline": "Deadline",
@@ -112,6 +122,7 @@
     "search_hint": "Type to search",
     "search_placeholder": "Search..."
   },
+  "select": "Select",
   "status": {
     "completed_on": "Completed on",
     "submitted": "Submitted"

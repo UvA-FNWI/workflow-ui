@@ -1,4 +1,5 @@
 {
+  "develop": "Ontwikkelen",
   "language": "Taal",
   "language_en": "Engels",
   "language_nl": "Nederlands",
@@ -7,5 +8,7 @@
   "search_placeholder": "Zoeken...",
   "session_expired_canvas_body": "De sessie is verlopen. Klik op de refresh knop in uw browser om de sessie te verversen.",
   "session_expired_surf_body": "De sessie is verlopen. Klik op de knop om opnieuw in te loggen.",
-  "session_expired_title": "Sessie verlopen"
+  "session_expired_title": "Sessie verlopen",
+  "version": "Versie",
+  "version_default": "standaard"
 }

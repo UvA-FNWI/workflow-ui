@@ -1,6 +1,7 @@
 import { CSSProperties, useRef } from 'react';
 
 import {
+  AriaButtonProps,
   AriaListBoxOptions,
   AriaPopoverProps,
   AriaSelectProps,
@@ -21,6 +22,7 @@ import type { Node, SelectState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
+import { InputLabel } from '../Input/InputLabel';
 import { inputVariants } from '../Input/InputVariant';
 import { selectionVariants } from './SelectionVariants';
 
@@ -149,6 +151,83 @@ const SelectListBox = <
   );
 };
 
+interface SelectInputProps<
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+> {
+  state: SelectState<T, M>;
+  valueProps: React.HTMLAttributes<HTMLElement>;
+  triggerProps: AriaButtonProps;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+  className?: string;
+  placeholder?: string;
+  isDisabled?: boolean;
+  isValid?: boolean;
+}
+export const SelectInput = <
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+>({
+  state,
+  valueProps,
+  triggerRef,
+  triggerProps,
+  className,
+  placeholder,
+  isDisabled,
+  isValid,
+}: SelectInputProps<T, M>) => {
+  const { focusProps, isFocusVisible } = useFocusRing();
+  const { buttonProps } = useButton(triggerProps, triggerRef);
+  const { hoverProps, isHovered } = useHover({
+    isDisabled,
+  });
+
+  const triggerClasses = inputVariants({
+    isDisabled,
+    isFocusVisible,
+    isHovered,
+    isValid,
+  });
+
+  return (
+    <button
+      {...mergeProps(buttonProps, focusProps, hoverProps)}
+      ref={triggerRef}
+      disabled={isDisabled}
+      className={cn(
+        triggerClasses,
+        'ui:flex ui:items-center ui:justify-between ui:gap-2 ui:text-left',
+        className
+      )}
+    >
+      <span
+        {...valueProps}
+        className={cn(
+          'ui:flex-1 ui:truncate ui:text-left',
+          state.selectedItems.length === 0 &&
+            'ui:text-grey-600 ui:dark:text-grey-400'
+        )}
+      >
+        {/* TODO: Support JSX items better */}
+        {state.selectedItems.length > 0
+          ? state.selectedItems.map(item => item.rendered).join(', ')
+          : placeholder}
+      </span>
+      <Icon
+        name="chevron-down-small-line"
+        size="sm"
+        color="secondary"
+        aria-hidden
+        className={cn(
+          'ui:shrink-0 ui:transition-transform ui:duration-200',
+          state.isOpen && 'ui:rotate-180'
+        )}
+      />
+    </button>
+  );
+};
+
 export interface SelectProps<
   T extends object,
   M extends SelectSelectionMode = 'single',
@@ -185,14 +264,13 @@ export function Select<
     ...restProps
   } = props;
 
-  const validationState = !isValid ? 'invalid' : 'valid';
   const state = useSelectState<T, M>({
     ...restProps,
     label,
     description,
     errorMessage,
     isDisabled,
-    validationState,
+    isInvalid: !isValid,
   });
 
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -204,7 +282,7 @@ export function Select<
     descriptionProps,
     errorMessageProps,
     hiddenSelectProps,
-    isInvalid,
+    isInvalid: isInvalidFromState,
   } = useSelect<T, M>(
     {
       ...restProps,
@@ -213,72 +291,29 @@ export function Select<
       errorMessage,
       isDisabled,
       placeholder,
-      validationState,
+      isInvalid: !isValid,
     },
     state,
     triggerRef
   );
-
-  const { focusProps, isFocusVisible } = useFocusRing();
-  const { buttonProps } = useButton(triggerProps, triggerRef);
-  const { hoverProps, isHovered } = useHover({
-    isDisabled,
-  });
-
-  const invalid = isInvalid || !isValid;
-  const triggerClasses = inputVariants({
-    isDisabled,
-    isFocusVisible,
-    isHovered,
-    isValid: !invalid,
-  });
+  const invalid = !isValid || isInvalidFromState;
 
   return (
-    <div className="ui:w-full">
-      {label && (
-        <span
-          {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
-        >
-          {label}
-        </span>
-      )}
+    <div>
+      {label && <InputLabel {...labelProps}>{label}</InputLabel>}
 
       <HiddenSelect {...hiddenSelectProps} />
 
-      <button
-        {...mergeProps(buttonProps, focusProps, hoverProps)}
-        ref={triggerRef}
-        className={cn(
-          triggerClasses,
-          'ui:flex ui:items-center ui:justify-between ui:gap-2 ui:text-left',
-          className
-        )}
-      >
-        <span
-          {...valueProps}
-          className={cn(
-            'ui:flex-1 ui:truncate ui:text-left',
-            state.selectedItems.length === 0 &&
-              'ui:text-grey-600 ui:dark:text-grey-400'
-          )}
-        >
-          {/* TODO: Support JSX items better */}
-          {state.selectedItems.length > 0
-            ? state.selectedItems.map(item => item.rendered).join(', ')
-            : placeholder}
-        </span>
-        <Icon
-          name="chevron-down-small-line"
-          size="sm"
-          color="secondary"
-          aria-hidden
-          className={cn(
-            'ui:shrink-0 ui:transition-transform ui:duration-200',
-            state.isOpen && 'ui:rotate-180'
-          )}
-        />
-      </button>
+      <SelectInput
+        state={state}
+        triggerRef={triggerRef}
+        triggerProps={triggerProps}
+        valueProps={valueProps}
+        className={className}
+        placeholder={placeholder}
+        isDisabled={isDisabled}
+        isValid={!invalid}
+      />
 
       {state.isOpen && (
         <SelectPopover
@@ -312,6 +347,27 @@ export function Select<
       )}
     </div>
   );
+}
+
+export function useSelectControl<
+  T extends object,
+  M extends SelectSelectionMode = 'single',
+>(
+  props: AriaSelectProps<T, M>,
+  triggerRef: React.RefObject<HTMLButtonElement | null>
+): {
+  state: SelectState<T, M>;
+  labelProps: React.HTMLAttributes<HTMLElement>;
+  triggerProps: AriaButtonProps;
+  valueProps: React.HTMLAttributes<HTMLElement>;
+} {
+  const state = useSelectState<T, M>(props);
+  const { labelProps, triggerProps, valueProps } = useSelect<T, M>(
+    props,
+    state,
+    triggerRef
+  );
+  return { state, labelProps, triggerProps, valueProps };
 }
 
 export { Item };

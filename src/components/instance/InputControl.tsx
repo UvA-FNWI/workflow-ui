@@ -13,11 +13,12 @@ import {
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
-import type {Answer, Question} from "~/store/api/types/submissions";
+import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
 import type {UserSearchResult} from "~/store/api/types/users";
 
 const toDate = (value: unknown) => {
@@ -132,13 +133,13 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
+        const isChoiceType = (choiceType: ChoiceLayoutType) =>
+            question.layout && "type" in question.layout && question.layout.type === choiceType;
         const choices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
-        const isDropdown =
-            question.layout && "type" in question.layout && question.layout.type === "Dropdown";
 
-        if (isDropdown) {
+        if (isChoiceType("Dropdown")) {
             if (question.isArray) {
                 const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
                 return (
@@ -153,6 +154,7 @@ export const InputControl = ({
                                   : [];
                             immediateChange(normalizedValues);
                         }}
+                        placeholder={t("select")}
                     >
                         {choices.map((choice) => (
                             <SelectItem key={choice.name}>
@@ -169,6 +171,7 @@ export const InputControl = ({
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
                     }}
+                    placeholder={t("select")}
                 >
                     {choices.map((choice) => (
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
@@ -177,18 +180,15 @@ export const InputControl = ({
             );
         }
 
-        if (question.layout && "type" in question.layout && question.layout.type === "Dropdown") {
+        if (isChoiceType("Rubric")) {
             return (
-                <Select
-                    value={(value as string) || ""}
-                    onChange={(selectedValue) => debouncedChange(selectedValue)}
-                >
-                    {choices.map((choice) => (
-                        <SelectItem key={choice.name} title={l(choice.text) ?? choice.name}>
-                            {l(choice.text) ?? choice.name}
-                        </SelectItem>
-                    ))}
-                </Select>
+                <RubricSelect
+                    value={typeof value === "string" ? value : undefined}
+                    onChange={(selectedValue) => {
+                        immediateChange(selectedValue != null ? String(selectedValue) : null);
+                    }}
+                    rubrics={question.rubric ?? []}
+                />
             );
         }
 

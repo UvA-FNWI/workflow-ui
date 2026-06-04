@@ -38,9 +38,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
     if (submission.form.formType === "AssessmentOverview") {
         return (
             <>
-                <Heading size="sm" className="uppercase" fontType="body">
-                    {t("instance.summary.title")}
-                </Heading>
+                <Heading size="sm">{t("instance.summary.title")}</Heading>
                 <FormSummary
                     submission={submission}
                     instanceId={instanceId}
@@ -104,7 +102,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                         {[
                             ...submission.form.pages.map((page, index) => (
                                 <TabPanel key={index}>
-                                    <div className="mb-4 pt-4">
+                                    <div className="my-4">
                                         <PageControl
                                             instanceId={instanceId}
                                             submissionId={submissionId}
@@ -118,7 +116,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                             onClick={() => goToNextEnabledTab(activeTabIndex, -1)}
                                             disabled={activeTabIndex === 0}
                                         >
-                                            {t("go_back")}
+                                            {t("previous")}
                                         </Button>
                                         <Button
                                             intent="secondary"
@@ -130,7 +128,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                             }
                                             onClick={() => goToNextEnabledTab(activeTabIndex, 1)}
                                         >
-                                            {t("continue")}
+                                            {t("next")}
                                         </Button>
                                     </div>
                                 </TabPanel>
@@ -138,9 +136,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                             <TabPanel key="summary">
                                 <div className="flex flex-col gap-6 pt-4">
                                     {/* Summary of all pages */}
-                                    <Heading size="sm" className="uppercase" fontType="body">
-                                        {t("instance.summary.title")}
-                                    </Heading>
+                                    <Heading size="sm">{t("instance.summary.title")}</Heading>
                                     <FormSummary
                                         submission={submission}
                                         instanceId={instanceId}
@@ -154,13 +150,11 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                 </Tabs>
             ) : (
                 <>
-                    <div className="mb-4 pt-4">
-                        <PageControl
-                            instanceId={instanceId}
-                            submissionId={submissionId}
-                            page={submission.form.pages[0]}
-                        />
-                    </div>
+                    <PageControl
+                        instanceId={instanceId}
+                        submissionId={submissionId}
+                        page={submission.form.pages[0]}
+                    />
                     <div className="mt-4">
                         <FormSubmitButton
                             instanceId={instanceId}
