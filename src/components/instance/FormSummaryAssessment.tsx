@@ -82,8 +82,8 @@ export const FormSummaryAssessment = ({
                                             <Button
                                                 intent="ghost"
                                                 size="small"
+                                                className="ml-1"
                                                 shape="circular"
-                                                className="ui:border-0 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                                                 onClick={() => onEditPage(index)}
                                                 rightIcon={
                                                     <Icon
