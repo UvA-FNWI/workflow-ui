@@ -66,7 +66,9 @@ export const QuestionAnswerList = ({
                                   )
                                 : noAnswerText;
 
-                        return question.type === "File" && answer != null ? (
+                        return question.type === "File" &&
+                            answer != null &&
+                            answer.value != null ? (
                             <Link
                                 key={submissionIndex}
                                 intent="primary"

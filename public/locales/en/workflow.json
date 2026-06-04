@@ -9,7 +9,6 @@
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "confirm": "Confirm",
-  "continue": "Continue",
   "develop": {
     "load_error": "Could not load instances",
     "loading": "Loading…",
@@ -39,7 +38,6 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
-  "go_back": "Go back",
   "good_to_know": {
     "show_all": "Show all",
     "show_less": "Show less",
@@ -63,7 +61,9 @@
     "workflowInstance": "Workflow Instance"
   },
   "name": "Name",
+  "next": "Next",
   "optional": "* Not required",
+  "previous": "Previous",
   "progress": {
     "completed": "Completed",
     "deadline": "Deadline",
