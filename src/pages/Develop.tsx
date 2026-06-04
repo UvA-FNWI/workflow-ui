@@ -4,7 +4,6 @@ import {
     Card,
     Container,
     Heading,
-    Icon,
     Tab,
     TabList,
     TabPanel,
@@ -12,7 +11,7 @@ import {
     Tabs,
 } from "@uva-fnwi/datanose-ui";
 
-import {VersionedLink} from "~/components/VersionedLink";
+import {BackLink} from "~/components/BackLink";
 import {useTranslate} from "~/hooks/useTranslate";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
@@ -39,15 +38,7 @@ function Develop() {
     // Only show types the user can actually create here — the page is for creating/iterating on
     // instances, so non-creatable types (e.g. Context) would just be empty, unactionable tabs.
     const creatableDefinitions = definitions.filter((definition) => definition.canCreateInstance);
-    const backLink = (
-        <VersionedLink
-            to="/"
-            className="mb-4 inline-flex items-center text-sm text-red-brand hover:opacity-80"
-        >
-            <Icon name="arrow-left-line" size="xs" className="mr-1" color="current" />
-            {t("home")}
-        </VersionedLink>
-    );
+    const backLink = <BackLink className="mb-4">{t("home")}</BackLink>;
 
     if (creatableDefinitions.length === 0) {
         return (
