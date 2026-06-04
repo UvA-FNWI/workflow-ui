@@ -63,7 +63,13 @@ export const StepCard = ({step, instance}: Props) => {
 
     const deadlineDate = step.deadline ?? null;
 
+    const versionsWithSubmissions =
+        step.versions?.filter((v) => (v.submissions?.length ?? 0) > 0) ?? [];
+
+    const hasSubmissions = submissions.length > 0 || versionsWithSubmissions.length > 0;
+
     const isDisabled =
+        !hasSubmissions &&
         !!instance.currentStep &&
         !isCurrentStep &&
         instance.steps.indexOf(step) >
@@ -150,30 +156,23 @@ export const StepCard = ({step, instance}: Props) => {
                             ))}
                         </div>
                     )}
-                    {showVersionCards &&
-                        step.versions?.some((version) => version.submissions?.length > 0) && (
-                            <div className="flex flex-col">
-                                {step.versions
-                                    .filter((v) => v.submissions.length > 0)
-                                    .map(
-                                        (v, index, arr) =>
-                                            v.submissions.length > 0 && (
-                                                <div key={v.versionNumber}>
-                                                    {index > 0 && <Separator />}
-                                                    <VersionCard
-                                                        version={v}
-                                                        instanceId={instance.id}
-                                                        isExpandedByDefault={
-                                                            submissionsToShow.length === 0 &&
-                                                            index === 0
-                                                        }
-                                                    />
-                                                    {index === arr.length - 1 && <Separator />}
-                                                </div>
-                                            ),
-                                    )}
-                            </div>
-                        )}
+                    {showVersionCards && (
+                        <div className="flex flex-col">
+                            {versionsWithSubmissions.map((v, index, arr) => (
+                                <div key={v.versionNumber}>
+                                    {index > 0 && <Separator />}
+                                    <VersionCard
+                                        version={v}
+                                        instanceId={instance.id}
+                                        isExpandedByDefault={
+                                            submissionsToShow.length === 0 && index === 0
+                                        }
+                                    />
+                                    {index === arr.length - 1 && <Separator />}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <Modal
                     isOpen={activeAction?.type === "Execute"}
