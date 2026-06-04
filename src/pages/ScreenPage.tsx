@@ -57,11 +57,13 @@ export const ProjectScreenOverview = () => {
                     <TabPanels>
                         {screens.groups.map((group) => (
                             <TabPanel key={group.name}>
-                                <ScreenTable
-                                    columns={screens.columns}
-                                    rows={group.rows}
-                                    globalFilter={search}
-                                />
+                                <div className="mt-8">
+                                    <ScreenTable
+                                        columns={screens.columns}
+                                        rows={group.rows}
+                                        globalFilter={search}
+                                    />
+                                </div>
                             </TabPanel>
                         ))}
                     </TabPanels>

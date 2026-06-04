@@ -9,7 +9,6 @@
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
-  "continue": "Volgende",
   "develop": {
     "load_error": "Kon instanties niet laden",
     "loading": "Laden…",
@@ -39,7 +38,6 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "go_back": "Vorige",
   "good_to_know": {
     "show_all": "Toon alles",
     "show_less": "Toon minder",
@@ -53,6 +51,7 @@
       "final_grade": "Eindcijfer",
       "grading_incomplete": "Beoordeling nog niet volledig"
     },
+    "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
       "edit_page": "Pagina bewerken",
       "hide_answers": "Verberg onderdelen en toelichting",
@@ -63,7 +62,9 @@
     "workflowInstance": "Workflow"
   },
   "name": "Naam",
+  "next": "Volgende",
   "optional": "* Niet verplicht",
+  "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",
     "deadline": "Deadline",
@@ -90,7 +91,7 @@
     "noStudentInfo": "Geen studentinformatie beschikbaar",
     "student": "Student"
   },
-  "submit": "Indienen",
+  "submit": "Inleveren",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",

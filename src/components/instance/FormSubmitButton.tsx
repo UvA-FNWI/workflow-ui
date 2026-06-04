@@ -12,6 +12,7 @@ type Props = {
     onSubmit: () => void;
     disabled?: boolean;
     size?: "small" | "medium" | "large";
+    text?: string;
 };
 
 export const FormSubmitButton = ({
@@ -20,6 +21,7 @@ export const FormSubmitButton = ({
     onSubmit,
     disabled,
     size = "medium",
+    text,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
 
@@ -29,7 +31,6 @@ export const FormSubmitButton = ({
         <Button
             intent="primary"
             variant="destructive"
-            className="ml-auto"
             size={size}
             disabled={disabled}
             isLoading={isLoading}
@@ -40,7 +41,7 @@ export const FormSubmitButton = ({
                 });
                 const errorResult = (res.error as FetchBaseQueryError)
                     ?.data as SubmitSubmissionResult;
-                if (errorResult?.validationErrors.length) {
+                if (errorResult?.validationErrors?.length) {
                     // TODO: validation (DN-3424)
                     const question = errorResult.validationErrors[0];
                     alert(`Not valid! ${question.questionName}: ${l(question.validationMessage)}`);
@@ -49,7 +50,7 @@ export const FormSubmitButton = ({
                 onSubmit();
             }}
         >
-            {t("submit")}
+            {text ?? t("submit")}
         </Button>
     );
 };
