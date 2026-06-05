@@ -1,6 +1,6 @@
-import {Link} from "react-router";
-
 import {Container} from "@uva-fnwi/datanose-ui";
+
+import {VersionedLink} from "~/components/VersionedLink";
 
 function Overview() {
     return (
@@ -15,7 +15,9 @@ function Overview() {
                 <p>Welcome to the Workflow UI Overview page.</p>
             </div>
             <nav>
-                <Link to="/screens/project-overview">Project overview screen</Link>
+                <VersionedLink to="/screens/project-overview">
+                    Project overview screen
+                </VersionedLink>
             </nav>
         </Container>
     );

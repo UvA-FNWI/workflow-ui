@@ -14,7 +14,6 @@ import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/
 
 const newOrganizationId = "new-item";
 
-// Selection type from react-stately
 type Selection = "all" | Set<string | number>;
 
 export interface AddExternalUserModalProps {
@@ -50,18 +49,9 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     const [newExternalUser, setNewExternalUser] = useState<UserSearchResult>(
         initialUser ?? emptyExternalUser,
     );
-
     const [triggerSearch, searchState] = useLazyFindOrganizationsQuery();
     const resetSearch = searchState.reset;
     const searchResults = useMemo(() => searchState.data ?? [], [searchState.data]);
-
-    const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
-        return searchResults.map((organization) => ({
-            key: organization.id,
-            primaryValue: organization.name,
-        }));
-    }, [searchResults]);
-
     const {
         emailError,
         isVerifyingEmail,
@@ -71,6 +61,13 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         validateEmail,
         wasEmailVerified,
     } = useManualUserEmailVerification();
+
+    const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
+        return searchResults.map((organization) => ({
+            key: organization.id,
+            primaryValue: organization.name,
+        }));
+    }, [searchResults]);
 
     const updateExternalUser = useCallback((updates: Partial<UserSearchResult>) => {
         setNewExternalUser((prev) => ({
@@ -112,7 +109,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             }
 
             const foundOrganization = searchResults.find(
-                (inst) => inst.id === selectedOrganizationId,
+                (organization) => organization.id === selectedOrganizationId,
             );
 
             updateExternalUser({

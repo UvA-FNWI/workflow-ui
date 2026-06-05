@@ -69,7 +69,7 @@ const buttonClassGenerator = cva(
         intent: 'ghost',
         variant: 'default',
         className:
-          'ui:border-transparent ui:bg-transparent ui:text-black ui:hover:enabled:border-black ui:dark:text-white ui:hover:enabled:dark:border-white',
+          'ui:border-transparent ui:bg-transparent ui:text-black ui:hover:enabled:bg-grey-200 ui:dark:text-white ui:dark:hover:enabled:bg-grey-800',
       },
       // Destructive primary
       {
@@ -90,7 +90,12 @@ const buttonClassGenerator = cva(
         intent: 'ghost',
         variant: 'destructive',
         className:
-          'ui:border-transparent ui:bg-transparent ui:text-red-600 ui:hover:enabled:border-red-600 ui:hover:enabled:dark:border-red-600',
+          'ui:border-transparent ui:bg-transparent ui:text-red-600 ui:hover:enabled:bg-red-200 ui:hover:enabled:dark:bg-red-800',
+      },
+      {
+        shape: 'circular',
+        size: 'small',
+        className: 'ui:p-1',
       },
     ],
     defaultVariants: {

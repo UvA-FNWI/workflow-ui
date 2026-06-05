@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
-import {cn, Heading, InputLabel, LoadingSpinner, Text} from "@uva-fnwi/datanose-ui";
+import {cn, Heading, InputLabel, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -15,6 +15,7 @@ import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Result} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
+import {isPageComplete} from "~/utils/submissionUtils.ts";
 
 type PageControlProps = {
     instanceId: string;
@@ -101,6 +102,11 @@ export const PageControl = ({
         control: form.control,
     });
 
+    const areWeightedQuestionsComplete = useMemo(
+        () => !!submission && isPageComplete(page, submission, true),
+        [submission, page],
+    );
+
     const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getResultsPage.useQuery(
         {
             instanceId,
@@ -114,6 +120,9 @@ export const PageControl = ({
     const formForPage = data?.forms?.[0]; // form for the current page
     const results = formForPage?.results?.[page.name];
     const weightedAverage = formForPage?.weightedAverages?.[page.name] ?? 0;
+    const averageGradeContent = areWeightedQuestionsComplete
+        ? weightedAverage.toLocaleString(i18n.language)
+        : t("instance.calculations.grading_incomplete");
 
     const getTotalPercentage = (r: Result[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
@@ -123,10 +132,10 @@ export const PageControl = ({
 
     return (
         <>
-            <div className="mb-4 flex flex-col gap-4 pt-4">
+            <div className="mb-4 flex flex-col gap-4">
                 <div>
                     {showTitle && (
-                        <Heading size="sm" className="uppercase" fontType="body">
+                        <Heading size="sm" className="pb-2">
                             {l(page.title)}
                             {results &&
                                 results.length > 0 &&
@@ -151,7 +160,7 @@ export const PageControl = ({
                                             return (
                                                 <div
                                                     className={cn(
-                                                        "mb-4",
+                                                        "mb-6",
                                                         showCompact &&
                                                             "flex flex-row items-start justify-between",
                                                     )}
@@ -234,9 +243,14 @@ export const PageControl = ({
                     </div>
                 )}
 
-                {typeof weightedAverage == "number" && weightedAverage !== 0 && (
+                {page.hasResults && (
                     <div>
-                        <Heading className="flex items-center gap-2">
+                        <Separator weight="bold" color="black" className="mb-4" />
+                        <Text
+                            size="xl"
+                            fontWeight="semibold"
+                            className="flex items-center justify-between gap-2 pr-12"
+                        >
                             {t("instance.calculations.average_grade", {
                                 page: l(page.title),
                             }).toUpperCase()}
@@ -244,9 +258,9 @@ export const PageControl = ({
                             {isFetchingAverages ? (
                                 <LoadingSpinner size="xs" />
                             ) : (
-                                <span>{weightedAverage.toLocaleString(i18n.language)}</span>
+                                <span>{averageGradeContent}</span>
                             )}
-                        </Heading>
+                        </Text>
                     </div>
                 )}
             </div>

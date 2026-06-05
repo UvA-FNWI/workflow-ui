@@ -127,12 +127,13 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           className={cn(inputClasses, className)}
         />
         <div className="ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-center">
-          <div className="ui:flex ui:h-1/2 ui:flex-col">
+          <div className="ui:flex ui:h-1/2 ui:flex-col ui:pr-2">
             <Button
               {...incrementProps}
               ref={incrementRef}
               type="button"
               intent="ghost"
+              className="ui:px-0 ui:py-1"
             >
               <Icon name="chevron-up-small-solid" size="lg" aria-hidden />
             </Button>
@@ -141,6 +142,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
               ref={decrementRef}
               type="button"
               intent="ghost"
+              className="ui:px-0 ui:py-1"
             >
               <Icon name="chevron-down-small-solid" size="lg" aria-hidden />
             </Button>
