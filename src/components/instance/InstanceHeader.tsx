@@ -1,8 +1,7 @@
-import {Link} from "react-router";
-
 import {Button, Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {VersionedLink} from "~/components/VersionedLink";
+import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
 interface InstanceHeaderProps {
@@ -19,6 +18,7 @@ export function InstanceHeader({
     isLoading,
 }: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
+    const {page} = useJobTranslations();
 
     if (isLoading) {
         return (
@@ -47,11 +47,11 @@ export function InstanceHeader({
                     {displayTitle}
                 </Heading>
                 {canUseAdminTools && instanceId && (
-                    <Link to={`/instance/${instanceId}/jobs`}>
+                    <VersionedLink to={`/instance/${instanceId}/jobs`}>
                         <Button intent="secondary" type="button">
-                            {t("jobs.viewJobs")}
+                            {page.viewJobs}
                         </Button>
-                    </Link>
+                    </VersionedLink>
                 )}
             </div>
         </div>

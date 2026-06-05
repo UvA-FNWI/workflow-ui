@@ -6,6 +6,7 @@ import {Button, Icon, linkClassGenerator, Pill} from "@uva-fnwi/datanose-ui";
 import {JOB_STATUS_VARIANT} from "../../utils/jobsUtils";
 import {JobModal} from "./JobModal";
 import {DataTable} from "~/components/Table";
+import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Job, JobStatus} from "~/store/api/types/jobs";
 import {formatDate} from "~/utils/formatDate";
@@ -18,7 +19,8 @@ type JobsTableProps = {
 };
 
 export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTableProps) => {
-    const {t, i18n} = useTranslate("workflow");
+    const {columns: columnLabels, i18n} = useJobTranslations();
+    const {t} = useTranslate("workflow");
     const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
     const columns = useMemo<ColumnDef<Job>[]>(
@@ -26,7 +28,7 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
             {
                 id: "sourceName",
                 accessorFn: (row) => row.sourceName ?? row.sourceType,
-                header: () => t("jobs.columns.source"),
+                header: () => columnLabels.source,
                 cell: ({row, getValue}) => {
                     const rowId = row.original.id;
                     const sourceValue = String(getValue<unknown>());
@@ -54,7 +56,7 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
             {
                 id: "status",
                 accessorKey: "status",
-                header: () => t("jobs.columns.status"),
+                header: () => columnLabels.status,
                 cell: ({getValue}) => {
                     const status = getValue<JobStatus>();
                     return <Pill variant={JOB_STATUS_VARIANT[status]}>{status}</Pill>;
@@ -64,14 +66,14 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
             {
                 id: "startOn",
                 accessorKey: "startOn",
-                header: () => t("jobs.columns.startOn"),
+                header: () => columnLabels.startOn,
                 cell: ({getValue}) => formatDate(getValue<string>(), i18n.language),
                 enableSorting: true,
             },
             {
                 id: "executedOn",
                 accessorKey: "executedOn",
-                header: () => t("jobs.columns.executedOn"),
+                header: () => columnLabels.executedOn,
                 cell: ({getValue}) => {
                     const value = getValue<string | null>();
                     return value ? formatDate(value, i18n.language) : "—";
@@ -81,14 +83,14 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
             {
                 id: "createdBy",
                 accessorFn: (row) => row.createdByDisplayName ?? row.createdBy,
-                header: () => t("jobs.columns.createdBy"),
+                header: () => columnLabels.createdBy,
                 cell: ({getValue}) => getValue<string | null>() ?? "—",
                 enableSorting: true,
             },
             {
                 id: "message",
                 accessorKey: "message",
-                header: () => t("jobs.columns.message"),
+                header: () => columnLabels.message,
                 cell: ({getValue}) => {
                     const message = getValue<string | null>();
                     const display = message ?? "—";
@@ -126,7 +128,7 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
                 },
             },
         ],
-        [i18n.language, t],
+        [columnLabels, i18n.language, t],
     );
 
     return (

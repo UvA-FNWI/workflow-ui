@@ -2,6 +2,7 @@ import {type ReactNode, useState} from "react";
 
 import {Button, Heading, Modal, Pill, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
+import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import {jobsEndpoints} from "~/store/api/jobsApi";
 import type {Job, JobStep} from "~/store/api/types/jobs";
@@ -16,7 +17,8 @@ type JobModalProps = {
 };
 
 export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) => {
-    const {t, i18n} = useTranslate("workflow");
+    const {modal, i18n} = useJobTranslations();
+    const {t} = useTranslate("workflow");
     const [isRunConfirmOpen, setIsRunConfirmOpen] = useState(false);
 
     const {
@@ -47,7 +49,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
         }
     };
 
-    const title = job?.sourceName ?? job?.sourceType ?? job?.id ?? t("jobs.modal.title");
+    const title = job?.sourceName ?? job?.sourceType ?? job?.id ?? modal.title;
 
     return (
         <>
@@ -55,7 +57,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
                 <Modal.Header>{title}</Modal.Header>
                 <Modal.Body className="flex flex-col gap-6 overflow-auto">
                     {isLoading && <Skeleton className="h-48 w-full" />}
-                    {isError && <Text>{t("jobs.modal.error")}</Text>}
+                    {isError && <Text>{modal.error}</Text>}
                     {job && <JobDetails job={job} locale={i18n.language} />}
                 </Modal.Body>
                 <Modal.Footer>
@@ -65,7 +67,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
                         onClick={() => setIsRunConfirmOpen(true)}
                         disabled={!jobId || job?.status === "Running" || isRunning || isLoading}
                     >
-                        {t("jobs.modal.run")}
+                        {modal.run}
                     </Button>
                     <Button
                         intent="secondary"
@@ -81,7 +83,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
             <Modal isOpen={isRunConfirmOpen} onOpenChange={setIsRunConfirmOpen} size="sm">
                 <Modal.Header>{t("are_you_sure")}</Modal.Header>
                 <Modal.Body>
-                    <Text>{t("jobs.modal.confirmRunMessage")}</Text>
+                    <Text>{modal.confirmRunMessage}</Text>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button intent="primary" onClick={handleRun} disabled={isRunning}>
@@ -106,48 +108,41 @@ type JobDetailsProps = {
 };
 
 const JobDetails = ({job, locale}: JobDetailsProps) => {
-    const {t} = useTranslate("workflow");
+    const {properties, modal} = useJobTranslations();
 
     return (
         <>
             <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Property label={t("jobs.modal.properties.id")} value={job.id} />
-                <Property label={t("jobs.modal.properties.status")}>
+                <Property label={properties.id} value={job.id} />
+                <Property label={properties.status}>
                     <Pill variant={JOB_STATUS_VARIANT[job.status]}>{job.status}</Pill>
                 </Property>
-                <Property label={t("jobs.modal.properties.sourceType")} value={job.sourceType} />
-                <Property label={t("jobs.modal.properties.sourceName")} value={job.sourceName} />
+                <Property label={properties.sourceType} value={job.sourceType} />
+                <Property label={properties.sourceName} value={job.sourceName} />
+                <Property label={properties.startOn} value={formatDate(job.startOn, locale)} />
                 <Property
-                    label={t("jobs.modal.properties.startOn")}
-                    value={formatDate(job.startOn, locale)}
-                />
-                <Property
-                    label={t("jobs.modal.properties.executedOn")}
+                    label={properties.executedOn}
                     value={job.executedOn ? formatDate(job.executedOn, locale) : null}
                 />
                 <Property
-                    label={t("jobs.modal.properties.createdBy")}
+                    label={properties.createdBy}
                     value={job.createdByDisplayName ?? job.createdBy}
                 />
                 <Property
-                    label={t("jobs.modal.properties.isSynchronous")}
-                    value={job.isSynchronous ? t("jobs.modal.yes") : t("jobs.modal.no")}
+                    label={properties.isSynchronous}
+                    value={job.isSynchronous ? modal.yes : modal.no}
                 />
-                <Property label={t("jobs.modal.properties.workerGroup")} value={job.workerGroup} />
+                <Property label={properties.workerGroup} value={job.workerGroup} />
                 <Property
-                    label={t("jobs.modal.properties.claimedUntil")}
+                    label={properties.claimedUntil}
                     value={job.claimedUntil ? formatDate(job.claimedUntil, locale) : null}
                 />
-                <Property label={t("jobs.modal.properties.instanceId")} value={job.instanceId} />
-                {job.message ? (
-                    <div />
-                ) : (
-                    <Property label={t("jobs.modal.properties.message")} value={null} />
-                )}
+                <Property label={properties.instanceId} value={job.instanceId} />
+                {job.message ? <div /> : <Property label={properties.message} value={null} />}
             </dl>
 
             {job.message ? (
-                <Property label={t("jobs.modal.properties.message")}>
+                <Property label={properties.message}>
                     <pre className="tmax-h-48 overflow-auto rounded bg-grey-100 p-2 text-xs dark:bg-grey-800">
                         {job.message}
                     </pre>
@@ -156,7 +151,7 @@ const JobDetails = ({job, locale}: JobDetailsProps) => {
 
             <section>
                 <Heading as="h3" size="sm" className="mb-3">
-                    {t("jobs.modal.steps")}
+                    {modal.steps}
                 </Heading>
                 {job.steps && job.steps.length > 0 ? (
                     <ol className="flex flex-col gap-4">
@@ -165,7 +160,7 @@ const JobDetails = ({job, locale}: JobDetailsProps) => {
                         ))}
                     </ol>
                 ) : (
-                    <Text>{t("jobs.modal.noSteps")}</Text>
+                    <Text>{modal.noSteps}</Text>
                 )}
             </section>
         </>
@@ -188,18 +183,18 @@ const Property = ({
 );
 
 const JobStepCard = ({step, index}: {step: JobStep; index: number}) => {
-    const {t} = useTranslate("workflow");
+    const {modal} = useJobTranslations();
 
     return (
         <li className="rounded border border-grey-300 p-4 dark:border-grey-600">
             <Text className="mb-2 font-semibold">
-                {t("jobs.modal.stepNumber", {number: index + 1})}
+                {modal.step} {index + 1}
                 {step.identifier ? `: ${step.identifier}` : ""}
             </Text>
             {step.message && (
                 <div className="mb-2">
                     <Text className="mb-1 text-sm font-medium text-grey-700 dark:text-grey-300">
-                        {t("jobs.modal.stepMessage")}:
+                        {modal.stepMessage}:
                     </Text>
                     <pre className="tmax-h-48 overflow-auto rounded bg-grey-100 p-2 text-xs dark:bg-grey-800">
                         {step.message}
@@ -209,7 +204,7 @@ const JobStepCard = ({step, index}: {step: JobStep; index: number}) => {
             {step.outputs && Object.keys(step.outputs).length > 0 && (
                 <div>
                     <Text className="mb-1 text-sm font-medium text-grey-700 dark:text-grey-300">
-                        {t("jobs.modal.stepOutputs")}:
+                        {modal.stepOutputs}:
                     </Text>
                     <pre className="max-h-48 overflow-auto rounded bg-grey-100 p-2 text-xs dark:bg-grey-800">
                         {JSON.stringify(step.outputs, null, 2)}

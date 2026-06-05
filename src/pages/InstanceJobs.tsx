@@ -5,6 +5,7 @@ import {Link, Navigate, useParams} from "react-router";
 import {Card, Container, Heading, Icon, SearchInput, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {JobsTable} from "~/components/JobsTable";
+import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {jobsEndpoints} from "~/store/api/jobsApi";
@@ -13,6 +14,7 @@ import {getLocalStringField} from "~/utils/fieldUtils";
 function InstanceJobs() {
     const {id} = useParams<{id: string}>();
     const {t, l} = useTranslate(["workflow", "common"]);
+    const {page} = useJobTranslations();
     const [search, setSearch] = useState("");
 
     const {data: instance, isLoading: isLoadingInstance} = instancesEndpoints.getInstance.useQuery(
@@ -32,11 +34,11 @@ function InstanceJobs() {
     });
 
     if (!id) {
-        return <div>{t("jobs.error")}</div>;
+        return <div>{page.error}</div>;
     }
 
     if (isError) {
-        return <div>{t("jobs.error")}</div>;
+        return <div>{page.error}</div>;
     }
 
     if (!isLoadingInstance && instance && !instance.canUseAdminTools) {
@@ -46,17 +48,17 @@ function InstanceJobs() {
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const displayTitle =
         (typeof courseName === "string" ? courseName : l(courseName)) ||
-        t("instance.workflowInstance");
+        t("instance.workflowInstance", {ns: "workflow"});
 
     return (
         <Container maxWidth={1280}>
             <div className="mb-8 flex flex-col gap-2">
                 <Link to={`/instance/${id}`} className="text-sm text-red-brand hover:opacity-80">
                     <Icon name="arrow-left-line" size="xs" className="mr-1" color="current" />
-                    {t("jobs.backToInstance")}
+                    {page.backToInstance}
                 </Link>
                 <Heading as="h1" size="lg">
-                    {displayTitle} | {t("jobs.title")}
+                    {displayTitle} | {page.title}
                 </Heading>
             </div>
             <Card>

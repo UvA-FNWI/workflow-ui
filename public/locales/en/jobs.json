@@ -1,0 +1,32 @@
+{
+  "backToInstance": "Back to instance",
+  "claimedUntil": "Claimed until",
+  "createdBy": "Created by",
+  "error": "Error loading jobs",
+  "executedOn": "Executed on",
+  "id": "ID",
+  "instanceId": "Instance ID",
+  "isSynchronous": "Synchronous",
+  "message": "Message",
+  "modal": {
+    "confirmRunMessage": "This will enqueue the job to run again.",
+    "error": "Error loading job details",
+    "no": "No",
+    "noSteps": "No steps recorded",
+    "run": "Run",
+    "stepMessage": "Message",
+    "step": "Step",
+    "stepOutputs": "Outputs",
+    "steps": "Steps",
+    "title": "Job",
+    "yes": "Yes"
+  },
+  "source": "Source",
+  "sourceName": "Source name",
+  "sourceType": "Source type",
+  "startOn": "Start on",
+  "status": "Status",
+  "title": "Jobs",
+  "viewJobs": "View jobs",
+  "workerGroup": "Worker group"
+}

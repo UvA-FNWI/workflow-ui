@@ -61,47 +61,6 @@
     },
     "workflowInstance": "Workflow"
   },
-  "jobs": {
-    "backToInstance": "Terug naar instance",
-    "columns": {
-      "createdBy": "Aangemaakt door",
-      "executedOn": "Uitgevoerd op",
-      "message": "Bericht",
-      "source": "Bron",
-      "startOn": "Start op",
-      "status": "Status"
-    },
-    "error": "Fout bij laden van jobs",
-    "modal": {
-      "confirmRunMessage": "Dit zal de job opnieuw in de wachtrij zetten om uit te voeren.",
-      "error": "Fout bij laden van jobdetails",
-      "no": "Nee",
-      "noSteps": "Geen stappen geregistreerd",
-      "properties": {
-        "claimedUntil": "Geclaimd tot",
-        "createdBy": "Aangemaakt door",
-        "executedOn": "Uitgevoerd op",
-        "id": "ID",
-        "instanceId": "Instance ID",
-        "isSynchronous": "Synchroon",
-        "message": "Bericht",
-        "sourceName": "Bronnaam",
-        "sourceType": "Brontype",
-        "startOn": "Start op",
-        "status": "Status",
-        "workerGroup": "Worker group"
-      },
-      "run": "Uitvoeren",
-      "stepMessage": "Bericht",
-      "stepNumber": "Stap {{number}}",
-      "stepOutputs": "Outputs",
-      "steps": "Stappen",
-      "title": "Job",
-      "yes": "Ja"
-    },
-    "title": "Jobs",
-    "viewJobs": "Bekijk jobs"
-  },
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
