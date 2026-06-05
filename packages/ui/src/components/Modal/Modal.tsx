@@ -244,10 +244,10 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         </h2>
         {showCloseButton && (
           <Button
-            intent="secondary"
+            intent="ghost"
             size="small"
             shape="circular"
-            className="ui:ml-auto ui:border-0 ui:bg-transparent ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+            className="ui:ml-auto"
             onClick={onClose}
             aria-label="Close modal"
           >

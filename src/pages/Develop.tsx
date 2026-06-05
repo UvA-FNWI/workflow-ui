@@ -11,6 +11,7 @@ import {
     Tabs,
 } from "@uva-fnwi/datanose-ui";
 
+import {BackLink} from "~/components/BackLink";
 import {useTranslate} from "~/hooks/useTranslate";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
@@ -37,10 +38,12 @@ function Develop() {
     // Only show types the user can actually create here — the page is for creating/iterating on
     // instances, so non-creatable types (e.g. Context) would just be empty, unactionable tabs.
     const creatableDefinitions = definitions.filter((definition) => definition.canCreateInstance);
+    const backLink = <BackLink className="mb-4">{t("home")}</BackLink>;
 
     if (creatableDefinitions.length === 0) {
         return (
             <Container maxWidth={1280}>
+                {backLink}
                 <Card>
                     <p className="text-sm text-grey-700 dark:text-grey-300">
                         {t("develop.no_definitions")}
@@ -53,6 +56,7 @@ function Develop() {
     if (creatableDefinitions.length === 1) {
         return (
             <Container maxWidth={1280}>
+                {backLink}
                 <Card>
                     <WorkflowInstancesPanel definition={creatableDefinitions[0]} />
                 </Card>
@@ -80,6 +84,7 @@ function Develop() {
 
     return (
         <Container maxWidth={1280}>
+            {backLink}
             <Card>
                 <Heading as="h1" className="mb-4">
                     {t("develop.title")}

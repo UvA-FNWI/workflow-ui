@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
-import {Button, Select, SelectItem, useTheme} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Select, SelectItem, useTheme} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {VersionedLink} from "~/components/VersionedLink";
@@ -55,46 +55,49 @@ function TemporaryNavbar() {
     return (
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
-                <p className="text-base font-semibold">Workflow UI</p>
-                <p className="text-xs text-grey-700 dark:text-grey-300">
-                    {VITE_ENV} | {VITE_WEBAPI_URL}
-                </p>
+                <Heading size="sm">Milestones (pilot)</Heading>
+                {VITE_ENV !== "production" && (
+                    <p className="text-xs text-grey-700 dark:text-grey-300">
+                        {VITE_ENV} | {VITE_WEBAPI_URL}
+                    </p>
+                )}
             </div>
             <div className="flex flex-wrap items-center gap-4">
                 {isSuperAdmin && (
-                    <VersionedLink to="/develop" className="text-sm font-medium underline">
-                        {t("develop")}
-                    </VersionedLink>
+                    <div className="flex items-center gap-4">
+                        <VersionedLink to="/develop" className="text-sm font-medium underline">
+                            {t("develop")}
+                        </VersionedLink>
+                        <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
+                            {t("version")}
+                            <div className="w-36">
+                                <Select
+                                    aria-label={t("version")}
+                                    selectedKey={selectedVersionKey}
+                                    onChange={(key) => {
+                                        const version =
+                                            key === DEFAULT_VERSION_KEY ? "" : String(key);
+                                        const params = new URLSearchParams(window.location.search);
+                                        if (version) {
+                                            params.set("version", version);
+                                        } else {
+                                            params.delete("version");
+                                        }
+                                        // Full reload so every cached query refetches under the new version.
+                                        window.location.search = params.toString();
+                                    }}
+                                >
+                                    {versionOptions.map((option) => (
+                                        <SelectItem key={option.key}>{option.label}</SelectItem>
+                                    ))}
+                                </Select>
+                            </div>
+                        </label>
+                    </div>
                 )}
                 <Button intent="secondary" onClick={handleThemeToggle} type="button">
                     Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode
                 </Button>
-                {isSuperAdmin && (
-                    <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
-                        {t("version")}
-                        <div className="w-36">
-                            <Select
-                                aria-label={t("version")}
-                                selectedKey={selectedVersionKey}
-                                onChange={(key) => {
-                                    const version = key === DEFAULT_VERSION_KEY ? "" : String(key);
-                                    const params = new URLSearchParams(window.location.search);
-                                    if (version) {
-                                        params.set("version", version);
-                                    } else {
-                                        params.delete("version");
-                                    }
-                                    // Full reload so every cached query refetches under the new version.
-                                    window.location.search = params.toString();
-                                }}
-                            >
-                                {versionOptions.map((option) => (
-                                    <SelectItem key={option.key}>{option.label}</SelectItem>
-                                ))}
-                            </Select>
-                        </div>
-                    </label>
-                )}
                 <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
                     {t("language")}
                     <div className="w-32">
