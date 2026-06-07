@@ -1,4 +1,4 @@
-import {Button, Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {BackLink} from "~/components/BackLink";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
