@@ -1,6 +1,7 @@
 import {Button, Heading, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {BackLink} from "~/components/BackLink";
+import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
