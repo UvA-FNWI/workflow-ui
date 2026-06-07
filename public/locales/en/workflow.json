@@ -10,6 +10,11 @@
   "cancel": "Cancel",
   "confirm": "Confirm",
   "develop": {
+    "columns": {
+      "created": "Created",
+      "id": "ID",
+      "title": "Title"
+    },
     "load_error": "Could not load instances",
     "loading": "Loading…",
     "new": "New {{name}}",
@@ -22,9 +27,10 @@
     "back_to_search": "Back to search",
     "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
     "email_error": "Please enter a valid email address",
+    "manual_user_email_already_exists": "A user with this email address already exists. Use the search function to find the user",
+    "manual_user_internal_email": "Users with UvA mail address cannot be added manually. Use the search function to find the user",
     "organization": "Organisation",
     "organization_name": "Organisation name",
-    "success_toast": "The external user has received an automatic email to confirm the account.",
     "title": "Add external user"
   },
   "file_upload": {

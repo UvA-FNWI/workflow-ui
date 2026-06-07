@@ -18,8 +18,9 @@ import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
+import type {SaveAnswerResult} from "~/store/api/types/returnTypes.ts";
 import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
-import type {UserSearchResult} from "~/store/api/types/users";
+import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
 
 const toDate = (value: unknown) => {
     if (value == null) return null;
@@ -35,8 +36,7 @@ interface InputControlProps {
     value?: unknown;
     question: Question;
     onChange?: (val: unknown) => void;
-    onSave?: (val: AnswerInput) => void;
-    // These extra props will be used later
+    onSave: (val: AnswerInput) => Promise<SaveAnswerResult>;
     onFileSave?: (params: FileParams) => void;
     answer?: Answer;
     visibleChoices?: string[] | null;
@@ -53,9 +53,31 @@ export const InputControl = ({
 
     const save = useCallback(
         (value: unknown) => {
-            onSave?.({questionName: question.name, value});
+            void onSave({questionName: question.name, value});
         },
         [question.name, onSave],
+    );
+    const handleCreateExternalUser = useCallback(
+        async (newUser: CreateExternalUserInput) => {
+            const result = await onSave({
+                questionName: question.name,
+                value: null,
+                externalUser: newUser,
+            });
+
+            const updatedAnswer = result.answers.find(
+                (answer) => answer.questionName === question.name,
+            );
+            const updatedUser = updatedAnswer?.value as UserSearchResult | undefined;
+
+            if (updatedUser) {
+                onChange?.(updatedUser);
+                return;
+            }
+
+            throw new Error(`Updated user answer was not returned for question "${question.name}"`);
+        },
+        [onChange, onSave, question.name],
     );
     const debouncedOnChange = useDebounce(save, 500);
     const debouncedChange = (value: unknown) => {
@@ -118,6 +140,7 @@ export const InputControl = ({
                 value={value as UserSearchResult | UserSearchResult[] | null | undefined}
                 onChange={(newValue) => debouncedChange(newValue)}
                 allowsExternalUsers={question.allowsExternalUsers}
+                onCreateExternalUser={handleCreateExternalUser}
             />
         );
     }

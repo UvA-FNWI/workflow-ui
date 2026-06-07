@@ -1,6 +1,6 @@
 import {Button, Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
 
-import {VersionedLink} from "~/components/VersionedLink";
+import {BackLink} from "~/components/BackLink";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
@@ -38,10 +38,7 @@ export function InstanceHeader({
 
     return (
         <div className="mb-8 flex flex-col gap-2">
-            <VersionedLink to="/" className="text-sm text-red-brand hover:opacity-80">
-                <Icon name="arrow-left-line" size={"xs"} className="mr-1" color={"current"} />
-                {t("home")}
-            </VersionedLink>
+            <BackLink>{t("home")}</BackLink>
             <div className="flex items-center justify-between gap-4">
                 <Heading as="h1" size="lg">
                     {displayTitle}
