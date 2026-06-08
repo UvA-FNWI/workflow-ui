@@ -36,8 +36,17 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
             <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
                 <div className="flex flex-col gap-6">
-                    {version.submissions.map((submission) => (
+                    {version.submissions.map((submission, index) => (
                         <div key={submission.id} className="flex flex-col gap-2">
+                            {version.submissions.length > 1 && index > 0 && (
+                                <Heading
+                                    as="h4"
+                                    size="xs"
+                                    className="pb-1 font-semibold text-red-brand"
+                                >
+                                    {l(submission.form.title)?.toUpperCase()}
+                                </Heading>
+                            )}
                             {submission.form.pages.map((page) => {
                                 const questionAnswerPairs = getVisibleQuestionAnswerPairs(
                                     page.questions,

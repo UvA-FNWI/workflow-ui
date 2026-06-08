@@ -1,4 +1,6 @@
-import {Link, useParams} from "react-router";
+import {useParams} from "react-router";
+
+import {VersionedLink} from "~/components/VersionedLink";
 
 function WorkflowDetail() {
     const {id} = useParams<{id: string}>();
@@ -6,8 +8,8 @@ function WorkflowDetail() {
     return (
         <div>
             <nav>
-                <Link to="/workflows">← Workflows</Link>
-                <Link to="/">Overview</Link>
+                <VersionedLink to="/workflows">← Workflows</VersionedLink>
+                <VersionedLink to="/">Overview</VersionedLink>
             </nav>
             <h1>Workflow {id}</h1>
             <p>Status: Active</p>

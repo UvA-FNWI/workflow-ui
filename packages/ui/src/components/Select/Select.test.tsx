@@ -19,7 +19,7 @@ describe('Select', () => {
     renderSelect({ placeholder: 'Choose status' });
 
     expect(
-      screen.getByText('Status', { selector: 'span' })
+      screen.getByText('Status', { selector: 'label[class]' })
     ).toBeInTheDocument();
     expect(screen.getByRole('button')).toHaveTextContent('Choose status');
   });

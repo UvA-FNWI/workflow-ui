@@ -50,7 +50,7 @@ export function SearchListBox({
             selectionMode={selectionMode}
             aria-label={ariaLabel}
         >
-            {(item) => (
+            {(item: SearchListBoxValue) => (
                 <Item key={item.key} textValue={item.primaryValue}>
                     <div
                         className={`min-w-0 items-center gap-2 ${gridColsClass && `grid ${gridColsClass}`}`}
