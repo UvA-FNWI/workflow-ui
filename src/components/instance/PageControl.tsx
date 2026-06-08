@@ -151,6 +151,11 @@ export const PageControl = ({
                                 const showCompact =
                                     submission?.form.layout === "Compact" &&
                                     question.type === "Choice";
+                                const answer = answers.find(
+                                    (a) => a.questionName === question.name,
+                                );
+                                const errorMessage =
+                                    answer?.validationError && l(answer.validationError);
                                 return (
                                     <Controller
                                         key={question.name}
@@ -206,6 +211,8 @@ export const PageControl = ({
                                                             onChange={field.onChange}
                                                             question={question}
                                                             onSave={save}
+                                                            errorMessage={errorMessage}
+                                                            isValid={!errorMessage}
                                                         />
                                                     </div>
                                                 </div>
