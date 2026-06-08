@@ -40,6 +40,8 @@ interface InputControlProps {
     onFileSave?: (params: FileParams) => void;
     answer?: Answer;
     visibleChoices?: string[] | null;
+    isValid?: boolean;
+    errorMessage?: string;
 }
 
 export const InputControl = ({
@@ -48,6 +50,8 @@ export const InputControl = ({
     onChange,
     onSave,
     visibleChoices,
+    isValid,
+    errorMessage,
 }: InputControlProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -113,6 +117,8 @@ export const InputControl = ({
                 }}
                 description={lengthValidationDescription}
                 maxLength={question.maxLength}
+                isValid={isValid}
+                errorMessage={errorMessage}
             />
         );
     }
@@ -125,13 +131,20 @@ export const InputControl = ({
                     debouncedChange(value);
                 }}
                 locale={i18n.language}
+                isValid={isValid}
+                errorMessage={errorMessage}
             />
         );
     }
 
     if (question.type === "Date") {
         return (
-            <DatePicker value={toDate(value)} onChange={(newValue) => debouncedChange(newValue)} />
+            <DatePicker
+                value={toDate(value)}
+                onChange={(newValue) => debouncedChange(newValue)}
+                isValid={isValid}
+                errorMessage={errorMessage}
+            />
         );
     }
     if (question.type === "User") {
@@ -178,6 +191,8 @@ export const InputControl = ({
                             immediateChange(normalizedValues);
                         }}
                         placeholder={t("select")}
+                        isValid={isValid}
+                        errorMessage={errorMessage}
                     >
                         {choices.map((choice) => (
                             <SelectItem key={choice.name}>
@@ -195,6 +210,8 @@ export const InputControl = ({
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
                     }}
                     placeholder={t("select")}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
                 >
                     {choices.map((choice) => (
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
@@ -211,6 +228,8 @@ export const InputControl = ({
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
                     }}
                     rubrics={question.rubric ?? []}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
                 />
             );
         }
@@ -247,6 +266,8 @@ export const InputControl = ({
                 onChange={(selectedValue: string) => {
                     immediateChange(selectedValue);
                 }}
+                isValid={isValid}
+                errorMessage={errorMessage}
             >
                 {choices.map((choice) => (
                     <Radio key={choice.name} value={choice.name}>
