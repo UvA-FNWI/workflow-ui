@@ -42,15 +42,23 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
     const resetSearch = searchState.reset;
-    const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
+    const includeExternalUsers = allowsExternalUsers ?? false;
+    const searchResults = useMemo(() => {
+        const results = searchState.data ?? [];
+        return includeExternalUsers ? results : results.filter((user) => !user.isExternal);
+    }, [includeExternalUsers, searchState.data]);
+
+    const getSecondaryValue = useCallback((user: UserSearchResult) => {
+        return [user.email, user.organization?.name].filter(Boolean).join(" | ");
+    }, []);
 
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: user.organization?.name ?? user.email,
+            secondaryValue: getSecondaryValue(user),
         }));
-    }, [searchResults]);
+    }, [getSecondaryValue, searchResults]);
 
     // Store all encountered users
     const usersCache = useMemo(() => {
@@ -102,6 +110,12 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     const modalTitle = title ?? t("user_picker.title");
     const searchPlaceholderText = searchPlaceholder ?? t("user_picker.search_placeholder");
+    const handleSearch = useCallback(
+        (query: string) => {
+            triggerSearch({query, includeExternalUsers});
+        },
+        [includeExternalUsers, triggerSearch],
+    );
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -111,7 +125,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     items={searchListBoxValues}
                     selectedKeys={selectedKeys}
                     onSelect={handleSelectionChange}
-                    onSearch={triggerSearch}
+                    onSearch={handleSearch}
                     resetSearch={resetSearch}
                     placeholder={searchPlaceholderText}
                     autoFocus={isOpen}
@@ -138,7 +152,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 >
                     {t("confirm")}
                 </Button>
-                {allowsExternalUsers && (
+                {includeExternalUsers && (
                     <Button
                         intent="secondary"
                         onClick={onAddExternalUser}
