@@ -1,4 +1,4 @@
-import {Button, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -71,19 +71,19 @@ export const FormSummaryAssessment = ({
                             {/* Page title with edit button */}
                             <div className={`grid gap-4 ${colsClass} w-full max-w-full`}>
                                 <div className="flex items-center">
-                                    <Text fontWeight="semibold" size="lg">
+                                    <Heading size="xs" className="font-semibold">
                                         {l(page.title)?.toUpperCase()}
                                         {assessmentForms[0]?.results?.[page.name]?.length &&
                                             ` (${assessmentForms[0].results?.[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
-                                    </Text>
+                                    </Heading>
                                     {onEditPage &&
                                         formType === "Normal" &&
                                         page.isInCurrentForm && (
                                             <Button
                                                 intent="ghost"
                                                 size="small"
+                                                className="ml-1"
                                                 shape="circular"
-                                                className="ui:border-0 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                                                 onClick={() => onEditPage(index)}
                                                 rightIcon={
                                                     <Icon
@@ -102,7 +102,7 @@ export const FormSummaryAssessment = ({
                                 {assessmentForms.map((assessment) => (
                                     <div key={assessment.id}>
                                         {assessment?.weightedAverages[page.name] ? (
-                                            <Text fontWeight="bold" size="lg">
+                                            <Text fontWeight="semibold" size="lg">
                                                 {assessment.weightedAverages[
                                                     page.name
                                                 ].toLocaleString(i18n.language)}
@@ -137,10 +137,10 @@ export const FormSummaryAssessment = ({
 
                 {hasTotalWeightedAverage && (
                     <div className={`grid gap-4 ${colsClass}`}>
-                        <Text fontWeight="bold" size="lg">
+                        <Text fontWeight="semibold" size="xl">
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
-                        <Text fontWeight="bold" size="lg">
+                        <Text fontWeight="semibold" size="xl">
                             {assessmentResults?.totalWeightedAverage?.toLocaleString(i18n.language)}
                         </Text>
                     </div>

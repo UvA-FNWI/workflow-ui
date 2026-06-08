@@ -24,7 +24,7 @@ export function CalendarButton(
       {...buttonProps}
       ref={triggerRef}
       leftIcon={<Icon name="calendar-search-line" size="md" color="primary" />}
-      className="ui:flex ui:items-center ui:justify-center ui:rounded ui:px-0 ui:pl-2 ui:text-grey-600 ui:transition-colors ui:hover:text-navy-600 ui:dark:text-grey-400 ui:dark:hover:text-sky-500"
+      className="ui:flex ui:items-center ui:justify-center ui:rounded ui:px-0 ui:pl-2 ui:text-grey-600 ui:transition-colors ui:hover:enabled:bg-grey-300 ui:dark:hover:enabled:bg-grey-700"
     />
   );
 }
@@ -50,7 +50,7 @@ export function CalendarNavButton({
       intent="ghost"
       {...buttonProps}
       ref={ref}
-      className="ui:flex ui:h-8 ui:w-8 ui:items-center ui:justify-center ui:rounded ui:text-grey-700 ui:transition-colors ui:hover:bg-grey-200 ui:dark:text-grey-300 ui:dark:hover:bg-grey-800"
+      className="ui:flex ui:h-8 ui:w-8 ui:items-center ui:justify-center ui:rounded ui:px-0 ui:text-grey-700 ui:transition-colors ui:dark:text-grey-300"
     >
       {children}
     </Button>

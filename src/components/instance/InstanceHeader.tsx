@@ -1,7 +1,6 @@
-import {Link} from "react-router";
+import {Heading, Skeleton} from "@uva-fnwi/datanose-ui";
 
-import {Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
-
+import {BackLink} from "~/components/BackLink";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
 interface InstanceHeaderProps {
@@ -22,10 +21,7 @@ export function InstanceHeader({courseName, isLoading}: InstanceHeaderProps) {
 
     return (
         <div className="mb-8 flex flex-col gap-2">
-            <Link to="/" className="text-sm text-red-brand hover:opacity-80">
-                <Icon name="arrow-left-line" size={"xs"} className="mr-1" color={"current"} />
-                {t("home")}
-            </Link>
+            <BackLink>{t("home")}</BackLink>
             <Heading as="h1" size="lg">
                 {displayTitle}
             </Heading>

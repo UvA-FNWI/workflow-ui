@@ -14,10 +14,6 @@ interface ProgressCardProps {
 export function ProgressCard({isLoading, isStudent, steps, currentStep}: ProgressCardProps) {
     const {t} = useTranslate("workflow");
 
-    const allStepsWithChildren = steps.flatMap((step) =>
-        step.children?.length ? [...step.children] : [step],
-    );
-
     return (
         <Card>
             <div className="flex flex-col gap-4">
@@ -42,10 +38,7 @@ export function ProgressCard({isLoading, isStudent, steps, currentStep}: Progres
                             </Heading>
                             <Separator className="mt-2" />
                         </div>
-                        <WorkflowProgressBar
-                            steps={allStepsWithChildren}
-                            currentStep={currentStep}
-                        />
+                        <WorkflowProgressBar steps={steps} currentStep={currentStep} />
                     </>
                 )}
             </div>

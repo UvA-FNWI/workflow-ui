@@ -20,9 +20,9 @@ export const answersApi = baseApi.injectEndpoints({
                         {instanceId: params.instanceId, submissionId: params.submissionId},
                         (current) => {
                             current.answers = current.answers.map((oldAnswer) => {
-                                const newAnswer = data.answers.filter(
-                                    (a) => a.id === oldAnswer.id,
-                                )[0];
+                                const newAnswer = data.answers.find(
+                                    (answer) => answer.id === oldAnswer.id,
+                                );
                                 return newAnswer ?? oldAnswer;
                             });
                         },
