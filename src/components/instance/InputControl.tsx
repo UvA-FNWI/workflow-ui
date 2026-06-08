@@ -36,7 +36,7 @@ interface InputControlProps {
     value?: unknown;
     question: Question;
     onChange?: (val: unknown) => void;
-    onSave: (val: AnswerInput) => Promise<SaveAnswerResult>;
+    onSave?: (val: AnswerInput) => Promise<SaveAnswerResult>;
     onFileSave?: (params: FileParams) => void;
     answer?: Answer;
     visibleChoices?: string[] | null;
@@ -53,12 +53,14 @@ export const InputControl = ({
 
     const save = useCallback(
         (value: unknown) => {
+            if (!onSave) return;
             void onSave({questionName: question.name, value});
         },
         [question.name, onSave],
     );
     const handleCreateExternalUser = useCallback(
         async (newUser: CreateExternalUserInput) => {
+            if (!onSave) return;
             const result = await onSave({
                 questionName: question.name,
                 value: null,

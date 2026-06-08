@@ -59,9 +59,11 @@
     },
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
+      "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
       "hide_answers": "Verberg onderdelen en toelichting",
       "no_answer": "Geen antwoord gegeven",
+      "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "title": "Samenvatting"
     },
@@ -77,6 +79,7 @@
     "titleStudent": "Jouw voortgang",
     "titleSupervisor": "Voortgang van de student"
   },
+  "save": "Opslaan",
   "screens": {
     "actions": "Acties",
     "students": "Studenten"

@@ -122,7 +122,11 @@ export const StepCard = ({step, instance}: Props) => {
                     )}
                     {submissionsToShow.map((submission) => (
                         <div key={submission.id} className="py-4">
-                            <FormSummary instanceId={instance.id} submission={submission} />
+                            <FormSummary
+                                instanceId={instance.id}
+                                submission={submission}
+                                permissions={instance.permissions}
+                            />
                         </div>
                     ))}
 

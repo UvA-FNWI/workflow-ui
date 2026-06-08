@@ -1,6 +1,7 @@
 import {baseApi} from "./baseApi";
 import type {SaveAnswerParams, SaveFileParams} from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
+import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 
 export const answersApi = baseApi.injectEndpoints({
@@ -24,6 +25,20 @@ export const answersApi = baseApi.injectEndpoints({
                                 );
                                 return newAnswer ?? oldAnswer;
                             });
+                        },
+                    ),
+                );
+                dispatch(
+                    instancesApi.util.updateQueryData(
+                        "getInstance",
+                        params.instanceId,
+                        (current) => {
+                            const idx = current.submissions.findIndex(
+                                (s) => s.id === params.submissionId,
+                            );
+                            if (idx !== -1) {
+                                current.submissions[idx] = data.submission;
+                            }
                         },
                     ),
                 );
