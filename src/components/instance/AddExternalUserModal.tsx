@@ -2,11 +2,17 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {Button, Input, Modal, Text} from "@uva-fnwi/datanose-ui";
 
+import type {SearchListBoxValue} from "./SearchListBox";
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {useManualUserEmailVerification} from "~/hooks/useManualUserEmailVerification.ts";
-import {useMockLazyFindOrganizationsQuery} from "~/hooks/useMockLazyFindOrganizationsQuery.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import {
+    useCreateOrganizationMutation,
+    useLazyFindOrganizationsQuery,
+} from "~/store/api/organizationsApi";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
+
+const newOrganizationId = "new-item";
 
 type Selection = "all" | Set<string | number>;
 
@@ -43,7 +49,8 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     const [newExternalUser, setNewExternalUser] = useState<UserSearchResult>(
         initialUser ?? emptyExternalUser,
     );
-    const [triggerSearch, searchState, resetSearch] = useMockLazyFindOrganizationsQuery();
+    const [triggerSearch, searchState] = useLazyFindOrganizationsQuery();
+    const resetSearch = searchState.reset;
     const searchResults = useMemo(() => searchState.data ?? [], [searchState.data]);
     const {
         emailError,
@@ -55,12 +62,22 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         wasEmailVerified,
     } = useManualUserEmailVerification();
 
+    const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
+        return searchResults.map((organization) => ({
+            key: organization.id,
+            primaryValue: organization.name,
+        }));
+    }, [searchResults]);
+
     const updateExternalUser = useCallback((updates: Partial<UserSearchResult>) => {
         setNewExternalUser((prev) => ({
             ...prev,
             ...updates,
         }));
     }, []);
+
+    const [createOrganization, {isLoading: isCreatingOrganization}] =
+        useCreateOrganizationMutation();
 
     useEffect(() => {
         if (!prevIsOpen.current && isOpen) {
@@ -81,22 +98,23 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     }, [initialUser, isOpen, resetEmailVerification]);
 
     const handleSelectOrganizationChange = useCallback(
-        (selected: Selection) => {
+        (selected: Selection, searchQuery: string) => {
             setSelectedOrganization(selected);
             if (selected === "all" || selected.size === 0) return;
             const selectedOrganizationId = [...selected][0] as string;
 
-            if (selectedOrganizationId === "new-item") {
-                updateExternalUser({organization: undefined});
+            if (selectedOrganizationId === newOrganizationId) {
+                updateExternalUser({organization: {id: newOrganizationId, name: searchQuery}});
                 return;
             }
 
             const foundOrganization = searchResults.find(
-                (organization) => organization.key === selectedOrganizationId,
+                (organization) => organization.id === selectedOrganizationId,
             );
+
             updateExternalUser({
                 organization: foundOrganization
-                    ? {id: foundOrganization.key, name: foundOrganization.primaryValue}
+                    ? {id: foundOrganization.id, name: foundOrganization.name}
                     : undefined,
             });
         },
@@ -116,11 +134,23 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             return;
         }
 
+        let externalOrganization = newExternalUser.organization;
+
+        if (hasOrganization && newExternalUser.organization?.id === newOrganizationId) {
+            const res = await createOrganization({name: newExternalUser.organization.name});
+            if (res.error) {
+                alert(`Error: ${JSON.stringify(res.error)}`);
+                return;
+            }
+
+            externalOrganization = res.data;
+        }
+
         try {
             await onConfirm({
                 displayName: normalizedDisplayName,
                 email: normalizedEmail,
-                organization: newExternalUser.organization ?? null,
+                organization: externalOrganization,
             });
         } catch (error) {
             setEmailValidationError(error);
@@ -129,10 +159,12 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         newExternalUser.organization,
         normalizedDisplayName,
         normalizedEmail,
+        hasOrganization,
         onConfirm,
         setEmailValidationError,
         validateEmail,
         wasEmailVerified,
+        createOrganization,
     ]);
 
     const handleBackToSearch = useCallback(() => {
@@ -160,6 +192,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     value={newExternalUser.displayName}
                     onChange={(value: string) => updateExternalUser({displayName: value})}
                 />
+
                 <Input
                     label={t("email")}
                     type="email"
@@ -177,7 +210,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
 
                 <SearchAndSelect
                     label={t("external_user_add.organization")}
-                    items={searchResults}
+                    items={searchListBoxValues}
                     selectedKeys={selectedOrganization}
                     onSelect={handleSelectOrganizationChange}
                     onSearch={triggerSearch}
@@ -186,27 +219,28 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     addNewItemVisible={true}
                     showSearchHint={false}
                     initialSearchQuery={
-                        initialUser?.organization?.id === "new-item"
+                        initialUser?.organization?.id === newOrganizationId
                             ? t("search_and_select.add_new")
                             : (initialUser?.organization?.name ?? "")
                     }
                 />
 
-                {selectedOrganization instanceof Set && selectedOrganization.has("new-item") && (
-                    <Input
-                        label={t("external_user_add.organization_name")}
-                        type="text"
-                        value={newExternalUser.organization?.name ?? ""}
-                        onChange={(value: string) =>
-                            updateExternalUser({
-                                organization: {
-                                    id: "new-item",
-                                    name: value,
-                                },
-                            })
-                        }
-                    />
-                )}
+                {selectedOrganization instanceof Set &&
+                    selectedOrganization.has(newOrganizationId) && (
+                        <Input
+                            label={t("external_user_add.organization_name")}
+                            type="text"
+                            value={newExternalUser.organization?.name}
+                            onChange={(value) =>
+                                updateExternalUser({
+                                    organization: {
+                                        id: newOrganizationId,
+                                        name: value,
+                                    },
+                                })
+                            }
+                        />
+                    )}
             </Modal.Body>
             <Modal.Footer className="justify-start">
                 <Button
@@ -215,7 +249,13 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     onClick={() => {
                         void handleConfirm();
                     }}
-                    disabled={!isCompleted || !isEmailVerified || isVerifyingEmail || isSaving}
+                    disabled={
+                        !isCompleted ||
+                        !isEmailVerified ||
+                        isVerifyingEmail ||
+                        isCreatingOrganization ||
+                        isSaving
+                    }
                 >
                     {t("confirm")}
                 </Button>

@@ -18,7 +18,7 @@ import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
-import type {SaveAnswerResult} from "~/store/api/types/returnTypes.ts";
+import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
 import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
 

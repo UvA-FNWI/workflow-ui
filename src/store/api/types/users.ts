@@ -1,3 +1,5 @@
+import type {Organization} from "./organizations";
+
 export interface UserSearchResult {
     userName: string;
     displayName: string;
@@ -9,11 +11,6 @@ export interface UserSearchResult {
 
 export interface CurrentUserResponse extends UserSearchResult {
     isSuperAdmin: boolean;
-}
-
-export interface Organization {
-    id: string;
-    name: string;
 }
 
 export interface VerifyEmailRequest {
