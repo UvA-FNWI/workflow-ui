@@ -1,4 +1,5 @@
 import {Heading} from "@uva-fnwi/datanose-ui";
+import {union} from "lodash-es";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
@@ -27,7 +28,7 @@ export const FormSummary = ({
 }: Props) => {
     const {t, l} = useTranslate("workflow");
 
-    const effectivePermissions = permissions ?? submission.permissions;
+    const effectivePermissions = union(permissions, submission.permissions);
     const canEdit = effectivePermissions.includes("Edit") && submission.dateSubmitted != null;
 
     const hasResults =
