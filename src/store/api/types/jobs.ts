@@ -5,6 +5,7 @@ export type JobStatus = "Pending" | "Completed" | "Failed" | "Running";
 export type JobStep = {
     identifier: string | null;
     message: string | null;
+    status: JobStatus | null;
     outputs: Record<string, unknown> | null;
 };
 

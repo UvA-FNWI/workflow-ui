@@ -185,12 +185,22 @@ const Property = ({
 const JobStepCard = ({step, index}: {step: JobStep; index: number}) => {
     const {modal} = useJobTranslations();
 
+    const hasStepContent =
+        !!step.message || !!(step.outputs && Object.keys(step.outputs).length > 0);
+
     return (
         <li className="rounded border border-grey-300 p-4 dark:border-grey-600">
-            <Text className="mb-2 font-semibold">
-                {modal.step} {index + 1}
-                {step.identifier ? `: ${step.identifier}` : ""}
-            </Text>
+            <div
+                className={`flex items-center justify-between gap-2${hasStepContent ? "mb-2" : ""}`}
+            >
+                <Text className="font-semibold">
+                    {modal.step} {index + 1}
+                    {step.identifier ? `: ${step.identifier}` : ""}
+                </Text>
+                {step.status && (
+                    <Pill variant={JOB_STATUS_VARIANT[step.status]}>{step.status}</Pill>
+                )}
+            </div>
             {step.message && (
                 <div className="mb-2">
                     <Text className="mb-1 text-sm font-medium text-grey-700 dark:text-grey-300">
