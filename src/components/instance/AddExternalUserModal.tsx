@@ -134,7 +134,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             return;
         }
 
-        let externalOrganization = newExternalUser.organization ?? null;
+        let externalOrganization = newExternalUser.organization;
 
         if (hasOrganization && newExternalUser.organization?.id === newOrganizationId) {
             const res = await createOrganization({name: newExternalUser.organization.name});
