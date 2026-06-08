@@ -24,3 +24,10 @@ export type ValidationError = {
     questionName: string;
     validationMessage: LocalString;
 };
+
+export type ApiErrorState = {
+    type?: "warning" | "error";
+    code?: number | "FETCH_ERROR" | "PARSING_ERROR" | "TIMEOUT_ERROR" | "CUSTOM_ERROR";
+    message?: LocalString | string;
+    instanceId?: string;
+};
