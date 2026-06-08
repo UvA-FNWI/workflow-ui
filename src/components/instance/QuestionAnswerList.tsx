@@ -92,25 +92,29 @@ export const QuestionAnswerList = ({
                                       )
                                     : noAnswerText;
 
-                            return question.type === "File" &&
-                                answer != null &&
+                            return question.type === "File" && answer != null ? (
                                 answer.value != null ? (
-                                <Link
-                                    key={submissionIndex}
-                                    intent="primary"
-                                    underline
-                                    className="truncate"
-                                    onClick={() =>
-                                        downloadFile(
-                                            answer.files[0],
-                                            question.name,
-                                            instanceId,
-                                            submissionId,
-                                        )
-                                    }
-                                >
-                                    {formattedValue}
-                                </Link>
+                                    <Link
+                                        key={submissionIndex}
+                                        intent="primary"
+                                        underline
+                                        className="truncate"
+                                        onClick={() =>
+                                            downloadFile(
+                                                answer.files[0],
+                                                question.name,
+                                                instanceId,
+                                                submissionId,
+                                            )
+                                        }
+                                    >
+                                        {formattedValue}
+                                    </Link>
+                                ) : (
+                                    <Text className="truncate" key={submissionIndex}>
+                                        {formattedValue ? formattedValue : "-"}
+                                    </Text>
+                                )
                             ) : (
                                 <div key={submissionIndex} className="flex items-center gap-2">
                                     <Text className="truncate">
