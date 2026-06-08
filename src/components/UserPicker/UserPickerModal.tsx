@@ -48,17 +48,14 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
         return includeExternalUsers ? results : results.filter((user) => !user.isExternal);
     }, [includeExternalUsers, searchState.data]);
 
-    const getSecondaryValue = useCallback((user: UserSearchResult) => {
-        return [user.email, user.organization?.name].filter(Boolean).join(" | ");
-    }, []);
-
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: getSecondaryValue(user),
+            secondaryValue: user.email,
+            tertiaryValue: user.organization?.name,
         }));
-    }, [getSecondaryValue, searchResults]);
+    }, [searchResults]);
 
     // Store all encountered users
     const usersCache = useMemo(() => {
@@ -118,7 +115,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     );
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
                 <SearchAndSelect

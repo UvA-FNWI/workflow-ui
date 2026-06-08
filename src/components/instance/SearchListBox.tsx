@@ -1,11 +1,12 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
-import {Item, ListBox, type ListBoxProps} from "@uva-fnwi/datanose-ui";
+import {Item, ListBox, type ListBoxProps, Text} from "@uva-fnwi/datanose-ui";
 
 export type SearchListBoxValue = {
     key: string;
     primaryValue: string;
     secondaryValue?: string;
+    tertiaryValue?: string;
 };
 
 // Selection type from react-stately
@@ -30,6 +31,17 @@ export function SearchListBox({
         onSelectionChange?.(selected);
     };
 
+    const hasSecondary = useMemo(() => items.some((item) => item.secondaryValue), [items]);
+    const hasTertiary = useMemo(() => items.some((item) => item.tertiaryValue), [items]);
+
+    const columnCount = 1 + (hasSecondary ? 1 : 0) + (hasTertiary ? 1 : 0);
+    const gridColsClass =
+        columnCount === 3
+            ? "grid-cols-[1fr_1fr_1fr]"
+            : columnCount === 2
+              ? "grid-cols-[1fr_1fr]"
+              : "";
+
     return (
         <ListBox
             items={items}
@@ -40,10 +52,19 @@ export function SearchListBox({
         >
             {(item: SearchListBoxValue) => (
                 <Item key={item.key} textValue={item.primaryValue}>
-                    <div className="flex items-center gap-2">
-                        <span className="flex-1 truncate">{item.primaryValue}</span>
-                        {item.secondaryValue && (
-                            <span className="flex-1 truncate">{item.secondaryValue}</span>
+                    <div
+                        className={`min-w-0 items-center gap-2 ${gridColsClass && `grid ${gridColsClass}`}`}
+                    >
+                        <Text truncate>{item.primaryValue}</Text>
+                        {hasSecondary && (
+                            <Text intent="secondary" truncate>
+                                {item.secondaryValue}
+                            </Text>
+                        )}
+                        {hasTertiary && (
+                            <Text intent="secondary" truncate>
+                                {item.tertiaryValue}
+                            </Text>
                         )}
                     </div>
                 </Item>

@@ -37,7 +37,7 @@ export function ListBoxItem<T>({ item, state }: ListBoxItemProps<T>) {
         })
       )}
     >
-      <div className="ui:flex ui:w-full ui:items-center ui:gap-2">
+      <div className="ui:flex ui:min-w-0 ui:flex-1 ui:items-center ui:gap-2">
         <div className="ui:flex ui:h-4 ui:w-4 ui:flex-none ui:items-center ui:justify-center">
           {isSelected && <Icon name="checkmark-solid" size="sm" />}
           {!isSelected && item.key === 'new-item' && (
