@@ -29,7 +29,12 @@ function Instance() {
 
     return (
         <Container maxWidth={1280}>
-            <InstanceHeader courseName={courseName} isLoading={isLoading} />
+            <InstanceHeader
+                courseName={courseName}
+                instanceId={id}
+                canUseAdminTools={instance?.canUseAdminTools ?? false}
+                isLoading={isLoading}
+            />
             <Grid>
                 <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">
                     <ProgressCard
