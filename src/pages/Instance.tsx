@@ -8,6 +8,7 @@ import {InfoCards} from "~/components/instance/InfoCards";
 import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {StudentCard} from "~/components/instance/StudentCard";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
@@ -18,13 +19,15 @@ function Instance() {
         skip: !id,
     });
 
+    const studentName = getStringField(instance?.fields, "Student.DisplayName");
+    useDocumentTitle(studentName);
+
     // Error state: early return when not loading and no instance
     if (!isLoading && !instance) {
         return <div>Error loading instance</div>;
     }
 
     const studentEmail = getStringField(instance?.fields, "Student.Email");
-    const studentName = getStringField(instance?.fields, "Student.DisplayName");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
     return (
