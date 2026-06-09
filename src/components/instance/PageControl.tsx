@@ -12,7 +12,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {Result} from "~/store/api/types/assessments.ts";
+import type {QuestionResult} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 import {isPageComplete} from "~/utils/submissionUtils.ts";
@@ -117,17 +117,21 @@ export const PageControl = ({
             skip: !page.hasResults,
         },
     );
-    const formForPage = data?.forms?.[0]; // form for the current page
-    const results = formForPage?.results?.[page.name];
-    const weightedAverage = formForPage?.weightedAverages?.[page.name] ?? 0;
+    const assessmentPart = data?.parts?.[0];
+    const pageResult = assessmentPart?.sourceResults?.pageResults?.find(
+        (pageResult) => pageResult.pageName === page.name,
+    );
+
+    const results = pageResult?.questionResults;
+    const weightedAverage = pageResult?.weightedAverage ?? 0;
     const averageGradeContent = areWeightedQuestionsComplete
         ? weightedAverage.toLocaleString(i18n.language)
         : t("instance.calculations.grading_incomplete");
 
-    const getTotalPercentage = (r: Result[]) =>
+    const getTotalPercentage = (r: QuestionResult[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
 
-    const getPercentage = (r: Result[], questionName: string) =>
+    const getPercentage = (r: QuestionResult[], questionName: string) =>
         r.find((q) => q.questionName === questionName)?.percentage;
 
     return (

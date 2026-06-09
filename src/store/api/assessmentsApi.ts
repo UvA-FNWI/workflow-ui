@@ -1,18 +1,18 @@
 import {baseApi} from "~/store/api/baseApi.ts";
-import type {AssessmentGroup} from "~/store/api/types/assessments.ts";
+import type {Assessment} from "~/store/api/types/assessments.ts";
 
 type AssessmentsParams = {instanceId: string; submissionId: string};
 
 export const assessmentsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getResults: builder.query<AssessmentGroup, AssessmentsParams>({
+        getResults: builder.query<Assessment, AssessmentsParams>({
             query: ({instanceId, submissionId}) =>
                 `/Assessments/${instanceId}/${submissionId}/Results`,
             providesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Assessments", instanceId, submissionId},
             ],
         }),
-        getResultsPage: builder.query<AssessmentGroup, AssessmentsParams & {pageName: string}>({
+        getResultsPage: builder.query<Assessment, AssessmentsParams & {pageName: string}>({
             query: ({instanceId, submissionId, pageName}) =>
                 `/Assessments/${instanceId}/${submissionId}/Results/${pageName}`,
             providesTags: (_result, _error, {instanceId, submissionId, pageName}) => [

@@ -1,4 +1,4 @@
-import type {Result} from "~/store/api/types/assessments.ts";
+import type {QuestionResult} from "~/store/api/types/assessments.ts";
 import type {Answer, Page, Question, Submission} from "~/store/api/types/submissions.ts";
 
 export type QuestionAnswerPair = {
@@ -10,7 +10,7 @@ export type QuestionAnswerPair = {
 export function getVisibleQuestionAnswerPairs(
     questions: Question[],
     answers: Answer[],
-    percentages?: Result[],
+    percentages?: QuestionResult[],
 ): QuestionAnswerPair[] {
     return questions
         .filter((question) => !question.hideInResults)

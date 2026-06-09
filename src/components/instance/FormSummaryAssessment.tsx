@@ -26,44 +26,52 @@ export const FormSummaryAssessment = ({
         instanceId,
         submissionId: formType == "AssessmentOverview" ? submission.form.name : submission.id,
     });
+    console.log("assessmentResults", assessmentResults);
 
-    const assessmentForms = (assessmentResults?.forms ?? []).filter(
+    const assessmentParts = (assessmentResults?.parts ?? []).filter(
         (f) =>
-            Object.keys(f.results ?? {}).length > 0 &&
-            Object.values(f.results ?? {}).some((pageResults) =>
-                pageResults.some((result) => result.answer !== 0),
+            f.sourceResults != null &&
+            f.sourceResults.pageResults.some((pageResult) =>
+                pageResult.questionResults.some((questionResult) => questionResult.answer !== 0),
             ),
     );
 
     const hasTotalWeightedAverage =
-        assessmentForms.length > 0 && (assessmentResults?.totalWeightedAverage ?? 0) > 0;
+        assessmentParts.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;
 
     const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
-    const colsClass = colsList[assessmentForms?.length ?? 1];
+    const colsClass = colsList[assessmentParts?.length ?? 1];
 
     return (
         <div className="overflow-x-auto">
             <div className="flex min-w-xl flex-col gap-6">
                 {/* Assessment columns header */}
-                {assessmentForms.length > 1 && (
+                {assessmentParts.length > 1 && (
                     <div className={`grid gap-4 ${colsClass}`}>
                         <div></div>
-                        {assessmentForms.map((assessment) => (
-                            <div key={assessment.id} className="w-48">
+                        {assessmentParts.map((assessmentPart) => (
+                            <div key={assessmentPart.id} className="w-48">
                                 <Text fontWeight="normal" size="lg" intent="error">
-                                    {l(assessment.formTitle)?.toUpperCase()}
+                                    {l(assessmentPart.sourceTitle)?.toUpperCase()}
                                 </Text>
                             </div>
                         ))}
                     </div>
                 )}
                 {submission.form.pages.map((page, index) => {
-                    const allQuestionAnswerPairs = assessmentForms.map((a) =>
+                    const allQuestionAnswerPairs = assessmentParts.map((a) =>
                         getVisibleQuestionAnswerPairs(
                             page.questions,
                             a.answers,
-                            assessmentForms.find((f) => f.id === a.id)?.results?.[page.name],
+                            assessmentParts
+                                .find((f) => f.id === a.id)
+                                ?.sourceResults?.pageResults.find((p) => p.pageName === page.name)
+                                ?.questionResults ?? [],
                         ),
+                    );
+
+                    const firstPageResult = assessmentParts[0]?.sourceResults?.pageResults.find(
+                        (p) => p.pageName === page.name,
                     );
 
                     return (
@@ -73,8 +81,8 @@ export const FormSummaryAssessment = ({
                                 <div className="flex items-center">
                                     <Heading size="xs" className="font-semibold">
                                         {l(page.title)?.toUpperCase()}
-                                        {assessmentForms[0]?.results?.[page.name]?.length &&
-                                            ` (${assessmentForms[0].results?.[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
+                                        {firstPageResult?.questionResults?.length &&
+                                            ` (${firstPageResult.questionResults.reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                                     </Heading>
                                     {onEditPage &&
                                         formType === "Normal" &&
@@ -99,21 +107,26 @@ export const FormSummaryAssessment = ({
                                         )}
                                 </div>
 
-                                {assessmentForms.map((assessment) => (
-                                    <div key={assessment.id}>
-                                        {assessment?.weightedAverages[page.name] ? (
-                                            <Text fontWeight="semibold" size="lg">
-                                                {assessment.weightedAverages[
-                                                    page.name
-                                                ].toLocaleString(i18n.language)}
-                                            </Text>
-                                        ) : (
-                                            <Text fontWeight="bold" size="lg">
-                                                -
-                                            </Text>
-                                        )}
-                                    </div>
-                                ))}
+                                {assessmentParts.map((assessment) => {
+                                    const pageResult = assessment.sourceResults?.pageResults.find(
+                                        (p) => p.pageName === page.name,
+                                    );
+                                    return (
+                                        <div key={assessment.id}>
+                                            {pageResult?.weightedAverage ? (
+                                                <Text fontWeight="semibold" size="lg">
+                                                    {pageResult.weightedAverage.toLocaleString(
+                                                        i18n.language,
+                                                    )}
+                                                </Text>
+                                            ) : (
+                                                <Text fontWeight="bold" size="lg">
+                                                    -
+                                                </Text>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                             {/* Questions and answers */}
                             {allQuestionAnswerPairs.flat().length > 0 && (
@@ -141,7 +154,7 @@ export const FormSummaryAssessment = ({
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
                         <Text fontWeight="semibold" size="xl">
-                            {assessmentResults?.totalWeightedAverage?.toLocaleString(i18n.language)}
+                            {assessmentResults?.finalGrade?.toLocaleString(i18n.language)}
                         </Text>
                     </div>
                 )}
