@@ -40,6 +40,7 @@
     "error_upload_failed": "Failed to upload file. Please try again.",
     "max_file_size": "Maximum {{size}} per file.",
     "no_file_uploaded": "No file uploaded",
+    "pdf_only": "Only PDF files can be uploaded.",
     "removed_success": "File removed",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"

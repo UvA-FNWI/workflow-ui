@@ -40,6 +40,7 @@
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
     "max_file_size": "Maximaal {{size}} per bestand.",
     "no_file_uploaded": "Geen bestand geüpload",
+    "pdf_only": "Alleen PDF-bestanden kunnen worden geüpload.",
     "removed_success": "Bestand verwijderd",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"

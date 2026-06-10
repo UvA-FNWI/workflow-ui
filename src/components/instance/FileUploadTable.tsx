@@ -127,6 +127,9 @@ export const FileUploadTable = ({
                                             {l(question.description)}
                                         </div>
                                     )}
+                                    <div className="text-sm text-grey-600 dark:text-grey-400">
+                                        {t("file_upload.pdf_only")}
+                                    </div>
                                 </td>
                                 <td className="p-2 align-top">
                                     <div className="flex flex-col gap-2">
