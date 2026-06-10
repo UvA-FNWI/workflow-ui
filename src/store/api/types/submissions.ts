@@ -75,6 +75,15 @@ export type Question = {
     weight?: number;
     allowsExternalUsers: boolean;
     rubric?: RubricEntry[];
+    sorting?: Sorting;
+};
+
+export type SortDirection = "Ascending" | "Descending";
+export type ChoiceSortField = "Name" | "Text" | "Value" | "Description";
+
+export type Sorting = {
+    field: ChoiceSortField;
+    direction: SortDirection;
 };
 
 export type RubricEntry = {
@@ -96,6 +105,7 @@ export type Choice = {
     name: string;
     description?: LocalString;
     text: LocalString;
+    value?: number;
 };
 
 export type PageLayout = "Normal" | "Condensed";
