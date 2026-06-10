@@ -153,7 +153,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     <Button
                         intent="secondary"
                         onClick={onAddExternalUser}
-                        leftIcon={<Icon name="user-add-line" className="text-inherit" />}
+                        leftIcon={<Icon name="user-add-line" color="current" />}
                     >
                         {t("user_picker.not_in_list")}
                     </Button>
