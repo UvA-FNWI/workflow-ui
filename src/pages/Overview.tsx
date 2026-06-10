@@ -2,8 +2,8 @@ import {Fragment, useEffect} from "react";
 
 import {Card, Container, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
-import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {VersionedLink} from "~/components/VersionedLink";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
