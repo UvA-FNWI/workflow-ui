@@ -127,12 +127,13 @@ export const InputControl = ({
     if (question.type === "Int" || question.type === "Double") {
         return (
             <NumberInput
-                value={(value as number) || 0}
+                value={Number.isFinite(value) ? (value as number) : undefined}
                 step={question.type === "Int" ? 1 : 0.01}
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
                 locale={i18n.language}
+                formatOptions={{useGrouping: false}}
                 isValid={isValid}
                 errorMessage={errorMessage}
             />
