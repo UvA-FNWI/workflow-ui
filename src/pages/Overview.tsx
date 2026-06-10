@@ -2,6 +2,7 @@ import {Fragment, useEffect} from "react";
 
 import {Card, Container, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {VersionedLink} from "~/components/VersionedLink";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -40,6 +41,7 @@ function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle: 
 function Overview() {
     const {t, l} = useTranslate("workflow");
     const navigate = useVersionedNavigate();
+    useDocumentTitle("Overview");
 
     const {data: accessibleDefinitions} = useGetAccessibleWorkflowDefinitionsQuery();
 
