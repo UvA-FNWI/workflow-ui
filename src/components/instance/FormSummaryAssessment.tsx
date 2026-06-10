@@ -24,7 +24,7 @@ export const FormSummaryAssessment = ({
 
     const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
         instanceId,
-        submissionId: formType === "Normal" ? submission.id : undefined,
+        submissionId: submission.id,
     });
     console.log("assessmentResults", assessmentResults);
     const assessmentSubmissions = (assessmentResults?.parts ?? [])
