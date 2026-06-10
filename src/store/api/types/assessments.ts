@@ -12,6 +12,7 @@ export type AssessmentPart = {
     title: LocalString;
     sourceResults: SourceResult[];
     weightedAverage: number;
+    percentage: number;
 };
 
 export type SourceResult = {
@@ -20,6 +21,7 @@ export type SourceResult = {
     pageResults: PageResult[];
     answers: Answer[];
     weightedAverage: number;
+    percentage: number;
 };
 
 export type PageResult = {

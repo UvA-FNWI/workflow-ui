@@ -49,7 +49,7 @@ export const FormSummaryAssessment = ({
                         {assessmentSubmissions.map((assessmentPart) => (
                             <div key={assessmentPart.id} className="w-48">
                                 <Text fontWeight="normal" size="lg" intent="error">
-                                    {l(assessmentPart.title)?.toUpperCase()}
+                                    {`${l(assessmentPart.title)?.toUpperCase()} (${assessmentPart.percentage}%)`}
                                 </Text>
                             </div>
                         ))}
