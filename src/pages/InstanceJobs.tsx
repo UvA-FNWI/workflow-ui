@@ -10,11 +10,11 @@ import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {jobsEndpoints} from "~/store/api/jobsApi";
-import {getLocalStringField} from "~/utils/fieldUtils";
+import {getStringField} from "~/utils/fieldUtils";
 
 function InstanceJobs() {
     const {id} = useParams<{id: string}>();
-    const {t, l} = useTranslate(["workflow", "common"]);
+    const {t} = useTranslate(["workflow", "common"]);
     const {page} = useJobTranslations();
     const [search, setSearch] = useState("");
 
@@ -34,10 +34,8 @@ function InstanceJobs() {
         skip: !id,
     });
 
-    const courseName = getLocalStringField(instance?.fields, "Course.Name");
-    const displayTitle =
-        (typeof courseName === "string" ? courseName : l(courseName)) ||
-        t("instance.workflowInstance", {ns: "workflow"});
+    const studentName = getStringField(instance?.fields, "Student.DisplayName");
+    const displayTitle = studentName || t("instance.workflowInstance");
 
     useDocumentTitle(`${displayTitle} | ${page.title}`);
 
