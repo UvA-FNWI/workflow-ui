@@ -36,7 +36,8 @@ export function RubricPopover({
     const {l} = useTranslate("workflow");
 
     const allGrades = rubrics.flatMap((r) => r.grades);
-    const selectedIndex = selectedGrade !== undefined ? allGrades.indexOf(selectedGrade) : -1;
+    const selectedIndex =
+        selectedGrade !== undefined ? allGrades.findIndex((g) => g.name === selectedGrade) : -1;
     const selectedKeys =
         selectedIndex >= 0 ? new Set([selectedIndex.toString()]) : new Set<string>();
 
@@ -45,7 +46,7 @@ export function RubricPopover({
         const index = Number([...selected][0]);
         const grade = allGrades[index];
         if (grade !== undefined) {
-            onSelectionChange(grade);
+            onSelectionChange(grade.name);
             state.close();
         }
     };
@@ -58,7 +59,7 @@ export function RubricPopover({
             className="my-0 max-h-[80vh] max-w-200 overflow-y-auto border border-grey-500 bg-grey-200 shadow-md outline-none dark:bg-grey-800"
         >
             <ListBoxWrapper<GradeItem>
-                items={allGrades.map((g, i) => ({key: i, grade: g}))}
+                items={allGrades.map((g, i) => ({key: i, grade: l(g.text) ?? g.name}))}
                 selectedKeys={selectedKeys}
                 onSelectionChange={handleSelectionChange}
                 selectionMode="single"
