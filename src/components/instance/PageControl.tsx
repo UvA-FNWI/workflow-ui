@@ -107,7 +107,7 @@ export const PageControl = ({
         [submission, page],
     );
 
-    const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getResultsPage.useQuery(
+    const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getPageResults.useQuery(
         {
             instanceId,
             submissionId,
@@ -117,22 +117,18 @@ export const PageControl = ({
             skip: !page.hasResults,
         },
     );
-    const assessmentPart = data?.parts?.[0];
-    const pageResult = assessmentPart?.sourceResults?.pageResults?.find(
-        (pageResult) => pageResult.pageName === page.name,
-    );
-
+    const pageResult = data?.pageResults?.[0];
     const results = pageResult?.questionResults;
-    const weightedAverage = pageResult?.weightedAverage ?? 0;
+
     const averageGradeContent = areWeightedQuestionsComplete
-        ? weightedAverage.toLocaleString(i18n.language)
+        ? `${pageResult?.weightedAverage?.toLocaleString(i18n.language) ?? 0}`
         : t("instance.calculations.grading_incomplete");
 
     const getTotalPercentage = (r: QuestionResult[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
 
     const getPercentage = (r: QuestionResult[], questionName: string) =>
-        r.find((q) => q.questionName === questionName)?.percentage;
+        r.find((q) => q.name === questionName)?.percentage;
 
     return (
         <>
@@ -182,7 +178,7 @@ export const PageControl = ({
                                                                     {results &&
                                                                         results.find(
                                                                             (q) =>
-                                                                                q.questionName ==
+                                                                                q.name ==
                                                                                 question.name,
                                                                         ) &&
                                                                         ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}

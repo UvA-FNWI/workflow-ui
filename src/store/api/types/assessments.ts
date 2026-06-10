@@ -9,27 +9,28 @@ export type Assessment = {
 
 export type AssessmentPart = {
     id: string;
-    sourceTitle: LocalString;
-    sourceResults: SourceResult;
-    //    weightedAverages: Record<string, number>;
-    answers: Answer[];
+    title: LocalString;
+    sourceResults: SourceResult[];
+    weightedAverage: number;
 };
 
 export type SourceResult = {
-    sourceName: string;
-    score: number;
+    id: string;
+    title: LocalString;
     pageResults: PageResult[];
+    answers: Answer[];
+    weightedAverage: number;
 };
 
 export type PageResult = {
-    pageName: string;
+    name: string;
     weight: number;
     weightedAverage: number;
     questionResults: QuestionResult[];
 };
 
 export type QuestionResult = {
-    questionName: string;
+    name: string;
     weight: number;
     percentage: number;
     answer: number;

@@ -22,56 +22,51 @@ export const FormSummaryAssessment = ({
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
-    const {data: assessmentResults} = assessmentsApi.endpoints.getResults.useQuery({
+    const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
         instanceId,
-        submissionId: formType == "AssessmentOverview" ? submission.form.name : submission.id,
+        submissionId: formType === "Normal" ? submission.id : undefined,
     });
     console.log("assessmentResults", assessmentResults);
+    const assessmentSubmissions = (assessmentResults?.parts ?? [])
+        .flatMap((part) => part.sourceResults ?? [])
+        .filter((sourceResult) => sourceResult.pageResults?.length > 0);
 
-    const assessmentParts = (assessmentResults?.parts ?? []).filter(
-        (f) =>
-            f.sourceResults != null &&
-            f.sourceResults.pageResults.some((pageResult) =>
-                pageResult.questionResults.some((questionResult) => questionResult.answer !== 0),
-            ),
-    );
+    console.log("assessmentSubmissions", assessmentSubmissions);
 
     const hasTotalWeightedAverage =
-        assessmentParts.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;
+        assessmentSubmissions.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;
 
     const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
-    const colsClass = colsList[assessmentParts?.length ?? 1];
+    const colsClass = colsList[assessmentSubmissions?.length ?? 1];
 
     return (
         <div className="overflow-x-auto">
             <div className="flex min-w-xl flex-col gap-6">
                 {/* Assessment columns header */}
-                {assessmentParts.length > 1 && (
+                {assessmentSubmissions.length > 1 && (
                     <div className={`grid gap-4 ${colsClass}`}>
                         <div></div>
-                        {assessmentParts.map((assessmentPart) => (
+                        {assessmentSubmissions.map((assessmentPart) => (
                             <div key={assessmentPart.id} className="w-48">
                                 <Text fontWeight="normal" size="lg" intent="error">
-                                    {l(assessmentPart.sourceTitle)?.toUpperCase()}
+                                    {l(assessmentPart.title)?.toUpperCase()}
                                 </Text>
                             </div>
                         ))}
                     </div>
                 )}
                 {submission.form.pages.map((page, index) => {
-                    const allQuestionAnswerPairs = assessmentParts.map((a) =>
+                    const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
                         getVisibleQuestionAnswerPairs(
                             page.questions,
-                            a.answers,
-                            assessmentParts
-                                .find((f) => f.id === a.id)
-                                ?.sourceResults?.pageResults.find((p) => p.pageName === page.name)
+                            sourceResult.answers,
+                            sourceResult.pageResults.find((p) => p.name === page.name)
                                 ?.questionResults ?? [],
                         ),
                     );
 
-                    const firstPageResult = assessmentParts[0]?.sourceResults?.pageResults.find(
-                        (p) => p.pageName === page.name,
+                    const firstPageResult = assessmentSubmissions[0]?.pageResults.find(
+                        (p) => p.name === page.name,
                     );
 
                     return (
@@ -107,12 +102,12 @@ export const FormSummaryAssessment = ({
                                         )}
                                 </div>
 
-                                {assessmentParts.map((assessment) => {
-                                    const pageResult = assessment.sourceResults?.pageResults.find(
-                                        (p) => p.pageName === page.name,
+                                {assessmentSubmissions.map((sourceResult) => {
+                                    const pageResult = sourceResult.pageResults.find(
+                                        (p) => p.name === page.name,
                                     );
                                     return (
-                                        <div key={assessment.id}>
+                                        <div key={sourceResult.id}>
                                             {pageResult?.weightedAverage ? (
                                                 <Text fontWeight="semibold" size="lg">
                                                     {pageResult.weightedAverage.toLocaleString(
