@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
 import {useAuth} from "@uva-fnwi/datanose-core";
-import {Button, Heading, Select, SelectItem, useTheme} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Select, SelectItem} from "@uva-fnwi/datanose-ui";
 
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {VersionedLink} from "~/components/VersionedLink";
@@ -16,9 +16,8 @@ type Language = "en" | "nl";
 // Sentinel key for the default (empty) workflow version, since react-aria treats "" as no selection.
 const DEFAULT_VERSION_KEY = "__default__";
 
-// Temporary navbar for quick theme & language switching during development.
+// Temporary navbar for quick language switching during development.
 function TemporaryNavbar() {
-    const {resolvedTheme, setTheme} = useTheme();
     const {i18n, t} = useTranslate("common");
     const {isAuthenticated, surfLogout} = useAuth();
     const user = useAppSelector(selectCurrentUser);
@@ -30,11 +29,6 @@ function TemporaryNavbar() {
     useEffect(() => {
         document.documentElement.setAttribute("lang", i18n.language);
     }, [i18n.language]);
-
-    const handleThemeToggle = () => {
-        const nextTheme = resolvedTheme === "light" ? "dark" : "light";
-        setTheme(nextTheme);
-    };
 
     // The backend may already list the default ("") version; dedupe and surface it as "default".
     const namedVersions = (versions ?? []).filter((v) => v !== "");
@@ -95,9 +89,6 @@ function TemporaryNavbar() {
                         </label>
                     </div>
                 )}
-                <Button intent="secondary" onClick={handleThemeToggle} type="button">
-                    Switch to {resolvedTheme === "light" ? "Dark" : "Light"} Mode
-                </Button>
                 <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
                     {t("language")}
                     <div className="w-32">
