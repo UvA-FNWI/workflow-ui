@@ -12,6 +12,7 @@ import {
 } from "@uva-fnwi/datanose-ui";
 
 import {BackLink} from "~/components/BackLink";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
@@ -22,6 +23,8 @@ function Develop() {
     const {data: currentUser, isLoading: isUserLoading} = useGetCurrentUserQuery();
     const {data: definitions} = useGetWorkflowDefinitionsQuery({includeAll: true});
     const [searchParams, setSearchParams] = useSearchParams();
+
+    useDocumentTitle("Develop");
 
     // The Develop area is admin-only; wait for the user to load, then bounce non-admins.
     if (isUserLoading) {
