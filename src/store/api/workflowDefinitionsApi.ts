@@ -10,7 +10,12 @@ export const workflowDefinitionsApi = baseApi.injectEndpoints({
             }),
             providesTags: ["Workflow"],
         }),
+        getAccessibleWorkflowDefinitions: builder.query<WorkflowDefinition[], void>({
+            query: () => "/WorkflowDefinitions/Accessible",
+            providesTags: ["Workflow"],
+        }),
     }),
 });
 
-export const {useGetWorkflowDefinitionsQuery} = workflowDefinitionsApi;
+export const {useGetWorkflowDefinitionsQuery, useGetAccessibleWorkflowDefinitionsQuery} =
+    workflowDefinitionsApi;

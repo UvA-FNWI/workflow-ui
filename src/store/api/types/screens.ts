@@ -19,6 +19,13 @@ export type Screen = {
     rows: ScreenRow[];
 };
 
+export type ScreenData = {
+    name: string;
+    workflowDefinition: string;
+    columns: ScreenColumn[];
+    rows: ScreenRow[];
+};
+
 export type ScreenColumn = {
     id: number;
     title: LocalString;
