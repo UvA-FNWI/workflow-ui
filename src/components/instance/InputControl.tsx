@@ -13,12 +13,15 @@ import {
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
-import type {Answer, Question} from "~/store/api/types/submissions";
-import type {UserSearchResult} from "~/store/api/types/users";
+import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
+import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
+import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
+import {sortChoices} from "~/utils/sortChoices";
 
 const toDate = (value: unknown) => {
     if (value == null) return null;
@@ -34,11 +37,12 @@ interface InputControlProps {
     value?: unknown;
     question: Question;
     onChange?: (val: unknown) => void;
-    onSave?: (val: AnswerInput) => void;
-    // These extra props will be used later
+    onSave?: (val: AnswerInput) => Promise<SaveAnswerResult>;
     onFileSave?: (params: FileParams) => void;
     answer?: Answer;
     visibleChoices?: string[] | null;
+    isValid?: boolean;
+    errorMessage?: string;
 }
 
 export const InputControl = ({
@@ -47,14 +51,40 @@ export const InputControl = ({
     onChange,
     onSave,
     visibleChoices,
+    isValid,
+    errorMessage,
 }: InputControlProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
     const save = useCallback(
         (value: unknown) => {
-            onSave?.({questionName: question.name, value});
+            if (!onSave) return;
+            void onSave({questionName: question.name, value});
         },
         [question.name, onSave],
+    );
+    const handleCreateExternalUser = useCallback(
+        async (newUser: CreateExternalUserInput) => {
+            if (!onSave) return;
+            const result = await onSave({
+                questionName: question.name,
+                value: null,
+                externalUser: newUser,
+            });
+
+            const updatedAnswer = result.answers.find(
+                (answer) => answer.questionName === question.name,
+            );
+            const updatedUser = updatedAnswer?.value as UserSearchResult | undefined;
+
+            if (updatedUser) {
+                onChange?.(updatedUser);
+                return;
+            }
+
+            throw new Error(`Updated user answer was not returned for question "${question.name}"`);
+        },
+        [onChange, onSave, question.name],
     );
     const debouncedOnChange = useDebounce(save, 500);
     const debouncedChange = (value: unknown) => {
@@ -90,6 +120,8 @@ export const InputControl = ({
                 }}
                 description={lengthValidationDescription}
                 maxLength={question.maxLength}
+                isValid={isValid}
+                errorMessage={errorMessage}
             />
         );
     }
@@ -102,13 +134,20 @@ export const InputControl = ({
                     debouncedChange(value);
                 }}
                 locale={i18n.language}
+                isValid={isValid}
+                errorMessage={errorMessage}
             />
         );
     }
 
     if (question.type === "Date") {
         return (
-            <DatePicker value={toDate(value)} onChange={(newValue) => debouncedChange(newValue)} />
+            <DatePicker
+                value={toDate(value)}
+                onChange={(newValue) => debouncedChange(newValue)}
+                isValid={isValid}
+                errorMessage={errorMessage}
+            />
         );
     }
     if (question.type === "User") {
@@ -117,6 +156,7 @@ export const InputControl = ({
                 value={value as UserSearchResult | UserSearchResult[] | null | undefined}
                 onChange={(newValue) => debouncedChange(newValue)}
                 allowsExternalUsers={question.allowsExternalUsers}
+                onCreateExternalUser={handleCreateExternalUser}
             />
         );
     }
@@ -132,13 +172,14 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
-        const choices = visibleChoices
+        const isChoiceType = (choiceType: ChoiceLayoutType) =>
+            question.layout && "type" in question.layout && question.layout.type === choiceType;
+        const filteredChoices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
-        const isDropdown =
-            question.layout && "type" in question.layout && question.layout.type === "Dropdown";
+        const choices = sortChoices(filteredChoices, question.sorting, i18n.language);
 
-        if (isDropdown) {
+        if (isChoiceType("Dropdown")) {
             if (question.isArray) {
                 const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
                 return (
@@ -153,6 +194,9 @@ export const InputControl = ({
                                   : [];
                             immediateChange(normalizedValues);
                         }}
+                        placeholder={t("select")}
+                        isValid={isValid}
+                        errorMessage={errorMessage}
                     >
                         {choices.map((choice) => (
                             <SelectItem key={choice.name}>
@@ -169,6 +213,9 @@ export const InputControl = ({
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
                     }}
+                    placeholder={t("select")}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
                 >
                     {choices.map((choice) => (
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
@@ -177,18 +224,17 @@ export const InputControl = ({
             );
         }
 
-        if (question.layout && "type" in question.layout && question.layout.type === "Dropdown") {
+        if (isChoiceType("Rubric")) {
             return (
-                <Select
-                    value={(value as string) || ""}
-                    onChange={(selectedValue) => debouncedChange(selectedValue)}
-                >
-                    {choices.map((choice) => (
-                        <SelectItem key={choice.name} title={l(choice.text) ?? choice.name}>
-                            {l(choice.text) ?? choice.name}
-                        </SelectItem>
-                    ))}
-                </Select>
+                <RubricSelect
+                    value={typeof value === "string" ? value : undefined}
+                    onChange={(selectedValue) => {
+                        immediateChange(selectedValue != null ? String(selectedValue) : null);
+                    }}
+                    rubrics={question.rubric ?? []}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                />
             );
         }
 
@@ -224,6 +270,8 @@ export const InputControl = ({
                 onChange={(selectedValue: string) => {
                     immediateChange(selectedValue);
                 }}
+                isValid={isValid}
+                errorMessage={errorMessage}
             >
                 {choices.map((choice) => (
                     <Radio key={choice.name} value={choice.name}>

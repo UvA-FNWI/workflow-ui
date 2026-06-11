@@ -1,4 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate";
+import type {ApiErrorState} from "~/store/api/types/returnTypes.ts";
 
 export type Submission = {
     id: string;
@@ -12,6 +13,7 @@ export type EffectResult = {
     redirectUrl?: string;
     showConfetti?: boolean;
     toast?: ToastEffect;
+    error?: ApiErrorState;
 };
 
 export type ToastEffect = {
@@ -70,7 +72,24 @@ export type Question = {
     shortText?: LocalString;
     layout?: StringLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
+    weight?: number;
     allowsExternalUsers: boolean;
+    rubric?: RubricEntry[];
+    sorting?: Sorting;
+};
+
+export type SortDirection = "Ascending" | "Descending";
+export type ChoiceSortField = "Name" | "Text" | "Value" | "Description";
+
+export type Sorting = {
+    field: ChoiceSortField;
+    direction: SortDirection;
+};
+
+export type RubricEntry = {
+    name: string;
+    description: LocalString;
+    grades: string[];
 };
 
 export type StringLayoutOptions = {
@@ -86,6 +105,7 @@ export type Choice = {
     name: string;
     description?: LocalString;
     text: LocalString;
+    value?: number;
 };
 
 export type PageLayout = "Normal" | "Condensed";
@@ -105,8 +125,8 @@ export type DataType =
     | "Int"
     | "Boolean"
     | "Object";
-export type ChoiceLayoutType = "Dropdown" | "RadioList";
-export type FormLayout = "Normal" | "SinglePage" | "Modal";
+export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric";
+export type FormLayout = "Normal" | "Compact" | "Modal";
 
 export type ImpersonationRole = {
     name: string;

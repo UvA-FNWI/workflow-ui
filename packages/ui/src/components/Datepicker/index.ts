@@ -8,7 +8,7 @@ export { Calendar, RangeCalendar } from './Calendar';
 export { DateField } from './DateField';
 export { CalendarCell } from './CalendarCell';
 export { CalendarButton, CalendarNavButton } from './CalendarButton';
-export { Popover } from './Popover';
+export { Popover } from '../Popover/Popover';
 export {
   dateToDateValue,
   dateValueToDate,

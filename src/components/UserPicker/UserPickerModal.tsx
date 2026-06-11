@@ -42,13 +42,18 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
     const resetSearch = searchState.reset;
-    const searchResults = useMemo(() => searchState.data ?? [], [searchState]);
+    const includeExternalUsers = allowsExternalUsers ?? false;
+    const searchResults = useMemo(() => {
+        const results = searchState.data ?? [];
+        return includeExternalUsers ? results : results.filter((user) => !user.isExternal);
+    }, [includeExternalUsers, searchState.data]);
 
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
         return searchResults.map((user) => ({
             key: user.userName,
             primaryValue: user.displayName,
-            secondaryValue: user.organization?.name ?? user.email,
+            secondaryValue: user.email,
+            tertiaryValue: user.organization?.name,
         }));
     }, [searchResults]);
 
@@ -102,16 +107,22 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     const modalTitle = title ?? t("user_picker.title");
     const searchPlaceholderText = searchPlaceholder ?? t("user_picker.search_placeholder");
+    const handleSearch = useCallback(
+        (query: string) => {
+            triggerSearch({query, includeExternalUsers});
+        },
+        [includeExternalUsers, triggerSearch],
+    );
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
             <Modal.Header>{modalTitle}</Modal.Header>
             <Modal.Body>
                 <SearchAndSelect
                     items={searchListBoxValues}
                     selectedKeys={selectedKeys}
                     onSelect={handleSelectionChange}
-                    onSearch={triggerSearch}
+                    onSearch={handleSearch}
                     resetSearch={resetSearch}
                     placeholder={searchPlaceholderText}
                     autoFocus={isOpen}
@@ -138,11 +149,11 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                 >
                     {t("confirm")}
                 </Button>
-                {allowsExternalUsers && (
+                {includeExternalUsers && (
                     <Button
                         intent="secondary"
                         onClick={onAddExternalUser}
-                        leftIcon={<Icon name="user-add-line" className="text-inherit" />}
+                        leftIcon={<Icon name="user-add-line" color="current" />}
                     >
                         {t("user_picker.not_in_list")}
                     </Button>

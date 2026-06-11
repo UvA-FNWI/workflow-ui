@@ -4,8 +4,8 @@ import {createRoot} from "react-dom/client";
 import {Provider} from "react-redux";
 import {RouterProvider} from "react-router";
 
-import {type AuthEventCallbacks, AuthProvider, isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
-import {ThemeProvider, ToastProvider} from "@uva-fnwi/datanose-ui";
+import {type AuthEventCallbacks, AuthProvider} from "@uva-fnwi/datanose-core";
+import {ToastProvider} from "@uva-fnwi/datanose-ui";
 import "@uva-fnwi/datanose-ui/styles";
 
 import SessionExpiredModal from "./components/SessionExpiredModal";
@@ -41,17 +41,10 @@ createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <Provider store={store}>
             <AuthProvider config={authConfig} events={authEvents}>
-                <ThemeProvider
-                    {...(isEmbeddedInCanvas() && {
-                        defaultTheme: "light",
-                        storageKey: "ui-theme-canvas",
-                    })}
-                >
-                    <ToastProvider>
-                        <SessionExpiredModal />
-                        <RouterProvider router={router} />
-                    </ToastProvider>
-                </ThemeProvider>
+                <ToastProvider>
+                    <SessionExpiredModal />
+                    <RouterProvider router={router} />
+                </ToastProvider>
             </AuthProvider>
         </Provider>
     </StrictMode>,

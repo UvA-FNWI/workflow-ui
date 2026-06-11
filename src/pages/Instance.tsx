@@ -9,6 +9,7 @@ import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {StaffCard} from "~/components/instance/StaffCard.tsx";
 import {StudentCard} from "~/components/instance/StudentCard";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
@@ -19,18 +20,25 @@ function Instance() {
         skip: !id,
     });
 
+    const studentName = getStringField(instance?.fields, "Student.DisplayName");
+    useDocumentTitle(studentName);
+
     // Error state: early return when not loading and no instance
     if (!isLoading && !instance) {
         return <div>Error loading instance</div>;
     }
 
     const studentEmail = getStringField(instance?.fields, "Student.Email");
-    const studentName = getStringField(instance?.fields, "Student.DisplayName");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
     return (
         <Container maxWidth={1280}>
-            <InstanceHeader courseName={courseName} isLoading={isLoading} />
+            <InstanceHeader
+                courseName={courseName}
+                instanceId={id}
+                canUseAdminTools={instance?.canUseAdminTools ?? false}
+                isLoading={isLoading}
+            />
             <Grid>
                 <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">
                     <ProgressCard
@@ -48,8 +56,9 @@ function Instance() {
                         isLoading={isLoading}
                     />
                     <StaffCard relatedUserGroups={instance?.relatedUserGroups?.groups ?? []} />
-                    <InfoCards isLoading={isLoading} />
-                    {instance?.canUseAdminTools && <AdminCard />}
+                    <InfoCards isLoading={isLoading} fields={instance?.fields} />
+                    {instance?.canImpersonate && <AdminCard />}
+                    {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
             </Grid>
         </Container>

@@ -1,19 +1,36 @@
-import {Link} from "react-router";
+import {Button, Heading, Skeleton} from "@uva-fnwi/datanose-ui";
 
-import {Heading, Icon, Skeleton} from "@uva-fnwi/datanose-ui";
-
+import {BackLink} from "~/components/BackLink";
+import {VersionedLink} from "~/components/VersionedLink.tsx";
+import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 
 interface InstanceHeaderProps {
     courseName?: LocalString | string | null;
+    instanceId?: string;
+    canUseAdminTools?: boolean;
     isLoading: boolean;
 }
 
-export function InstanceHeader({courseName, isLoading}: InstanceHeaderProps) {
+export function InstanceHeader({
+    courseName,
+    instanceId,
+    canUseAdminTools = false,
+    isLoading,
+}: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
+    const {page} = useJobTranslations();
 
     if (isLoading) {
-        return <Skeleton className="mb-8 h-8 w-48" />;
+        return (
+            <div className="mb-8 flex flex-col gap-2">
+                <Skeleton className="h-4 w-24" />
+                <div className="flex items-center justify-between gap-4">
+                    <Skeleton className="h-8 w-48" />
+                    {canUseAdminTools && <Skeleton className="h-10 w-28" />}
+                </div>
+            </div>
+        );
     }
 
     const displayTitle =
@@ -22,13 +39,19 @@ export function InstanceHeader({courseName, isLoading}: InstanceHeaderProps) {
 
     return (
         <div className="mb-8 flex flex-col gap-2">
-            <Link to="/" className="text-sm text-red-brand hover:opacity-80">
-                <Icon name="arrow-left-line" size={"xs"} className="mr-1" color={"current"} />
-                {t("home")}
-            </Link>
-            <Heading as="h1" size="lg">
-                {displayTitle}
-            </Heading>
+            <BackLink>{t("home")}</BackLink>
+            <div className="flex items-center justify-between gap-4">
+                <Heading as="h1" size="lg">
+                    {displayTitle}
+                </Heading>
+                {canUseAdminTools && instanceId && (
+                    <VersionedLink to={`/instance/${instanceId}/jobs`}>
+                        <Button intent="secondary" type="button">
+                            {page.viewJobs}
+                        </Button>
+                    </VersionedLink>
+                )}
+            </div>
         </div>
     );
 }

@@ -23,16 +23,24 @@ export function getVisibleQuestionAnswerPairs(
         .filter((pair) => pair.answer?.isVisible !== false);
 }
 
-export function isPageComplete(page: Page, submission: Submission): boolean {
+export function isPageComplete(
+    page: Page,
+    submission: Submission,
+    weightedOnly?: boolean,
+): boolean {
     return page.questions
-        .filter((q) => q.isRequired)
+        .filter((q) => q.isRequired && (!weightedOnly || (q.weight && q.weight > 0)))
         .every((question) => {
             const answer = submission.answers.find((a) => a.questionName === question.name);
-            return (
-                answer?.isVisible === false ||
-                (answer?.value != null &&
-                    answer.value !== "" &&
-                    (!Array.isArray(answer.value) || answer.value.length > 0))
-            );
+
+            if (answer?.isVisible === false) return true;
+
+            const hasError = !!answer?.validationError;
+
+            const hasValue =
+                answer?.value != null &&
+                answer.value !== "" &&
+                (!Array.isArray(answer.value) || answer.value.length > 0);
+            return hasValue && !hasError;
         });
 }

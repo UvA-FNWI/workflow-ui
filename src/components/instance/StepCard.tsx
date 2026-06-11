@@ -53,7 +53,12 @@ export const StepCard = ({step, instance}: Props) => {
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
     );
     const submissions = instance.submissions.filter((s) => s.form.step === step.id);
-    const isFormOpen = activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
+
+    const resolvedAction =
+        activeAction ??
+        (actions.length === 1 && actions[0].type === "SubmitForm" ? actions[0] : null);
+    const isFormOpen =
+        resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
 
     const deadlineDate = step.deadline ?? null;
@@ -72,6 +77,13 @@ export const StepCard = ({step, instance}: Props) => {
             : step.versions?.length == 1
               ? step.versions[0].submissions
               : [];
+
+    const showEmptyMessage =
+        !isFormOpen &&
+        submissionsToShow.length === 0 &&
+        actions.length === 0 &&
+        !isDisabled &&
+        !showVersionCards;
 
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
@@ -103,9 +115,18 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             <Disclosure.Content>
                 <div className="flex flex-col gap-4">
+                    {showEmptyMessage && (
+                        <div className="pt-4">
+                            <Text className="italic">{t("instance.empty_step")}</Text>
+                        </div>
+                    )}
                     {submissionsToShow.map((submission) => (
                         <div key={submission.id} className="py-4">
-                            <FormSummary instanceId={instance.id} submission={submission} />
+                            <FormSummary
+                                instanceId={instance.id}
+                                submission={submission}
+                                permissions={instance.permissions}
+                            />
                         </div>
                     ))}
 
@@ -113,7 +134,7 @@ export const StepCard = ({step, instance}: Props) => {
                         <div className="py-4">
                             <FormPage
                                 instanceId={instance.id}
-                                submissionId={activeAction?.form ?? ""}
+                                submissionId={resolvedAction?.form ?? ""}
                                 onClose={() => setActiveAction(null)}
                             />
                         </div>

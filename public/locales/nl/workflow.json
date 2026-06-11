@@ -10,15 +10,28 @@
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "confirm": "Bevestigen",
-  "continue": "Volgende",
+  "develop": {
+    "columns": {
+      "created": "Aangemaakt",
+      "id": "ID",
+      "title": "Titel"
+    },
+    "load_error": "Kon instanties niet laden",
+    "loading": "Laden…",
+    "new": "Nieuw {{name}}",
+    "no_definitions": "Geen projecttypes beschikbaar",
+    "no_instances": "Nog geen instanties",
+    "title": "Ontwikkelen"
+  },
   "email": "E-mailadres",
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
     "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
     "email_error": "Vul een geldig e-mailadres in",
+    "manual_user_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres. Gebruik de zoekfunctie om de gebruiker te vinden",
+    "manual_user_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden. Gebruik de zoekfunctie om de gebruiker te vinden",
     "organization": "Organisatie",
     "organization_name": "Naam organisatie",
-    "success_toast": "De externe medewerker heeft een automatische mail gekregen om het account te bevestigen.",
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
@@ -28,11 +41,11 @@
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
     "max_file_size": "Maximaal {{size}} per bestand.",
     "no_file_uploaded": "Geen bestand geüpload",
+    "pdf_only": "Alleen PDF-bestanden kunnen worden geüpload.",
     "removed_success": "Bestand verwijderd",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "go_back": "Vorige",
   "good_to_know": {
     "show_all": "Toon alles",
     "show_less": "Toon minder",
@@ -43,25 +56,32 @@
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
-      "final_grade": "Eindcijfer"
+      "final_grade": "Eindcijfer",
+      "grading_incomplete": "Beoordeling nog niet volledig"
     },
+    "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
+      "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
       "hide_answers": "Verberg onderdelen en toelichting",
       "no_answer": "Geen antwoord gegeven",
+      "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "title": "Samenvatting"
     },
     "workflowInstance": "Workflow"
   },
   "name": "Naam",
+  "next": "Volgende",
   "optional": "* Niet verplicht",
+  "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",
     "deadline": "Deadline",
     "titleStudent": "Jouw voortgang",
     "titleSupervisor": "Voortgang van de student"
   },
+  "save": "Opslaan",
   "screens": {
     "actions": "Acties",
     "students": "Studenten"
@@ -72,6 +92,7 @@
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
   },
+  "select": "Kies",
   "staff_card": {
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
@@ -87,7 +108,7 @@
     "noStudentInfo": "Geen studentinformatie beschikbaar",
     "student": "Student"
   },
-  "submit": "Indienen",
+  "submit": "Inleveren",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",

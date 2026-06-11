@@ -1,7 +1,8 @@
 import {useState} from "react";
 
-import {Link, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
+import {InlineQuestionEdit} from "./InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {downloadFile} from "~/utils/fileDownload";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
@@ -15,6 +16,7 @@ type Props = {
     isOpen?: boolean;
     colsClass?: string;
     collapseAnswers?: boolean;
+    canEdit?: boolean;
 };
 
 export const QuestionAnswerList = ({
@@ -25,9 +27,11 @@ export const QuestionAnswerList = ({
     isOpen: initialIsOpen = false,
     colsClass = "grid-cols-2",
     collapseAnswers = false,
+    canEdit = false,
 }: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
+    const [editingQuestionName, setEditingQuestionName] = useState<string | null>(null);
 
     if (collapseAnswers && !isOpen) {
         return (
@@ -46,51 +50,101 @@ export const QuestionAnswerList = ({
 
     return (
         <div className="flex flex-col gap-2">
-            {questions.map(({question, percentage}, rowIndex) => (
-                <div key={question.name} className={`grid gap-4 ${colsClass}`}>
-                    <Text>
-                        {l(question.text)}
-                        {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                    </Text>
+            {questions.map(({question, percentage}, rowIndex) => {
+                const isEditing = canEdit && editingQuestionName === question.name;
+                const pair = questions[rowIndex];
 
-                    {arrayOfPairs.map((submission, submissionIndex) => {
-                        const pair = submission[rowIndex];
-                        const {answer} = pair;
-                        const formattedValue =
-                            answer != null
-                                ? formatAnswer(
-                                      answer.value,
-                                      question.type,
-                                      i18n.language,
-                                      question.choices,
-                                  )
-                                : noAnswerText;
-
-                        return question.type === "File" && answer != null ? (
-                            <Link
-                                key={submissionIndex}
-                                intent="primary"
-                                underline
-                                className="truncate"
-                                onClick={() =>
-                                    downloadFile(
-                                        answer.files[0],
-                                        question.name,
-                                        instanceId,
-                                        submissionId,
-                                    )
-                                }
-                            >
-                                {formattedValue}
-                            </Link>
-                        ) : (
-                            <Text key={submissionIndex} className="truncate">
-                                {formattedValue ? formattedValue : "-"}
+                if (isEditing) {
+                    return (
+                        <div key={question.name} className={`grid gap-4 ${colsClass}`}>
+                            <Text>
+                                {l(question.text)}
+                                {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                             </Text>
-                        );
-                    })}
-                </div>
-            ))}
+                            <InlineQuestionEdit
+                                question={question}
+                                answer={pair.answer}
+                                instanceId={instanceId}
+                                submissionId={submissionId}
+                                onClose={() => setEditingQuestionName(null)}
+                            />
+                        </div>
+                    );
+                }
+
+                return (
+                    <div key={question.name} className={`grid gap-4 ${colsClass}`}>
+                        <Text className="min-w-0 wrap-break-word">
+                            {l(question.text)}
+                            {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
+                        </Text>
+
+                        {arrayOfPairs.map((submission, submissionIndex) => {
+                            const pair = submission[rowIndex];
+                            const {answer} = pair;
+                            const formattedValue =
+                                answer != null
+                                    ? formatAnswer(
+                                          answer.value,
+                                          question.type,
+                                          i18n.language,
+                                          question.choices,
+                                      )
+                                    : noAnswerText;
+
+                            return question.type === "File" && answer != null ? (
+                                answer.value != null ? (
+                                    <Link
+                                        key={submissionIndex}
+                                        intent="primary"
+                                        underline
+                                        className="truncate"
+                                        onClick={() =>
+                                            downloadFile(
+                                                answer.files[0],
+                                                question.name,
+                                                instanceId,
+                                                submissionId,
+                                            )
+                                        }
+                                    >
+                                        {formattedValue}
+                                    </Link>
+                                ) : (
+                                    <Text
+                                        className="min-w-0 wrap-break-word whitespace-pre-wrap"
+                                        key={submissionIndex}
+                                    >
+                                        {formattedValue ? formattedValue : "-"}
+                                    </Text>
+                                )
+                            ) : (
+                                <div key={submissionIndex} className="min-w-0">
+                                    <Text
+                                        as="span"
+                                        display="inline"
+                                        className="wrap-break-word whitespace-pre-wrap"
+                                    >
+                                        {formattedValue ? formattedValue : "-"}
+                                    </Text>
+                                    {canEdit && (
+                                        <Button
+                                            intent="ghost"
+                                            size="small"
+                                            shape="circular"
+                                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                            onClick={() => setEditingQuestionName(question.name)}
+                                            aria-label={t("instance.summary.edit_answer")}
+                                        >
+                                            <Icon name="edit-line" size="xs" color="danger" />
+                                        </Button>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            })}
             {collapseAnswers && (
                 <Link intent="destructive" underline onClick={() => setIsOpen(false)}>
                     {t("instance.summary.hide_answers")}

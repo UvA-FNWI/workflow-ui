@@ -14,6 +14,7 @@ import {
 } from "@uva-fnwi/datanose-ui";
 
 import {ScreenTable} from "~/components/ScreenTable";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {screensEndpoints} from "~/store/api/screensApi";
 
@@ -22,6 +23,8 @@ export const ProjectScreenOverview = () => {
     const {data: screens} = screensEndpoints.getProjectsOverviewScreens.useQuery();
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState(0);
+
+    useDocumentTitle("Students");
 
     if (!screens) {
         return null;
@@ -57,11 +60,13 @@ export const ProjectScreenOverview = () => {
                     <TabPanels>
                         {screens.groups.map((group) => (
                             <TabPanel key={group.name}>
-                                <ScreenTable
-                                    columns={screens.columns}
-                                    rows={group.rows}
-                                    globalFilter={search}
-                                />
+                                <div className="mt-8">
+                                    <ScreenTable
+                                        columns={screens.columns}
+                                        rows={group.rows}
+                                        globalFilter={search}
+                                    />
+                                </div>
                             </TabPanel>
                         ))}
                     </TabPanels>

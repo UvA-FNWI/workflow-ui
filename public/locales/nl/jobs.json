@@ -1,0 +1,33 @@
+{
+  "backToInstance": "Terug naar instance",
+  "claimedUntil": "Geclaimd tot",
+  "createdBy": "Aangemaakt door",
+  "error": "Fout bij laden van jobs",
+  "executedOn": "Uitgevoerd op",
+  "id": "ID",
+  "instanceId": "Instance ID",
+  "isSynchronous": "Synchroon",
+  "message": "Bericht",
+  "modal": {
+    "confirmRunMessage": "Dit zal de job opnieuw in de wachtrij zetten om uit te voeren.",
+    "error": "Fout bij laden van jobdetails",
+    "no": "Nee",
+    "noSteps": "Geen stappen geregistreerd",
+    "run": "Uitvoeren",
+    "step": "Stap",
+    "stepMessage": "Bericht",
+    "stepNumber": "Nummer",
+    "stepOutputs": "Outputs",
+    "steps": "Stappen",
+    "title": "Job",
+    "yes": "Ja"
+  },
+  "source": "Bron",
+  "sourceName": "Bronnaam",
+  "sourceType": "Brontype",
+  "startOn": "Start op",
+  "status": "Status",
+  "title": "Jobs",
+  "viewJobs": "Bekijk jobs",
+  "workerGroup": "Worker group"
+}

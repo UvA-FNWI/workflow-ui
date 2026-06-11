@@ -23,9 +23,21 @@ export type WorkflowInstance = {
     actions: Action[];
     permissions: RoleAction[];
     canUseAdminTools: boolean;
+    canImpersonate: boolean;
     viewerRoles: string[];
     relatedUserGroups: RelatedUserGroups;
 };
+
+/**
+ * A row from the instances-list endpoint. Keys are the requested property names (plus "id" and
+ * "createdOn", which are always returned). The endpoint projects properties on demand, so the shape
+ * beyond those is dynamic. "title" is only present when the request opts in with includeTitle.
+ */
+export type InstanceSummary = {
+    id: string;
+    createdOn: string;
+    title?: string | null;
+} & Record<string, unknown>;
 
 export type StepHeaderStatus = {
     type: "Info" | "Attention" | "Success";
