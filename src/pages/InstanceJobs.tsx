@@ -5,15 +5,16 @@ import {Link, Navigate, useParams} from "react-router";
 import {Card, Container, Heading, Icon, SearchInput, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {JobsTable} from "~/components/JobsTable";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {jobsEndpoints} from "~/store/api/jobsApi";
-import {getLocalStringField} from "~/utils/fieldUtils";
+import {getStringField} from "~/utils/fieldUtils";
 
 function InstanceJobs() {
     const {id} = useParams<{id: string}>();
-    const {t, l} = useTranslate(["workflow", "common"]);
+    const {t} = useTranslate(["workflow", "common"]);
     const {page} = useJobTranslations();
     const [search, setSearch] = useState("");
 
@@ -33,6 +34,11 @@ function InstanceJobs() {
         skip: !id,
     });
 
+    const studentName = getStringField(instance?.fields, "Student.DisplayName");
+    const displayTitle = studentName || t("instance.workflowInstance");
+
+    useDocumentTitle(`${displayTitle} | ${page.title}`);
+
     if (!id) {
         return <div>{page.error}</div>;
     }
@@ -44,11 +50,6 @@ function InstanceJobs() {
     if (!isLoadingInstance && instance && !instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}`} replace />;
     }
-
-    const courseName = getLocalStringField(instance?.fields, "Course.Name");
-    const displayTitle =
-        (typeof courseName === "string" ? courseName : l(courseName)) ||
-        t("instance.workflowInstance", {ns: "workflow"});
 
     return (
         <Container maxWidth={1280}>

@@ -21,6 +21,7 @@ import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
 import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
+import {sortChoices} from "~/utils/sortChoices";
 
 const toDate = (value: unknown) => {
     if (value == null) return null;
@@ -174,9 +175,10 @@ export const InputControl = ({
     if (question.type === "Choice") {
         const isChoiceType = (choiceType: ChoiceLayoutType) =>
             question.layout && "type" in question.layout && question.layout.type === choiceType;
-        const choices = visibleChoices
+        const filteredChoices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
+        const choices = sortChoices(filteredChoices, question.sorting, i18n.language);
 
         if (isChoiceType("Dropdown")) {
             if (question.isArray) {

@@ -1,8 +1,11 @@
 import {Container} from "@uva-fnwi/datanose-ui";
 
 import {VersionedLink} from "~/components/VersionedLink";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 
 function Overview() {
+    useDocumentTitle("Overview");
+
     return (
         <Container>
             <div

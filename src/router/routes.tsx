@@ -8,7 +8,6 @@ import Overview from "../pages/Overview";
 import {developRoutes} from "./developRoutes";
 import {instanceRoutes} from "./instanceRoutes";
 import screenRoutes from "./screenRoutes";
-import {workflowRoutes} from "./workflowRoutes";
 
 const routes: RouteObject[] = [
     {
@@ -35,7 +34,7 @@ const routes: RouteObject[] = [
             {
                 path: "/",
                 element: <App />,
-                children: [...instanceRoutes, ...workflowRoutes, ...screenRoutes, ...developRoutes],
+                children: [...instanceRoutes, ...screenRoutes, ...developRoutes],
             },
         ],
     },
