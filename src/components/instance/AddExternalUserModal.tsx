@@ -31,6 +31,7 @@ const emptyExternalUser: UserSearchResult = {
     email: "",
     organization: undefined,
     isExternal: true,
+    isPending: false,
 };
 
 export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
