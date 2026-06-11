@@ -124,7 +124,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         <input
           {...mergeProps(rest, inputProps, focusProps, hoverProps)}
           ref={ref}
-          className={cn(inputClasses, className)}
+          // Reserve space on the right so large values don't run under the
+          // absolutely-positioned increment/decrement buttons.
+          className={cn(inputClasses, 'ui:pr-10', className)}
         />
         <div className="ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-center">
           <div className="ui:flex ui:h-1/2 ui:flex-col ui:pr-2">

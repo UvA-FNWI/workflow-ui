@@ -74,7 +74,7 @@ export const QuestionAnswerList = ({
 
                 return (
                     <div key={question.name} className={`grid gap-4 ${colsClass}`}>
-                        <Text>
+                        <Text className="min-w-0 wrap-break-word">
                             {l(question.text)}
                             {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                         </Text>
@@ -111,13 +111,20 @@ export const QuestionAnswerList = ({
                                         {formattedValue}
                                     </Link>
                                 ) : (
-                                    <Text className="truncate" key={submissionIndex}>
+                                    <Text
+                                        className="min-w-0 wrap-break-word whitespace-pre-wrap"
+                                        key={submissionIndex}
+                                    >
                                         {formattedValue ? formattedValue : "-"}
                                     </Text>
                                 )
                             ) : (
-                                <div key={submissionIndex} className="flex items-center gap-2">
-                                    <Text className="truncate">
+                                <div key={submissionIndex} className="min-w-0">
+                                    <Text
+                                        as="span"
+                                        display="inline"
+                                        className="wrap-break-word whitespace-pre-wrap"
+                                    >
                                         {formattedValue ? formattedValue : "-"}
                                     </Text>
                                     {canEdit && (
@@ -125,7 +132,7 @@ export const QuestionAnswerList = ({
                                             intent="ghost"
                                             size="small"
                                             shape="circular"
-                                            className="ui:border-0 ui:px-1 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                                             onClick={() => setEditingQuestionName(question.name)}
                                             aria-label={t("instance.summary.edit_answer")}
                                         >
