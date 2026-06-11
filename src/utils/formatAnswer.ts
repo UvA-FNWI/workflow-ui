@@ -1,13 +1,13 @@
 import {formatDate} from "./formatDate";
-import type {Choice, DataType, RubricEntry} from "~/store/api/types/submissions";
+import type {Choice, DataType} from "~/store/api/types/submissions";
 
 /**
  * Format an answer value based on its data type
  * @param value - The answer value to format
  * @param type - The data type of the question
  * @param locale - The locale for formatting (e.g., 'en', 'nl')
- * @param choices - The choices for a Choice question (used to resolve localized labels)
- * @param rubric - The rubric entries for a Rubric-layout Choice question (grade labels)
+ * @param choices - The choices for a Choice question (used to resolve localized labels).
+ *   For Rubric questions the grade names are choice names, so this also covers grades.
  * @returns Formatted answer string
  */
 export function formatAnswer(
@@ -15,7 +15,6 @@ export function formatAnswer(
     type: DataType,
     locale: string = "en",
     choices?: Choice[],
-    rubric?: RubricEntry[],
 ): string {
     // Handle null/undefined
     if (value == null) {
@@ -80,17 +79,11 @@ export function formatAnswer(
             return String(value);
 
         case "Choice": {
-            const grades = rubric?.flatMap((entry) => entry.grades);
             const resolveLabel = (v: unknown): string => {
                 const choice = choices?.find((c) => c.name === v);
-                if (choice) {
-                    return (locale === "nl" ? choice.text.nl : choice.text.en) ?? String(v);
-                }
-                const grade = grades?.find((g) => g.name === v);
-                if (grade) {
-                    return (locale === "nl" ? grade.text.nl : grade.text.en) ?? String(v);
-                }
-                return String(v);
+                return choice
+                    ? ((locale === "nl" ? choice.text.nl : choice.text.en) ?? String(v))
+                    : String(v);
             };
             if (Array.isArray(value)) {
                 return value.map(resolveLabel).join(", ");

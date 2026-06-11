@@ -89,7 +89,6 @@ export const QuestionAnswerList = ({
                                           question.type,
                                           i18n.language,
                                           question.choices,
-                                          question.rubric,
                                       )
                                     : noAnswerText;
 
