@@ -60,15 +60,14 @@ export const StepCard = ({step, instance}: Props) => {
     const isFormOpen =
         resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
+    const currentStepIndex = instance.steps.findIndex((s) =>
+        [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
+    );
 
     const deadlineDate = step.deadline ?? null;
 
     const isDisabled =
-        !!instance.currentStep &&
-        !isCurrentStep &&
-        instance.steps.indexOf(step) >
-            instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
-
+        !!instance.currentStep && !isCurrentStep && instance.steps.indexOf(step) > currentStepIndex;
     const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
     const submissionsToShow =
