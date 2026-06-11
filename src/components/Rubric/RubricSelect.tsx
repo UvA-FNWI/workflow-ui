@@ -25,7 +25,7 @@ export function RubricSelect({
     description,
     errorMessage,
 }: RubricSelectProps) {
-    const {t} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
     const [selectedGrade, setSelectedGrade] = useState<string>(value ?? "");
 
     const handleGradeSelect = useCallback(
@@ -45,7 +45,9 @@ export function RubricSelect({
             onChange: (key) => handleGradeSelect(key as string),
             isInvalid: !isValid,
             children: rubrics.flatMap((rubricEntry) =>
-                rubricEntry.grades.map((grade) => <SelectItem key={grade}>{grade}</SelectItem>),
+                rubricEntry.grades.map((grade) => (
+                    <SelectItem key={grade.name}>{l(grade.text) ?? grade.name}</SelectItem>
+                )),
             ),
         },
         triggerRef,

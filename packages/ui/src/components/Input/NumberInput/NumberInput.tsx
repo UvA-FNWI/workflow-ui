@@ -36,6 +36,7 @@ export interface NumberInputProps
   errorMessage?: string;
   isValid?: boolean;
   locale?: string;
+  formatOptions?: Intl.NumberFormatOptions;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
@@ -51,6 +52,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   isValid = true,
   isDisabled = false,
   locale = 'en-US',
+  formatOptions,
   className,
   ...rest
 }) => {
@@ -64,6 +66,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     isDisabled: isDisabled ?? false,
     label,
     locale,
+    formatOptions,
     description,
     errorMessage,
     validationState: !isValid ? 'invalid' : 'valid',
@@ -89,6 +92,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       minValue,
       maxValue,
       step,
+      formatOptions,
       isDisabled: isDisabled ?? false,
       validationState: !isValid ? 'invalid' : 'valid',
     },
