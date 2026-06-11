@@ -41,29 +41,31 @@ export const FormSummaryAssessment = ({
             <div className="mt-4 flex flex-col gap-2">
                 {assessmentResults.parts.map((part) => (
                     <div className="grid grid-cols-2 gap-4">
-                        <Text size="lg" fontWeight="semibold" className="py-1">
+                        <Text size="md" fontWeight="semibold" className="py-1">
                             {`${l(part.title)} (${part.percentage}%):`}
                         </Text>
-                        <Text size="lg" className="py-1" fontWeight="semibold">
-                            {part.weightedAverage}{" "}
+                        <Text size="md" className="py-1" fontWeight="semibold">
+                            {part.weightedAverage}
                         </Text>
                     </div>
                 ))}
                 <div className="grid grid-cols-2 gap-4">
                     <Text size="lg" fontWeight="semibold" className="py-1">
-                        {t("instance.calculations.final_grade").toUpperCase()}:
+                        {t("instance.calculations.final_grade")}:
                     </Text>
                     <Text size="lg" fontWeight="semibold" className="py-1">
-                        {assessmentResults?.finalGrade}{" "}
+                        {assessmentResults?.finalGrade ?? "-"}
                     </Text>
                 </div>
                 <Separator weight="bold" className="my-4" />
-                <PageControl
-                    instanceId={instanceId}
-                    submissionId={submission.id}
-                    page={submission.form.pages[0]}
-                    showTitle={false}
-                />
+                {submission.form.pages.length == 1 && (
+                    <PageControl
+                        instanceId={instanceId}
+                        submissionId={submission.id}
+                        page={submission.form.pages[0]}
+                        showTitle={false}
+                    />
+                )}
             </div>
         );
 
