@@ -35,7 +35,10 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     if (!submission) return <div>Loading...</div>;
 
-    if (submission.form.formType === "AssessmentOverview") {
+    if (
+        submission.form.formType === "AssessmentPartOverview" ||
+        submission.form.formType === "AssessmentFinalOverview"
+    ) {
         return (
             <>
                 <Heading size="sm">{t("instance.summary.title")}</Heading>
@@ -44,7 +47,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                     instanceId={instanceId}
                     onSubmit={onClose}
                     onEditPage={() => {}}
-                    formType="AssessmentOverview"
+                    formType={submission.form.formType}
                 />
             </>
         );

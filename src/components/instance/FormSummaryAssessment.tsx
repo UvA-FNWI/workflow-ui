@@ -1,6 +1,7 @@
 import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
+import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import type {FormType, Submission} from "~/store/api/types/submissions.ts";
@@ -24,14 +25,43 @@ export const FormSummaryAssessment = ({
 
     const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
         instanceId,
-        submissionId: submission.id,
+        submissionId: formType != "AssessmentFinalOverview" ? submission.id : undefined,
     });
-    console.log("assessmentResults", assessmentResults);
+
+    if (formType == "AssessmentFinalOverview")
+        return (
+            <div className="mt-4 flex flex-col gap-2">
+                {assessmentResults?.parts.map((part) => (
+                    <div className="grid grid-cols-2 gap-4">
+                        <Text size="lg" fontWeight="semibold" className="py-1">
+                            {`${l(part.title)} (${part.percentage}%):`}
+                        </Text>
+                        <Text size="lg" className="py-1" fontWeight="semibold">
+                            {part.weightedAverage}{" "}
+                        </Text>
+                    </div>
+                ))}
+                <div className="grid grid-cols-2 gap-4">
+                    <Text size="lg" fontWeight="semibold" className="py-1">
+                        {t("instance.calculations.final_grade").toUpperCase()}:
+                    </Text>
+                    <Text size="lg" fontWeight="semibold" className="py-1">
+                        {assessmentResults?.finalGrade}{" "}
+                    </Text>
+                </div>
+                <Separator weight="bold" className="my-4" />
+                <PageControl
+                    instanceId={instanceId}
+                    submissionId={submission.id}
+                    page={submission.form.pages[0]}
+                    showTitle={false}
+                />
+            </div>
+        );
+
     const assessmentSubmissions = (assessmentResults?.parts ?? [])
         .flatMap((part) => part.sourceResults ?? [])
         .filter((sourceResult) => sourceResult.pageResults?.length > 0);
-
-    console.log("assessmentSubmissions", assessmentSubmissions);
 
     const hasTotalWeightedAverage =
         assessmentSubmissions.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;

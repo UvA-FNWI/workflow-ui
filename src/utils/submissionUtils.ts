@@ -17,8 +17,7 @@ export function getVisibleQuestionAnswerPairs(
         .map((question) => ({
             question,
             answer: answers.find((a) => a.questionName === question.name) ?? null,
-            percentage:
-                percentages?.find((p) => p.questionName === question.name)?.percentage ?? null,
+            percentage: percentages?.find((p) => p.name === question.name)?.percentage ?? null,
         }))
         .filter((pair) => pair.answer?.isVisible !== false);
 }

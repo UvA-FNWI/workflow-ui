@@ -99,7 +99,7 @@ export type Choice = {
 };
 
 export type PageLayout = "Normal" | "Condensed";
-export type FormType = "Normal" | "AssessmentOverview";
+export type FormType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
 export type RoleAction = "ViewAdminTools" | "View" | "Edit" | "Submit";
 export type DataType =
     | "File"

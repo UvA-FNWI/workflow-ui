@@ -6,7 +6,7 @@ import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {FormSummaryAssessment} from "~/components/instance/FormSummaryAssessment.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {FormType, RoleAction, Submission} from "~/store/api/types/submissions.ts";
-import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
+import {getVisibleQuestionAnswerPairs, isPageComplete} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
@@ -32,7 +32,9 @@ export const FormSummary = ({
     const canEdit = effectivePermissions.includes("Edit") && submission.dateSubmitted != null;
 
     const hasResults =
-        formType === "AssessmentOverview" || submission.form.pages.some((p) => p.hasResults);
+        formType === "AssessmentPartOverview" ||
+        formType === "AssessmentFinalOverview" ||
+        submission.form.pages.some((p) => p.hasResults);
 
     if (hasResults) {
         return (
@@ -48,6 +50,11 @@ export const FormSummary = ({
                         instanceId={instanceId}
                         submission={submission}
                         onSubmit={onSubmit}
+                        disabled={
+                            formType == "AssessmentFinalOverview"
+                                ? !isPageComplete(submission.form.pages[0], submission)
+                                : false
+                        }
                     />
                 )}
             </>
