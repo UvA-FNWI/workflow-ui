@@ -73,6 +73,11 @@
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
+  "overview": {
+    "choose_course_subtitle": "Select a course to continue.",
+    "choose_course_title": "Choose your course",
+    "no_access": "You don't have access to any courses yet."
+  },
   "previous": "Previous",
   "progress": {
     "completed": "Completed",
@@ -82,8 +87,7 @@
   },
   "save": "Save",
   "screens": {
-    "actions": "Actions",
-    "students": "Students"
+    "actions": "Actions"
   },
   "search_and_select": {
     "add_new": "Add",
