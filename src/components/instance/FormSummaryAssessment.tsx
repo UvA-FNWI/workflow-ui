@@ -28,10 +28,18 @@ export const FormSummaryAssessment = ({
         submissionId: formType != "AssessmentFinalOverview" ? submission.id : undefined,
     });
 
+    if (!assessmentResults || !assessmentResults?.parts || assessmentResults?.parts?.length == 0) {
+        return (
+            <div className="my-4">
+                <Text className="italic">{t("instance.empty_step")}</Text>
+            </div>
+        );
+    }
+
     if (formType == "AssessmentFinalOverview")
         return (
             <div className="mt-4 flex flex-col gap-2">
-                {assessmentResults?.parts.map((part) => (
+                {assessmentResults.parts.map((part) => (
                     <div className="grid grid-cols-2 gap-4">
                         <Text size="lg" fontWeight="semibold" className="py-1">
                             {`${l(part.title)} (${part.percentage}%):`}
@@ -59,7 +67,7 @@ export const FormSummaryAssessment = ({
             </div>
         );
 
-    const assessmentSubmissions = (assessmentResults?.parts ?? [])
+    const assessmentSubmissions = assessmentResults.parts
         .flatMap((part) => part.sourceResults ?? [])
         .filter((sourceResult) => sourceResult.pageResults?.length > 0);
 
