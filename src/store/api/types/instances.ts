@@ -22,6 +22,7 @@ export type WorkflowInstance = {
     actions: Action[];
     permissions: RoleAction[];
     canUseAdminTools: boolean;
+    canImpersonate: boolean;
     viewerRoles: string[];
 };
 

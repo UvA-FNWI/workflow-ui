@@ -55,7 +55,8 @@ function Instance() {
                         isLoading={isLoading}
                     />
                     <InfoCards isLoading={isLoading} fields={instance?.fields} />
-                    {instance?.canUseAdminTools && <AdminCard />}
+                    {instance?.canImpersonate && <AdminCard />}{" "}
+                    {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
             </Grid>
         </Container>
