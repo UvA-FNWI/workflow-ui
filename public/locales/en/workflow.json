@@ -87,8 +87,7 @@
   },
   "save": "Save",
   "screens": {
-    "actions": "Actions",
-    "students": "Students"
+    "actions": "Actions"
   },
   "search_and_select": {
     "add_new": "Add",
