@@ -126,10 +126,18 @@ export const InputControl = ({
         );
     }
     if (question.type === "Int" || question.type === "Double") {
+        // Both types are stored as JS numbers, which silently lose precision
+        // past Number.MAX_SAFE_INTEGER (trailing digits become zeros). Int is a
+        // 32-bit signed integer on the backend, so clamp it to that range
+        const isInt = question.type === "Int";
+        const maxValue = isInt ? 2_147_483_647 : Number.MAX_SAFE_INTEGER;
+        const minValue = isInt ? -2_147_483_648 : -Number.MAX_SAFE_INTEGER;
         return (
             <NumberInput
                 value={Number.isFinite(value) ? (value as number) : undefined}
-                step={question.type === "Int" ? 1 : 0.01}
+                step={isInt ? 1 : 0.01}
+                minValue={minValue}
+                maxValue={maxValue}
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
