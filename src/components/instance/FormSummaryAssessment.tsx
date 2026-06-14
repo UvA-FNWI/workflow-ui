@@ -4,28 +4,32 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
+import type {SourceResult} from "~/store/api/types/assessments.ts";
 import type {FormType, Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
-    submission: Submission;
+    submissions: Submission[];
     onEditPage?: (index: number) => void;
     formType?: FormType;
     collapseAnswers?: boolean;
+    combine: boolean;
 };
 
 export const FormSummaryAssessment = ({
     instanceId,
-    submission,
+    submissions,
     onEditPage,
     formType = "Normal",
+    combine,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
     const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
         instanceId,
-        submissionId: formType != "AssessmentFinalOverview" ? submission.id : undefined,
+        submissionId: formType != "AssessmentFinalOverview" ? submissions[0].id : undefined,
+        combine,
     });
 
     if (!assessmentResults || !assessmentResults?.parts || assessmentResults?.parts?.length == 0) {
@@ -58,11 +62,11 @@ export const FormSummaryAssessment = ({
                     </Text>
                 </div>
                 <Separator weight="bold" className="my-4" />
-                {submission.form.pages.length == 1 && (
+                {submissions[0].form.pages.length == 1 && (
                     <PageControl
                         instanceId={instanceId}
-                        submissionId={submission.id}
-                        page={submission.form.pages[0]}
+                        submissionId={submissions[0].id}
+                        page={submissions[0].form.pages[0]}
                         showTitle={false}
                     />
                 )}
@@ -71,7 +75,9 @@ export const FormSummaryAssessment = ({
 
     const assessmentSubmissions = assessmentResults.parts
         .flatMap((part) => [...(part.sourceResults ?? []), part.combined])
-        .filter((sourceResult) => sourceResult.pageResults?.length > 0);
+        .filter(
+            (sourceResult) => sourceResult && sourceResult.pageResults?.length > 0,
+        ) as SourceResult[];
 
     const hasTotalWeightedAverage =
         assessmentSubmissions.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;
@@ -96,13 +102,14 @@ export const FormSummaryAssessment = ({
                         ))}
                     </div>
                 )}
-                {submission.form.pages.map((page, index) => {
+                {submissions[0].form.pages.map((page, index) => {
                     const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
                         getVisibleQuestionAnswerPairs(
                             page.questions,
                             sourceResult.answers,
                             sourceResult.pageResults.find((p) => p.name === page.name)
                                 ?.questionResults ?? [],
+                            submissions.find((s) => s.id == sourceResult.id),
                         ),
                     );
 
@@ -175,14 +182,15 @@ export const FormSummaryAssessment = ({
                                     questionAnswerPairs={allQuestionAnswerPairs}
                                     noAnswerText=" "
                                     instanceId={instanceId}
-                                    submissionId={submission.id}
                                     colsClass={colsClass}
                                     collapseAnswers={true}
                                 />
                             )}
                             <Separator
                                 weight={
-                                    index == submission.form.pages.length - 1 ? "bold" : "normal"
+                                    index == submissions[0].form.pages.length - 1
+                                        ? "bold"
+                                        : "normal"
                                 }
                             />
                         </div>

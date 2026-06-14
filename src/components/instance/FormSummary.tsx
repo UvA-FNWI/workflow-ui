@@ -46,18 +46,21 @@ export const FormSummary = ({
                     submission={submission}
                     onEditPage={onEditPage}
                     formType={formType}
+                    combine={false}
                 />
                 {onSubmit && (
-                    <FormSubmitButton
-                        instanceId={instanceId}
-                        submission={submission}
-                        onSubmit={onSubmit}
-                        disabled={
-                            formType == "AssessmentFinalOverview"
-                                ? !isPageComplete(submission.form.pages[0], submission)
-                                : false
-                        }
-                    />
+                    <div className="mt-4">
+                        <FormSubmitButton
+                            instanceId={instanceId}
+                            submission={submission}
+                            onSubmit={onSubmit}
+                            disabled={
+                                formType == "AssessmentFinalOverview"
+                                    ? !isPageComplete(submission.form.pages[0], submission)
+                                    : false
+                            }
+                        />
+                    </div>
                 )}
             </>
         );

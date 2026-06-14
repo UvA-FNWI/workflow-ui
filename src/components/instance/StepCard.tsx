@@ -46,8 +46,10 @@ type Props = {
 
 const hasResults = (submission: Submission) => submission.form.pages.some((p) => p.hasResults);
 
-const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] =>
-    (step.children ?? []).flatMap((child) => [child, ...getStepHierarchy(child)]);
+const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
+    step,
+    ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
+];
 
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
@@ -65,7 +67,7 @@ export const StepCard = ({step, instance}: Props) => {
         activeAction ??
         (actions.length === 1 &&
         actions[0].type === "SubmitForm" &&
-        !submissions.filter((s) => s.dateSubmitted)
+        !submissions.some((s) => s.dateSubmitted)
             ? actions[0]
             : null);
     const isFormOpen =
@@ -146,7 +148,8 @@ export const StepCard = ({step, instance}: Props) => {
                     {assessmentSubmissions.length > 0 && (
                         <FormSummaryAssessment
                             instanceId={instance.id}
-                            submission={assessmentSubmissions[0]}
+                            submissions={assessmentSubmissions}
+                            combine={true}
                         />
                     )}
 

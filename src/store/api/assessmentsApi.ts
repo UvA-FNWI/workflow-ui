@@ -7,12 +7,12 @@ export const assessmentsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getAssessmentResults: builder.query<
             Assessment,
-            {instanceId: string; submissionId?: string}
+            {instanceId: string; submissionId?: string; combine: boolean}
         >({
-            query: ({instanceId, submissionId}) =>
+            query: ({instanceId, submissionId, combine}) =>
                 submissionId
-                    ? `/Assessments/${instanceId}/${submissionId}`
-                    : `/Assessments/${instanceId}`,
+                    ? `/Assessments/${instanceId}/${submissionId}?combine=${combine}`
+                    : `/Assessments/${instanceId}?combine=${combine}`,
             providesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Assessments", instanceId, submissionId},
             ],

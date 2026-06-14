@@ -11,7 +11,7 @@ export type AssessmentPart = {
     id: string;
     title: LocalString;
     sourceResults: SourceResult[];
-    combined: SourceResult;
+    combined: SourceResult | null;
     weightedAverage: number;
     percentage: number;
 };
