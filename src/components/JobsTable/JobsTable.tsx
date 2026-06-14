@@ -79,6 +79,8 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
             cell: (info) => info.getValue() || "—",
         }),
         columnHelper.accessor("id", {
+            header: "",
+            enableSorting: false,
             cell: (info) => {
                 const rowId = info.getValue();
 

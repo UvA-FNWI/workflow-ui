@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 
 import {createColumnHelper} from "@tanstack/react-table";
-import {Button, Heading} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Text} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table/DataTable";
 import {VersionedLink} from "~/components/VersionedLink";
@@ -48,7 +48,14 @@ export function WorkflowInstancesPanel({definition}: WorkflowInstancesPanelProps
             }),
             columnHelper.accessor("title", {
                 header: t("columns.title"),
-                cell: (info) => info.getValue() || "—",
+                cell: (info) => {
+                    const value = info.getValue() || "—";
+                    return (
+                        <Text size={"sm"} truncate={true} className="max-w-100">
+                            {value}
+                        </Text>
+                    );
+                },
             }),
             columnHelper.accessor("createdOn", {
                 header: t("columns.created"),
