@@ -73,6 +73,11 @@
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
+  "overview": {
+    "choose_course_subtitle": "Selecteer een vak om verder te gaan.",
+    "choose_course_title": "Kies je vak",
+    "no_access": "Je hebt nog geen toegang tot vakken."
+  },
   "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",
@@ -82,8 +87,7 @@
   },
   "save": "Opslaan",
   "screens": {
-    "actions": "Acties",
-    "students": "Studenten"
+    "actions": "Acties"
   },
   "search_and_select": {
     "add_new": "Voeg toe",

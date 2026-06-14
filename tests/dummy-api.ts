@@ -24,7 +24,7 @@ app.get("/WorkflowInstances/form-submitted", (_, res) => {
     res.json(formSubmitted);
 });
 
-app.get("/Screens/Grouped/Project/Projects", (_, res) => {
+app.get("/Screens/Project/Projects", (_, res) => {
     res.json(projectsScreen);
 });
 

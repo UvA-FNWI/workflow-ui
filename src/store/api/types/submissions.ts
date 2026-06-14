@@ -86,10 +86,15 @@ export type Sorting = {
     direction: SortDirection;
 };
 
+export type RubricGrade = {
+    name: string;
+    text: LocalString;
+};
+
 export type RubricEntry = {
     name: string;
     description: LocalString;
-    grades: string[];
+    grades: RubricGrade[];
 };
 
 export type StringLayoutOptions = {

@@ -6,6 +6,8 @@ import type {Choice, DataType} from "~/store/api/types/submissions";
  * @param value - The answer value to format
  * @param type - The data type of the question
  * @param locale - The locale for formatting (e.g., 'en', 'nl')
+ * @param choices - The choices for a Choice question (used to resolve localized labels).
+ *   For Rubric questions the grade names are choice names, so this also covers grades.
  * @returns Formatted answer string
  */
 export function formatAnswer(
@@ -76,24 +78,18 @@ export function formatAnswer(
             }
             return String(value);
 
-        case "Choice":
-            if (choices) {
-                if (Array.isArray(value)) {
-                    return value
-                        .map((v) => {
-                            const choice = choices.find((c) => c.name === v);
-                            return (
-                                (locale === "nl" ? choice?.text.nl : choice?.text.en) ?? String(v)
-                            );
-                        })
-                        .join(", ");
-                }
-                const choice = choices.find((c) => c.name === value);
-                if (choice) {
-                    return (locale === "nl" ? choice.text.nl : choice.text.en) ?? String(value);
-                }
+        case "Choice": {
+            const resolveLabel = (v: unknown): string => {
+                const choice = choices?.find((c) => c.name === v);
+                return choice
+                    ? ((locale === "nl" ? choice.text.nl : choice.text.en) ?? String(v))
+                    : String(v);
+            };
+            if (Array.isArray(value)) {
+                return value.map(resolveLabel).join(", ");
             }
-            return String(value);
+            return resolveLabel(value);
+        }
 
         case "File":
             // Handle file - show filename
