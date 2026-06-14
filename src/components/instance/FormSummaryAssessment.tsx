@@ -116,8 +116,9 @@ export const FormSummaryAssessment = ({
                                 <div className="flex items-center">
                                     <Heading size="xs" className="font-semibold">
                                         {l(page.title)?.toUpperCase()}
-                                        {firstPageResult?.questionResults?.length &&
-                                            ` (${firstPageResult.questionResults.reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
+                                        {(firstPageResult?.questionResults?.filter((q) => q.weight)
+                                            .length ?? 0) > 0 &&
+                                            ` (${firstPageResult?.questionResults.reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                                     </Heading>
                                     {onEditPage &&
                                         formType === "Normal" &&
@@ -148,11 +149,11 @@ export const FormSummaryAssessment = ({
                                     );
                                     return (
                                         <div key={sourceResult.id}>
-                                            {pageResult?.weightedAverage ? (
+                                            {pageResult?.weightedAverage || pageResult?.sum ? (
                                                 <Text fontWeight="semibold" size="lg">
-                                                    {pageResult.weightedAverage.toLocaleString(
-                                                        i18n.language,
-                                                    )}
+                                                    {(
+                                                        pageResult.weightedAverage ?? pageResult.sum
+                                                    ).toLocaleString(i18n.language)}
                                                 </Text>
                                             ) : (
                                                 <Text fontWeight="bold" size="lg">

@@ -29,6 +29,7 @@ export type PageResult = {
     weight: number;
     weightedAverage: number;
     questionResults: QuestionResult[];
+    sum: number;
 };
 
 export type QuestionResult = {
