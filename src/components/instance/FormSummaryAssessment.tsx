@@ -173,7 +173,7 @@ export const FormSummaryAssessment = ({
                             {allQuestionAnswerPairs.flat().length > 0 && (
                                 <QuestionAnswerList
                                     questionAnswerPairs={allQuestionAnswerPairs}
-                                    noAnswerText={t("instance.summary.no_answer")}
+                                    noAnswerText=" "
                                     instanceId={instanceId}
                                     submissionId={submission.id}
                                     colsClass={colsClass}
