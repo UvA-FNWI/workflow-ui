@@ -70,7 +70,7 @@ export const FormSummaryAssessment = ({
         );
 
     const assessmentSubmissions = assessmentResults.parts
-        .flatMap((part) => part.sourceResults ?? [])
+        .flatMap((part) => [...(part.sourceResults ?? []), part.combined])
         .filter((sourceResult) => sourceResult.pageResults?.length > 0);
 
     const hasTotalWeightedAverage =
@@ -89,7 +89,8 @@ export const FormSummaryAssessment = ({
                         {assessmentSubmissions.map((assessmentPart) => (
                             <div key={assessmentPart.id} className="w-48">
                                 <Text fontWeight="normal" size="lg" intent="error">
-                                    {`${l(assessmentPart.title)?.toUpperCase()} (${assessmentPart.percentage}%)`}
+                                    {l(assessmentPart.title)?.toUpperCase()}{" "}
+                                    {assessmentPart.percentage && `(${assessmentPart.percentage}%)`}
                                 </Text>
                             </div>
                         ))}
@@ -104,6 +105,10 @@ export const FormSummaryAssessment = ({
                                 ?.questionResults ?? [],
                         ),
                     );
+
+                    if (!allQuestionAnswerPairs.some((p) => p.some((r) => r.answer))) {
+                        return null;
+                    }
 
                     const firstPageResult = assessmentSubmissions[0]?.pageResults.find(
                         (p) => p.name === page.name,
@@ -189,9 +194,11 @@ export const FormSummaryAssessment = ({
                         <Text fontWeight="semibold" size="xl">
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
-                        <Text fontWeight="semibold" size="xl">
-                            {assessmentResults?.finalGrade?.toLocaleString(i18n.language)}
-                        </Text>
+                        {assessmentSubmissions.map((sourceResult) => (
+                            <Text fontWeight="semibold" size="xl">
+                                {sourceResult.weightedAverage?.toLocaleString(i18n.language)}
+                            </Text>
+                        ))}
                     </div>
                 )}
             </div>

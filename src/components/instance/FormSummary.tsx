@@ -31,10 +31,12 @@ export const FormSummary = ({
     const effectivePermissions = union(permissions, submission.permissions);
     const canEdit = effectivePermissions.includes("Edit") && submission.dateSubmitted != null;
 
+    const pages = submission.form.pages.filter((p) => p.isInCurrentForm);
+
     const hasResults =
         formType === "AssessmentPartOverview" ||
         formType === "AssessmentFinalOverview" ||
-        submission.form.pages.some((p) => p.hasResults);
+        pages.some((p) => p.hasResults);
 
     if (hasResults) {
         return (
@@ -63,7 +65,7 @@ export const FormSummary = ({
 
     return (
         <div key={submission.id} className="flex flex-col gap-2">
-            {submission.form.pages.map((page) => {
+            {pages.map((page) => {
                 const questionAnswerPairs = getVisibleQuestionAnswerPairs(
                     page.questions,
                     submission.answers,
@@ -71,7 +73,7 @@ export const FormSummary = ({
 
                 return (
                     <div key={page.name} className="py-2">
-                        {submission.form.pages.length > 1 && (
+                        {pages.length > 1 && (
                             <Heading as="h4" size="xs" className="pb-1 font-semibold">
                                 {l(page.title)}
                             </Heading>
