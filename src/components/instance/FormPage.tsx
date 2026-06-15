@@ -35,7 +35,10 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     if (!submission) return <div>Loading...</div>;
 
-    if (submission.form.formType === "AssessmentOverview") {
+    if (
+        submission.form.formType === "AssessmentPartOverview" ||
+        submission.form.formType === "AssessmentFinalOverview"
+    ) {
         return (
             <>
                 <Heading size="sm">{t("instance.summary.title")}</Heading>
@@ -44,7 +47,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                     instanceId={instanceId}
                     onSubmit={onClose}
                     onEditPage={() => {}}
-                    formType="AssessmentOverview"
+                    formType={submission.form.formType}
                 />
             </>
         );
@@ -58,10 +61,10 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     const areAllPagesComplete = submission.form.pages.every((page) => isPageComplete(page));
 
+    const pages = submission.form.pages.filter((p) => p.isInCurrentForm);
+
     // For some assessment forms not all tabs are enabled
     const goToNextEnabledTab = (current: number, direction: 1 | -1) => {
-        const pages = submission.form.pages;
-
         const isEnabled = (i: number) =>
             i < pages.length ? pages[i].isInCurrentForm : i === pages.length && areAllPagesComplete;
 
@@ -80,8 +83,8 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                 <Tabs activeIndex={activeTabIndex} onTabChange={setActiveTabIndex}>
                     <TabList>
                         {[
-                            ...submission.form.pages.map((page, index) => (
-                                <Tab key={index} disabled={!page.isInCurrentForm}>
+                            ...pages.map((page, index) => (
+                                <Tab key={index}>
                                     {l(page.title)}
                                     {isPageComplete(page) && (
                                         <Icon
@@ -100,7 +103,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                     </TabList>
                     <TabPanels>
                         {[
-                            ...submission.form.pages.map((page, index) => (
+                            ...pages.map((page, index) => (
                                 <TabPanel key={index}>
                                     <div className="my-4">
                                         <PageControl

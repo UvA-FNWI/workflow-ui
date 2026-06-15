@@ -12,7 +12,7 @@ type Props = {
     questionAnswerPairs: QuestionAnswerPair[] | QuestionAnswerPair[][];
     noAnswerText?: string;
     instanceId: string;
-    submissionId: string;
+    submissionId?: string;
     isOpen?: boolean;
     colsClass?: string;
     collapseAnswers?: boolean;
@@ -51,7 +51,7 @@ export const QuestionAnswerList = ({
     return (
         <div className="flex flex-col gap-2">
             {questions.map(({question, percentage}, rowIndex) => {
-                const isEditing = canEdit && editingQuestionName === question.name;
+                const isEditing = editingQuestionName === question.name;
                 const pair = questions[rowIndex];
 
                 if (isEditing) {
@@ -65,7 +65,7 @@ export const QuestionAnswerList = ({
                                 question={question}
                                 answer={pair.answer}
                                 instanceId={instanceId}
-                                submissionId={submissionId}
+                                submissionId={pair.submission?.id ?? submissionId ?? ""}
                                 onClose={() => setEditingQuestionName(null)}
                             />
                         </div>
@@ -127,7 +127,7 @@ export const QuestionAnswerList = ({
                                     >
                                         {formattedValue ? formattedValue : "-"}
                                     </Text>
-                                    {canEdit && (
+                                    {(canEdit || pair.submission?.permissions.includes("Edit")) && (
                                         <Button
                                             intent="ghost"
                                             size="small"

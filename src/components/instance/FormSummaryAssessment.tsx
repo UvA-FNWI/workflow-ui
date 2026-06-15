@@ -1,69 +1,124 @@
 import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
+import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
+import type {SourceResult} from "~/store/api/types/assessments.ts";
 import type {FormType, Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
-    submission: Submission;
+    submissions: Submission[];
     onEditPage?: (index: number) => void;
     formType?: FormType;
     collapseAnswers?: boolean;
+    combine: boolean;
 };
 
 export const FormSummaryAssessment = ({
     instanceId,
-    submission,
+    submissions,
     onEditPage,
     formType = "Normal",
+    combine,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
-    const {data: assessmentResults} = assessmentsApi.endpoints.getResults.useQuery({
+    const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
         instanceId,
-        submissionId: formType == "AssessmentOverview" ? submission.form.name : submission.id,
+        submissionId: formType != "AssessmentFinalOverview" ? submissions[0].id : undefined,
+        combine,
     });
 
-    const assessmentForms = (assessmentResults?.forms ?? []).filter(
-        (f) =>
-            Object.keys(f.results ?? {}).length > 0 &&
-            Object.values(f.results ?? {}).some((pageResults) =>
-                pageResults.some((result) => result.answer !== 0),
-            ),
-    );
+    if (!assessmentResults || !assessmentResults?.parts || assessmentResults?.parts?.length == 0) {
+        return (
+            <div className="my-4">
+                <Text className="italic">{t("instance.empty_step")}</Text>
+            </div>
+        );
+    }
+
+    if (formType == "AssessmentFinalOverview")
+        return (
+            <div className="mt-4 flex flex-col gap-2">
+                {assessmentResults.parts.map((part) => (
+                    <div className="grid grid-cols-2 gap-4">
+                        <Text size="md" fontWeight="semibold" className="py-1">
+                            {`${l(part.title)} (${part.percentage}%):`}
+                        </Text>
+                        <Text size="md" className="py-1" fontWeight="semibold">
+                            {part.weightedAverage}
+                        </Text>
+                    </div>
+                ))}
+                <div className="grid grid-cols-2 gap-4">
+                    <Text size="lg" fontWeight="semibold" className="py-1">
+                        {t("instance.calculations.final_grade")}:
+                    </Text>
+                    <Text size="lg" fontWeight="semibold" className="py-1">
+                        {assessmentResults?.finalGrade ?? "-"}
+                    </Text>
+                </div>
+                <Separator weight="bold" className="my-4" />
+                {submissions[0].form.pages.length == 1 && (
+                    <PageControl
+                        instanceId={instanceId}
+                        submissionId={submissions[0].id}
+                        page={submissions[0].form.pages[0]}
+                        showTitle={false}
+                    />
+                )}
+            </div>
+        );
+
+    const assessmentSubmissions = assessmentResults.parts
+        .flatMap((part) => [...(part.sourceResults ?? []), part.combined])
+        .filter(
+            (sourceResult) => sourceResult && sourceResult.pageResults?.length > 0,
+        ) as SourceResult[];
 
     const hasTotalWeightedAverage =
-        assessmentForms.length > 0 && (assessmentResults?.totalWeightedAverage ?? 0) > 0;
+        assessmentSubmissions.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;
 
     const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
-    const colsClass = colsList[assessmentForms?.length ?? 1];
+    const colsClass = colsList[assessmentSubmissions?.length ?? 1];
 
     return (
         <div className="overflow-x-auto">
             <div className="flex min-w-xl flex-col gap-6">
                 {/* Assessment columns header */}
-                {assessmentForms.length > 1 && (
+                {assessmentSubmissions.length > 1 && (
                     <div className={`grid gap-4 ${colsClass}`}>
                         <div></div>
-                        {assessmentForms.map((assessment) => (
-                            <div key={assessment.id} className="w-48">
+                        {assessmentSubmissions.map((assessmentPart) => (
+                            <div key={assessmentPart.id} className="w-48">
                                 <Text fontWeight="normal" size="lg" intent="error">
-                                    {l(assessment.formTitle)?.toUpperCase()}
+                                    {l(assessmentPart.title)?.toUpperCase()}{" "}
+                                    {assessmentPart.percentage && `(${assessmentPart.percentage}%)`}
                                 </Text>
                             </div>
                         ))}
                     </div>
                 )}
-                {submission.form.pages.map((page, index) => {
-                    const allQuestionAnswerPairs = assessmentForms.map((a) =>
+                {submissions[0].form.pages.map((page, index) => {
+                    const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
                         getVisibleQuestionAnswerPairs(
                             page.questions,
-                            a.answers,
-                            assessmentForms.find((f) => f.id === a.id)?.results?.[page.name],
+                            sourceResult.answers,
+                            sourceResult.pageResults.find((p) => p.name === page.name)
+                                ?.questionResults ?? [],
+                            submissions.find((s) => s.id == sourceResult.id),
                         ),
+                    );
+
+                    if (!allQuestionAnswerPairs.some((p) => p.some((r) => r.answer))) {
+                        return null;
+                    }
+
+                    const firstPageResult = assessmentSubmissions[0]?.pageResults.find(
+                        (p) => p.name === page.name,
                     );
 
                     return (
@@ -73,8 +128,9 @@ export const FormSummaryAssessment = ({
                                 <div className="flex items-center">
                                     <Heading size="xs" className="font-semibold">
                                         {l(page.title)?.toUpperCase()}
-                                        {assessmentForms[0]?.results?.[page.name]?.length &&
-                                            ` (${assessmentForms[0].results?.[page.name].reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
+                                        {(firstPageResult?.questionResults?.filter((q) => q.weight)
+                                            .length ?? 0) > 0 &&
+                                            ` (${firstPageResult?.questionResults.reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
                                     </Heading>
                                     {onEditPage &&
                                         formType === "Normal" &&
@@ -99,36 +155,42 @@ export const FormSummaryAssessment = ({
                                         )}
                                 </div>
 
-                                {assessmentForms.map((assessment) => (
-                                    <div key={assessment.id}>
-                                        {assessment?.weightedAverages[page.name] ? (
-                                            <Text fontWeight="semibold" size="lg">
-                                                {assessment.weightedAverages[
-                                                    page.name
-                                                ].toLocaleString(i18n.language)}
-                                            </Text>
-                                        ) : (
-                                            <Text fontWeight="bold" size="lg">
-                                                -
-                                            </Text>
-                                        )}
-                                    </div>
-                                ))}
+                                {assessmentSubmissions.map((sourceResult) => {
+                                    const pageResult = sourceResult.pageResults.find(
+                                        (p) => p.name === page.name,
+                                    );
+                                    return (
+                                        <div key={sourceResult.id}>
+                                            {pageResult?.weightedAverage || pageResult?.sum ? (
+                                                <Text fontWeight="semibold" size="lg">
+                                                    {(
+                                                        pageResult.weightedAverage ?? pageResult.sum
+                                                    ).toLocaleString(i18n.language)}
+                                                </Text>
+                                            ) : (
+                                                <Text fontWeight="bold" size="lg">
+                                                    -
+                                                </Text>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                             {/* Questions and answers */}
                             {allQuestionAnswerPairs.flat().length > 0 && (
                                 <QuestionAnswerList
                                     questionAnswerPairs={allQuestionAnswerPairs}
-                                    noAnswerText={t("instance.summary.no_answer")}
+                                    noAnswerText=" "
                                     instanceId={instanceId}
-                                    submissionId={submission.id}
                                     colsClass={colsClass}
                                     collapseAnswers={true}
                                 />
                             )}
                             <Separator
                                 weight={
-                                    index == submission.form.pages.length - 1 ? "bold" : "normal"
+                                    index == submissions[0].form.pages.length - 1
+                                        ? "bold"
+                                        : "normal"
                                 }
                             />
                         </div>
@@ -140,9 +202,11 @@ export const FormSummaryAssessment = ({
                         <Text fontWeight="semibold" size="xl">
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
-                        <Text fontWeight="semibold" size="xl">
-                            {assessmentResults?.totalWeightedAverage?.toLocaleString(i18n.language)}
-                        </Text>
+                        {assessmentSubmissions.map((sourceResult) => (
+                            <Text fontWeight="semibold" size="xl">
+                                {sourceResult.weightedAverage?.toLocaleString(i18n.language)}
+                            </Text>
+                        ))}
                     </div>
                 )}
             </div>
