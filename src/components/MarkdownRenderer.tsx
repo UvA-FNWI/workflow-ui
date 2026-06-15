@@ -11,7 +11,7 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
         <Markdown
             rehypePlugins={[rehypeRaw]}
             components={{
-                p: ({children}) => <p className="my-3">{children}</p>,
+                p: ({children}) => <p className="my-1">{children}</p>,
                 ul: ({children: nodeChildren}) => (
                     <ul className="my-1 list-disc pl-5">{nodeChildren}</ul>
                 ),
@@ -20,6 +20,11 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
                 ),
                 strong: ({children: nodeChildren}) => (
                     <strong className="font-semibold">{nodeChildren}</strong>
+                ),
+                a: ({children: nodeChildren, href}) => (
+                    <a className="text-red-500 hover:underline" href={href} target="_blank">
+                        {nodeChildren}
+                    </a>
                 ),
             }}
         >

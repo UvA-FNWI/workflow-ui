@@ -2,6 +2,7 @@ import {useState} from "react";
 
 import {FileUpload, Text, useToast} from "@uva-fnwi/datanose-ui";
 
+import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
 import {downloadFile} from "~/utils/fileDownload";
@@ -124,7 +125,9 @@ export const FileUploadTable = ({
                                     <div className="font-medium">{l(question.text)}</div>
                                     {question.description && (
                                         <div className="text-sm text-grey-600 dark:text-grey-400">
-                                            {l(question.description)}
+                                            <MarkdownRenderer>
+                                                {l(question.description) ?? ""}
+                                            </MarkdownRenderer>
                                         </div>
                                     )}
                                     <div className="text-sm text-grey-600 dark:text-grey-400">

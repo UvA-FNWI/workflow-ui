@@ -142,7 +142,11 @@ export const PageControl = ({
                                 ` (${getTotalPercentage(results).toLocaleString(i18n.language)}%)`}
                         </Heading>
                     )}
-                    {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
+                    {page.introduction && (
+                        <Text size="lg">
+                            <MarkdownRenderer>{l(page.introduction) ?? ""}</MarkdownRenderer>
+                        </Text>
+                    )}
                 </div>
                 {(regularQuestions.length > 0 || fileQuestions.length > 0) && (
                     <div>
