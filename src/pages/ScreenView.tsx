@@ -38,7 +38,7 @@ export const ScreenView = () => {
             <Card>
                 <div className="mb-4">
                     <div className="flex w-full justify-between">
-                        <Heading as="h1">{screen.workflowDefinition}</Heading>
+                        <Heading as="h1">{l(screen.workflowDefinition.title)}</Heading>
                         <SearchInput
                             value={search}
                             onChange={setSearch}

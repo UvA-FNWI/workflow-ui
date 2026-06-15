@@ -1,5 +1,6 @@
 import type {DataType} from "./submissions";
 import type {LocalString} from "~/hooks/useTranslate";
+import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions.ts";
 
 export type ScreenGroup = {
     name: string;
@@ -9,7 +10,7 @@ export type ScreenGroup = {
 
 export type ScreenData = {
     name: string;
-    workflowDefinition: string;
+    workflowDefinition: WorkflowDefinition;
     columns: ScreenColumn[];
     rows: ScreenRow[];
     // Present when the screen defines a grouping configuration; rows are then empty.
