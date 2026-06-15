@@ -43,7 +43,7 @@ export const FormSummary = ({
             <>
                 <FormSummaryAssessment
                     instanceId={instanceId}
-                    submission={submission}
+                    submissions={[submission]}
                     onEditPage={onEditPage}
                     formType={formType}
                     combine={false}
