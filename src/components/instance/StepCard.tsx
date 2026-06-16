@@ -53,7 +53,6 @@ const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
 
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
-    const [activeAction, setActiveAction] = useState<Action | null>(null);
 
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
@@ -61,6 +60,10 @@ export const StepCard = ({step, instance}: Props) => {
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
     );
+    const [activeAction, setActiveAction] = useState<Action | null>(
+        actions.length === 1 && actions[0]?.type === "SubmitForm" ? actions[0] : null,
+    );
+
     const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
 
     const resolvedAction =
