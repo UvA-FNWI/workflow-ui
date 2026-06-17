@@ -51,8 +51,6 @@ const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
     ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
 ];
 
-type SubmitFormState = Action | null | "auto";
-
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
 
@@ -64,17 +62,17 @@ export const StepCard = ({step, instance}: Props) => {
     );
     const submitActions = actions.filter((a) => a.type === "SubmitForm");
     const otherActions = actions.filter((a) => a.type !== "SubmitForm");
-    const [submitFormState, setSubmitFormState] = useState<SubmitFormState>("auto");
+    const [openSubmitAction, setOpenSubmitAction] = useState<Action | null>(null);
+    const [autoOpenDismissed, setAutoOpenDismissed] = useState(false);
     const [activeExecuteAction, setActiveExecuteAction] = useState<Action | null>(null);
 
     const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
 
-    const resolvedSubmitAction =
-        submitFormState === "auto"
-            ? submitActions.length === 1
-                ? submitActions[0]
-                : null
-            : submitFormState;
+    const autoOpenCandidate =
+        !autoOpenDismissed && submitActions.length === 1 && submitActions[0].autoOpenForm
+            ? submitActions[0]
+            : null;
+    const resolvedSubmitAction = openSubmitAction ?? autoOpenCandidate;
     const isFormOpen =
         resolvedSubmitAction?.type === "SubmitForm" && resolvedSubmitAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
@@ -177,7 +175,10 @@ export const StepCard = ({step, instance}: Props) => {
                             <FormPage
                                 instanceId={instance.id}
                                 submissionId={resolvedSubmitAction?.form ?? ""}
-                                onClose={() => setSubmitFormState(null)}
+                                onClose={() => {
+                                    setOpenSubmitAction(null);
+                                    setAutoOpenDismissed(true);
+                                }}
                             />
                         </div>
                     )}
@@ -187,7 +188,7 @@ export const StepCard = ({step, instance}: Props) => {
                             {submitActions.map((a) => (
                                 <Button
                                     key={a.id}
-                                    onClick={() => setSubmitFormState(a)}
+                                    onClick={() => setOpenSubmitAction(a)}
                                     {...actionIntentToButtonProps(a.intent)}
                                 >
                                     {l(a.title)}
@@ -263,7 +264,10 @@ export const StepCard = ({step, instance}: Props) => {
                         resolvedSubmitAction?.type === "SubmitForm" &&
                         resolvedSubmitAction.formLayout === "Modal"
                     }
-                    onClose={() => setSubmitFormState(null)}
+                    onClose={() => {
+                        setOpenSubmitAction(null);
+                        setAutoOpenDismissed(true);
+                    }}
                     instanceId={instance.id}
                     submissionId={resolvedSubmitAction?.form ?? ""}
                 />
