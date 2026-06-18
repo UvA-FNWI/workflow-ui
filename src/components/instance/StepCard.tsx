@@ -60,21 +60,21 @@ export const StepCard = ({step, instance}: Props) => {
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
     );
-    const submitActions = actions.filter((a) => a.type === "SubmitForm");
-    const otherActions = actions.filter((a) => a.type !== "SubmitForm");
-    const [openSubmitAction, setOpenSubmitAction] = useState<Action | null>(null);
-    const [autoOpenDismissed, setAutoOpenDismissed] = useState(false);
-    const [activeExecuteAction, setActiveExecuteAction] = useState<Action | null>(null);
-
     const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
 
-    const autoOpenCandidate =
-        !autoOpenDismissed && submitActions.length === 1 && submitActions[0].autoOpenForm
-            ? submitActions[0]
-            : null;
-    const resolvedSubmitAction = openSubmitAction ?? autoOpenCandidate;
+    const shouldAutoOpenForm = (action: Action) =>
+        action.type === "SubmitForm" &&
+        action.autoOpenForm !== false &&
+        !submissions.some((s) => s.dateSubmitted && s.form.name === action.form);
+
+    const autoOpenAction =
+        actions.length === 1 && actions[0] && shouldAutoOpenForm(actions[0]) ? actions[0] : null;
+
+    const [activeAction, setActiveAction] = useState<Action | null>(autoOpenAction);
+
+    const resolvedAction = activeAction ?? autoOpenAction;
     const isFormOpen =
-        resolvedSubmitAction?.type === "SubmitForm" && resolvedSubmitAction.formLayout !== "Modal";
+        resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
     const currentStepIndex = instance.steps.findIndex((s) =>
         [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
@@ -156,39 +156,23 @@ export const StepCard = ({step, instance}: Props) => {
                         />
                     )}
 
-                    {otherActions.length > 0 && (
-                        <div className="flex gap-2 pt-2">
-                            {otherActions.map((a) => (
-                                <Button
-                                    key={a.id}
-                                    onClick={() => setActiveExecuteAction(a)}
-                                    {...actionIntentToButtonProps(a.intent)}
-                                >
-                                    {l(a.title)}
-                                </Button>
-                            ))}
-                        </div>
-                    )}
-
                     {isFormOpen && (
                         <div className="py-4">
                             <FormPage
                                 instanceId={instance.id}
-                                submissionId={resolvedSubmitAction?.form ?? ""}
-                                onClose={() => {
-                                    setOpenSubmitAction(null);
-                                    setAutoOpenDismissed(true);
-                                }}
+                                submissionId={resolvedAction?.form ?? ""}
+                                onClose={() => setActiveAction(null)}
                             />
                         </div>
                     )}
 
-                    {submitActions.length > 0 && !isFormOpen && (
+                    {/* Action buttons */}
+                    {!isFormOpen && actions.length > 0 && (
                         <div className="flex gap-2 pt-2">
-                            {submitActions.map((a) => (
+                            {actions.map((a) => (
                                 <Button
                                     key={a.id}
-                                    onClick={() => setOpenSubmitAction(a)}
+                                    onClick={() => setActiveAction(a)}
                                     {...actionIntentToButtonProps(a.intent)}
                                 >
                                     {l(a.title)}
@@ -222,16 +206,16 @@ export const StepCard = ({step, instance}: Props) => {
                         )}
                 </div>
                 <Modal
-                    isOpen={activeExecuteAction?.type === "Execute"}
-                    onOpenChange={() => setActiveExecuteAction(null)}
+                    isOpen={activeAction?.type === "Execute"}
+                    onOpenChange={() => setActiveAction(null)}
                 >
                     <Modal.Header className="pb-0 text-2xl font-semibold">
-                        {activeExecuteAction && l(activeExecuteAction.title)}
+                        {activeAction && l(activeAction.title)}
                     </Modal.Header>
                     <Modal.Body className="mt-2 text-lg">
                         <p>{t("are_you_sure")}</p>
                     </Modal.Body>
-                    {activeExecuteAction && (
+                    {activeAction && (
                         <Modal.Footer>
                             <Button
                                 intent="primary"
@@ -240,10 +224,10 @@ export const StepCard = ({step, instance}: Props) => {
                                 onClick={() => {
                                     executeAction({
                                         instanceId: instance.id,
-                                        name: activeExecuteAction.name,
-                                        type: activeExecuteAction.type,
+                                        name: activeAction.name,
+                                        type: activeAction.type,
                                     });
-                                    setActiveExecuteAction(null);
+                                    setActiveAction(null);
                                 }}
                             >
                                 {t("confirm")}
@@ -252,7 +236,7 @@ export const StepCard = ({step, instance}: Props) => {
                                 intent="secondary"
                                 variant="destructive"
                                 size="large"
-                                onClick={() => setActiveExecuteAction(null)}
+                                onClick={() => setActiveAction(null)}
                             >
                                 {t("cancel")}
                             </Button>
@@ -261,15 +245,11 @@ export const StepCard = ({step, instance}: Props) => {
                 </Modal>
                 <FormModal
                     isOpen={
-                        resolvedSubmitAction?.type === "SubmitForm" &&
-                        resolvedSubmitAction.formLayout === "Modal"
+                        activeAction?.type === "SubmitForm" && activeAction.formLayout === "Modal"
                     }
-                    onClose={() => {
-                        setOpenSubmitAction(null);
-                        setAutoOpenDismissed(true);
-                    }}
+                    onClose={() => setActiveAction(null)}
                     instanceId={instance.id}
-                    submissionId={resolvedSubmitAction?.form ?? ""}
+                    submissionId={activeAction?.form ?? ""}
                 />
             </Disclosure.Content>
         </Disclosure>
