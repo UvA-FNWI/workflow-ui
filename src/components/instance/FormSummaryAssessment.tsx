@@ -1,4 +1,4 @@
-import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";
@@ -209,6 +209,13 @@ export const FormSummaryAssessment = ({
                         ))}
                     </div>
                 )}
+
+                {assessmentResults.parts[0].showDiscrepancyWarning &&
+                    assessmentSubmissions.length > 1 && (
+                        <Callout type="warning">
+                            {t("instance.calculations.discrepancy_warning")}
+                        </Callout>
+                    )}
             </div>
         </div>
     );
