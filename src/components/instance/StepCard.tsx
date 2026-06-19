@@ -84,7 +84,7 @@ export const StepCard = ({step, instance}: Props) => {
 
     const isDisabled =
         !!instance.currentStep && !isCurrentStep && instance.steps.indexOf(step) > currentStepIndex;
-    const showVersionCards = (step.versions?.length ?? 0) > 1;
+    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
     const submissionsToShow =
         submissions.length > 0
