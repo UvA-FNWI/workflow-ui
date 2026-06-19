@@ -93,8 +93,10 @@ export const StepCard = ({step, instance}: Props) => {
               ? step.versions[0].submissions
               : [];
 
-    const regularSubmissions = submissionsToShow.filter((s) => !hasResults(s));
-    const assessmentSubmissions = submissionsToShow.filter((s) => hasResults(s));
+    const regularSubmissions = submissionsToShow.filter((s) => !hasResults(s) && s.answers.length);
+    const assessmentSubmissions = submissionsToShow.filter(
+        (s) => hasResults(s) || s.form.formType === "AssessmentFinalOverview",
+    );
 
     const showEmptyMessage =
         !isFormOpen &&
@@ -153,6 +155,7 @@ export const StepCard = ({step, instance}: Props) => {
                             instanceId={instance.id}
                             submissions={assessmentSubmissions}
                             combine={true}
+                            formType={assessmentSubmissions[0].form.formType}
                         />
                     )}
 
