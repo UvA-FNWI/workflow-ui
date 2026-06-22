@@ -57,7 +57,7 @@ export const FormSummaryAssessment = ({
                             {`${l(part.title)} (${part.percentage}%):`}
                         </Text>
                         <Text size="md" className="py-1" fontWeight="semibold">
-                            {part.weightedAverage}
+                            {part.combined?.weightedAverage}
                         </Text>
                     </div>
                 ))}
