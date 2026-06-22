@@ -5,7 +5,7 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {FormSummaryAssessment} from "~/components/instance/FormSummaryAssessment.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {FormType, RoleAction, Submission} from "~/store/api/types/submissions.ts";
+import type {RoleAction, Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs, isPageComplete} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -45,7 +45,6 @@ export const FormSummary = ({
                     instanceId={instanceId}
                     submissions={[submission]}
                     onEditPage={onEditPage}
-                    resultType={formType}
                     combine={false}
                 />
                 {onSubmit && (
