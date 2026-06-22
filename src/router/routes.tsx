@@ -19,22 +19,20 @@ const routes: RouteObject[] = [
         element: <CanvasCallback />,
     },
     {
-        path: "/",
-        element: <App />,
-        children: [
-            {
-                index: true,
-                element: <Overview />,
-            },
-        ],
-    },
-    {
         element: <AuthGuard />,
         children: [
             {
                 path: "/",
                 element: <App />,
-                children: [...instanceRoutes, ...screenRoutes, ...developRoutes],
+                children: [
+                    {
+                        index: true,
+                        element: <Overview />,
+                    },
+                    ...instanceRoutes,
+                    ...screenRoutes,
+                    ...developRoutes,
+                ],
             },
         ],
     },

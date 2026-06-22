@@ -1,22 +1,20 @@
 import type {DataType} from "./submissions";
 import type {LocalString} from "~/hooks/useTranslate";
+import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions.ts";
 
-export type GroupedScreen = {
-    name: string;
-    entityType: string;
-    columns: ScreenColumn[];
-    groups: ScreenGroup[];
-};
 export type ScreenGroup = {
     name: string;
     title: LocalString;
     rows: ScreenRow[];
 };
-export type Screen = {
+
+export type ScreenData = {
     name: string;
-    entityType: string;
+    workflowDefinition: WorkflowDefinition;
     columns: ScreenColumn[];
     rows: ScreenRow[];
+    // Present when the screen defines a grouping configuration; rows are then empty.
+    groups?: ScreenGroup[];
 };
 
 export type ScreenColumn = {

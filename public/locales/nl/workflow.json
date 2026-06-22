@@ -56,6 +56,7 @@
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
+      "discrepancy_warning": "Er is een groot verschil tussen de cijfers van de verschillende beoordelaars. Bespreek de cijfers voordat je indient en raadpleeg de coördinator indien nodig.",
       "final_grade": "Eindcijfer",
       "grading_incomplete": "Beoordeling nog niet volledig"
     },
@@ -64,7 +65,6 @@
       "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
       "hide_answers": "Verberg onderdelen en toelichting",
-      "no_answer": "Geen antwoord gegeven",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "title": "Samenvatting"
@@ -74,6 +74,11 @@
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
+  "overview": {
+    "choose_course_subtitle": "Selecteer een vak om verder te gaan.",
+    "choose_course_title": "Kies je vak",
+    "no_access": "Je hebt nog geen toegang tot vakken."
+  },
   "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",
@@ -83,8 +88,7 @@
   },
   "save": "Opslaan",
   "screens": {
-    "actions": "Acties",
-    "students": "Studenten"
+    "actions": "Acties"
   },
   "search_and_select": {
     "add_new": "Voeg toe",

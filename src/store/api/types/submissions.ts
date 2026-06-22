@@ -86,10 +86,15 @@ export type Sorting = {
     direction: SortDirection;
 };
 
+export type RubricGrade = {
+    name: string;
+    text: LocalString;
+};
+
 export type RubricEntry = {
     name: string;
     description: LocalString;
-    grades: string[];
+    grades: RubricGrade[];
 };
 
 export type StringLayoutOptions = {
@@ -109,7 +114,7 @@ export type Choice = {
 };
 
 export type PageLayout = "Normal" | "Condensed";
-export type FormType = "Normal" | "AssessmentOverview";
+export type FormType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
 export type RoleAction = "ViewAdminTools" | "View" | "Edit" | "Submit";
 export type DataType =
     | "File"

@@ -56,6 +56,7 @@
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
+      "discrepancy_warning": "There is a large discrepancy between the supervisors' assessments. Please discuss the grades before submitting and consult the coordinator if needed.",
       "final_grade": "Final grade",
       "grading_incomplete": "Grading not yet complete"
     },
@@ -64,7 +65,6 @@
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
       "hide_answers": "Hide parts and explanations",
-      "no_answer": "No answer provided",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "title": "Summary"
@@ -74,6 +74,11 @@
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
+  "overview": {
+    "choose_course_subtitle": "Select a course to continue.",
+    "choose_course_title": "Choose your course",
+    "no_access": "You don't have access to any courses yet."
+  },
   "previous": "Previous",
   "progress": {
     "completed": "Completed",
@@ -83,8 +88,7 @@
   },
   "save": "Save",
   "screens": {
-    "actions": "Actions",
-    "students": "Students"
+    "actions": "Actions"
   },
   "search_and_select": {
     "add_new": "Add",

@@ -1,5 +1,11 @@
 export const projectsScreen = {
     name: "Projects",
+    workflowDefinition: {
+        title: {
+            en: "Project",
+            nl: "Project",
+        },
+    },
     entityType: "Project",
     columns: [
         {

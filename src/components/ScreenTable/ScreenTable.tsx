@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 
 import {type ColumnDef} from "@tanstack/react-table";
-import {Button, Icon, linkClassGenerator} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, linkClassGenerator, Text} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table";
 import {VersionedLink} from "~/components/VersionedLink";
@@ -45,7 +45,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                                     return (
                                         <div className="flex items-baseline gap-2">
                                             <div
-                                                className={`h-2 w-2 rounded-full ${progressColor?.toLowerCase() == "green" ? "bg-green-600" : "bg-red-600"}`}
+                                                className={`h-2 min-w-2 rounded-full ${progressColor?.toLowerCase() == "green" ? "bg-green-600" : "bg-red-600"}`}
                                             />
                                             <span>{l(progressText)}</span>
                                         </div>
@@ -69,7 +69,11 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                                 );
                             }
 
-                            return formattedValue;
+                            return (
+                                <Text size={"sm"} truncate={true} className="max-w-80">
+                                    {formattedValue}
+                                </Text>
+                            );
                         },
                         enableSorting: true,
                     }),

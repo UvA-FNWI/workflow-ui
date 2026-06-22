@@ -8,7 +8,7 @@ import { Icon } from '../Icon';
 const defaultType = 'info';
 
 const calloutVariants = cva(
-  'ui:relative ui:grid ui:w-max ui:grid-cols-[auto_1fr_auto] ui:items-center ui:gap-3 ui:border-l-4 ui:p-4 ui:break-words ui:text-grey-900',
+  'ui:relative ui:grid ui:grid-cols-[auto_1fr_auto] ui:items-center ui:gap-3 ui:border-l-4 ui:p-4 ui:break-words ui:text-grey-900',
   {
     variants: {
       type: {

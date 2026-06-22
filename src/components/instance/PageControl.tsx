@@ -12,7 +12,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {Result} from "~/store/api/types/assessments.ts";
+import type {QuestionResult} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 import {isPageComplete} from "~/utils/submissionUtils.ts";
@@ -107,7 +107,7 @@ export const PageControl = ({
         [submission, page],
     );
 
-    const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getResultsPage.useQuery(
+    const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getPageResults.useQuery(
         {
             instanceId,
             submissionId,
@@ -117,18 +117,18 @@ export const PageControl = ({
             skip: !page.hasResults,
         },
     );
-    const formForPage = data?.forms?.[0]; // form for the current page
-    const results = formForPage?.results?.[page.name];
-    const weightedAverage = formForPage?.weightedAverages?.[page.name] ?? 0;
+    const pageResult = data?.pageResults?.[0];
+    const results = pageResult?.questionResults;
+
     const averageGradeContent = areWeightedQuestionsComplete
-        ? weightedAverage.toLocaleString(i18n.language)
+        ? `${pageResult?.weightedAverage?.toLocaleString(i18n.language) ?? 0}`
         : t("instance.calculations.grading_incomplete");
 
-    const getTotalPercentage = (r: Result[]) =>
+    const getTotalPercentage = (r: QuestionResult[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
 
-    const getPercentage = (r: Result[], questionName: string) =>
-        r.find((q) => q.questionName === questionName)?.percentage;
+    const getPercentage = (r: QuestionResult[], questionName: string) =>
+        r.find((q) => q.name === questionName)?.percentage;
 
     return (
         <>
@@ -142,7 +142,11 @@ export const PageControl = ({
                                 ` (${getTotalPercentage(results).toLocaleString(i18n.language)}%)`}
                         </Heading>
                     )}
-                    {page.introduction && <Text size="lg">{l(page.introduction)}</Text>}
+                    {page.introduction && (
+                        <Text size="lg">
+                            <MarkdownRenderer>{l(page.introduction) ?? ""}</MarkdownRenderer>
+                        </Text>
+                    )}
                 </div>
                 {(regularQuestions.length > 0 || fileQuestions.length > 0) && (
                     <div>
@@ -178,7 +182,7 @@ export const PageControl = ({
                                                                     {results &&
                                                                         results.find(
                                                                             (q) =>
-                                                                                q.questionName ==
+                                                                                q.name ==
                                                                                 question.name,
                                                                         ) &&
                                                                         ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}

@@ -15,6 +15,7 @@ import i18n from "i18next";
 import {FormPage} from "./FormPage.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
+import {FormSummaryAssessment} from "~/components/instance/FormSummaryAssessment.tsx";
 import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
@@ -24,6 +25,7 @@ import type {
     WorkflowInstance,
     WorkflowStep,
 } from "~/store/api/types/instances.ts";
+import type {Submission} from "~/store/api/types/submissions.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 
@@ -42,33 +44,46 @@ type Props = {
     instance: WorkflowInstance;
 };
 
+const hasResults = (submission: Submission) => submission.form.pages.some((p) => p.hasResults);
+
+const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
+    step,
+    ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
+];
+
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
-    const [activeAction, setActiveAction] = useState<Action | null>(null);
 
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
-    const stepIds = [step.id, ...(step.children?.map((s) => s.id) ?? [])];
+    const stepIds = getStepHierarchy(step).map((s) => s.id);
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
     );
-    const submissions = instance.submissions.filter((s) => s.form.step === step.id);
+    const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
 
-    const resolvedAction =
-        activeAction ??
-        (actions.length === 1 && actions[0].type === "SubmitForm" ? actions[0] : null);
+    const shouldAutoOpenForm = (action: Action) =>
+        action.type === "SubmitForm" &&
+        action.autoOpenForm !== false &&
+        !submissions.some((s) => s.dateSubmitted && s.form.name === action.form);
+
+    const autoOpenAction =
+        actions.length === 1 && actions[0] && shouldAutoOpenForm(actions[0]) ? actions[0] : null;
+
+    const [activeAction, setActiveAction] = useState<Action | null>(autoOpenAction);
+
+    const resolvedAction = activeAction ?? autoOpenAction;
     const isFormOpen =
         resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
+    const currentStepIndex = instance.steps.findIndex((s) =>
+        [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
+    );
 
     const deadlineDate = step.deadline ?? null;
 
     const isDisabled =
-        !!instance.currentStep &&
-        !isCurrentStep &&
-        instance.steps.indexOf(step) >
-            instance.steps.findIndex((s) => instance.currentStep?.includes(s.id));
-
+        !!instance.currentStep && !isCurrentStep && instance.steps.indexOf(step) > currentStepIndex;
     const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
     const submissionsToShow =
@@ -77,6 +92,9 @@ export const StepCard = ({step, instance}: Props) => {
             : step.versions?.length == 1
               ? step.versions[0].submissions
               : [];
+
+    const regularSubmissions = submissionsToShow.filter((s) => !hasResults(s));
+    const assessmentSubmissions = submissionsToShow.filter((s) => hasResults(s));
 
     const showEmptyMessage =
         !isFormOpen &&
@@ -120,7 +138,7 @@ export const StepCard = ({step, instance}: Props) => {
                             <Text className="italic">{t("instance.empty_step")}</Text>
                         </div>
                     )}
-                    {submissionsToShow.map((submission) => (
+                    {regularSubmissions.map((submission) => (
                         <div key={submission.id} className="py-4">
                             <FormSummary
                                 instanceId={instance.id}
@@ -129,6 +147,14 @@ export const StepCard = ({step, instance}: Props) => {
                             />
                         </div>
                     ))}
+
+                    {assessmentSubmissions.length > 0 && (
+                        <FormSummaryAssessment
+                            instanceId={instance.id}
+                            submissions={assessmentSubmissions}
+                            combine={true}
+                        />
+                    )}
 
                     {isFormOpen && (
                         <div className="py-4">

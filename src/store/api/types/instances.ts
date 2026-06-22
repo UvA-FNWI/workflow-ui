@@ -49,6 +49,8 @@ export type IconVariant = {
     color: string;
 };
 
+export type StepHierarchyMode = "Sequential" | "Parallel";
+
 export type WorkflowStep = {
     id: string;
     title: LocalString;
@@ -59,6 +61,7 @@ export type WorkflowStep = {
     children: WorkflowStep[] | null;
     versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;
+    hierarchyMode: StepHierarchyMode;
 };
 
 export type WorkflowStepVersion = {
@@ -78,6 +81,7 @@ export type Action = {
     steps: string[];
     intent: ActionIntent;
     formLayout: FormLayout;
+    autoOpenForm?: boolean;
 };
 
 export type ActionType = "SubmitForm" | "Execute";

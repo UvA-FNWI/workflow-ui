@@ -19,6 +19,10 @@ export const submissionsApi = baseApi.injectEndpoints({
                 url: `Submissions/${params.instanceId}/${params.submissionId}`,
                 method: "post",
             }),
+            invalidatesTags: (_result, _error, {instanceId, submissionId}) => [
+                {type: "Assessments", instanceId},
+                {type: "Assessments", instanceId, submissionId},
+            ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
                 const {data} = await queryFulfilled;
                 dispatch(

@@ -42,6 +42,16 @@ interface WorkflowProgressBarProps {
     currentStep: string;
 }
 
+/**
+ * Flattens the steps array for display purposes:
+ * - Steps with sequential children are replaced by their children.
+ * - Steps with parallel children (or no children) remain as-is.
+ */
+const flattenSteps = (steps: WorkflowStep[]): WorkflowStep[] =>
+    steps.flatMap((step) =>
+        step.children && step.hierarchyMode === "Sequential" ? step.children : [step],
+    );
+
 /** True if `currentStep` is this step or any descendant, at any depth. */
 const containsStep = (step: WorkflowStep, currentStep: string): boolean =>
     step.id === currentStep ||
@@ -162,8 +172,9 @@ const getProgressPercentage = (positions: number[], currentStepIndex: number): n
 
 export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarProps) => {
     const {l, t, i18n} = useTranslate("workflow");
-    const currentStepIndex = getCurrentStepIndex(steps, currentStep);
-    const positions = getStepPositions(steps);
+    const displaySteps = flattenSteps(steps);
+    const currentStepIndex = getCurrentStepIndex(displaySteps, currentStep);
+    const positions = getStepPositions(displaySteps);
     const progress = getProgressPercentage(positions, currentStepIndex);
 
     const formatDeadline = (deadline: string) =>
@@ -183,7 +194,7 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
         <div className="w-full overflow-x-auto overflow-y-visible">
             <div className="flex min-w-md flex-col gap-2">
                 <div className="relative h-8">
-                    {steps.map((step, index) => {
+                    {displaySteps.map((step, index) => {
                         const isCompleted = index < currentStepIndex;
                         const position = positions[index];
 
@@ -248,7 +259,8 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                         size="sm"
                     >
                         {currentStepIndex >= 0
-                            ? (l(steps[currentStepIndex]?.title) ?? steps[currentStepIndex]?.id)
+                            ? (l(displaySteps[currentStepIndex]?.title) ??
+                              displaySteps[currentStepIndex]?.id)
                             : t("progress.completed")}
                     </Text>
                 </div>
