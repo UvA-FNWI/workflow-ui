@@ -53,7 +53,6 @@ const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
 
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
-    const [activeAction, setActiveAction] = useState<Action | null>(null);
 
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
@@ -63,13 +62,17 @@ export const StepCard = ({step, instance}: Props) => {
     );
     const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
 
-    const resolvedAction =
-        activeAction ??
-        (actions.length === 1 &&
-        actions[0].type === "SubmitForm" &&
-        !submissions.some((s) => s.dateSubmitted)
-            ? actions[0]
-            : null);
+    const shouldAutoOpenForm = (action: Action) =>
+        action.type === "SubmitForm" &&
+        action.autoOpenForm !== false &&
+        !submissions.some((s) => s.dateSubmitted && s.form.name === action.form);
+
+    const autoOpenAction =
+        actions.length === 1 && actions[0] && shouldAutoOpenForm(actions[0]) ? actions[0] : null;
+
+    const [activeAction, setActiveAction] = useState<Action | null>(autoOpenAction);
+
+    const resolvedAction = activeAction ?? autoOpenAction;
     const isFormOpen =
         resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
@@ -81,7 +84,7 @@ export const StepCard = ({step, instance}: Props) => {
 
     const isDisabled =
         !!instance.currentStep && !isCurrentStep && instance.steps.indexOf(step) > currentStepIndex;
-    const showVersionCards = (step.versions?.length ?? 0) > 1;
+    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
     const submissionsToShow =
         submissions.length > 0

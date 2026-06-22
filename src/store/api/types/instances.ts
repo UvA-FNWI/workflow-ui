@@ -79,6 +79,7 @@ export type Action = {
     steps: string[];
     intent: ActionIntent;
     formLayout: FormLayout;
+    autoOpenForm?: boolean;
 };
 
 export type ActionType = "SubmitForm" | "Execute";

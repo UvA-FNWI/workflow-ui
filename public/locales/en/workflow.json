@@ -55,6 +55,7 @@
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
+      "discrepancy_warning": "There is a large discrepancy between the supervisors' assessments. Please discuss the grades before submitting and consult the coordinator if needed.",
       "final_grade": "Final grade",
       "grading_incomplete": "Grading not yet complete"
     },

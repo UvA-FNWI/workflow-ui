@@ -14,6 +14,7 @@ export type AssessmentPart = {
     combined: SourceResult | null;
     weightedAverage: number;
     percentage: number;
+    showDiscrepancyWarning: boolean;
 };
 
 export type SourceResult = {
