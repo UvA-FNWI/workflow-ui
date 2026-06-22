@@ -13,7 +13,6 @@ type Props = {
     submission: Submission;
     onEditPage?: (index: number) => void;
     onSubmit?: () => void;
-    formType?: FormType;
     collapseAnswers?: boolean;
     permissions?: RoleAction[];
 };
@@ -33,10 +32,7 @@ export const FormSummary = ({
 
     const pages = submission.form.pages.filter((p) => p.isInCurrentForm);
 
-    const hasResults =
-        formType === "AssessmentPartOverview" ||
-        formType === "AssessmentFinalOverview" ||
-        pages.some((p) => p.hasResults);
+    const hasResults = pages.some((p) => p.hasResults);
 
     if (hasResults) {
         return (
