@@ -6,7 +6,7 @@ import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {FormSummaryAssessment} from "~/components/instance/FormSummaryAssessment.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RoleAction, Submission} from "~/store/api/types/submissions.ts";
-import {getVisibleQuestionAnswerPairs, isPageComplete} from "~/utils/submissionUtils.ts";
+import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     instanceId: string;
@@ -17,14 +17,7 @@ type Props = {
     permissions?: RoleAction[];
 };
 
-export const FormSummary = ({
-    instanceId,
-    submission,
-    onEditPage,
-    onSubmit,
-    formType = "Normal",
-    permissions,
-}: Props) => {
+export const FormSummary = ({instanceId, submission, onEditPage, onSubmit, permissions}: Props) => {
     const {t, l} = useTranslate("workflow");
 
     const effectivePermissions = union(permissions, submission.permissions);
@@ -49,11 +42,7 @@ export const FormSummary = ({
                             instanceId={instanceId}
                             submission={submission}
                             onSubmit={onSubmit}
-                            disabled={
-                                formType == "AssessmentFinalOverview"
-                                    ? !isPageComplete(submission.form.pages[0], submission)
-                                    : false
-                            }
+                            disabled={false}
                         />
                     </div>
                 )}
