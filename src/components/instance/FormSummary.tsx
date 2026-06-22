@@ -45,7 +45,7 @@ export const FormSummary = ({
                     instanceId={instanceId}
                     submissions={[submission]}
                     onEditPage={onEditPage}
-                    formType={formType}
+                    resultType={formType}
                     combine={false}
                 />
                 {onSubmit && (

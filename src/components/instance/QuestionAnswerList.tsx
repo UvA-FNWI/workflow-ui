@@ -81,6 +81,7 @@ export const QuestionAnswerList = ({
 
                         {arrayOfPairs.map((submission, submissionIndex) => {
                             const pair = submission[rowIndex];
+                            if (!pair) return <span></span>;
                             const {answer} = pair;
                             const formattedValue =
                                 answer != null

@@ -93,7 +93,7 @@ export const StepCard = ({step, instance}: Props) => {
               ? step.versions[0].submissions
               : [];
 
-    const regularSubmissions = submissionsToShow.filter((s) => !hasResults(s));
+    const regularSubmissions = submissionsToShow.filter((s) => !hasResults(s) && s.answers.length);
     const assessmentSubmissions = submissionsToShow.filter((s) => hasResults(s));
 
     const showEmptyMessage =
@@ -101,7 +101,8 @@ export const StepCard = ({step, instance}: Props) => {
         submissionsToShow.length === 0 &&
         actions.length === 0 &&
         !isDisabled &&
-        !showVersionCards;
+        !showVersionCards &&
+        step.resultsType === "Normal";
 
     return (
         <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
@@ -148,11 +149,12 @@ export const StepCard = ({step, instance}: Props) => {
                         </div>
                     ))}
 
-                    {assessmentSubmissions.length > 0 && (
+                    {(assessmentSubmissions.length > 0 || step.resultsType !== "Normal") && (
                         <FormSummaryAssessment
                             instanceId={instance.id}
                             submissions={assessmentSubmissions}
                             combine={true}
+                            step={step}
                         />
                     )}
 
