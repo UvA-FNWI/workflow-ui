@@ -43,10 +43,10 @@ const checkboxBoxVariants = cva(
       isSelected: {
         true: 'ui:border-navy-600 ui:bg-navy-600 ui:dark:border-sky-500 ui:dark:bg-sky-500',
         false:
-          'ui:border-grey-300 ui:bg-white ui:dark:border-grey-600 ui:dark:bg-grey-800',
+          'ui:border-grey-600 ui:bg-white ui:dark:border-grey-600 ui:dark:bg-grey-800',
       },
       isDisabled: {
-        true: 'ui:border-grey-300 ui:bg-grey-100 ui:dark:border-grey-600 ui:dark:bg-grey-800',
+        true: 'ui:border-grey-500 ui:bg-grey-100 ui:dark:border-grey-600 ui:dark:bg-grey-800',
         false: '',
       },
       isValid: {
@@ -155,7 +155,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         )}
         onClick={() => state.toggle()}
       >
-        {state.isSelected && !isDisabled && (
+        {state.isSelected && (
           <svg
             className="ui:h-6 ui:w-6 ui:text-white"
             fill="currentColor"
