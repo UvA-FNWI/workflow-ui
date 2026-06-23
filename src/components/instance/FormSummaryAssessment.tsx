@@ -48,38 +48,40 @@ export const FormSummaryAssessment = ({
         );
     }
 
-    if (step?.resultsType === "AssessmentFinalOverview") if (!assessmentResults.finalGrade) return;
-    return (
-        <div className="mt-4 flex flex-col gap-2">
-            {assessmentResults.parts.map((part) => (
+    if (step?.resultsType === "AssessmentFinalOverview") {
+        if (!assessmentResults.finalGrade) return null;
+        return (
+            <div className="mt-4 flex flex-col gap-2">
+                {assessmentResults.parts.map((part) => (
+                    <div className="grid grid-cols-2 gap-4">
+                        <Text size="md" fontWeight="semibold" className="py-1">
+                            {`${l(part.title)} (${part.percentage}%):`}
+                        </Text>
+                        <Text size="md" className="py-1" fontWeight="semibold">
+                            {part.combined?.weightedAverage}
+                        </Text>
+                    </div>
+                ))}
                 <div className="grid grid-cols-2 gap-4">
-                    <Text size="md" fontWeight="semibold" className="py-1">
-                        {`${l(part.title)} (${part.percentage}%):`}
+                    <Text size="lg" fontWeight="semibold" className="py-1">
+                        {t("instance.calculations.final_grade")}:
                     </Text>
-                    <Text size="md" className="py-1" fontWeight="semibold">
-                        {part.combined?.weightedAverage}
+                    <Text size="lg" fontWeight="semibold" className="py-1">
+                        {assessmentResults?.finalGrade ?? "-"}
                     </Text>
                 </div>
-            ))}
-            <div className="grid grid-cols-2 gap-4">
-                <Text size="lg" fontWeight="semibold" className="py-1">
-                    {t("instance.calculations.final_grade")}:
-                </Text>
-                <Text size="lg" fontWeight="semibold" className="py-1">
-                    {assessmentResults?.finalGrade ?? "-"}
-                </Text>
+                <Separator weight="bold" className="my-4" />
+                {submissions[0]?.form.pages.length == 1 && (
+                    <PageControl
+                        instanceId={instanceId}
+                        submissionId={submissions[0].id}
+                        page={submissions[0].form.pages[0]}
+                        showTitle={false}
+                    />
+                )}
             </div>
-            <Separator weight="bold" className="my-4" />
-            {submissions[0]?.form.pages.length == 1 && (
-                <PageControl
-                    instanceId={instanceId}
-                    submissionId={submissions[0].id}
-                    page={submissions[0].form.pages[0]}
-                    showTitle={false}
-                />
-            )}
-        </div>
-    );
+        );
+    }
 
     const assessmentSubmissions = assessmentResults.parts
         .flatMap((part) => [...(part.sourceResults ?? []), part.combined])
