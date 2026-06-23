@@ -8,6 +8,7 @@ import {
     type ContentState,
     getSubmissionsToShow,
     type ModalState,
+    resolveFormState,
 } from "~/components/instance/resolveContentState.ts";
 import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -24,6 +25,7 @@ type Props = {
     contentState: ContentState;
     modalState: ModalState;
     activeAction: Action | null;
+    resolvedAction: Action | null;
     setActiveAction: (action: Action | null) => void;
 };
 
@@ -35,32 +37,27 @@ export const StepCardBody = ({
     contentState,
     modalState,
     activeAction,
+    resolvedAction,
     setActiveAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
     const submissionsToShow = getSubmissionsToShow(submissions, step);
+    const formState = resolveFormState(resolvedAction);
 
-    const renderContent = () => {
+    const renderBackgroundContent = () => {
         switch (contentState.type) {
             case "empty":
-                return (
-                    <div className="pt-4">
-                        <Text className="italic">{t("instance.empty_step")}</Text>
-                    </div>
-                );
-
-            case "activeFormInPage":
-                return (
-                    <div className="py-4">
-                        <FormPage
-                            instanceId={instance.id}
-                            submissionId={contentState.action.form ?? ""}
-                            onClose={() => setActiveAction(null)}
-                        />
-                    </div>
-                );
+                // Only show empty message when there's no form open either
+                if (!formState && actions.length === 0) {
+                    return (
+                        <div className="pt-4">
+                            <Text className="italic">{t("instance.empty_step")}</Text>
+                        </div>
+                    );
+                }
+                return null;
 
             case "versionHistory":
                 return (
@@ -92,30 +89,40 @@ export const StepCardBody = ({
                                 </div>
                             ))
                         )}
-                        {contentState.assessments.length > 0 && (
+                        {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
                             <FormSummaryAssessment
                                 instanceId={instance.id}
                                 submissions={contentState.assessments}
                                 combine={true}
+                                step={step}
                             />
                         )}
                     </>
                 );
-
-            case "availableActions":
-                // Only show actions — no form is open, no submissions exist
-                return null;
         }
     };
 
-    // Action buttons show when form is NOT open and actions exist (current behavior)
-    const showActionButtons = contentState.type !== "activeFormInPage" && actions.length > 0;
+    // Action buttons show when form is NOT open and actions exist
+    const showActionButtons = !formState && actions.length > 0;
 
     return (
         <>
             <div className="flex flex-col gap-4">
-                {renderContent()}
+                {/* Background content: submissions, version history, or empty */}
+                {renderBackgroundContent()}
 
+                {/* Form overlay: shown alongside submissions */}
+                {formState && (
+                    <div className="py-4">
+                        <FormPage
+                            instanceId={instance.id}
+                            submissionId={formState.action.form ?? ""}
+                            onClose={() => setActiveAction(null)}
+                        />
+                    </div>
+                )}
+
+                {/* Action buttons */}
                 {showActionButtons && (
                     <div className="flex gap-2 pt-2">
                         {actions.map((a) => (

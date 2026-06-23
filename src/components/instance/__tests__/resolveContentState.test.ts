@@ -1,9 +1,9 @@
 import {describe, expect, it} from "vitest";
 
 import {
-    getResolvedAction,
     getSubmissionsToShow,
     resolveContentState,
+    resolveFormState,
     resolveModalState,
 } from "../resolveContentState.ts";
 import type {Action, WorkflowStep} from "~/store/api/types/instances.ts";
@@ -20,6 +20,7 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     versions: null,
     headerStatus: null,
     hierarchyMode: "Parallel",
+    resultsType: "Normal",
     ...overrides,
 });
 
@@ -39,7 +40,7 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
     id: "sub-1",
     dateSubmitted: "2026-01-01T00:00:00Z",
     permissions: [],
-    answers: [],
+    answers: [{id: "a1", questionName: "q1", value: "test", isVisible: true}],
     form: {
         name: "form-1",
         title: {en: "Form 1", nl: "Formulier 1"},
@@ -59,36 +60,6 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
         step: "step-1",
     },
     ...overrides,
-});
-
-describe("getResolvedAction", () => {
-    it("returns activeAction when set", () => {
-        const action = makeAction();
-        expect(getResolvedAction(action, [], [])).toBe(action);
-    });
-
-    it("auto-resolves single SubmitForm when no submissions submitted", () => {
-        const action = makeAction({type: "SubmitForm"});
-        const submission = makeSubmission({dateSubmitted: undefined});
-        expect(getResolvedAction(null, [action], [submission])).toBe(action);
-    });
-
-    it("does NOT auto-resolve when a submission is already submitted", () => {
-        const action = makeAction({type: "SubmitForm"});
-        const submission = makeSubmission({dateSubmitted: "2026-01-01"});
-        expect(getResolvedAction(null, [action], [submission])).toBeNull();
-    });
-
-    it("does NOT auto-resolve when multiple actions exist", () => {
-        const action1 = makeAction({id: "a1", name: "a1"});
-        const action2 = makeAction({id: "a2", name: "a2"});
-        expect(getResolvedAction(null, [action1, action2], [])).toBeNull();
-    });
-
-    it("does NOT auto-resolve Execute actions", () => {
-        const action = makeAction({type: "Execute"});
-        expect(getResolvedAction(null, [action], [])).toBeNull();
-    });
 });
 
 describe("getSubmissionsToShow", () => {
@@ -134,18 +105,6 @@ describe("getSubmissionsToShow", () => {
 });
 
 describe("resolveContentState", () => {
-    it("returns 'activeFormInPage' when SubmitForm action with non-Modal layout is resolved", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Normal"});
-        const result = resolveContentState({
-            step: makeStep(),
-            actions: [action],
-            submissions: [],
-            activeAction: action,
-            isDisabled: false,
-        });
-        expect(result).toEqual({type: "activeFormInPage", action});
-    });
-
     it("returns 'versionHistory' when multiple versions with submissions exist", () => {
         const step = makeStep({
             versions: [
@@ -167,7 +126,7 @@ describe("resolveContentState", () => {
             step,
             actions: [],
             submissions: [],
-            activeAction: null,
+            resolvedAction: null,
             isDisabled: false,
         });
         expect(result).toEqual({type: "versionHistory"});
@@ -200,7 +159,7 @@ describe("resolveContentState", () => {
             step: makeStep(),
             actions: [],
             submissions: [regular, assessment],
-            activeAction: null,
+            resolvedAction: null,
             isDisabled: false,
         });
         expect(result).toEqual({
@@ -210,16 +169,15 @@ describe("resolveContentState", () => {
         });
     });
 
-    it("returns 'availableActions' when actions exist but no form/submissions", () => {
-        const action = makeAction({type: "Execute"});
+    it("returns 'submissions' (empty lists) when resultsType is not Normal", () => {
         const result = resolveContentState({
-            step: makeStep(),
-            actions: [action],
+            step: makeStep({resultsType: "AssessmentPartOverview"}),
+            actions: [],
             submissions: [],
-            activeAction: null,
+            resolvedAction: null,
             isDisabled: false,
         });
-        expect(result).toEqual({type: "availableActions"});
+        expect(result).toEqual({type: "submissions", regular: [], assessments: []});
     });
 
     it("returns 'empty' when nothing exists", () => {
@@ -227,7 +185,7 @@ describe("resolveContentState", () => {
             step: makeStep(),
             actions: [],
             submissions: [],
-            activeAction: null,
+            resolvedAction: null,
             isDisabled: false,
         });
         expect(result).toEqual({type: "empty"});
@@ -238,36 +196,67 @@ describe("resolveContentState", () => {
             step: makeStep(),
             actions: [],
             submissions: [],
-            activeAction: null,
+            resolvedAction: null,
             isDisabled: true,
         });
         expect(result).toEqual({type: "empty"});
     });
 
-    it("prioritizes activeFormInPage over submissions", () => {
+    it("content state shows submissions even when a form is open (form is overlay)", () => {
         const action = makeAction({type: "SubmitForm", formLayout: "Compact"});
         const submission = makeSubmission();
         const result = resolveContentState({
             step: makeStep(),
             actions: [action],
             submissions: [submission],
-            activeAction: action,
+            resolvedAction: action,
             isDisabled: false,
         });
-        expect(result).toEqual({type: "activeFormInPage", action});
+        // Form is open but submissions still show as background content
+        expect(result.type).toBe("submissions");
     });
 
-    it("does NOT return activeFormInPage for Modal layout (falls through to other states)", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Modal"});
+    it("filters out submissions with no answers from regular list", () => {
+        const withAnswers = makeSubmission({id: "with-answers"});
+        const withoutAnswers = makeSubmission({id: "no-answers", answers: []});
         const result = resolveContentState({
             step: makeStep(),
-            actions: [action],
-            submissions: [],
-            activeAction: action,
+            actions: [],
+            submissions: [withAnswers, withoutAnswers],
+            resolvedAction: null,
             isDisabled: false,
         });
-        // Modal form doesn't show in-page — falls through to availableActions
-        expect(result).toEqual({type: "availableActions"});
+        expect(result).toEqual({
+            type: "submissions",
+            regular: [withAnswers],
+            assessments: [],
+        });
+    });
+});
+
+describe("resolveFormState", () => {
+    it("returns null when no resolved action", () => {
+        expect(resolveFormState(null)).toBeNull();
+    });
+
+    it("returns 'inPage' for SubmitForm with non-Modal layout", () => {
+        const action = makeAction({type: "SubmitForm", formLayout: "Normal"});
+        expect(resolveFormState(action)).toEqual({type: "inPage", action});
+    });
+
+    it("returns 'inPage' for SubmitForm with Compact layout", () => {
+        const action = makeAction({type: "SubmitForm", formLayout: "Compact"});
+        expect(resolveFormState(action)).toEqual({type: "inPage", action});
+    });
+
+    it("returns null for SubmitForm with Modal layout (handled by modal state)", () => {
+        const action = makeAction({type: "SubmitForm", formLayout: "Modal"});
+        expect(resolveFormState(action)).toBeNull();
+    });
+
+    it("returns null for Execute action", () => {
+        const action = makeAction({type: "Execute"});
+        expect(resolveFormState(action)).toBeNull();
     });
 });
 

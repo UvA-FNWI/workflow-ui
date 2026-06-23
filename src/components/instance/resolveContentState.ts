@@ -1,13 +1,22 @@
 import type {Action, WorkflowStep} from "~/store/api/types/instances.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
+/**
+ * Background content state — what fills the card body regardless of any open form.
+ */
 export type ContentState =
-    | {type: "activeFormInPage"; action: Action}
     | {type: "versionHistory"}
     | {type: "submissions"; regular: Submission[]; assessments: Submission[]}
-    | {type: "availableActions"}
     | {type: "empty"};
 
+/**
+ * Form overlay state — shown alongside the background content (not exclusive).
+ */
+export type FormState = {type: "inPage"; action: Action} | null;
+
+/**
+ * Modal overlay state — dialog shown on top of everything.
+ */
 export type ModalState =
     | {type: "formModal"; action: Action}
     | {type: "confirmationModal"; action: Action}
@@ -24,28 +33,9 @@ type ResolveParams = {
     step: WorkflowStep;
     actions: Action[];
     submissions: Submission[];
-    activeAction: Action | null;
+    resolvedAction: Action | null;
     isDisabled: boolean;
 };
-
-/**
- * Auto-resolves the active action when there's a single SubmitForm action
- * and no submissions have been submitted yet.
- */
-export function getResolvedAction(
-    activeAction: Action | null,
-    actions: Action[],
-    submissions: Submission[],
-): Action | null {
-    return (
-        activeAction ??
-        (actions.length === 1 &&
-        actions[0].type === "SubmitForm" &&
-        !submissions.some((s) => s.dateSubmitted)
-            ? actions[0]
-            : null)
-    );
-}
 
 /**
  * Determines which submissions to display for a step.
@@ -58,49 +48,54 @@ export function getSubmissionsToShow(submissions: Submission[], step: WorkflowSt
 }
 
 /**
- * Resolves the content state (what fills the card body) based on step data.
- * Returns exactly one content state — first match wins.
+ * Resolves the background content state (always visible, independent of form).
  */
 export function resolveContentState({
     step,
     actions,
     submissions,
-    activeAction,
+    resolvedAction,
     isDisabled,
 }: ResolveParams): ContentState {
-    const resolvedAction = getResolvedAction(activeAction, actions, submissions);
     const submissionsToShow = getSubmissionsToShow(submissions, step);
-    const showVersionCards =
-        (step.versions?.length ?? 0) > 1 && step.versions!.some((v) => v.submissions?.length > 0);
+    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
-    // 1. Active form in-page (SubmitForm action resolved + layout !== Modal)
-    if (resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal") {
-        return {type: "activeFormInPage", action: resolvedAction};
-    }
-
-    // 2. Version history (multiple versions with submissions)
+    // 1. Version history (multiple versions with submissions)
     if (showVersionCards) {
         return {type: "versionHistory"};
     }
 
-    // 3. Submissions (single or multiple — component handles both)
+    // 2. Submissions exist (split into regular + assessment)
     if (submissionsToShow.length > 0) {
-        const regular = submissionsToShow.filter((s) => !hasResults(s));
+        const regular = submissionsToShow.filter((s) => !hasResults(s) && s.answers.length > 0);
         const assessments = submissionsToShow.filter((s) => hasResults(s));
         return {type: "submissions", regular, assessments};
     }
 
-    // 4. Available actions (actions exist, no form is open)
-    if (actions.length > 0) {
-        return {type: "availableActions"};
+    // 3. Show assessment component even without submissions when resultsType is not Normal
+    if (step.resultsType !== "Normal") {
+        return {type: "submissions", regular: [], assessments: []};
     }
 
-    // 5. Empty step (fallback — only if not disabled)
-    if (!isDisabled) {
+    // 4. Empty step — no submissions, no form open, no actions, not disabled
+    const isFormOpen =
+        resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
+    if (!isFormOpen && actions.length === 0 && !isDisabled) {
         return {type: "empty"};
     }
 
+    // Default: empty (for disabled steps or steps with only actions/form)
     return {type: "empty"};
+}
+
+/**
+ * Resolves the form overlay state (shown alongside background content).
+ */
+export function resolveFormState(resolvedAction: Action | null): FormState {
+    if (resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal") {
+        return {type: "inPage", action: resolvedAction};
+    }
+    return null;
 }
 
 /**

@@ -4,7 +4,6 @@ import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/
 import i18n from "i18next";
 
 import {
-    getResolvedAction,
     getStepHierarchy,
     resolveContentState,
     resolveModalState,
@@ -34,9 +33,16 @@ type Props = {
     instance: WorkflowInstance;
 };
 
+const shouldAutoOpenForm = (
+    action: Action,
+    submissions: {dateSubmitted?: string; form: {name: string}}[],
+) =>
+    action.type === "SubmitForm" &&
+    action.autoOpenForm !== false &&
+    !submissions.some((s) => s.dateSubmitted && s.form.name === action.form);
+
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
-    const [activeAction, setActiveAction] = useState<Action | null>(null);
 
     const stepIds = getStepHierarchy(step).map((s) => s.id);
     const actions = instance.actions.filter((action) =>
@@ -44,7 +50,15 @@ export const StepCard = ({step, instance}: Props) => {
     );
     const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
 
-    const resolvedAction = getResolvedAction(activeAction, actions, submissions);
+    const autoOpenAction =
+        actions.length === 1 && actions[0] && shouldAutoOpenForm(actions[0], submissions)
+            ? actions[0]
+            : null;
+
+    const [activeAction, setActiveAction] = useState<Action | null>(autoOpenAction);
+
+    const resolvedAction = activeAction ?? autoOpenAction;
+
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
     const currentStepIndex = instance.steps.findIndex((s) =>
         [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
@@ -58,7 +72,7 @@ export const StepCard = ({step, instance}: Props) => {
         step,
         actions,
         submissions,
-        activeAction: resolvedAction,
+        resolvedAction,
         isDisabled,
     });
     const modalState = resolveModalState(activeAction);
@@ -99,6 +113,7 @@ export const StepCard = ({step, instance}: Props) => {
                     contentState={contentState}
                     modalState={modalState}
                     activeAction={activeAction}
+                    resolvedAction={resolvedAction}
                     setActiveAction={setActiveAction}
                 />
             </Disclosure.Content>
