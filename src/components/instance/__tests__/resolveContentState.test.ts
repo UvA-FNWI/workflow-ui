@@ -40,7 +40,7 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
     id: "sub-1",
     dateSubmitted: "2026-01-01T00:00:00Z",
     permissions: [],
-    answers: [{id: "a1", questionName: "q1", value: "test", isVisible: true}],
+    answers: [{id: "a1", questionName: "q1", value: "test", isVisible: true, files: []}],
     form: {
         name: "form-1",
         title: {en: "Form 1", nl: "Formulier 1"},
@@ -56,7 +56,6 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
                 isInCurrentForm: true,
             },
         ],
-        formType: "Normal",
         step: "step-1",
     },
     ...overrides,
@@ -151,7 +150,6 @@ describe("resolveContentState", () => {
                         isInCurrentForm: true,
                     },
                 ],
-                formType: "Normal",
                 step: "step-1",
             },
         });
