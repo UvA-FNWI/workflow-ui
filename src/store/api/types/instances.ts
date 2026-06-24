@@ -3,6 +3,7 @@ import type {
     FormLayout,
     ImpersonationRole,
     RoleAction,
+    StepResultsType,
     Submission,
 } from "~/store/api/types/submissions.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
@@ -61,6 +62,7 @@ export type WorkflowStep = {
     children: WorkflowStep[] | null;
     versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;
+    resultsType: StepResultsType;
     hierarchyMode: StepHierarchyMode;
 };
 

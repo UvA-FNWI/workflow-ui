@@ -1,5 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate.ts";
-import type {Answer} from "~/store/api/types/submissions.ts";
+import type {Answer, Form} from "~/store/api/types/submissions.ts";
 
 export type Assessment = {
     id: string;
@@ -12,9 +12,9 @@ export type AssessmentPart = {
     title: LocalString;
     sourceResults: SourceResult[];
     combined: SourceResult | null;
-    weightedAverage: number;
     percentage: number;
     showDiscrepancyWarning: boolean;
+    form: Form;
 };
 
 export type SourceResult = {

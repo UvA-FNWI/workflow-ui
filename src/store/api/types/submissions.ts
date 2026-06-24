@@ -44,7 +44,6 @@ export type Form = {
     title: LocalString;
     layout: FormLayout;
     pages: Page[];
-    formType: FormType;
     step?: string;
 };
 
@@ -114,7 +113,7 @@ export type Choice = {
 };
 
 export type PageLayout = "Normal" | "Condensed";
-export type FormType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
+export type StepResultsType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
 export type RoleAction = "ViewAdminTools" | "View" | "Edit" | "Submit";
 export type DataType =
     | "File"
