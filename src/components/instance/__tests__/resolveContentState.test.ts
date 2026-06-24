@@ -104,7 +104,7 @@ describe("getSubmissionsToShow", () => {
 });
 
 describe("resolveContentState", () => {
-    it("returns 'versionHistory' when multiple versions with submissions exist", () => {
+    it("returns 'empty' when multiple versions exist but no direct submissions", () => {
         const step = makeStep({
             versions: [
                 {
@@ -128,7 +128,8 @@ describe("resolveContentState", () => {
             resolvedAction: null,
             isDisabled: false,
         });
-        expect(result).toEqual({type: "versionHistory"});
+        // Version history is rendered separately, content falls through to empty
+        expect(result).toEqual({type: "empty"});
     });
 
     it("returns 'submissions' with regular and assessment submissions", () => {

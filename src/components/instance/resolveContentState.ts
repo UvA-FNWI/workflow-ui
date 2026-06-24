@@ -5,7 +5,6 @@ import type {Submission} from "~/store/api/types/submissions.ts";
  * Background content state — what fills the card body regardless of any open form.
  */
 export type ContentState =
-    | {type: "versionHistory"}
     | {type: "submissions"; regular: Submission[]; assessments: Submission[]}
     | {type: "empty"};
 
@@ -58,26 +57,20 @@ export function resolveContentState({
     isDisabled,
 }: ResolveParams): ContentState {
     const submissionsToShow = getSubmissionsToShow(submissions, step);
-    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
-    // 1. Version history (multiple versions with submissions)
-    if (showVersionCards) {
-        return {type: "versionHistory"};
-    }
-
-    // 2. Submissions exist (split into regular + assessment)
+    // 1. Submissions exist (split into regular + assessment)
     if (submissionsToShow.length > 0) {
         const regular = submissionsToShow.filter((s) => !hasResults(s) && s.answers.length > 0);
         const assessments = submissionsToShow.filter((s) => hasResults(s));
         return {type: "submissions", regular, assessments};
     }
 
-    // 3. Show assessment component even without submissions when resultsType is not Normal
+    // 2. Show assessment component even without submissions when resultsType is not Normal
     if (step.resultsType !== "Normal") {
         return {type: "submissions", regular: [], assessments: []};
     }
 
-    // 4. Empty step — no submissions, no form open, no actions, not disabled
+    // 3. Empty step — no submissions, no form open, no actions, not disabled
     const isFormOpen =
         resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     if (!isFormOpen && actions.length === 0 && !isDisabled) {

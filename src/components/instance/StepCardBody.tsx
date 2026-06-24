@@ -45,12 +45,13 @@ export const StepCardBody = ({
 
     const submissionsToShow = getSubmissionsToShow(submissions, step);
     const formState = resolveFormState(resolvedAction);
+    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
             case "empty":
                 // Only show empty message when there's no form open either
-                if (!formState && actions.length === 0) {
+                if (!formState && actions.length === 0 && !showVersionCards) {
                     return (
                         <div className="pt-4">
                             <Text className="italic">{t("instance.empty_step")}</Text>
@@ -58,15 +59,6 @@ export const StepCardBody = ({
                     );
                 }
                 return null;
-
-            case "versionHistory":
-                return (
-                    <VersionHistory
-                        versions={step.versions ?? []}
-                        instanceId={instance.id}
-                        defaultExpandFirst={submissionsToShow.length === 0}
-                    />
-                );
 
             case "submissions":
                 return (
@@ -108,7 +100,7 @@ export const StepCardBody = ({
     return (
         <>
             <div className="flex flex-col gap-4">
-                {/* Background content: submissions, version history, or empty */}
+                {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
 
                 {/* Form overlay: shown alongside submissions */}
@@ -135,6 +127,15 @@ export const StepCardBody = ({
                             </Button>
                         ))}
                     </div>
+                )}
+
+                {/* Version history: always at the bottom */}
+                {showVersionCards && (
+                    <VersionHistory
+                        versions={step.versions ?? []}
+                        instanceId={instance.id}
+                        defaultExpandFirst={submissionsToShow.length === 0}
+                    />
                 )}
             </div>
 
