@@ -1,4 +1,4 @@
-import {Button, Heading, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import {FormModal} from "~/components/instance/FormModal.tsx";
 import {FormPage} from "~/components/instance/FormPage.tsx";
@@ -14,7 +14,7 @@ import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
-import type {RoleAction, Submission} from "~/store/api/types/submissions.ts";
+import type {Submission} from "~/store/api/types/submissions.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
 
 type Props = {
@@ -63,26 +63,15 @@ export const StepCardBody = ({
             case "submissions":
                 return (
                     <>
-                        {step.hierarchyMode === "Sequential" &&
-                        step.children &&
-                        step.children.length > 0 ? (
-                            <SequentialSubmissions
-                                step={step}
-                                submissions={contentState.regular}
-                                instanceId={instance.id}
-                                permissions={instance.permissions}
-                            />
-                        ) : (
-                            contentState.regular.map((submission) => (
-                                <div key={submission.id} className="py-4">
-                                    <FormSummary
-                                        instanceId={instance.id}
-                                        submission={submission}
-                                        permissions={instance.permissions}
-                                    />
-                                </div>
-                            ))
-                        )}
+                        {contentState.regular.map((submission) => (
+                            <div key={submission.id} className="py-4">
+                                <FormSummary
+                                    instanceId={instance.id}
+                                    submission={submission}
+                                    permissions={instance.permissions}
+                                />
+                            </div>
+                        ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
                             <FormSummaryAssessment
                                 instanceId={instance.id}
@@ -188,49 +177,6 @@ export const StepCardBody = ({
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}
             />
-        </>
-    );
-};
-
-/**
- * Renders submissions grouped by child step (for Sequential hierarchyMode).
- */
-const SequentialSubmissions = ({
-    step,
-    submissions,
-    instanceId,
-    permissions,
-}: {
-    step: WorkflowStep;
-    submissions: Submission[];
-    instanceId: string;
-    permissions: RoleAction[];
-}) => {
-    const {l} = useTranslate("workflow");
-    const children = step.children ?? [];
-
-    return (
-        <>
-            {children.map((child) => {
-                const childSubmissions = submissions.filter((s) => s.form.step === child.id);
-                if (childSubmissions.length === 0) return null;
-                return (
-                    <div key={child.id} className="flex flex-col gap-2 py-2">
-                        <Heading as="h4" size="xs" className="font-semibold">
-                            {l(child.title)}
-                        </Heading>
-                        {childSubmissions.map((submission) => (
-                            <div key={submission.id} className="py-2">
-                                <FormSummary
-                                    instanceId={instanceId}
-                                    submission={submission}
-                                    permissions={permissions}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                );
-            })}
         </>
     );
 };
