@@ -72,7 +72,7 @@ describe('Checkbox Component', () => {
     test('does not apply selected CSS classes when isSelected is false', () => {
       render(<Checkbox {...defaultProps} isSelected={false} />);
       const checkboxBox = document.querySelector('span[class*="ui:relative"]');
-      expect(checkboxBox).toHaveClass('ui:bg-white', 'ui:border-grey-300');
+      expect(checkboxBox).toHaveClass('ui:bg-white', 'ui:border-grey-600');
     });
   });
 
