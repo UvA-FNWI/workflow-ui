@@ -63,7 +63,9 @@ export const StepCardBody = ({
             case "submissions":
                 return (
                     <>
-                        {step.hierarchyMode === "Sequential" && step.children ? (
+                        {step.hierarchyMode === "Sequential" &&
+                        step.children &&
+                        step.children.length > 0 ? (
                             <SequentialSubmissions
                                 step={step}
                                 submissions={contentState.regular}
