@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 
 import {Button, Input, Modal} from "@uva-fnwi/datanose-ui";
 
@@ -9,7 +9,7 @@ import type {UserSearchResult} from "~/store/api/types/users.ts";
 export type EditEmailModalProps = {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
-    onSave: (user: UserSearchResult) => void;
+    onSave: (user: UserSearchResult) => Promise<void> | void;
     user: UserSearchResult;
 };
 
@@ -21,7 +21,6 @@ export function EditEmailModal({isOpen, setIsOpen, onSave, user}: EditEmailModal
         emailError,
         isVerifyingEmail,
         clearEmailValidation,
-        resetEmailVerification,
         setEmailValidationError,
         validateEmail,
         wasEmailVerified,
@@ -50,12 +49,11 @@ export function EditEmailModal({isOpen, setIsOpen, onSave, user}: EditEmailModal
 
         const newUser = {...user, email: normalizedEmail};
         try {
-            console.log(newUser);
+            await onSave(newUser);
         } catch (error) {
             setEmailValidationError(error);
             return;
         }
-        onSave(newUser);
         setIsOpen(false);
     }, [
         newEmail,
@@ -66,12 +64,6 @@ export function EditEmailModal({isOpen, setIsOpen, onSave, user}: EditEmailModal
         setIsOpen,
         setEmailValidationError,
     ]);
-
-    useEffect(() => {
-        if (isOpen) {
-            resetEmailVerification();
-        }
-    }, [isOpen, resetEmailVerification]);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={setIsOpen}>

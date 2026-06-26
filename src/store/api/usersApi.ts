@@ -1,6 +1,7 @@
 import {baseApi} from "./baseApi";
 import type {
     CurrentUserResponse,
+    UpdateUserEmailRequest,
     UserSearchResult,
     VerifyEmailRequest,
     VerifyEmailResponse,
@@ -29,6 +30,14 @@ export const usersApi = baseApi.injectEndpoints({
                 body,
             }),
         }),
+        updateUserEmail: builder.mutation<UserSearchResult, UpdateUserEmailRequest>({
+            query: ({userId, email}) => ({
+                url: `/Users/${userId}/email`,
+                method: "PUT",
+                body: {email},
+            }),
+            invalidatesTags: (_result, _error, {userId}) => [{type: "User", id: userId}],
+        }),
     }),
 });
 
@@ -37,4 +46,5 @@ export const {
     useFindUsersQuery,
     useLazyFindUsersQuery,
     useVerifyEmailMutation,
+    useUpdateUserEmailMutation,
 } = usersApi;

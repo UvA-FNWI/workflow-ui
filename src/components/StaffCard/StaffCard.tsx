@@ -28,7 +28,11 @@ export function StaffCard({relatedUserGroups, canEdit = false}: StaffCardProps) 
                                 <RelatedStaffInfo
                                     key={user_index}
                                     relatedUser={relatedUser}
-                                    isEditable={canEdit && relatedUser.user.isPending}
+                                    isEditable={
+                                        canEdit &&
+                                        relatedUser.user.isExternal &&
+                                        relatedUser.user.requiresInvitation === true
+                                    }
                                 />
                             ))}
                         </div>
@@ -39,6 +43,7 @@ export function StaffCard({relatedUserGroups, canEdit = false}: StaffCardProps) 
                     <Icon name="square-info-line" />
                 </div>
                 <Link
+                    className="break-all"
                     underline
                     href={
                         t("staff_card.confidential_advisers_link").startsWith("http")
