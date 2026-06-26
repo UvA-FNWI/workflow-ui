@@ -3,6 +3,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Button, Input, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import type {SearchListBoxValue} from "./SearchListBox";
+import {EmailInput} from "~/components/inputs/EmailInput";
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {useManualUserEmailVerification} from "~/hooks/useManualUserEmailVerification.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -193,9 +194,8 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     onChange={(value: string) => updateExternalUser({displayName: value})}
                 />
 
-                <Input
+                <EmailInput
                     label={t("email")}
-                    type="email"
                     value={newExternalUser.email}
                     isValid={emailError == null}
                     errorMessage={emailError ?? undefined}

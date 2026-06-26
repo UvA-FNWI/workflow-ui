@@ -109,6 +109,8 @@ export function formatAnswer(
             return String(value);
 
         case "String":
+        case "Email":
+        case "Phone":
         case "Reference":
         default:
             // Default string formatting

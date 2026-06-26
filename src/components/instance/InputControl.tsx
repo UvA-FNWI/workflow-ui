@@ -13,6 +13,8 @@ import {
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {EmailInput} from "~/components/inputs/EmailInput";
+import {PhoneInput} from "~/components/inputs/PhoneInput";
 import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
@@ -125,6 +127,29 @@ export const InputControl = ({
             />
         );
     }
+
+    if (question.type === "Email") {
+        return (
+            <EmailInput
+                value={(value as string) || ""}
+                onChange={(value) => debouncedChange(value)}
+                isValid={isValid}
+                errorMessage={errorMessage}
+            />
+        );
+    }
+
+    if (question.type === "Phone") {
+        return (
+            <PhoneInput
+                value={(value as string) || ""}
+                onChange={(value) => debouncedChange(value)}
+                isValid={isValid}
+                errorMessage={errorMessage}
+            />
+        );
+    }
+
     if (question.type === "Int" || question.type === "Double") {
         // Both types are stored as JS numbers, which silently lose precision
         // past Number.MAX_SAFE_INTEGER (trailing digits become zeros). Int is a

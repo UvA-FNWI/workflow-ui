@@ -124,6 +124,8 @@ export type DataType =
     | "Currency"
     | "Table"
     | "String"
+    | "Email"
+    | "Phone"
     | "Double"
     | "Reference"
     | "Int"
