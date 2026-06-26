@@ -99,11 +99,35 @@ export const InputControl = ({
     };
 
     if (question.type === "String") {
+        const variant =
+            question.layout != null && "variant" in question.layout
+                ? question.layout.variant
+                : undefined;
+
+        if (variant === "Email") {
+            return (
+                <EmailInput
+                    value={(value as string) || ""}
+                    onChange={(value) => debouncedChange(value)}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                />
+            );
+        }
+
+        if (variant === "Phone") {
+            return (
+                <PhoneInput
+                    value={(value as string) || ""}
+                    onChange={(value) => debouncedChange(value)}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                />
+            );
+        }
+
         const isMultilineString =
-            question.type === "String" &&
-            question.layout != null &&
-            "multiline" in question.layout &&
-            question.layout.multiline;
+            question.layout != null && "multiline" in question.layout && question.layout.multiline;
         const lengthValidationDescription = question.maxLength
             ? t("string_validation", {
                   maxInputLength: question.maxLength,
@@ -122,28 +146,6 @@ export const InputControl = ({
                 }}
                 description={lengthValidationDescription}
                 maxLength={question.maxLength}
-                isValid={isValid}
-                errorMessage={errorMessage}
-            />
-        );
-    }
-
-    if (question.type === "Email") {
-        return (
-            <EmailInput
-                value={(value as string) || ""}
-                onChange={(value) => debouncedChange(value)}
-                isValid={isValid}
-                errorMessage={errorMessage}
-            />
-        );
-    }
-
-    if (question.type === "Phone") {
-        return (
-            <PhoneInput
-                value={(value as string) || ""}
-                onChange={(value) => debouncedChange(value)}
                 isValid={isValid}
                 errorMessage={errorMessage}
             />

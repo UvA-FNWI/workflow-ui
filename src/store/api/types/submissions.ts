@@ -69,7 +69,7 @@ export type Question = {
     workflowDefinition?: string;
     hideInResults: boolean;
     shortText?: LocalString;
-    layout?: StringLayoutOptions | ChoiceLayoutOptions;
+    layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
     weight?: number;
     allowsExternalUsers: boolean;
@@ -96,9 +96,12 @@ export type RubricEntry = {
     grades: RubricGrade[];
 };
 
-export type StringLayoutOptions = {
+export type StringVariant = "Email" | "Phone";
+
+export type TextLayoutOptions = {
     allowAttachments: boolean;
     multiline: boolean;
+    variant?: StringVariant;
 };
 
 export type ChoiceLayoutOptions = {
@@ -124,8 +127,6 @@ export type DataType =
     | "Currency"
     | "Table"
     | "String"
-    | "Email"
-    | "Phone"
     | "Double"
     | "Reference"
     | "Int"
