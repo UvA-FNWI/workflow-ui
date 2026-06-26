@@ -2,6 +2,7 @@ import {useState} from "react";
 
 import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
+import {InlineFileEdit} from "./InlineFileEdit.tsx";
 import {InlineQuestionEdit} from "./InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {downloadFile} from "~/utils/fileDownload";
@@ -55,13 +56,16 @@ export const QuestionAnswerList = ({
                 const pair = questions[rowIndex];
 
                 if (isEditing) {
+                    const EditComponent =
+                        question.type === "File" ? InlineFileEdit : InlineQuestionEdit;
+
                     return (
                         <div key={question.name} className={`grid gap-4 ${colsClass}`}>
                             <Text>
                                 {l(question.text)}
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                             </Text>
-                            <InlineQuestionEdit
+                            <EditComponent
                                 question={question}
                                 answer={pair.answer}
                                 instanceId={instanceId}
@@ -94,31 +98,45 @@ export const QuestionAnswerList = ({
                                     : noAnswerText;
 
                             return question.type === "File" && answer != null ? (
-                                answer.value != null ? (
-                                    <Link
-                                        key={submissionIndex}
-                                        intent="primary"
-                                        underline
-                                        className="truncate"
-                                        onClick={() =>
-                                            downloadFile(
-                                                answer.files[0],
-                                                question.name,
-                                                instanceId,
-                                                submissionId,
-                                            )
-                                        }
-                                    >
-                                        {formattedValue}
-                                    </Link>
-                                ) : (
-                                    <Text
-                                        className="min-w-0 wrap-break-word whitespace-pre-wrap"
-                                        key={submissionIndex}
-                                    >
-                                        {formattedValue ? formattedValue : "-"}
-                                    </Text>
-                                )
+                                <div key={submissionIndex} className="min-w-0">
+                                    {answer.value != null ? (
+                                        <Link
+                                            intent="primary"
+                                            underline
+                                            className="truncate"
+                                            onClick={() =>
+                                                downloadFile(
+                                                    answer.files[0],
+                                                    question.name,
+                                                    instanceId,
+                                                    submissionId,
+                                                )
+                                            }
+                                        >
+                                            {formattedValue}
+                                        </Link>
+                                    ) : (
+                                        <Text
+                                            as="span"
+                                            display="inline"
+                                            className="wrap-break-word whitespace-pre-wrap"
+                                        >
+                                            {formattedValue ? formattedValue : "-"}
+                                        </Text>
+                                    )}
+                                    {(canEdit || pair.submission?.permissions.includes("Edit")) && (
+                                        <Button
+                                            intent="ghost"
+                                            size="small"
+                                            shape="circular"
+                                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                            onClick={() => setEditingQuestionName(question.name)}
+                                            aria-label={t("instance.summary.edit_answer")}
+                                        >
+                                            <Icon name="edit-line" size="xs" color="danger" />
+                                        </Button>
+                                    )}
+                                </div>
                             ) : (
                                 <div key={submissionIndex} className="min-w-0">
                                     <Text
