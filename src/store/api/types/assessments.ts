@@ -5,6 +5,7 @@ export type Assessment = {
     id: string;
     parts: AssessmentPart[];
     finalGrade: number;
+    finalGradeLabel: LocalString;
 };
 
 export type AssessmentPart = {

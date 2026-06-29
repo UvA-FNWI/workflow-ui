@@ -49,7 +49,7 @@ export const FormSummaryAssessment = ({
     }
 
     if (step?.resultsType === "AssessmentFinalOverview") {
-        if (!assessmentResults.finalGrade) return null;
+        if (!assessmentResults.finalGrade && !assessmentResults.finalGradeLabel) return null;
         return (
             <div className="mt-4 flex flex-col gap-2">
                 {assessmentResults.parts.map((part) => (
@@ -67,7 +67,9 @@ export const FormSummaryAssessment = ({
                         {t("instance.calculations.final_grade")}:
                     </Text>
                     <Text size="lg" fontWeight="semibold" className="py-1">
-                        {assessmentResults?.finalGrade ?? "-"}
+                        {l(assessmentResults?.finalGradeLabel) ??
+                            assessmentResults?.finalGrade ??
+                            "-"}
                     </Text>
                 </div>
                 <Separator weight="bold" className="my-4" />
@@ -89,8 +91,9 @@ export const FormSummaryAssessment = ({
             (sourceResult) => sourceResult && sourceResult.pageResults?.length > 0,
         ) as SourceResult[];
 
-    const hasTotalWeightedAverage =
-        assessmentSubmissions.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;
+    const hasWeightedAverage =
+        assessmentSubmissions.length > 0 &&
+        assessmentSubmissions.some((s) => s.weightedAverage > 0);
 
     const form = submissions[0]?.form ?? assessmentResults.parts[0]?.form;
 
@@ -205,7 +208,7 @@ export const FormSummaryAssessment = ({
                     );
                 })}
 
-                {hasTotalWeightedAverage && (
+                {hasWeightedAverage && (
                     <div className={`grid gap-4 ${colsClass}`}>
                         <Text fontWeight="semibold" size="xl">
                             {t("instance.calculations.final_grade").toUpperCase()}
