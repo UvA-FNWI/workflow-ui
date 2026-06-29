@@ -56,16 +56,13 @@ export const QuestionAnswerList = ({
                 const pair = questions[rowIndex];
 
                 if (isEditing) {
-                    const EditComponent =
-                        question.type === "File" ? InlineFileEdit : InlineQuestionEdit;
-
                     return (
                         <div key={question.name} className={`grid gap-4 ${colsClass}`}>
                             <Text>
                                 {l(question.text)}
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                             </Text>
-                            <EditComponent
+                            <InlineQuestionEdit
                                 question={question}
                                 answer={pair.answer}
                                 instanceId={instanceId}
@@ -99,7 +96,14 @@ export const QuestionAnswerList = ({
 
                             return question.type === "File" && answer != null ? (
                                 <div key={submissionIndex} className="min-w-0">
-                                    {answer.value != null ? (
+                                    {canEdit || pair.submission?.permissions.includes("Edit") ? (
+                                        <InlineFileEdit
+                                            question={question}
+                                            answer={answer}
+                                            instanceId={instanceId}
+                                            submissionId={pair.submission?.id ?? submissionId ?? ""}
+                                        />
+                                    ) : answer.value != null ? (
                                         <Link
                                             intent="primary"
                                             underline
@@ -123,18 +127,6 @@ export const QuestionAnswerList = ({
                                         >
                                             {formattedValue ? formattedValue : "-"}
                                         </Text>
-                                    )}
-                                    {(canEdit || pair.submission?.permissions.includes("Edit")) && (
-                                        <Button
-                                            intent="ghost"
-                                            size="small"
-                                            shape="circular"
-                                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                            onClick={() => setEditingQuestionName(question.name)}
-                                            aria-label={t("instance.summary.edit_answer")}
-                                        >
-                                            <Icon name="edit-line" size="xs" color="danger" />
-                                        </Button>
                                     )}
                                 </div>
                             ) : (

@@ -1,6 +1,6 @@
-import {useState} from "react";
+import {useRef} from "react";
 
-import {Button, FileUpload, Icon, Text} from "@uva-fnwi/datanose-ui";
+import {Button, FileUpload, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {answersApi} from "~/store/api/answersApi.ts";
@@ -12,57 +12,42 @@ type Props = {
     answer: Answer | null;
     instanceId: string;
     submissionId: string;
-    onClose: () => void;
 };
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
-export const InlineFileEdit = ({question, answer, instanceId, submissionId, onClose}: Props) => {
+export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Props) => {
     const {t} = useTranslate("workflow");
-    const [saveFile, {isLoading: isUploading}] = answersApi.endpoints.saveFile.useMutation();
-    const [saveAnswer, {isLoading: isDeleting}] = answersApi.endpoints.saveAnswer.useMutation();
-    const [error, setError] = useState<string | null>(null);
+    const [saveFile, {isLoading: isUploading, isError: isUploadError}] =
+        answersApi.endpoints.saveFile.useMutation();
+    const [saveAnswer, {isLoading: isDeleting, isError: isDeleteError}] =
+        answersApi.endpoints.saveAnswer.useMutation();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const hasFile = answer?.value != null && answer.files.length > 0;
-    const isLoading = isUploading || isDeleting;
+    const hasFile = answer?.value != null && (answer.files?.length ?? 0) > 0;
 
     const handleUpload = async (file: File | null) => {
         if (!file) return;
-        setError(null);
-
-        const result = await saveFile({
-            instanceId,
-            submissionId,
-            questionName: question.name,
-            file,
-        });
-
-        if ("error" in result) {
-            setError(t("file_upload.error_upload_failed"));
-        } else {
-            onClose();
-        }
+        await saveFile({instanceId, submissionId, questionName: question.name, file});
     };
 
     const handleDelete = async () => {
-        setError(null);
-
-        const result = await saveAnswer({
+        await saveAnswer({
             instanceId,
             submissionId,
             answer: {questionName: question.name, value: null},
         });
-
-        if ("error" in result) {
-            setError(t("file_upload.error_remove_failed"));
-        } else {
-            onClose();
-        }
     };
 
-    if (question.isRequired) {
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] ?? null;
+        if (file) void handleUpload(file);
+        e.target.value = "";
+    };
+
+    if (!hasFile) {
         return (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
                 <FileUpload
                     maxSize={MAX_FILE_SIZE}
                     accept={["application/pdf"]}
@@ -71,84 +56,74 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId, onCl
                     buttonIntent="primary"
                     buttonVariant="destructive"
                     isLoading={isUploading}
-                    showFileName={hasFile}
-                    fileName={answer?.files[0]?.name}
-                    onFileNameClick={
-                        hasFile
-                            ? () =>
-                                  downloadFile(
-                                      answer.files[0],
-                                      question.name,
-                                      instanceId,
-                                      submissionId,
-                                  )
-                            : undefined
-                    }
                     errorMessages={{
                         fileSize: t("file_upload.error_max_file_size", {size: "20MB"}),
                     }}
                 />
-                {error && (
+                {isUploadError && (
                     <Text size="sm" intent="error">
-                        {error}
+                        {t("file_upload.error_upload_failed")}
                     </Text>
                 )}
-                <div>
-                    <Button variant="destructive" intent="secondary" onClick={onClose}>
-                        {t("cancel")}
-                    </Button>
-                </div>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-2">
-            {hasFile ? (
-                <div className="flex items-center gap-2">
-                    <Text as="span" className="truncate">
-                        {answer.files[0].name}
-                    </Text>
+        <div className="flex flex-col gap-1">
+            <div className="flex min-w-0 items-center gap-1">
+                <Link
+                    intent="primary"
+                    underline
+                    className="truncate"
+                    onClick={() =>
+                        downloadFile(answer.files[0], question.name, instanceId, submissionId)
+                    }
+                >
+                    {answer.files[0].name}
+                </Link>
+                {question.isRequired ? (
+                    <>
+                        <Button
+                            intent="ghost"
+                            size="small"
+                            shape="circular"
+                            className="ui:border-0 ui:px-1 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                            onClick={() => fileInputRef.current?.click()}
+                            isLoading={isUploading}
+                            aria-label={t("instance.summary.replace_file")}
+                        >
+                            <Icon name="swap-line" size="xs" color="danger" />
+                        </Button>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="application/pdf"
+                            className="hidden"
+                            onChange={handleFileInputChange}
+                        />
+                    </>
+                ) : (
                     <Button
                         intent="ghost"
                         size="small"
                         shape="circular"
+                        className="ui:border-0 ui:px-1 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                         onClick={handleDelete}
                         isLoading={isDeleting}
-                        aria-label={t("delete")}
+                        aria-label={t("instance.summary.delete_file")}
                     >
                         <Icon name="trash-line" size="xs" color="danger" />
                     </Button>
-                </div>
-            ) : (
-                <FileUpload
-                    maxSize={MAX_FILE_SIZE}
-                    accept={["application/pdf"]}
-                    onFileSelect={handleUpload}
-                    buttonText={t("file_upload.upload_file")}
-                    buttonIntent="primary"
-                    buttonVariant="destructive"
-                    isLoading={isUploading}
-                    errorMessages={{
-                        fileSize: t("file_upload.error_max_file_size", {size: "20MB"}),
-                    }}
-                />
-            )}
-            {error && (
+                )}
+            </div>
+            {(isUploadError || isDeleteError) && (
                 <Text size="sm" intent="error">
-                    {error}
+                    {isUploadError
+                        ? t("file_upload.error_upload_failed")
+                        : t("file_upload.error_remove_failed")}
                 </Text>
             )}
-            <div>
-                <Button
-                    variant="destructive"
-                    intent="secondary"
-                    onClick={onClose}
-                    disabled={isLoading}
-                >
-                    {t("cancel")}
-                </Button>
-            </div>
         </div>
     );
 };

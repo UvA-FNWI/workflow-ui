@@ -61,8 +61,10 @@
     },
     "empty_step": "Nothing has been submitted yet.",
     "summary": {
+      "delete_file": "Delete file",
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
+      "replace_file": "Replace file",
       "hide_answers": "Hide parts and explanations",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
