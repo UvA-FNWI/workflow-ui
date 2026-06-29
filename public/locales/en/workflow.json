@@ -64,8 +64,8 @@
       "delete_file": "Delete file",
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
-      "replace_file": "Replace file",
       "hide_answers": "Hide parts and explanations",
+      "replace_file": "Replace file",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "title": "Summary"
