@@ -13,6 +13,8 @@ import {
 import {parseISO} from "date-fns";
 
 import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {EmailInput} from "~/components/inputs/EmailInput";
+import {PhoneInput} from "~/components/inputs/PhoneInput";
 import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
@@ -97,11 +99,35 @@ export const InputControl = ({
     };
 
     if (question.type === "String") {
+        const variant =
+            question.layout != null && "variant" in question.layout
+                ? question.layout.variant
+                : undefined;
+
+        if (variant === "Email") {
+            return (
+                <EmailInput
+                    value={(value as string) || ""}
+                    onChange={(value) => debouncedChange(value)}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                />
+            );
+        }
+
+        if (variant === "Phone") {
+            return (
+                <PhoneInput
+                    value={(value as string) || ""}
+                    onChange={(value) => debouncedChange(value)}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                />
+            );
+        }
+
         const isMultilineString =
-            question.type === "String" &&
-            question.layout != null &&
-            "multiline" in question.layout &&
-            question.layout.multiline;
+            question.layout != null && "multiline" in question.layout && question.layout.multiline;
         const lengthValidationDescription = question.maxLength
             ? t("string_validation", {
                   maxInputLength: question.maxLength,
@@ -125,6 +151,7 @@ export const InputControl = ({
             />
         );
     }
+
     if (question.type === "Int" || question.type === "Double") {
         // Both types are stored as JS numbers, which silently lose precision
         // past Number.MAX_SAFE_INTEGER (trailing digits become zeros). Int is a
