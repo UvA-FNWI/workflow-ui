@@ -117,6 +117,10 @@
     "selected_users_other": "{{count}} gebruikers geselecteerd",
     "title": "Zoek medewerker"
   },
+  "validation": {
+    "email": "Vul een geldig e-mailadres in",
+    "phone": "Vul een geldig telefoonnummer in"
+  },
   "version_card": {
     "no_answer": "Geen antwoord gegeven",
     "version_nr": "Versie {{versionNumber}}"
