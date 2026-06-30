@@ -19,12 +19,13 @@ export interface UserImpersonationStarted {
     expiresAtUtc: string;
 }
 
-/** Active global user impersonation. Target name is kept so the banner survives the reload. */
+/** Active global user impersonation. Names are kept so the banner and logout label survive the reload. */
 export interface UserImpersonation {
     token: string;
     expiresAtUtc: string;
     targetUserName: string;
     targetDisplayName: string;
+    adminDisplayName: string;
 }
 
 export interface VerifyEmailRequest {

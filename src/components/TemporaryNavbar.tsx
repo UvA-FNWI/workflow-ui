@@ -55,6 +55,8 @@ function TemporaryNavbar() {
                     expiresAtUtc: result.expiresAtUtc,
                     targetUserName: target.userName,
                     targetDisplayName: target.displayName,
+                    // Captured before the reload swaps currentUser over to the target.
+                    adminDisplayName: user?.displayName ?? "",
                 }),
             );
             // Reload so every query refetches as the impersonated user.
@@ -183,7 +185,7 @@ function TemporaryNavbar() {
                         onClick={() => void surfLogout()}
                         type="button"
                     >
-                        {t("logout")} ({user?.displayName})
+                        {t("logout")} ({userImpersonation?.adminDisplayName ?? user?.displayName})
                     </Button>
                 )}
             </div>
