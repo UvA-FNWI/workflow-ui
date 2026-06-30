@@ -1,4 +1,4 @@
-import {Button, Callout, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, Heading, Icon, Separator, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";
@@ -49,7 +49,7 @@ export const FormSummaryAssessment = ({
     }
 
     if (step?.resultsType === "AssessmentFinalOverview") {
-        if (!assessmentResults.finalGrade && !assessmentResults.finalGradeLabel) return null;
+        if (!assessmentResults.finalGrade) return null;
         return (
             <div className="mt-4 flex flex-col gap-2">
                 {assessmentResults.parts.map((part) => (
@@ -67,9 +67,24 @@ export const FormSummaryAssessment = ({
                         {t("instance.calculations.final_grade")}:
                     </Text>
                     <Text size="lg" fontWeight="semibold" className="py-1">
-                        {l(assessmentResults?.finalGradeLabel) ??
-                            assessmentResults?.finalGrade ??
-                            "-"}
+                        {assessmentResults.finalGrade?.calculated ? (
+                            <Tooltip
+                                content={
+                                    t("instance.calculations.calculated_grade") +
+                                    assessmentResults.finalGrade.calculated.toFixed(5)
+                                }
+                            >
+                                <span>
+                                    {l(assessmentResults?.finalGrade?.text) ??
+                                        assessmentResults?.finalGrade.rounded ??
+                                        "-"}
+                                </span>
+                            </Tooltip>
+                        ) : (
+                            (l(assessmentResults?.finalGrade?.text) ??
+                            assessmentResults?.finalGrade.rounded ??
+                            "-")
+                        )}
                     </Text>
                 </div>
                 <Separator weight="bold" className="my-4" />

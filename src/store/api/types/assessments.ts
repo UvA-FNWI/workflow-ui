@@ -1,11 +1,16 @@
 import type {LocalString} from "~/hooks/useTranslate.ts";
 import type {Answer, Form} from "~/store/api/types/submissions.ts";
 
+export type FinalGrade = {
+    calculated: number;
+    rounded: number;
+    text: LocalString;
+};
+
 export type Assessment = {
     id: string;
     parts: AssessmentPart[];
-    finalGrade: number;
-    finalGradeLabel: LocalString;
+    finalGrade: FinalGrade;
 };
 
 export type AssessmentPart = {
