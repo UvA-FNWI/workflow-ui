@@ -95,6 +95,9 @@ export const StepCard = ({step, instance}: Props) => {
 
     const regularSubmissions = submissionsToShow.filter((s) => !hasResults(s) && s.answers.length);
     const assessmentSubmissions = submissionsToShow.filter((s) => hasResults(s));
+    const submittedRegularSubmissionIds = regularSubmissions
+        .filter((s) => s.dateSubmitted)
+        .map((s) => s.id);
 
     const showEmptyMessage =
         !isFormOpen &&
@@ -141,6 +144,15 @@ export const StepCard = ({step, instance}: Props) => {
                     )}
                     {regularSubmissions.map((submission) => (
                         <div key={submission.id} className="py-4">
+                            {submittedRegularSubmissionIds.indexOf(submission.id) > 0 && (
+                                <Heading
+                                    as="h4"
+                                    size="xs"
+                                    className="pb-1 font-semibold text-red-brand"
+                                >
+                                    {l(submission.form.title)?.toUpperCase()}
+                                </Heading>
+                            )}
                             <FormSummary
                                 instanceId={instance.id}
                                 submission={submission}
