@@ -257,21 +257,20 @@ export const PageControl = ({
                 {page.hasResults && (
                     <div>
                         <Separator weight="bold" color="black" className="mb-4" />
-                        <Text
-                            size="xl"
-                            fontWeight="semibold"
-                            className="flex items-center justify-between gap-2 pr-12"
-                        >
-                            {t("instance.calculations.average_grade", {
-                                page: l(page.title),
-                            }).toUpperCase()}
-
+                        <div className="flex items-center justify-between gap-2 pr-12">
+                            <Text size="xl" fontWeight="semibold">
+                                {t("instance.calculations.average_grade", {
+                                    page: l(page.title),
+                                }).toUpperCase()}
+                            </Text>
                             {isFetchingAverages ? (
                                 <LoadingSpinner size="xs" />
                             ) : (
-                                <span>{averageGradeContent}</span>
+                                <Text size="xl" fontWeight="semibold">
+                                    {averageGradeContent}
+                                </Text>
                             )}
-                        </Text>
+                        </div>
                     </div>
                 )}
             </div>
