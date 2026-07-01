@@ -116,6 +116,10 @@
     "selected_users_other": "{{count}} users selected",
     "title": "Search user"
   },
+  "validation": {
+    "email": "Please enter a valid email address",
+    "phone": "Please enter a valid phone number"
+  },
   "version_card": {
     "no_answer": "No answer provided",
     "version_nr": "Version {{versionNumber}}"
