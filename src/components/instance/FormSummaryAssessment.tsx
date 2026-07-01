@@ -12,7 +12,7 @@ import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 type Props = {
     instanceId: string;
     submissions: Submission[];
-    onEditPage?: (index: number) => void;
+    onEditPage?: (pageName: string) => void;
     step?: WorkflowStep;
     collapseAnswers?: boolean;
     combine: boolean;
@@ -152,7 +152,7 @@ export const FormSummaryAssessment = ({
                                                 size="small"
                                                 className="ml-1"
                                                 shape="circular"
-                                                onClick={() => onEditPage(index)}
+                                                onClick={() => onEditPage(page.name)}
                                                 rightIcon={
                                                     <Icon
                                                         name="edit-line"
