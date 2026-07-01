@@ -11,11 +11,11 @@ function AuthCallback() {
     // The login code is single-use. StrictMode runs this effect twice in dev, and
     // redeeming the code twice makes SURFconext drop the session and bounce you into
     // a login loop, so only redeem it once.
-    const hasCompletedLogin = useRef(false);
+    const hasStartedLogin = useRef(false);
 
     useEffect(() => {
-        if (hasCompletedLogin.current) return;
-        hasCompletedLogin.current = true;
+        if (hasStartedLogin.current) return;
+        hasStartedLogin.current = true;
 
         surfCompleteLogin()
             .then((user) => {
