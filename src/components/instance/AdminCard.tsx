@@ -7,13 +7,13 @@ import {Button, Card, Heading, Icon, Select, SelectItem, Skeleton} from "@uva-fn
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import type {ImpersonationRole} from "~/store/api/types/submissions";
-import {clearImpersonation, selectImpersonationForInstance} from "~/store/authSlice";
+import {clearRoleImpersonation, selectRoleImpersonationForInstance} from "~/store/authSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
 export function AdminCard() {
     const {id} = useParams<{id: string}>();
     const {t, l} = useTranslate("workflow");
-    const impersonate = useAppSelector((state) => selectImpersonationForInstance(state, id));
+    const impersonate = useAppSelector((state) => selectRoleImpersonationForInstance(state, id));
     const dispatch = useAppDispatch();
     const [selectedRole, setSelectedRole] = useState<ImpersonationRole | null>(
         impersonate?.role ?? null,
@@ -85,7 +85,7 @@ export function AdminCard() {
                             intent="secondary"
                             variant="destructive"
                             onClick={() => {
-                                dispatch(clearImpersonation());
+                                dispatch(clearRoleImpersonation());
                                 window.location.reload();
                             }}
                             leftIcon={<Icon name="cross-small-line" size="sm" color="current" />}
