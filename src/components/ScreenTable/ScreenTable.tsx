@@ -26,10 +26,11 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                 .map(
                     (col): ColumnDef<ScreenRow> => ({
                         id: String(col.id),
-                        accessorFn: (row) => row.values[col.id],
+                        accessorFn: (row) =>
+                            getComparableCellValue(row.values[col.id], col.dataType, i18n.language),
                         header: () => l(col.title),
                         cell: (info) => {
-                            const value = info.getValue();
+                            const value = info.row.original.values[col.id];
                             const formattedValue = formatCellValue(
                                 value,
                                 col.dataType,
@@ -138,6 +139,38 @@ function formatCellValue(value: unknown, dataType: string, locale: string): Reac
         default:
             return String(value);
     }
+}
+
+function getComparableCellValue(value: unknown, dataType: string, locale: string): string | number {
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    switch (dataType) {
+        case "Date":
+        case "DateTime":
+            return getTimeValue(value);
+        case "Currency":
+        case "Double":
+        case "Int":
+            return typeof value === "number" ? value : String(value);
+        case "LocalString":
+        case "Object":
+            return String(formatCellValue(value, dataType, locale) ?? "");
+        default:
+            return String(value);
+    }
+}
+
+function getTimeValue(value: unknown): number | string {
+    if (typeof value === "string" || typeof value === "number") {
+        const date = new Date(value);
+        if (!isNaN(date.getTime())) {
+            return date.getTime();
+        }
+    }
+
+    return String(value);
 }
 
 function formatDate(value: unknown): string {
