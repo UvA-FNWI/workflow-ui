@@ -11,7 +11,7 @@ import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 type Props = {
     instanceId: string;
     submission: Submission;
-    onEditPage?: (index: number) => void;
+    onEditPage?: (pageName: string) => void;
     onSubmit?: () => void;
     collapseAnswers?: boolean;
     permissions?: RoleAction[];
