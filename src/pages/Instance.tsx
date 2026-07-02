@@ -27,7 +27,9 @@ function Instance() {
     if (!isLoading && !instance) {
         return <div>Error loading instance</div>;
     }
-    const canEdit = instance?.permissions.includes("Edit");
+    const canEdit = instance?.permissions.some((permission) =>
+        ["Edit", "ViewAdminTools"].includes(permission),
+    );
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
@@ -56,6 +58,7 @@ function Instance() {
                         isLoading={isLoading}
                     />
                     <StaffCard
+                        instanceId={id ?? ""}
                         relatedUserGroups={instance?.relatedUserGroups?.groups ?? []}
                         canEdit={canEdit}
                     />

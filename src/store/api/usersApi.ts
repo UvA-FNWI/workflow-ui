@@ -39,10 +39,10 @@ export const usersApi = baseApi.injectEndpoints({
             }),
         }),
         updateUserEmail: builder.mutation<UserSearchResult, UpdateUserEmailRequest>({
-            query: ({userId, email}) => ({
+            query: ({userId, email, instanceId}) => ({
                 url: `/Users/${userId}/email`,
                 method: "PUT",
-                body: {email},
+                body: {email, instanceId},
             }),
             invalidatesTags: (_result, _error, {userId}) => [{type: "User", id: userId}],
         }),

@@ -11,9 +11,16 @@ export type EditEmailModalProps = {
     setIsOpen: (isOpen: boolean) => void;
     onSave: (user: UserSearchResult) => Promise<void> | void;
     user: UserSearchResult;
+    isSaving?: boolean;
 };
 
-export function EditEmailModal({isOpen, setIsOpen, onSave, user}: EditEmailModalProps) {
+export function EditEmailModal({
+    isOpen,
+    setIsOpen,
+    onSave,
+    user,
+    isSaving = false,
+}: EditEmailModalProps) {
     const {t} = useTranslate("workflow");
     const [newEmail, setNewEmail] = useState(user.email);
 
@@ -96,6 +103,7 @@ export function EditEmailModal({isOpen, setIsOpen, onSave, user}: EditEmailModal
                     onClick={handleEmailSave}
                     disabled={
                         isVerifyingEmail ||
+                        isSaving ||
                         emailError != null ||
                         !newEmail.trim() ||
                         !isEmailVerified

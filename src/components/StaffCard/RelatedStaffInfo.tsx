@@ -1,7 +1,5 @@
 import {useState} from "react";
 
-import {useParams} from "react-router";
-
 import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
 import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
@@ -14,31 +12,34 @@ import {useUpdateUserEmailMutation} from "~/store/api/usersApi.ts";
 import {useAppDispatch} from "~/store/store.ts";
 
 type RelatedStaffInfoProps = {
+    instanceId?: string;
     relatedUser: RelatedUser;
     isEditable?: boolean;
 };
 
-export function RelatedStaffInfo({relatedUser, isEditable = false}: RelatedStaffInfoProps) {
-    const {id: instanceId} = useParams<{id: string}>();
+export function RelatedStaffInfo({
+    instanceId,
+    relatedUser,
+    isEditable = false,
+}: RelatedStaffInfoProps) {
     const {t, l} = useTranslate("workflow");
     const {user, title} = relatedUser;
     const [isEditing, setIsEditing] = useState(false);
-    const [updateUserEmail] = useUpdateUserEmailMutation();
+    const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
     const dispatch = useAppDispatch();
 
     const handleSave = async (updatedUser: UserSearchResult) => {
-        if (!user.id) {
+        if (!user.id || !instanceId) {
             return;
         }
 
         await updateUserEmail({
             userId: user.id,
             email: updatedUser.email,
+            instanceId,
         }).unwrap();
 
-        if (instanceId) {
-            dispatch(baseApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
-        }
+        dispatch(baseApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
     };
 
     return (
@@ -47,7 +48,7 @@ export function RelatedStaffInfo({relatedUser, isEditable = false}: RelatedStaff
                 <UserAvatar userName={user.displayName} />
                 <div className="flex min-w-0 gap-2">
                     <Text fontWeight="semibold">{l(title)}</Text>
-                    {isEditable && (
+                    {isEditable && user.requiresInvitation == true && (
                         <Button
                             intent="ghost"
                             size="small"
@@ -69,12 +70,15 @@ export function RelatedStaffInfo({relatedUser, isEditable = false}: RelatedStaff
                     </Link>
                 </div>
             </div>
-            <EditEmailModal
-                isOpen={isEditing}
-                setIsOpen={setIsEditing}
-                user={user}
-                onSave={handleSave}
-            />
+            {isEditing && (
+                <EditEmailModal
+                    isOpen={isEditing}
+                    setIsOpen={setIsEditing}
+                    user={user}
+                    onSave={handleSave}
+                    isSaving={isUpdatingEmail}
+                />
+            )}
         </>
     );
 }

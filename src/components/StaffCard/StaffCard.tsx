@@ -5,11 +5,12 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RelatedUserGroup} from "~/store/api/types/instances.ts";
 
 type StaffCardProps = {
+    instanceId: string;
     relatedUserGroups: RelatedUserGroup[];
     canEdit?: boolean;
 };
 
-export function StaffCard({relatedUserGroups, canEdit = false}: StaffCardProps) {
+export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: StaffCardProps) {
     const {t, l} = useTranslate("workflow");
 
     return (
@@ -20,13 +21,14 @@ export function StaffCard({relatedUserGroups, canEdit = false}: StaffCardProps) 
             <Disclosure.Content>
                 {relatedUserGroups.length > 0 &&
                     relatedUserGroups.map((group, group_index) => (
-                        <div key={group_index}>
+                        <div key={`related_${group_index}`}>
                             <Heading size="sm" className="my-4">
                                 {l(group.title)}
                             </Heading>
                             {group.users.map((relatedUser, user_index) => (
                                 <RelatedStaffInfo
-                                    key={user_index}
+                                    key={`related_${group_index}_${user_index}`}
+                                    instanceId={instanceId}
                                     relatedUser={relatedUser}
                                     isEditable={
                                         canEdit &&
@@ -43,8 +45,8 @@ export function StaffCard({relatedUserGroups, canEdit = false}: StaffCardProps) 
                     <Icon name="square-info-line" />
                 </div>
                 <Link
-                    className="break-all"
                     underline
+                    className="break-all"
                     href={
                         t("staff_card.confidential_advisers_link").startsWith("http")
                             ? t("staff_card.confidential_advisers_link")

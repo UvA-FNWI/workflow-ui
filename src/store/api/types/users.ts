@@ -43,6 +43,7 @@ export interface VerifyEmailResponse {
 export interface UpdateUserEmailRequest {
     userId: string;
     email: string;
+    instanceId: string;
 }
 
 export interface CreateExternalUserInput {

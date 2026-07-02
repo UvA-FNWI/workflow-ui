@@ -98,7 +98,7 @@ export type RoleImpersonationResult = {
 
 export type RelatedUser = {
     title: LocalString;
-    user: UserSearchResult;
+    user: UserSearchResult & {id: string};
 };
 
 export type RelatedUserGroup = {
