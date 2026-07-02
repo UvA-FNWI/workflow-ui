@@ -110,7 +110,7 @@ export const FormSummaryAssessment = ({
         assessmentSubmissions.length > 0 &&
         assessmentSubmissions.some((s) => s.weightedAverage > 0);
 
-    const form = submissions[0]?.form ?? assessmentResults.parts[0]?.form;
+    const form = assessmentResults.parts[0]?.form ?? submissions[0]?.form;
 
     const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
     const colsClass = colsList[assessmentSubmissions?.length ?? 1];
