@@ -16,6 +16,21 @@ export interface CurrentUserResponse extends UserSearchResult {
     isSuperAdmin: boolean;
 }
 
+/** Signed token and expiry returned when starting impersonation. */
+export interface UserImpersonationStarted {
+    token: string;
+    expiresAtUtc: string;
+}
+
+/** Active global user impersonation. Names are kept so the banner and logout label survive the reload. */
+export interface UserImpersonation {
+    token: string;
+    expiresAtUtc: string;
+    targetUserName: string;
+    targetDisplayName: string;
+    adminDisplayName: string;
+}
+
 export interface VerifyEmailRequest {
     email: string;
 }

@@ -1,4 +1,4 @@
-import {Button, Callout, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, Heading, Icon, Separator, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";
@@ -12,7 +12,7 @@ import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 type Props = {
     instanceId: string;
     submissions: Submission[];
-    onEditPage?: (index: number) => void;
+    onEditPage?: (pageName: string) => void;
     step?: WorkflowStep;
     collapseAnswers?: boolean;
     combine: boolean;
@@ -67,7 +67,24 @@ export const FormSummaryAssessment = ({
                         {t("instance.calculations.final_grade")}:
                     </Text>
                     <Text size="lg" fontWeight="semibold" className="py-1">
-                        {assessmentResults?.finalGrade ?? "-"}
+                        {assessmentResults.finalGrade?.calculated ? (
+                            <Tooltip
+                                content={
+                                    t("instance.calculations.calculated_grade") +
+                                    assessmentResults.finalGrade.calculated.toFixed(5)
+                                }
+                            >
+                                <span>
+                                    {l(assessmentResults?.finalGrade?.text) ??
+                                        assessmentResults?.finalGrade.rounded ??
+                                        "-"}
+                                </span>
+                            </Tooltip>
+                        ) : (
+                            (l(assessmentResults?.finalGrade?.text) ??
+                            assessmentResults?.finalGrade.rounded ??
+                            "-")
+                        )}
                     </Text>
                 </div>
                 <Separator weight="bold" className="my-4" />
@@ -89,8 +106,9 @@ export const FormSummaryAssessment = ({
             (sourceResult) => sourceResult && sourceResult.pageResults?.length > 0,
         ) as SourceResult[];
 
-    const hasTotalWeightedAverage =
-        assessmentSubmissions.length > 0 && (assessmentResults?.finalGrade ?? 0) > 0;
+    const hasWeightedAverage =
+        assessmentSubmissions.length > 0 &&
+        assessmentSubmissions.some((s) => s.weightedAverage > 0);
 
     const form = submissions[0]?.form ?? assessmentResults.parts[0]?.form;
 
@@ -152,7 +170,7 @@ export const FormSummaryAssessment = ({
                                                 size="small"
                                                 className="ml-1"
                                                 shape="circular"
-                                                onClick={() => onEditPage(index)}
+                                                onClick={() => onEditPage(page.name)}
                                                 rightIcon={
                                                     <Icon
                                                         name="edit-line"
@@ -205,7 +223,7 @@ export const FormSummaryAssessment = ({
                     );
                 })}
 
-                {hasTotalWeightedAverage && (
+                {hasWeightedAverage && (
                     <div className={`grid gap-4 ${colsClass}`}>
                         <Text fontWeight="semibold" size="xl">
                             {t("instance.calculations.final_grade").toUpperCase()}
