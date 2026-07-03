@@ -19,6 +19,11 @@ type Props = {
     canEdit?: boolean;
 };
 
+type EditTarget = {
+    submissionIndex: number;
+    question: string;
+};
+
 export const QuestionAnswerList = ({
     questionAnswerPairs,
     noAnswerText,
@@ -31,7 +36,7 @@ export const QuestionAnswerList = ({
 }: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
-    const [editingQuestionName, setEditingQuestionName] = useState<string | null>(null);
+    const [editingQuestion, setEditingQuestion] = useState<EditTarget | null>(null);
 
     if (collapseAnswers && !isOpen) {
         return (
@@ -50,102 +55,99 @@ export const QuestionAnswerList = ({
 
     return (
         <div className="flex flex-col gap-2">
-            {questions.map(({question, percentage}, rowIndex) => {
-                const isEditing = editingQuestionName === question.name;
-                const pair = questions[rowIndex];
+            {questions.map(({question, percentage}, rowIndex) => (
+                <div key={question.name} className={`grid gap-4 ${colsClass}`}>
+                    <Text className="min-w-0 wrap-break-word">
+                        {l(question.text)}
+                        {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
+                    </Text>
 
-                if (isEditing) {
-                    return (
-                        <div key={question.name} className={`grid gap-4 ${colsClass}`}>
-                            <Text>
-                                {l(question.text)}
-                                {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                            </Text>
-                            <InlineQuestionEdit
-                                question={question}
-                                answer={pair.answer}
-                                instanceId={instanceId}
-                                submissionId={pair.submission?.id ?? submissionId ?? ""}
-                                onClose={() => setEditingQuestionName(null)}
-                            />
-                        </div>
-                    );
-                }
+                    {arrayOfPairs.map((submission, submissionIndex) => {
+                        const pair = submission[rowIndex];
+                        if (!pair) return <span></span>;
+                        const {answer} = pair;
+                        const formattedValue =
+                            answer != null
+                                ? formatAnswer(
+                                      answer.value,
+                                      question.type,
+                                      i18n.language,
+                                      question.choices,
+                                  )
+                                : noAnswerText;
 
-                return (
-                    <div key={question.name} className={`grid gap-4 ${colsClass}`}>
-                        <Text className="min-w-0 wrap-break-word">
-                            {l(question.text)}
-                            {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                        </Text>
-
-                        {arrayOfPairs.map((submission, submissionIndex) => {
-                            const pair = submission[rowIndex];
-                            if (!pair) return <span></span>;
-                            const {answer} = pair;
-                            const formattedValue =
-                                answer != null
-                                    ? formatAnswer(
-                                          answer.value,
-                                          question.type,
-                                          i18n.language,
-                                          question.choices,
-                                      )
-                                    : noAnswerText;
-
-                            return question.type === "File" && answer != null ? (
-                                answer.value != null ? (
-                                    <Link
-                                        key={submissionIndex}
-                                        intent="primary"
-                                        underline
-                                        className="truncate"
-                                        onClick={() =>
-                                            downloadFile(
-                                                answer.files[0],
-                                                question.name,
-                                                instanceId,
-                                                submissionId,
-                                            )
-                                        }
-                                    >
-                                        {formattedValue}
-                                    </Link>
-                                ) : (
-                                    <Text
-                                        className="min-w-0 wrap-break-word whitespace-pre-wrap"
-                                        key={submissionIndex}
-                                    >
-                                        {formattedValue ? formattedValue : "-"}
-                                    </Text>
-                                )
-                            ) : (
-                                <div key={submissionIndex} className="min-w-0">
-                                    <Text
-                                        as="span"
-                                        display="inline"
-                                        className="wrap-break-word whitespace-pre-wrap"
-                                    >
-                                        {formattedValue ? formattedValue : "-"}
-                                    </Text>
-                                    {(canEdit || pair.submission?.permissions.includes("Edit")) && (
-                                        <Button
-                                            intent="ghost"
-                                            size="small"
-                                            shape="circular"
-                                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                            onClick={() => setEditingQuestionName(question.name)}
-                                            aria-label={t("instance.summary.edit_answer")}
-                                        >
-                                            <Icon name="edit-line" size="xs" color="danger" />
-                                        </Button>
-                                    )}
-                                </div>
+                        if (
+                            editingQuestion?.question === question.name &&
+                            editingQuestion?.submissionIndex === submissionIndex
+                        ) {
+                            return (
+                                <InlineQuestionEdit
+                                    question={question}
+                                    answer={answer}
+                                    instanceId={instanceId}
+                                    submissionId={pair.submission?.id ?? submissionId ?? ""}
+                                    onClose={() => setEditingQuestion(null)}
+                                />
                             );
-                        })}
-                    </div>
-                );
-            })}
+                        }
+
+                        return question.type === "File" && answer != null ? (
+                            answer.value != null ? (
+                                <Link
+                                    key={submissionIndex}
+                                    intent="primary"
+                                    underline
+                                    className="truncate"
+                                    onClick={() =>
+                                        downloadFile(
+                                            answer.files[0],
+                                            question.name,
+                                            instanceId,
+                                            submissionId,
+                                        )
+                                    }
+                                >
+                                    {formattedValue}
+                                </Link>
+                            ) : (
+                                <Text
+                                    className="min-w-0 wrap-break-word whitespace-pre-wrap"
+                                    key={submissionIndex}
+                                >
+                                    {formattedValue ? formattedValue : "-"}
+                                </Text>
+                            )
+                        ) : (
+                            <div key={submissionIndex} className="min-w-0">
+                                <Text
+                                    as="span"
+                                    display="inline"
+                                    className="wrap-break-word whitespace-pre-wrap"
+                                >
+                                    {formattedValue ? formattedValue : "-"}
+                                </Text>
+                                {(canEdit || pair.submission?.permissions.includes("Edit")) && (
+                                    <Button
+                                        intent="ghost"
+                                        size="small"
+                                        shape="circular"
+                                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                        onClick={() =>
+                                            setEditingQuestion({
+                                                submissionIndex,
+                                                question: question.name,
+                                            })
+                                        }
+                                        aria-label={t("instance.summary.edit_answer")}
+                                    >
+                                        <Icon name="edit-line" size="xs" color="danger" />
+                                    </Button>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            ))}
             {collapseAnswers && (
                 <Link intent="destructive" underline onClick={() => setIsOpen(false)}>
                     {t("instance.summary.hide_answers")}
