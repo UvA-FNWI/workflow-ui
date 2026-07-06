@@ -24,7 +24,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
         >
             <Disclosure.Header nested={true}>
                 <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <Heading fontType="heading" className="text-lg font-semibold">
+                    <Heading fontType="heading" size={"sm"} className="font-semibold">
                         {t("version_card.version_nr", {versionNumber: version.versionNumber})}
                     </Heading>
                     <Text as="span">

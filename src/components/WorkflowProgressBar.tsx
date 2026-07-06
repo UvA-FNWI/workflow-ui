@@ -191,7 +191,7 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
     };
 
     return (
-        <div className="w-full overflow-x-auto overflow-y-visible">
+        <div className="w-full overflow-x-visible overflow-y-visible">
             <div className="flex min-w-md flex-col gap-2">
                 <div className="relative h-8">
                     {displaySteps.map((step, index) => {
