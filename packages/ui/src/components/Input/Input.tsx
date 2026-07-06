@@ -3,6 +3,8 @@ import { useRef } from 'react';
 import { mergeProps, useFocusRing, useHover, useTextField } from 'react-aria';
 
 import { cn } from '../../utils/cn';
+import { InputDescription } from './InputDescription';
+import { InputError } from './InputError';
 import { InputLabel } from './InputLabel';
 import { type InputVariantProps, inputVariants } from './InputVariant';
 
@@ -52,7 +54,7 @@ export const Input: React.FC<InputProps> = ({
         'aria-label': ariaLabel,
         'aria-labelledby': ariaLabelledBy,
         isDisabled,
-        validationState: isValid === false ? 'invalid' : 'valid',
+        validationState: !isValid ? 'invalid' : 'valid',
         maxLength: maxLength,
       },
       ref
@@ -79,20 +81,10 @@ export const Input: React.FC<InputProps> = ({
         className={cn(inputClasses, className)}
       />
       {description && (
-        <div
-          {...descriptionProps}
-          className="ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
-        >
-          {description}
-        </div>
+        <InputDescription {...descriptionProps}>{description}</InputDescription>
       )}
-      {errorMessage && isValid === false && (
-        <div
-          {...errorMessageProps}
-          className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"
-        >
-          {errorMessage}
-        </div>
+      {errorMessage && !isValid && (
+        <InputError {...errorMessageProps}>{errorMessage}</InputError>
       )}
     </div>
   );
