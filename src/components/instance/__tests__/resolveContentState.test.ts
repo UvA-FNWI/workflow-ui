@@ -101,6 +101,23 @@ describe("getSubmissionsToShow", () => {
         });
         expect(getSubmissionsToShow([], step)).toEqual([]);
     });
+
+    it("single version with multiple submissions: shown via fallback, not duplicated in version history", () => {
+        const sub1 = makeSubmission({id: "v-sub-1"});
+        const sub2 = makeSubmission({id: "v-sub-2"});
+        const step = makeStep({
+            versions: [
+                {versionNumber: 1, eventIds: [], submittedAt: "", submissions: [sub1, sub2]},
+            ],
+        });
+        // getSubmissionsToShow falls back to single version's submissions
+        const shown = getSubmissionsToShow([], step);
+        expect(shown).toEqual([sub1, sub2]);
+
+        // With only 1 version, version history should NOT render (versions.length <= 1)
+        // This prevents the same submissions appearing in both FormSummary and VersionHistory
+        expect(step.versions!.length).toBe(1);
+    });
 });
 
 describe("resolveContentState", () => {

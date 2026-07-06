@@ -45,7 +45,9 @@ export const StepCardBody = ({
 
     const submissionsToShow = getSubmissionsToShow(submissions, step);
     const formState = resolveFormState(resolvedAction);
-    const showVersionCards = (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
+    const showVersionCards =
+        (step.versions?.length ?? 0) > 1 &&
+        (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
