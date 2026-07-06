@@ -87,7 +87,7 @@ export type Action = {
 export type ActionType = "SubmitForm" | "Execute";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 
-export type ImpersonationResult = {
+export type RoleImpersonationResult = {
     instanceId: string;
     role: ImpersonationRole;
     token: string;

@@ -1,2 +1,7 @@
 export {impersonationPersistMiddleware} from "./persistMiddleware";
-export {loadPersistedImpersonationToken, saveImpersonationToken} from "./storage";
+export {
+    loadPersistedRoleImpersonation,
+    loadPersistedUserImpersonation,
+    saveRoleImpersonation,
+    saveUserImpersonation,
+} from "./storage";

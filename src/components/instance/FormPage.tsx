@@ -59,6 +59,11 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
         setActiveTabIndex(nextIndex);
     };
 
+    const onEditPage = (pageName: string) => {
+        const tabIndex = pages.findIndex((p) => p.name === pageName);
+        if (tabIndex !== -1) setActiveTabIndex(tabIndex);
+    };
+
     return (
         <div>
             {showTabView ? (
@@ -126,7 +131,7 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
                                         submission={submission}
                                         instanceId={instanceId}
                                         onSubmit={onClose}
-                                        onEditPage={setActiveTabIndex}
+                                        onEditPage={onEditPage}
                                     />
                                 </div>
                             </TabPanel>,
