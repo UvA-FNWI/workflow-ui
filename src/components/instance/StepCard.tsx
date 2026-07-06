@@ -13,9 +13,9 @@ import {
 import i18n from "i18next";
 
 import {FormPage} from "./FormPage.tsx";
+import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOverview.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
-import {FormSummaryAssessment} from "~/components/instance/FormSummaryAssessment.tsx";
 import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
@@ -150,7 +150,7 @@ export const StepCard = ({step, instance}: Props) => {
                     ))}
 
                     {(assessmentSubmissions.length > 0 || step.resultsType !== "Normal") && (
-                        <FormSummaryAssessment
+                        <AssessmentOverview
                             instanceId={instance.id}
                             submissions={assessmentSubmissions}
                             combine={true}

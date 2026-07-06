@@ -1,11 +1,9 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
-import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
+import {Link} from "@uva-fnwi/datanose-ui";
 
-import {InlineQuestionEdit} from "./InlineQuestionEdit.tsx";
+import {QuestionAnswerRow} from "~/components/instance/QuestionAnswerRow.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {downloadFile} from "~/utils/fileDownload";
-import {formatAnswer} from "~/utils/formatAnswer.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -19,32 +17,19 @@ type Props = {
     canEdit?: boolean;
 };
 
-type EditTarget = {
-    submissionIndex: number;
-    question: string;
-};
-
 export const QuestionAnswerList = ({
     questionAnswerPairs,
     noAnswerText,
     instanceId,
     submissionId,
     isOpen: initialIsOpen = false,
-    colsClass = "grid-cols-2",
+    colsClass = "grid-cols-3",
     collapseAnswers = false,
     canEdit = false,
 }: Props) => {
-    const {i18n, l, t} = useTranslate("workflow");
+    const {t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
-    const [editingQuestion, setEditingQuestion] = useState<EditTarget | null>(null);
-
-    if (collapseAnswers && !isOpen) {
-        return (
-            <Link intent="destructive" underline onClick={() => setIsOpen(true)}>
-                {t("instance.summary.show_answers")}
-            </Link>
-        );
-    }
+    const [expandedLinks, setExpandedLinks] = useState<Set<string>>(new Set());
 
     const arrayOfPairs: QuestionAnswerPair[][] = Array.isArray(questionAnswerPairs[0])
         ? (questionAnswerPairs as QuestionAnswerPair[][])
@@ -53,106 +38,108 @@ export const QuestionAnswerList = ({
     // Use the first submission's questions as the row definitions
     const questions = arrayOfPairs[0] ?? [];
 
+    const linkedQuestionsMap = useMemo(() => {
+        const map = new Map<string, number[]>();
+        questions.forEach(({question}, index) => {
+            if (question.linkedTo) {
+                const existing = map.get(question.linkedTo) ?? [];
+                map.set(question.linkedTo, [...existing, index]);
+            }
+        });
+        return map;
+    }, [questions]);
+
+    const toggleLinkedQuestion = (questionName: string) => {
+        setExpandedLinks((prev) => {
+            const next = new Set(prev);
+            if (next.has(questionName)) {
+                next.delete(questionName);
+            } else {
+                next.add(questionName);
+            }
+            return next;
+        });
+    };
+
+    if (collapseAnswers && !isOpen) {
+        return (
+            <Link intent="destructive" underline onClick={() => setIsOpen(true)}>
+                {t("instance.summary.show_answers")}
+            </Link>
+        );
+    }
     return (
         <div className="flex flex-col gap-2">
-            {questions.map(({question, percentage}, rowIndex) => (
-                <div key={question.name} className={`grid gap-4 ${colsClass}`}>
-                    <Text className="min-w-0 wrap-break-word">
-                        {l(question.text)}
-                        {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                    </Text>
-
-                    {arrayOfPairs.map((submission, submissionIndex) => {
-                        const pair = submission[rowIndex];
-                        if (!pair) return <span></span>;
-                        const {answer} = pair;
-                        const formattedValue =
-                            answer != null
-                                ? formatAnswer(
-                                      answer.value,
-                                      question.type,
-                                      i18n.language,
-                                      question.choices,
-                                  )
-                                : noAnswerText;
-
-                        if (
-                            editingQuestion?.question === question.name &&
-                            editingQuestion?.submissionIndex === submissionIndex
-                        ) {
-                            return (
-                                <InlineQuestionEdit
-                                    question={question}
-                                    answer={answer}
-                                    instanceId={instanceId}
-                                    submissionId={pair.submission?.id ?? submissionId ?? ""}
-                                    onClose={() => setEditingQuestion(null)}
-                                />
-                            );
-                        }
-
-                        return question.type === "File" && answer != null ? (
-                            answer.value != null ? (
-                                <Link
-                                    key={submissionIndex}
-                                    intent="primary"
-                                    underline
-                                    className="truncate"
-                                    onClick={() =>
-                                        downloadFile(
-                                            answer.files[0],
-                                            question.name,
-                                            instanceId,
-                                            submissionId,
-                                        )
-                                    }
-                                >
-                                    {formattedValue}
-                                </Link>
-                            ) : (
-                                <Text
-                                    className="min-w-0 wrap-break-word whitespace-pre-wrap"
-                                    key={submissionIndex}
-                                >
-                                    {formattedValue ? formattedValue : "-"}
-                                </Text>
-                            )
-                        ) : (
-                            <div key={submissionIndex} className="min-w-0">
-                                <Text
-                                    as="span"
-                                    display="inline"
-                                    className="wrap-break-word whitespace-pre-wrap"
-                                >
-                                    {formattedValue ? formattedValue : "-"}
-                                </Text>
-                                {(canEdit || pair.submission?.permissions.includes("Edit")) && (
-                                    <Button
-                                        intent="ghost"
-                                        size="small"
-                                        shape="circular"
-                                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                        onClick={() =>
-                                            setEditingQuestion({
-                                                submissionIndex,
-                                                question: question.name,
-                                            })
-                                        }
-                                        aria-label={t("instance.summary.edit_answer")}
-                                    >
-                                        <Icon name="edit-line" size="xs" color="danger" />
-                                    </Button>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            ))}
             {collapseAnswers && (
-                <Link intent="destructive" underline onClick={() => setIsOpen(false)}>
+                <Link
+                    intent="destructive"
+                    underline
+                    onClick={() => {
+                        setIsOpen(false);
+                        setExpandedLinks(new Set());
+                    }}
+                >
                     {t("instance.summary.hide_answers")}
                 </Link>
             )}
+            {questions.map(({question, percentage}, rowIndex) => {
+                const linkedIndices = linkedQuestionsMap.get(question.name) ?? [];
+                const isExpanded = expandedLinks.has(question.name);
+
+                if (question.linkedTo) return null;
+
+                return (
+                    <div key={question.name} className="flex flex-col gap-2">
+                        <QuestionAnswerRow
+                            question={question}
+                            percentage={percentage}
+                            colsClass={colsClass}
+                            rowIndex={rowIndex}
+                            canEdit={canEdit}
+                            arrayOfPairs={arrayOfPairs}
+                            noAnswerText={noAnswerText}
+                            instanceId={instanceId}
+                            submissionId={submissionId}
+                        />
+                        {linkedIndices.length > 0 && (
+                            <>
+                                <Link
+                                    intent="destructive"
+                                    underline
+                                    onClick={() => toggleLinkedQuestion(question.name)}
+                                >
+                                    {isExpanded
+                                        ? t("instance.summary.hide_linked")
+                                        : t("instance.summary.show_linked")}
+                                </Link>
+                                {isExpanded && (
+                                    <div className="flex flex-col gap-2 py-2">
+                                        {linkedIndices.map((linkedIndex) => {
+                                            const {question: lq, percentage: lp} =
+                                                questions[linkedIndex];
+                                            return (
+                                                <QuestionAnswerRow
+                                                    key={lq.name}
+                                                    question={lq}
+                                                    percentage={lp}
+                                                    colsClass="grid-cols-1"
+                                                    rowIndex={linkedIndex}
+                                                    canEdit={canEdit}
+                                                    arrayOfPairs={arrayOfPairs}
+                                                    noAnswerText={noAnswerText}
+                                                    instanceId={instanceId}
+                                                    submissionId={submissionId}
+                                                    isLinkedRow={true}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                );
+            })}
         </div>
     );
 };

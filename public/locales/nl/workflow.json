@@ -64,9 +64,12 @@
     "summary": {
       "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
+      "explanation": "Toelichting",
       "hide_answers": "Verberg onderdelen en toelichting",
+      "hide_linked": "Verberg toelichtingen",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
+      "show_linked": "Toon toelichtingen",
       "title": "Samenvatting"
     },
     "workflowInstance": "Workflow"

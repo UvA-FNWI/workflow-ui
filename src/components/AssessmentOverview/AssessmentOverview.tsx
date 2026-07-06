@@ -1,7 +1,7 @@
-import {Button, Callout, Heading, Icon, Separator, Text, Tooltip} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
-import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
-import {PageControl} from "~/components/instance/PageControl.tsx";
+import {QuestionAnswerList} from "../instance/QuestionAnswerList.tsx";
+import {AssessmentFinalOverview} from "~/components/AssessmentOverview/AssessmentFinalOverview.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
@@ -18,13 +18,7 @@ type Props = {
     combine: boolean;
 };
 
-export const FormSummaryAssessment = ({
-    instanceId,
-    submissions,
-    onEditPage,
-    step,
-    combine,
-}: Props) => {
+export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, combine}: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
     const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
@@ -49,54 +43,12 @@ export const FormSummaryAssessment = ({
     }
 
     if (step?.resultsType === "AssessmentFinalOverview") {
-        if (!assessmentResults.finalGrade) return null;
         return (
-            <div className="mt-4 flex flex-col gap-2">
-                {assessmentResults.parts.map((part) => (
-                    <div className="grid grid-cols-2 gap-4">
-                        <Text size="md" fontWeight="semibold" className="py-1">
-                            {`${l(part.title)} (${part.percentage}%):`}
-                        </Text>
-                        <Text size="md" className="py-1" fontWeight="semibold">
-                            {part.combined?.weightedAverage}
-                        </Text>
-                    </div>
-                ))}
-                <div className="grid grid-cols-2 gap-4">
-                    <Text size="lg" fontWeight="semibold" className="py-1">
-                        {t("instance.calculations.final_grade")}:
-                    </Text>
-                    <Text size="lg" fontWeight="semibold" className="py-1">
-                        {assessmentResults.finalGrade?.calculated ? (
-                            <Tooltip
-                                content={
-                                    t("instance.calculations.calculated_grade") +
-                                    assessmentResults.finalGrade.calculated.toFixed(5)
-                                }
-                            >
-                                <span>
-                                    {l(assessmentResults?.finalGrade?.text) ??
-                                        assessmentResults?.finalGrade.rounded ??
-                                        "-"}
-                                </span>
-                            </Tooltip>
-                        ) : (
-                            (l(assessmentResults?.finalGrade?.text) ??
-                            assessmentResults?.finalGrade.rounded ??
-                            "-")
-                        )}
-                    </Text>
-                </div>
-                <Separator weight="bold" className="my-4" />
-                {submissions[0]?.form.pages.length == 1 && (
-                    <PageControl
-                        instanceId={instanceId}
-                        submissionId={submissions[0].id}
-                        page={submissions[0].form.pages[0]}
-                        showTitle={false}
-                    />
-                )}
-            </div>
+            <AssessmentFinalOverview
+                assessmentResults={assessmentResults}
+                instanceId={instanceId}
+                submission={submissions[0]}
+            />
         );
     }
 
@@ -113,17 +65,18 @@ export const FormSummaryAssessment = ({
     const form = assessmentResults.parts[0]?.form ?? submissions[0]?.form;
 
     const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
-    const colsClass = colsList[assessmentSubmissions?.length ?? 1];
+    const colsClass =
+        colsList[assessmentSubmissions?.length ? assessmentSubmissions.length + 1 : 1];
 
     return (
         <div className="overflow-x-auto">
-            <div className="flex min-w-xl flex-col gap-6">
+            <div className="flex flex-col gap-6">
                 {/* Assessment columns header */}
                 {assessmentSubmissions.length > 1 && (
                     <div className={`grid gap-4 ${colsClass}`}>
-                        <div></div>
+                        <div className="col-span-2"></div>
                         {assessmentSubmissions.map((assessmentPart) => (
-                            <div key={assessmentPart.id} className="w-48">
+                            <div key={assessmentPart.id}>
                                 <Text fontWeight="normal" size="lg" intent="error">
                                     {l(assessmentPart.title)?.toUpperCase()}{" "}
                                     {assessmentPart.percentage && `(${assessmentPart.percentage}%)`}
@@ -140,6 +93,7 @@ export const FormSummaryAssessment = ({
                             sourceResult.pageResults.find((p) => p.name === page.name)
                                 ?.questionResults ?? [],
                             submissions.find((s) => s.id == sourceResult.id),
+                            sourceResult.title,
                         ),
                     );
 
@@ -152,12 +106,12 @@ export const FormSummaryAssessment = ({
                     );
 
                     return (
-                        <div key={index} className="contents">
+                        <div key={index} className="flex flex-col gap-2">
                             {/* Page title with edit button */}
                             <div className={`grid gap-4 ${colsClass} w-full max-w-full`}>
-                                <div className="flex items-center">
-                                    <Heading size="xs" className="font-semibold">
-                                        {l(page.title)?.toUpperCase()}
+                                <div className="col-span-2 flex items-center">
+                                    <Heading size="xs" className="font-semibold" fontType="heading">
+                                        {l(page.title)}
                                         {(firstPageResult?.questionResults?.filter((q) => q.weight)
                                             .length ?? 0) > 0 &&
                                             ` (${firstPageResult?.questionResults.reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
@@ -225,7 +179,7 @@ export const FormSummaryAssessment = ({
 
                 {hasWeightedAverage && (
                     <div className={`grid gap-4 ${colsClass}`}>
-                        <Text fontWeight="semibold" size="xl">
+                        <Text fontWeight="semibold" size="xl" className="col-span-2">
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
                         {assessmentSubmissions.map((sourceResult) => (

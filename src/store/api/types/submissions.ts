@@ -75,6 +75,7 @@ export type Question = {
     allowsExternalUsers: boolean;
     rubric?: RubricEntry[];
     sorting?: Sorting;
+    linkedTo?: string;
 };
 
 export type SortDirection = "Ascending" | "Descending";

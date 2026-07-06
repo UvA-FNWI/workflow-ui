@@ -33,7 +33,7 @@ const headingVariants = cva('ui:m-0 ui:p-0', {
     {
       size: 'xs',
       fontType: 'heading',
-      className: 'ui:font-body',
+      className: 'ui:font-heading',
     },
   ],
 });
