@@ -14,7 +14,6 @@ type Props = {
     submissions: Submission[];
     onEditPage?: (pageName: string) => void;
     step?: WorkflowStep;
-    collapseAnswers?: boolean;
     combine: boolean;
 };
 
@@ -32,8 +31,6 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
         combine,
     });
 
-    const resultsType = step?.resultsType ?? "Normal";
-
     if (!assessmentResults || !assessmentResults?.parts || assessmentResults?.parts?.length == 0) {
         return (
             <div className="my-4">
@@ -41,12 +38,11 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
             </div>
         );
     }
-    console.log("submissions", submissions);
 
     if (step?.resultsType === "AssessmentFinalOverview") {
         return (
             <div className="flex flex-col gap-2">
-                <AssessmentFinalOverview instanceId={instanceId} combine={combine} />
+                <AssessmentFinalOverview assessmentResults={assessmentResults} />
                 {submissions[0]?.form.pages.length == 1 && (
                     <PageControl
                         instanceId={instanceId}
@@ -71,9 +67,8 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
 
     const form = assessmentResults.parts[0]?.form ?? submissions[0]?.form;
 
-    const colsList = ["grid-cols-1", "grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5"];
-    const colsClass =
-        colsList[assessmentSubmissions?.length ? assessmentSubmissions.length + 1 : 1];
+    const colsList = ["grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5", "grid-cols-6"]; // +1 for the first column which stretches two columns
+    const colsClass = colsList[assessmentSubmissions?.length ?? 1];
 
     return (
         <div className="overflow-x-auto">
@@ -93,15 +88,13 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
                     </div>
                 )}
                 {/* Assessment page sections */}
-                {form?.pages.map((page, index) => (
+                {form?.pages.map((page) => (
                     <AssessmentPageSection
                         page={page}
                         assessmentSubmissions={assessmentSubmissions}
                         submissions={submissions}
-                        form={form}
-                        index={index}
                         onEditPage={onEditPage}
-                        resultsType={resultsType}
+                        resultsType={step?.resultsType ?? "Normal"}
                         instanceId={instanceId}
                         colsClass={colsClass}
                     />

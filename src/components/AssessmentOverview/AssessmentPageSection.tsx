@@ -3,32 +3,31 @@ import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/AssessmentQuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
-import type {Form, Page, StepResultsType, Submission} from "~/store/api/types/submissions.ts";
+import type {Page, StepResultsType, Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 export type AssessmentPageSectionProps = {
     page: Page;
     submissions: Submission[];
     assessmentSubmissions: SourceResult[];
-    form: Form;
     instanceId: string;
-    index: number;
     colsClass?: string;
     onEditPage?: (pageName: string) => void;
     resultsType?: StepResultsType;
+    isLastPage?: boolean;
 };
 export const AssessmentPageSection = ({
     page,
     submissions,
     assessmentSubmissions,
-    form,
     instanceId,
-    index,
     onEditPage,
     resultsType,
+    isLastPage = false,
     colsClass = "grid-cols-1",
 }: AssessmentPageSectionProps) => {
     const {t, l, i18n} = useTranslate("workflow");
+
     const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
         getVisibleQuestionAnswerPairs(
             page.questions,
@@ -45,7 +44,6 @@ export const AssessmentPageSection = ({
 
     const firstPageResult = assessmentSubmissions[0]?.pageResults.find((p) => p.name === page.name);
 
-    console.log("INDEX", index, page.index);
     return (
         <div key={page.index} className="flex flex-col gap-2">
             {/* Page title with edit button */}
@@ -72,6 +70,7 @@ export const AssessmentPageSection = ({
                     )}
                 </div>
 
+                {/* Weighted averages for the page for each submission */}
                 {assessmentSubmissions.map((sourceResult) => {
                     const pageResult = sourceResult.pageResults.find((p) => p.name === page.name);
                     return (
@@ -101,7 +100,7 @@ export const AssessmentPageSection = ({
                     collapseAnswers={true}
                 />
             )}
-            <Separator weight={index == form.pages.length - 1 ? "bold" : "normal"} />
+            <Separator weight={isLastPage ? "bold" : "normal"} />
         </div>
     );
 };

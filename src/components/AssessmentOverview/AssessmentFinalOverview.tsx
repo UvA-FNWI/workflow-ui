@@ -1,28 +1,14 @@
 import {Separator, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
+import type {Assessment} from "~/store/api/types/assessments.ts";
 
 type Props = {
-    instanceId: string;
-    combine: boolean;
+    assessmentResults: Assessment;
 };
 
-export const AssessmentFinalOverview = ({instanceId, combine}: Props) => {
+export const AssessmentFinalOverview = ({assessmentResults}: Props) => {
     const {t, l} = useTranslate("workflow");
-
-    const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
-        instanceId,
-        combine,
-    });
-
-    if (!assessmentResults || !assessmentResults?.parts || assessmentResults?.parts?.length == 0) {
-        return (
-            <div className="my-4">
-                <Text className="italic">{t("instance.empty_step")}</Text>
-            </div>
-        );
-    }
 
     if (!assessmentResults.finalGrade) return null;
     return (
