@@ -1,8 +1,8 @@
 import {useMemo, useState} from "react";
 
-import {Link} from "@uva-fnwi/datanose-ui";
+import {Link, Text} from "@uva-fnwi/datanose-ui";
 
-import {QuestionAnswerRow} from "~/components/AssessmentOverview/QuestionAnswerRow.tsx";
+import {AnswerCell} from "~/components/AssessmentOverview/AnswerCell.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
@@ -27,16 +27,20 @@ export const AssessmentQuestionAnswerList = ({
     collapseAnswers = false,
     canEdit = false,
 }: Props) => {
-    const {t} = useTranslate("workflow");
+    const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
     const [expandedLinks, setExpandedLinks] = useState<Set<string>>(new Set());
 
-    const arrayOfPairs: QuestionAnswerPair[][] = Array.isArray(questionAnswerPairs[0])
-        ? (questionAnswerPairs as QuestionAnswerPair[][])
-        : [questionAnswerPairs as QuestionAnswerPair[]];
+    const arrayOfPairs: QuestionAnswerPair[][] = useMemo(
+        () =>
+            Array.isArray(questionAnswerPairs[0])
+                ? (questionAnswerPairs as QuestionAnswerPair[][])
+                : [questionAnswerPairs as QuestionAnswerPair[]],
+        [questionAnswerPairs],
+    );
 
     // Use the first submission's questions as the row definitions
-    const questions = arrayOfPairs[0] ?? [];
+    const questions = useMemo(() => arrayOfPairs[0] ?? [], [arrayOfPairs]);
 
     const linkedQuestionsMap = useMemo(() => {
         const map = new Map<string, number[]>();
@@ -83,24 +87,35 @@ export const AssessmentQuestionAnswerList = ({
                 </Link>
             )}
             {questions.map(({question, percentage}, rowIndex) => {
+                if (question.linkedTo) return null;
+
                 const linkedIndices = linkedQuestionsMap.get(question.name) ?? [];
                 const isExpanded = expandedLinks.has(question.name);
 
-                if (question.linkedTo) return null;
-
                 return (
                     <div key={question.name} className="flex flex-col gap-2">
-                        <QuestionAnswerRow
-                            question={question}
-                            percentage={percentage}
-                            colsClass={colsClass}
-                            rowIndex={rowIndex}
-                            canEdit={canEdit}
-                            arrayOfPairs={arrayOfPairs}
-                            noAnswerText={noAnswerText}
-                            instanceId={instanceId}
-                            submissionId={submissionId}
-                        />
+                        <div className={`grid gap-4 ${colsClass}`}>
+                            <Text
+                                fontWeight="semibold"
+                                className="col-span-2 min-w-0 wrap-break-word"
+                            >
+                                {l(question.text)}
+                                {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
+                            </Text>
+                            {arrayOfPairs.map((submission, submissionIndex) => {
+                                return (
+                                    <AnswerCell
+                                        key={submissionIndex}
+                                        question={question}
+                                        pair={submission[rowIndex]}
+                                        canEdit={canEdit}
+                                        noAnswerText={noAnswerText}
+                                        instanceId={instanceId}
+                                        submissionId={submissionId}
+                                    />
+                                );
+                            })}
+                        </div>
                         {linkedIndices.length > 0 && (
                             <>
                                 <Link
@@ -118,19 +133,28 @@ export const AssessmentQuestionAnswerList = ({
                                             const {question: lq, percentage: lp} =
                                                 questions[linkedIndex];
                                             return (
-                                                <QuestionAnswerRow
-                                                    key={lq.name}
-                                                    question={lq}
-                                                    percentage={lp}
-                                                    colsClass="grid-cols-1"
-                                                    rowIndex={linkedIndex}
-                                                    canEdit={canEdit}
-                                                    arrayOfPairs={arrayOfPairs}
-                                                    noAnswerText={noAnswerText}
-                                                    instanceId={instanceId}
-                                                    submissionId={submissionId}
-                                                    isLinkedRow={true}
-                                                />
+                                                <div key={lq.name} className="flex flex-col gap-2">
+                                                    {lp && (
+                                                        <Text fontWeight="semibold">
+                                                            {lq.text && `${l(lq.text)} `}
+                                                            {`(${lp.toLocaleString(i18n.language)}%)`}
+                                                        </Text>
+                                                    )}
+                                                    {arrayOfPairs.map(
+                                                        (submission, submissionIndex) => (
+                                                            <AnswerCell
+                                                                key={submissionIndex}
+                                                                question={lq}
+                                                                pair={submission[linkedIndex]}
+                                                                canEdit={canEdit}
+                                                                noAnswerText={noAnswerText}
+                                                                instanceId={instanceId}
+                                                                submissionId={submissionId}
+                                                                isLinkedRow={true}
+                                                            />
+                                                        ),
+                                                    )}
+                                                </div>
                                             );
                                         })}
                                     </div>
