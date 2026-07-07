@@ -2,7 +2,7 @@ import {useMemo, useState} from "react";
 
 import {Link} from "@uva-fnwi/datanose-ui";
 
-import {QuestionAnswerRow} from "~/components/instance/QuestionAnswerRow.tsx";
+import {QuestionAnswerRow} from "~/components/AssessmentOverview/QuestionAnswerRow.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
@@ -113,7 +113,7 @@ export const AssessmentQuestionAnswerList = ({
                                         : t("instance.summary.show_linked")}
                                 </Link>
                                 {isExpanded && (
-                                    <div className="flex flex-col gap-2 py-2">
+                                    <div className="flex flex-col gap-2 border-l-2 border-grey-300 py-2 pl-4">
                                         {linkedIndices.map((linkedIndex) => {
                                             const {question: lq, percentage: lp} =
                                                 questions[linkedIndex];
