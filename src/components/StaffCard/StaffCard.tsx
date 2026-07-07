@@ -16,13 +16,13 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
     return (
         <Disclosure>
             <Disclosure.Header>
-                <Heading>{t("staff_card.title")}</Heading>
+                <Heading size="sm">{t("staff_card.title")}</Heading>
             </Disclosure.Header>
-            <Disclosure.Content>
+            <Disclosure.Content padding="lg" className="flex flex-col gap-4">
                 {relatedUserGroups.length > 0 &&
                     relatedUserGroups.map((group, group_index) => (
                         <div key={`related_${group_index}`}>
-                            <Heading size="sm" className="my-4">
+                            <Heading size="sm" className="mb-4 empty:hidden">
                                 {l(group.title)}
                             </Heading>
                             {group.users.map((relatedUser, user_index) => (
