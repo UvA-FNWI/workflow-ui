@@ -10,6 +10,9 @@ import {
 import { useDatePickerState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
+import { InputDescription } from '../Input/InputDescription';
+import { InputError } from '../Input/InputError';
+import { InputLabel } from '../Input/InputLabel';
 import { inputVariants } from '../Input/InputVariant';
 import { Popover } from '../Popover/Popover';
 import { Calendar } from './Calendar';
@@ -132,14 +135,7 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
 
   return (
     <div className="ui:w-full">
-      {label && (
-        <label
-          {...labelProps}
-          className="ui:mb-1 ui:block ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
-        >
-          {label}
-        </label>
-      )}
+      {label && <InputLabel {...labelProps}>{label}</InputLabel>}
       <div
         {...groupProps}
         className={cn(
@@ -165,20 +161,10 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
         </Popover>
       )}
       {description && (
-        <div
-          {...descriptionProps}
-          className="ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
-        >
-          {description}
-        </div>
+        <InputDescription {...descriptionProps}>{description}</InputDescription>
       )}
       {errorMessage && !isValid && (
-        <div
-          {...errorMessageProps}
-          className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"
-        >
-          {errorMessage}
-        </div>
+        <InputError {...errorMessageProps}>{errorMessage}</InputError>
       )}
     </div>
   );

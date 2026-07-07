@@ -13,6 +13,9 @@ import { RadioGroupState, useRadioGroupState } from 'react-stately';
 import { cva, VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
+import { InputDescription } from '../Input/InputDescription';
+import { InputError } from '../Input/InputError';
+import { InputLabel } from '../Input/InputLabel';
 import { Text } from '../Text/Text';
 
 // Context for sharing RadioGroup state
@@ -196,7 +199,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
     defaultValue,
     onChange,
     isDisabled,
-    validationState: isValid === false ? 'invalid' : 'valid',
+    validationState: !isValid ? 'invalid' : 'valid',
     name,
   });
 
@@ -205,9 +208,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
       {
         label,
         description,
-        errorMessage: isValid === false ? errorMessage : undefined,
+        errorMessage: !isValid ? errorMessage : undefined,
         isDisabled,
-        validationState: isValid === false ? 'invalid' : 'valid',
+        validationState: !isValid ? 'invalid' : 'valid',
         orientation,
         name,
       },
@@ -216,21 +219,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   return (
     <div {...radioGroupProps} className="ui:flex ui:flex-col ui:gap-2">
-      {label && (
-        <span
-          {...labelProps}
-          className="ui:text-sm ui:font-medium ui:text-black ui:dark:text-white"
-        >
-          {label}
-        </span>
-      )}
+      {label && <InputLabel {...labelProps}>{label}</InputLabel>}
       {description && (
-        <span
-          {...descriptionProps}
-          className="ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
-        >
-          {description}
-        </span>
+        <InputDescription {...descriptionProps}>{description}</InputDescription>
       )}
       <RadioGroupContext.Provider value={state}>
         <div
@@ -242,13 +233,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
           {children}
         </div>
       </RadioGroupContext.Provider>
-      {errorMessage && isValid === false && (
-        <span
-          {...errorMessageProps}
-          className="ui:text-sm ui:text-red-600 ui:dark:text-red-400"
-        >
-          {errorMessage}
-        </span>
+      {errorMessage && !isValid && (
+        <InputError {...errorMessageProps}>{errorMessage}</InputError>
       )}
     </div>
   );
