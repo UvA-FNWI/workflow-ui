@@ -51,7 +51,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit, permi
     }
 
     return (
-        <div key={submission.id} className="flex flex-col gap-2">
+        <div key={submission.id} className="flex flex-col gap-6">
             {pages.map((page) => {
                 const questionAnswerPairs = getVisibleQuestionAnswerPairs(
                     page.questions,
@@ -61,8 +61,8 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit, permi
                 return (
                     <div key={page.name} className="py-2">
                         {pages.length > 1 && (
-                            <Heading as="h4" size="xs" className="pb-1 font-semibold">
-                                {l(page.title)}
+                            <Heading as="h4" size="xs" className="pb-2 font-semibold">
+                                {l(page.title)?.toUpperCase()}
                             </Heading>
                         )}
                         <QuestionAnswerList

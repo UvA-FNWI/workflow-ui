@@ -24,18 +24,6 @@ const headingVariants = cva('ui:m-0 ui:p-0', {
     size: 'md',
     fontType: 'heading',
   },
-  compoundVariants: [
-    {
-      size: 'xs',
-      fontType: undefined,
-      className: 'ui:font-body',
-    },
-    {
-      size: 'xs',
-      fontType: 'heading',
-      className: 'ui:font-heading',
-    },
-  ],
 });
 
 type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
@@ -67,12 +55,14 @@ export const Heading = ({
   ...otherProps
 }: PropsWithChildren<HeadingProps>) => {
   const Tag = as || sizeToTag[size ?? 'md'];
+  const fontTypeClass = fontType ?? (size === 'xs' ? 'body' : 'heading');
+
   return (
     <Tag
       className={cn(
         headingVariants({
           size,
-          fontType,
+          fontType: fontTypeClass,
         }),
         className
       )}

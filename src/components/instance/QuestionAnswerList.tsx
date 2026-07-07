@@ -53,9 +53,14 @@ export const QuestionAnswerList = ({
 
                 return (
                     <div key={question.name} className="grid grid-cols-2 gap-4">
-                        <Text fontWeight="semibold" className="min-w-0 wrap-break-word">
+                        <Text
+                            fontWeight="semibold"
+                            className="min-w-0 wrap-break-word"
+                            color="text-grey-900"
+                        >
                             {l(question.text)}
                             {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
+                            {":"}
                         </Text>
 
                         {editingQuestion === question.name && (
