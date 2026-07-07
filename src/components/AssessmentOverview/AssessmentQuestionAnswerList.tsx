@@ -90,6 +90,7 @@ export const AssessmentQuestionAnswerList = ({
                 if (question.linkedTo) return null;
 
                 const linkedIndices = linkedQuestionsMap.get(question.name) ?? [];
+                const isMultiSubmission = arrayOfPairs.length > 1;
                 const isExpanded = expandedLinks.has(question.name);
 
                 return (
@@ -118,16 +119,18 @@ export const AssessmentQuestionAnswerList = ({
                         </div>
                         {linkedIndices.length > 0 && (
                             <>
-                                <Link
-                                    intent="destructive"
-                                    underline
-                                    onClick={() => toggleLinkedQuestion(question.name)}
-                                >
-                                    {isExpanded
-                                        ? t("instance.summary.hide_linked")
-                                        : t("instance.summary.show_linked")}
-                                </Link>
-                                {isExpanded && (
+                                {isMultiSubmission && (
+                                    <Link
+                                        intent="destructive"
+                                        underline
+                                        onClick={() => toggleLinkedQuestion(question.name)}
+                                    >
+                                        {isExpanded
+                                            ? t("instance.summary.hide_linked")
+                                            : t("instance.summary.show_linked")}
+                                    </Link>
+                                )}
+                                {(isExpanded || !isMultiSubmission) && (
                                     <div className="flex flex-col gap-2 border-l-2 border-grey-300 py-2 pl-4">
                                         {linkedIndices.map((linkedIndex) => {
                                             const {question: lq, percentage: lp} =
@@ -150,7 +153,9 @@ export const AssessmentQuestionAnswerList = ({
                                                                 noAnswerText={noAnswerText}
                                                                 instanceId={instanceId}
                                                                 submissionId={submissionId}
-                                                                isLinkedRow={true}
+                                                                showLinkedTitle={
+                                                                    arrayOfPairs.length > 1
+                                                                }
                                                             />
                                                         ),
                                                     )}

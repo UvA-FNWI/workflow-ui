@@ -16,7 +16,7 @@ type Props = {
     noAnswerText?: string;
     instanceId: string;
     submissionId?: string;
-    isLinkedRow?: boolean;
+    showLinkedTitle?: boolean;
 };
 
 export const AnswerCell = ({
@@ -26,7 +26,7 @@ export const AnswerCell = ({
     noAnswerText,
     instanceId,
     submissionId,
-    isLinkedRow = false,
+    showLinkedTitle = false,
 }: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isEditing, setIsEditing] = useState(false);
@@ -78,7 +78,7 @@ export const AnswerCell = ({
 
     return (
         <div className="flex min-w-0 flex-col">
-            {isLinkedRow && (
+            {showLinkedTitle && (
                 <div>
                     <Text fontWeight="semibold" className="mb-1">
                         {t("instance.summary.explanation")}
