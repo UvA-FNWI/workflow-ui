@@ -113,10 +113,7 @@ describe("getSubmissionsToShow", () => {
         // getSubmissionsToShow falls back to single version's submissions
         const shown = getSubmissionsToShow([], step);
         expect(shown).toEqual([sub1, sub2]);
-
-        // With only 1 version, version history should NOT render (versions.length <= 1)
-        // This prevents the same submissions appearing in both FormSummary and VersionHistory
-        expect(step.versions!.length).toBe(1);
+        // Note: version history rendering (versions.length > 1 guard) is in StepCardBody
     });
 });
 
