@@ -1,18 +1,28 @@
 import {Separator, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
-import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {Assessment} from "~/store/api/types/assessments.ts";
-import type {Submission} from "~/store/api/types/submissions.ts";
+import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 
 type Props = {
-    assessmentResults: Assessment;
     instanceId: string;
-    submission: Submission;
+    combine: boolean;
 };
 
-export const AssessmentFinalOverview = ({assessmentResults, instanceId, submission}: Props) => {
+export const AssessmentFinalOverview = ({instanceId, combine}: Props) => {
     const {t, l} = useTranslate("workflow");
+
+    const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
+        instanceId,
+        combine,
+    });
+
+    if (!assessmentResults || !assessmentResults?.parts || assessmentResults?.parts?.length == 0) {
+        return (
+            <div className="my-4">
+                <Text className="italic">{t("instance.empty_step")}</Text>
+            </div>
+        );
+    }
 
     if (!assessmentResults.finalGrade) return null;
     return (
@@ -53,14 +63,6 @@ export const AssessmentFinalOverview = ({assessmentResults, instanceId, submissi
                 </Text>
             </div>
             <Separator weight="bold" className="my-4" />
-            {submission?.form.pages.length == 1 && (
-                <PageControl
-                    instanceId={instanceId}
-                    submissionId={submission.id}
-                    page={submission.form.pages[0]}
-                    showTitle={false}
-                />
-            )}
         </div>
     );
 };

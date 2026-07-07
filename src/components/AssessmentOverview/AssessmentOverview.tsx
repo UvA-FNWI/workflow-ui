@@ -2,6 +2,7 @@ import {Callout, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentFinalOverview} from "~/components/AssessmentOverview/AssessmentFinalOverview.tsx";
 import {AssessmentPageSection} from "~/components/AssessmentOverview/AssessmentPageSection.tsx";
+import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
@@ -40,14 +41,21 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
             </div>
         );
     }
+    console.log("submissions", submissions);
 
     if (step?.resultsType === "AssessmentFinalOverview") {
         return (
-            <AssessmentFinalOverview
-                assessmentResults={assessmentResults}
-                instanceId={instanceId}
-                submission={submissions[0]}
-            />
+            <div className="flex flex-col gap-2">
+                <AssessmentFinalOverview instanceId={instanceId} combine={combine} />
+                {submissions[0]?.form.pages.length == 1 && (
+                    <PageControl
+                        instanceId={instanceId}
+                        submissionId={submissions[0].id}
+                        page={submissions[0].form.pages[0]}
+                        showTitle={false}
+                    />
+                )}
+            </div>
         );
     }
 
