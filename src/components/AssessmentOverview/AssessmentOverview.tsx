@@ -56,7 +56,10 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
     }
 
     const assessmentSubmissions = assessmentResults.parts
-        .flatMap((part) => [...(part.sourceResults ?? []), part.combined])
+        .flatMap((part) => {
+            const sources = part.sourceResults ?? [];
+            return sources.length > 1 ? [...sources, part.combined] : sources;
+        })
         .filter(
             (sourceResult) => sourceResult && sourceResult.pageResults?.length > 0,
         ) as SourceResult[];
