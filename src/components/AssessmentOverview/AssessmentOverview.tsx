@@ -72,7 +72,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
 
     return (
         <div className="overflow-x-auto">
-            <div className="flex flex-col gap-6">
+            <div className="mt-4 flex flex-col gap-6">
                 {/* Assessment columns header */}
                 {assessmentSubmissions.length > 1 && (
                     <div className={`grid gap-4 ${colsClass}`}>
