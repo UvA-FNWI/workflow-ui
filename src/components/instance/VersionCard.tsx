@@ -66,7 +66,6 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                                         )}
                                         <QuestionAnswerList
                                             questionAnswerPairs={questionAnswerPairs}
-                                            noAnswerText={t("version_card.no_answer")}
                                             instanceId={instanceId}
                                             submissionId={submission.id}
                                         />

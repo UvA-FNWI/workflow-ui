@@ -2,7 +2,7 @@ import {useMemo, useState} from "react";
 
 import {Link, Text} from "@uva-fnwi/datanose-ui";
 
-import {AnswerCell} from "~/components/AssessmentOverview/AnswerCell.tsx";
+import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 

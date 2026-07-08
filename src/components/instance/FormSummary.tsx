@@ -18,7 +18,7 @@ type Props = {
 };
 
 export const FormSummary = ({instanceId, submission, onEditPage, onSubmit, permissions}: Props) => {
-    const {t, l} = useTranslate("workflow");
+    const {l} = useTranslate("workflow");
 
     const effectivePermissions = union(permissions, submission.permissions);
     const canEdit = effectivePermissions.includes("Edit") && submission.dateSubmitted != null;
@@ -67,7 +67,6 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit, permi
                         )}
                         <QuestionAnswerList
                             questionAnswerPairs={questionAnswerPairs}
-                            noAnswerText={t("version_card.no_answer")}
                             instanceId={instanceId}
                             submissionId={submission.id}
                             canEdit={canEdit}
