@@ -37,7 +37,6 @@ export const QuestionAnswerList = ({
                         </Text>
 
                         <AnswerCell
-                            question={question}
                             pair={pair}
                             canEdit={canEdit}
                             submissionId={submissionId}

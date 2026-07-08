@@ -4,14 +4,12 @@ import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {Question} from "~/store/api/types/submissions.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
-    question: Question;
-    pair: QuestionAnswerPair | undefined;
+    pair: QuestionAnswerPair;
     canEdit?: boolean;
     noAnswerText?: string;
     instanceId: string;
@@ -20,7 +18,6 @@ type Props = {
 };
 
 export const AnswerCell = ({
-    question,
     pair,
     canEdit,
     noAnswerText,
@@ -37,14 +34,14 @@ export const AnswerCell = ({
     const {answer} = pair;
     const formattedValue =
         answer != null
-            ? formatAnswer(answer.value, question.type, i18n.language, question.choices)
+            ? formatAnswer(answer.value, pair.question.type, i18n.language, pair.question.choices)
             : noAnswerText;
 
     const answerTitleText = pair.columnTitle ?? pair?.submission?.form?.title;
     if (isEditing) {
         return (
             <InlineQuestionEdit
-                question={question}
+                question={pair.question}
                 answer={answer}
                 instanceId={instanceId}
                 submissionId={pair.submission?.id ?? submissionId ?? ""}
@@ -53,7 +50,7 @@ export const AnswerCell = ({
         );
     }
 
-    if (question.type === "File" && answer != null) {
+    if (pair.question.type === "File" && answer != null) {
         return (
             <div className="min-w-0">
                 {answer.value != null ? (
@@ -62,7 +59,12 @@ export const AnswerCell = ({
                         underline
                         className="truncate"
                         onClick={() =>
-                            downloadFile(answer.files[0], question.name, instanceId, submissionId)
+                            downloadFile(
+                                answer.files[0],
+                                pair.question.name,
+                                instanceId,
+                                submissionId,
+                            )
                         }
                     >
                         {formattedValue}

@@ -94,7 +94,6 @@ export const AssessmentPageSection = ({
             {allQuestionAnswerPairs.flat().length > 0 && (
                 <AssessmentQuestionAnswerList
                     questionAnswerPairs={allQuestionAnswerPairs}
-                    noAnswerText=" "
                     instanceId={instanceId}
                     colsClass={colsClass}
                     collapseAnswers={true}

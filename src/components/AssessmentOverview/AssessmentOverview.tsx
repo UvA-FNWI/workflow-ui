@@ -1,6 +1,6 @@
 import {Callout, Text} from "@uva-fnwi/datanose-ui";
 
-import {AssessmentFinalOverview} from "~/components/AssessmentOverview/AssessmentFinalOverview.tsx";
+import {AssessmentGradeSummary} from "~/components/AssessmentOverview/AssessmentGradeSummary.tsx";
 import {AssessmentPageSection} from "~/components/AssessmentOverview/AssessmentPageSection.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -42,7 +42,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
     if (step?.resultsType === "AssessmentFinalOverview") {
         return (
             <div className="flex flex-col gap-2">
-                <AssessmentFinalOverview assessmentResults={assessmentResults} />
+                <AssessmentGradeSummary assessmentResults={assessmentResults} />
                 {submissions[0]?.form.pages.length == 1 && (
                     <PageControl
                         instanceId={instanceId}

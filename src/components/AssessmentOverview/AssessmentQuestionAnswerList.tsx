@@ -8,7 +8,6 @@ import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
     questionAnswerPairs: QuestionAnswerPair[] | QuestionAnswerPair[][];
-    noAnswerText?: string;
     instanceId: string;
     submissionId?: string;
     isOpen?: boolean;
@@ -19,7 +18,6 @@ type Props = {
 
 export const AssessmentQuestionAnswerList = ({
     questionAnswerPairs,
-    noAnswerText,
     instanceId,
     submissionId,
     isOpen: initialIsOpen = false,
@@ -107,10 +105,9 @@ export const AssessmentQuestionAnswerList = ({
                                 return (
                                     <AnswerCell
                                         key={submissionIndex}
-                                        question={question}
                                         pair={submission[rowIndex]}
                                         canEdit={canEdit}
-                                        noAnswerText={noAnswerText}
+                                        noAnswerText="-"
                                         instanceId={instanceId}
                                         submissionId={submissionId}
                                     />
@@ -147,10 +144,9 @@ export const AssessmentQuestionAnswerList = ({
                                                         (submission, submissionIndex) => (
                                                             <AnswerCell
                                                                 key={submissionIndex}
-                                                                question={lq}
                                                                 pair={submission[linkedIndex]}
                                                                 canEdit={canEdit}
-                                                                noAnswerText={noAnswerText}
+                                                                noAnswerText="-"
                                                                 instanceId={instanceId}
                                                                 submissionId={submissionId}
                                                                 showLinkedTitle={

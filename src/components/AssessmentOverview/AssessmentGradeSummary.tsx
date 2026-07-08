@@ -7,7 +7,7 @@ type Props = {
     assessmentResults: Assessment;
 };
 
-export const AssessmentFinalOverview = ({assessmentResults}: Props) => {
+export const AssessmentGradeSummary = ({assessmentResults}: Props) => {
     const {t, l} = useTranslate("workflow");
 
     if (!assessmentResults.finalGrade) return null;
