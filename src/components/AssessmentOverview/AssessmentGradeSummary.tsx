@@ -11,18 +11,26 @@ export const AssessmentGradeSummary = ({assessmentResults}: Props) => {
     const {t, l} = useTranslate("workflow");
 
     if (!assessmentResults.finalGrade) return null;
+
     return (
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-4 flex flex-col gap-4">
             {assessmentResults.parts.map((part) => (
-                <div className="grid grid-cols-2 gap-4">
-                    <Text size="md" fontWeight="semibold" className="py-1">
+                <div key={part.id} className="grid grid-cols-2 gap-4">
+                    <Text
+                        fontWeight="semibold"
+                        className="min-w-0 wrap-break-word"
+                        color="text-grey-900"
+                    >
                         {`${l(part.title)} (${part.percentage}%):`}
                     </Text>
-                    <Text size="md" className="py-1" fontWeight="semibold">
+                    <Text as="span" display="inline">
                         {part.combined?.weightedAverage}
                     </Text>
                 </div>
             ))}
+
+            <Separator weight="bold" />
+
             <div className="grid grid-cols-2 gap-4">
                 <Text size="lg" fontWeight="semibold" className="py-1">
                     {t("instance.calculations.final_grade")}:
@@ -48,7 +56,6 @@ export const AssessmentGradeSummary = ({assessmentResults}: Props) => {
                     )}
                 </Text>
             </div>
-            <Separator weight="bold" className="my-4" />
         </div>
     );
 };
