@@ -1,6 +1,6 @@
-import {setImpersonation} from "../authSlice";
+import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
-import type {ImpersonationResult, InstanceSummary, WorkflowInstance} from "./types/instances";
+import type {InstanceSummary, RoleImpersonationResult, WorkflowInstance} from "./types/instances";
 import type {ImpersonationRole} from "./types/submissions";
 
 export const instancesApi = baseApi.injectEndpoints({
@@ -28,7 +28,7 @@ export const instancesApi = baseApi.injectEndpoints({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/roles`,
         }),
         impersonateRole: builder.mutation<
-            ImpersonationResult,
+            RoleImpersonationResult,
             {instanceId: string; roleName: string}
         >({
             query: ({instanceId, roleName}) => ({
@@ -39,7 +39,7 @@ export const instancesApi = baseApi.injectEndpoints({
             async onQueryStarted(_arg, {dispatch, queryFulfilled}) {
                 try {
                     const {data} = await queryFulfilled;
-                    dispatch(setImpersonation(data));
+                    dispatch(setRoleImpersonation(data));
                     window.location.reload();
                 } catch {
                     return;

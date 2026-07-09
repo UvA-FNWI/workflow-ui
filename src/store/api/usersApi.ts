@@ -1,6 +1,8 @@
 import {baseApi} from "./baseApi";
 import type {
     CurrentUserResponse,
+    UpdateUserEmailRequest,
+    UserImpersonationStarted,
     UserSearchResult,
     VerifyEmailRequest,
     VerifyEmailResponse,
@@ -29,6 +31,21 @@ export const usersApi = baseApi.injectEndpoints({
                 body,
             }),
         }),
+        startImpersonation: builder.mutation<UserImpersonationStarted, {userName: string}>({
+            query: (body) => ({
+                url: "/Users/Impersonate",
+                method: "POST",
+                body,
+            }),
+        }),
+        updateUserEmail: builder.mutation<UserSearchResult, UpdateUserEmailRequest>({
+            query: ({userId, email, instanceId}) => ({
+                url: `/Users/${userId}/email`,
+                method: "PUT",
+                body: {email, instanceId},
+            }),
+            invalidatesTags: (_result, _error, {userId}) => [{type: "User", id: userId}],
+        }),
     }),
 });
 
@@ -37,4 +54,6 @@ export const {
     useFindUsersQuery,
     useLazyFindUsersQuery,
     useVerifyEmailMutation,
+    useStartImpersonationMutation,
+    useUpdateUserEmailMutation,
 } = usersApi;

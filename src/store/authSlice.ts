@@ -1,7 +1,8 @@
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 
-import type {ImpersonationResult} from "./api/types/instances";
-import {loadPersistedImpersonationToken} from "./impersonation";
+import type {RoleImpersonationResult} from "./api/types/instances";
+import type {UserImpersonation} from "./api/types/users";
+import {loadPersistedRoleImpersonation, loadPersistedUserImpersonation} from "./impersonation";
 import type {RootState} from "./store";
 
 export type CurrentUser = {
@@ -15,15 +16,18 @@ export type AuthState = {
     accessToken: string | null;
     currentUser: CurrentUser | null;
     showSessionExpiredModal: boolean;
-    /** Single impersonation token. Replaced when impersonating elsewhere. Persisted to localStorage. */
-    impersonation: ImpersonationResult | null;
+    /** Instance-scoped role impersonation token. Replaced when impersonating elsewhere. Persisted to localStorage. */
+    roleImpersonation: RoleImpersonationResult | null;
+    /** Global user impersonation (super admin). Persisted to localStorage. */
+    userImpersonation: UserImpersonation | null;
 };
 
 const initialState: AuthState = {
     accessToken: null,
     currentUser: null,
     showSessionExpiredModal: false,
-    impersonation: loadPersistedImpersonationToken(),
+    roleImpersonation: loadPersistedRoleImpersonation(),
+    userImpersonation: loadPersistedUserImpersonation(),
 };
 
 const authSlice = createSlice({
@@ -33,6 +37,10 @@ const authSlice = createSlice({
         setAccessToken: (state, action: PayloadAction<string | null>) => {
             state.accessToken = action.payload;
             state.showSessionExpiredModal = false;
+            // On logout, stop impersonating.
+            if (action.payload === null) {
+                state.userImpersonation = null;
+            }
         },
         setCurrentUser: (state, action: PayloadAction<CurrentUser | null>) => {
             state.currentUser = action.payload;
@@ -43,11 +51,20 @@ const authSlice = createSlice({
         openSessionExpiredModal: (state) => {
             state.showSessionExpiredModal = true;
         },
-        setImpersonation: (state, action: PayloadAction<ImpersonationResult>) => {
-            state.impersonation = action.payload;
+        setRoleImpersonation: (state, action: PayloadAction<RoleImpersonationResult>) => {
+            state.roleImpersonation = action.payload;
         },
-        clearImpersonation: (state) => {
-            state.impersonation = null;
+        clearRoleImpersonation: (state) => {
+            state.roleImpersonation = null;
+        },
+        setUserImpersonation: (state, action: PayloadAction<UserImpersonation>) => {
+            state.userImpersonation = action.payload;
+            // Becoming another user globally supersedes any instance-role impersonation, which is
+            // bound to the real admin.
+            state.roleImpersonation = null;
+        },
+        clearUserImpersonation: (state) => {
+            state.userImpersonation = null;
         },
     },
 });
@@ -57,17 +74,26 @@ export const {
     setCurrentUser,
     clearCurrentUser,
     openSessionExpiredModal,
-    setImpersonation,
-    clearImpersonation,
+    setRoleImpersonation,
+    clearRoleImpersonation,
+    setUserImpersonation,
+    clearUserImpersonation,
 } = authSlice.actions;
 
 export const selectAccessToken = (state: RootState) => state.auth.accessToken;
 export const selectCurrentUser = (state: RootState) => state.auth.currentUser;
 export const selectShowSessionExpiredModal = (state: RootState) =>
     state.auth.showSessionExpiredModal;
-export const selectImpersonation = (state: RootState) => state.auth.impersonation;
-export const selectImpersonationForInstance = (state: RootState, instanceId: string | undefined) =>
-    state.auth.impersonation?.instanceId === instanceId ? state.auth.impersonation : null;
-export const selectImpersonationToken = (state: RootState) => selectImpersonation(state)?.token;
+export const selectRoleImpersonation = (state: RootState) => state.auth.roleImpersonation;
+export const selectRoleImpersonationForInstance = (
+    state: RootState,
+    instanceId: string | undefined,
+) =>
+    state.auth.roleImpersonation?.instanceId === instanceId ? state.auth.roleImpersonation : null;
+export const selectRoleImpersonationToken = (state: RootState) =>
+    selectRoleImpersonation(state)?.token;
+export const selectUserImpersonation = (state: RootState) => state.auth.userImpersonation;
+export const selectUserImpersonationToken = (state: RootState) =>
+    selectUserImpersonation(state)?.token;
 
 export default authSlice.reducer;

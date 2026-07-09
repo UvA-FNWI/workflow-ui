@@ -2,7 +2,11 @@ import type {BaseQueryFn} from "@reduxjs/toolkit/query";
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 import {VITE_WEBAPI_URL} from "../../helpers/Environment";
-import {selectAccessToken, selectImpersonationToken} from "../authSlice";
+import {
+    selectAccessToken,
+    selectRoleImpersonationToken,
+    selectUserImpersonationToken,
+} from "../authSlice";
 import type {RootState} from "../store";
 import {triggerApiError} from "~/store/errorSlice.ts";
 
@@ -14,9 +18,13 @@ const rawBaseQuery = fetchBaseQuery({
         if (accessToken) {
             headers.set("Authorization", `Bearer ${accessToken}`);
         }
-        const impersonationToken = selectImpersonationToken(state);
-        if (impersonationToken) {
-            headers.set("X-Workflow-Impersonation", impersonationToken);
+        const roleImpersonationToken = selectRoleImpersonationToken(state);
+        if (roleImpersonationToken) {
+            headers.set("X-Workflow-Impersonation", roleImpersonationToken);
+        }
+        const userImpersonationToken = selectUserImpersonationToken(state);
+        if (userImpersonationToken) {
+            headers.set("X-User-Impersonation", userImpersonationToken);
         }
         // The workflow version lives in the URL (?version=) so each tab is independent and
         // it survives the page reloads triggered by impersonation and the auth redirect.

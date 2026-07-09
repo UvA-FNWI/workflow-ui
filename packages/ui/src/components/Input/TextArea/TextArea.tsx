@@ -3,6 +3,8 @@ import { useRef } from 'react';
 import { mergeProps, useFocusRing, useHover, useTextField } from 'react-aria';
 
 import { cn } from '../../../utils/cn';
+import { InputDescription } from '../InputDescription';
+import { InputError } from '../InputError';
 import { InputLabel } from '../InputLabel';
 import { type InputVariantProps, inputVariants } from '../InputVariant';
 
@@ -80,20 +82,10 @@ export const TextArea: React.FC<TextAreaProps> = ({
         className={cn(textareaClasses, 'ui:min-h-28 ui:resize-y', className)}
       />
       {description && (
-        <div
-          {...descriptionProps}
-          className="ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
-        >
-          {description}
-        </div>
+        <InputDescription {...descriptionProps}>{description}</InputDescription>
       )}
       {errorMessage && !isValid && (
-        <div
-          {...errorMessageProps}
-          className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"
-        >
-          {errorMessage}
-        </div>
+        <InputError {...errorMessageProps}>{errorMessage}</InputError>
       )}
     </div>
   );
