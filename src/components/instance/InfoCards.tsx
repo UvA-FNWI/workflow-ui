@@ -58,6 +58,7 @@ export function InfoCards({isLoading, fields}: InfoCardsProps) {
                 onOpenChange={() => setIsAddStaffModalOpen(!isAddStaffModalOpen)}
                 onConfirm={() => console.log("Do something")}
                 instanceFields={fields}
+                allowsExternalUsers={true}
             />
             <Card>
                 {isLoading ? (

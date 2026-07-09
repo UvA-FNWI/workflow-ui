@@ -4,6 +4,7 @@ import {SearchInput} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
+import {useExternalUserPicker} from "~/hooks/useExternalUserPicker.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
@@ -45,8 +46,12 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     onCreateExternalUser,
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
-    const [isOpenExternal, setIsOpenExternal] = useState(false);
-    const [isCreatingExternalUser, setIsCreatingExternalUser] = useState(false);
+    const {
+        isOpen: isOpenExternal,
+        setIsOpen: setIsOpenExternal,
+        isCreating: isCreatingExternalUser,
+        handleConfirm: handleConfirmExternalUser,
+    } = useExternalUserPicker(onCreateExternalUser, () => setIsOpenUserPicker(false));
     const {t} = useTranslate("workflow");
 
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
@@ -89,17 +94,6 @@ export const UserPicker: React.FC<UserPickerProps> = ({
 
     const handleConfirmUserPicker = (selectedUsers: UserSearchResult[]) => {
         onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
-    };
-
-    const handleConfirmExternalUser = async (newUser: CreateExternalUserInput) => {
-        setIsCreatingExternalUser(true);
-        try {
-            await onCreateExternalUser(newUser);
-            setIsOpenExternal(false);
-            setIsOpenUserPicker(false);
-        } finally {
-            setIsCreatingExternalUser(false);
-        }
     };
 
     return (
