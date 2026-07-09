@@ -71,17 +71,17 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
     const form = assessmentResults.parts[0]?.form ?? submissions[0]?.form;
 
     const colsList = ["grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5", "grid-cols-6"]; // +1 for the first column which stretches two columns
-    const colsClass = colsList[assessmentSubmissions?.length ?? 1];
+    const colsClass = `${colsList[assessmentSubmissions?.length ?? 1]} w-full`;
 
     return (
         <div className="overflow-x-auto">
-            <div className="mt-4 flex flex-col gap-6">
+            <div className="mt-4 flex w-full min-w-max flex-col gap-6">
                 {/* Assessment columns header */}
                 {assessmentSubmissions.length > 1 && (
                     <div className={`grid gap-4 ${colsClass}`}>
-                        <div className="col-span-2"></div>
+                        <div className="col-span-2 w-48"></div>
                         {assessmentSubmissions.map((assessmentPart) => (
-                            <div key={assessmentPart.id}>
+                            <div key={assessmentPart.id} className="w-32">
                                 <Text fontWeight="normal" size="lg" intent="error">
                                     {l(assessmentPart.title)?.toUpperCase()}{" "}
                                     {assessmentPart.percentage && `(${assessmentPart.percentage}%)`}
@@ -106,7 +106,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
                 {/* Final grade */}
                 {hasWeightedAverage && (
                     <div className={`grid gap-4 ${colsClass}`}>
-                        <Text fontWeight="semibold" size="xl" className="col-span-2">
+                        <Text fontWeight="semibold" size="xl" className="col-span-2 w-48">
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
                         {assessmentSubmissions.map((sourceResult) => (

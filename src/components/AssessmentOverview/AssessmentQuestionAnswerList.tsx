@@ -80,6 +80,7 @@ export const AssessmentQuestionAnswerList = ({
                         setIsOpen(false);
                         setExpandedLinks(new Set());
                     }}
+                    className="w-48"
                 >
                     {t("instance.summary.hide_answers")}
                 </Link>
@@ -96,7 +97,7 @@ export const AssessmentQuestionAnswerList = ({
                         <div className={`grid gap-4 ${colsClass}`}>
                             <Text
                                 fontWeight="semibold"
-                                className="col-span-2 min-w-0 wrap-break-word"
+                                className="col-span-2 w-48 min-w-0 wrap-break-word"
                             >
                                 {l(question.text)}
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
@@ -121,6 +122,7 @@ export const AssessmentQuestionAnswerList = ({
                                         intent="destructive"
                                         underline
                                         onClick={() => toggleLinkedQuestion(question.name)}
+                                        className="w-48"
                                     >
                                         {isExpanded
                                             ? t("instance.summary.hide_linked")
@@ -128,7 +130,7 @@ export const AssessmentQuestionAnswerList = ({
                                     </Link>
                                 )}
                                 {(isExpanded || !isMultiSubmission) && (
-                                    <div className="flex flex-col gap-2 border-l-2 border-grey-300 py-2 pl-4">
+                                    <div className="flex flex-col gap-2 border-l-2 border-grey-300 py-2 pl-4 contain-[inline-size]">
                                         {linkedIndices.map((linkedIndex) => {
                                             const {question: lq, percentage: lp} =
                                                 questions[linkedIndex];

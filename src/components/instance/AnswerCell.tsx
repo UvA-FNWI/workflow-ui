@@ -106,7 +106,11 @@ export const AnswerCell = ({
                 </div>
             )}
             <div>
-                <Text as="span" display="inline" className="wrap-break-word whitespace-pre-wrap">
+                <Text
+                    as="span"
+                    display="inline"
+                    className="w-32 wrap-break-word whitespace-pre-wrap"
+                >
                     {formattedValue ? formattedValue : "-"}
                 </Text>
                 {(canEdit || pair.submission?.permissions.includes("Edit")) && (
