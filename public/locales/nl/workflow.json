@@ -71,6 +71,7 @@
     },
     "workflowInstance": "Workflow"
   },
+  "make_a_choice": "Maak een keuze",
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
@@ -97,6 +98,17 @@
     "search_placeholder": "Zoeken..."
   },
   "select": "Kies",
+  "staff_card": {
+    "add_modal": {
+      "callout_header": "Informeer de toegevoegde medewerker zelf",
+      "callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
+      "choose_role": "Kies een rol",
+      "choose_staff": "Kies een medewerker",
+      "description": "Je wilt voor het project van {{studentName}} een andere medewerker toewijzen.",
+      "this_student": "deze student",
+      "title": "Medewerker toewijzen"
+    }
+  },
   "status": {
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"

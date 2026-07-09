@@ -14,6 +14,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
 import { Button } from '../Button/Button';
+import { Heading } from '../Heading/Heading';
 import { Icon } from '../Icon';
 
 const modalClassGenerator = cva(
@@ -239,9 +240,7 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         )}
         {...props}
       >
-        <h2 className="ui:text-xl ui:font-semibold ui:text-grey-900 ui:dark:text-white">
-          {children}
-        </h2>
+        <Heading>{children}</Heading>
         {showCloseButton && (
           <Button
             intent="ghost"

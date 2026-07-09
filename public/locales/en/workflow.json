@@ -71,6 +71,7 @@
     },
     "workflowInstance": "Workflow Instance"
   },
+  "make_a_choice": "Make a choice",
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
@@ -97,6 +98,17 @@
     "search_placeholder": "Search..."
   },
   "select": "Select",
+  "staff_card": {
+    "add_modal": {
+      "callout_text": "No automated email is sent. Therefore, inform the employee yourself about their role in this student's project.",
+      "callout_header": "Inform the added staff member yourself",
+      "choose_role": "Choose role",
+      "choose_staff": "Choose staff member",
+      "description": "You want to assign another staff member to the project of {{studentName}}.",
+      "this_student": "this student",
+      "title": "Assign staff member"
+    }
+  },
   "status": {
     "completed_on": "Completed on",
     "submitted": "Submitted"

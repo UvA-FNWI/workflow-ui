@@ -1,8 +1,9 @@
 import {useMemo, useState} from "react";
 
-import {Card, Heading, Icon, Link, Skeleton} from "@uva-fnwi/datanose-ui";
+import {Button, Card, Heading, Icon, Link, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {usefulLinksData} from "./InfoCardsData.tsx";
+import AddStaffModal from "~/components/instance/AddStaffModal.tsx";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowInstanceField} from "~/store/api/types/instances.ts";
 import {getStringField} from "~/utils/fieldUtils.ts";
@@ -15,6 +16,7 @@ interface InfoCardsProps {
 export function InfoCards({isLoading, fields}: InfoCardsProps) {
     const {t, l} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(false);
+    const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
 
     const studyManualUrl = getStringField(fields, "Course.StudyManual");
 
@@ -38,6 +40,25 @@ export function InfoCards({isLoading, fields}: InfoCardsProps) {
 
     return (
         <>
+            <Card>
+                <Heading>
+                    Staff card
+                    <Button
+                        intent="secondary"
+                        variant="destructive"
+                        onClick={() => setIsAddStaffModalOpen(true)}
+                    >
+                        +
+                    </Button>
+                </Heading>
+            </Card>
+
+            <AddStaffModal
+                isOpen={isAddStaffModalOpen}
+                onOpenChange={() => setIsAddStaffModalOpen(!isAddStaffModalOpen)}
+                onConfirm={() => console.log("Do something")}
+                instanceFields={fields}
+            />
             <Card>
                 {isLoading ? (
                     <Skeleton className="h-5 w-28" />

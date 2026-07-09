@@ -217,7 +217,6 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     resetSearch={resetSearch}
                     isLoading={searchState.isLoading || searchState.isFetching}
                     addNewItemVisible={true}
-                    showSearchHint={false}
                     initialSearchQuery={
                         initialUser?.organization?.id === newOrganizationId
                             ? t("search_and_select.add_new")
