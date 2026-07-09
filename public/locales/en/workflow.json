@@ -107,7 +107,11 @@
       "description": "You want to assign another staff member to the project of {{studentName}}.",
       "this_student": "this student",
       "title": "Assign staff member"
-    }
+    },
+    "confidential_advisers": "Confidential advisers",
+    "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",
+    "edit_email_title": "Edit email for {{name}}",
+    "title": "Staff"
   },
   "status": {
     "completed_on": "Completed on",

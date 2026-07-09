@@ -107,7 +107,11 @@
       "description": "Je wilt voor het project van {{studentName}} een andere medewerker toewijzen.",
       "this_student": "deze student",
       "title": "Medewerker toewijzen"
-    }
+    },
+    "confidential_advisers": "Vertrouwenspersonen",
+    "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
+    "edit_email_title": "E-mailadres bewerken van {{name}}",
+    "title": "Medewerkers"
   },
   "status": {
     "completed_on": "Voltooid op",
