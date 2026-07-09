@@ -8,6 +8,7 @@ import {InfoCards} from "~/components/instance/InfoCards";
 import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {StudentCard} from "~/components/instance/StudentCard";
+import {StaffCard} from "~/components/StaffCard/StaffCard.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
@@ -26,7 +27,9 @@ function Instance() {
     if (!isLoading && !instance) {
         return <div>Error loading instance</div>;
     }
-
+    const canEdit = instance?.permissions.some((permission) =>
+        ["Edit", "ViewAdminTools"].includes(permission),
+    );
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
@@ -54,8 +57,13 @@ function Instance() {
                         studentName={studentName}
                         isLoading={isLoading}
                     />
+                    <StaffCard
+                        instanceId={id ?? ""}
+                        relatedUserGroups={instance?.relatedUserGroups?.groups ?? []}
+                        canEdit={canEdit}
+                    />
                     <InfoCards isLoading={isLoading} fields={instance?.fields} />
-                    {instance?.canImpersonate && <AdminCard />}{" "}
+                    {instance?.canImpersonate && <AdminCard />}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
             </Grid>
