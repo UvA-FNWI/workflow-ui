@@ -6,7 +6,7 @@ import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
 import {EditEmailModal} from "~/components/StaffCard/EditEmailModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {baseApi} from "~/store/api/baseApi.ts";
-import type {RelatedUser} from "~/store/api/types/instances.ts";
+import type {RelatedUser, Role} from "~/store/api/types/instances.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
 import {useUpdateUserEmailMutation} from "~/store/api/usersApi.ts";
 import {useAppDispatch} from "~/store/store.ts";
@@ -15,21 +15,23 @@ type RelatedStaffInfoProps = {
     instanceId?: string;
     relatedUser: RelatedUser;
     isEditable?: boolean;
+    onAddUser?: (allowsExternalUsers: boolean, role: Role) => void;
 };
 
 export function RelatedStaffInfo({
     instanceId,
     relatedUser,
     isEditable = false,
+    onAddUser,
 }: RelatedStaffInfoProps) {
     const {t, l} = useTranslate("workflow");
-    const {user, title} = relatedUser;
+    const {role, user, title, allowsExternalUsers, allowsAssignment} = relatedUser;
     const [isEditing, setIsEditing] = useState(false);
     const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
     const dispatch = useAppDispatch();
 
     const handleSave = async (updatedUser: UserSearchResult) => {
-        if (!user.id || !instanceId) {
+        if (!user || !user?.id || !instanceId) {
             return;
         }
 
@@ -41,6 +43,26 @@ export function RelatedStaffInfo({
 
         dispatch(baseApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
     };
+
+    if (!user && allowsAssignment) {
+        return (
+            <div className="flex min-w-0 flex-col items-start gap-2 pb-8">
+                <Text fontWeight="semibold">{l(title)}</Text>
+                <Button
+                    intent="secondary"
+                    variant="destructive"
+                    leftIcon={<Icon name="plus-solid" color="current" />}
+                    onClick={() => onAddUser?.(allowsExternalUsers, role)}
+                >
+                    {t("add")}
+                </Button>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return;
+    }
 
     return (
         <>

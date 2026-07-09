@@ -1,7 +1,11 @@
 import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
-import type {InstanceSummary, RoleImpersonationResult, WorkflowInstance} from "./types/instances";
-import type {ImpersonationRole} from "./types/submissions";
+import type {
+    InstanceSummary,
+    Role,
+    RoleImpersonationResult,
+    WorkflowInstance,
+} from "./types/instances";
 
 export const instancesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -24,7 +28,7 @@ export const instancesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["Instance"],
         }),
-        getImpersonationRoles: builder.query<ImpersonationRole[], string>({
+        getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/roles`,
         }),
         impersonateRole: builder.mutation<

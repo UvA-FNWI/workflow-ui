@@ -14,8 +14,8 @@ import {
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
 import {useExternalUserPicker} from "~/hooks/useExternalUserPicker.ts";
-import {type LocalString, useTranslate} from "~/hooks/useTranslate.ts";
-import type {WorkflowInstanceField} from "~/store/api/types/instances.ts";
+import {useTranslate} from "~/hooks/useTranslate.ts";
+import type {Role, WorkflowInstanceField} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 import {getStringField} from "~/utils/fieldUtils.ts";
 
@@ -27,12 +27,8 @@ export interface AddStaffModalProps {
     isSaving?: boolean;
     instanceFields?: WorkflowInstanceField[];
     allowsExternalUsers?: boolean;
+    initialRole?: Role;
 }
-
-type Role = {
-    name: string;
-    title: LocalString;
-};
 
 export default function AddStaffModal({
     isOpen,
@@ -41,11 +37,13 @@ export default function AddStaffModal({
     isSaving,
     instanceFields,
     allowsExternalUsers,
+    initialRole,
 }: AddStaffModalProps) {
     const {l, t} = useTranslate("workflow");
-    const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+    const [selectedRole, setSelectedRole] = useState<Role | null>(initialRole ?? null);
     const [selectedUsers, setSelectedUsers] = useState<UserSearchResult[]>([]);
 
+    console.log(selectedRole);
     const handleCreateExternalUser = async (newUser: CreateExternalUserInput): Promise<void> => {
         // TODO: call your staff assignment API here, e.g.:
         // await assignStaffMember(newUser);

@@ -6,7 +6,7 @@ import AddStaffModal from "~/components/instance/AddStaffModal.tsx";
 import {RelatedStaffInfo} from "~/components/StaffCard/RelatedStaffInfo.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
-import type {RelatedUserGroup} from "~/store/api/types/instances.ts";
+import type {RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
 
 type StaffCardProps = {
     instanceId: string;
@@ -17,10 +17,19 @@ type StaffCardProps = {
 export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: StaffCardProps) {
     const {t, l} = useTranslate("workflow");
     const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
+    const [addStaffModalData, setAddStaffModalData] = useState<{
+        allowsExternalUsers: boolean;
+        initialRole?: Role;
+    }>({allowsExternalUsers: false});
 
     const {data: instance} = instancesEndpoints.getInstance.useQuery(instanceId ?? "", {
         skip: !instanceId,
     });
+
+    const handleOpenAddStaffModal = (allowsExternalUsers: boolean, role?: Role) => {
+        setAddStaffModalData({allowsExternalUsers, initialRole: role});
+        setIsAddStaffModalOpen(true);
+    };
 
     return (
         <>
@@ -36,7 +45,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                             className="flex items-center justify-center leading-0"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                setIsAddStaffModalOpen(true);
+                                handleOpenAddStaffModal(false, undefined);
                             }}
                         >
                             <Icon name="plus-solid" color="current" />
@@ -57,9 +66,10 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                                         relatedUser={relatedUser}
                                         isEditable={
                                             canEdit &&
-                                            relatedUser.user.isExternal &&
-                                            relatedUser.user.requiresInvitation === true
+                                            relatedUser.user?.isExternal &&
+                                            relatedUser.user?.requiresInvitation === true
                                         }
+                                        onAddUser={handleOpenAddStaffModal}
                                     />
                                 ))}
                             </div>
@@ -89,7 +99,8 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                 onOpenChange={() => setIsAddStaffModalOpen(!isAddStaffModalOpen)}
                 onConfirm={() => console.log("Do something")}
                 instanceFields={instance?.fields}
-                allowsExternalUsers={true}
+                allowsExternalUsers={addStaffModalData.allowsExternalUsers}
+                initialRole={addStaffModalData.initialRole}
             />
         </>
     );

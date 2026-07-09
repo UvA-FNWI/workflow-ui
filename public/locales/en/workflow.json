@@ -1,4 +1,5 @@
 {
+  "add": "Add",
   "admin": {
     "impersonate_role_button": "Impersonate",
     "impersonate_role_placeholder": "Select a role",

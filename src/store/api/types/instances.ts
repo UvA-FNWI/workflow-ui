@@ -1,7 +1,6 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
     FormLayout,
-    ImpersonationRole,
     RoleAction,
     StepResultsType,
     Submission,
@@ -89,16 +88,24 @@ export type Action = {
 export type ActionType = "SubmitForm" | "Execute";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 
+export type Role = {
+    name: string;
+    title: LocalString;
+};
+
 export type RoleImpersonationResult = {
     instanceId: string;
-    role: ImpersonationRole;
+    role: Role;
     token: string;
     expiresAtUtc: string;
 };
 
 export type RelatedUser = {
+    role: Role;
     title: LocalString;
     user: UserSearchResult & {id: string};
+    allowsExternalUsers: boolean;
+    allowsAssignment: boolean;
 };
 
 export type RelatedUserGroup = {
