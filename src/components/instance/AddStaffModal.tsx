@@ -22,8 +22,7 @@ import {getStringField} from "~/utils/fieldUtils.ts";
 export interface AddStaffModalProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
-    //onConfirm: (newUser: string) => Promise<void>;
-    onConfirm: (newUser: string) => void;
+    onConfirm: (role: string, users: UserSearchResult[]) => void;
     isSaving?: boolean;
     instanceFields?: WorkflowInstanceField[];
     allowsExternalUsers?: boolean;
@@ -89,7 +88,7 @@ export default function AddStaffModal({
             "selected users: ",
             selectedUsers.map((u) => u.displayName).join(","),
         );
-        onConfirm(selectedRole?.name ?? "");
+        onConfirm(selectedRole?.name ?? "", selectedUsers);
         handleClose();
     };
 

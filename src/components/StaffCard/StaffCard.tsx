@@ -48,19 +48,21 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                 <Disclosure.Header>
                     <div className="flex flex-row items-center justify-between">
                         <Heading size="sm">{t("staff_card.title")}</Heading>
-                        <Button
-                            intent="secondary"
-                            variant="destructive"
-                            size="square"
-                            width="none"
-                            className="flex items-center justify-center leading-0"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenAddStaffModal(false, undefined);
-                            }}
-                        >
-                            <Icon name="plus-solid" color="current" />
-                        </Button>
+                        {canEdit && (
+                            <Button
+                                intent="secondary"
+                                variant="destructive"
+                                size="square"
+                                width="none"
+                                className="flex items-center justify-center leading-0"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenAddStaffModal(false, undefined);
+                                }}
+                            >
+                                <Icon name="plus-solid" color="current" />
+                            </Button>
+                        )}
                     </div>
                 </Disclosure.Header>
                 <Disclosure.Content padding="lg" className="flex flex-col gap-4">
@@ -75,12 +77,13 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                                         key={`related_${group_index}_${user_index}`}
                                         instanceId={instanceId}
                                         relatedUser={relatedUser}
-                                        isEditable={
+                                        isEmailEditable={
                                             canEdit &&
                                             relatedUser.user?.isExternal &&
                                             relatedUser.user?.requiresInvitation === true
                                         }
                                         onAddUser={handleOpenAddStaffModal}
+                                        canEdit={canEdit}
                                     />
                                 ))}
                             </div>

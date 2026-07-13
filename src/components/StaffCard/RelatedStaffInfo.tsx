@@ -14,14 +14,16 @@ import {useAppDispatch} from "~/store/store.ts";
 type RelatedStaffInfoProps = {
     instanceId?: string;
     relatedUser: RelatedUser;
-    isEditable?: boolean;
+    canEdit?: boolean;
+    isEmailEditable?: boolean;
     onAddUser?: (allowsExternalUsers: boolean, role?: Role) => void;
 };
 
 export function RelatedStaffInfo({
     instanceId,
     relatedUser,
-    isEditable = false,
+    canEdit = false,
+    isEmailEditable = false,
     onAddUser,
 }: RelatedStaffInfoProps) {
     const {t, l} = useTranslate("workflow");
@@ -44,7 +46,9 @@ export function RelatedStaffInfo({
         dispatch(baseApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
     };
 
-    if (!user && allowsAssignment) {
+    console.log(canEdit);
+
+    if (canEdit && !user && allowsAssignment) {
         return (
             <div className="flex min-w-0 flex-col items-start gap-2 pb-8">
                 <Text fontWeight="semibold">{l(title)}</Text>
@@ -70,7 +74,7 @@ export function RelatedStaffInfo({
                 <UserAvatar userName={user.displayName} />
                 <div className="flex min-w-0 gap-2">
                     <Text fontWeight="semibold">{l(title)}</Text>
-                    {isEditable && user.requiresInvitation == true && (
+                    {isEmailEditable && user.requiresInvitation == true && (
                         <Button
                             intent="ghost"
                             size="small"
