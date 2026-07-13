@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {
     Button,
@@ -27,6 +27,7 @@ export interface AddStaffModalProps {
     isSaving?: boolean;
     instanceFields?: WorkflowInstanceField[];
     allowsExternalUsers?: boolean;
+    instanceRoles: Role[];
     initialRole?: Role;
 }
 
@@ -37,13 +38,20 @@ export default function AddStaffModal({
     isSaving,
     instanceFields,
     allowsExternalUsers,
+    instanceRoles,
     initialRole,
 }: AddStaffModalProps) {
     const {l, t} = useTranslate("workflow");
     const [selectedRole, setSelectedRole] = useState<Role | null>(initialRole ?? null);
     const [selectedUsers, setSelectedUsers] = useState<UserSearchResult[]>([]);
+    const prevIsOpen = useRef(false);
 
-    console.log(selectedRole);
+    useEffect(() => {
+        if (!prevIsOpen.current && isOpen) {
+            setSelectedRole(initialRole ?? null);
+        }
+    }, [isOpen, initialRole]);
+
     const handleCreateExternalUser = async (newUser: CreateExternalUserInput): Promise<void> => {
         // TODO: call your staff assignment API here, e.g.:
         // await assignStaffMember(newUser);
@@ -60,11 +68,6 @@ export default function AddStaffModal({
     const studentName =
         getStringField(instanceFields, "Student.DisplayName") ??
         t("staff_card.add_modal.this_student");
-
-    const staffRoles = [
-        {name: "Rol 1", title: {en: "Role 1", nl: "Rol 1"}},
-        {name: "Rol 2", title: {en: "Role 2", nl: "Rol 2"}},
-    ];
 
     const isComplete = selectedRole != null && selectedUsers.length > 0;
     const handleConfirm = () => {
@@ -93,14 +96,14 @@ export default function AddStaffModal({
                         <InputLabel>{t("staff_card.add_modal.choose_role")}</InputLabel>
                         <Select
                             placeholder={t("make_a_choice")}
-                            value={l(selectedRole?.title)}
+                            value={selectedRole?.name}
                             onChange={(value) =>
                                 setSelectedRole(
-                                    staffRoles?.find((role) => role.name === value) ?? null,
+                                    instanceRoles?.find((role) => role.name === value) ?? null,
                                 )
                             }
                         >
-                            {staffRoles?.map((role) => (
+                            {instanceRoles?.map((role) => (
                                 <SelectItem key={role.name} title={l(role.title)}>
                                     {l(role.title)}
                                 </SelectItem>

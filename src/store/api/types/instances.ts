@@ -101,7 +101,7 @@ export type RoleImpersonationResult = {
 };
 
 export type RelatedUser = {
-    role: Role;
+    role: string;
     title: LocalString;
     user: UserSearchResult & {id: string};
     allowsExternalUsers: boolean;

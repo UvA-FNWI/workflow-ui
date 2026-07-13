@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
 import {Button, Disclosure, Heading, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
@@ -25,6 +25,17 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
     const {data: instance} = instancesEndpoints.getInstance.useQuery(instanceId ?? "", {
         skip: !instanceId,
     });
+
+    const instanceUserRoles = useMemo(() => {
+        return (
+            instance?.relatedUserGroups.groups
+                .find((g) => g.name === "default")
+                ?.users.map((u) => ({
+                    name: u.role,
+                    title: u.title,
+                })) ?? []
+        );
+    }, [instance]);
 
     const handleOpenAddStaffModal = (allowsExternalUsers: boolean, role?: Role) => {
         setAddStaffModalData({allowsExternalUsers, initialRole: role});
@@ -100,6 +111,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                 onConfirm={() => console.log("Do something")}
                 instanceFields={instance?.fields}
                 allowsExternalUsers={addStaffModalData.allowsExternalUsers}
+                instanceRoles={instanceUserRoles}
                 initialRole={addStaffModalData.initialRole}
             />
         </>
