@@ -53,9 +53,15 @@ export default function AddStaffModal({
     }, [isOpen, initialRole]);
 
     const handleCreateExternalUser = async (newUser: CreateExternalUserInput): Promise<void> => {
-        // TODO: call your staff assignment API here, e.g.:
-        // await assignStaffMember(newUser);
-        console.log("Creating external user for staff:", newUser);
+        const externalUserResult: UserSearchResult = {
+            displayName: newUser.displayName,
+            userName: newUser.email,
+            email: newUser.email,
+            organization: newUser.organization,
+            isExternal: true,
+            isPending: false,
+        };
+        setSelectedUsers((prev) => [...prev, externalUserResult]);
     };
 
     const {
@@ -70,6 +76,12 @@ export default function AddStaffModal({
         t("staff_card.add_modal.this_student");
 
     const isComplete = selectedRole != null && selectedUsers.length > 0;
+
+    const handleClose = () => {
+        onOpenChange(false);
+        setSelectedUsers([]);
+        setSelectedRole(null);
+    };
     const handleConfirm = () => {
         console.log(
             "selected role: ",
@@ -78,11 +90,7 @@ export default function AddStaffModal({
             selectedUsers.map((u) => u.displayName).join(","),
         );
         onConfirm(selectedRole?.name ?? "");
-        onOpenChange(false);
-    };
-
-    const handleCancel = () => {
-        onOpenChange(false);
+        handleClose();
     };
 
     return (
@@ -113,6 +121,7 @@ export default function AddStaffModal({
                     <div>
                         <InputLabel>{t("staff_card.add_modal.choose_staff")}</InputLabel>
                         <UserPickerInput
+                            initialSelection={selectedUsers}
                             onSelectionChange={setSelectedUsers}
                             searchPlaceholder={t("make_a_choice")}
                             autoFocus={false}
@@ -149,7 +158,7 @@ export default function AddStaffModal({
                             size="large"
                             intent="secondary"
                             variant="destructive"
-                            onClick={handleCancel}
+                            onClick={handleClose}
                             className="ml-auto"
                         >
                             {t("cancel")}
