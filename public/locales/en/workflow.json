@@ -112,6 +112,8 @@
     "confidential_advisers": "Confidential advisers",
     "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",
     "edit_email_title": "Edit email for {{name}}",
+    "remove_staff_confirmation": "Are you sure you want to remove {{name}} from this project?",
+    "remove_staff_title": "Remove staff member",
     "title": "Staff"
   },
   "status": {

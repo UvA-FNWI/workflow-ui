@@ -112,6 +112,8 @@
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
     "edit_email_title": "E-mailadres bewerken van {{name}}",
+    "remove_staff_confirmation": "Weet je zeker dat je {{name}} wilt verwijderen uit dit project?",
+    "remove_staff_title": "Medewerker verwijderen",
     "title": "Medewerkers"
   },
   "status": {

@@ -97,9 +97,10 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
         [includeExternalUsers, triggerSearch],
     );
 
-    const initialSearchQuery = showSelectedEmail
-        ? `${initialSelection[0]?.displayName} | ${initialSelection[0]?.email}`
-        : initialSelection[0]?.displayName;
+    const initialSearchQuery =
+        initialSelection.length > 0 && showSelectedEmail
+            ? `${initialSelection[0]?.displayName} | ${initialSelection[0]?.email}`
+            : initialSelection[0]?.displayName;
 
     return (
         <SearchAndSelect

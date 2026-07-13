@@ -4,6 +4,7 @@ import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
 import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
 import {EditEmailModal} from "~/components/StaffCard/EditEmailModal.tsx";
+import {RemoveStaffMemberModal} from "~/components/StaffCard/RemoveStaffMemberModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {baseApi} from "~/store/api/baseApi.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
@@ -30,6 +31,7 @@ export function RelatedStaffInfo({
     const {t, l} = useTranslate("workflow");
     const {role, user, title, allowsExternalUsers, allowsAssignment} = relatedUser;
     const [isEditing, setIsEditing] = useState(false);
+    const [isRemoving, setIsRemoving] = useState(false);
     const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
     const [updateProperty] = instancesEndpoints.updateProperty.useMutation();
     const dispatch = useAppDispatch();
@@ -56,6 +58,7 @@ export function RelatedStaffInfo({
             value: null,
             externalUser: undefined,
         });
+        setIsRemoving(false);
     };
 
     if (canEdit && !user && allowsAssignment) {
@@ -84,29 +87,44 @@ export function RelatedStaffInfo({
                 <UserAvatar userName={user.displayName} />
                 <div className="flex min-w-0 gap-2">
                     <Text fontWeight="semibold">{l(title)}</Text>
-                    {isEmailEditable && user.requiresInvitation == true && (
-                        <Button
-                            intent="ghost"
-                            size="small"
-                            shape="circular"
-                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                            onClick={() => setIsEditing(true)}
-                            aria-label={t("instance.summary.edit_answer")}
-                        >
-                            <Icon name="edit-line" size="xs" color="danger" />
-                        </Button>
-                    )}
-                    {canEdit && relatedUser.allowsAssignment && (
-                        <Button
-                            intent="ghost"
-                            size="small"
-                            shape="circular"
-                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                            onClick={handleRemoveUser}
-                        >
-                            <Icon name="trash-line" size="xs" color="danger" />
-                        </Button>
-                    )}
+                    <div className="flex flex-row items-center gap-1">
+                        {canEdit && (
+                            <Button
+                                intent="ghost"
+                                size="small"
+                                shape="circular"
+                                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                onClick={() =>
+                                    onAddUser?.(allowsExternalUsers, {name: role, title})
+                                }
+                            >
+                                <Icon name="edit-line" size="xs" color="danger" />
+                            </Button>
+                        )}
+                        {canEdit && relatedUser.allowsAssignment && (
+                            <Button
+                                intent="ghost"
+                                size="small"
+                                shape="circular"
+                                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                onClick={() => setIsRemoving(true)}
+                            >
+                                <Icon name="trash-line" size="xs" color="danger" />
+                            </Button>
+                        )}
+                        {isEmailEditable && user.requiresInvitation == true && (
+                            <Button
+                                intent="ghost"
+                                size="small"
+                                shape="circular"
+                                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                onClick={() => setIsEditing(true)}
+                                aria-label={t("instance.summary.edit_answer")}
+                            >
+                                <Icon name="email-line" size="xs" color="danger" />
+                            </Button>
+                        )}
+                    </div>
                 </div>
                 <Text>{user.displayName}</Text>
                 {user.organization && <Text>{user.organization?.name}</Text>}
@@ -124,6 +142,14 @@ export function RelatedStaffInfo({
                     user={user}
                     onSave={handleSave}
                     isSaving={isUpdatingEmail}
+                />
+            )}
+            {isRemoving && (
+                <RemoveStaffMemberModal
+                    isOpen={isRemoving}
+                    setIsOpen={setIsRemoving}
+                    onConfirm={handleRemoveUser}
+                    user={user}
                 />
             )}
         </>
