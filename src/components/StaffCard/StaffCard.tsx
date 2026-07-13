@@ -7,6 +7,7 @@ import {RelatedStaffInfo} from "~/components/StaffCard/RelatedStaffInfo.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
+import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
 type StaffCardProps = {
     instanceId: string;
@@ -26,6 +27,8 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
         skip: !instanceId,
     });
 
+    const [updateProperty] = instancesEndpoints.updateProperty.useMutation();
+
     const instanceUserRoles = useMemo(() => {
         return (
             instance?.relatedUserGroups.groups
@@ -40,6 +43,21 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
     const handleOpenAddStaffModal = (allowsExternalUsers: boolean, role?: Role) => {
         setAddStaffModalData({allowsExternalUsers, initialRole: role});
         setIsAddStaffModalOpen(true);
+    };
+
+    const handleAddStaff = async (
+        role: Role,
+        value: UserSearchResult[],
+        externalUser?: CreateExternalUserInput | null,
+    ) => {
+        updateProperty({
+            instanceId,
+            property: role.name,
+            value: value.length === 1 ? value[0] : value,
+            externalUser: externalUser ? externalUser : undefined,
+        });
+        setIsAddStaffModalOpen(false);
+        setAddStaffModalData({allowsExternalUsers: false, initialRole: undefined});
     };
 
     return (
@@ -111,7 +129,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
             <AddStaffModal
                 isOpen={isAddStaffModalOpen}
                 onOpenChange={() => setIsAddStaffModalOpen(!isAddStaffModalOpen)}
-                onConfirm={() => console.log("Do something")}
+                onConfirm={handleAddStaff}
                 instanceFields={instance?.fields}
                 allowsExternalUsers={addStaffModalData.allowsExternalUsers}
                 instanceRoles={instanceUserRoles}

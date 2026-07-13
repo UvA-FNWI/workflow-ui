@@ -22,7 +22,11 @@ import {getStringField} from "~/utils/fieldUtils.ts";
 export interface AddStaffModalProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
-    onConfirm: (role: string, users: UserSearchResult[]) => void;
+    onConfirm: (
+        role: Role,
+        value: UserSearchResult[],
+        externalUser: CreateExternalUserInput | null,
+    ) => void;
     isSaving?: boolean;
     instanceFields?: WorkflowInstanceField[];
     allowsExternalUsers?: boolean;
@@ -43,6 +47,7 @@ export default function AddStaffModal({
     const {l, t} = useTranslate("workflow");
     const [selectedRole, setSelectedRole] = useState<Role | null>(initialRole ?? null);
     const [selectedUsers, setSelectedUsers] = useState<UserSearchResult[]>([]);
+    const [externalUser, setExternalUser] = useState<CreateExternalUserInput | null>(null);
     const prevIsOpen = useRef(false);
 
     useEffect(() => {
@@ -52,6 +57,7 @@ export default function AddStaffModal({
     }, [isOpen, initialRole]);
 
     const handleCreateExternalUser = async (newUser: CreateExternalUserInput): Promise<void> => {
+        setExternalUser(newUser);
         const externalUserResult: UserSearchResult = {
             displayName: newUser.displayName,
             userName: newUser.email,
@@ -60,7 +66,7 @@ export default function AddStaffModal({
             isExternal: true,
             isPending: false,
         };
-        setSelectedUsers((prev) => [...prev, externalUserResult]);
+        setSelectedUsers([externalUserResult]);
     };
 
     const {
@@ -74,23 +80,21 @@ export default function AddStaffModal({
         getStringField(instanceFields, "Student.DisplayName") ??
         t("staff_card.add_modal.this_student");
 
-    const isComplete = selectedRole != null && selectedUsers.length > 0;
+    const isComplete = selectedRole != null && selectedUsers != null;
 
     const handleClose = () => {
         onOpenChange(false);
         setSelectedUsers([]);
         setSelectedRole(null);
+        setExternalUser(null);
     };
     const handleConfirm = () => {
-        console.log(
-            "selected role: ",
-            selectedRole?.name,
-            "selected users: ",
-            selectedUsers.map((u) => u.displayName).join(","),
-        );
-        onConfirm(selectedRole?.name ?? "", selectedUsers);
+        if (!selectedRole || !selectedUsers) return;
+        onConfirm(selectedRole, selectedUsers, externalUser);
         handleClose();
     };
+
+    console.log("Selected users", selectedUsers);
 
     return (
         <>
@@ -120,11 +124,13 @@ export default function AddStaffModal({
                     <div>
                         <InputLabel>{t("staff_card.add_modal.choose_staff")}</InputLabel>
                         <UserPickerInput
+                            key={selectedUsers.map((u) => u.email).join(",")}
                             initialSelection={selectedUsers}
                             onSelectionChange={setSelectedUsers}
                             searchPlaceholder={t("make_a_choice")}
                             autoFocus={false}
                             allowsExternalUsers={allowsExternalUsers}
+                            showSelectedEmail={true}
                         />
                     </div>
                     <Callout header={t("staff_card.add_modal.callout_header")}>

@@ -6,6 +6,7 @@ import type {
     RoleImpersonationResult,
     WorkflowInstance,
 } from "./types/instances";
+import type {UpdatePropertyParams} from "~/store/api/types/params.ts";
 
 export const instancesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -49,6 +50,16 @@ export const instancesApi = baseApi.injectEndpoints({
                     return;
                 }
             },
+        }),
+        updateProperty: builder.mutation<WorkflowInstance, UpdatePropertyParams>({
+            query: ({instanceId, property, value, externalUser}: UpdatePropertyParams) => ({
+                url: `/WorkflowInstances/${instanceId}/properties/${property}`,
+                method: "PUT",
+                body: {value, externalUser},
+            }),
+            invalidatesTags: (_result, _error, {instanceId}) => [
+                {type: "Instance", id: instanceId},
+            ],
         }),
     }),
 });

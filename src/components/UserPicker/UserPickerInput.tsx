@@ -18,6 +18,7 @@ export interface UserPickerInputProps {
     minSearchLength?: number;
     allowsExternalUsers?: boolean;
     autoFocus?: boolean;
+    showSelectedEmail?: boolean;
 }
 
 export const UserPickerInput: React.FC<UserPickerInputProps> = ({
@@ -29,6 +30,7 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
     minSearchLength,
     autoFocus,
     allowsExternalUsers,
+    showSelectedEmail = false,
 }) => {
     const {t} = useTranslate("workflow");
     const confirmButtonRef = useRef<HTMLButtonElement>(null);
@@ -95,6 +97,10 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
         [includeExternalUsers, triggerSearch],
     );
 
+    const initialSearchQuery = showSelectedEmail
+        ? `${initialSelection[0]?.displayName} | ${initialSelection[0]?.email}`
+        : initialSelection[0]?.displayName;
+
     return (
         <SearchAndSelect
             items={searchListBoxValues}
@@ -107,7 +113,7 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
             selectionMode={selectionMode}
             minSearchLength={minSearchLength}
             isLoading={searchState.isLoading || searchState.isFetching}
-            initialSearchQuery={initialSelection[0]?.displayName}
+            initialSearchQuery={initialSearchQuery}
             noResultsText={t("user_picker.no_results")}
             showSearchHint={showSearchHint}
             searchHintText={

@@ -46,8 +46,6 @@ export function RelatedStaffInfo({
         dispatch(baseApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
     };
 
-    console.log(canEdit);
-
     if (canEdit && !user && allowsAssignment) {
         return (
             <div className="flex min-w-0 flex-col items-start gap-2 pb-8">
