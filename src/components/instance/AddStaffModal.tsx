@@ -94,8 +94,6 @@ export default function AddStaffModal({
         handleClose();
     };
 
-    console.log("Selected users", selectedUsers);
-
     return (
         <>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

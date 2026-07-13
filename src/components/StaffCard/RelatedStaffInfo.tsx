@@ -6,6 +6,7 @@ import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
 import {EditEmailModal} from "~/components/StaffCard/EditEmailModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {baseApi} from "~/store/api/baseApi.ts";
+import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {RelatedUser, Role} from "~/store/api/types/instances.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
 import {useUpdateUserEmailMutation} from "~/store/api/usersApi.ts";
@@ -30,6 +31,7 @@ export function RelatedStaffInfo({
     const {role, user, title, allowsExternalUsers, allowsAssignment} = relatedUser;
     const [isEditing, setIsEditing] = useState(false);
     const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
+    const [updateProperty] = instancesEndpoints.updateProperty.useMutation();
     const dispatch = useAppDispatch();
 
     const handleSave = async (updatedUser: UserSearchResult) => {
@@ -44,6 +46,16 @@ export function RelatedStaffInfo({
         }).unwrap();
 
         dispatch(baseApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
+    };
+
+    const handleRemoveUser = async () => {
+        if (!instanceId || !relatedUser) return;
+        updateProperty({
+            instanceId,
+            property: relatedUser.role,
+            value: null,
+            externalUser: undefined,
+        });
     };
 
     if (canEdit && !user && allowsAssignment) {
@@ -82,6 +94,17 @@ export function RelatedStaffInfo({
                             aria-label={t("instance.summary.edit_answer")}
                         >
                             <Icon name="edit-line" size="xs" color="danger" />
+                        </Button>
+                    )}
+                    {canEdit && relatedUser.allowsAssignment && (
+                        <Button
+                            intent="ghost"
+                            size="small"
+                            shape="circular"
+                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                            onClick={handleRemoveUser}
+                        >
+                            <Icon name="trash-line" size="xs" color="danger" />
                         </Button>
                     )}
                 </div>
