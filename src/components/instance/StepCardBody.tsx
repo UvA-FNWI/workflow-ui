@@ -87,22 +87,6 @@ export const StepCardBody = ({
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
                             <div className="flex flex-col gap-2 py-4">
-                                {contentState.assessments.map((submission, index) => {
-                                    const submissionIndex = contentState.regular.length + index;
-
-                                    return (
-                                        shouldShowFormTitle(submissionIndex) && (
-                                            <Heading
-                                                key={submission.id}
-                                                as="h4"
-                                                size="xs"
-                                                className="pb-1 font-semibold text-red-brand"
-                                            >
-                                                {l(submission.form.title)?.toUpperCase()}
-                                            </Heading>
-                                        )
-                                    );
-                                })}
                                 <FormSummaryAssessment
                                     instanceId={instance.id}
                                     submissions={contentState.assessments}
