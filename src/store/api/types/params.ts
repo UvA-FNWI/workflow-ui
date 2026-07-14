@@ -38,3 +38,9 @@ export type UpdatePropertyParams = {
     value: unknown;
     externalUser?: CreateExternalUserInput;
 };
+
+export type DeletePropertyParams = {
+    instanceId: string;
+    property: string;
+    itemId: string;
+};

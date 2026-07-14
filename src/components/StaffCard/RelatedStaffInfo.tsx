@@ -32,7 +32,7 @@ export function RelatedStaffInfo({
     const [editingUser, setEditingUser] = useState<UserSearchResult | null>(null);
     const [removingUser, setRemovingUser] = useState<UserSearchResult | null>(null);
     const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
-    const [updateProperty] = instancesEndpoints.updateProperty.useMutation();
+    const [deleteProperty] = instancesEndpoints.deleteProperty.useMutation();
     const dispatch = useAppDispatch();
 
     const handleSave = async (updatedUser: UserSearchResult) => {
@@ -50,12 +50,11 @@ export function RelatedStaffInfo({
     };
 
     const handleRemoveUser = async () => {
-        if (!instanceId || !relatedUserRoles) return;
-        updateProperty({
+        if (!instanceId || !relatedUserRoles || !removingUser || !removingUser.id) return;
+        deleteProperty({
             instanceId,
             property: relatedUserRoles.role,
-            value: null,
-            externalUser: undefined,
+            itemId: removingUser?.id,
         });
         setRemovingUser(null);
     };
@@ -80,45 +79,54 @@ export function RelatedStaffInfo({
         return;
     }
 
+    const canBeRemoved =
+        canEdit &&
+        (relatedUserRoles.allowsAssignment ||
+            (relatedUserRoles.allowsMultipleUsers && users.length > 1));
+
     return (
         <>
             {users.map((user, index) => (
                 <div key={index} className="flex flex-col pb-8">
                     <UserAvatar userName={user.displayName} />
-                    <div className="flex min-w-0 gap-2">
-                        <Text fontWeight="semibold">{l(title)}</Text>
-                        <div className="flex flex-row items-center gap-1">
-                            {canEdit && (
-                                <Button
-                                    intent="ghost"
-                                    size="small"
-                                    shape="circular"
-                                    className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                    onClick={() =>
-                                        onAddUser?.(allowsExternalUsers, {name: role, title})
-                                    }
-                                >
-                                    <Icon
-                                        name={allowsMultipleUsers ? "plus-line" : "edit-line"}
-                                        size="xs"
-                                        color="danger"
-                                    />
-                                </Button>
-                            )}
-                            {canEdit && relatedUserRoles.allowsAssignment && (
-                                <Button
-                                    intent="ghost"
-                                    size="small"
-                                    shape="circular"
-                                    className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                    onClick={() => setRemovingUser(user)}
-                                >
-                                    <Icon name="trash-line" size="xs" color="danger" />
-                                </Button>
-                            )}
+                    {index === 0 && (
+                        <div className="flex min-w-0 gap-2">
+                            <Text fontWeight="semibold">{l(title)}</Text>
+                            <div className="flex flex-row items-center gap-1">
+                                {canEdit && (
+                                    <Button
+                                        intent="ghost"
+                                        size="small"
+                                        shape="circular"
+                                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                        onClick={() =>
+                                            onAddUser?.(allowsExternalUsers, {name: role, title})
+                                        }
+                                    >
+                                        <Icon
+                                            name={allowsMultipleUsers ? "plus-line" : "edit-line"}
+                                            size="xs"
+                                            color="danger"
+                                        />
+                                    </Button>
+                                )}
+                            </div>
                         </div>
+                    )}
+                    <div className="flex min-w-0 gap-2">
+                        <Text>{user.displayName}</Text>
+                        {canBeRemoved && (
+                            <Button
+                                intent="ghost"
+                                size="small"
+                                shape="circular"
+                                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                onClick={() => setRemovingUser(user)}
+                            >
+                                <Icon name="trash-line" size="xs" color="danger" />
+                            </Button>
+                        )}
                     </div>
-                    <Text>{user.displayName}</Text>
                     {user.organization && <Text>{user.organization?.name}</Text>}
                     <div className="flex flex-row items-center gap-2">
                         <Icon className="flex-none" name="email-line" color="current" size="md" />

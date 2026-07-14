@@ -95,7 +95,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                                         instanceId={instanceId}
                                         relatedUserRoles={relatedUserRoles}
                                         onAddUser={handleOpenAddStaffModal}
-                                        canEdit={canEdit}
+                                        canEdit={canEdit && group.name === "default"}
                                     />
                                 ))}
                             </div>
