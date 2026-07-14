@@ -68,6 +68,7 @@ export type Question = {
     choices: Choice[];
     workflowDefinition?: string;
     hideInResults: boolean;
+    percentage: number | null;
     shortText?: LocalString;
     layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;

@@ -137,8 +137,6 @@ export const FormSummaryAssessment = ({
                         getVisibleQuestionAnswerPairs(
                             page.questions,
                             sourceResult.answers,
-                            sourceResult.pageResults.find((p) => p.name === page.name)
-                                ?.questionResults ?? [],
                             submissions.find((s) => s.id == sourceResult.id),
                         ),
                     );
@@ -147,10 +145,6 @@ export const FormSummaryAssessment = ({
                         return null;
                     }
 
-                    const firstPageResult = assessmentSubmissions[0]?.pageResults.find(
-                        (p) => p.name === page.name,
-                    );
-
                     return (
                         <div key={index} className="contents">
                             {/* Page title with edit button */}
@@ -158,9 +152,10 @@ export const FormSummaryAssessment = ({
                                 <div className="flex items-center">
                                     <Heading size="xs" className="font-semibold">
                                         {l(page.title)?.toUpperCase()}
-                                        {(firstPageResult?.questionResults?.filter((q) => q.weight)
-                                            .length ?? 0) > 0 &&
-                                            ` (${firstPageResult?.questionResults.reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
+                                        {page.questions.some(
+                                            (question) => question.percentage != null,
+                                        ) &&
+                                            ` (${page.questions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toLocaleString(i18n.language)}%)`}
                                     </Heading>
                                     {onEditPage &&
                                         resultsType === "Normal" &&
