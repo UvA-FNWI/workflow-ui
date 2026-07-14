@@ -2,7 +2,7 @@ import {useMemo, useState} from "react";
 
 import {Button, Disclosure, Heading, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
-import AddStaffModal from "~/components/instance/AddStaffModal.tsx";
+import AddStaffModal from "~/components/StaffCard/AddStaffModal.tsx";
 import {RelatedStaffInfo} from "~/components/StaffCard/RelatedStaffInfo.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
@@ -63,26 +63,25 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
     return (
         <>
             <Disclosure>
-                <Disclosure.Header>
-                    <div className="flex flex-row items-center justify-between">
+                <div className="flex flex-row items-center justify-between">
+                    <Disclosure.Header>
                         <Heading size="sm">{t("staff_card.title")}</Heading>
-                        {canEdit && (
+                    </Disclosure.Header>
+                    {canEdit && (
+                        <div className="pr-6">
                             <Button
                                 intent="secondary"
                                 variant="destructive"
                                 size="square"
                                 width="none"
                                 className="flex items-center justify-center leading-0"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleOpenAddStaffModal(false, undefined);
-                                }}
+                                onClick={() => handleOpenAddStaffModal(false, undefined)}
                             >
                                 <Icon name="plus-solid" color="current" />
                             </Button>
-                        )}
-                    </div>
-                </Disclosure.Header>
+                        </div>
+                    )}
+                </div>
                 <Disclosure.Content padding="lg" className="flex flex-col gap-4">
                     {relatedUserGroups.length > 0 &&
                         relatedUserGroups.map((group, group_index) => (
@@ -107,23 +106,22 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                             </div>
                         ))}
 
-                    <div className="flex flex-row items-center gap-1">
+                    <div className="flex flex-col gap-1">
                         <Text fontWeight="semibold">{t("staff_card.confidential_advisers")}</Text>
-                        <Icon name="square-info-line" />
+                        <Link
+                            underline
+                            className="break-all"
+                            href={
+                                t("staff_card.confidential_advisers_link").startsWith("http")
+                                    ? t("staff_card.confidential_advisers_link")
+                                    : `https://${t("staff_card.confidential_advisers_link")}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {t("staff_card.confidential_advisers_link")}
+                        </Link>
                     </div>
-                    <Link
-                        underline
-                        className="break-all"
-                        href={
-                            t("staff_card.confidential_advisers_link").startsWith("http")
-                                ? t("staff_card.confidential_advisers_link")
-                                : `https://${t("staff_card.confidential_advisers_link")}`
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        {t("staff_card.confidential_advisers_link")}
-                    </Link>
                 </Disclosure.Content>
             </Disclosure>
             <AddStaffModal

@@ -1,3 +1,5 @@
+import {Trans} from "react-i18next";
+
 import {Button, Modal} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -25,7 +27,10 @@ export function RemoveStaffMemberModal({
                 {t("staff_card.remove_staff_title", {name: user.displayName})}
             </Modal.Header>
             <Modal.Body>
-                {t("staff_card.remove_staff_confirmation", {name: user.displayName})}
+                <Trans
+                    i18nKey="workflow:staff_card.remove_staff_confirmation"
+                    values={{name: user.displayName}}
+                />
             </Modal.Body>
             <Modal.Footer>
                 <Button intent="secondary" variant="destructive" onClick={() => setIsOpen(false)}>

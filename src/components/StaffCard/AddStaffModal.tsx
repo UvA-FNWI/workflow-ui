@@ -1,5 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 
+import {Trans} from "react-i18next";
+
 import {
     Button,
     Callout,
@@ -99,7 +101,12 @@ export default function AddStaffModal({
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <Modal.Header>{t("staff_card.add_modal.title")}</Modal.Header>
                 <Modal.Body className="flex flex-col gap-4">
-                    <Text>{t("staff_card.add_modal.description", {studentName})}</Text>
+                    <Text>
+                        <Trans
+                            i18nKey="workflow:staff_card.add_modal.description"
+                            values={{studentName}}
+                        />
+                    </Text>
 
                     <div>
                         <InputLabel>{t("staff_card.add_modal.choose_role")}</InputLabel>

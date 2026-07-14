@@ -112,18 +112,6 @@ export function RelatedStaffInfo({
                                 <Icon name="trash-line" size="xs" color="danger" />
                             </Button>
                         )}
-                        {isEmailEditable && user.requiresInvitation == true && (
-                            <Button
-                                intent="ghost"
-                                size="small"
-                                shape="circular"
-                                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                onClick={() => setIsEditing(true)}
-                                aria-label={t("instance.summary.edit_answer")}
-                            >
-                                <Icon name="email-line" size="xs" color="danger" />
-                            </Button>
-                        )}
                     </div>
                 </div>
                 <Text>{user.displayName}</Text>
@@ -133,6 +121,18 @@ export function RelatedStaffInfo({
                     <Link underline className="truncate" href={`mailto:${user.email}`}>
                         {user.email}
                     </Link>
+                    {isEmailEditable && user.requiresInvitation == true && (
+                        <Button
+                            intent="ghost"
+                            size="small"
+                            shape="circular"
+                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                            onClick={() => setIsEditing(true)}
+                            aria-label={t("instance.summary.edit_answer")}
+                        >
+                            <Icon name="edit-line" size="xs" color="danger" />
+                        </Button>
+                    )}
                 </div>
             </div>
             {isEditing && (

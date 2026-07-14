@@ -105,14 +105,18 @@
       "callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
       "choose_role": "Kies een rol",
       "choose_staff": "Kies een medewerker",
-      "description": "Je wilt voor het project van {{studentName}} een andere medewerker toewijzen.",
+      "description": "Je wilt voor het project van <strong>{{studentName}}</strong> een andere medewerker toewijzen.",
       "this_student": "deze student",
       "title": "Medewerker toewijzen"
     },
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
-    "edit_email_title": "E-mailadres bewerken van {{name}}",
-    "remove_staff_confirmation": "Weet je zeker dat je {{name}} wilt verwijderen uit dit project?",
+    "edit_email_modal": {
+      "error_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres.",
+      "error_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden.",
+      "title": "E-mailadres bewerken van {{name}}"
+    },
+    "remove_staff_confirmation": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen uit dit project?",
     "remove_staff_title": "Medewerker verwijderen",
     "title": "Medewerkers"
   },

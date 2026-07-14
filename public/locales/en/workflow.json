@@ -105,14 +105,18 @@
       "callout_header": "Inform the added staff member yourself",
       "choose_role": "Choose role",
       "choose_staff": "Choose staff member",
-      "description": "You want to assign another staff member to the project of {{studentName}}.",
+      "description": "You want to assign another staff member to the project of <strong>{{studentName}}</strong>.",
       "this_student": "this student",
       "title": "Assign staff member"
     },
     "confidential_advisers": "Confidential advisers",
     "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",
-    "edit_email_title": "Edit email for {{name}}",
-    "remove_staff_confirmation": "Are you sure you want to remove {{name}} from this project?",
+    "edit_email_modal": {
+      "error_email_already_exists": "A user with this email address already exists.",
+      "error_internal_email": "Users with UvA mail address cannot be added manually.",
+      "title": "Edit email for {{name}}"
+    },
+    "remove_staff_confirmation": "Are you sure you want to remove <strong>{{name}}</strong> from this project?",
     "remove_staff_title": "Remove staff member",
     "title": "Staff"
   },
