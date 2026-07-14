@@ -33,7 +33,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
         return (
             instance?.relatedUserGroups.groups
                 .find((g) => g.name === "default")
-                ?.users.map((u) => ({
+                ?.userRoles.map((u) => ({
                     name: u.role,
                     title: u.title,
                 })) ?? []
@@ -89,16 +89,11 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                                 <Heading size="sm" className="mb-4 empty:hidden">
                                     {l(group.title)}
                                 </Heading>
-                                {group.users.map((relatedUser, user_index) => (
+                                {group.userRoles.map((relatedUserRoles, user_role_index) => (
                                     <RelatedStaffInfo
-                                        key={`related_${group_index}_${user_index}`}
+                                        key={`related_${group_index}_${user_role_index}`}
                                         instanceId={instanceId}
-                                        relatedUser={relatedUser}
-                                        isEmailEditable={
-                                            canEdit &&
-                                            relatedUser.user?.isExternal &&
-                                            relatedUser.user?.requiresInvitation === true
-                                        }
+                                        relatedUserRoles={relatedUserRoles}
                                         onAddUser={handleOpenAddStaffModal}
                                         canEdit={canEdit}
                                     />

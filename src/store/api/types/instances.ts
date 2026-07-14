@@ -100,18 +100,19 @@ export type RoleImpersonationResult = {
     expiresAtUtc: string;
 };
 
-export type RelatedUser = {
+export type RelatedUserRoles = {
     role: string;
     title: LocalString;
-    user: UserSearchResult & {id: string};
+    users: (UserSearchResult & {id: string})[];
     allowsExternalUsers: boolean;
     allowsAssignment: boolean;
+    allowsMultipleUsers: boolean;
 };
 
 export type RelatedUserGroup = {
     name: string;
     title: LocalString;
-    users: RelatedUser[];
+    userRoles: RelatedUserRoles[];
 };
 
 export type RelatedUserGroups = {
