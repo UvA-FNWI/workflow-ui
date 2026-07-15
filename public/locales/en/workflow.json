@@ -34,6 +34,7 @@
     "title": "Add external user"
   },
   "file_upload": {
+    "confirm_delete_message": "Are you sure you want to delete this file?",
     "description": "Description",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
     "error_remove_failed": " Failed to remove file. Please try again.",

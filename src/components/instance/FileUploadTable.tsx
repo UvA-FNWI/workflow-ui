@@ -2,6 +2,7 @@ import {useState} from "react";
 
 import {FileUpload, Text, useToast} from "@uva-fnwi/datanose-ui";
 
+import {MAX_FILE_SIZE} from "./constants";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
@@ -25,8 +26,6 @@ interface FileUploadTableProps {
     /** Callback to remove file from server */
     onRemoveStoredFile: (questionName: string) => Promise<void>;
 }
-
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 10MB in bytes
 
 export const FileUploadTable = ({
     instanceId,
@@ -161,7 +160,7 @@ export const FileUploadTable = ({
                                             isLoading={uploadingFiles[question.name]}
                                             errorMessages={{
                                                 fileSize: t("file_upload.error_max_file_size", {
-                                                    size: "20MB",
+                                                    size: "10MB",
                                                 }),
                                             }}
                                             accept={["application/pdf"]}
@@ -179,7 +178,7 @@ export const FileUploadTable = ({
                 </tbody>
             </table>
             <div className="mt-2 text-sm text-black dark:text-white">
-                {t("file_upload.max_file_size", {size: "20MB"})}
+                {t("file_upload.max_file_size", {size: "10MB"})}
             </div>
         </div>
     );

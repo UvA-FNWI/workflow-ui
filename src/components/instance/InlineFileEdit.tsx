@@ -1,7 +1,8 @@
-import {useRef} from "react";
+import {useRef, useState} from "react";
 
-import {Button, FileUpload, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
+import {Button, FileUpload, Icon, Link, Modal, Text} from "@uva-fnwi/datanose-ui";
 
+import {MAX_FILE_SIZE} from "./constants";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {answersApi} from "~/store/api/answersApi.ts";
 import type {Answer, Question} from "~/store/api/types/submissions.ts";
@@ -14,8 +15,6 @@ type Props = {
     submissionId: string;
 };
 
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
-
 export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Props) => {
     const {t} = useTranslate("workflow");
     const [saveFile, {isLoading: isUploading, isError: isUploadError}] =
@@ -23,6 +22,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
     const [saveAnswer, {isLoading: isDeleting, isError: isDeleteError}] =
         answersApi.endpoints.saveAnswer.useMutation();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
     const hasFile = answer?.value != null && (answer.files?.length ?? 0) > 0;
 
@@ -37,6 +37,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
             submissionId,
             answer: {questionName: question.name, value: null},
         });
+        setIsConfirmDeleteOpen(false);
     };
 
     const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +58,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                     buttonVariant="destructive"
                     isLoading={isUploading}
                     errorMessages={{
-                        fileSize: t("file_upload.error_max_file_size", {size: "20MB"}),
+                        fileSize: t("file_upload.error_max_file_size", {size: "10MB"}),
                     }}
                 />
                 {isUploadError && (
@@ -70,60 +71,79 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
     }
 
     return (
-        <div className="flex flex-col gap-1">
-            <div className="flex min-w-0 items-center gap-1">
-                <Link
-                    intent="primary"
-                    underline
-                    className="truncate"
-                    onClick={() =>
-                        downloadFile(answer.files[0], question.name, instanceId, submissionId)
-                    }
-                >
-                    {answer.files[0].name}
-                </Link>
-                {question.isRequired ? (
-                    <>
-                        <Button
-                            intent="ghost"
-                            size="small"
-                            shape="circular"
-                            className="ui:border-0 ui:px-1 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                            onClick={() => fileInputRef.current?.click()}
-                            isLoading={isUploading}
-                            aria-label={t("instance.summary.replace_file")}
-                        >
-                            <Icon name="swap-line" size="xs" color="danger" />
-                        </Button>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="application/pdf"
-                            className="hidden"
-                            onChange={handleFileInputChange}
-                        />
-                    </>
-                ) : (
+        <>
+            <div className="flex flex-col gap-1">
+                <div className="flex min-w-0 items-center gap-1">
+                    <Link
+                        intent="primary"
+                        underline
+                        className="truncate"
+                        onClick={() =>
+                            downloadFile(answer.files[0], question.name, instanceId, submissionId)
+                        }
+                    >
+                        {answer.files[0].name}
+                    </Link>
                     <Button
                         intent="ghost"
                         size="small"
                         shape="circular"
                         className="ui:border-0 ui:px-1 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                        onClick={handleDelete}
-                        isLoading={isDeleting}
-                        aria-label={t("instance.summary.delete_file")}
+                        onClick={() => fileInputRef.current?.click()}
+                        isLoading={isUploading}
+                        aria-label={t("instance.summary.replace_file")}
                     >
-                        <Icon name="trash-line" size="xs" color="danger" />
+                        <Icon name="swap-line" size="xs" color="danger" />
                     </Button>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        onChange={handleFileInputChange}
+                    />
+                    {question.isRequired && (
+                        <Button
+                            intent="ghost"
+                            size="small"
+                            shape="circular"
+                            className="ui:border-0 ui:px-1 ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                            onClick={() => setIsConfirmDeleteOpen(true)}
+                            isLoading={isDeleting}
+                            aria-label={t("instance.summary.delete_file")}
+                        >
+                            <Icon name="trash-line" size="xs" color="danger" />
+                        </Button>
+                    )}
+                </div>
+                {(isUploadError || isDeleteError) && (
+                    <Text size="sm" intent="error">
+                        {isUploadError
+                            ? t("file_upload.error_upload_failed")
+                            : t("file_upload.error_remove_failed")}
+                    </Text>
                 )}
             </div>
-            {(isUploadError || isDeleteError) && (
-                <Text size="sm" intent="error">
-                    {isUploadError
-                        ? t("file_upload.error_upload_failed")
-                        : t("file_upload.error_remove_failed")}
-                </Text>
-            )}
-        </div>
+
+            <Modal isOpen={isConfirmDeleteOpen} onOpenChange={setIsConfirmDeleteOpen} size="sm">
+                <Modal.Header>{t("are_you_sure")}</Modal.Header>
+                <Modal.Body>
+                    <Text>{t("file_upload.confirm_delete_message")}</Text>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        intent="primary"
+                        variant="destructive"
+                        onClick={handleDelete}
+                        isLoading={isDeleting}
+                    >
+                        {t("confirm")}
+                    </Button>
+                    <Button intent="secondary" onClick={() => setIsConfirmDeleteOpen(false)}>
+                        {t("cancel")}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 };
