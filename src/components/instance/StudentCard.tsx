@@ -1,5 +1,6 @@
 import {Card, Heading, Icon, Link, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
+import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 
 interface StudentCardProps {
@@ -7,15 +8,6 @@ interface StudentCardProps {
     studentName?: string;
     studentEmail?: string;
 }
-
-const getInitials = (name: string): string => {
-    return name
-        .trim()
-        .split(" ")
-        .filter((word) => word.length > 0 && /^[a-zA-Z]/.test(word))
-        .map((word) => word.charAt(0).toUpperCase() + ".")
-        .join(" ");
-};
 
 export function StudentCard({isLoading, studentName, studentEmail}: StudentCardProps) {
     const {t} = useTranslate("workflow");
@@ -35,9 +27,7 @@ export function StudentCard({isLoading, studentName, studentEmail}: StudentCardP
                     <div className="mb-2 flex flex-col items-center">
                         {studentName && (
                             <>
-                                <div className="mb-2 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 align-middle font-medium text-gray-600">
-                                    {getInitials(studentName)}
-                                </div>
+                                <UserAvatar userName={studentName} />
                                 <Heading as="h3" size="sm">
                                     {studentName}
                                 </Heading>
