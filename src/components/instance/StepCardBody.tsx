@@ -86,14 +86,12 @@ export const StepCardBody = ({
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
-                            <div className="flex flex-col gap-2 py-4">
-                                <FormSummaryAssessment
-                                    instanceId={instance.id}
-                                    submissions={contentState.assessments}
-                                    combine={true}
-                                    step={step}
-                                />
-                            </div>
+                            <FormSummaryAssessment
+                                instanceId={instance.id}
+                                submissions={contentState.assessments}
+                                combine={true}
+                                step={step}
+                            />
                         )}
                     </>
                 );
