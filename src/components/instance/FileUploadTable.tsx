@@ -144,7 +144,7 @@ export const FileUploadTable = ({
                                                     storedFiles.length > 0,
                                                 )
                                             }
-                                            showFileName={!hasError}
+                                            showFileName={!hasError && !isLoading}
                                             fileName={fileName}
                                             onFileNameClick={() =>
                                                 downloadFile(
