@@ -1,9 +1,9 @@
 {
   "admin": {
-    "impersonate_role_button": "Impersoneer",
+    "impersonate_role_button": "Voordoen",
     "impersonate_role_placeholder": "Selecteer een rol",
-    "impersonate_role_title": "Impersoneer als",
-    "stop_impersonating_button": "Stop impersoneren",
+    "impersonate_role_title": "Voordoen als rol",
+    "stop_impersonating_button": "Stoppen met voordoen",
     "title": "Admin"
   },
   "are_you_sure": "Weet je het zeker?",
@@ -56,6 +56,7 @@
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
+      "calculated_grade": "Berekend cijfer: ",
       "discrepancy_warning": "Er is een groot verschil tussen de cijfers van de verschillende beoordelaars. Bespreek de cijfers voordat je indient en raadpleeg de coördinator indien nodig.",
       "final_grade": "Eindcijfer",
       "grading_incomplete": "Beoordeling nog niet volledig"
@@ -99,6 +100,12 @@
     "search_placeholder": "Zoeken..."
   },
   "select": "Kies",
+  "staff_card": {
+    "confidential_advisers": "Vertrouwenspersonen",
+    "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
+    "edit_email_title": "E-mailadres bewerken van {{name}}",
+    "title": "Medewerkers"
+  },
   "status": {
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"
@@ -118,6 +125,10 @@
     "selected_users_one": "{{count}} gebruiker geselecteerd",
     "selected_users_other": "{{count}} gebruikers geselecteerd",
     "title": "Zoek medewerker"
+  },
+  "validation": {
+    "email": "Vul een geldig e-mailadres in",
+    "phone": "Vul een geldig telefoonnummer in"
   },
   "version_card": {
     "no_answer": "Geen antwoord gegeven",

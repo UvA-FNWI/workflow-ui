@@ -31,6 +31,14 @@ export {
   type InputVariantProps,
 } from './components/Input/Input';
 export {
+  InputDescription,
+  type InputDescriptionProps,
+} from './components/Input/InputDescription';
+export {
+  InputError,
+  type InputErrorProps,
+} from './components/Input/InputError';
+export {
   InputLabel,
   type InputLabelProps,
 } from './components/Input/InputLabel';

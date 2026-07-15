@@ -56,6 +56,7 @@
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
+      "calculated_grade": "Calculated grade: ",
       "discrepancy_warning": "There is a large discrepancy between the supervisors' assessments. Please discuss the grades before submitting and consult the coordinator if needed.",
       "final_grade": "Final grade",
       "grading_incomplete": "Grading not yet complete"
@@ -99,6 +100,12 @@
     "search_placeholder": "Search..."
   },
   "select": "Select",
+  "staff_card": {
+    "confidential_advisers": "Confidential advisers",
+    "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",
+    "edit_email_title": "Edit email for {{name}}",
+    "title": "Staff"
+  },
   "status": {
     "completed_on": "Completed on",
     "submitted": "Submitted"
@@ -118,6 +125,10 @@
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search user"
+  },
+  "validation": {
+    "email": "Please enter a valid email address",
+    "phone": "Please enter a valid phone number"
   },
   "version_card": {
     "no_answer": "No answer provided",

@@ -14,6 +14,8 @@ import { VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 import { Button } from '../../Button/Button';
 import { Icon } from '../../Icon';
+import { InputDescription } from '../InputDescription';
+import { InputError } from '../InputError';
 import { InputLabel } from '../InputLabel';
 import { inputVariants } from '../InputVariant';
 
@@ -156,20 +158,10 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         </div>
       </div>
       {description && (
-        <div
-          {...descriptionProps}
-          className="ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
-        >
-          {description}
-        </div>
+        <InputDescription {...descriptionProps}>{description}</InputDescription>
       )}
       {errorMessage && !isValid && (
-        <div
-          {...errorMessageProps}
-          className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"
-        >
-          {errorMessage}
-        </div>
+        <InputError {...errorMessageProps}>{errorMessage}</InputError>
       )}
     </div>
   );

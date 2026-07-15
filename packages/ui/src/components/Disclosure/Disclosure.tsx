@@ -203,7 +203,12 @@ const DisclosureHeader = (
       )}
     >
       <button
-        {...buttonProps}
+        // useDisclosure's buttonProps also carry React Aria press props
+        // (onPress/onPressStart/isDisabled) meant for useButton, not a native
+        // <button>. We toggle via onClick below, so take only the ARIA wiring.
+        id={buttonProps.id}
+        aria-expanded={buttonProps['aria-expanded']}
+        aria-controls={buttonProps['aria-controls']}
         ref={ref || buttonRef}
         type="button"
         onClick={handleClick}
