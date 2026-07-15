@@ -1,4 +1,5 @@
 {
+  "config_version": "Versie",
   "develop": "Ontwikkelen",
   "errors": {
     "contact_message": "Neem contact op met een beheerder via milestones@uva.nl.",
@@ -20,5 +21,20 @@
   "session_expired_title": "Sessie verlopen",
   "stop_impersonation": "Stoppen met voordoen",
   "version": "Versie",
-  "version_default": "standaard"
+  "version_available": "beschikbaar",
+  "version_baseline_default": "standaardversie",
+  "version_baseline_reloaded": "Standaardversie opnieuw geladen",
+  "version_branch": "branch",
+  "version_currently_viewing": "Huidige versie:",
+  "version_default": "standaard",
+  "version_exit_preview": "Preview sluiten",
+  "version_load": "Laden",
+  "version_load_error": "Laden mislukt",
+  "version_load_ref": "Versie laden",
+  "version_loading_ref": "{{ref}} laden...",
+  "version_previewing": "Je bekijkt versie",
+  "version_ref_placeholder": "branch / tag / SHA",
+  "version_reload_baseline": "Standaardversie opnieuw laden",
+  "version_reload_error": "Opnieuw laden mislukt",
+  "version_upload": "upload"
 }

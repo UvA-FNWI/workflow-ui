@@ -3,6 +3,17 @@ import {useCallback, useMemo} from "react";
 import {type NavigateOptions, type To, useNavigate, useSearchParams} from "react-router";
 
 /**
+ * Set (or clear, with null) the active workflow version in the URL and full-reload. A reload is
+ * necessary for a fresh load.
+ */
+export function setWorkflowVersion(version: string | null) {
+    const params = new URLSearchParams(window.location.search);
+    if (version) params.set("version", version);
+    else params.delete("version");
+    window.location.search = params.toString();
+}
+
+/**
  * Returns the query-string suffix (e.g. "?version=foo") that must be carried across navigation so
  * the selected workflow version is not lost. Empty string when no version is set.
  */
