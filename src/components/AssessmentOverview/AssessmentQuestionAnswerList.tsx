@@ -80,12 +80,12 @@ export const AssessmentQuestionAnswerList = ({
                         setIsOpen(false);
                         setExpandedLinks(new Set());
                     }}
-                    className="w-48"
+                    className="w-80"
                 >
                     {t("instance.summary.hide_answers")}
                 </Link>
             )}
-            {questions.map(({question, percentage}, rowIndex) => {
+            {questions.map(({question, percentage}) => {
                 if (question.linkedTo) return null;
 
                 const linkedIndices = linkedQuestionsMap.get(question.name) ?? [];
@@ -97,21 +97,25 @@ export const AssessmentQuestionAnswerList = ({
                         <div className={`grid gap-4 ${colsClass}`}>
                             <Text
                                 fontWeight="semibold"
-                                className="col-span-2 w-48 min-w-0 wrap-break-word"
+                                className="col-span-2 w-80 min-w-0 wrap-break-word"
                             >
                                 {l(question.text)}
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                             </Text>
                             {arrayOfPairs.map((submission, submissionIndex) => {
+                                const pair = submission.find(
+                                    (s) => s.question.name === question.name,
+                                );
                                 return (
-                                    <AnswerCell
-                                        key={submissionIndex}
-                                        pair={submission[rowIndex]}
-                                        canEdit={canEdit}
-                                        noAnswerText="-"
-                                        instanceId={instanceId}
-                                        submissionId={submissionId}
-                                    />
+                                    <div key={submissionIndex} className="w-32 min-w-0">
+                                        <AnswerCell
+                                            pair={pair}
+                                            canEdit={canEdit}
+                                            noAnswerText="-"
+                                            instanceId={instanceId}
+                                            submissionId={submissionId}
+                                        />
+                                    </div>
                                 );
                             })}
                         </div>
@@ -122,7 +126,7 @@ export const AssessmentQuestionAnswerList = ({
                                         intent="destructive"
                                         underline
                                         onClick={() => toggleLinkedQuestion(question.name)}
-                                        className="w-48"
+                                        className="w-80"
                                     >
                                         {isExpanded
                                             ? t("instance.summary.hide_linked")
@@ -143,19 +147,24 @@ export const AssessmentQuestionAnswerList = ({
                                                         </Text>
                                                     )}
                                                     {arrayOfPairs.map(
-                                                        (submission, submissionIndex) => (
-                                                            <AnswerCell
-                                                                key={submissionIndex}
-                                                                pair={submission[linkedIndex]}
-                                                                canEdit={canEdit}
-                                                                noAnswerText="-"
-                                                                instanceId={instanceId}
-                                                                submissionId={submissionId}
-                                                                showLinkedTitle={
-                                                                    arrayOfPairs.length > 1
-                                                                }
-                                                            />
-                                                        ),
+                                                        (submission, submissionIndex) => {
+                                                            const pair = submission.find(
+                                                                (s) => s.question.name === lq.name,
+                                                            );
+                                                            return (
+                                                                <AnswerCell
+                                                                    key={submissionIndex}
+                                                                    pair={pair}
+                                                                    canEdit={canEdit}
+                                                                    noAnswerText="-"
+                                                                    instanceId={instanceId}
+                                                                    submissionId={submissionId}
+                                                                    showLinkedTitle={
+                                                                        arrayOfPairs.length > 1
+                                                                    }
+                                                                />
+                                                            );
+                                                        },
                                                     )}
                                                 </div>
                                             );

@@ -48,7 +48,7 @@ export const AssessmentPageSection = ({
         <div className="flex flex-col gap-2">
             {/* Page title with edit button */}
             <div className={`grid gap-4 ${colsClass} w-full max-w-full`}>
-                <div className="col-span-2 flex w-48 items-center">
+                <div className="col-span-2 flex w-80 items-center">
                     <Heading
                         size="xs"
                         className="min-w-0 font-semibold wrap-break-word"

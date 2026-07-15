@@ -9,7 +9,7 @@ import {formatAnswer} from "~/utils/formatAnswer.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
-    pair: QuestionAnswerPair;
+    pair?: QuestionAnswerPair;
     canEdit?: boolean;
     noAnswerText?: string;
     instanceId: string;
@@ -30,7 +30,7 @@ export const AnswerCell = ({
     const [copied, setCopied] = useState(false);
     const toast = useToast();
 
-    if (!pair) return <span />;
+    if (!pair) return <Text>-</Text>;
 
     const {answer} = pair;
     const formattedValue =
@@ -116,11 +116,7 @@ export const AnswerCell = ({
                 </div>
             )}
             <div>
-                <Text
-                    as="span"
-                    display="inline"
-                    className="w-32 wrap-break-word whitespace-pre-wrap"
-                >
+                <Text as="span" display="inline" className="wrap-break-word whitespace-pre-wrap">
                     {formattedValue ? formattedValue : "-"}
                 </Text>
                 {(canEdit || pair.submission?.permissions.includes("Edit")) && (
