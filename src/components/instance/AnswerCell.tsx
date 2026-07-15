@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Link, Text, useToast} from "@uva-fnwi/datanose-ui";
 
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -25,9 +25,10 @@ export const AnswerCell = ({
     submissionId,
     showLinkedTitle = false,
 }: Props) => {
-    const {i18n, l, t} = useTranslate("workflow");
+    const {i18n, l, t} = useTranslate(["workflow", "common"]);
     const [isEditing, setIsEditing] = useState(false);
     const [copied, setCopied] = useState(false);
+    const toast = useToast();
 
     if (!pair) return <span />;
 
@@ -38,6 +39,19 @@ export const AnswerCell = ({
             : noAnswerText;
 
     const answerTitleText = pair.columnTitle ?? pair?.submission?.form?.title;
+
+    const handleCopyToClipboard = () => {
+        try {
+            navigator.clipboard.writeText(answer?.value as string);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch {
+            toast.custom("warning", t("common:errors.clipboard_copy_failed"), {
+                title: t("common:errors.warning_title"),
+            });
+        }
+    };
+
     if (isEditing) {
         return (
             <InlineQuestionEdit
@@ -91,11 +105,7 @@ export const AnswerCell = ({
                         size="small"
                         shape="circular"
                         className="border-0 px-1 align-top"
-                        onClick={() => {
-                            navigator.clipboard.writeText(answer?.value as string);
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                        }}
+                        onClick={handleCopyToClipboard}
                     >
                         <Icon
                             name={copied ? "checkmark-line" : "copy-line"}

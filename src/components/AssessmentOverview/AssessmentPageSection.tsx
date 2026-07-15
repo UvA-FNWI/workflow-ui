@@ -45,7 +45,7 @@ export const AssessmentPageSection = ({
     const firstPageResult = assessmentSubmissions[0]?.pageResults.find((p) => p.name === page.name);
 
     return (
-        <div key={page.index} className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
             {/* Page title with edit button */}
             <div className={`grid gap-4 ${colsClass} w-full max-w-full`}>
                 <div className="col-span-2 flex w-48 items-center">

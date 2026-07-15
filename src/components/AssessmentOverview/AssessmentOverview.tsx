@@ -41,7 +41,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
 
     if (step?.resultsType === "AssessmentFinalOverview") {
         return (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 py-4">
                 <AssessmentGradeSummary assessmentResults={assessmentResults} />
                 {submissions[0]?.form.pages.length == 1 && (
                     <PageControl
@@ -74,7 +74,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
     const colsClass = `${colsList[assessmentSubmissions?.length ?? 1]} w-full`;
 
     return (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto py-4">
             <div className="mt-4 flex w-full min-w-max flex-col gap-6">
                 {/* Assessment columns header */}
                 {assessmentSubmissions.length > 1 && (
@@ -93,6 +93,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
                 {/* Assessment page sections */}
                 {form?.pages.map((page) => (
                     <AssessmentPageSection
+                        key={page.name}
                         page={page}
                         assessmentSubmissions={assessmentSubmissions}
                         submissions={submissions}
@@ -110,7 +111,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
                         {assessmentSubmissions.map((sourceResult) => (
-                            <Text fontWeight="semibold" size="xl">
+                            <Text key={sourceResult.id} fontWeight="semibold" size="xl">
                                 {sourceResult.weightedAverage?.toLocaleString(i18n.language)}
                             </Text>
                         ))}
