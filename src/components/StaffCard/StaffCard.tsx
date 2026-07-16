@@ -21,6 +21,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
     const [addStaffModalData, setAddStaffModalData] = useState<{
         allowsExternalUsers: boolean;
         initialRole?: Role;
+        disableRoleSelection?: boolean;
     }>({allowsExternalUsers: false});
 
     const {data: instance} = instancesEndpoints.getInstance.useQuery(instanceId ?? "", {
@@ -29,20 +30,30 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
 
     const [updateProperty] = instancesEndpoints.updateProperty.useMutation();
 
-    const instanceUserRoles = useMemo(() => {
+    const instanceUserRoles: Role[] = useMemo(() => {
         return (
-            instance?.relatedUserGroups.groups
-                .find((g) => g.name === "default")
-                ?.userRoles.filter((u) => u.canEdit)
-                .map((u) => ({
-                    name: u.role,
-                    title: u.title,
-                })) ?? []
+            instance?.relatedUserGroups.groups?.flatMap(
+                (g) =>
+                    g.userRoles
+                        .filter((u) => u.canEdit)
+                        .map((u) => ({
+                            name: u.role,
+                            title: u.title,
+                        })) ?? [],
+            ) ?? []
         );
     }, [instance]);
 
-    const handleOpenAddStaffModal = (allowsExternalUsers: boolean, role?: Role) => {
-        setAddStaffModalData({allowsExternalUsers, initialRole: role});
+    const handleOpenAddStaffModal = (
+        allowsExternalUsers: boolean,
+        role?: Role,
+        disableRoleSelection?: boolean,
+    ) => {
+        setAddStaffModalData({
+            allowsExternalUsers,
+            initialRole: role,
+            disableRoleSelection: disableRoleSelection,
+        });
         setIsAddStaffModalOpen(true);
     };
 
@@ -58,7 +69,11 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
             externalUser: externalUser ? externalUser : undefined,
         });
         setIsAddStaffModalOpen(false);
-        setAddStaffModalData({allowsExternalUsers: false, initialRole: undefined});
+        setAddStaffModalData({
+            allowsExternalUsers: false,
+            initialRole: undefined,
+            disableRoleSelection: false,
+        });
     };
 
     return (
@@ -130,6 +145,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                 allowsExternalUsers={addStaffModalData.allowsExternalUsers}
                 instanceRoles={instanceUserRoles}
                 initialRole={addStaffModalData.initialRole}
+                disableRoleSelection={addStaffModalData.disableRoleSelection}
             />
         </>
     );

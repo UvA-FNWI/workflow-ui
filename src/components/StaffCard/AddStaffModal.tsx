@@ -34,6 +34,7 @@ export interface AddStaffModalProps {
     allowsExternalUsers?: boolean;
     instanceRoles: Role[];
     initialRole?: Role;
+    disableRoleSelection?: boolean;
 }
 
 export default function AddStaffModal({
@@ -45,6 +46,7 @@ export default function AddStaffModal({
     allowsExternalUsers,
     instanceRoles,
     initialRole,
+    disableRoleSelection,
 }: AddStaffModalProps) {
     const {l, t} = useTranslate("workflow");
     const [selectedRole, setSelectedRole] = useState<Role | null>(initialRole ?? null);
@@ -118,6 +120,7 @@ export default function AddStaffModal({
                                     instanceRoles?.find((role) => role.name === value) ?? null,
                                 )
                             }
+                            isDisabled={disableRoleSelection}
                         >
                             {instanceRoles?.map((role) => (
                                 <SelectItem key={role.name} title={l(role.title)}>

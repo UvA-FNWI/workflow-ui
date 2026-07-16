@@ -17,7 +17,7 @@ type RelatedStaffInfoProps = {
     instanceId?: string;
     relatedUserRoles: RelatedUserRoles;
     canEdit?: boolean;
-    onAddUser?: (allowsExternalUsers: boolean, role?: Role) => void;
+    onAddUser?: (allowsExternalUsers: boolean, role?: Role, disableRoleSelection?: boolean) => void;
 };
 
 export function RelatedStaffInfo({
@@ -67,7 +67,7 @@ export function RelatedStaffInfo({
                     intent="secondary"
                     variant="destructive"
                     leftIcon={<Icon name="plus-solid" color="current" />}
-                    onClick={() => onAddUser?.(allowsExternalUsers, {name: role, title})}
+                    onClick={() => onAddUser?.(allowsExternalUsers, {name: role, title}, true)}
                 >
                     {t("add")}
                 </Button>
@@ -100,7 +100,11 @@ export function RelatedStaffInfo({
                                         shape="circular"
                                         className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                                         onClick={() =>
-                                            onAddUser?.(allowsExternalUsers, {name: role, title})
+                                            onAddUser?.(
+                                                allowsExternalUsers,
+                                                {name: role, title},
+                                                true,
+                                            )
                                         }
                                     >
                                         <Icon
