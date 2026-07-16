@@ -7,7 +7,7 @@ import {
   useRef,
 } from 'react';
 
-import { FocusScope, useDialog, useModalOverlay } from 'react-aria';
+import { FocusScope, useDialog, useId, useModalOverlay } from 'react-aria';
 import { createPortal } from 'react-dom';
 
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -73,6 +73,7 @@ export interface ModalProps extends ModalVariantProps {
 interface ModalContextValue {
   onClose: () => void;
   showCloseButton: boolean;
+  headingId: string;
 }
 
 const ModalContext = createContext<ModalContextValue | null>(null);
@@ -193,6 +194,8 @@ const BaseModal = (props: ModalProps) => {
     ...restProps
   } = props;
 
+  const headingId = useId();
+
   // Don't render anything if not open
   if (!isOpen) {
     return null;
@@ -207,9 +210,9 @@ const BaseModal = (props: ModalProps) => {
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
     >
-      <ModalDialog role={role} aria-labelledby="dialog-title">
+      <ModalDialog role={role} aria-labelledby={headingId}>
         <ModalContext.Provider
-          value={{ onClose: handleClose, showCloseButton }}
+          value={{ onClose: handleClose, showCloseButton, headingId }}
         >
           <div
             className={cn(dialogClassGenerator({ size }))}
@@ -229,7 +232,7 @@ BaseModal.displayName = 'Modal';
 // Sub-components for compound component pattern
 const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
   ({ children, className, ...props }, ref) => {
-    const { onClose, showCloseButton } = useModalContext();
+    const { onClose, showCloseButton, headingId } = useModalContext();
 
     return (
       <header
@@ -240,7 +243,7 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         )}
         {...props}
       >
-        <Heading id="dialog-title">{children}</Heading>
+        <Heading id={headingId}>{children}</Heading>
         {showCloseButton && (
           <Button
             intent="ghost"

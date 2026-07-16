@@ -26,7 +26,7 @@
   "email": "Email address",
   "external_user_add": {
     "back_to_search": "Back to search",
-    "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
+    "description": "Can't you find someone in the list? You can add them yourself. Fill in the details below:",
     "email_error": "Please enter a valid email address",
     "manual_user_email_already_exists": "A user with this email address already exists. Use the search function to find the user",
     "manual_user_internal_email": "Users with UvA mail address cannot be added manually. Use the search function to find the user",
@@ -108,7 +108,7 @@
       "info_callout_text": "No automated email is sent. Therefore, inform the employee yourself about their role in this student's project.",
       "this_student": "this student",
       "title": "Assign staff member",
-      "warning_callout_text": "The current <strong>{{role}}</strong> with the name of <strong>{{name}}</strong> will be replaced by the new staff member."
+      "warning_callout_text": "The current {{role}} <strong>{{name}}</strong> will be replaced by the new staff member."
     },
     "confidential_advisers": "Confidential advisers",
     "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",

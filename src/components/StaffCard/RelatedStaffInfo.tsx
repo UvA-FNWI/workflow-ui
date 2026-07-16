@@ -79,10 +79,7 @@ export function RelatedStaffInfo({
         return;
     }
 
-    const canBeRemoved =
-        canEdit &&
-        (relatedUserRoles.allowsAssignment ||
-            (relatedUserRoles.allowsMultipleUsers && users.length > 1));
+    const canBeRemoved = canEdit && relatedUserRoles.allowsMultipleUsers && users.length > 1;
 
     return (
         <>
@@ -90,7 +87,7 @@ export function RelatedStaffInfo({
                 <div key={index} className="flex flex-col pb-8">
                     <UserAvatar userName={user.displayName} />
                     {index === 0 && (
-                        <div className="flex min-w-0 gap-2">
+                        <div className="flex min-w-0 gap-1">
                             <Text fontWeight="semibold">{l(title)}</Text>
                             <div className="flex flex-row items-center gap-1">
                                 {canEdit && (
@@ -117,7 +114,7 @@ export function RelatedStaffInfo({
                             </div>
                         </div>
                     )}
-                    <div className="flex min-w-0 gap-2">
+                    <div className="flex min-w-0 gap-1">
                         <Text>{user.displayName}</Text>
                         {canBeRemoved && (
                             <Button
@@ -132,11 +129,18 @@ export function RelatedStaffInfo({
                         )}
                     </div>
                     {user.organization && <Text>{user.organization?.name}</Text>}
-                    <div className="flex flex-row items-center gap-2">
-                        <Icon className="flex-none" name="email-line" color="current" size="md" />
-                        <Link underline className="truncate" href={`mailto:${user.email}`}>
-                            {user.email}
-                        </Link>
+                    <div className="flex flex-row items-center gap-1">
+                        <div className="flex flex-row items-center gap-2">
+                            <Icon
+                                className="flex-none"
+                                name="email-line"
+                                color="current"
+                                size="md"
+                            />
+                            <Link underline className="truncate" href={`mailto:${user.email}`}>
+                                {user.email}
+                            </Link>
+                        </div>
                         {canEdit && user.isExternal && user.requiresInvitation && (
                             <Button
                                 intent="ghost"

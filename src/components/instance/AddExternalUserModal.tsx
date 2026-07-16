@@ -244,6 +244,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             </Modal.Body>
             <Modal.Footer className="justify-start">
                 <Button
+                    size="large"
                     intent="primary"
                     variant="destructive"
                     onClick={() => {
@@ -259,10 +260,16 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                 >
                     {t("confirm")}
                 </Button>
-                <Button intent="secondary" variant="destructive" onClick={handleBackToSearch}>
+                <Button
+                    size="large"
+                    intent="secondary"
+                    variant="destructive"
+                    onClick={handleBackToSearch}
+                >
                     {t("external_user_add.back_to_search")}
                 </Button>
                 <Button
+                    size="large"
                     intent="secondary"
                     variant="destructive"
                     onClick={() => onOpenChange(false)}

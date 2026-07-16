@@ -33,11 +33,16 @@ export function RemoveStaffMemberModal({
                 />
             </Modal.Body>
             <Modal.Footer>
-                <Button intent="secondary" variant="destructive" onClick={() => setIsOpen(false)}>
-                    {t("cancel")}
-                </Button>
-                <Button intent="primary" variant="destructive" onClick={onConfirm}>
+                <Button size="large" intent="primary" variant="destructive" onClick={onConfirm}>
                     {t("confirm")}
+                </Button>
+                <Button
+                    size="large"
+                    intent="secondary"
+                    variant="destructive"
+                    onClick={() => setIsOpen(false)}
+                >
+                    {t("cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>
