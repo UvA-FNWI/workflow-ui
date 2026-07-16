@@ -33,7 +33,8 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
         return (
             instance?.relatedUserGroups.groups
                 .find((g) => g.name === "default")
-                ?.userRoles.map((u) => ({
+                ?.userRoles.filter((u) => u.canEdit)
+                .map((u) => ({
                     name: u.role,
                     title: u.title,
                 })) ?? []
@@ -95,7 +96,9 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                                         instanceId={instanceId}
                                         relatedUserRoles={relatedUserRoles}
                                         onAddUser={handleOpenAddStaffModal}
-                                        canEdit={canEdit && group.name === "default"}
+                                        canEdit={
+                                            relatedUserRoles.canEdit && group.name === "default"
+                                        }
                                     />
                                 ))}
                             </div>

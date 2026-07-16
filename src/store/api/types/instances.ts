@@ -107,6 +107,7 @@ export type RelatedUserRoles = {
     allowsExternalUsers: boolean;
     allowsAssignment: boolean;
     allowsMultipleUsers: boolean;
+    canEdit: boolean;
 };
 
 export type RelatedUserGroup = {
