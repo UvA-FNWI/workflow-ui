@@ -108,7 +108,7 @@
       "info_callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
       "this_student": "deze student",
       "title": "Medewerker toewijzen",
-      "warning_callout_text": "De huidige {{role}}> <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker."
+      "warning_callout_text": "De huidige {{role}} <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker."
     },
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",

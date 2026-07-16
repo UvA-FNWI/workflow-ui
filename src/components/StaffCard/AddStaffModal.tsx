@@ -16,7 +16,7 @@ import {
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
 import {useExternalUserPicker} from "~/hooks/useExternalUserPicker.ts";
-import {useTranslate} from "~/hooks/useTranslate.ts";
+import {type LocalString, useTranslate} from "~/hooks/useTranslate.ts";
 import type {RelatedUserGroup, Role, WorkflowInstanceField} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 import {getStringField} from "~/utils/fieldUtils.ts";
@@ -64,7 +64,11 @@ export default function AddStaffModal({
 
     const {isReplacing, currentName, currentRole} = useMemo(() => {
         if (!selectedRole || !relatedUserGroups)
-            return {isReplacing: false, currentName: "", currentRole: ""};
+            return {
+                isReplacing: false,
+                currentName: "",
+                currentRole: {en: "", nl: ""} as LocalString,
+            };
         const matchedRole = relatedUserGroups
             .flatMap((ug) => ug.userRoles)
             .find((r) => r.role === selectedRole.name);
@@ -72,7 +76,7 @@ export default function AddStaffModal({
             isReplacing:
                 !!matchedRole && !matchedRole.allowsMultipleUsers && matchedRole.users.length >= 1,
             currentName: matchedRole?.users[0]?.displayName ?? "",
-            currentRole: matchedRole?.role ?? "",
+            currentRole: matchedRole?.title ?? ({en: "", nl: ""} as LocalString),
         };
     }, [selectedRole, relatedUserGroups]);
 
@@ -164,7 +168,10 @@ export default function AddStaffModal({
                         <Callout type="warning">
                             <Trans
                                 i18nKey="workflow:staff_card.add_modal.warning_callout_text"
-                                values={{role: currentRole, name: currentName}}
+                                values={{
+                                    role: currentRole ? l(currentRole) : "",
+                                    name: currentName,
+                                }}
                             />
                         </Callout>
                     )}
