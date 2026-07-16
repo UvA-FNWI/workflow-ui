@@ -146,6 +146,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                 instanceRoles={instanceUserRoles}
                 initialRole={addStaffModalData.initialRole}
                 disableRoleSelection={addStaffModalData.disableRoleSelection}
+                relatedUserGroups={relatedUserGroups}
             />
         </>
     );

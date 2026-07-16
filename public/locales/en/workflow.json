@@ -101,8 +101,9 @@
   "select": "Select",
   "staff_card": {
     "add_modal": {
-      "callout_text": "No automated email is sent. Therefore, inform the employee yourself about their role in this student's project.",
-      "callout_header": "Inform the added staff member yourself",
+      "info_callout_text": "No automated email is sent. Therefore, inform the employee yourself about their role in this student's project.",
+      "info_callout_header": "Inform the added staff member yourself",
+      "warning_callout_text": "The current <strong>{{role}}</strong> with the name of <strong>{{name}}</strong> will be replaced by the new staff member.",
       "choose_role": "Choose role",
       "choose_staff": "Choose staff member",
       "description": "You want to assign another staff member to the project of <strong>{{studentName}}</strong>.",

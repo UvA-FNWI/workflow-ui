@@ -101,8 +101,9 @@
   "select": "Kies",
   "staff_card": {
     "add_modal": {
-      "callout_header": "Informeer de toegevoegde medewerker zelf",
-      "callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
+      "info_callout_header": "Informeer de toegevoegde medewerker zelf",
+      "info_callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
+      "warning_callout_text": "De huidige <strong>{{role}}</strong> genaamd <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker.",
       "choose_role": "Kies een rol",
       "choose_staff": "Kies een medewerker",
       "description": "Je wilt voor het project van <strong>{{studentName}}</strong> een andere medewerker toewijzen.",

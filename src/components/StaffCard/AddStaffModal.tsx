@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 
 import {Trans} from "react-i18next";
 
@@ -17,7 +17,7 @@ import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.t
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
 import {useExternalUserPicker} from "~/hooks/useExternalUserPicker.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {Role, WorkflowInstanceField} from "~/store/api/types/instances.ts";
+import type {RelatedUserGroup, Role, WorkflowInstanceField} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 import {getStringField} from "~/utils/fieldUtils.ts";
 
@@ -35,6 +35,7 @@ export interface AddStaffModalProps {
     instanceRoles: Role[];
     initialRole?: Role;
     disableRoleSelection?: boolean;
+    relatedUserGroups?: RelatedUserGroup[];
 }
 
 export default function AddStaffModal({
@@ -47,6 +48,7 @@ export default function AddStaffModal({
     instanceRoles,
     initialRole,
     disableRoleSelection,
+    relatedUserGroups,
 }: AddStaffModalProps) {
     const {l, t} = useTranslate("workflow");
     const [selectedRole, setSelectedRole] = useState<Role | null>(initialRole ?? null);
@@ -59,6 +61,20 @@ export default function AddStaffModal({
             setSelectedRole(initialRole ?? null);
         }
     }, [isOpen, initialRole]);
+
+    const {isReplacing, currentName, currentRole} = useMemo(() => {
+        if (!selectedRole || !relatedUserGroups)
+            return {isReplacing: false, currentName: "", currentRole: ""};
+        const matchedRole = relatedUserGroups
+            .flatMap((ug) => ug.userRoles)
+            .find((r) => r.role === selectedRole.name);
+        return {
+            isReplacing:
+                !!matchedRole && !matchedRole.allowsMultipleUsers && matchedRole.users.length >= 1,
+            currentName: matchedRole?.users[0]?.displayName ?? "",
+            currentRole: matchedRole?.role ?? "",
+        };
+    }, [selectedRole, relatedUserGroups]);
 
     const handleCreateExternalUser = async (newUser: CreateExternalUserInput): Promise<void> => {
         setExternalUser(newUser);
@@ -141,9 +157,17 @@ export default function AddStaffModal({
                             showSelectedEmail={true}
                         />
                     </div>
-                    <Callout header={t("staff_card.add_modal.callout_header")}>
-                        {t("staff_card.add_modal.callout_text")}
+                    <Callout header={t("staff_card.add_modal.info_callout_header")}>
+                        {t("staff_card.add_modal.info_callout_text")}
                     </Callout>
+                    {isReplacing && (
+                        <Callout type="warning">
+                            <Trans
+                                i18nKey="workflow:staff_card.add_modal.warning_callout_text"
+                                values={{role: currentRole, name: currentName}}
+                            />
+                        </Callout>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="flex flex-row gap-2">
