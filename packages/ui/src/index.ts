@@ -149,4 +149,12 @@ export {
   type GridItemProps,
 } from './components/Grid';
 
+export {
+  PageMark,
+  type PageMarkProps,
+  type PageMarkVariant,
+} from './components/PageMark';
+
+export { useEnvData, type EnvData } from './hooks/useEnvData';
+
 export { cn } from './utils/cn';
