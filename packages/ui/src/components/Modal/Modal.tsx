@@ -207,7 +207,7 @@ const BaseModal = (props: ModalProps) => {
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
     >
-      <ModalDialog role={role}>
+      <ModalDialog role={role} aria-labelledby="dialog-title">
         <ModalContext.Provider
           value={{ onClose: handleClose, showCloseButton }}
         >
@@ -240,7 +240,7 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         )}
         {...props}
       >
-        <Heading>{children}</Heading>
+        <Heading id="dialog-title">{children}</Heading>
         {showCloseButton && (
           <Button
             intent="ghost"

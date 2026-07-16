@@ -50,7 +50,7 @@ describe('Modal', () => {
         </Modal>
       );
 
-      const heading = screen.getByRole('heading', { level: 2 });
+      const heading = screen.getByRole('heading', { level: 3 });
       expect(heading).toHaveTextContent('Custom Title');
     });
 
