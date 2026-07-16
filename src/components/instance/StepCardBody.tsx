@@ -1,4 +1,4 @@
-import {Button, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import {FormModal} from "~/components/instance/FormModal.tsx";
 import {FormPage} from "~/components/instance/FormPage.tsx";
@@ -49,6 +49,8 @@ export const StepCardBody = ({
         (step.versions?.length ?? 0) > 1 &&
         (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
 
+    const shouldShowFormTitle = (submissionIndex: number) => submissionIndex > 0;
+
     const renderBackgroundContent = () => {
         switch (contentState.type) {
             case "empty":
@@ -65,8 +67,17 @@ export const StepCardBody = ({
             case "submissions":
                 return (
                     <>
-                        {contentState.regular.map((submission) => (
-                            <div key={submission.id} className="py-4">
+                        {contentState.regular.map((submission, index) => (
+                            <div key={submission.id} className="flex flex-col gap-2 py-4">
+                                {shouldShowFormTitle(index) && (
+                                    <Heading
+                                        as="h4"
+                                        size="xs"
+                                        className="pb-1 font-semibold text-red-brand"
+                                    >
+                                        {l(submission.form.title)?.toUpperCase()}
+                                    </Heading>
+                                )}
                                 <FormSummary
                                     instanceId={instance.id}
                                     submission={submission}
@@ -75,12 +86,14 @@ export const StepCardBody = ({
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
-                            <FormSummaryAssessment
-                                instanceId={instance.id}
-                                submissions={contentState.assessments}
-                                combine={true}
-                                step={step}
-                            />
+                            <div className="flex flex-col gap-2 py-4">
+                                <FormSummaryAssessment
+                                    instanceId={instance.id}
+                                    submissions={contentState.assessments}
+                                    combine={true}
+                                    step={step}
+                                />
+                            </div>
                         )}
                     </>
                 );
