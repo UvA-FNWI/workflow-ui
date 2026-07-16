@@ -101,14 +101,14 @@
   "select": "Kies",
   "staff_card": {
     "add_modal": {
-      "info_callout_header": "Informeer de toegevoegde medewerker zelf",
-      "info_callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
-      "warning_callout_text": "De huidige <strong>{{role}}</strong> genaamd <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker.",
       "choose_role": "Kies een rol",
       "choose_staff": "Kies een medewerker",
       "description": "Je wilt voor het project van <strong>{{studentName}}</strong> een andere medewerker toewijzen.",
+      "info_callout_header": "Informeer de toegevoegde medewerker zelf",
+      "info_callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
       "this_student": "deze student",
-      "title": "Medewerker toewijzen"
+      "title": "Medewerker toewijzen",
+      "warning_callout_text": "De huidige <strong>{{role}}</strong> genaamd <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker."
     },
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
