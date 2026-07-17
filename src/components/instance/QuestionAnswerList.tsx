@@ -1,158 +1,51 @@
-import {useState} from "react";
+import {Text} from "@uva-fnwi/datanose-ui";
 
-import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
-
-import {InlineQuestionEdit} from "./InlineQuestionEdit.tsx";
+import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {downloadFile} from "~/utils/fileDownload";
-import {formatAnswer} from "~/utils/formatAnswer.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
-    questionAnswerPairs: QuestionAnswerPair[] | QuestionAnswerPair[][];
-    noAnswerText?: string;
+    questionAnswerPairs: QuestionAnswerPair[];
     instanceId: string;
     submissionId?: string;
-    isOpen?: boolean;
-    colsClass?: string;
-    collapseAnswers?: boolean;
     canEdit?: boolean;
-};
-
-type EditTarget = {
-    submissionIndex: number;
-    question: string;
 };
 
 export const QuestionAnswerList = ({
     questionAnswerPairs,
-    noAnswerText,
     instanceId,
     submissionId,
-    isOpen: initialIsOpen = false,
-    colsClass = "grid-cols-2",
-    collapseAnswers = false,
     canEdit = false,
 }: Props) => {
-    const {i18n, l, t} = useTranslate("workflow");
-    const [isOpen, setIsOpen] = useState(initialIsOpen);
-    const [editingQuestion, setEditingQuestion] = useState<EditTarget | null>(null);
-
-    if (collapseAnswers && !isOpen) {
-        return (
-            <Link intent="destructive" underline onClick={() => setIsOpen(true)}>
-                {t("instance.summary.show_answers")}
-            </Link>
-        );
-    }
-
-    const arrayOfPairs: QuestionAnswerPair[][] = Array.isArray(questionAnswerPairs[0])
-        ? (questionAnswerPairs as QuestionAnswerPair[][])
-        : [questionAnswerPairs as QuestionAnswerPair[]];
-
-    // Use the first submission's questions as the row definitions
-    const questions = arrayOfPairs[0] ?? [];
+    const {t, l, i18n} = useTranslate("workflow");
 
     return (
         <div className="flex flex-col gap-2">
-            {questions.map(({question, percentage}, rowIndex) => (
-                <div key={question.name} className={`grid gap-4 ${colsClass}`}>
-                    <Text className="min-w-0 wrap-break-word">
-                        {l(question.text)}
-                        {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                    </Text>
+            {questionAnswerPairs.map((pair) => {
+                const {question, percentage} = pair;
 
-                    {arrayOfPairs.map((submission, submissionIndex) => {
-                        const pair = submission[rowIndex];
-                        if (!pair) return <span></span>;
-                        const {answer} = pair;
-                        const formattedValue =
-                            answer != null
-                                ? formatAnswer(
-                                      answer.value,
-                                      question.type,
-                                      i18n.language,
-                                      question.choices,
-                                  )
-                                : noAnswerText;
+                return (
+                    <div key={question.name} className="grid grid-cols-2 gap-4">
+                        <Text
+                            fontWeight="semibold"
+                            className="min-w-0 wrap-break-word"
+                            color="text-grey-900"
+                        >
+                            {l(question.text)}
+                            {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
+                            {":"}
+                        </Text>
 
-                        if (
-                            editingQuestion?.question === question.name &&
-                            editingQuestion?.submissionIndex === submissionIndex
-                        ) {
-                            return (
-                                <InlineQuestionEdit
-                                    question={question}
-                                    answer={answer}
-                                    instanceId={instanceId}
-                                    submissionId={pair.submission?.id ?? submissionId ?? ""}
-                                    onClose={() => setEditingQuestion(null)}
-                                />
-                            );
-                        }
-
-                        return question.type === "File" && answer != null ? (
-                            answer.value != null ? (
-                                <Link
-                                    key={submissionIndex}
-                                    intent="primary"
-                                    underline
-                                    className="truncate"
-                                    onClick={() =>
-                                        downloadFile(
-                                            answer.files[0],
-                                            question.name,
-                                            instanceId,
-                                            submissionId,
-                                        )
-                                    }
-                                >
-                                    {formattedValue}
-                                </Link>
-                            ) : (
-                                <Text
-                                    className="min-w-0 wrap-break-word whitespace-pre-wrap"
-                                    key={submissionIndex}
-                                >
-                                    {formattedValue ? formattedValue : "-"}
-                                </Text>
-                            )
-                        ) : (
-                            <div key={submissionIndex} className="min-w-0">
-                                <Text
-                                    as="span"
-                                    display="inline"
-                                    className="wrap-break-word whitespace-pre-wrap"
-                                >
-                                    {formattedValue ? formattedValue : "-"}
-                                </Text>
-                                {(canEdit || pair.submission?.permissions.includes("Edit")) && (
-                                    <Button
-                                        intent="ghost"
-                                        size="small"
-                                        shape="circular"
-                                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                        onClick={() =>
-                                            setEditingQuestion({
-                                                submissionIndex,
-                                                question: question.name,
-                                            })
-                                        }
-                                        aria-label={t("instance.summary.edit_answer")}
-                                    >
-                                        <Icon name="edit-line" size="xs" color="danger" />
-                                    </Button>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            ))}
-            {collapseAnswers && (
-                <Link intent="destructive" underline onClick={() => setIsOpen(false)}>
-                    {t("instance.summary.hide_answers")}
-                </Link>
-            )}
+                        <AnswerCell
+                            pair={pair}
+                            canEdit={canEdit}
+                            submissionId={submissionId}
+                            instanceId={instanceId}
+                            noAnswerText={t("version_card.no_answer")}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 };

@@ -117,18 +117,26 @@ export const PageControl = ({
             skip: !page.hasResults,
         },
     );
-    const pageResult = data?.pageResults?.[0];
-    const results = pageResult?.questionResults;
-
-    const averageGradeContent = areWeightedQuestionsComplete
-        ? `${pageResult?.weightedAverage?.toLocaleString(i18n.language) ?? 0}`
-        : t("instance.calculations.grading_incomplete");
 
     const getTotalPercentage = (r: QuestionResult[]) =>
         Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
 
     const getPercentage = (r: QuestionResult[], questionName: string) =>
         r.find((q) => q.name === questionName)?.percentage;
+
+    const pageResult = data?.pageResults?.[0];
+    const results = pageResult?.questionResults;
+
+    const gradeDisplayText =
+        getTotalPercentage(results ?? []) === 100
+            ? t("instance.calculations.final_grade")
+            : t("instance.calculations.average_grade", {
+                  page: l(page.title),
+              }).toUpperCase();
+
+    const averageGradeContent = areWeightedQuestionsComplete
+        ? `${pageResult?.weightedAverage?.toLocaleString(i18n.language) ?? 0}`
+        : t("instance.calculations.grading_incomplete");
 
     return (
         <>
@@ -259,9 +267,7 @@ export const PageControl = ({
                         <Separator weight="bold" color="black" className="mb-4" />
                         <div className="flex items-center justify-between gap-2 pr-12">
                             <Text size="xl" fontWeight="semibold">
-                                {t("instance.calculations.average_grade", {
-                                    page: l(page.title),
-                                }).toUpperCase()}
+                                {gradeDisplayText}
                             </Text>
                             {isFetchingAverages ? (
                                 <LoadingSpinner size="xs" />

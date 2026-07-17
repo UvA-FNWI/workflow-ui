@@ -1,6 +1,7 @@
 {
   "develop": "Develop",
   "errors": {
+    "clipboard_copy_failed": "Could not copy to clipboard.",
     "contact_message": "Contact an administrator at milestones@uva.nl.",
     "error_title": "An error has occurred",
     "warning_title": "Something went wrong"
