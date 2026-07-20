@@ -14,7 +14,7 @@ type VerifyEmailErrorResponse = {
     errorCode?: ManualUserEmailErrorCode;
 };
 
-type EmailErrorMessages = {
+export type EmailErrorMessages = {
     internalEmail?: string;
     emailAlreadyExists?: string;
     invalidEmail?: string;

@@ -216,6 +216,10 @@ export default function AddStaffModal({
                 onConfirm={handleConfirmExternalUser}
                 isSaving={isCreatingExternalUser}
                 onBackToSearch={() => setIsOpenExternal(false)}
+                emailErrorMessages={{
+                    internalEmail: t("staff_card.edit_email_modal.error_internal_email"),
+                    emailAlreadyExists: t("staff_card.edit_email_modal.error_email_already_exists"),
+                }}
             />
         </>
     );
