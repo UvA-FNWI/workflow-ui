@@ -6,9 +6,6 @@ export const versionsApi = baseApi.injectEndpoints({
         getVersionDetails: builder.query<VersionInfo[], void>({
             query: () => "/Versions/details",
         }),
-        getBranches: builder.query<string[], void>({
-            query: () => "/Versions/branches",
-        }),
         // Loads a branch (or tag/SHA) as a named preview version.
         loadBranch: builder.mutation<string, string>({
             query: (ref) => ({
@@ -27,9 +24,5 @@ export const versionsApi = baseApi.injectEndpoints({
     }),
 });
 
-export const {
-    useGetVersionDetailsQuery,
-    useGetBranchesQuery,
-    useLoadBranchMutation,
-    useReloadBaselineMutation,
-} = versionsApi;
+export const {useGetVersionDetailsQuery, useLoadBranchMutation, useReloadBaselineMutation} =
+    versionsApi;
