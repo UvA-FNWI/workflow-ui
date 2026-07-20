@@ -7,14 +7,13 @@ import {
   useRef,
 } from 'react';
 
-import { FocusScope, useDialog, useId, useModalOverlay } from 'react-aria';
+import { FocusScope, useDialog, useModalOverlay } from 'react-aria';
 import { createPortal } from 'react-dom';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
 import { Button } from '../Button/Button';
-import { Heading } from '../Heading/Heading';
 import { Icon } from '../Icon';
 
 const modalClassGenerator = cva(
@@ -73,7 +72,6 @@ export interface ModalProps extends ModalVariantProps {
 interface ModalContextValue {
   onClose: () => void;
   showCloseButton: boolean;
-  headingId: string;
 }
 
 const ModalContext = createContext<ModalContextValue | null>(null);
@@ -194,8 +192,6 @@ const BaseModal = (props: ModalProps) => {
     ...restProps
   } = props;
 
-  const headingId = useId();
-
   // Don't render anything if not open
   if (!isOpen) {
     return null;
@@ -210,9 +206,9 @@ const BaseModal = (props: ModalProps) => {
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
     >
-      <ModalDialog role={role} aria-labelledby={headingId}>
+      <ModalDialog role={role}>
         <ModalContext.Provider
-          value={{ onClose: handleClose, showCloseButton, headingId }}
+          value={{ onClose: handleClose, showCloseButton }}
         >
           <div
             className={cn(dialogClassGenerator({ size }))}
@@ -232,7 +228,7 @@ BaseModal.displayName = 'Modal';
 // Sub-components for compound component pattern
 const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
   ({ children, className, ...props }, ref) => {
-    const { onClose, showCloseButton, headingId } = useModalContext();
+    const { onClose, showCloseButton } = useModalContext();
 
     return (
       <header
@@ -243,7 +239,9 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         )}
         {...props}
       >
-        <Heading id={headingId}>{children}</Heading>
+        <h2 className="ui:font-heading ui:text-2xl ui:text-black ui:dark:text-white">
+          {children}
+        </h2>
         {showCloseButton && (
           <Button
             intent="ghost"
@@ -268,7 +266,7 @@ const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        'ui:px-6 ui:py-2 ui:text-black ui:dark:text-white',
+        'ui:px-6 ui:py-2 ui:text-lg ui:text-grey-900 ui:dark:text-white',
         className
       )}
       {...props}
