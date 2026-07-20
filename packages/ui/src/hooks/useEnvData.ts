@@ -31,13 +31,13 @@ export function useEnvData(env: string | undefined): EnvData | null {
     case 'pr-fe':
     case 'pr-be':
       return {
-        bgClassName: 'ui:bg-grey-200',
+        bgClassName: 'ui:bg-lime-200',
         variant: 'tertiary',
         label: env,
       };
     case 'development':
       return {
-        bgClassName: 'ui:bg-grey-200',
+        bgClassName: 'ui:bg-lime-200',
         variant: 'tertiary',
         label: 'dev',
       };

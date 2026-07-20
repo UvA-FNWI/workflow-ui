@@ -155,6 +155,12 @@ export {
   type PageMarkVariant,
 } from './components/PageMark';
 
+export {
+  EnvViewToggle,
+  useProductionView,
+  type EnvViewToggleProps,
+} from './components/EnvViewToggle';
+
 export { useEnvData, type EnvData } from './hooks/useEnvData';
 
 export { cn } from './utils/cn';

@@ -24,7 +24,7 @@ const pageMarkVariants = cva(
 );
 
 const labelVariants = cva(
-  'ui:w-[200px] ui:-translate-x-[28%] ui:-translate-y-[35%] ui:-rotate-45 ui:py-3 ui:text-center ui:text-sm ui:font-semibold ui:uppercase ui:shadow-md',
+  'ui:w-[200px] ui:-translate-x-[25%] ui:-translate-y-[-60%] ui:-rotate-45 ui:py-3 ui:text-center ui:text-sm ui:font-semibold ui:uppercase ui:shadow-md',
   {
     variants: {
       variant: {
