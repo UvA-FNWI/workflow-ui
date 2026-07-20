@@ -151,7 +151,7 @@ export const PageControl = ({
                         </Heading>
                     )}
                     {page.introduction && (
-                        <Text size="lg">
+                        <Text size="lg" as="span">
                             <MarkdownRenderer>{l(page.introduction) ?? ""}</MarkdownRenderer>
                         </Text>
                     )}
