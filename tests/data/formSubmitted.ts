@@ -593,4 +593,13 @@ export const formSubmitted = {
         },
     ],
     permissions: ["ViewAdminTools"],
+    relatedUserGroups: {
+        groups: [
+            {
+                name: "default",
+                title: null,
+                userRoles: [],
+            },
+        ],
+    },
 };
