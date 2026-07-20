@@ -1,9 +1,9 @@
 import {Button, Heading, Modal, Text} from "@uva-fnwi/datanose-ui";
 
+import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOverview.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
 import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
-import {FormSummaryAssessment} from "~/components/instance/FormSummaryAssessment.tsx";
 import {
     type ContentState,
     getSubmissionsToShow,
@@ -86,14 +86,12 @@ export const StepCardBody = ({
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
-                            <div className="flex flex-col gap-2 py-4">
-                                <FormSummaryAssessment
-                                    instanceId={instance.id}
-                                    submissions={contentState.assessments}
-                                    combine={true}
-                                    step={step}
-                                />
-                            </div>
+                            <AssessmentOverview
+                                instanceId={instance.id}
+                                submissions={contentState.assessments}
+                                combine={true}
+                                step={step}
+                            />
                         )}
                     </>
                 );
