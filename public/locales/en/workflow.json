@@ -65,9 +65,12 @@
     "summary": {
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
+      "explanation": "Explanation",
       "hide_answers": "Hide parts and explanations",
+      "hide_linked": "Hide explanations",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
+      "show_linked": "Show explanations",
       "title": "Summary"
     },
     "workflowInstance": "Workflow Instance"

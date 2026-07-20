@@ -1,6 +1,7 @@
 {
   "develop": "Ontwikkelen",
   "errors": {
+    "clipboard_copy_failed": "Kopiëren naar klembord mislukt.",
     "contact_message": "Neem contact op met een beheerder via milestones@uva.nl.",
     "error_title": "Er is een fout opgetreden",
     "warning_title": "Er is iets mis gegaan"
