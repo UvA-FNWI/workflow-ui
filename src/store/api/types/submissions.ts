@@ -59,10 +59,12 @@ export type Page = {
 };
 
 export type Question = {
-    id: string;
     name: string;
     type: DataType;
     text: LocalString;
+
+    weight: number | null;
+    percentage: number | null;
 
     isRequired: boolean;
     isArray: boolean;
@@ -70,16 +72,13 @@ export type Question = {
     allowsExternalUsers: boolean;
 
     choices: Choice[];
-    rubric: RubricEntry[];
-    subProperties: Question[];
+    rubric?: RubricEntry[];
 
     description?: LocalString;
     shortText?: LocalString;
     workflowDefinition?: string;
     layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
-    weight?: number;
-    percentage?: number;
     sorting?: Sorting;
     linkedTo?: string;
 };

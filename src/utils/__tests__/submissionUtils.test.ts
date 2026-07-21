@@ -11,6 +11,7 @@ const question = (overrides: Partial<Question> = {}): Question => ({
     isArray: false,
     choices: [],
     hideInResults: false,
+    weight: null,
     percentage: null,
     allowsExternalUsers: false,
     ...overrides,
@@ -58,24 +59,37 @@ describe("getVisibleQuestionAnswerPairs", () => {
 });
 
 describe("isPageComplete", () => {
-    it("requires every weighted question, including optional questions", () => {
-        const weighted = question({weight: 1});
-        const unweightedRequired = question({name: "required", isRequired: true});
-        const currentPage = page([weighted, unweightedRequired]);
-        const currentSubmission = submission([weighted, unweightedRequired], []);
+    it("is complete when all required questions are answered", () => {
+        const required = question({name: "required", isRequired: true});
+        const optional = question({name: "optional"});
+        const currentPage = page([required, optional]);
+        const currentSubmission = submission([required, optional], []);
+
+        expect(isPageComplete(currentPage, currentSubmission)).toBe(false);
+
+        currentSubmission.answers.push(answer({questionName: required.name}));
+
+        expect(isPageComplete(currentPage, currentSubmission)).toBe(true);
+    });
+
+    it("only requires weighted questions that are required in weighted-only mode", () => {
+        const requiredWeighted = question({name: "required-weighted", isRequired: true, weight: 1});
+        const optionalWeighted = question({name: "optional-weighted", weight: 1});
+        const currentPage = page([requiredWeighted, optionalWeighted]);
+        const currentSubmission = submission([requiredWeighted, optionalWeighted], []);
 
         expect(isPageComplete(currentPage, currentSubmission, true)).toBe(false);
 
-        currentSubmission.answers.push(answer());
+        currentSubmission.answers.push(answer({questionName: requiredWeighted.name}));
 
         expect(isPageComplete(currentPage, currentSubmission, true)).toBe(true);
     });
 
-    it("ignores hidden weighted questions", () => {
-        const weighted = question({weight: 1});
-        const currentPage = page([weighted]);
-        const currentSubmission = submission([weighted], [answer({value: null, isVisible: false})]);
+    it("ignores hidden required questions", () => {
+        const required = question({isRequired: true});
+        const currentPage = page([required]);
+        const currentSubmission = submission([required], [answer({value: null, isVisible: false})]);
 
-        expect(isPageComplete(currentPage, currentSubmission, true)).toBe(true);
+        expect(isPageComplete(currentPage, currentSubmission)).toBe(true);
     });
 });
