@@ -59,22 +59,27 @@ export type Page = {
 };
 
 export type Question = {
+    id: string;
     name: string;
     type: DataType;
     text: LocalString;
-    description?: LocalString;
+
     isRequired: boolean;
     isArray: boolean;
-    choices: Choice[];
-    workflowDefinition?: string;
     hideInResults: boolean;
-    percentage: number | null;
+    allowsExternalUsers: boolean;
+
+    choices: Choice[];
+    rubric: RubricEntry[];
+    subProperties: Question[];
+
+    description?: LocalString;
     shortText?: LocalString;
+    workflowDefinition?: string;
     layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
     weight?: number;
-    allowsExternalUsers: boolean;
-    rubric?: RubricEntry[];
+    percentage?: number;
     sorting?: Sorting;
     linkedTo?: string;
 };
