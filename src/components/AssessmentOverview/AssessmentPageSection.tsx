@@ -32,7 +32,6 @@ export const AssessmentPageSection = ({
         getVisibleQuestionAnswerPairs(
             page.questions,
             sourceResult.answers,
-            sourceResult.pageResults.find((p) => p.name === page.name)?.questionResults ?? [],
             submissions.find((s) => s.id == sourceResult.id),
             sourceResult.title,
         ),
@@ -41,8 +40,6 @@ export const AssessmentPageSection = ({
     if (!allQuestionAnswerPairs.some((p) => p.some((r) => r.answer))) {
         return null;
     }
-
-    const firstPageResult = assessmentSubmissions[0]?.pageResults.find((p) => p.name === page.name);
 
     return (
         <div className="flex flex-col gap-2">
@@ -55,9 +52,8 @@ export const AssessmentPageSection = ({
                         fontType="heading"
                     >
                         {l(page.title)}
-                        {(firstPageResult?.questionResults?.filter((q) => q.weight).length ?? 0) >
-                            0 &&
-                            ` (${firstPageResult?.questionResults.reduce((sum, q) => sum + q.percentage, 0).toLocaleString(i18n.language)}%)`}
+                        {page.questions.some((question) => question.percentage != null) &&
+                            ` (${page.questions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toLocaleString(i18n.language)}%)`}
                     </Heading>
                     {onEditPage && resultsType === "Normal" && page.isInCurrentForm && (
                         <Button
