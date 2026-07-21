@@ -1,5 +1,6 @@
 {
   "admin": {
+    "fill_dummy_data_button": "Vul met dummy data",
     "impersonate_role_button": "Voordoen",
     "impersonate_role_placeholder": "Selecteer een rol",
     "impersonate_role_title": "Voordoen als rol",

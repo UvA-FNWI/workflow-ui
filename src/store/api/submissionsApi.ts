@@ -45,6 +45,36 @@ export const submissionsApi = baseApi.injectEndpoints({
                 }
             },
         }),
+        getFakeSubmissionData: builder.mutation<Submission, SubmissionParams>({
+            query: ({instanceId, submissionId}) => ({
+                url: `/Submissions/${instanceId}/${submissionId}/fake`,
+                method: "post",
+            }),
+            async onQueryStarted(params, {dispatch, queryFulfilled}) {
+                const {data} = await queryFulfilled;
+                dispatch(
+                    submissionsApi.util.updateQueryData(
+                        "getSubmission",
+                        {instanceId: params.instanceId, submissionId: params.submissionId},
+                        () => data,
+                    ),
+                );
+                dispatch(
+                    instancesApi.util.updateQueryData(
+                        "getInstance",
+                        params.instanceId,
+                        (current) => {
+                            const idx = current.submissions.findIndex(
+                                (s) => s.id === params.submissionId,
+                            );
+                            if (idx !== -1) {
+                                current.submissions[idx] = data;
+                            }
+                        },
+                    ),
+                );
+            },
+        }),
     }),
 });
 

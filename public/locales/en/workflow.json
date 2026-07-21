@@ -1,5 +1,6 @@
 {
   "admin": {
+    "fill_dummy_data_button": "Fill with dummy data",
     "impersonate_role_button": "Impersonate",
     "impersonate_role_placeholder": "Select a role",
     "impersonate_role_title": "Impersonate role",

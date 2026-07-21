@@ -33,6 +33,11 @@ function Instance() {
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
+    const currentStepActions = instance
+        ? instance.actions.filter((a) => a.steps.includes(instance.currentStep ?? ""))
+        : null;
+    const openFormAction = currentStepActions?.find((a) => a.type === "SubmitForm");
+
     return (
         <Container maxWidth={1280}>
             <InstanceHeader
@@ -63,7 +68,13 @@ function Instance() {
                         canEdit={canEdit}
                     />
                     <InfoCards isLoading={isLoading} fields={instance?.fields} />
-                    {instance?.canImpersonate && <AdminCard />}
+                    {instance?.canImpersonate && (
+                        <AdminCard
+                            instanceId={instance.id}
+                            canUseAdminTools={instance.canUseAdminTools}
+                            submissionId={openFormAction?.form}
+                        />
+                    )}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
             </Grid>

@@ -6,11 +6,18 @@ import {Button, Card, Heading, Icon, Select, SelectItem, Skeleton} from "@uva-fn
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
 import type {ImpersonationRole} from "~/store/api/types/submissions";
 import {clearRoleImpersonation, selectRoleImpersonationForInstance} from "~/store/authSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
-export function AdminCard() {
+type AdminCardProps = {
+    instanceId: string;
+    canUseAdminTools: boolean;
+    submissionId?: string;
+};
+
+export function AdminCard({instanceId, canUseAdminTools, submissionId}: AdminCardProps) {
     const {id} = useParams<{id: string}>();
     const {t, l} = useTranslate("workflow");
     const impersonate = useAppSelector((state) => selectRoleImpersonationForInstance(state, id));
@@ -26,6 +33,7 @@ export function AdminCard() {
     );
 
     const [impersonateRole] = instancesEndpoints.impersonateRole.useMutation();
+    const [fillDummyData] = submissionsEndpoints.getFakeSubmissionData.useMutation();
 
     if (isLoading) {
         return (
@@ -95,6 +103,16 @@ export function AdminCard() {
                         </Button>
                     )}
                 </div>
+                {canUseAdminTools && !!submissionId && (
+                    <Button
+                        intent="secondary"
+                        variant="default"
+                        onClick={() => fillDummyData({instanceId, submissionId})}
+                        leftIcon={<Icon name="sparkles-line" size="sm" color="current" />}
+                    >
+                        {t("admin.fill_dummy_data_button")}
+                    </Button>
+                )}
             </div>
         </Card>
     );
