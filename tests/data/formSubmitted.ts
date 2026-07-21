@@ -70,7 +70,7 @@ export const formSubmitted = {
             value: "Test working title",
         },
     ],
-    step: [
+    steps: [
         {
             id: "Subject",
             title: {
