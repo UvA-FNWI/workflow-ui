@@ -33,7 +33,7 @@ export function isPageComplete(
     weightedOnly?: boolean,
 ): boolean {
     return page.questions
-        .filter((q) => (weightedOnly ? q.weight != null && q.weight > 0 : q.isRequired))
+        .filter((q) => q.isRequired && (!weightedOnly || (q.weight && q.weight > 0)))
         .every((question) => {
             const answer = submission.answers.find((a) => a.questionName === question.name);
 
