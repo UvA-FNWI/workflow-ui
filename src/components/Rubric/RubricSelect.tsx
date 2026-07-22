@@ -41,7 +41,7 @@ export function RubricSelect({
         {
             label,
             placeholder: t("select"),
-            value: selectedGrade || null,
+            value: value ?? null,
             onChange: (key) => handleGradeSelect(key as string),
             isInvalid: !isValid,
             children: rubrics.flatMap((rubricEntry) =>
