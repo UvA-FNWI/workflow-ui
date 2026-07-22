@@ -11,16 +11,11 @@ import type {ImpersonationRole} from "~/store/api/types/submissions";
 import {clearRoleImpersonation, selectRoleImpersonationForInstance} from "~/store/authSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
-type AdminCardProps = {
-    instanceId: string;
-    canUseAdminTools: boolean;
-    submissionId?: string;
-};
-
-export function AdminCard({instanceId, canUseAdminTools, submissionId}: AdminCardProps) {
+export function AdminCard() {
     const {id} = useParams<{id: string}>();
     const {t, l} = useTranslate("workflow");
     const impersonate = useAppSelector((state) => selectRoleImpersonationForInstance(state, id));
+    const {formId: openFormId, instanceId} = useAppSelector((state) => state.openForm);
     const dispatch = useAppDispatch();
     const [selectedRole, setSelectedRole] = useState<ImpersonationRole | null>(
         impersonate?.role ?? null,
@@ -103,11 +98,11 @@ export function AdminCard({instanceId, canUseAdminTools, submissionId}: AdminCar
                         </Button>
                     )}
                 </div>
-                {canUseAdminTools && !!submissionId && (
+                {!!instanceId && !!openFormId && (
                     <Button
                         intent="secondary"
                         variant="default"
-                        onClick={() => generateDummyData({instanceId, submissionId})}
+                        onClick={() => generateDummyData({instanceId, submissionId: openFormId})}
                         leftIcon={<Icon name="sparkles-line" size="sm" color="current" />}
                     >
                         {t("admin.fill_dummy_data_button")}

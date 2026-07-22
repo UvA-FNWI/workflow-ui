@@ -12,7 +12,6 @@ import {StaffCard} from "~/components/StaffCard/StaffCard.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
-import {getDescendantIds} from "~/utils/instanceUtils.ts";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
@@ -33,14 +32,6 @@ function Instance() {
     );
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
-
-    const openFormAction = instance?.actions.find(
-        (a) =>
-            a.type === "SubmitForm" &&
-            a.steps.some((s) =>
-                getDescendantIds(instance.steps, instance.currentStep ?? "").includes(s),
-            ),
-    );
 
     return (
         <Container maxWidth={1280}>
@@ -72,13 +63,7 @@ function Instance() {
                         canEdit={canEdit}
                     />
                     <InfoCards isLoading={isLoading} fields={instance?.fields} />
-                    {instance?.canImpersonate && (
-                        <AdminCard
-                            instanceId={instance.id}
-                            canUseAdminTools={instance.canUseAdminTools}
-                            submissionId={openFormAction?.form}
-                        />
-                    )}
+                    {instance?.canImpersonate && <AdminCard />}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
             </Grid>
