@@ -45,9 +45,9 @@ export const submissionsApi = baseApi.injectEndpoints({
                 }
             },
         }),
-        getFakeSubmissionData: builder.mutation<Submission, SubmissionParams>({
+        generateDummySubmissionData: builder.mutation<Submission, SubmissionParams>({
             query: ({instanceId, submissionId}) => ({
-                url: `/Submissions/${instanceId}/${submissionId}/fake`,
+                url: `/Submissions/${instanceId}/${submissionId}/dummyData`,
                 method: "post",
             }),
             invalidatesTags: (_result, _error, {instanceId, submissionId}) => [

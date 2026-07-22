@@ -33,7 +33,7 @@ export function AdminCard({instanceId, canUseAdminTools, submissionId}: AdminCar
     );
 
     const [impersonateRole] = instancesEndpoints.impersonateRole.useMutation();
-    const [fillDummyData] = submissionsEndpoints.getFakeSubmissionData.useMutation();
+    const [generateDummyData] = submissionsEndpoints.generateDummySubmissionData.useMutation();
 
     if (isLoading) {
         return (
@@ -107,7 +107,7 @@ export function AdminCard({instanceId, canUseAdminTools, submissionId}: AdminCar
                     <Button
                         intent="secondary"
                         variant="default"
-                        onClick={() => fillDummyData({instanceId, submissionId})}
+                        onClick={() => generateDummyData({instanceId, submissionId})}
                         leftIcon={<Icon name="sparkles-line" size="sm" color="current" />}
                     >
                         {t("admin.fill_dummy_data_button")}
