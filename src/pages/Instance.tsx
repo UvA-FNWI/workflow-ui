@@ -12,6 +12,7 @@ import {StaffCard} from "~/components/StaffCard/StaffCard.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
+import {getDescendantIds} from "~/utils/instanceUtils.ts";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
@@ -33,10 +34,13 @@ function Instance() {
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
 
-    const currentStepActions = instance
-        ? instance.actions.filter((a) => a.steps.includes(instance.currentStep ?? ""))
-        : null;
-    const openFormAction = currentStepActions?.find((a) => a.type === "SubmitForm");
+    const openFormAction = instance?.actions.find(
+        (a) =>
+            a.type === "SubmitForm" &&
+            a.steps.some((s) =>
+                getDescendantIds(instance.steps, instance.currentStep ?? "").includes(s),
+            ),
+    );
 
     return (
         <Container maxWidth={1280}>
