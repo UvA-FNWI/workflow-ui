@@ -48,9 +48,7 @@ export const StepCard = ({step, instance}: Props) => {
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
     );
-    const submissions = instance.submissions.filter((s) =>
-        stepIds.includes(s.form.step ?? s.form.name),
-    );
+    const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
 
     const autoOpenAction =
         actions.length === 1 && actions[0] && shouldAutoOpenForm(actions[0], submissions)

@@ -56,6 +56,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                     buttonText={t("file_upload.upload_file")}
                     buttonIntent="primary"
                     buttonVariant="destructive"
+                    buttonSize="small"
                     isLoading={isUploading}
                     errorMessages={{
                         fileSize: t("file_upload.error_max_file_size", {size: "10MB"}),
@@ -102,7 +103,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                         className="hidden"
                         onChange={handleFileInputChange}
                     />
-                    {question.isRequired && (
+                    {!question.isRequired && (
                         <Button
                             intent="ghost"
                             size="small"
