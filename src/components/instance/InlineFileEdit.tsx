@@ -24,11 +24,16 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [isWaitingForRefetch, setIsWaitingForRefetch] = useState(false);
 
     const hasFile = answer?.value != null && (answer.files?.length ?? 0) > 0;
 
+    // Keep loading state active until refetched data confirms the file exists
+    if (hasFile && isWaitingForRefetch) setIsWaitingForRefetch(false);
+
     const handleUpload = async (file: File | null) => {
         if (!file) return;
+        setIsWaitingForRefetch(true);
         await saveFile({instanceId, submissionId, questionName: question.name, file});
     };
 
@@ -77,7 +82,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                     buttonText={t("file_upload.upload_file")}
                     buttonIntent="primary"
                     buttonVariant="destructive"
-                    isLoading={isUploading}
+                    isLoading={isUploading || isWaitingForRefetch}
                     errorMessages={{
                         fileSize: t("file_upload.error_max_file_size", {size: "10MB"}),
                     }}
