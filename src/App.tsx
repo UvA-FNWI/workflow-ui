@@ -11,6 +11,7 @@ import {
 import EffectsWrapper from "./components/EffectsWrapper";
 import TemporaryNavbar from "./components/TemporaryNavbar";
 import {ErrorWrapper} from "~/components/ErrorWrapper.tsx";
+import {PreviewBanner} from "~/components/PreviewBanner";
 import {VITE_ENV} from "~/helpers/Environment";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             className={`min-h-screen w-full text-black dark:bg-stone-900 dark:text-white ${!isProductionView && envData ? envData.bgClassName : "bg-grey-300"}`}
         >
             <TemporaryNavbar />
+            <PreviewBanner />
             <EffectsWrapper />
             <ErrorWrapper />
 
