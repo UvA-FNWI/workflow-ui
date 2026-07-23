@@ -1,6 +1,6 @@
 import {expect, test} from "@playwright/test";
 
-// DN-3903: pages must not scroll horizontally at 320px. Tabs scroll within
+// Pages must not scroll horizontally at 320px. Tabs scroll within
 // their own area and wide tables scroll within their card, so neither leaks
 // page-level horizontal scroll.
 const MOBILE = {width: 320, height: 800};
