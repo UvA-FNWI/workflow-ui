@@ -144,6 +144,7 @@ export const InputControl = ({
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
+                onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
                 description={lengthValidationDescription}
                 maxLength={question.maxLength}
                 isValid={isValid}
