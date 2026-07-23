@@ -4,7 +4,7 @@ import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
 import {AdminCard} from "~/components/instance/AdminCard";
 import {ContentCard} from "~/components/instance/ContentCard";
-import {InfoCards} from "~/components/instance/InfoCards";
+import {InfoCard} from "~/components/instance/InfoCard.tsx";
 import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {StudentCard} from "~/components/instance/StudentCard";
@@ -62,7 +62,9 @@ function Instance() {
                         relatedUserGroups={instance?.relatedUserGroups?.groups ?? []}
                         canEdit={canEdit}
                     />
-                    <InfoCards isLoading={isLoading} fields={instance?.fields} />
+                    {instance?.resources.map((resource) => (
+                        <InfoCard isLoading={isLoading} resource={resource} />
+                    ))}
                     {instance?.canImpersonate && <AdminCard />}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>

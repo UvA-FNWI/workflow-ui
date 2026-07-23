@@ -45,12 +45,6 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
-  "good_to_know": {
-    "show_all": "Show all",
-    "show_less": "Show less",
-    "title_one": "Useful during your thesis",
-    "title_other": "[{{count}}x] Useful during your thesis"
-  },
   "home": "Home",
   "instance": {
     "calculations": {
@@ -100,6 +94,8 @@
     "search_placeholder": "Search..."
   },
   "select": "Select",
+  "show_all": "Show all",
+  "show_less": "Show less",
   "staff_card": {
     "confidential_advisers": "Confidential advisers",
     "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",

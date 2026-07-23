@@ -45,12 +45,6 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "good_to_know": {
-    "show_all": "Toon alles",
-    "show_less": "Toon minder",
-    "title_one": "Handig tijdens je scriptie",
-    "title_other": "[{{count}}x] Handig tijdens je scriptie"
-  },
   "home": "Home",
   "instance": {
     "calculations": {
@@ -100,6 +94,8 @@
     "search_placeholder": "Zoeken..."
   },
   "select": "Kies",
+  "show_all": "Toon alles",
+  "show_less": "Toon minder",
   "staff_card": {
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
