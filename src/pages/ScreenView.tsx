@@ -37,14 +37,18 @@ export const ScreenView = () => {
         <Container maxWidth={1280}>
             <Card>
                 <div className="mb-4">
-                    <div className="flex w-full justify-between">
-                        <Heading as="h1">{l(screen.workflowDefinition.title)}</Heading>
-                        <SearchInput
-                            value={search}
-                            onChange={setSearch}
-                            placeholder={t("search_placeholder")}
-                            className="w-fit max-w-sm"
-                        />
+                    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <Heading as="h1" className="min-w-0 wrap-break-word">
+                            {l(screen.workflowDefinition.title)}
+                        </Heading>
+                        <div className="w-full sm:w-80 sm:max-w-sm">
+                            <SearchInput
+                                value={search}
+                                onChange={setSearch}
+                                placeholder={t("search_placeholder")}
+                                className="w-full"
+                            />
+                        </div>
                     </div>
                 </div>
                 {screen.groups ? (
