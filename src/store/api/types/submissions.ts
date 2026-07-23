@@ -62,19 +62,25 @@ export type Question = {
     name: string;
     type: DataType;
     text: LocalString;
-    description?: LocalString;
+
+    weight: number | null;
+    percentage: number | null;
+
     isRequired: boolean;
     isArray: boolean;
-    choices: Choice[];
-    workflowDefinition?: string;
     hideInResults: boolean;
+    allowsExternalUsers: boolean;
+
+    choices: Choice[];
+    rubric?: RubricEntry[];
+
+    description?: LocalString;
     shortText?: LocalString;
+    workflowDefinition?: string;
     layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
-    weight?: number;
-    allowsExternalUsers: boolean;
-    rubric?: RubricEntry[];
     sorting?: Sorting;
+    linkedTo?: string;
 };
 
 export type SortDirection = "Ascending" | "Descending";
