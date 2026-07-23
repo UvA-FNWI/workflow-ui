@@ -119,7 +119,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                         isLoading={isUploading}
                         aria-label={t("instance.summary.replace_file")}
                     >
-                        <Icon name="rotate-right-left-solid" size="xs" color="danger" />
+                        <Icon name="edit-line" size="xs" color="danger" />
                     </Button>
                     <input
                         ref={fileInputRef}
