@@ -593,4 +593,5 @@ export const formSubmitted = {
         },
     ],
     permissions: ["ViewAdminTools"],
+    resources: [],
 };
