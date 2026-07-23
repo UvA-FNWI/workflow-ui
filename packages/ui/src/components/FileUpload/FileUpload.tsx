@@ -202,7 +202,7 @@ export const FileUpload = ({
               fileNameToShow
             )}
           </div>
-          {(selectedFile || fileName) && (
+          {(selectedFile || fileName) && !isLoading && (
             <Button
               intent="ghost"
               disabled={disabled}
