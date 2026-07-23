@@ -23,6 +23,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
         answersApi.endpoints.saveAnswer.useMutation();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     const hasFile = answer?.value != null && (answer.files?.length ?? 0) > 0;
 
@@ -47,6 +48,26 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
     };
 
     if (!hasFile) {
+        if (!isEditing) {
+            return (
+                <div className="flex min-w-0 items-center">
+                    <Text as="span" display="inline">
+                        -
+                    </Text>
+                    <Button
+                        intent="ghost"
+                        size="small"
+                        shape="circular"
+                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                        onClick={() => setIsEditing(true)}
+                        aria-label={t("instance.summary.edit_answer")}
+                    >
+                        <Icon name="edit-line" size="xs" color="danger" />
+                    </Button>
+                </div>
+            );
+        }
+
         return (
             <div className="flex flex-col gap-1">
                 <FileUpload
@@ -56,7 +77,6 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                     buttonText={t("file_upload.upload_file")}
                     buttonIntent="primary"
                     buttonVariant="destructive"
-                    buttonSize="small"
                     isLoading={isUploading}
                     errorMessages={{
                         fileSize: t("file_upload.error_max_file_size", {size: "10MB"}),
@@ -94,7 +114,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                         isLoading={isUploading}
                         aria-label={t("instance.summary.replace_file")}
                     >
-                        <Icon name="swap-line" size="xs" color="danger" />
+                        <Icon name="rotate-right-left-solid" size="xs" color="danger" />
                     </Button>
                     <input
                         ref={fileInputRef}
