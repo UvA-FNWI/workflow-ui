@@ -73,6 +73,10 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
     const colsList = ["grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5", "grid-cols-6"]; // +1 for the first column which stretches two columns
     const colsClass = `${colsList[assessmentSubmissions?.length ?? 1]} w-full`;
 
+    if (assessmentSubmissions.length === 0) {
+        return null;
+    }
+
     return (
         <div className="overflow-x-auto py-4">
             <div className="mt-4 flex w-full min-w-max flex-col gap-6">
