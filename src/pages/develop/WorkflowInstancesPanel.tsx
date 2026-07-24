@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 
 import {createColumnHelper} from "@tanstack/react-table";
-import {Button, Heading, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Text, useToast} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table/DataTable";
 import {VersionedLink} from "~/components/VersionedLink";
@@ -19,6 +19,7 @@ const columnHelper = createColumnHelper<InstanceSummary>();
 
 export function WorkflowInstancesPanel({definition}: WorkflowInstancesPanelProps) {
     const {t, l, i18n} = useTranslate("workflow", {keyPrefix: "develop"});
+    const toast = useToast();
     const navigate = useVersionedNavigate();
     const {
         data: instances,
@@ -27,10 +28,21 @@ export function WorkflowInstancesPanel({definition}: WorkflowInstancesPanelProps
     } = instancesEndpoints.getInstances.useQuery(definition.name);
     const [createInstance, {isLoading: isCreating}] =
         instancesEndpoints.createInstance.useMutation();
+    const [recalculateCurrentSteps, {isLoading: isRecalculating}] =
+        instancesEndpoints.recalculateCurrentSteps.useMutation();
 
     const onCreate = async () => {
         const created = await createInstance({workflowDefinition: definition.name}).unwrap();
         navigate(`/instance/${created.id}`);
+    };
+
+    const onRecalculateCurrentSteps = async () => {
+        try {
+            const result = await recalculateCurrentSteps(definition.name).unwrap();
+            toast.success(t("recalculate_current_steps_success", result));
+        } catch {
+            toast.error(t("recalculate_current_steps_error"));
+        }
     };
 
     const columns = useMemo(
@@ -74,11 +86,26 @@ export function WorkflowInstancesPanel({definition}: WorkflowInstancesPanelProps
                 <Heading as="h2" size="md" className="mb-0">
                     {l(definition.titlePlural)}
                 </Heading>
-                {definition.canCreateInstance && (
-                    <Button intent="primary" onClick={onCreate} disabled={isCreating} type="button">
-                        {t("new", {name: l(definition.title) ?? definition.name})}
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                    <Button
+                        intent="secondary"
+                        onClick={() => void onRecalculateCurrentSteps()}
+                        isLoading={isRecalculating}
+                        type="button"
+                    >
+                        {t("recalculate_current_steps")}
                     </Button>
-                )}
+                    {definition.canCreateInstance && (
+                        <Button
+                            intent="primary"
+                            onClick={() => void onCreate()}
+                            isLoading={isCreating}
+                            type="button"
+                        >
+                            {t("new", {name: l(definition.title) ?? definition.name})}
+                        </Button>
+                    )}
+                </div>
             </div>
             {isLoading ? (
                 <p className="text-sm text-grey-700 dark:text-grey-300">{t("loading")}</p>
