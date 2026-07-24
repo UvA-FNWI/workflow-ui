@@ -12,7 +12,6 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {QuestionResult} from "~/store/api/types/assessments.ts";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Page} from "~/store/api/types/submissions";
 import {isPageComplete} from "~/utils/submissionUtils.ts";
@@ -114,21 +113,26 @@ export const PageControl = ({
             pageName: page.name,
         },
         {
-            skip: !page.hasResults,
+            skip: !page.hasResults || !areWeightedQuestionsComplete,
         },
     );
+
     const pageResult = data?.pageResults?.[0];
-    const results = pageResult?.questionResults;
+    const weightedQuestions = page.questions.filter((question) => question.percentage != null);
+    const totalPercentage = Number(
+        weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toFixed(2),
+    );
+
+    const gradeDisplayText =
+        totalPercentage === 100
+            ? t("instance.calculations.final_grade")
+            : t("instance.calculations.average_grade", {
+                  page: l(page.title),
+              }).toUpperCase();
 
     const averageGradeContent = areWeightedQuestionsComplete
         ? `${pageResult?.weightedAverage?.toLocaleString(i18n.language) ?? 0}`
         : t("instance.calculations.grading_incomplete");
-
-    const getTotalPercentage = (r: QuestionResult[]) =>
-        Number(r.reduce((sum, q) => sum + q.percentage, 0).toFixed(2));
-
-    const getPercentage = (r: QuestionResult[], questionName: string) =>
-        r.find((q) => q.name === questionName)?.percentage;
 
     return (
         <>
@@ -137,9 +141,8 @@ export const PageControl = ({
                     {showTitle && (
                         <Heading size="sm" className="pb-2">
                             {l(page.title)}
-                            {results &&
-                                results.length > 0 &&
-                                ` (${getTotalPercentage(results).toLocaleString(i18n.language)}%)`}
+                            {weightedQuestions.length > 0 &&
+                                ` (${totalPercentage.toLocaleString(i18n.language)}%)`}
                         </Heading>
                     )}
                     {page.introduction && (
@@ -179,13 +182,8 @@ export const PageControl = ({
                                                             {question.type !== "Boolean" && (
                                                                 <InputLabel key={question.name}>
                                                                     {l(question.text)}
-                                                                    {results &&
-                                                                        results.find(
-                                                                            (q) =>
-                                                                                q.name ==
-                                                                                question.name,
-                                                                        ) &&
-                                                                        ` (${getPercentage(results, question.name)?.toLocaleString(i18n.language)}%)`}
+                                                                    {question.percentage != null &&
+                                                                        ` (${question.percentage.toLocaleString(i18n.language)}%)`}
                                                                 </InputLabel>
                                                             )}
                                                             {!question.isRequired && (
@@ -259,9 +257,7 @@ export const PageControl = ({
                         <Separator weight="bold" color="black" className="mb-4" />
                         <div className="flex items-center justify-between gap-2 pr-12">
                             <Text size="xl" fontWeight="semibold">
-                                {t("instance.calculations.average_grade", {
-                                    page: l(page.title),
-                                }).toUpperCase()}
+                                {gradeDisplayText}
                             </Text>
                             {isFetchingAverages ? (
                                 <LoadingSpinner size="xs" />

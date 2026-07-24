@@ -34,6 +34,8 @@ export interface FileUploadProps {
   buttonIntent?: 'primary' | 'secondary' | 'ghost';
   /** Button variant */
   buttonVariant?: 'default' | 'destructive';
+  /** Button size */
+  buttonSize?: 'small' | 'medium' | 'large';
   /** Show selected file name */
   showFileName?: boolean;
   /** External file name to display (e.g., from backend) */
@@ -58,6 +60,7 @@ export const FileUpload = ({
   buttonText = 'Upload File',
   buttonIntent = 'secondary',
   buttonVariant = 'default',
+  buttonSize = 'medium',
   showFileName = true,
   fileName,
   errorMessages = {},
@@ -172,6 +175,7 @@ export const FileUpload = ({
           leftIcon={<Icon name="upload-line" size="sm" color="current" />}
           isLoading={isLoading}
           className="ui:w-fit"
+          size={buttonSize}
         >
           {buttonText}
         </Button>
@@ -198,7 +202,7 @@ export const FileUpload = ({
               fileNameToShow
             )}
           </div>
-          {(selectedFile || fileName) && (
+          {(selectedFile || fileName) && !isLoading && (
             <Button
               intent="ghost"
               disabled={disabled}

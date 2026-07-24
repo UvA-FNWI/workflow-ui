@@ -6,6 +6,7 @@ import type {
     StepResultsType,
     Submission,
 } from "~/store/api/types/submissions.ts";
+import type {UserSearchResult} from "~/store/api/types/users.ts";
 
 export type WorkflowInstanceField = {
     key: string | null;
@@ -25,6 +26,7 @@ export type WorkflowInstance = {
     canUseAdminTools: boolean;
     canImpersonate: boolean;
     viewerRoles: string[];
+    relatedUserGroups: RelatedUserGroups;
 };
 
 /**
@@ -92,4 +94,19 @@ export type RoleImpersonationResult = {
     role: ImpersonationRole;
     token: string;
     expiresAtUtc: string;
+};
+
+export type RelatedUser = {
+    title: LocalString;
+    user: UserSearchResult & {id: string};
+};
+
+export type RelatedUserGroup = {
+    name: string;
+    title: LocalString;
+    users: RelatedUser[];
+};
+
+export type RelatedUserGroups = {
+    groups: RelatedUserGroup[];
 };

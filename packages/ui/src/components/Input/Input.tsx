@@ -1,8 +1,10 @@
-import { useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 
 import { mergeProps, useFocusRing, useHover, useTextField } from 'react-aria';
 
 import { cn } from '../../utils/cn';
+import { InputDescription } from './InputDescription';
+import { InputError } from './InputError';
 import { InputLabel } from './InputLabel';
 import { type InputVariantProps, inputVariants } from './InputVariant';
 
@@ -22,6 +24,8 @@ export interface InputProps
   description?: string;
   errorMessage?: string;
   isValid?: boolean;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -35,6 +39,8 @@ export const Input: React.FC<InputProps> = ({
   isDisabled = false,
   className,
   maxLength,
+  leftIcon,
+  rightIcon,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...rest
@@ -52,7 +58,7 @@ export const Input: React.FC<InputProps> = ({
         'aria-label': ariaLabel,
         'aria-labelledby': ariaLabelledBy,
         isDisabled,
-        validationState: isValid === false ? 'invalid' : 'valid',
+        validationState: !isValid ? 'invalid' : 'valid',
         maxLength: maxLength,
       },
       ref
@@ -73,26 +79,33 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div>
       {label && <InputLabel {...labelProps}>{label}</InputLabel>}
-      <input
-        {...mergeProps(inputProps, focusProps, hoverProps, rest)}
-        ref={ref}
-        className={cn(inputClasses, className)}
-      />
+      <div className="ui:relative">
+        {leftIcon && (
+          <div className="ui:pointer-events-none ui:absolute ui:top-0 ui:left-0 ui:flex ui:h-full ui:items-center">
+            <div className="ui:pr-2 ui:pl-3 ui:text-grey-600">{leftIcon}</div>
+          </div>
+        )}
+        <input
+          {...mergeProps(inputProps, focusProps, hoverProps, rest)}
+          ref={ref}
+          className={cn(
+            inputClasses,
+            leftIcon && 'ui:pl-10',
+            rightIcon && 'ui:pr-10',
+            className
+          )}
+        />
+        {rightIcon && (
+          <div className="ui:pointer-events-none ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-center">
+            <div className="ui:pr-3 ui:pl-2 ui:text-grey-600">{rightIcon}</div>
+          </div>
+        )}
+      </div>
       {description && (
-        <div
-          {...descriptionProps}
-          className="ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
-        >
-          {description}
-        </div>
+        <InputDescription {...descriptionProps}>{description}</InputDescription>
       )}
-      {errorMessage && isValid === false && (
-        <div
-          {...errorMessageProps}
-          className="ui:mt-1 ui:text-sm ui:text-red-600 ui:dark:text-red-400"
-        >
-          {errorMessage}
-        </div>
+      {errorMessage && !isValid && (
+        <InputError {...errorMessageProps}>{errorMessage}</InputError>
       )}
     </div>
   );

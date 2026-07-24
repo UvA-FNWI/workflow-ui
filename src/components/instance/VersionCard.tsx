@@ -56,13 +56,16 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                                 return (
                                     <div key={page.name} className="py-2">
                                         {submission.form.pages.length > 1 && (
-                                            <Heading size="xs" className="pb-1 font-semibold">
-                                                {l(page.title)}
+                                            <Heading
+                                                size="xs"
+                                                as="h4"
+                                                className="pb-2 font-semibold"
+                                            >
+                                                {l(page.title)?.toUpperCase()}
                                             </Heading>
                                         )}
                                         <QuestionAnswerList
                                             questionAnswerPairs={questionAnswerPairs}
-                                            noAnswerText={t("version_card.no_answer")}
                                             instanceId={instanceId}
                                             submissionId={submission.id}
                                         />

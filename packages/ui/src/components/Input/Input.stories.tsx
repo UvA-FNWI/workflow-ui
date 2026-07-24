@@ -2,6 +2,7 @@ import { type ComponentProps, useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { Icon } from '../Icon';
 import { Input } from './Input';
 
 const meta: Meta<typeof Input> = {
@@ -50,5 +51,33 @@ export const Disabled: Story = {
     description: 'This input is disabled.',
     isDisabled: true,
     isValid: true,
+  },
+};
+
+export const WithLeftIcon: Story = {
+  render: InteractiveInput,
+  args: {
+    label: 'Email',
+    placeholder: 'Enter email address',
+    leftIcon: <Icon name="email-solid" size="sm" />,
+  },
+};
+
+export const WithRightIcon: Story = {
+  render: InteractiveInput,
+  args: {
+    label: 'Search',
+    placeholder: 'Search...',
+    rightIcon: <Icon name="search-line" size="sm" />,
+  },
+};
+
+export const WithBothIcons: Story = {
+  render: InteractiveInput,
+  args: {
+    label: 'Website',
+    placeholder: 'Enter URL',
+    leftIcon: <Icon name="link-line" size="sm" />,
+    rightIcon: <Icon name="square-info-line" size="sm" />,
   },
 };

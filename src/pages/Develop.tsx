@@ -14,6 +14,7 @@ import {
 import {BackLink} from "~/components/BackLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
+import {ConfigVersionCard} from "~/pages/develop/ConfigVersionCard";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
 import {useGetWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
@@ -41,37 +42,6 @@ function Develop() {
     // Only show types the user can actually create here — the page is for creating/iterating on
     // instances, so non-creatable types (e.g. Context) would just be empty, unactionable tabs.
     const creatableDefinitions = definitions.filter((definition) => definition.canCreateInstance);
-    const backLink = <BackLink className="mb-4">{t("home")}</BackLink>;
-
-    if (creatableDefinitions.length === 0) {
-        return (
-            <Container maxWidth={1280}>
-                {backLink}
-                <Card>
-                    <p className="text-sm text-grey-700 dark:text-grey-300">
-                        {t("develop.no_definitions")}
-                    </p>
-                </Card>
-            </Container>
-        );
-    }
-
-    if (creatableDefinitions.length === 1) {
-        return (
-            <Container maxWidth={1280}>
-                {backLink}
-                <Card>
-                    <WorkflowInstancesPanel definition={creatableDefinitions[0]} />
-                </Card>
-            </Container>
-        );
-    }
-
-    const activeName = searchParams.get("tab");
-    const activeIndex = Math.max(
-        0,
-        creatableDefinitions.findIndex((d) => d.name === activeName),
-    );
 
     const onTabChange = (index: number) => {
         // Preserve every existing param (notably ?version=) and only update ?tab=.
@@ -85,9 +55,28 @@ function Develop() {
         );
     };
 
-    return (
-        <Container maxWidth={1280}>
-            {backLink}
+    let definitionsContent;
+    if (creatableDefinitions.length === 0) {
+        definitionsContent = (
+            <Card>
+                <p className="text-sm text-grey-700 dark:text-grey-300">
+                    {t("develop.no_definitions")}
+                </p>
+            </Card>
+        );
+    } else if (creatableDefinitions.length === 1) {
+        definitionsContent = (
+            <Card>
+                <WorkflowInstancesPanel definition={creatableDefinitions[0]} />
+            </Card>
+        );
+    } else {
+        const activeName = searchParams.get("tab");
+        const activeIndex = Math.max(
+            0,
+            creatableDefinitions.findIndex((d) => d.name === activeName),
+        );
+        definitionsContent = (
             <Card>
                 <Heading as="h1" className="mb-4">
                     {t("develop.title")}
@@ -107,6 +96,14 @@ function Develop() {
                     </TabPanels>
                 </Tabs>
             </Card>
+        );
+    }
+
+    return (
+        <Container maxWidth={1280}>
+            <BackLink className="mb-4">{t("home")}</BackLink>
+            <ConfigVersionCard />
+            {definitionsContent}
         </Container>
     );
 }

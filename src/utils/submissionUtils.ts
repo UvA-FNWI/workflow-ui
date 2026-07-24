@@ -1,4 +1,4 @@
-import type {QuestionResult} from "~/store/api/types/assessments.ts";
+import type {LocalString} from "~/hooks/useTranslate.ts";
 import type {Answer, Page, Question, Submission} from "~/store/api/types/submissions.ts";
 
 export type QuestionAnswerPair = {
@@ -6,21 +6,23 @@ export type QuestionAnswerPair = {
     answer: Answer | null;
     percentage: number | null;
     submission?: Submission;
+    columnTitle?: LocalString;
 };
 
 export function getVisibleQuestionAnswerPairs(
     questions: Question[],
     answers: Answer[],
-    percentages?: QuestionResult[],
     submission?: Submission,
+    columnTitle?: LocalString,
 ): QuestionAnswerPair[] {
     return questions
         .filter((question) => !question.hideInResults)
         .map((question) => ({
             question,
             answer: answers.find((a) => a.questionName === question.name) ?? null,
-            percentage: percentages?.find((p) => p.name === question.name)?.percentage ?? null,
+            percentage: question.percentage,
             submission,
+            columnTitle,
         }))
         .filter((pair) => pair.answer?.isVisible !== false);
 }
