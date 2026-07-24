@@ -67,6 +67,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
+                {type: "Instance", id: params.instanceId},
             ],
         }),
     }),

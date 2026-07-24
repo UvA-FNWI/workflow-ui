@@ -34,6 +34,7 @@
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
+    "confirm_delete_message": "Weet je zeker dat je dit bestand wilt verwijderen?",
     "description": "Beschrijving",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
     "error_remove_failed": "Verwijderen van bestand mislukt. Probeer het opnieuw.",
@@ -62,11 +63,13 @@
     },
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
+      "delete_file": "Bestand verwijderen",
       "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
       "explanation": "Toelichting",
       "hide_answers": "Verberg onderdelen en toelichting",
       "hide_linked": "Verberg toelichtingen",
+      "replace_file": "Bestand vervangen",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",

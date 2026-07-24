@@ -34,6 +34,7 @@
     "title": "Add external user"
   },
   "file_upload": {
+    "confirm_delete_message": "Are you sure you want to delete this file?",
     "description": "Description",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
     "error_remove_failed": " Failed to remove file. Please try again.",
@@ -62,11 +63,13 @@
     },
     "empty_step": "Nothing has been submitted yet.",
     "summary": {
+      "delete_file": "Delete file",
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
       "explanation": "Explanation",
       "hide_answers": "Hide parts and explanations",
       "hide_linked": "Hide explanations",
+      "replace_file": "Replace file",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
