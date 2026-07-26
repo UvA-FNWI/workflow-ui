@@ -20,6 +20,9 @@
     "new": "New {{name}}",
     "no_definitions": "No project types available",
     "no_instances": "No instances yet",
+    "recalculate_current_steps": "Recalculate steps",
+    "recalculate_current_steps_error": "Could not recalculate the current steps",
+    "recalculate_current_steps_success": "Checked {{total}} instances: {{updated}} updated and {{unchanged}} unchanged",
     "title": "Develop"
   },
   "email": "Email address",

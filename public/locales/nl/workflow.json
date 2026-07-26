@@ -20,6 +20,9 @@
     "new": "Nieuw {{name}}",
     "no_definitions": "Geen projecttypes beschikbaar",
     "no_instances": "Nog geen instanties",
+    "recalculate_current_steps": "Stappen herberekenen",
+    "recalculate_current_steps_error": "Kon de huidige stappen niet herberekenen",
+    "recalculate_current_steps_success": "{{total}} instanties gecontroleerd: {{updated}} bijgewerkt en {{unchanged}} ongewijzigd",
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
