@@ -82,6 +82,24 @@
     "choose_course_title": "Kies je vak",
     "no_access": "Je hebt nog geen toegang tot vakken."
   },
+  "personal": {
+    "columns": {
+      "course": "Vak",
+      "employees": "Medewerkers",
+      "progress": "Voortgang",
+      "student_name": "Naam student",
+      "title": "Titel"
+    },
+    "empty_description": "Zodra je aan een workflow bent toegewezen, verschijnt deze hier.",
+    "empty_title": "Geen workflows gevonden",
+    "load_error": "Je workflows konden niet worden geladen. Probeer het opnieuw.",
+    "open": "Openen",
+    "open_instance": "Open {{title}}",
+    "role": "Rol",
+    "search_placeholder": "Zoek in je workflows...",
+    "subtitle": "Alle workflows waarbij je betrokken bent, gegroepeerd op jouw rol.",
+    "title": "Mijn workflows"
+  },
   "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",

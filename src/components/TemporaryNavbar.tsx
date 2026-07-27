@@ -117,6 +117,11 @@ function TemporaryNavbar() {
                         {t("impersonate")}
                     </Button>
                 )}
+                {isAuthenticated && (
+                    <VersionedLink to="/personal" className="text-sm font-medium underline">
+                        {t("personal_page")}
+                    </VersionedLink>
+                )}
                 {isSuperAdmin && (
                     <>
                         <VersionedLink to="/develop" className="text-sm font-medium underline">

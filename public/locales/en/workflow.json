@@ -82,6 +82,24 @@
     "choose_course_title": "Choose your course",
     "no_access": "You don't have access to any courses yet."
   },
+  "personal": {
+    "columns": {
+      "course": "Course",
+      "employees": "Employees",
+      "progress": "Progress",
+      "student_name": "Student name",
+      "title": "Title"
+    },
+    "empty_description": "When you are assigned to a workflow, it will appear here.",
+    "empty_title": "No workflows found",
+    "load_error": "Your workflows could not be loaded. Please try again.",
+    "open": "Open",
+    "open_instance": "Open {{title}}",
+    "role": "Role",
+    "search_placeholder": "Search your workflows...",
+    "subtitle": "All workflows you are involved in, grouped by your role.",
+    "title": "My workflows"
+  },
   "previous": "Previous",
   "progress": {
     "completed": "Completed",
