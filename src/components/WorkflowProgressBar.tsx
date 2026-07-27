@@ -248,16 +248,8 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                         />
                     )}
                 </div>
-                <div className="relative mb-1 h-6">
-                    <Text
-                        className={`absolute whitespace-nowrap text-grey-700 dark:text-grey-400 ${currentStepIndex >= 0 ? "-translate-x-1/2" : ""}`}
-                        style={
-                            currentStepIndex >= 0
-                                ? {left: `${positions[currentStepIndex]}%`}
-                                : {right: "0%"}
-                        }
-                        size="sm"
-                    >
+                <div className="mb-1">
+                    <Text className="text-grey-700 dark:text-grey-400" size="sm">
                         {currentStepIndex >= 0
                             ? (l(displaySteps[currentStepIndex]?.title) ??
                               displaySteps[currentStepIndex]?.id)
