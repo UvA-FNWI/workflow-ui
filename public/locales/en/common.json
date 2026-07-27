@@ -1,4 +1,5 @@
 {
+  "config_version": "Version",
   "develop": "Develop",
   "errors": {
     "clipboard_copy_failed": "Could not copy to clipboard.",
@@ -21,5 +22,18 @@
   "session_expired_title": "Session expired",
   "stop_impersonation": "Stop impersonation",
   "version": "Version",
-  "version_default": "default"
+  "version_baseline_default": "baseline (default)",
+  "version_baseline_reloaded": "Baseline reloaded",
+  "version_branch": "branch",
+  "version_currently_viewing": "Currently viewing:",
+  "version_default": "default",
+  "version_exit_preview": "Exit preview",
+  "version_load": "Load",
+  "version_load_error": "Failed to load version",
+  "version_load_ref": "Load ref",
+  "version_previewing": "Previewing version",
+  "version_ref_placeholder": "branch / tag / SHA",
+  "version_reload_baseline": "Reload baseline",
+  "version_reload_error": "Failed to reload baseline",
+  "version_upload": "upload"
 }

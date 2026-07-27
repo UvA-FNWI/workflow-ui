@@ -39,6 +39,12 @@ export type InstanceSummary = {
     title?: string | null;
 } & Record<string, unknown>;
 
+export type RecalculateCurrentStepsResult = {
+    total: number;
+    updated: number;
+    unchanged: number;
+};
+
 export type StepHeaderStatus = {
     type: "Info" | "Attention" | "Success";
     label: LocalString;
