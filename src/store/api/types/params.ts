@@ -42,5 +42,5 @@ export type UpdatePropertyParams = {
 export type DeletePropertyParams = {
     instanceId: string;
     property: string;
-    itemId: string;
+    itemId?: string;
 };

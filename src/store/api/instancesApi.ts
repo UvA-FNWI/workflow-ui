@@ -71,7 +71,9 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         deleteProperty: builder.mutation<WorkflowInstance, DeletePropertyParams>({
             query: ({instanceId, property, itemId}: DeletePropertyParams) => ({
-                url: `/WorkflowInstances/${instanceId}/properties/${property}/${itemId}`,
+                url: itemId
+                    ? `/WorkflowInstances/${instanceId}/properties/${property}/${itemId}`
+                    : `/WorkflowInstances/${instanceId}/properties/${property}`,
                 method: "DELETE",
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [

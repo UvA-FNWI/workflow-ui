@@ -4,7 +4,7 @@ import {SearchInput} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
-import {useExternalUserPicker} from "~/hooks/useExternalUserPicker.ts";
+import {useModalState} from "~/hooks/useModalState.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
@@ -49,9 +49,11 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     const {
         isOpen: isOpenExternal,
         setIsOpen: setIsOpenExternal,
-        isCreating: isCreatingExternalUser,
+        isLoading: isCreatingExternalUser,
         handleConfirm: handleConfirmExternalUser,
-    } = useExternalUserPicker(onCreateExternalUser, () => setIsOpenUserPicker(false));
+    } = useModalState<CreateExternalUserInput>(onCreateExternalUser, () =>
+        setIsOpenUserPicker(false),
+    );
     const {t} = useTranslate("workflow");
 
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];

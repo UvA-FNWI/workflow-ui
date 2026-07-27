@@ -15,7 +15,7 @@ import {
 
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
-import {useExternalUserPicker} from "~/hooks/useExternalUserPicker.ts";
+import {useModalState} from "~/hooks/useModalState.ts";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate.ts";
 import type {RelatedUserGroup, Role, WorkflowInstanceField} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
@@ -96,9 +96,9 @@ export default function AddStaffModal({
     const {
         isOpen: isOpenExternal,
         setIsOpen: setIsOpenExternal,
-        isCreating: isCreatingExternalUser,
+        isLoading: isCreatingExternalUser,
         handleConfirm: handleConfirmExternalUser,
-    } = useExternalUserPicker(handleCreateExternalUser);
+    } = useModalState<CreateExternalUserInput>(handleCreateExternalUser);
 
     const studentName =
         getStringField(instanceFields, "Student.DisplayName") ??
