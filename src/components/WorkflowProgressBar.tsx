@@ -1,3 +1,5 @@
+import {useLayoutEffect, useRef, useState} from "react";
+
 import {Icon, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 import {cva} from "class-variance-authority";
 
@@ -170,6 +172,44 @@ const getProgressPercentage = (positions: number[], currentStepIndex: number): n
     return Math.round(positions[currentStepIndex]);
 };
 
+/** Centres the label on its percentage position without overflowing the track. */
+const CurrentStepLabel = ({position, label}: {position: number; label: string}) => {
+    const trackRef = useRef<HTMLDivElement>(null);
+    const labelRef = useRef<HTMLDivElement>(null);
+    const [offset, setOffset] = useState(0);
+
+    useLayoutEffect(() => {
+        const track = trackRef.current;
+        const labelEl = labelRef.current;
+        if (!track || !labelEl) return;
+
+        const clampToTrack = () => {
+            const centred = (position / 100) * track.clientWidth - labelEl.offsetWidth / 2;
+            setOffset(Math.max(0, Math.min(centred, track.clientWidth - labelEl.offsetWidth)));
+        };
+
+        clampToTrack();
+        const observer = new ResizeObserver(clampToTrack);
+        observer.observe(track);
+        observer.observe(labelEl);
+        return () => observer.disconnect();
+    }, [position]);
+
+    return (
+        <div ref={trackRef} className="mb-1">
+            <div
+                ref={labelRef}
+                className="w-fit transition-[margin-left] duration-50"
+                style={{marginLeft: offset}}
+            >
+                <Text className="text-grey-700 dark:text-grey-400" size="sm">
+                    {label}
+                </Text>
+            </div>
+        </div>
+    );
+};
+
 export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarProps) => {
     const {l, t, i18n} = useTranslate("workflow");
     const displaySteps = flattenSteps(steps);
@@ -248,14 +288,15 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                         />
                     )}
                 </div>
-                <div className="mb-1">
-                    <Text className="text-grey-700 dark:text-grey-400" size="sm">
-                        {currentStepIndex >= 0
+                <CurrentStepLabel
+                    position={positions[currentStepIndex] ?? 100}
+                    label={
+                        currentStepIndex >= 0
                             ? (l(displaySteps[currentStepIndex]?.title) ??
                               displaySteps[currentStepIndex]?.id)
-                            : t("progress.completed")}
-                    </Text>
-                </div>
+                            : t("progress.completed")
+                    }
+                />
             </div>
         </div>
     );
