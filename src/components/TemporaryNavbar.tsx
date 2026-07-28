@@ -125,11 +125,8 @@ function TemporaryNavbar() {
                 )}
                 {isSuperAdmin && (
                     <>
-                        <VersionedLink
-                            to="/develop"
-                            className="inline-flex h-8 items-center justify-center rounded-xs border border-black bg-black px-3 text-sm font-medium text-white no-underline transition-colors hover:border-grey-700 hover:bg-grey-700 focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-grey-400 dark:focus-visible:ring-offset-grey-900"
-                        >
-                            {t("develop")}
+                        <VersionedLink to="/develop">
+                            <Button intent="primary">{t("develop")}</Button>
                         </VersionedLink>
                         <VersionPicker />
                     </>
