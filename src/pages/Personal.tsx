@@ -5,10 +5,10 @@ import {
     Button,
     Card,
     Container,
+    Disclosure,
     Heading,
     Icon,
     linkClassGenerator,
-    Pill,
     SearchInput,
     Skeleton,
     Text,
@@ -22,28 +22,56 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
 import type {PersonalInstance} from "~/store/api/types/personal";
-import {groupPersonalInstancesByRole} from "~/utils/personalInstances";
+import {
+    groupPersonalInstancesByRole,
+    partitionPersonalInstancesByCompletion,
+    type PersonalRoleGroup,
+} from "~/utils/personalInstances";
+import {getComparableTableCellValue} from "~/utils/tableCellValues";
+
+const columnWidths = {
+    student: "18%",
+    title: "22%",
+    course: "16%",
+    employees: "19%",
+    progress: "18%",
+    actions: "7%",
+};
 
 export default function Personal() {
     const {data: instances = [], isLoading, isError} = useGetPersonalInstancesQuery();
-    const {l, t} = useTranslate("workflow");
+    const {i18n, l, t} = useTranslate("workflow");
     const navigate = useVersionedNavigate();
-    const [search, setSearch] = useState("");
+    const [activeSearch, setActiveSearch] = useState("");
+    const [completedSearch, setCompletedSearch] = useState("");
     useDocumentTitle(t("personal.title"));
 
-    const roleGroups = useMemo(() => groupPersonalInstancesByRole(instances), [instances]);
+    const {activeRoleGroups, completedRoleGroups} = useMemo(() => {
+        const {active, completed} = partitionPersonalInstancesByCompletion(instances);
+        return {
+            activeRoleGroups: groupPersonalInstancesByRole(active),
+            completedRoleGroups: groupPersonalInstancesByRole(completed),
+        };
+    }, [instances]);
+    const hasRoleGroups = activeRoleGroups.length > 0 || completedRoleGroups.length > 0;
     const columns = useMemo<ColumnDef<PersonalInstance>[]>(
         () => [
             {
                 id: "student",
-                accessorKey: "student",
+                accessorFn: (instance) =>
+                    getComparableTableCellValue(instance.student, "String", i18n.language),
                 header: () => t("personal.columns.student_name"),
                 cell: ({getValue}) => getValue<string | null>() || "—",
+                enableSorting: true,
             },
             {
                 id: "title",
                 accessorFn: (instance) =>
-                    instance.title || l(instance.workflowDefinitionTitle) || instance.id,
+                    getComparableTableCellValue(
+                        instance.title || l(instance.workflowDefinitionTitle) || instance.id,
+                        "String",
+                        i18n.language,
+                    ),
                 header: () => t("personal.columns.title"),
                 cell: ({row}) => (
                     <VersionedLink
@@ -59,24 +87,35 @@ export default function Personal() {
                             row.original.id}
                     </VersionedLink>
                 ),
+                enableSorting: true,
             },
             {
                 id: "course",
-                accessorKey: "course",
+                accessorFn: (instance) =>
+                    getComparableTableCellValue(instance.course, "String", i18n.language),
                 header: () => t("personal.columns.course"),
                 cell: ({getValue}) => getValue<string | null>() || "—",
+                enableSorting: true,
             },
             {
                 id: "employees",
-                accessorFn: (instance) => instance.employees.join(", "),
+                accessorFn: (instance) =>
+                    getComparableTableCellValue(
+                        instance.employees.join(", "),
+                        "String",
+                        i18n.language,
+                    ),
                 header: () => t("personal.columns.employees"),
                 cell: ({getValue}) => getValue<string>() || "—",
+                enableSorting: true,
             },
             {
                 id: "progress",
-                accessorFn: (instance) => l(instance.progress.text) || "",
+                accessorFn: (instance) =>
+                    getComparableTableCellValue(instance.progress, "Object", i18n.language),
                 header: () => t("personal.columns.progress"),
                 cell: ({row}) => <ProgressCell progress={row.original.progress} />,
+                enableSorting: true,
             },
             {
                 id: "actions",
@@ -104,27 +143,12 @@ export default function Personal() {
                 ),
             },
         ],
-        [l, navigate, t],
+        [i18n.language, l, navigate, t],
     );
 
     return (
         <Container maxWidth={1280}>
-            <PageHeader
-                title={t("personal.title")}
-                backLabel={t("home")}
-                actions={
-                    !isLoading &&
-                    !isError &&
-                    roleGroups.length > 0 && (
-                        <SearchInput
-                            value={search}
-                            onChange={setSearch}
-                            placeholder={t("personal.search_placeholder")}
-                            className="w-full sm:w-96"
-                        />
-                    )
-                }
-            />
+            <PageHeader title={t("personal.title")} backLabel={t("home")} />
             <div className="flex flex-col gap-6">
                 {isLoading && <PersonalLoadingState />}
 
@@ -134,7 +158,7 @@ export default function Personal() {
                     </Card>
                 )}
 
-                {!isLoading && !isError && roleGroups.length === 0 && (
+                {!isLoading && !isError && !hasRoleGroups && (
                     <Card>
                         <div className="flex flex-col items-center gap-3 py-10 text-center">
                             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-grey-100 text-grey-600">
@@ -150,31 +174,81 @@ export default function Personal() {
                     </Card>
                 )}
 
-                {!isLoading &&
-                    !isError &&
-                    roleGroups.map(({role, instances: roleInstances}) => (
-                        <Card key={role} padding="none" className="overflow-hidden">
-                            <div className="flex items-center justify-between gap-4 border-b border-grey-300 px-6 py-4 dark:border-grey-600">
-                                <div>
-                                    <Text size="sm" className="text-grey-600">
-                                        {t("personal.role")}
-                                    </Text>
-                                    <Heading as="h2" size="sm">
-                                        {formatIdentifier(role)}
-                                    </Heading>
+                {!isLoading && !isError && hasRoleGroups && (
+                    <>
+                        <Disclosure defaultExpanded>
+                            <Disclosure.Header>
+                                <Heading>{t("personal.active")}</Heading>
+                            </Disclosure.Header>
+                            <Disclosure.Content>
+                                <div className="mb-6 flex justify-end pt-4">
+                                    <SearchInput
+                                        value={activeSearch}
+                                        onChange={setActiveSearch}
+                                        placeholder={t("personal.search_placeholder")}
+                                        className="w-full sm:w-96"
+                                    />
                                 </div>
-                                <Pill variant="grey">{roleInstances.length}</Pill>
-                            </div>
-                            <DataTable
-                                data={roleInstances}
-                                columns={columns}
-                                getRowId={(instance) => instance.id}
-                                globalFilter={search}
-                            />
-                        </Card>
-                    ))}
+                                <PersonalRoleTables
+                                    roleGroups={activeRoleGroups}
+                                    columns={columns}
+                                    search={activeSearch}
+                                />
+                            </Disclosure.Content>
+                        </Disclosure>
+                        <Disclosure>
+                            <Disclosure.Header>
+                                <Heading>{t("personal.completed")}</Heading>
+                            </Disclosure.Header>
+                            <Disclosure.Content>
+                                <div className="mb-6 flex justify-end pt-4">
+                                    <SearchInput
+                                        value={completedSearch}
+                                        onChange={setCompletedSearch}
+                                        placeholder={t("personal.search_placeholder")}
+                                        className="w-full sm:w-96"
+                                    />
+                                </div>
+                                <PersonalRoleTables
+                                    roleGroups={completedRoleGroups}
+                                    columns={columns}
+                                    search={completedSearch}
+                                />
+                            </Disclosure.Content>
+                        </Disclosure>
+                    </>
+                )}
             </div>
         </Container>
+    );
+}
+
+function PersonalRoleTables({
+    roleGroups,
+    columns,
+    search,
+}: {
+    roleGroups: PersonalRoleGroup[];
+    columns: ColumnDef<PersonalInstance>[];
+    search: string;
+}) {
+    return (
+        <div className="flex flex-col gap-6">
+            {roleGroups.map(({role, instances: roleInstances}) => (
+                <section key={role} className="overflow-hidden">
+                    <Heading as="h3" size="sm">
+                        {formatIdentifier(role)}
+                    </Heading>
+                    <DataTable
+                        data={roleInstances}
+                        columns={columns}
+                        getRowId={(instance) => instance.id}
+                        globalFilter={search}
+                        columnWidths={columnWidths}
+                    />
+                </section>
+            ))}
+        </div>
     );
 }
 

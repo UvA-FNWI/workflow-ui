@@ -5,6 +5,16 @@ export type PersonalRoleGroup = {
     instances: PersonalInstance[];
 };
 
+export function partitionPersonalInstancesByCompletion(instances: PersonalInstance[]): {
+    active: PersonalInstance[];
+    completed: PersonalInstance[];
+} {
+    return {
+        active: instances.filter((instance) => instance.currentStep !== null),
+        completed: instances.filter((instance) => instance.currentStep === null),
+    };
+}
+
 export function groupPersonalInstancesByRole(instances: PersonalInstance[]): PersonalRoleGroup[] {
     const instancesByRole = new Map<string, PersonalInstance[]>();
 

@@ -83,6 +83,7 @@
     "no_access": "You don't have access to any courses yet."
   },
   "personal": {
+    "active": "Active",
     "columns": {
       "course": "Course",
       "employees": "Employees",
@@ -90,6 +91,7 @@
       "student_name": "Student name",
       "title": "Title"
     },
+    "completed": "Completed",
     "empty_description": "When you are assigned to a workflow, it will appear here.",
     "empty_title": "No workflows found",
     "load_error": "Your workflows could not be loaded. Please try again.",

@@ -29,6 +29,8 @@ type DataTableProps<TData> = {
     filterFns?: FilterFns;
     initialSorting?: SortingState;
     onSortingChange?: (sorting: SortingState) => void;
+    /** Fixed widths keyed by column id. Supplying this also enables fixed table layout. */
+    columnWidths?: Partial<Record<string, string>>;
 };
 
 export function DataTable<TData>({
@@ -40,6 +42,7 @@ export function DataTable<TData>({
     filterFns,
     initialSorting = [],
     onSortingChange,
+    columnWidths,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
@@ -79,7 +82,16 @@ export function DataTable<TData>({
 
     return (
         <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
+            <table
+                className={`w-full border-collapse text-sm ${columnWidths ? "table-fixed" : ""}`}
+            >
+                {columnWidths && (
+                    <colgroup>
+                        {table.getVisibleLeafColumns().map((column) => (
+                            <col key={column.id} style={{width: columnWidths[column.id]}} />
+                        ))}
+                    </colgroup>
+                )}
                 <thead className="border-b border-grey-300">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>

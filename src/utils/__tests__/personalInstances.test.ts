@@ -1,18 +1,22 @@
 import {describe, expect, it} from "vitest";
 
 import type {PersonalInstance} from "~/store/api/types/personal";
-import {groupPersonalInstancesByRole} from "~/utils/personalInstances";
+import {
+    groupPersonalInstancesByRole,
+    partitionPersonalInstancesByCompletion,
+} from "~/utils/personalInstances";
 
 const instance = (
     id: string,
     roles: string[],
     workflowDefinition = "Project",
+    currentStep: string | null = "Start",
 ): PersonalInstance => ({
     id,
     workflowDefinition,
     workflowDefinitionTitle: {en: workflowDefinition, nl: workflowDefinition},
     title: `Instance ${id}`,
-    currentStep: "Start",
+    currentStep,
     progress: {
         text: {en: "In progress", nl: "In behandeling"},
         color: "Green",
@@ -45,5 +49,15 @@ describe("groupPersonalInstancesByRole", () => {
 
     it("returns no groups when there are no personal instances", () => {
         expect(groupPersonalInstancesByRole([])).toEqual([]);
+    });
+
+    it("partitions active and completed instances by the presence of a current step", () => {
+        const active = instance("active", ["Student"]);
+        const completed = instance("completed", ["Student"], "Project", null);
+
+        expect(partitionPersonalInstancesByCompletion([active, completed])).toEqual({
+            active: [active],
+            completed: [completed],
+        });
     });
 });
