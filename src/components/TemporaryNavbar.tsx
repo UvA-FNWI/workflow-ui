@@ -26,6 +26,7 @@ type Language = "en" | "nl";
 function TemporaryNavbar() {
     const {i18n, t} = useTranslate("common");
     const {isAuthenticated, surfLogout} = useAuth();
+    const swaggerUrl = `${VITE_WEBAPI_URL.replace(/\/$/, "")}/swagger`;
     const dispatch = useAppDispatch();
     const toast = useToast();
     const user = useAppSelector(selectCurrentUser);
@@ -94,14 +95,19 @@ function TemporaryNavbar() {
     return (
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
-                <Heading size="sm">Milestones (pilot)</Heading>
+                <VersionedLink to="/" className="no-underline">
+                    <Heading size="sm">Milestones (pilot)</Heading>
+                </VersionedLink>
                 {VITE_ENV !== "production" && (
                     <p className="text-xs text-grey-700 dark:text-grey-300">
-                        {VITE_ENV} | {VITE_WEBAPI_URL}
+                        {VITE_ENV} |{" "}
+                        <a href={swaggerUrl} target="_blank" rel="noreferrer" className="underline">
+                            {VITE_WEBAPI_URL}
+                        </a>
                     </p>
                 )}
             </div>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
                 {userImpersonation && (
                     <div className="flex items-center gap-3 rounded-md bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
                         <span>
@@ -119,7 +125,10 @@ function TemporaryNavbar() {
                 )}
                 {isSuperAdmin && (
                     <>
-                        <VersionedLink to="/develop" className="text-sm font-medium underline">
+                        <VersionedLink
+                            to="/develop"
+                            className="inline-flex h-8 items-center justify-center rounded-xs border border-black bg-black px-3 text-sm font-medium text-white no-underline transition-colors hover:border-grey-700 hover:bg-grey-700 focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-grey-400 dark:focus-visible:ring-offset-grey-900"
+                        >
                             {t("develop")}
                         </VersionedLink>
                         <VersionPicker />
@@ -130,6 +139,7 @@ function TemporaryNavbar() {
                     <div className="w-32">
                         <Select
                             aria-label={t("language")}
+                            className="h-8! min-h-8! py-1! text-sm!"
                             selectedKey={i18n.language}
                             onChange={(key) => i18n.changeLanguage(String(key) as Language)}
                         >

@@ -20,6 +20,12 @@ export function VersionPicker() {
     const currentVersion = new URLSearchParams(window.location.search).get("version") ?? "";
 
     const baseline = details.find((d) => d.name === "");
+    const selectableVersions = details.filter((d) => d.name !== "");
+
+    if (selectableVersions.length === 0) {
+        return null;
+    }
+
     const versionOptions = [
         {
             key: DEFAULT_VERSION_KEY,
@@ -27,12 +33,10 @@ export function VersionPicker() {
                 ? `${t("version_default")} · ${shortSha(baseline.commit)}`
                 : t("version_default"),
         },
-        ...details
-            .filter((d) => d.name !== "")
-            .map((d) => ({
-                key: d.name,
-                label: `${d.name} · ${d.commit ? shortSha(d.commit) : t(d.kind === "Branch" ? "version_branch" : "version_upload")} · ${formatRelativeTime(d.loadedAt, i18n.language)}`,
-            })),
+        ...selectableVersions.map((d) => ({
+            key: d.name,
+            label: `${d.name} · ${d.commit ? shortSha(d.commit) : t(d.kind === "Branch" ? "version_branch" : "version_upload")} · ${formatRelativeTime(d.loadedAt, i18n.language)}`,
+        })),
     ];
     const selectedVersionKey = currentVersion === "" ? DEFAULT_VERSION_KEY : currentVersion;
 
@@ -44,9 +48,10 @@ export function VersionPicker() {
     return (
         <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
             {t("version")}
-            <div className="w-72">
+            <div className="w-fit">
                 <Select
                     aria-label={t("version")}
+                    className="h-8! min-h-8! w-auto! py-1! text-sm!"
                     selectedKey={selectedVersionKey}
                     onChange={(key) => handleSelect(String(key))}
                 >

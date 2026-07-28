@@ -49,6 +49,7 @@ export function ConfigVersionCard() {
                     <div className="w-64">
                         <Input
                             type="text"
+                            className="h-8! min-h-8! py-1! text-sm!"
                             placeholder={t("version_ref_placeholder")}
                             value={ref}
                             onChange={(value: string) => setRef(value)}
