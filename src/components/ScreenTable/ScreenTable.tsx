@@ -3,11 +3,12 @@ import {useMemo} from "react";
 import {type ColumnDef} from "@tanstack/react-table";
 import {Button, Icon, linkClassGenerator, Text} from "@uva-fnwi/datanose-ui";
 
-import {DataTable} from "~/components/Table";
+import {DataTable, ProgressCell} from "~/components/Table";
 import {VersionedLink} from "~/components/VersionedLink";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
+import {isProgressInformation} from "~/utils/progress";
 
 type ScreenTableProps = {
     columns: ScreenColumn[];
@@ -39,18 +40,8 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
 
                             // Custom formatting for the progress column
                             if (col.isCurrentStep && col.dataType === "Object") {
-                                const obj = value as Record<string, unknown>;
-                                if ("text" in obj && "color" in obj) {
-                                    const progressText = obj["text"] as LocalString | undefined;
-                                    const progressColor = obj["color"] as string | undefined;
-                                    return (
-                                        <div className="flex items-baseline gap-2">
-                                            <div
-                                                className={`h-2 min-w-2 rounded-full ${progressColor?.toLowerCase() == "green" ? "bg-green-600" : "bg-red-600"}`}
-                                            />
-                                            <span>{l(progressText)}</span>
-                                        </div>
-                                    );
+                                if (isProgressInformation(value)) {
+                                    return <ProgressCell progress={value} />;
                                 }
                             }
 

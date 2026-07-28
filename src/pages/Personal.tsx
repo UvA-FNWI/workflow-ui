@@ -14,7 +14,8 @@ import {
     Text,
 } from "@uva-fnwi/datanose-ui";
 
-import {DataTable} from "~/components/Table";
+import {PageHeader} from "~/components/PageHeader";
+import {DataTable, ProgressCell} from "~/components/Table";
 import {VersionedLink} from "~/components/VersionedLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -72,10 +73,10 @@ export default function Personal() {
                 cell: ({getValue}) => getValue<string>() || "—",
             },
             {
-                id: "currentStep",
-                accessorFn: (instance) => formatIdentifier(instance.currentStep),
+                id: "progress",
+                accessorFn: (instance) => l(instance.progress.text) || "",
                 header: () => t("personal.columns.progress"),
-                cell: ({getValue}) => getValue<string>() || "—",
+                cell: ({row}) => <ProgressCell progress={row.original.progress} />,
             },
             {
                 id: "actions",
@@ -108,24 +109,23 @@ export default function Personal() {
 
     return (
         <Container maxWidth={1280}>
-            <div className="flex flex-col gap-6">
-                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-                    <div className="flex flex-col gap-1">
-                        <Heading as="h1" size="lg">
-                            {t("personal.title")}
-                        </Heading>
-                        <Text className="text-grey-600">{t("personal.subtitle")}</Text>
-                    </div>
-                    {!isLoading && !isError && roleGroups.length > 0 && (
+            <PageHeader
+                title={t("personal.title")}
+                backLabel={t("home")}
+                actions={
+                    !isLoading &&
+                    !isError &&
+                    roleGroups.length > 0 && (
                         <SearchInput
                             value={search}
                             onChange={setSearch}
                             placeholder={t("personal.search_placeholder")}
-                            className="w-full md:max-w-sm"
+                            className="w-full sm:w-96"
                         />
-                    )}
-                </div>
-
+                    )
+                }
+            />
+            <div className="flex flex-col gap-6">
                 {isLoading && <PersonalLoadingState />}
 
                 {!isLoading && isError && (

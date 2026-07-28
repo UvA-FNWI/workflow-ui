@@ -13,6 +13,10 @@ const instance = (
     workflowDefinitionTitle: {en: workflowDefinition, nl: workflowDefinition},
     title: `Instance ${id}`,
     currentStep: "Start",
+    progress: {
+        text: {en: "In progress", nl: "In behandeling"},
+        color: "Green",
+    },
     createdOn: "2026-07-27T12:00:00Z",
     roles,
     student: "Student Name",

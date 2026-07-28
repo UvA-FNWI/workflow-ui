@@ -1,4 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate";
+import type {ProgressInformation} from "~/store/api/types/progress";
 
 export type PersonalInstance = {
     id: string;
@@ -6,6 +7,7 @@ export type PersonalInstance = {
     workflowDefinitionTitle: LocalString;
     title: string | null;
     currentStep: string | null;
+    progress: ProgressInformation;
     createdOn: string;
     roles: string[];
     student: string | null;
