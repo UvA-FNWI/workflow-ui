@@ -42,20 +42,26 @@ export function getComparableTableCellValue(
         return "";
     }
 
-    switch (dataType) {
-        case "Date":
-        case "DateTime":
-            return getTimeValue(value);
-        case "Currency":
-        case "Double":
-        case "Int":
-            return typeof value === "number" ? value : String(value);
-        case "LocalString":
-        case "Object":
-            return String(formatTableCellValue(value, dataType, locale) ?? "");
-        default:
-            return String(value);
-    }
+    const comparableValue = (() => {
+        switch (dataType) {
+            case "Date":
+            case "DateTime":
+                return getTimeValue(value);
+            case "Currency":
+            case "Double":
+            case "Int":
+                return typeof value === "number" ? value : String(value);
+            case "LocalString":
+            case "Object":
+                return String(formatTableCellValue(value, dataType, locale) ?? "");
+            default:
+                return String(value);
+        }
+    })();
+
+    return typeof comparableValue === "string"
+        ? comparableValue.toLocaleLowerCase(locale)
+        : comparableValue;
 }
 
 function getTimeValue(value: unknown): number | string {

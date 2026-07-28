@@ -1,6 +1,16 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {ProgressInformation} from "~/store/api/types/progress";
 
+export type PersonalRole = {
+    name: string;
+    title: LocalString;
+};
+
+export type PersonalInstances = {
+    roles: PersonalRole[];
+    instances: PersonalInstance[];
+};
+
 export type PersonalInstance = {
     id: string;
     workflowDefinition: string;

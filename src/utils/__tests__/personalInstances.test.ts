@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import type {PersonalInstance} from "~/store/api/types/personal";
+import type {PersonalInstance, PersonalRole} from "~/store/api/types/personal";
 import {
     groupPersonalInstancesByRole,
     partitionPersonalInstancesByCompletion,
@@ -28,32 +28,43 @@ const instance = (
     employees: ["Employee Name"],
 });
 
+const role = (name: string, en: string, nl: string): PersonalRole => ({
+    name,
+    title: {en, nl},
+});
+
 describe("groupPersonalInstancesByRole", () => {
     it("places instances in a separate group for every matching role", () => {
+        const studentRole = role("Student", "Student", "Student");
+        const supervisorRole = role("Supervisor", "Supervisor", "Begeleider");
         const studentAndSupervisor = instance("one", ["Student", "Supervisor"]);
         const student = instance("two", ["Student"]);
 
-        const groups = groupPersonalInstancesByRole([studentAndSupervisor, student]);
+        const groups = groupPersonalInstancesByRole(
+            [studentAndSupervisor, student],
+            [studentRole, supervisorRole],
+        );
 
         expect(groups).toEqual([
             {
-                role: "Student",
+                role: studentRole,
                 instances: [studentAndSupervisor, student],
             },
             {
-                role: "Supervisor",
+                role: supervisorRole,
                 instances: [studentAndSupervisor],
             },
         ]);
     });
 
     it("returns no groups when there are no personal instances", () => {
-        expect(groupPersonalInstancesByRole([])).toEqual([]);
+        expect(groupPersonalInstancesByRole([], [])).toEqual([]);
     });
 
     it("partitions active and completed instances by the presence of a current step", () => {
-        const active = instance("active", ["Student"]);
-        const completed = instance("completed", ["Student"], "Project", null);
+        const studentRole = role("Student", "Student", "Student");
+        const active = instance("active", [studentRole.name]);
+        const completed = instance("completed", [studentRole.name], "Project", null);
 
         expect(partitionPersonalInstancesByCompletion([active, completed])).toEqual({
             active: [active],

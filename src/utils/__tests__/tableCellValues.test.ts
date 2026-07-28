@@ -12,11 +12,17 @@ describe("getComparableTableCellValue", () => {
             color: "Red",
         };
 
-        expect(getComparableTableCellValue(progress, "Object", "en")).toBe("Waiting for approval");
-        expect(getComparableTableCellValue(progress, "Object", "nl")).toBe("Wacht op goedkeuring");
+        expect(getComparableTableCellValue(progress, "Object", "en")).toBe("waiting for approval");
+        expect(getComparableTableCellValue(progress, "Object", "nl")).toBe("wacht op goedkeuring");
     });
 
     it("sorts empty values as an empty string", () => {
         expect(getComparableTableCellValue(null, "String", "en")).toBe("");
+    });
+
+    it("ignores capitalization when comparing text", () => {
+        expect(getComparableTableCellValue("Supervisor", "String", "en")).toBe(
+            getComparableTableCellValue("supervisor", "String", "en"),
+        );
     });
 });

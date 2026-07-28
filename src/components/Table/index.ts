@@ -1,2 +1,4 @@
 export * from "./DataTable";
-export * from "./ProgressCell";
+export * from "./TableLinkCell";
+export * from "./TableProgressCell";
+export * from "./TableTextCell";

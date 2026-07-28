@@ -1,7 +1,7 @@
-import type {PersonalInstance} from "~/store/api/types/personal";
+import type {PersonalInstance, PersonalRole} from "~/store/api/types/personal";
 
 export type PersonalRoleGroup = {
-    role: string;
+    role: PersonalRole;
     instances: PersonalInstance[];
 };
 
@@ -15,18 +15,28 @@ export function partitionPersonalInstancesByCompletion(instances: PersonalInstan
     };
 }
 
-export function groupPersonalInstancesByRole(instances: PersonalInstance[]): PersonalRoleGroup[] {
-    const instancesByRole = new Map<string, PersonalInstance[]>();
+export function groupPersonalInstancesByRole(
+    instances: PersonalInstance[],
+    roles: PersonalRole[],
+): PersonalRoleGroup[] {
+    const rolesByName = new Map(roles.map((role) => [role.name, role]));
+    const groupsByRole = new Map<string, PersonalRoleGroup>();
 
     for (const instance of instances) {
-        for (const role of instance.roles) {
-            const roleInstances = instancesByRole.get(role) ?? [];
-            roleInstances.push(instance);
-            instancesByRole.set(role, roleInstances);
+        for (const roleName of instance.roles) {
+            const group = groupsByRole.get(roleName);
+            if (group) {
+                group.instances.push(instance);
+            } else {
+                const role = rolesByName.get(roleName);
+                if (role) {
+                    groupsByRole.set(roleName, {role, instances: [instance]});
+                }
+            }
         }
     }
 
-    return [...instancesByRole.entries()]
-        .sort(([firstRole], [secondRole]) => firstRole.localeCompare(secondRole))
-        .map(([role, roleInstances]) => ({role, instances: roleInstances}));
+    return [...groupsByRole.values()].sort((first, second) =>
+        first.role.name.localeCompare(second.role.name),
+    );
 }

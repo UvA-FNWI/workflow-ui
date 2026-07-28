@@ -1,0 +1,18 @@
+{
+  "active": "Active",
+  "columns": {
+    "course": "Course",
+    "employees": "Employees",
+    "progress": "Progress",
+    "student_name": "Student name",
+    "title": "Title"
+  },
+  "completed": "Completed",
+  "empty_description": "When you are assigned to a thesis, it will appear here.",
+  "empty_title": "No theses found",
+  "load_error": "Your theses could not be loaded. Please try again.",
+  "open_instance": "Open {{title}}",
+  "role_title": "You are {{role}} for:",
+  "search_placeholder": "Type a searchword",
+  "title": "Theses"
+}

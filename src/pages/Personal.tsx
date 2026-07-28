@@ -8,15 +8,13 @@ import {
     Disclosure,
     Heading,
     Icon,
-    linkClassGenerator,
     SearchInput,
     Skeleton,
     Text,
 } from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
-import {DataTable, ProgressCell} from "~/components/Table";
-import {VersionedLink} from "~/components/VersionedLink";
+import {DataTable, TableLinkCell, TableProgressCell} from "~/components/Table";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -32,27 +30,31 @@ import {getComparableTableCellValue} from "~/utils/tableCellValues";
 const columnWidths = {
     student: "18%",
     title: "22%",
-    course: "16%",
-    employees: "19%",
-    progress: "18%",
-    actions: "7%",
+    course: "17%",
+    employees: "20%",
+    progress: "22%",
+    actions: "64px",
 };
 
+const noInstances: PersonalInstance[] = [];
+
 export default function Personal() {
-    const {data: instances = [], isLoading, isError} = useGetPersonalInstancesQuery();
-    const {i18n, l, t} = useTranslate("workflow");
+    const {data, isLoading, isError} = useGetPersonalInstancesQuery();
+    const instances = data?.instances ?? noInstances;
+    const {i18n, l, t} = useTranslate("personal");
+    const {t: workflowT} = useTranslate("workflow");
     const navigate = useVersionedNavigate();
     const [activeSearch, setActiveSearch] = useState("");
     const [completedSearch, setCompletedSearch] = useState("");
-    useDocumentTitle(t("personal.title"));
+    useDocumentTitle(t("title"));
 
     const {activeRoleGroups, completedRoleGroups} = useMemo(() => {
         const {active, completed} = partitionPersonalInstancesByCompletion(instances);
         return {
-            activeRoleGroups: groupPersonalInstancesByRole(active),
-            completedRoleGroups: groupPersonalInstancesByRole(completed),
+            activeRoleGroups: groupPersonalInstancesByRole(active, data?.roles ?? []),
+            completedRoleGroups: groupPersonalInstancesByRole(completed, data?.roles ?? []),
         };
-    }, [instances]);
+    }, [data?.roles, instances]);
     const hasRoleGroups = activeRoleGroups.length > 0 || completedRoleGroups.length > 0;
     const columns = useMemo<ColumnDef<PersonalInstance>[]>(
         () => [
@@ -60,8 +62,12 @@ export default function Personal() {
                 id: "student",
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.student, "String", i18n.language),
-                header: () => t("personal.columns.student_name"),
-                cell: ({getValue}) => getValue<string | null>() || "—",
+                header: () => t("columns.student_name"),
+                cell: ({row}) => (
+                    <TableLinkCell to={`/instance/${row.original.id}`}>
+                        {row.original.student || "—"}
+                    </TableLinkCell>
+                ),
                 enableSorting: true,
             },
             {
@@ -72,20 +78,13 @@ export default function Personal() {
                         "String",
                         i18n.language,
                     ),
-                header: () => t("personal.columns.title"),
+                header: () => t("columns.title"),
                 cell: ({row}) => (
-                    <VersionedLink
-                        to={`/instance/${row.original.id}`}
-                        className={linkClassGenerator({
-                            intent: "primary",
-                            underline: true,
-                            size: "sm",
-                        })}
-                    >
+                    <TableLinkCell to={`/instance/${row.original.id}`}>
                         {row.original.title ||
                             l(row.original.workflowDefinitionTitle) ||
                             row.original.id}
-                    </VersionedLink>
+                    </TableLinkCell>
                 ),
                 enableSorting: true,
             },
@@ -93,8 +92,12 @@ export default function Personal() {
                 id: "course",
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.course, "String", i18n.language),
-                header: () => t("personal.columns.course"),
-                cell: ({getValue}) => getValue<string | null>() || "—",
+                header: () => t("columns.course"),
+                cell: ({row}) => (
+                    <TableLinkCell to={`/instance/${row.original.id}`}>
+                        {row.original.course || "—"}
+                    </TableLinkCell>
+                ),
                 enableSorting: true,
             },
             {
@@ -105,21 +108,25 @@ export default function Personal() {
                         "String",
                         i18n.language,
                     ),
-                header: () => t("personal.columns.employees"),
-                cell: ({getValue}) => getValue<string>() || "—",
+                header: () => t("columns.employees"),
+                cell: ({row}) => (
+                    <TableLinkCell to={`/instance/${row.original.id}`}>
+                        {row.original.employees.join(", ") || "—"}
+                    </TableLinkCell>
+                ),
                 enableSorting: true,
             },
             {
                 id: "progress",
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.progress, "Object", i18n.language),
-                header: () => t("personal.columns.progress"),
-                cell: ({row}) => <ProgressCell progress={row.original.progress} />,
+                header: () => t("columns.progress"),
+                cell: ({row}) => <TableProgressCell progress={row.original.progress} />,
                 enableSorting: true,
             },
             {
                 id: "actions",
-                header: () => <span className="sr-only">{t("screens.actions")}</span>,
+                header: () => <span className="sr-only">{workflowT("screens.actions")}</span>,
                 enableSorting: false,
                 cell: ({row}) => (
                     <div className="flex w-auto justify-end p-0">
@@ -129,7 +136,7 @@ export default function Personal() {
                             size="square"
                             width="none"
                             className="flex items-center justify-center rounded-sm text-white"
-                            aria-label={t("personal.open_instance", {
+                            aria-label={t("open_instance", {
                                 title:
                                     row.original.title ||
                                     l(row.original.workflowDefinitionTitle) ||
@@ -143,18 +150,18 @@ export default function Personal() {
                 ),
             },
         ],
-        [i18n.language, l, navigate, t],
+        [i18n.language, l, navigate, t, workflowT],
     );
 
     return (
         <Container maxWidth={1280}>
-            <PageHeader title={t("personal.title")} backLabel={t("home")} />
+            <PageHeader title={t("title")} backLabel={workflowT("home")} />
             <div className="flex flex-col gap-6">
                 {isLoading && <PersonalLoadingState />}
 
                 {!isLoading && isError && (
                     <Card>
-                        <Text className="text-red-700">{t("personal.load_error")}</Text>
+                        <Text className="text-red-700">{t("load_error")}</Text>
                     </Card>
                 )}
 
@@ -165,11 +172,9 @@ export default function Personal() {
                                 <Icon name="folder-line" size="lg" decorative />
                             </span>
                             <Heading as="h2" size="sm">
-                                {t("personal.empty_title")}
+                                {t("empty_title")}
                             </Heading>
-                            <Text className="max-w-lg text-grey-600">
-                                {t("personal.empty_description")}
-                            </Text>
+                            <Text className="max-w-lg text-grey-600">{t("empty_description")}</Text>
                         </div>
                     </Card>
                 )}
@@ -178,14 +183,14 @@ export default function Personal() {
                     <>
                         <Disclosure defaultExpanded>
                             <Disclosure.Header>
-                                <Heading>{t("personal.active")}</Heading>
+                                <Heading>{t("active")}</Heading>
                             </Disclosure.Header>
                             <Disclosure.Content>
                                 <div className="mb-6 flex justify-end pt-4">
                                     <SearchInput
                                         value={activeSearch}
                                         onChange={setActiveSearch}
-                                        placeholder={t("personal.search_placeholder")}
+                                        placeholder={t("search_placeholder")}
                                         className="w-full sm:w-96"
                                     />
                                 </div>
@@ -198,14 +203,14 @@ export default function Personal() {
                         </Disclosure>
                         <Disclosure>
                             <Disclosure.Header>
-                                <Heading>{t("personal.completed")}</Heading>
+                                <Heading>{t("completed")}</Heading>
                             </Disclosure.Header>
                             <Disclosure.Content>
                                 <div className="mb-6 flex justify-end pt-4">
                                     <SearchInput
                                         value={completedSearch}
                                         onChange={setCompletedSearch}
-                                        placeholder={t("personal.search_placeholder")}
+                                        placeholder={t("search_placeholder")}
                                         className="w-full sm:w-96"
                                     />
                                 </div>
@@ -232,12 +237,18 @@ function PersonalRoleTables({
     columns: ColumnDef<PersonalInstance>[];
     search: string;
 }) {
+    const {l, t} = useTranslate("personal");
+
     return (
         <div className="flex flex-col gap-6">
             {roleGroups.map(({role, instances: roleInstances}) => (
-                <section key={role} className="overflow-hidden">
-                    <Heading as="h3" size="sm">
-                        {formatIdentifier(role)}
+                <section key={role.name} className="overflow-hidden">
+                    <Heading as="h3" size="sm" className="pb-4">
+                        {t("role_title", {
+                            role: (
+                                l(role.title) || formatIdentifier(role.name)
+                            ).toLocaleLowerCase(),
+                        })}
                     </Heading>
                     <DataTable
                         data={roleInstances}

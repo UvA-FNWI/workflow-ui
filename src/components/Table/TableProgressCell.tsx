@@ -1,11 +1,11 @@
 import {useTranslate} from "~/hooks/useTranslate";
 import type {ProgressInformation} from "~/store/api/types/progress";
 
-type ProgressCellProps = {
+type TableProgressCellProps = {
     progress: ProgressInformation;
 };
 
-export function ProgressCell({progress}: ProgressCellProps) {
+export function TableProgressCell({progress}: TableProgressCellProps) {
     const {l} = useTranslate("workflow");
 
     return (

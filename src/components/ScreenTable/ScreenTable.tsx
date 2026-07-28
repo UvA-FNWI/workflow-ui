@@ -1,10 +1,9 @@
 import {useMemo} from "react";
 
 import {type ColumnDef} from "@tanstack/react-table";
-import {Button, Icon, linkClassGenerator, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Icon} from "@uva-fnwi/datanose-ui";
 
-import {DataTable, ProgressCell} from "~/components/Table";
-import {VersionedLink} from "~/components/VersionedLink";
+import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
@@ -46,31 +45,20 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                             // Custom formatting for the progress column
                             if (col.isCurrentStep && col.dataType === "Object") {
                                 if (isProgressInformation(value)) {
-                                    return <ProgressCell progress={value} />;
+                                    return <TableProgressCell progress={value} />;
                                 }
                             }
 
                             if (col.link) {
                                 const rowId = info.row.original.id;
                                 return (
-                                    <VersionedLink
-                                        to={`/instance/${rowId}`}
-                                        className={linkClassGenerator({
-                                            intent: "primary",
-                                            underline: true,
-                                            size: "sm",
-                                        })}
-                                    >
+                                    <TableLinkCell to={`/instance/${rowId}`}>
                                         {formattedValue}
-                                    </VersionedLink>
+                                    </TableLinkCell>
                                 );
                             }
 
-                            return (
-                                <Text size={"sm"} truncate={true} className="max-w-80">
-                                    {formattedValue}
-                                </Text>
-                            );
+                            return <TableTextCell>{formattedValue}</TableTextCell>;
                         },
                         enableSorting: true,
                     }),
