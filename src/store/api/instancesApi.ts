@@ -1,6 +1,11 @@
 import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
-import type {InstanceSummary, RoleImpersonationResult, WorkflowInstance} from "./types/instances";
+import type {
+    InstanceSummary,
+    RecalculateCurrentStepsResult,
+    RoleImpersonationResult,
+    WorkflowInstance,
+} from "./types/instances";
 import type {ImpersonationRole} from "./types/submissions";
 
 export const instancesApi = baseApi.injectEndpoints({
@@ -21,6 +26,13 @@ export const instancesApi = baseApi.injectEndpoints({
                 url: "/WorkflowInstances",
                 method: "POST",
                 body,
+            }),
+            invalidatesTags: ["Instance"],
+        }),
+        recalculateCurrentSteps: builder.mutation<RecalculateCurrentStepsResult, string>({
+            query: (workflowDefinition) => ({
+                url: `/WorkflowInstances/instances/${workflowDefinition}/recalculate-current-step`,
+                method: "POST",
             }),
             invalidatesTags: ["Instance"],
         }),

@@ -20,6 +20,9 @@
     "new": "New {{name}}",
     "no_definitions": "No project types available",
     "no_instances": "No instances yet",
+    "recalculate_current_steps": "Recalculate steps",
+    "recalculate_current_steps_error": "Could not recalculate the current steps",
+    "recalculate_current_steps_success": "Checked {{total}} instances: {{updated}} updated and {{unchanged}} unchanged",
     "title": "Develop"
   },
   "email": "Email address",
@@ -45,12 +48,6 @@
     "removed_success": "File removed",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
-  },
-  "good_to_know": {
-    "show_all": "Show all",
-    "show_less": "Show less",
-    "title_one": "Useful during your thesis",
-    "title_other": "[{{count}}x] Useful during your thesis"
   },
   "home": "Home",
   "instance": {
@@ -103,6 +100,8 @@
     "search_placeholder": "Search..."
   },
   "select": "Select",
+  "show_all": "Show all",
+  "show_less": "Show less",
   "staff_card": {
     "confidential_advisers": "Confidential advisers",
     "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",

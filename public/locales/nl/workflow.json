@@ -20,6 +20,9 @@
     "new": "Nieuw {{name}}",
     "no_definitions": "Geen projecttypes beschikbaar",
     "no_instances": "Nog geen instanties",
+    "recalculate_current_steps": "Stappen herberekenen",
+    "recalculate_current_steps_error": "Kon de huidige stappen niet herberekenen",
+    "recalculate_current_steps_success": "{{total}} instanties gecontroleerd: {{updated}} bijgewerkt en {{unchanged}} ongewijzigd",
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
@@ -45,12 +48,6 @@
     "removed_success": "Bestand verwijderd",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
-  },
-  "good_to_know": {
-    "show_all": "Toon alles",
-    "show_less": "Toon minder",
-    "title_one": "Handig tijdens je scriptie",
-    "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
   "instance": {
@@ -103,6 +100,8 @@
     "search_placeholder": "Zoeken..."
   },
   "select": "Kies",
+  "show_all": "Toon alles",
+  "show_less": "Toon minder",
   "staff_card": {
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
