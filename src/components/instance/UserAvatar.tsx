@@ -8,11 +8,17 @@ const getInitials = (name: string): string => {
 };
 interface UserAvatarProps {
     userName: string;
+    picture?: string;
 }
-export function UserAvatar({userName}: UserAvatarProps) {
+export function UserAvatar({userName, picture}: UserAvatarProps) {
+    console.log(picture);
     return (
         <div className="mb-2 inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gray-200 align-middle font-medium text-gray-600">
-            <span className="w-full p-1 text-center">{getInitials(userName)}</span>
+            {picture ? (
+                <img src={picture} alt={userName} className="h-full w-full object-cover" />
+            ) : (
+                <span className="w-full p-1 text-center">{getInitials(userName)}</span>
+            )}
         </div>
     );
 }
