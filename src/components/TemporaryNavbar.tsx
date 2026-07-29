@@ -151,6 +151,7 @@ function TemporaryNavbar() {
                         variant="destructive"
                         onClick={() => void surfLogout()}
                         type="button"
+                        className="max-w-full min-w-0"
                     >
                         {t("logout")} ({userImpersonation?.adminDisplayName ?? user?.displayName})
                     </Button>
