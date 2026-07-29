@@ -67,7 +67,7 @@ export const Callout = ({
 
       <div className="ui:flex ui:flex-col ui:gap-1">
         {header && (
-          <div className="ui:text-base ui:leading-tight ui:font-normal">
+          <div className="ui:text-base ui:leading-tight ui:font-semibold">
             {header}
           </div>
         )}
