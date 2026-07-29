@@ -30,20 +30,22 @@ const TabList = ({
   ...otherProps
 }: TabListProps) => {
   return (
-    <div
-      className={cn(tabListClassGenerator(), className)}
-      {...tabListProps}
-      {...otherProps}
-      ref={tabListRef}
-    >
-      {children.map((child, index) =>
-        cloneElement(child, {
-          key: index,
-          isActive: index === activeIndex,
-          item: { key: index.toString() },
-          state,
-        })
-      )}
+    <div className="ui:max-w-full ui:overflow-x-auto">
+      <div
+        className={cn(tabListClassGenerator(), className)}
+        {...tabListProps}
+        {...otherProps}
+        ref={tabListRef}
+      >
+        {children.map((child, index) =>
+          cloneElement(child, {
+            key: index,
+            isActive: index === activeIndex,
+            item: { key: index.toString() },
+            state,
+          })
+        )}
+      </div>
     </div>
   );
 };

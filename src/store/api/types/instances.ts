@@ -26,6 +26,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     relatedUserGroups: RelatedUserGroups;
+    resources: Resource[];
 };
 
 /**
@@ -124,4 +125,22 @@ export type RelatedUserGroup = {
 
 export type RelatedUserGroups = {
     groups: RelatedUserGroup[];
+};
+
+export type ResourceLayout = "Links" | "Text";
+export type ResourceType = "Link" | "Download" | "Text";
+
+export type Resource = {
+    name: string;
+    title: LocalString;
+    type: ResourceLayout;
+    items?: ResourceItem[];
+    content?: LocalString;
+};
+
+export type ResourceItem = {
+    name: string;
+    text: LocalString;
+    type: ResourceType;
+    url?: LocalString;
 };

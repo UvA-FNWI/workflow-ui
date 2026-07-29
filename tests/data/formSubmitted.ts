@@ -602,4 +602,5 @@ export const formSubmitted = {
             },
         ],
     },
+    resources: [],
 };

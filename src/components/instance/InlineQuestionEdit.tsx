@@ -43,6 +43,9 @@ export const InlineQuestionEdit = ({
                 value={localValue}
                 question={question}
                 onChange={setLocalValue}
+                onSaveExternalUser={(answerInput) =>
+                    saveAnswer({instanceId, submissionId, answer: answerInput}).unwrap()
+                }
                 visibleChoices={answer?.visibleChoices}
             />
             {isError && (
