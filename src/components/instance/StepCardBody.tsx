@@ -120,7 +120,7 @@ export const StepCardBody = ({
 
                 {/* Action buttons */}
                 {showActionButtons && (
-                    <div className="flex gap-2 pt-2">
+                    <div className="flex flex-wrap gap-2 pt-2">
                         {actions.map((a) => (
                             <Button
                                 key={a.id}

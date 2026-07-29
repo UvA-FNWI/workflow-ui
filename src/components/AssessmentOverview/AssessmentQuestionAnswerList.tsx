@@ -80,7 +80,7 @@ export const AssessmentQuestionAnswerList = ({
                         setIsOpen(false);
                         setExpandedLinks(new Set());
                     }}
-                    className="w-80"
+                    className="w-48 sm:w-80"
                 >
                     {t("instance.summary.hide_answers")}
                 </Link>
@@ -97,7 +97,7 @@ export const AssessmentQuestionAnswerList = ({
                         <div className={`grid gap-4 ${colsClass}`}>
                             <Text
                                 fontWeight="semibold"
-                                className="col-span-2 w-80 min-w-0 wrap-break-word"
+                                className="col-span-2 w-48 min-w-0 wrap-break-word sm:w-80"
                             >
                                 {l(question.text)}
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
@@ -107,7 +107,7 @@ export const AssessmentQuestionAnswerList = ({
                                     (s) => s.question.name === question.name,
                                 );
                                 return (
-                                    <div key={submissionIndex} className="w-32 min-w-0">
+                                    <div key={submissionIndex} className="w-24 min-w-0 sm:w-32">
                                         <AnswerCell
                                             pair={pair}
                                             canEdit={canEdit}
@@ -126,7 +126,7 @@ export const AssessmentQuestionAnswerList = ({
                                         intent="destructive"
                                         underline
                                         onClick={() => toggleLinkedQuestion(question.name)}
-                                        className="w-80"
+                                        className="w-48 sm:w-80"
                                     >
                                         {isExpanded
                                             ? t("instance.summary.hide_linked")

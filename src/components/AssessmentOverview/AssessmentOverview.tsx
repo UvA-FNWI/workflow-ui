@@ -83,9 +83,9 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
                 {/* Assessment columns header */}
                 {assessmentSubmissions.length > 1 && (
                     <div className={`grid gap-4 ${colsClass}`}>
-                        <div className="col-span-2 w-80"></div>
+                        <div className="col-span-2 w-48 sm:w-80"></div>
                         {assessmentSubmissions.map((assessmentPart) => (
-                            <div key={assessmentPart.id} className="w-32">
+                            <div key={assessmentPart.id} className="w-24 sm:w-32">
                                 <Text fontWeight="normal" size="lg" intent="error">
                                     {l(assessmentPart.title)?.toUpperCase()}{" "}
                                     {assessmentPart.percentage && `(${assessmentPart.percentage}%)`}
@@ -111,7 +111,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
                 {/* Final grade */}
                 {hasWeightedAverage && (
                     <div className={`grid gap-4 ${colsClass}`}>
-                        <Text fontWeight="semibold" size="xl" className="col-span-2 w-80">
+                        <Text fontWeight="semibold" size="xl" className="col-span-2 w-48 sm:w-80">
                             {t("instance.calculations.final_grade").toUpperCase()}
                         </Text>
                         {assessmentSubmissions.map((sourceResult) => (
