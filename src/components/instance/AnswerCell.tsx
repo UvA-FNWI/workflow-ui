@@ -68,6 +68,13 @@ export const AnswerCell = ({
                         answer: {questionName: pair.question.name, value},
                     })
                 }
+                onSaveExternalUser={(answer) =>
+                    saveAnswer({
+                        instanceId,
+                        submissionId: pair.submission?.id ?? submissionId ?? "",
+                        answer,
+                    }).unwrap()
+                }
                 onClose={() => setIsEditing(false)}
             />
         );

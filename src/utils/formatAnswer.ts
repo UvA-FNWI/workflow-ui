@@ -45,21 +45,12 @@ export function formatAnswer(
 
         case "User":
             if (Array.isArray(value)) {
-                return value.map((user) => formatAnswer(user, "User")).join(", ");
+                return value.map(GetNameFromUser).join(", ");
             }
             // Handle user/person object with displayName
             if (typeof value === "object" && value !== null) {
                 const userObj = value as Record<string, unknown>;
-                if ("displayName" in userObj && typeof userObj.displayName === "string") {
-                    return userObj.displayName;
-                }
-                // Fallback to name or email if displayName is not available
-                if ("name" in userObj && typeof userObj.name === "string") {
-                    return userObj.name;
-                }
-                if ("email" in userObj && typeof userObj.email === "string") {
-                    return userObj.email;
-                }
+                return GetNameFromUser(userObj);
             }
             return String(value);
 
@@ -129,4 +120,18 @@ export function formatAnswer(
             }
             return String(value);
     }
+}
+
+function GetNameFromUser(userObj: Record<string, unknown>) {
+    if ("displayName" in userObj && typeof userObj.displayName === "string") {
+        return userObj.displayName;
+    }
+    // Fallback to name or email if displayName is not available
+    if ("name" in userObj && typeof userObj.name === "string") {
+        return userObj.name;
+    }
+    if ("email" in userObj && typeof userObj.email === "string") {
+        return userObj.email;
+    }
+    return String(userObj);
 }
