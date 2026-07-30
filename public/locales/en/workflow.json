@@ -1,4 +1,5 @@
 {
+  "add": "Add",
   "admin": {
     "impersonate_role_button": "Impersonate",
     "impersonate_role_placeholder": "Select a role",
@@ -28,7 +29,7 @@
   "email": "Email address",
   "external_user_add": {
     "back_to_search": "Back to search",
-    "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
+    "description": "Can't you find someone in the list? You can add them yourself. Fill in the details below:",
     "email_error": "Please enter a valid email address",
     "manual_user_email_already_exists": "A user with this email address already exists. Use the search function to find the user",
     "manual_user_internal_email": "Users with UvA mail address cannot be added manually. Use the search function to find the user",
@@ -74,6 +75,7 @@
     },
     "workflowInstance": "Workflow Instance"
   },
+  "make_a_choice": "Make a choice",
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
@@ -103,9 +105,25 @@
   "show_all": "Show all",
   "show_less": "Show less",
   "staff_card": {
+    "add_modal": {
+      "choose_role": "Choose role",
+      "choose_staff": "Choose staff member",
+      "description": "You want to assign another staff member to the project of <strong>{{studentName}}</strong>.",
+      "info_callout_header": "Inform the added staff member yourself",
+      "info_callout_text": "No automated email is sent. Therefore, inform the staff member yourself about their role in this student's project.",
+      "this_student": "this student",
+      "title": "Assign staff member",
+      "warning_callout_text": "The current {{role}} <strong>{{name}}</strong> will be replaced by the new staff member."
+    },
     "confidential_advisers": "Confidential advisers",
     "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",
-    "edit_email_title": "Edit email for {{name}}",
+    "edit_email_modal": {
+      "error_email_already_exists": "A user with this email address already exists.",
+      "error_internal_email": "Users with UvA mail address cannot be added manually.",
+      "title": "Edit email for {{name}}"
+    },
+    "remove_staff_confirmation": "Are you sure you want to remove <strong>{{name}}</strong> from this project?",
+    "remove_staff_title": "Remove staff member",
     "title": "Staff"
   },
   "status": {

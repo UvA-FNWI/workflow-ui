@@ -28,10 +28,8 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose}>
-            <Modal.Header className="pb-0 text-2xl font-semibold">
-                {l(submission?.form.title)}
-            </Modal.Header>
-            <Modal.Body className="mt-2 text-lg">
+            <Modal.Header className="pb-0">{l(submission?.form.title)}</Modal.Header>
+            <Modal.Body className="mt-2">
                 {submission && (
                     <PageControl
                         showTitle={false}
