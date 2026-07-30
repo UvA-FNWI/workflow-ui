@@ -197,6 +197,7 @@ export const InputControl = ({
                 onChange={(newValue) => debouncedChange(newValue)}
                 allowsExternalUsers={question.allowsExternalUsers}
                 onCreateExternalUser={handleCreateExternalUser}
+                selectionMode={question.isArray ? "multiple" : "single"}
             />
         );
     }

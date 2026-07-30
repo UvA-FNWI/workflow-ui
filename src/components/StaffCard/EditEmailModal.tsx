@@ -1,7 +1,8 @@
 import {useCallback, useState} from "react";
 
-import {Button, Input, Modal} from "@uva-fnwi/datanose-ui";
+import {Button, Modal} from "@uva-fnwi/datanose-ui";
 
+import {EmailInput} from "~/components/inputs/EmailInput";
 import {useManualUserEmailVerification} from "~/hooks/useManualUserEmailVerification.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
@@ -31,7 +32,10 @@ export function EditEmailModal({
         setEmailValidationError,
         validateEmail,
         wasEmailVerified,
-    } = useManualUserEmailVerification();
+    } = useManualUserEmailVerification({
+        internalEmail: t("staff_card.edit_email_modal.error_internal_email"),
+        emailAlreadyExists: t("staff_card.edit_email_modal.error_email_already_exists"),
+    });
 
     const isEmailVerified = wasEmailVerified(newEmail.trim());
 
@@ -75,12 +79,11 @@ export function EditEmailModal({
     return (
         <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
             <Modal.Header>
-                {t("staff_card.edit_email_title", {name: user.displayName})}
+                {t("staff_card.edit_email_modal.title", {name: user.displayName})}
             </Modal.Header>
             <Modal.Body>
-                <Input
+                <EmailInput
                     label={t("email")}
-                    type="email"
                     value={newEmail}
                     isValid={emailError == null}
                     errorMessage={emailError ?? undefined}
@@ -94,9 +97,6 @@ export function EditEmailModal({
                 />
             </Modal.Body>
             <Modal.Footer>
-                <Button intent="secondary" variant="destructive" onClick={() => setIsOpen(false)}>
-                    {t("cancel")}
-                </Button>
                 <Button
                     intent="primary"
                     variant="destructive"
@@ -110,6 +110,9 @@ export function EditEmailModal({
                     }
                 >
                     {t("save")}
+                </Button>
+                <Button intent="secondary" variant="destructive" onClick={() => setIsOpen(false)}>
+                    {t("cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>
