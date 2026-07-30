@@ -6,6 +6,15 @@
     "stop_impersonating_button": "Stop impersonating",
     "title": "Admin"
   },
+  "admin_data": {
+    "back_to_instance": "Back to instance",
+    "description": "All properties of this instance. Changes take effect immediately and are recorded in the change log.",
+    "edit_data": "Edit data",
+    "edit_property": "Edit {{property}}",
+    "load_error": "Could not load the properties of this instance",
+    "no_properties": "This instance type has no properties",
+    "title": "Data"
+  },
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",
   "confirm": "Confirm",

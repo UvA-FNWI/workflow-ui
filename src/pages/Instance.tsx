@@ -1,4 +1,4 @@
-import {useParams} from "react-router";
+import {Navigate, useParams} from "react-router";
 
 import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
@@ -26,6 +26,11 @@ function Instance() {
     // Error state: early return when not loading and no instance
     if (!isLoading && !instance) {
         return <div>Error loading instance</div>;
+    }
+
+    // Property-only instances open directly in the admin data view.
+    if (instance && !instance.workflowDefinition.hasSteps && instance.canUseAdminTools) {
+        return <Navigate to={`/instance/${id}/admin`} replace />;
     }
     const canEdit = instance?.permissions.some((permission) =>
         ["Edit", "ViewAdminTools"].includes(permission),

@@ -1,6 +1,7 @@
 import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
+    InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
     RoleImpersonationResult,
@@ -20,6 +21,24 @@ export const instancesApi = baseApi.injectEndpoints({
                 params: {includeTitle: true},
             }),
             providesTags: ["Instance"],
+        }),
+        getInstanceProperties: builder.query<InstanceProperties, string>({
+            query: (id: string) => `/WorkflowInstances/${id}/properties`,
+            providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
+        }),
+        saveInstanceProperty: builder.mutation<
+            void,
+            {instanceId: string; path: string; value: unknown}
+        >({
+            query: ({instanceId, path, value}) => ({
+                url: `/WorkflowInstances/${instanceId}/properties/${path}`,
+                method: "POST",
+                body: {value},
+            }),
+            // Property changes can affect steps and the title.
+            invalidatesTags: (_result, _error, {instanceId}) => [
+                {type: "Instance", id: instanceId},
+            ],
         }),
         createInstance: builder.mutation<WorkflowInstance, {workflowDefinition: string}>({
             query: (body) => ({

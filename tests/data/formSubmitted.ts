@@ -8,6 +8,7 @@ export const formSubmitted = {
             en: "Projects",
             nl: "Projects",
         },
+        hasSteps: true,
     },
     currentStep: "SubjectFeedback",
     actions: [

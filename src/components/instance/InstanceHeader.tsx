@@ -45,11 +45,18 @@ export function InstanceHeader({
                     {displayTitle}
                 </Heading>
                 {canUseAdminTools && instanceId && (
-                    <VersionedLink to={`/instance/${instanceId}/jobs`}>
-                        <Button intent="secondary" type="button">
-                            {page.viewJobs}
-                        </Button>
-                    </VersionedLink>
+                    <div className="flex gap-2">
+                        <VersionedLink to={`/instance/${instanceId}/admin`}>
+                            <Button intent="secondary" type="button">
+                                {t("admin_data.edit_data")}
+                            </Button>
+                        </VersionedLink>
+                        <VersionedLink to={`/instance/${instanceId}/jobs`}>
+                            <Button intent="secondary" type="button">
+                                {page.viewJobs}
+                            </Button>
+                        </VersionedLink>
+                    </div>
                 )}
             </div>
         </div>

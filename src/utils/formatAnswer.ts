@@ -44,6 +44,9 @@ export function formatAnswer(
             return String(value);
 
         case "User":
+            if (Array.isArray(value)) {
+                return value.map((user) => formatAnswer(user, "User")).join(", ");
+            }
             // Handle user/person object with displayName
             if (typeof value === "object" && value !== null) {
                 const userObj = value as Record<string, unknown>;
@@ -101,7 +104,9 @@ export function formatAnswer(
             }
             return String(value);
 
+        // Summarize structured arrays instead of stringifying each item.
         case "Table":
+        case "Object":
             // Handle table/array data
             if (Array.isArray(value)) {
                 return `${value.length} items`;

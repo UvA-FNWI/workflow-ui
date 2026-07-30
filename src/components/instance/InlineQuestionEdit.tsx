@@ -4,37 +4,29 @@ import {Button, Text} from "@uva-fnwi/datanose-ui";
 
 import {InputControl} from "./InputControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {answersApi} from "~/store/api/answersApi.ts";
-import type {Answer, Question} from "~/store/api/types/submissions.ts";
+import type {Question} from "~/store/api/types/submissions.ts";
 
 type Props = {
     question: Question;
-    answer: Answer | null;
-    instanceId: string;
-    submissionId: string;
+    value: unknown;
+    visibleChoices?: string[] | null;
+    onSave: (value: unknown) => Promise<{error?: unknown}>;
     onClose: () => void;
 };
 
-export const InlineQuestionEdit = ({
-    question,
-    answer,
-    instanceId,
-    submissionId,
-    onClose,
-}: Props) => {
+export const InlineQuestionEdit = ({question, value, visibleChoices, onSave, onClose}: Props) => {
     const {t} = useTranslate("workflow");
-    const [localValue, setLocalValue] = useState<unknown>(answer?.value ?? null);
-    const [saveAnswer, {isLoading, isError}] = answersApi.endpoints.saveAnswer.useMutation();
+    const [localValue, setLocalValue] = useState<unknown>(value ?? null);
+    const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
 
     const handleSave = async () => {
-        const result = await saveAnswer({
-            instanceId,
-            submissionId,
-            answer: {questionName: question.name, value: localValue},
-        });
-        if (!("error" in result)) {
-            onClose();
+        setStatus("saving");
+        const result = await onSave(localValue);
+        if (result.error) {
+            setStatus("error");
+            return;
         }
+        onClose();
     };
 
     return (
@@ -43,9 +35,9 @@ export const InlineQuestionEdit = ({
                 value={localValue}
                 question={question}
                 onChange={setLocalValue}
-                visibleChoices={answer?.visibleChoices}
+                visibleChoices={visibleChoices}
             />
-            {isError && (
+            {status === "error" && (
                 <Text size="sm" intent="error">
                     {t("instance.summary.save_error")}
                 </Text>
@@ -55,7 +47,7 @@ export const InlineQuestionEdit = ({
                     intent="primary"
                     variant="destructive"
                     onClick={handleSave}
-                    isLoading={isLoading}
+                    isLoading={status === "saving"}
                 >
                     {t("save")}
                 </Button>

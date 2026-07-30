@@ -6,6 +6,15 @@
     "stop_impersonating_button": "Stoppen met voordoen",
     "title": "Admin"
   },
+  "admin_data": {
+    "back_to_instance": "Terug naar instantie",
+    "description": "Alle eigenschappen van deze instantie. Wijzigingen zijn direct van kracht en worden vastgelegd in het wijzigingslogboek.",
+    "edit_data": "Gegevens bewerken",
+    "edit_property": "{{property}} bewerken",
+    "load_error": "Kan de eigenschappen van deze instantie niet laden",
+    "no_properties": "Dit instantietype heeft geen eigenschappen",
+    "title": "Gegevens"
+  },
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
   "confirm": "Bevestigen",

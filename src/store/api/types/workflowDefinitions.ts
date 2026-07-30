@@ -10,4 +10,6 @@ export type WorkflowDefinition = {
     isEmbedded: boolean;
     screens: string[];
     canCreateInstance: boolean;
+    /** Whether the definition declares steps; instance steps may be filtered. */
+    hasSteps: boolean;
 };
