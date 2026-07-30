@@ -29,8 +29,6 @@ type DataTableProps<TData> = {
     filterFns?: FilterFns;
     initialSorting?: SortingState;
     onSortingChange?: (sorting: SortingState) => void;
-    /** Fixed widths keyed by column id. Supplying this also enables fixed table layout. */
-    columnWidths?: Partial<Record<string, string>>;
 };
 
 export function DataTable<TData>({
@@ -42,7 +40,6 @@ export function DataTable<TData>({
     filterFns,
     initialSorting = [],
     onSortingChange,
-    columnWidths,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
@@ -79,25 +76,21 @@ export function DataTable<TData>({
         getSortedRowModel: getSortedRowModel(),
         getRowId,
     });
+    const leafColumns = table.getVisibleLeafColumns();
+    const isFixed = leafColumns.some((column) => column.columnDef.size !== undefined);
 
     return (
         <div className="overflow-x-auto">
             <table
-                className={`w-full border-collapse text-sm ${columnWidths ? "table-fixed" : ""}`}
+                className={`w-full border-collapse text-sm ${isFixed ? "min-w-3xl table-fixed" : ""}`}
             >
-                {columnWidths && (
-                    <colgroup>
-                        {table.getVisibleLeafColumns().map((column) => (
-                            <col key={column.id} style={{width: columnWidths[column.id]}} />
-                        ))}
-                    </colgroup>
-                )}
                 <thead className="border-b border-grey-300">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <th
                                     key={header.id}
+                                    style={{width: isFixed ? header.getSize() : undefined}}
                                     className={`px-4 py-3 text-left font-body font-semibold whitespace-nowrap text-black dark:text-white ${
                                         header.column.getCanSort()
                                             ? "cursor-pointer select-none"

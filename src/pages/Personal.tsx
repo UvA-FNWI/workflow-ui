@@ -14,7 +14,7 @@ import {
 } from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
-import {DataTable, TableLinkCell, TableProgressCell} from "~/components/Table";
+import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -26,15 +26,6 @@ import {
     type PersonalRoleGroup,
 } from "~/utils/personalInstances";
 import {getComparableTableCellValue} from "~/utils/tableCellValues";
-
-const columnWidths = {
-    student: "18%",
-    title: "22%",
-    course: "17%",
-    employees: "20%",
-    progress: "22%",
-    actions: "64px",
-};
 
 const noInstances: PersonalInstance[] = [];
 
@@ -60,6 +51,7 @@ export default function Personal() {
         () => [
             {
                 id: "student",
+                size: 180,
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.student, "String", i18n.language),
                 header: () => t("columns.student_name"),
@@ -72,6 +64,7 @@ export default function Personal() {
             },
             {
                 id: "title",
+                size: 220,
                 accessorFn: (instance) =>
                     getComparableTableCellValue(
                         instance.title || l(instance.workflowDefinitionTitle) || instance.id,
@@ -80,28 +73,26 @@ export default function Personal() {
                     ),
                 header: () => t("columns.title"),
                 cell: ({row}) => (
-                    <TableLinkCell to={`/instance/${row.original.id}`}>
+                    <TableTextCell>
                         {row.original.title ||
                             l(row.original.workflowDefinitionTitle) ||
                             row.original.id}
-                    </TableLinkCell>
+                    </TableTextCell>
                 ),
                 enableSorting: true,
             },
             {
                 id: "course",
+                size: 170,
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.course, "String", i18n.language),
                 header: () => t("columns.course"),
-                cell: ({row}) => (
-                    <TableLinkCell to={`/instance/${row.original.id}`}>
-                        {row.original.course || "—"}
-                    </TableLinkCell>
-                ),
+                cell: ({row}) => <TableTextCell>{row.original.course || "—"}</TableTextCell>,
                 enableSorting: true,
             },
             {
                 id: "employees",
+                size: 200,
                 accessorFn: (instance) =>
                     getComparableTableCellValue(
                         instance.employees.join(", "),
@@ -110,14 +101,13 @@ export default function Personal() {
                     ),
                 header: () => t("columns.employees"),
                 cell: ({row}) => (
-                    <TableLinkCell to={`/instance/${row.original.id}`}>
-                        {row.original.employees.join(", ") || "—"}
-                    </TableLinkCell>
+                    <TableTextCell>{row.original.employees.join(", ") || "—"}</TableTextCell>
                 ),
                 enableSorting: true,
             },
             {
                 id: "progress",
+                size: 220,
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.progress, "Object", i18n.language),
                 header: () => t("columns.progress"),
@@ -126,6 +116,7 @@ export default function Personal() {
             },
             {
                 id: "actions",
+                size: 64,
                 header: () => <span className="sr-only">{workflowT("screens.actions")}</span>,
                 enableSorting: false,
                 cell: ({row}) => (
@@ -255,7 +246,6 @@ function PersonalRoleTables({
                         columns={columns}
                         getRowId={(instance) => instance.id}
                         globalFilter={search}
-                        columnWidths={columnWidths}
                     />
                 </section>
             ))}
