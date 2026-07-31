@@ -8,7 +8,7 @@ import type {
     RoleImpersonationResult,
     WorkflowInstance,
 } from "./types/instances";
-import type {DeletePropertyParams, UpdatePropertyParams} from "~/store/api/types/params.ts";
+import type {AssignRelatedUserParams, RemoveRelatedUserParams} from "~/store/api/types/params.ts";
 
 export const instancesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -78,21 +78,19 @@ export const instancesApi = baseApi.injectEndpoints({
                 }
             },
         }),
-        updateProperty: builder.mutation<WorkflowInstance, UpdatePropertyParams>({
-            query: ({instanceId, property, value, externalUser}: UpdatePropertyParams) => ({
-                url: `/WorkflowInstances/${instanceId}/properties/${property}`,
+        assignRelatedUser: builder.mutation<void, AssignRelatedUserParams>({
+            query: ({instanceId, property, user, externalUser}: AssignRelatedUserParams) => ({
+                url: `/WorkflowInstances/${instanceId}/related-users/${property}`,
                 method: "POST",
-                body: {value, externalUser},
+                body: {user, externalUser},
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
             ],
         }),
-        deleteProperty: builder.mutation<WorkflowInstance, DeletePropertyParams>({
-            query: ({instanceId, property, itemId}: DeletePropertyParams) => ({
-                url: itemId
-                    ? `/WorkflowInstances/${instanceId}/properties/${property}/${itemId}`
-                    : `/WorkflowInstances/${instanceId}/properties/${property}`,
+        removeRelatedUser: builder.mutation<void, RemoveRelatedUserParams>({
+            query: ({instanceId, property, userId}: RemoveRelatedUserParams) => ({
+                url: `/WorkflowInstances/${instanceId}/related-users/${property}/${userId}`,
                 method: "DELETE",
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [
