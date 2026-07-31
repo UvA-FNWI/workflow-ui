@@ -3,10 +3,11 @@ import {baseApi} from "./baseApi";
 import type {
     InstanceSummary,
     RecalculateCurrentStepsResult,
+    Role,
     RoleImpersonationResult,
     WorkflowInstance,
 } from "./types/instances";
-import type {ImpersonationRole} from "./types/submissions";
+import type {DeletePropertyParams, UpdatePropertyParams} from "~/store/api/types/params.ts";
 
 export const instancesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -36,7 +37,7 @@ export const instancesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["Instance"],
         }),
-        getImpersonationRoles: builder.query<ImpersonationRole[], string>({
+        getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/roles`,
         }),
         impersonateRole: builder.mutation<
@@ -57,6 +58,27 @@ export const instancesApi = baseApi.injectEndpoints({
                     return;
                 }
             },
+        }),
+        updateProperty: builder.mutation<WorkflowInstance, UpdatePropertyParams>({
+            query: ({instanceId, property, value, externalUser}: UpdatePropertyParams) => ({
+                url: `/WorkflowInstances/${instanceId}/properties/${property}`,
+                method: "POST",
+                body: {value, externalUser},
+            }),
+            invalidatesTags: (_result, _error, {instanceId}) => [
+                {type: "Instance", id: instanceId},
+            ],
+        }),
+        deleteProperty: builder.mutation<WorkflowInstance, DeletePropertyParams>({
+            query: ({instanceId, property, itemId}: DeletePropertyParams) => ({
+                url: itemId
+                    ? `/WorkflowInstances/${instanceId}/properties/${property}/${itemId}`
+                    : `/WorkflowInstances/${instanceId}/properties/${property}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: (_result, _error, {instanceId}) => [
+                {type: "Instance", id: instanceId},
+            ],
         }),
     }),
 });

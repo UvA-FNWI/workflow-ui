@@ -239,7 +239,7 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         )}
         {...props}
       >
-        <h2 className="ui:text-xl ui:font-semibold ui:text-grey-900 ui:dark:text-white">
+        <h2 className="ui:font-heading ui:text-2xl ui:text-black ui:dark:text-white">
           {children}
         </h2>
         {showCloseButton && (
@@ -266,7 +266,7 @@ const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        'ui:px-6 ui:py-2 ui:text-black ui:dark:text-white',
+        'ui:px-6 ui:py-2 ui:text-lg ui:text-grey-900 ui:dark:text-white',
         className
       )}
       {...props}

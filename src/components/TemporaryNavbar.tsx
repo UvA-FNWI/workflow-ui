@@ -101,7 +101,7 @@ function TemporaryNavbar() {
                     </p>
                 )}
             </div>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex min-w-0 flex-wrap items-center gap-4">
                 {userImpersonation && (
                     <div className="flex items-center gap-3 rounded-md bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
                         <span>
@@ -149,6 +149,7 @@ function TemporaryNavbar() {
                         variant="destructive"
                         onClick={() => void surfLogout()}
                         type="button"
+                        className="max-w-full min-w-0"
                     >
                         {t("logout")} ({userImpersonation?.adminDisplayName ?? user?.displayName})
                     </Button>

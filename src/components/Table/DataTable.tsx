@@ -87,7 +87,9 @@ export function DataTable<TData>({
     }
 
     return (
-        <div className="overflow-x-auto">
+        // contain:paint isolates the horizontal scroll so a wide table scrolls
+        // within this box instead of leaking page-level scroll on mobile.
+        <div className="overflow-x-auto contain-[paint]">
             <table
                 className={`w-full border-collapse text-sm ${isFixed ? "min-w-3xl table-fixed" : ""}`}
             >

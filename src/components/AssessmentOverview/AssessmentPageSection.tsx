@@ -45,7 +45,7 @@ export const AssessmentPageSection = ({
         <div className="flex flex-col gap-2">
             {/* Page title with edit button */}
             <div className={`grid gap-4 ${colsClass} w-full max-w-full`}>
-                <div className="col-span-2 flex w-80 items-center">
+                <div className="col-span-2 flex w-48 items-center sm:w-80">
                     <Heading
                         size="xs"
                         className="min-w-0 font-semibold wrap-break-word"
@@ -74,7 +74,7 @@ export const AssessmentPageSection = ({
                 {assessmentSubmissions.map((sourceResult) => {
                     const pageResult = sourceResult.pageResults.find((p) => p.name === page.name);
                     return (
-                        <div key={sourceResult.id} className="w-32 min-w-0">
+                        <div key={sourceResult.id} className="w-24 min-w-0 sm:w-32">
                             {pageResult?.weightedAverage || pageResult?.sum ? (
                                 <Text fontWeight="semibold" size="lg">
                                     {(pageResult.weightedAverage ?? pageResult.sum).toLocaleString(

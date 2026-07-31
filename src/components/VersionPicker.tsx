@@ -44,7 +44,7 @@ export function VersionPicker() {
     return (
         <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
             {t("version")}
-            <div className="w-72">
+            <div className="w-full sm:w-72">
                 <Select
                     aria-label={t("version")}
                     selectedKey={selectedVersionKey}

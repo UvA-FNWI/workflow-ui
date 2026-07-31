@@ -5,7 +5,10 @@ import {Button, Input, Modal, Text} from "@uva-fnwi/datanose-ui";
 import type {SearchListBoxValue} from "./SearchListBox";
 import {EmailInput} from "~/components/inputs/EmailInput";
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
-import {useManualUserEmailVerification} from "~/hooks/useManualUserEmailVerification.ts";
+import {
+    type EmailErrorMessages,
+    useManualUserEmailVerification,
+} from "~/hooks/useManualUserEmailVerification.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {
     useCreateOrganizationMutation,
@@ -24,6 +27,7 @@ export interface AddExternalUserModalProps {
     onBackToSearch: () => void;
     isSaving?: boolean;
     initialUser?: UserSearchResult | null;
+    emailErrorMessages?: EmailErrorMessages;
 }
 
 const emptyExternalUser: UserSearchResult = {
@@ -42,6 +46,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     onBackToSearch,
     isSaving = false,
     initialUser,
+    emailErrorMessages,
 }) => {
     const {t} = useTranslate("workflow");
     const prevIsOpen = useRef(false);
@@ -62,7 +67,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         setEmailValidationError,
         validateEmail,
         wasEmailVerified,
-    } = useManualUserEmailVerification();
+    } = useManualUserEmailVerification(emailErrorMessages ?? {});
 
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
         return searchResults.map((organization) => ({
@@ -218,7 +223,6 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     resetSearch={resetSearch}
                     isLoading={searchState.isLoading || searchState.isFetching}
                     addNewItemVisible={true}
-                    showSearchHint={false}
                     initialSearchQuery={
                         initialUser?.organization?.id === newOrganizationId
                             ? t("search_and_select.add_new")
@@ -245,6 +249,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
             </Modal.Body>
             <Modal.Footer className="justify-start">
                 <Button
+                    size="large"
                     intent="primary"
                     variant="destructive"
                     onClick={() => {
@@ -260,10 +265,16 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                 >
                     {t("confirm")}
                 </Button>
-                <Button intent="secondary" variant="destructive" onClick={handleBackToSearch}>
+                <Button
+                    size="large"
+                    intent="secondary"
+                    variant="destructive"
+                    onClick={handleBackToSearch}
+                >
                     {t("external_user_add.back_to_search")}
                 </Button>
                 <Button
+                    size="large"
                     intent="secondary"
                     variant="destructive"
                     onClick={() => onOpenChange(false)}

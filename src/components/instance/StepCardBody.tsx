@@ -120,7 +120,7 @@ export const StepCardBody = ({
 
                 {/* Action buttons */}
                 {showActionButtons && (
-                    <div className="flex gap-2 pt-2">
+                    <div className="flex flex-wrap gap-2 pt-2">
                         {actions.map((a) => (
                             <Button
                                 key={a.id}
@@ -148,10 +148,10 @@ export const StepCardBody = ({
                 isOpen={modalState?.type === "confirmationModal"}
                 onOpenChange={() => setActiveAction(null)}
             >
-                <Modal.Header className="pb-0 text-2xl font-semibold">
+                <Modal.Header className="pb-0">
                     {activeAction && l(activeAction.title)}
                 </Modal.Header>
-                <Modal.Body className="mt-2 text-lg">
+                <Modal.Body className="mt-2">
                     <p>{t("are_you_sure")}</p>
                 </Modal.Body>
                 {activeAction && (

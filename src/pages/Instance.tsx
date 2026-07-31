@@ -52,11 +52,14 @@ function Instance() {
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </GridItem>
                 <GridItem span={{base: 12, sm: 3}} className="flex flex-col gap-6">
-                    <StudentCard
-                        studentEmail={studentEmail}
-                        studentName={studentName}
-                        isLoading={isLoading}
-                    />
+                    {/* On mobile the sidebar stacks under the content; show the student card at the bottom. */}
+                    <div className="order-last sm:order-first">
+                        <StudentCard
+                            studentEmail={studentEmail}
+                            studentName={studentName}
+                            isLoading={isLoading}
+                        />
+                    </div>
                     <StaffCard
                         instanceId={id ?? ""}
                         relatedUserGroups={instance?.relatedUserGroups?.groups ?? []}
