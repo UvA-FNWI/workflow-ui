@@ -22,6 +22,11 @@ export function groupPersonalInstancesByRole(
     const rolesByName = new Map(roles.map((role) => [role.name, role]));
     const groupsByRole = new Map<string, PersonalRoleGroup>();
 
+    // Prefill the groups for ordering
+    for (const role of roles) {
+        groupsByRole.set(role.name, {role: role, instances: []});
+    }
+
     for (const instance of instances) {
         for (const roleName of instance.roles) {
             const group = groupsByRole.get(roleName);
@@ -36,7 +41,5 @@ export function groupPersonalInstancesByRole(
         }
     }
 
-    return [...groupsByRole.values()].sort((first, second) =>
-        first.role.name.localeCompare(second.role.name),
-    );
+    return [...groupsByRole.values()];
 }

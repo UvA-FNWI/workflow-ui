@@ -26,15 +26,6 @@ export function PersonalDisclosure({
     const {l, t} = useTranslate("personal");
     const [search, setSearch] = useState("");
 
-    // Always show Supervisor roles first, everything after that in alphabetical order
-    const sortedRoleGroups = roleGroups.toSorted((first, second) =>
-        first.role.name === "Supervisor"
-            ? -1
-            : second.role.name === "Supervisor"
-              ? 1
-              : first.role.name.localeCompare(second.role.name),
-    );
-
     return (
         <Disclosure defaultExpanded={defaultExpanded} isExpanded={isExpanded}>
             <Disclosure.Header>
@@ -53,7 +44,7 @@ export function PersonalDisclosure({
                             />
                         </div>
                         <div className="flex flex-col gap-6">
-                            {sortedRoleGroups.map(({role, instances}) => (
+                            {roleGroups.map(({role, instances}) => (
                                 <section key={role.name} className="overflow-hidden">
                                     <Heading as="h3" size="sm" className="pb-4">
                                         {t("role_title", {
