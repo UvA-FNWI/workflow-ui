@@ -4,7 +4,7 @@ import {Text} from "@uva-fnwi/datanose-ui";
 
 export function TableTextCell({children}: {children: ReactNode}) {
     return (
-        <Text size="sm" truncate className="max-w-80">
+        <Text size="sm" truncate className="block max-w-80">
             {children}
         </Text>
     );

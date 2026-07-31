@@ -1,20 +1,11 @@
-import {useMemo, useState} from "react";
+import {useMemo} from "react";
 
 import {type ColumnDef} from "@tanstack/react-table";
-import {
-    Button,
-    Card,
-    Container,
-    Disclosure,
-    Heading,
-    Icon,
-    SearchInput,
-    Skeleton,
-    Text,
-} from "@uva-fnwi/datanose-ui";
+import {Button, Card, Container, Icon, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
-import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
+import {PersonalDisclosure} from "~/components/PersonalDisclosure";
+import {TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -23,7 +14,6 @@ import type {PersonalInstance} from "~/store/api/types/personal";
 import {
     groupPersonalInstancesByRole,
     partitionPersonalInstancesByCompletion,
-    type PersonalRoleGroup,
 } from "~/utils/personalInstances";
 import {getComparableTableCellValue} from "~/utils/tableCellValues";
 
@@ -35,8 +25,6 @@ export default function Personal() {
     const {i18n, l, t} = useTranslate("personal");
     const {t: workflowT} = useTranslate("workflow");
     const navigate = useVersionedNavigate();
-    const [activeSearch, setActiveSearch] = useState("");
-    const [completedSearch, setCompletedSearch] = useState("");
     useDocumentTitle(t("title"));
 
     const {activeRoleGroups, completedRoleGroups} = useMemo(() => {
@@ -101,7 +89,13 @@ export default function Personal() {
                     ),
                 header: () => t("columns.employees"),
                 cell: ({row}) => (
-                    <TableTextCell>{row.original.employees.join(", ") || "—"}</TableTextCell>
+                    <div>
+                        {row.original.employees.length
+                            ? row.original.employees.map((employee) => (
+                                  <div key={employee}>{employee}</div>
+                              ))
+                            : "—"}
+                    </div>
                 ),
                 enableSorting: true,
             },
@@ -156,100 +150,24 @@ export default function Personal() {
                     </Card>
                 )}
 
-                {!isLoading && !isError && !hasRoleGroups && (
-                    <Card>
-                        <div className="flex flex-col items-center gap-3 py-10 text-center">
-                            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-grey-100 text-grey-600">
-                                <Icon name="folder-line" size="lg" decorative />
-                            </span>
-                            <Heading as="h2" size="sm">
-                                {t("empty_title")}
-                            </Heading>
-                            <Text className="max-w-lg text-grey-600">{t("empty_description")}</Text>
-                        </div>
-                    </Card>
-                )}
-
                 {!isLoading && !isError && hasRoleGroups && (
                     <>
-                        <Disclosure defaultExpanded>
-                            <Disclosure.Header>
-                                <Heading>{t("active")}</Heading>
-                            </Disclosure.Header>
-                            <Disclosure.Content>
-                                <div className="mb-6 flex justify-end pt-4">
-                                    <SearchInput
-                                        value={activeSearch}
-                                        onChange={setActiveSearch}
-                                        placeholder={t("search_placeholder")}
-                                        className="w-full sm:w-96"
-                                    />
-                                </div>
-                                <PersonalRoleTables
-                                    roleGroups={activeRoleGroups}
-                                    columns={columns}
-                                    search={activeSearch}
-                                />
-                            </Disclosure.Content>
-                        </Disclosure>
-                        <Disclosure>
-                            <Disclosure.Header>
-                                <Heading>{t("completed")}</Heading>
-                            </Disclosure.Header>
-                            <Disclosure.Content>
-                                <div className="mb-6 flex justify-end pt-4">
-                                    <SearchInput
-                                        value={completedSearch}
-                                        onChange={setCompletedSearch}
-                                        placeholder={t("search_placeholder")}
-                                        className="w-full sm:w-96"
-                                    />
-                                </div>
-                                <PersonalRoleTables
-                                    roleGroups={completedRoleGroups}
-                                    columns={columns}
-                                    search={completedSearch}
-                                />
-                            </Disclosure.Content>
-                        </Disclosure>
+                        <PersonalDisclosure
+                            title={t("active")}
+                            roleGroups={activeRoleGroups}
+                            columns={columns}
+                            defaultExpanded={true}
+                        />
+                        <PersonalDisclosure
+                            title={t("completed")}
+                            roleGroups={completedRoleGroups}
+                            columns={columns}
+                            defaultExpanded={completedRoleGroups.length === 0}
+                        />
                     </>
                 )}
             </div>
         </Container>
-    );
-}
-
-function PersonalRoleTables({
-    roleGroups,
-    columns,
-    search,
-}: {
-    roleGroups: PersonalRoleGroup[];
-    columns: ColumnDef<PersonalInstance>[];
-    search: string;
-}) {
-    const {l, t} = useTranslate("personal");
-
-    return (
-        <div className="flex flex-col gap-6">
-            {roleGroups.map(({role, instances: roleInstances}) => (
-                <section key={role.name} className="overflow-hidden">
-                    <Heading as="h3" size="sm" className="pb-4">
-                        {t("role_title", {
-                            role: (
-                                l(role.title) || formatIdentifier(role.name)
-                            ).toLocaleLowerCase(),
-                        })}
-                    </Heading>
-                    <DataTable
-                        data={roleInstances}
-                        columns={columns}
-                        getRowId={(instance) => instance.id}
-                        globalFilter={search}
-                    />
-                </section>
-            ))}
-        </div>
     );
 }
 
@@ -264,15 +182,4 @@ function PersonalLoadingState() {
             ))}
         </>
     );
-}
-
-function formatIdentifier(value: string | null): string {
-    if (!value) {
-        return "";
-    }
-
-    return value
-        .replace(/[-_]+/g, " ")
-        .replace(/([a-z\d])([A-Z])/g, "$1 $2")
-        .replace(/^./, (character) => character.toUpperCase());
 }

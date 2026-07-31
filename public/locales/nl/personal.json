@@ -11,6 +11,7 @@
   "empty_description": "Zodra je aan een scriptie bent toegewezen, verschijnt deze hier.",
   "empty_title": "Geen scripties gevonden",
   "load_error": "Je scripties konden niet worden geladen. Probeer het opnieuw.",
+  "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
   "open_instance": "Open {{title}}",
   "role_title": "Je bent {{role}} voor:",
   "search_placeholder": "Typ een zoekwoord in",

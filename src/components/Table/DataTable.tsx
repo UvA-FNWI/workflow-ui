@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {type ReactNode, useState} from "react";
 
 import {rankItem} from "@tanstack/match-sorter-utils";
 import {
@@ -29,6 +29,7 @@ type DataTableProps<TData> = {
     filterFns?: FilterFns;
     initialSorting?: SortingState;
     onSortingChange?: (sorting: SortingState) => void;
+    emptyNode?: ReactNode;
 };
 
 export function DataTable<TData>({
@@ -40,6 +41,7 @@ export function DataTable<TData>({
     filterFns,
     initialSorting = [],
     onSortingChange,
+    emptyNode,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
@@ -78,6 +80,11 @@ export function DataTable<TData>({
     });
     const leafColumns = table.getVisibleLeafColumns();
     const isFixed = leafColumns.some((column) => column.columnDef.size !== undefined);
+    const rows = table.getRowModel().rows;
+
+    if (rows.length === 0 && emptyNode !== undefined) {
+        return emptyNode;
+    }
 
     return (
         <div className="overflow-x-auto">
@@ -117,13 +124,13 @@ export function DataTable<TData>({
                     ))}
                 </thead>
                 <tbody>
-                    {table.getRowModel().rows.map((row) => (
+                    {rows.map((row) => (
                         <tr
                             key={row.id}
                             className={`hover:bg-grey-50 border-b border-grey-300 dark:border-grey-600 dark:hover:bg-grey-800`}
                         >
                             {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className="px-4 py-2">
+                                <td key={cell.id} className="px-4 py-2 align-baseline">
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}
