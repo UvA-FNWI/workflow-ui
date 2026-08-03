@@ -8,7 +8,6 @@
     "title": "Title"
   },
   "completed": "Completed",
-  "empty_description": "When you are assigned to a thesis, it will appear here.",
   "empty_title": "No theses found",
   "load_error": "Your theses could not be loaded. Please try again.",
   "no_instances_found": "No theses found for '{{search}}'",

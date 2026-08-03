@@ -8,7 +8,6 @@
     "title": "Titel"
   },
   "completed": "Afgerond",
-  "empty_description": "Zodra je aan een scriptie bent toegewezen, verschijnt deze hier.",
   "empty_title": "Geen scripties gevonden",
   "load_error": "Je scripties konden niet worden geladen. Probeer het opnieuw.",
   "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
