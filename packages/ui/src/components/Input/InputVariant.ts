@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 
 export const inputVariants = cva(
-  'ui:min-h-10 ui:w-full ui:rounded-xs ui:border ui:px-3 ui:py-2 ui:text-base ui:transition-all ui:duration-200 ui:outline-none ui:dark:text-white',
+  'ui:w-full ui:rounded-xs ui:border ui:transition-all ui:duration-200 ui:outline-none ui:dark:text-white',
   {
     variants: {
       isDisabled: {
@@ -19,6 +19,15 @@ export const inputVariants = cva(
       isValid: {
         true: 'ui:border-grey-600 ui:dark:border-grey-400',
         false: 'ui:border-red-600 ui:dark:border-red-400',
+      },
+      size: {
+        sm: 'ui:min-h-6 ui:px-2 ui:py-1 ui:text-xs',
+        md: 'ui:min-h-8 ui:px-3 ui:py-1.5 ui:text-sm',
+        lg: 'ui:min-h-10 ui:px-3 ui:py-2 ui:text-base',
+      },
+      align: {
+        left: 'ui:text-left',
+        center: 'ui:text-center',
       },
     },
     compoundVariants: [
@@ -38,6 +47,8 @@ export const inputVariants = cva(
       isFocusVisible: false,
       isHovered: false,
       isValid: true,
+      size: 'lg',
+      align: 'left',
     },
   }
 );
