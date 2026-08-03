@@ -58,7 +58,18 @@ describe("groupPersonalInstancesByRole", () => {
     });
 
     it("returns no groups when there are no personal instances", () => {
-        expect(groupPersonalInstancesByRole([], [])).toEqual([]);
+        expect(groupPersonalInstancesByRole([], [role("Student", "Student", "Student")])).toEqual(
+            [],
+        );
+    });
+
+    it("matches role names case-insensitively", () => {
+        const studentRole = role("Student", "Student", "Student");
+        const student = instance("student", ["student"]);
+
+        expect(groupPersonalInstancesByRole([student], [studentRole])).toEqual([
+            {role: studentRole, instances: [student]},
+        ]);
     });
 
     it("partitions active and completed instances by the presence of a current step", () => {
