@@ -28,8 +28,8 @@ function Instance() {
         return <div>Error loading instance</div>;
     }
 
-    // Property-only instances open directly in the admin data view.
-    if (instance && instance.workflowDefinition.isPropertyOnly && instance.canUseAdminTools) {
+    const isPropertyOnly = instance && instance.workflowDefinition.isPropertyOnly;
+    if (isPropertyOnly && instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}/admin`} replace />;
     }
     const canEdit = instance?.permissions.some((permission) =>

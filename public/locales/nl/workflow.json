@@ -8,12 +8,13 @@
     "title": "Admin"
   },
   "admin_data": {
-    "back_to_instance": "Terug naar instantie",
+    "back_to_instance": "Terug naar workflow",
+    "back_to_overview": "Terug naar overzicht",
     "description": "Alle eigenschappen van deze instantie. Wijzigingen zijn direct van kracht en worden vastgelegd in het wijzigingslogboek.",
     "edit_data": "Gegevens bewerken",
     "edit_property": "{{property}} bewerken",
     "load_error": "Kan de eigenschappen van deze instantie niet laden",
-    "no_properties": "Dit instantietype heeft geen eigenschappen",
+    "no_properties": "Deze workflow heeft geen eigenschappen",
     "title": "Gegevens"
   },
   "are_you_sure": "Weet je het zeker?",

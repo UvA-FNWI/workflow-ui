@@ -1,5 +1,7 @@
 import {expect, test} from "@playwright/test";
 
+import {propertiesInstance} from "./data/instanceProperties";
+
 test.describe("instance admin data page", () => {
     const openDataView = async (page: import("@playwright/test").Page) => {
         await page.goto("instance/context-admin/admin");
@@ -15,6 +17,8 @@ test.describe("instance admin data page", () => {
         // User arrays list each display name.
         await expect(page.getByText("Ada Lovelace, Grace Hopper")).toBeVisible();
 
+        await page.getByText("Assessment", {exact: true}).click();
+
         // Nested properties show their full path.
         await expect(page.getByText("Assessment.Consent", {exact: true})).toBeVisible();
         await expect(page.getByText("Assessment.Grade", {exact: true})).toBeVisible();
@@ -24,6 +28,7 @@ test.describe("instance admin data page", () => {
         await openDataView(page);
 
         await expect(page.getByRole("button", {name: "Edit Name", exact: true})).toBeVisible();
+        await page.getByText("Assessment", {exact: true}).click();
         await expect(page.getByRole("button", {name: "Edit Grade", exact: true})).toBeVisible();
         // File editing is not supported.
         await expect(page.getByRole("button", {name: "Edit Study manual"})).toHaveCount(0);
@@ -40,6 +45,7 @@ test.describe("instance admin data page", () => {
                     .endsWith("/WorkflowInstances/context-admin/properties/Assessment.Grade"),
         );
 
+        await page.getByText("Assessment", {exact: true}).click();
         await page.getByRole("button", {name: "Edit Grade", exact: true}).click();
 
         // Keep the stored decimal exact; a large negative minimum previously changed it.
@@ -66,11 +72,21 @@ test.describe("instance admin data page", () => {
         await expect(page.getByRole("heading", {level: 1})).toContainText("Updated context");
     });
 
+    test("shows Data once when the instance has no title", async ({page}) => {
+        await page.route(/\/WorkflowInstances\/context-admin(?:\?.*)?$/, (route) =>
+            route.fulfill({json: {...propertiesInstance, title: null}}),
+        );
+
+        await openDataView(page);
+
+        await expect(page.getByRole("heading", {level: 1})).toHaveText("Data");
+    });
+
     test("sends an instance without steps straight to the data view", async ({page}) => {
         await page.goto("instance/context-admin");
 
         await expect(page).toHaveURL(/\/instance\/context-admin\/admin$/);
-        await expect(page.getByRole("link", {name: "Back to instance"})).toHaveCount(0);
+        await expect(page.getByRole("link", {name: "Back to overview"})).toBeVisible();
     });
 
     test("bounces a viewer the endpoint refuses back to the instance page", async ({page}) => {

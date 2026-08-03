@@ -9,6 +9,7 @@
   },
   "admin_data": {
     "back_to_instance": "Back to instance",
+    "back_to_overview": "Back to overview",
     "description": "All properties of this instance. Changes take effect immediately and are recorded in the change log.",
     "edit_data": "Edit data",
     "edit_property": "Edit {{property}}",

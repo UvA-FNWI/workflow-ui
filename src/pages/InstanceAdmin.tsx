@@ -18,8 +18,9 @@ function InstanceAdmin() {
         instancesEndpoints.getInstance.useQuery(id);
     const [saveProperty] = instancesEndpoints.saveInstanceProperty.useMutation();
 
-    const displayTitle = instance?.title || t("title");
-    useDocumentTitle(`${displayTitle} | ${t("title")}`);
+    const isPropertyOnly = instance && instance.workflowDefinition.isPropertyOnly;
+    const displayTitle = instance?.title ? `${instance.title} | ${t("title")}` : t("title");
+    useDocumentTitle(displayTitle);
 
     if (instance && !instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}`} replace />;
@@ -52,11 +53,13 @@ function InstanceAdmin() {
     return (
         <Container maxWidth={1280}>
             <div className="mb-8 flex flex-col gap-2">
-                {!instance?.workflowDefinition.isPropertyOnly && (
-                    <BackLink to={`/instance/${id}`}>{t("back_to_instance")}</BackLink>
+                {instance && (
+                    <BackLink to={isPropertyOnly ? "/" : `/instance/${id}`}>
+                        {t(isPropertyOnly ? "back_to_overview" : "back_to_instance")}
+                    </BackLink>
                 )}
                 <Heading as="h1" size="lg">
-                    {displayTitle} | {t("title")}
+                    {displayTitle}
                 </Heading>
                 <Text size="sm" intent="secondary">
                     {t("description")}

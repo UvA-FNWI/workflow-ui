@@ -31,8 +31,8 @@ export const InstancePropertyRow = ({question, path, values, onSave}: Props) => 
 
     if (children?.length) {
         return (
-            <div className="flex flex-col gap-2">
-                <Text fontWeight="semibold">{label}</Text>
+            <details>
+                <summary className="cursor-pointer font-semibold">{label}</summary>
                 <div className="flex flex-col gap-2 border-l-2 border-grey-200 pl-4">
                     {children.map((child) => (
                         <InstancePropertyRow
@@ -44,7 +44,7 @@ export const InstancePropertyRow = ({question, path, values, onSave}: Props) => 
                         />
                     ))}
                 </div>
-            </div>
+            </details>
         );
     }
 

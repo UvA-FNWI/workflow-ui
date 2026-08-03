@@ -13,7 +13,7 @@ type Props = {
     value: unknown;
     visibleChoices?: string[] | null;
     onSave: (value: unknown) => Promise<{error?: unknown}>;
-    /** Creating an external user saves immediately, so it needs the answer endpoint directly. */
+    /** External user creation saves before the Save button so the picker can receive the created user. */
     onSaveExternalUser?: (answer: AnswerInput) => Promise<SaveAnswerResult>;
     onClose: () => void;
 };
