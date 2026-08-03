@@ -78,7 +78,9 @@ export function DataTable<TData>({
     });
 
     return (
-        <div className="overflow-x-auto">
+        // contain:paint isolates the horizontal scroll so a wide table scrolls
+        // within this box instead of leaking page-level scroll on mobile.
+        <div className="overflow-x-auto contain-[paint]">
             <table className="w-full border-collapse text-sm">
                 <thead className="border-b border-grey-300">
                     {table.getHeaderGroups().map((headerGroup) => (

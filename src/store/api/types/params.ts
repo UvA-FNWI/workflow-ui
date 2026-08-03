@@ -31,3 +31,16 @@ export type ExecuteActionParams = {
     type: ActionType;
     name: string;
 };
+
+export type UpdatePropertyParams = {
+    instanceId: string;
+    property: string;
+    value: unknown;
+    externalUser?: CreateExternalUserInput;
+};
+
+export type DeletePropertyParams = {
+    instanceId: string;
+    property: string;
+    itemId?: string;
+};

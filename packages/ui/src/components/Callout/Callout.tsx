@@ -8,7 +8,7 @@ import { Icon } from '../Icon';
 const defaultType = 'info';
 
 const calloutVariants = cva(
-  'ui:relative ui:grid ui:grid-cols-[auto_1fr_auto] ui:items-center ui:gap-3 ui:border-l-4 ui:p-4 ui:break-words ui:text-grey-900',
+  'ui:items-top ui:relative ui:grid ui:grid-cols-[auto_1fr_auto] ui:gap-3 ui:border-l-4 ui:p-4 ui:break-words ui:text-grey-900',
   {
     variants: {
       type: {
@@ -67,7 +67,7 @@ export const Callout = ({
 
       <div className="ui:flex ui:flex-col ui:gap-1">
         {header && (
-          <div className="ui:text-base ui:leading-tight ui:font-normal">
+          <div className="ui:text-base ui:leading-tight ui:font-semibold">
             {header}
           </div>
         )}

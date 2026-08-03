@@ -1,4 +1,5 @@
 {
+  "add": "Toevoegen",
   "admin": {
     "impersonate_role_button": "Voordoen",
     "impersonate_role_placeholder": "Selecteer een rol",
@@ -20,12 +21,15 @@
     "new": "Nieuw {{name}}",
     "no_definitions": "Geen projecttypes beschikbaar",
     "no_instances": "Nog geen instanties",
+    "recalculate_current_steps": "Stappen herberekenen",
+    "recalculate_current_steps_error": "Kon de huidige stappen niet herberekenen",
+    "recalculate_current_steps_success": "{{total}} instanties gecontroleerd: {{updated}} bijgewerkt en {{unchanged}} ongewijzigd",
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
-    "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
+    "description": "Staat iemand niet in de lijst? Dan mag je deze zelf toevoegen. Vul onderstaande gegevens in:",
     "email_error": "Vul een geldig e-mailadres in",
     "manual_user_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres. Gebruik de zoekfunctie om de gebruiker te vinden",
     "manual_user_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden. Gebruik de zoekfunctie om de gebruiker te vinden",
@@ -34,6 +38,7 @@
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
+    "confirm_delete_message": "Weet je zeker dat je dit bestand wilt verwijderen?",
     "description": "Beschrijving",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
     "error_remove_failed": "Verwijderen van bestand mislukt. Probeer het opnieuw.",
@@ -44,12 +49,6 @@
     "removed_success": "Bestand verwijderd",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
-  },
-  "good_to_know": {
-    "show_all": "Toon alles",
-    "show_less": "Toon minder",
-    "title_one": "Handig tijdens je scriptie",
-    "title_other": "[{{count}}x] Handig tijdens je scriptie"
   },
   "home": "Home",
   "instance": {
@@ -62,11 +61,13 @@
     },
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
+      "delete_file": "Bestand verwijderen",
       "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
       "explanation": "Toelichting",
       "hide_answers": "Verberg onderdelen en toelichting",
       "hide_linked": "Verberg toelichtingen",
+      "replace_file": "Bestand vervangen",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
@@ -74,6 +75,7 @@
     },
     "workflowInstance": "Workflow"
   },
+  "make_a_choice": "Maak een keuze",
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
@@ -100,10 +102,28 @@
     "search_placeholder": "Zoeken..."
   },
   "select": "Kies",
+  "show_all": "Toon alles",
+  "show_less": "Toon minder",
   "staff_card": {
+    "add_modal": {
+      "choose_role": "Kies een rol",
+      "choose_staff": "Kies een medewerker",
+      "description": "Je wilt voor het project van <strong>{{studentName}}</strong> een andere medewerker toewijzen.",
+      "info_callout_header": "Informeer de toegevoegde medewerker zelf",
+      "info_callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
+      "this_student": "deze student",
+      "title": "Medewerker toewijzen",
+      "warning_callout_text": "De huidige {{role}} <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker."
+    },
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
-    "edit_email_title": "E-mailadres bewerken van {{name}}",
+    "edit_email_modal": {
+      "error_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres.",
+      "error_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden.",
+      "title": "E-mailadres bewerken van {{name}}"
+    },
+    "remove_staff_confirmation": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen uit dit project?",
+    "remove_staff_title": "Medewerker verwijderen",
     "title": "Medewerkers"
   },
   "status": {
