@@ -8,7 +8,8 @@ import { cn } from '../../utils/cn';
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: React.ReactNode;
   state: OverlayTriggerState;
-  triggerRef: React.RefObject<HTMLElement>;
+  triggerRef: React.RefObject<HTMLElement | null>;
+  trigger?: 'SubmenuTrigger';
   className?: string;
 }
 
