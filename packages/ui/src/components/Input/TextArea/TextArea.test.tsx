@@ -71,4 +71,18 @@ describe('TextArea Component', () => {
       'ui:resize-y'
     );
   });
+
+  test('applies align styles', () => {
+    render(<TextArea aria-label="Notes" align="center" />);
+
+    expect(screen.getByRole('textbox')).toHaveClass('ui:text-center');
+  });
+
+  test('min-h-28 always wins over the size variant', () => {
+    render(<TextArea aria-label="Notes" size="sm" />);
+
+    const el = screen.getByRole('textbox');
+    expect(el).toHaveClass('ui:min-h-28', 'ui:text-xs', 'ui:px-2');
+    expect(el).not.toHaveClass('ui:min-h-6');
+  });
 });

@@ -24,7 +24,7 @@ export type NumberInputVariantProps = VariantProps<typeof inputVariants>;
 export interface NumberInputProps
   extends Omit<
       React.ComponentPropsWithoutRef<'input'>,
-      'onChange' | 'value' | 'defaultValue' | 'type'
+      'onChange' | 'value' | 'defaultValue' | 'type' | 'size'
     >,
     NumberInputVariantProps {
   value?: number;
@@ -56,6 +56,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   locale = 'en-US',
   formatOptions,
   className,
+  size,
+  align,
   ...rest
 }) => {
   const state = useNumberFieldState({
@@ -121,6 +123,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     isFocusVisible,
     isHovered,
     isValid,
+    size,
+    align,
   });
 
   return (
