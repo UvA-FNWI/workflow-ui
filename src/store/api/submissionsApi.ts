@@ -45,6 +45,39 @@ export const submissionsApi = baseApi.injectEndpoints({
                 }
             },
         }),
+        generateDummySubmissionData: builder.mutation<Submission, SubmissionParams>({
+            query: ({instanceId, submissionId}) => ({
+                url: `/Submissions/${instanceId}/${submissionId}/dummyData`,
+                method: "post",
+            }),
+            invalidatesTags: (_result, _error, {instanceId, submissionId}) => [
+                {type: "Assessments", instanceId, submissionId},
+            ],
+            async onQueryStarted(params, {dispatch, queryFulfilled}) {
+                const {data} = await queryFulfilled;
+                dispatch(
+                    submissionsApi.util.updateQueryData(
+                        "getSubmission",
+                        {instanceId: params.instanceId, submissionId: params.submissionId},
+                        () => data,
+                    ),
+                );
+                dispatch(
+                    instancesApi.util.updateQueryData(
+                        "getInstance",
+                        params.instanceId,
+                        (current) => {
+                            const idx = current.submissions.findIndex(
+                                (s) => s.id === params.submissionId,
+                            );
+                            if (idx !== -1) {
+                                current.submissions[idx] = data;
+                            }
+                        },
+                    ),
+                );
+            },
+        }),
     }),
 });
 
