@@ -1,7 +1,6 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
     FormLayout,
-    ImpersonationRole,
     RoleAction,
     StepResultsType,
     Submission,
@@ -27,6 +26,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     relatedUserGroups: RelatedUserGroups;
+    resources: Resource[];
 };
 
 /**
@@ -39,6 +39,12 @@ export type InstanceSummary = {
     createdOn: string;
     title?: string | null;
 } & Record<string, unknown>;
+
+export type RecalculateCurrentStepsResult = {
+    total: number;
+    updated: number;
+    unchanged: number;
+};
 
 export type StepHeaderStatus = {
     type: "Info" | "Attention" | "Success";
@@ -89,24 +95,52 @@ export type Action = {
 export type ActionType = "SubmitForm" | "Execute";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 
+export type Role = {
+    name: string;
+    title: LocalString;
+};
+
 export type RoleImpersonationResult = {
     instanceId: string;
-    role: ImpersonationRole;
+    role: Role;
     token: string;
     expiresAtUtc: string;
 };
 
-export type RelatedUser = {
+export type RelatedUserRoles = {
+    role: string;
     title: LocalString;
-    user: UserSearchResult & {id: string};
+    users: (UserSearchResult & {id: string})[];
+    allowsExternalUsers: boolean;
+    allowsAssignment: boolean;
+    allowsMultipleUsers: boolean;
+    canEdit: boolean;
 };
 
 export type RelatedUserGroup = {
     name: string;
     title: LocalString;
-    users: RelatedUser[];
+    userRoles: RelatedUserRoles[];
 };
 
 export type RelatedUserGroups = {
     groups: RelatedUserGroup[];
+};
+
+export type ResourceLayout = "Links" | "Text";
+export type ResourceType = "Link" | "Download" | "Text";
+
+export type Resource = {
+    name: string;
+    title: LocalString;
+    type: ResourceLayout;
+    items?: ResourceItem[];
+    content?: LocalString;
+};
+
+export type ResourceItem = {
+    name: string;
+    text: LocalString;
+    type: ResourceType;
+    url?: LocalString;
 };

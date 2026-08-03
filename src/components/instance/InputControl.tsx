@@ -40,6 +40,7 @@ interface InputControlProps {
     question: Question;
     onChange?: (val: unknown) => void;
     onSave?: (val: AnswerInput) => Promise<SaveAnswerResult>;
+    onSaveExternalUser?: (val: AnswerInput) => Promise<SaveAnswerResult>;
     onFileSave?: (params: FileParams) => void;
     answer?: Answer;
     visibleChoices?: string[] | null;
@@ -52,6 +53,7 @@ export const InputControl = ({
     question,
     onChange,
     onSave,
+    onSaveExternalUser,
     visibleChoices,
     isValid,
     errorMessage,
@@ -65,10 +67,11 @@ export const InputControl = ({
         },
         [question.name, onSave],
     );
+    const saveExternalUser = onSaveExternalUser ?? onSave;
     const handleCreateExternalUser = useCallback(
         async (newUser: CreateExternalUserInput) => {
-            if (!onSave) return;
-            const result = await onSave({
+            if (!saveExternalUser) return;
+            const result = await saveExternalUser({
                 questionName: question.name,
                 value: null,
                 externalUser: newUser,
@@ -86,7 +89,7 @@ export const InputControl = ({
 
             throw new Error(`Updated user answer was not returned for question "${question.name}"`);
         },
-        [onChange, onSave, question.name],
+        [onChange, saveExternalUser, question.name],
     );
     const debouncedOnChange = useDebounce(save, 500);
     const debouncedChange = (value: unknown) => {
@@ -144,6 +147,7 @@ export const InputControl = ({
                 onChange={(value) => {
                     debouncedChange(value);
                 }}
+                onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
                 description={lengthValidationDescription}
                 maxLength={question.maxLength}
                 isValid={isValid}
@@ -193,6 +197,7 @@ export const InputControl = ({
                 onChange={(newValue) => debouncedChange(newValue)}
                 allowsExternalUsers={question.allowsExternalUsers}
                 onCreateExternalUser={handleCreateExternalUser}
+                selectionMode={question.isArray ? "multiple" : "single"}
             />
         );
     }

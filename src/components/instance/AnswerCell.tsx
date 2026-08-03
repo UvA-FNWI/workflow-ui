@@ -2,6 +2,7 @@ import {useState} from "react";
 
 import {Button, Icon, Link, Text, useToast} from "@uva-fnwi/datanose-ui";
 
+import {InlineFileEdit} from "~/components/instance/InlineFileEdit.tsx";
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
@@ -67,7 +68,14 @@ export const AnswerCell = ({
     if (pair.question.type === "File" && answer != null) {
         return (
             <div className="min-w-0">
-                {answer.value != null ? (
+                {canEdit || pair.submission?.permissions.includes("Edit") ? (
+                    <InlineFileEdit
+                        question={pair.question}
+                        answer={answer}
+                        instanceId={instanceId}
+                        submissionId={pair.submission?.id ?? submissionId ?? ""}
+                    />
+                ) : answer.value != null ? (
                     <Link
                         intent="primary"
                         underline

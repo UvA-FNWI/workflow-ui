@@ -7,7 +7,7 @@ import {Button, Card, Heading, Icon, Select, SelectItem, Skeleton} from "@uva-fn
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
-import type {ImpersonationRole} from "~/store/api/types/submissions";
+import type {Role} from "~/store/api/types/instances.ts";
 import {clearRoleImpersonation, selectRoleImpersonationForInstance} from "~/store/authSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
@@ -17,9 +17,7 @@ export function AdminCard() {
     const impersonate = useAppSelector((state) => selectRoleImpersonationForInstance(state, id));
     const {formId: openFormId, instanceId} = useAppSelector((state) => state.openForm);
     const dispatch = useAppDispatch();
-    const [selectedRole, setSelectedRole] = useState<ImpersonationRole | null>(
-        impersonate?.role ?? null,
-    );
+    const [selectedRole, setSelectedRole] = useState<Role | null>(impersonate?.role ?? null);
     const {data: impersonationRoles, isLoading} = instancesEndpoints.getImpersonationRoles.useQuery(
         id ?? "",
         {

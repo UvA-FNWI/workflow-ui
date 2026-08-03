@@ -7,10 +7,10 @@ import {Button, Heading, Select, SelectItem, useToast} from "@uva-fnwi/datanose-
 import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
 import {UserPickerModal} from "~/components/UserPicker/UserPickerModal";
 import {VersionedLink} from "~/components/VersionedLink";
+import {VersionPicker} from "~/components/VersionPicker";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users";
 import {useStartImpersonationMutation} from "~/store/api/usersApi";
-import {useGetVersionsQuery} from "~/store/api/versionsApi";
 import {
     clearUserImpersonation,
     selectCurrentUser,
@@ -22,10 +22,7 @@ import {useAppDispatch, useAppSelector} from "~/store/store";
 
 type Language = "en" | "nl";
 
-// Sentinel key for the default (empty) workflow version, since react-aria treats "" as no selection.
-const DEFAULT_VERSION_KEY = "__default__";
-
-// Temporary navbar for quick language switching during development.
+// Temporary navbar for quick language switching and admin tooling during development.
 function TemporaryNavbar() {
     const {i18n, t} = useTranslate("common");
     const {isAuthenticated, surfLogout} = useAuth();
@@ -35,7 +32,6 @@ function TemporaryNavbar() {
     // The Develop page and version switching are developer/admin functionality, locked behind
     // super-admin rights (see /Users/Me isSuperAdmin).
     const isSuperAdmin = user?.isSuperAdmin ?? false;
-    const {data: versions} = useGetVersionsQuery(undefined, {skip: !isSuperAdmin});
 
     // While impersonating, the stop control is gated on the token, not isSuperAdmin (which now
     // reflects the target, not the admin).
@@ -86,22 +82,10 @@ function TemporaryNavbar() {
         dispatch(clearUserImpersonation());
         window.location.reload();
     };
-    const currentVersion = new URLSearchParams(window.location.search).get("version") ?? "";
+
     useEffect(() => {
         document.documentElement.setAttribute("lang", i18n.language);
     }, [i18n.language]);
-
-    // The backend may already list the default ("") version; dedupe and surface it as "default".
-    const namedVersions = (versions ?? []).filter((v) => v !== "");
-    const versionOptions = [
-        {key: DEFAULT_VERSION_KEY, label: t("version_default")},
-        ...namedVersions.map((version) => ({key: version, label: version})),
-    ];
-    // Keep an unknown version from the URL selectable so it stays visible.
-    if (currentVersion !== "" && !namedVersions.includes(currentVersion)) {
-        versionOptions.push({key: currentVersion, label: currentVersion});
-    }
-    const selectedVersionKey = currentVersion === "" ? DEFAULT_VERSION_KEY : currentVersion;
 
     if (isEmbeddedInCanvas()) {
         return null;
@@ -117,7 +101,7 @@ function TemporaryNavbar() {
                     </p>
                 )}
             </div>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex min-w-0 flex-wrap items-center gap-4">
                 {userImpersonation && (
                     <div className="flex items-center gap-3 rounded-md bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
                         <span>
@@ -134,36 +118,12 @@ function TemporaryNavbar() {
                     </Button>
                 )}
                 {isSuperAdmin && (
-                    <div className="flex items-center gap-4">
+                    <>
                         <VersionedLink to="/develop" className="text-sm font-medium underline">
                             {t("develop")}
                         </VersionedLink>
-                        <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
-                            {t("version")}
-                            <div className="w-36">
-                                <Select
-                                    aria-label={t("version")}
-                                    selectedKey={selectedVersionKey}
-                                    onChange={(key) => {
-                                        const version =
-                                            key === DEFAULT_VERSION_KEY ? "" : String(key);
-                                        const params = new URLSearchParams(window.location.search);
-                                        if (version) {
-                                            params.set("version", version);
-                                        } else {
-                                            params.delete("version");
-                                        }
-                                        // Full reload so every cached query refetches under the new version.
-                                        window.location.search = params.toString();
-                                    }}
-                                >
-                                    {versionOptions.map((option) => (
-                                        <SelectItem key={option.key}>{option.label}</SelectItem>
-                                    ))}
-                                </Select>
-                            </div>
-                        </label>
-                    </div>
+                        <VersionPicker />
+                    </>
                 )}
                 <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
                     {t("language")}
@@ -184,6 +144,7 @@ function TemporaryNavbar() {
                         variant="destructive"
                         onClick={() => void surfLogout()}
                         type="button"
+                        className="max-w-full min-w-0"
                     >
                         {t("logout")} ({userImpersonation?.adminDisplayName ?? user?.displayName})
                     </Button>

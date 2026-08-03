@@ -1,4 +1,5 @@
 {
+  "add": "Add",
   "admin": {
     "fill_dummy_data_button": "Fill with dummy data",
     "impersonate_role_button": "Impersonate",
@@ -21,12 +22,15 @@
     "new": "New {{name}}",
     "no_definitions": "No project types available",
     "no_instances": "No instances yet",
+    "recalculate_current_steps": "Recalculate steps",
+    "recalculate_current_steps_error": "Could not recalculate the current steps",
+    "recalculate_current_steps_success": "Checked {{total}} instances: {{updated}} updated and {{unchanged}} unchanged",
     "title": "Develop"
   },
   "email": "Email address",
   "external_user_add": {
     "back_to_search": "Back to search",
-    "description": "Fill in the details below, so this person will receive an email to get access to this tool.",
+    "description": "Can't you find someone in the list? You can add them yourself. Fill in the details below:",
     "email_error": "Please enter a valid email address",
     "manual_user_email_already_exists": "A user with this email address already exists. Use the search function to find the user",
     "manual_user_internal_email": "Users with UvA mail address cannot be added manually. Use the search function to find the user",
@@ -35,6 +39,7 @@
     "title": "Add external user"
   },
   "file_upload": {
+    "confirm_delete_message": "Are you sure you want to delete this file?",
     "description": "Description",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
     "error_remove_failed": " Failed to remove file. Please try again.",
@@ -45,12 +50,6 @@
     "removed_success": "File removed",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
-  },
-  "good_to_know": {
-    "show_all": "Show all",
-    "show_less": "Show less",
-    "title_one": "Useful during your thesis",
-    "title_other": "[{{count}}x] Useful during your thesis"
   },
   "home": "Home",
   "instance": {
@@ -63,11 +62,13 @@
     },
     "empty_step": "Nothing has been submitted yet.",
     "summary": {
+      "delete_file": "Delete file",
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
       "explanation": "Explanation",
       "hide_answers": "Hide parts and explanations",
       "hide_linked": "Hide explanations",
+      "replace_file": "Replace file",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
@@ -75,6 +76,7 @@
     },
     "workflowInstance": "Workflow Instance"
   },
+  "make_a_choice": "Make a choice",
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
@@ -101,10 +103,28 @@
     "search_placeholder": "Search..."
   },
   "select": "Select",
+  "show_all": "Show all",
+  "show_less": "Show less",
   "staff_card": {
+    "add_modal": {
+      "choose_role": "Choose role",
+      "choose_staff": "Choose staff member",
+      "description": "You want to assign another staff member to the project of <strong>{{studentName}}</strong>.",
+      "info_callout_header": "Inform the added staff member yourself",
+      "info_callout_text": "No automated email is sent. Therefore, inform the staff member yourself about their role in this student's project.",
+      "this_student": "this student",
+      "title": "Assign staff member",
+      "warning_callout_text": "The current {{role}} <strong>{{name}}</strong> will be replaced by the new staff member."
+    },
     "confidential_advisers": "Confidential advisers",
     "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",
-    "edit_email_title": "Edit email for {{name}}",
+    "edit_email_modal": {
+      "error_email_already_exists": "A user with this email address already exists.",
+      "error_internal_email": "Users with UvA mail address cannot be added manually.",
+      "title": "Edit email for {{name}}"
+    },
+    "remove_staff_confirmation": "Are you sure you want to remove <strong>{{name}}</strong> from this project?",
+    "remove_staff_title": "Remove staff member",
     "title": "Staff"
   },
   "status": {

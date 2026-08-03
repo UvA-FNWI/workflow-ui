@@ -41,7 +41,7 @@ export function SearchAndSelect({
     isLoading = false,
     autoFocus = false,
     addNewItemVisible = false,
-    showSearchHint: showSearchHintEnabled = true,
+    showSearchHint: showSearchHintEnabled = false,
     searchHintText,
     noResultsText,
     initialSearchQuery = "",
