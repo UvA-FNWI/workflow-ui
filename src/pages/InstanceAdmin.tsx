@@ -52,7 +52,7 @@ function InstanceAdmin() {
     return (
         <Container maxWidth={1280}>
             <div className="mb-8 flex flex-col gap-2">
-                {instance?.workflowDefinition.hasSteps && (
+                {!instance?.workflowDefinition.isPropertyOnly && (
                     <BackLink to={`/instance/${id}`}>{t("back_to_instance")}</BackLink>
                 )}
                 <Heading as="h1" size="lg">

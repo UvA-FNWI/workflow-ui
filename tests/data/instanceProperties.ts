@@ -6,7 +6,7 @@ export const propertiesInstance = {
         name: "Context",
         title: null,
         titlePlural: {en: "Contexts", nl: "Contexts"},
-        hasSteps: false,
+        isPropertyOnly: true,
     },
     currentStep: null,
     parentId: null,
