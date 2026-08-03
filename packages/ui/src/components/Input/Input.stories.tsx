@@ -5,9 +5,25 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from '../Icon';
 import { Input } from './Input';
 
+const commonArgTypes = {
+  size: {
+    control: {
+      type: 'select' as const,
+    },
+    options: ['sm', 'md', 'lg'],
+  },
+  align: {
+    control: {
+      type: 'select' as const,
+    },
+    options: ['left', 'center'],
+  },
+};
+
 const meta: Meta<typeof Input> = {
   title: 'Components/Input',
   component: Input,
+  argTypes: commonArgTypes,
 };
 
 export default meta;
@@ -79,5 +95,32 @@ export const WithBothIcons: Story = {
     placeholder: 'Enter URL',
     leftIcon: <Icon name="link-line" size="sm" />,
     rightIcon: <Icon name="square-info-line" size="sm" />,
+  },
+};
+
+export const Sizes: Story = {
+  args: {
+    label: 'Input label',
+    placeholder: 'Type something...',
+  },
+  render: args => {
+    const sizes = ['sm', 'md', 'lg'] as const;
+    return (
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-end' }}>
+        {sizes.map(size => (
+          <Input key={size} {...args} size={size} label={`Input (${size})`} />
+        ))}
+      </div>
+    );
+  },
+};
+
+export const Centered: Story = {
+  render: InteractiveInput,
+  args: {
+    label: 'Grade',
+    placeholder: '0',
+    align: 'center',
+    size: 'sm',
   },
 };
