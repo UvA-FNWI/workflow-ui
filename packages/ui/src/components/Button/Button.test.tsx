@@ -135,7 +135,25 @@ describe('Button', () => {
         </Button>
       );
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('ui:w-full', 'ui:justify-between');
+      expect(button).toHaveClass('ui:w-full');
+    });
+  });
+
+  describe('Justify variants', () => {
+    it('centers content by default', () => {
+      render(<Button intent="primary">Centered</Button>);
+      const content = screen.getByText('Centered').closest('div');
+      expect(content?.parentElement).toHaveClass('ui:justify-center');
+    });
+
+    it('spaces content between when justify="between"', () => {
+      render(
+        <Button intent="primary" justify="between" rightIcon={<span>→</span>}>
+          Spaced
+        </Button>
+      );
+      const content = screen.getByText('Spaced').closest('div');
+      expect(content?.parentElement).toHaveClass('ui:justify-between');
     });
   });
 
