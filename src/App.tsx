@@ -9,7 +9,7 @@ import {
 } from "@uva-fnwi/datanose-ui";
 
 import EffectsWrapper from "./components/EffectsWrapper";
-import TemporaryNavbar from "./components/TemporaryNavbar";
+import Navbar from "./components/Navbar/Navbar";
 import {ErrorWrapper} from "~/components/ErrorWrapper.tsx";
 import {PreviewBanner} from "~/components/PreviewBanner";
 import {VITE_ENV} from "~/helpers/Environment";
@@ -22,7 +22,7 @@ function App() {
         <div
             className={`min-h-screen w-full text-black dark:bg-stone-900 dark:text-white ${!isProductionView && envData ? envData.bgClassName : "bg-grey-300"}`}
         >
-            <TemporaryNavbar />
+            <Navbar />
             <PreviewBanner />
             <EffectsWrapper />
             <ErrorWrapper />
