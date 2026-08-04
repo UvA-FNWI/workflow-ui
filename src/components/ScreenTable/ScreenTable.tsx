@@ -1,13 +1,14 @@
 import {useMemo} from "react";
 
 import {type ColumnDef} from "@tanstack/react-table";
-import {Button, Icon, linkClassGenerator, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Icon} from "@uva-fnwi/datanose-ui";
 
-import {DataTable} from "~/components/Table";
-import {VersionedLink} from "~/components/VersionedLink";
-import {type LocalString, useTranslate} from "~/hooks/useTranslate";
+import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
+import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
+import {isProgressInformation} from "~/utils/progress";
+import {formatTableCellValue, getComparableTableCellValue} from "~/utils/tableCellValues";
 
 type ScreenTableProps = {
     columns: ScreenColumn[];
@@ -27,11 +28,15 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                     (col): ColumnDef<ScreenRow> => ({
                         id: String(col.id),
                         accessorFn: (row) =>
-                            getComparableCellValue(row.values[col.id], col.dataType, i18n.language),
+                            getComparableTableCellValue(
+                                row.values[col.id],
+                                col.dataType,
+                                i18n.language,
+                            ),
                         header: () => l(col.title),
                         cell: (info) => {
                             const value = info.row.original.values[col.id];
-                            const formattedValue = formatCellValue(
+                            const formattedValue = formatTableCellValue(
                                 value,
                                 col.dataType,
                                 i18n.language,
@@ -39,42 +44,21 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
 
                             // Custom formatting for the progress column
                             if (col.isCurrentStep && col.dataType === "Object") {
-                                const obj = value as Record<string, unknown>;
-                                if ("text" in obj && "color" in obj) {
-                                    const progressText = obj["text"] as LocalString | undefined;
-                                    const progressColor = obj["color"] as string | undefined;
-                                    return (
-                                        <div className="flex items-baseline gap-2">
-                                            <div
-                                                className={`h-2 min-w-2 rounded-full ${progressColor?.toLowerCase() == "green" ? "bg-green-600" : "bg-red-600"}`}
-                                            />
-                                            <span>{l(progressText)}</span>
-                                        </div>
-                                    );
+                                if (isProgressInformation(value)) {
+                                    return <TableProgressCell progress={value} />;
                                 }
                             }
 
                             if (col.link) {
                                 const rowId = info.row.original.id;
                                 return (
-                                    <VersionedLink
-                                        to={`/instance/${rowId}`}
-                                        className={linkClassGenerator({
-                                            intent: "primary",
-                                            underline: true,
-                                            size: "sm",
-                                        })}
-                                    >
+                                    <TableLinkCell to={`/instance/${rowId}`}>
                                         {formattedValue}
-                                    </VersionedLink>
+                                    </TableLinkCell>
                                 );
                             }
 
-                            return (
-                                <Text size={"sm"} truncate={true} className="max-w-80">
-                                    {formattedValue}
-                                </Text>
-                            );
+                            return <TableTextCell>{formattedValue}</TableTextCell>;
                         },
                         enableSorting: true,
                     }),
@@ -108,109 +92,3 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
 
     return <DataTable data={rows} columns={tableColumns} globalFilter={globalFilter} />;
 };
-
-function formatCellValue(value: unknown, dataType: string, locale: string): React.ReactNode {
-    if (value === null || value === undefined) {
-        return "—";
-    }
-
-    switch (dataType) {
-        case "Date":
-            return formatDate(value);
-        case "DateTime":
-            return formatDateTime(value);
-        case "Currency":
-            return formatCurrency(value);
-        case "Double":
-            return typeof value === "number" ? value.toLocaleString() : String(value);
-        case "Int":
-            return typeof value === "number" ? value.toLocaleString() : String(value);
-        case "LocalString":
-            return typeof value === "object" && (value as LocalString)[locale as keyof LocalString];
-        case "Object": {
-            if (typeof value === "object") {
-                const localString = getLocalStringFromObject(value as object);
-                if (localString) {
-                    return localString[locale as keyof LocalString] ?? "—";
-                }
-            }
-            return String(value);
-        }
-        default:
-            return String(value);
-    }
-}
-
-function getComparableCellValue(value: unknown, dataType: string, locale: string): string | number {
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    switch (dataType) {
-        case "Date":
-        case "DateTime":
-            return getTimeValue(value);
-        case "Currency":
-        case "Double":
-        case "Int":
-            return typeof value === "number" ? value : String(value);
-        case "LocalString":
-        case "Object":
-            return String(formatCellValue(value, dataType, locale) ?? "");
-        default:
-            return String(value);
-    }
-}
-
-function getTimeValue(value: unknown): number | string {
-    if (typeof value === "string" || typeof value === "number") {
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) {
-            return date.getTime();
-        }
-    }
-
-    return String(value);
-}
-
-function formatDate(value: unknown): string {
-    if (typeof value === "string" || typeof value === "number") {
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) {
-            return date.toLocaleDateString();
-        }
-    }
-    return String(value);
-}
-
-function formatDateTime(value: unknown): string {
-    if (typeof value === "string" || typeof value === "number") {
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) {
-            return date.toLocaleString();
-        }
-    }
-    return String(value);
-}
-
-function formatCurrency(value: unknown): string {
-    if (typeof value === "number") {
-        return new Intl.NumberFormat(undefined, {
-            style: "currency",
-            currency: "EUR",
-        }).format(value);
-    }
-    return String(value);
-}
-
-function getLocalStringFromObject(value: object): LocalString | null {
-    for (const field of Object.values(value)) {
-        if (typeof field === "object" && field !== null && !Array.isArray(field)) {
-            const keys = Object.keys(field);
-            if (keys.some((k) => /^[a-z]{2}(-[A-Z]{2})?$/.test(k))) {
-                return field as LocalString;
-            }
-        }
-    }
-    return null;
-}

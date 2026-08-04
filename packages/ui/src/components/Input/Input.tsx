@@ -13,7 +13,7 @@ export type { InputVariantProps };
 export interface InputProps
   extends Omit<
       React.ComponentPropsWithoutRef<'input'>,
-      'onChange' | 'disabled'
+      'onChange' | 'disabled' | 'size'
     >,
     InputVariantProps {
   isDisabled?: boolean;
@@ -41,6 +41,8 @@ export const Input: React.FC<InputProps> = ({
   maxLength,
   leftIcon,
   rightIcon,
+  size,
+  align,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...rest
@@ -74,6 +76,8 @@ export const Input: React.FC<InputProps> = ({
     isFocusVisible,
     isHovered,
     isValid,
+    size,
+    align,
   });
 
   return (
@@ -90,6 +94,7 @@ export const Input: React.FC<InputProps> = ({
           ref={ref}
           className={cn(
             inputClasses,
+            // Gutters are calibrated for the lg size and don't shrink for size="sm"/"md".
             leftIcon && 'ui:pl-10',
             rightIcon && 'ui:pr-10',
             className

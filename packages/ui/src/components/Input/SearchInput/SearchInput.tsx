@@ -15,7 +15,7 @@ import { inputVariants } from '../InputVariant';
 export type SearchInputVariantProps = VariantProps<typeof inputVariants>;
 
 export interface SearchInputProps
-  extends Omit<React.ComponentPropsWithoutRef<'input'>, 'onChange'>,
+  extends Omit<React.ComponentPropsWithoutRef<'input'>, 'onChange' | 'size'>,
     SearchInputVariantProps {
   value?: string;
   defaultValue?: string;
@@ -37,6 +37,8 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   isValid = true,
   isDisabled = false,
   className,
+  size,
+  align,
   ...rest
 }) => {
   const state = useSearchFieldState({
@@ -74,6 +76,8 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     isFocusVisible,
     isHovered,
     isValid,
+    size,
+    align,
   });
 
   return (

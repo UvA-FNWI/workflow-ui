@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import {
     Button,
@@ -17,6 +17,8 @@ import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page} from "~/store/api/types/submissions";
+import {setOpenForm} from "~/store/openFormSlice.ts";
+import {useAppDispatch} from "~/store/store.ts";
 import {isPageComplete as isPageCompleteUtil} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -32,6 +34,14 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
         submissionId,
     });
     const [activeTabIndex, setActiveTabIndex] = useState(0);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(setOpenForm({formId: submissionId, instanceId}));
+        return () => {
+            dispatch(setOpenForm({formId: null, instanceId}));
+        };
+    }, [submissionId, instanceId, dispatch]);
 
     if (!submission) return <div>Loading...</div>;
 
