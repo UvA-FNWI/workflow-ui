@@ -1,17 +1,16 @@
 import {useState} from "react";
 
-import {Button, Icon, Link, Text, Tooltip} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
 import {EditEmailModal} from "~/components/StaffCard/EditEmailModal.tsx";
 import {RemoveStaffMemberModal} from "~/components/StaffCard/RemoveStaffMemberModal.tsx";
+import {UserInfoDisplay} from "~/components/StaffCard/UserInfoDisplay.tsx";
+import {useEditEmail} from "~/hooks/useEditEmail.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {baseApi} from "~/store/api/baseApi.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {RelatedUserRoles, Role} from "~/store/api/types/instances.ts";
-import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
-import {useUpdateUserEmailMutation} from "~/store/api/usersApi.ts";
-import {useAppDispatch} from "~/store/store.ts";
+import type {UserSearchResult} from "~/store/api/types/users.ts";
 
 type RelatedStaffInfoProps = {
     instanceId?: string;
@@ -29,30 +28,9 @@ export function RelatedStaffInfo({
     const {t, l} = useTranslate("workflow");
     const {role, users, title, allowsExternalUsers, allowsAssignment, allowsMultipleUsers} =
         relatedUserRoles;
-    const [editingUser, setEditingUser] = useState<UserSearchResult | null>(null);
+    const {editingUser, setEditingUser, handleSave, isUpdatingEmail} = useEditEmail(instanceId);
     const [removingUser, setRemovingUser] = useState<UserSearchResult | null>(null);
-    const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
     const [deleteProperty] = instancesEndpoints.deleteProperty.useMutation();
-    const dispatch = useAppDispatch();
-
-    const handleSave = async (updatedUser: UserSearchResult) => {
-        if (!users || users.length <= 0 || !updatedUser.id || !instanceId) {
-            return;
-        }
-        const externalUser: CreateExternalUserInput = {
-            userId: updatedUser.id,
-            email: updatedUser.email,
-            displayName: updatedUser.displayName,
-            organization: updatedUser.organization,
-        };
-
-        await updateUserEmail({
-            externalUser,
-            instanceId,
-        }).unwrap();
-
-        dispatch(baseApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
-    };
 
     const handleRemoveUser = async () => {
         if (!instanceId || !relatedUserRoles || !removingUser || !removingUser.id) return;
@@ -119,57 +97,25 @@ export function RelatedStaffInfo({
                             </div>
                         </div>
                     )}
-                    <div className="flex min-w-0 gap-1">
-                        <Text className="wrap-anywhere">{user.displayName}</Text>
-                        {canBeRemoved && (
-                            <Button
-                                intent="ghost"
-                                size="small"
-                                shape="circular"
-                                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                onClick={() => setRemovingUser(user)}
-                            >
-                                <Icon name="trash-line" size="xs" color="danger" />
-                            </Button>
-                        )}
-                    </div>
-                    {user.organization && (
-                        <Text className="wrap-anywhere">{user.organization?.name}</Text>
-                    )}
-                    <div className="flex flex-row items-center gap-1">
-                        <div className="flex min-w-0 flex-row items-center gap-2 overflow-hidden">
-                            <Icon
-                                className="flex-none"
-                                name="email-line"
-                                color="current"
-                                size="md"
-                            />
-
-                            <Tooltip
-                                content={user.email}
-                                triggerClassName="min-w-0 overflow-hidden"
-                            >
-                                <Link
-                                    underline
-                                    className="block max-w-full truncate"
-                                    href={`mailto:${user.email}`}
-                                >
-                                    {user.email}
-                                </Link>
-                            </Tooltip>
-                        </div>
-                        {canEdit && user.isExternal && user.requiresInvitation && (
-                            <Button
-                                intent="ghost"
-                                size="small"
-                                shape="circular"
-                                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                onClick={() => setEditingUser(user)}
-                                aria-label={t("instance.summary.edit_answer")}
-                            >
-                                <Icon name="edit-line" size="xs" color="danger" />
-                            </Button>
-                        )}
+                    <div className="flex min-w-0 flex-col gap-1">
+                        <UserInfoDisplay
+                            user={user}
+                            canEditEmail={canEdit && user.isExternal && user.requiresInvitation}
+                            onEditEmail={setEditingUser}
+                            actionButton={
+                                canBeRemoved && (
+                                    <Button
+                                        intent="ghost"
+                                        size="small"
+                                        shape="circular"
+                                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                        onClick={() => setRemovingUser(user)}
+                                    >
+                                        <Icon name="trash-line" size="xs" color="danger" />
+                                    </Button>
+                                )
+                            }
+                        />
                     </div>
                 </div>
             ))}
