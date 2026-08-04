@@ -104,6 +104,11 @@ function Navbar() {
                 )}
             </div>
             <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+                {isAuthenticated && (
+                    <VersionedLink to="/personal" className="text-sm font-medium underline">
+                        {t("personal_page")}
+                    </VersionedLink>
+                )}
                 {isSuperAdmin && (
                     <VersionedLink to="/develop">
                         <Button intent="primary">{t("develop")}</Button>

@@ -16,6 +16,7 @@
   "language_nl": "Dutch",
   "login": "Login",
   "logout": "Logout",
+  "personal_page": "Theses",
   "search_placeholder": "Search...",
   "session_expired_canvas_body": "The session has expired. Click the refresh button in your browser to refresh the session.",
   "session_expired_surf_body": "The session has expired. Click the button to login again.",
