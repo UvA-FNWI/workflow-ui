@@ -10,11 +10,6 @@ const {changeLanguage, getVersionDetails, setWorkflowVersion} = vi.hoisted(() =>
     setWorkflowVersion: vi.fn(),
 }));
 
-vi.mock("@uva-fnwi/datanose-ui", async (importOriginal) => ({
-    ...(await importOriginal<typeof import("@uva-fnwi/datanose-ui")>()),
-    Icon: () => null,
-}));
-
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
         i18n: {language: "nl", changeLanguage},
