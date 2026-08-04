@@ -39,12 +39,14 @@ export const usersApi = baseApi.injectEndpoints({
             }),
         }),
         updateUserEmail: builder.mutation<UserSearchResult, UpdateUserEmailRequest>({
-            query: ({userId, email, instanceId}) => ({
-                url: `/Users/${userId}/email`,
+            query: ({externalUser, instanceId}) => ({
+                url: `/Users/${externalUser.userId}`,
                 method: "PUT",
-                body: {email, instanceId},
+                body: {externalUser, instanceId},
             }),
-            invalidatesTags: (_result, _error, {userId}) => [{type: "User", id: userId}],
+            invalidatesTags: (_result, _error, {externalUser}) => [
+                {type: "User", id: externalUser?.userId},
+            ],
         }),
     }),
 });

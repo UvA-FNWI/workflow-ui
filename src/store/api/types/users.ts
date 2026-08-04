@@ -41,12 +41,12 @@ export interface VerifyEmailResponse {
 }
 
 export interface UpdateUserEmailRequest {
-    userId: string;
-    email: string;
+    externalUser: CreateExternalUserInput;
     instanceId: string;
 }
 
 export interface CreateExternalUserInput {
+    userId?: string;
     displayName: string;
     email: string;
     organization?: Organization | null;

@@ -155,6 +155,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
 
         try {
             await onConfirm({
+                userId: initialUser?.id ?? undefined,
                 displayName: normalizedDisplayName,
                 email: normalizedEmail,
                 organization: externalOrganization,
