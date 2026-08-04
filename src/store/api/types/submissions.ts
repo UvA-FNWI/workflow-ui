@@ -81,6 +81,8 @@ export type Question = {
     maxLength?: number;
     sorting?: Sorting;
     linkedTo?: string;
+    /** Properties of an embedded object. */
+    subProperties?: Question[] | null;
 };
 
 export type SortDirection = "Ascending" | "Descending";

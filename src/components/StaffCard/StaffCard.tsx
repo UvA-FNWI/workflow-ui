@@ -28,7 +28,7 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
         skip: !instanceId,
     });
 
-    const [updateProperty] = instancesEndpoints.updateProperty.useMutation();
+    const [assignRelatedUser] = instancesEndpoints.assignRelatedUser.useMutation();
 
     const instanceUserRoles: Role[] = useMemo(() => {
         return (
@@ -62,10 +62,12 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
         value: UserSearchResult[],
         externalUser?: CreateExternalUserInput | null,
     ) => {
-        updateProperty({
+        if (!value[0]) return;
+
+        assignRelatedUser({
             instanceId,
             property: role.name,
-            value: value.length === 1 ? value[0] : value,
+            user: value[0],
             externalUser: externalUser ? externalUser : undefined,
         });
         setIsAddStaffModalOpen(false);
