@@ -210,6 +210,7 @@ export const PageControl = ({
                                                             onChange={field.onChange}
                                                             question={question}
                                                             onSave={save}
+                                                            visibleChoices={answer?.visibleChoices}
                                                             errorMessage={errorMessage}
                                                             isValid={!errorMessage}
                                                         />
