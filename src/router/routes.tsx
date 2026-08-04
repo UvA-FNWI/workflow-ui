@@ -5,6 +5,7 @@ import AuthGuard from "../components/AuthGuard";
 import AuthCallback from "../pages/AuthCallback";
 import CanvasCallback from "../pages/CanvasCallback";
 import Overview from "../pages/Overview";
+import Personal from "../pages/Personal";
 import {developRoutes} from "./developRoutes";
 import {instanceRoutes} from "./instanceRoutes";
 import screenRoutes from "./screenRoutes";
@@ -28,6 +29,10 @@ const routes: RouteObject[] = [
                     {
                         index: true,
                         element: <Overview />,
+                    },
+                    {
+                        path: "/personal",
+                        element: <Personal />,
                     },
                     ...instanceRoutes,
                     ...screenRoutes,

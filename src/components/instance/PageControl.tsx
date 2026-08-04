@@ -52,10 +52,7 @@ export const PageControl = ({
     useEffect(() => {
         const visibleAnswers = answers.filter((a) => a.isVisible);
         visibleAnswers.forEach((answer) => {
-            const valueInForm = form.getValues(answer.questionName);
-            if (valueInForm === undefined) {
-                form.setValue(answer.questionName, answer.value);
-            }
+            form.setValue(answer.questionName, answer.value);
         });
     }, [answers, form]);
 
@@ -146,7 +143,7 @@ export const PageControl = ({
                         </Heading>
                     )}
                     {page.introduction && (
-                        <Text size="lg">
+                        <Text size="lg" as="span">
                             <MarkdownRenderer>{l(page.introduction) ?? ""}</MarkdownRenderer>
                         </Text>
                     )}

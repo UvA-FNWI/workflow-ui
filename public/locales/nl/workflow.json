@@ -1,5 +1,7 @@
 {
+  "add": "Toevoegen",
   "admin": {
+    "fill_dummy_data_button": "Vul met dummy data",
     "impersonate_role_button": "Voordoen",
     "impersonate_role_placeholder": "Selecteer een rol",
     "impersonate_role_title": "Voordoen als rol",
@@ -28,7 +30,7 @@
   "email": "E-mailadres",
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
-    "description": "Vul onderstaande gegevens in, zodat deze persoon een mail krijgt om toegang te krijgen tot deze tool.",
+    "description": "Staat iemand niet in de lijst? Dan mag je deze zelf toevoegen. Vul onderstaande gegevens in:",
     "email_error": "Vul een geldig e-mailadres in",
     "manual_user_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres. Gebruik de zoekfunctie om de gebruiker te vinden",
     "manual_user_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden. Gebruik de zoekfunctie om de gebruiker te vinden",
@@ -74,6 +76,7 @@
     },
     "workflowInstance": "Workflow"
   },
+  "make_a_choice": "Maak een keuze",
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
@@ -103,9 +106,25 @@
   "show_all": "Toon alles",
   "show_less": "Toon minder",
   "staff_card": {
+    "add_modal": {
+      "choose_role": "Kies een rol",
+      "choose_staff": "Kies een medewerker",
+      "description": "Je wilt voor het project van <strong>{{studentName}}</strong> een andere medewerker toewijzen.",
+      "info_callout_header": "Informeer de toegevoegde medewerker zelf",
+      "info_callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
+      "this_student": "deze student",
+      "title": "Medewerker toewijzen",
+      "warning_callout_text": "De huidige {{role}} <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker."
+    },
     "confidential_advisers": "Vertrouwenspersonen",
     "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
-    "edit_email_title": "E-mailadres bewerken van {{name}}",
+    "edit_email_modal": {
+      "error_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres.",
+      "error_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden.",
+      "title": "E-mailadres bewerken van {{name}}"
+    },
+    "remove_staff_confirmation": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen uit dit project?",
+    "remove_staff_title": "Medewerker verwijderen",
     "title": "Medewerkers"
   },
   "status": {

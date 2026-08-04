@@ -140,8 +140,3 @@ export type DataType =
     | "Object";
 export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric";
 export type FormLayout = "Normal" | "Compact" | "Modal";
-
-export type ImpersonationRole = {
-    name: string;
-    title: LocalString;
-};

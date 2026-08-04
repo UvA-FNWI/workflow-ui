@@ -6,7 +6,8 @@ import {Button, Card, Heading, Icon, Select, SelectItem, Skeleton} from "@uva-fn
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
-import type {ImpersonationRole} from "~/store/api/types/submissions";
+import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
+import type {Role} from "~/store/api/types/instances.ts";
 import {clearRoleImpersonation, selectRoleImpersonationForInstance} from "~/store/authSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
@@ -14,10 +15,9 @@ export function AdminCard() {
     const {id} = useParams<{id: string}>();
     const {t, l} = useTranslate("workflow");
     const impersonate = useAppSelector((state) => selectRoleImpersonationForInstance(state, id));
+    const {formId: openFormId, instanceId} = useAppSelector((state) => state.openForm);
     const dispatch = useAppDispatch();
-    const [selectedRole, setSelectedRole] = useState<ImpersonationRole | null>(
-        impersonate?.role ?? null,
-    );
+    const [selectedRole, setSelectedRole] = useState<Role | null>(impersonate?.role ?? null);
     const {data: impersonationRoles, isLoading} = instancesEndpoints.getImpersonationRoles.useQuery(
         id ?? "",
         {
@@ -26,6 +26,7 @@ export function AdminCard() {
     );
 
     const [impersonateRole] = instancesEndpoints.impersonateRole.useMutation();
+    const [generateDummyData] = submissionsEndpoints.generateDummySubmissionData.useMutation();
 
     if (isLoading) {
         return (
@@ -95,6 +96,16 @@ export function AdminCard() {
                         </Button>
                     )}
                 </div>
+                {!!instanceId && !!openFormId && (
+                    <Button
+                        intent="secondary"
+                        variant="default"
+                        onClick={() => generateDummyData({instanceId, submissionId: openFormId})}
+                        leftIcon={<Icon name="sparkles-line" size="sm" color="current" />}
+                    >
+                        {t("admin.fill_dummy_data_button")}
+                    </Button>
+                )}
             </div>
         </Card>
     );
