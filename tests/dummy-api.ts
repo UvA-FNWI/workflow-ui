@@ -17,7 +17,16 @@ app.use(function (req, res, next) {
 });
 
 app.get("/Users/Me", (_, res) => {
-    res.json({id: "test-user", name: "Test User", email: "test@example.com"});
+    res.json({
+        id: "test-user",
+        userName: "test-user",
+        displayName: "Test User",
+        email: "test@example.com",
+        organization: null,
+        isExternal: false,
+        isPending: false,
+        isSuperAdmin: false,
+    });
 });
 
 app.get("/WorkflowInstances/form-submitted", (_, res) => {

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   AriaMenuOptions,
@@ -42,6 +42,26 @@ interface MenuListProps extends MenuDefinition {
   rootState: RootMenuTriggerState;
   ariaProps?: AriaMenuOptions<MenuItemDefinition>;
   menuRef?: React.RefObject<HTMLUListElement | null>;
+}
+
+function useIsSmallScreen() {
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    if (!window.matchMedia) {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(max-width: 639px)');
+    const updateIsSmallScreen = () => setIsSmallScreen(mediaQuery.matches);
+
+    updateIsSmallScreen();
+    mediaQuery.addEventListener('change', updateIsSmallScreen);
+
+    return () => mediaQuery.removeEventListener('change', updateIsSmallScreen);
+  }, []);
+
+  return isSmallScreen;
 }
 
 export function MenuList({
@@ -94,6 +114,7 @@ export function MenuList({
 }
 
 export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
+  const isSmallScreen = useIsSmallScreen();
   const itemDefinition = item.value;
   const itemRef = useRef<HTMLLIElement>(null);
   const submenuRef = useRef<HTMLUListElement>(null);
@@ -167,7 +188,7 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
           state={submenuState}
           triggerRef={itemRef}
           trigger="SubmenuTrigger"
-          placement="end top"
+          placement={isSmallScreen ? 'bottom start' : 'end top'}
           offset={submenu.offset ?? 4}
           shouldCloseOnInteractOutside={shouldCloseSubmenu}
           className={cn(
