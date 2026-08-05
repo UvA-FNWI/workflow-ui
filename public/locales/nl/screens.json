@@ -9,6 +9,7 @@
   },
   "completed": "Afgerond",
   "empty_title": "Geen scripties gevonden",
+  "import": "Importeren",
   "load_error": "Je scripties konden niet worden geladen. Probeer het opnieuw.",
   "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
   "open_instance": "Open {{title}}",

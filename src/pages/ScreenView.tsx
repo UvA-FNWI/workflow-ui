@@ -7,20 +7,21 @@ import {
     Container,
     Heading,
     Pill,
-    SearchInput,
     Tab,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
+    TabToolbar,
 } from "@uva-fnwi/datanose-ui";
 
 import {ScreenTable} from "~/components/ScreenTable";
+import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useGetScreenQuery} from "~/store/api/screensApi";
 
 export const ScreenView = () => {
-    const {t, l} = useTranslate("common");
+    const {l} = useTranslate("common");
     const {workflowDefinition, screenName} = useParams();
     const {data: screen} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
@@ -33,6 +34,8 @@ export const ScreenView = () => {
         return null;
     }
 
+    const canEdit = true;
+
     return (
         <Container maxWidth={1280}>
             <Card>
@@ -41,14 +44,6 @@ export const ScreenView = () => {
                         <Heading as="h1" className="min-w-0 wrap-break-word">
                             {l(screen.workflowDefinition.title)}
                         </Heading>
-                        <div className="w-full sm:w-80 sm:max-w-sm">
-                            <SearchInput
-                                value={search}
-                                onChange={setSearch}
-                                placeholder={t("search_placeholder")}
-                                className="w-full"
-                            />
-                        </div>
                     </div>
                 </div>
                 {screen.groups ? (
@@ -65,26 +60,38 @@ export const ScreenView = () => {
                                 </Tab>
                             ))}
                         </TabList>
+                        <TabToolbar className="py-4">
+                            <ScreenTableToolbar
+                                search={search}
+                                setSearch={setSearch}
+                                canEdit={canEdit}
+                            />
+                        </TabToolbar>
                         <TabPanels>
                             {screen.groups.map((group) => (
                                 <TabPanel key={group.name}>
-                                    <div className="mt-8">
-                                        <ScreenTable
-                                            columns={screen.columns}
-                                            rows={group.rows}
-                                            globalFilter={search}
-                                        />
-                                    </div>
+                                    <ScreenTable
+                                        columns={screen.columns}
+                                        rows={group.rows}
+                                        globalFilter={search}
+                                    />
                                 </TabPanel>
                             ))}
                         </TabPanels>
                     </Tabs>
                 ) : (
-                    <ScreenTable
-                        columns={screen.columns}
-                        rows={screen.rows}
-                        globalFilter={search}
-                    />
+                    <div className="flex flex-col gap-4">
+                        <ScreenTableToolbar
+                            search={search}
+                            setSearch={setSearch}
+                            canEdit={canEdit}
+                        />
+                        <ScreenTable
+                            columns={screen.columns}
+                            rows={screen.rows}
+                            globalFilter={search}
+                        />
+                    </div>
                 )}
             </Card>
         </Container>

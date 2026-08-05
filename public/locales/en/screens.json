@@ -9,10 +9,11 @@
   },
   "completed": "Completed",
   "empty_title": "No theses found",
+  "import": "Import",
   "load_error": "Your theses could not be loaded. Please try again.",
   "no_instances_found": "No theses found for '{{search}}'",
   "open_instance": "Open {{title}}",
   "role_title": "You are {{role}} for:",
-  "search_placeholder": "Type a searchword",
+  "search_placeholder": "Type a search query",
   "title": "Theses"
 }
