@@ -81,10 +81,8 @@ export const InputControl = ({
             const updatedAnswer = result.answers.find(
                 (answer) => answer.questionName === question.name,
             );
-            const updatedUser = updatedAnswer?.value as UserSearchResult | undefined;
-
-            if (updatedUser) {
-                onChange?.(updatedUser);
+            if (updatedAnswer) {
+                onChange?.(updatedAnswer.value);
                 return;
             }
 
@@ -206,6 +204,7 @@ export const InputControl = ({
                 allowsExternalUsers={question.allowsExternalUsers}
                 onCreateExternalUser={handleCreateExternalUser}
                 selectionMode={question.isArray ? "multiple" : "single"}
+                isRequired={question.isRequired}
             />
         );
     }
