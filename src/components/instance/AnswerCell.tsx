@@ -5,6 +5,7 @@ import {Button, Icon, Link, Text, useToast} from "@uva-fnwi/datanose-ui";
 import {InlineFileEdit} from "~/components/instance/InlineFileEdit.tsx";
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import type {UserSearchResult} from "~/store/api/types/users.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
@@ -96,6 +97,32 @@ export const AnswerCell = ({
                         {formattedValue ? formattedValue : "-"}
                     </Text>
                 )}
+            </div>
+        );
+    }
+
+    if (pair.question.type === "User" && (pair.answer?.value as UserSearchResult)?.isExternal) {
+        const user = pair.answer?.value as UserSearchResult;
+
+        return (
+            <div className="flex min-w-0 flex-col gap-1">
+                <div className="flex flex-row items-center gap-1">
+                    <Text>{user.displayName}</Text>
+                    {(canEdit || pair.submission?.permissions.includes("Edit")) && (
+                        <Button
+                            intent="ghost"
+                            size="small"
+                            shape="circular"
+                            className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                            onClick={() => setIsEditing(true)}
+                            aria-label={t("instance.summary.edit_answer")}
+                        >
+                            <Icon name="edit-line" size="xs" color="danger" />
+                        </Button>
+                    )}
+                </div>
+                {user.organization && <Text>{user.organization.name}</Text>}
+                <Text>{user.email}</Text>
             </div>
         );
     }
