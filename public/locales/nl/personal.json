@@ -1,0 +1,18 @@
+{
+  "active": "Lopend",
+  "columns": {
+    "course": "Vak",
+    "employees": "Medewerkers",
+    "progress": "Voortgang",
+    "student_name": "Naam student",
+    "title": "Titel"
+  },
+  "completed": "Afgerond",
+  "empty_title": "Geen scripties gevonden",
+  "load_error": "Je scripties konden niet worden geladen. Probeer het opnieuw.",
+  "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
+  "open_instance": "Open {{title}}",
+  "role_title": "Je bent {{role}} voor:",
+  "search_placeholder": "Typ een zoekwoord in",
+  "title": "Scripties"
+}

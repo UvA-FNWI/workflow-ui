@@ -32,7 +32,7 @@ export function RelatedStaffInfo({
     const [editingUser, setEditingUser] = useState<UserSearchResult | null>(null);
     const [removingUser, setRemovingUser] = useState<UserSearchResult | null>(null);
     const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
-    const [deleteProperty] = instancesEndpoints.deleteProperty.useMutation();
+    const [removeRelatedUser] = instancesEndpoints.removeRelatedUser.useMutation();
     const dispatch = useAppDispatch();
 
     const handleSave = async (updatedUser: UserSearchResult) => {
@@ -56,10 +56,10 @@ export function RelatedStaffInfo({
 
     const handleRemoveUser = async () => {
         if (!instanceId || !relatedUserRoles || !removingUser || !removingUser.id) return;
-        deleteProperty({
+        removeRelatedUser({
             instanceId,
             property: relatedUserRoles.role,
-            itemId: removingUser?.id,
+            userId: removingUser.id,
         });
         setRemovingUser(null);
     };

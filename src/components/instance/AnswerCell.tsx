@@ -5,6 +5,7 @@ import {Button, Icon, Link, Text, useToast} from "@uva-fnwi/datanose-ui";
 import {InlineFileEdit} from "~/components/instance/InlineFileEdit.tsx";
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import {answersApi} from "~/store/api/answersApi.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
@@ -31,6 +32,7 @@ export const AnswerCell = ({
     const [isEditing, setIsEditing] = useState(false);
     const [copied, setCopied] = useState(false);
     const toast = useToast();
+    const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
 
     if (!pair) return <Text>-</Text>;
 
@@ -58,9 +60,22 @@ export const AnswerCell = ({
         return (
             <InlineQuestionEdit
                 question={pair.question}
-                answer={answer}
-                instanceId={instanceId}
-                submissionId={pair.submission?.id ?? submissionId ?? ""}
+                value={answer?.value}
+                visibleChoices={answer?.visibleChoices}
+                onSave={(value) =>
+                    saveAnswer({
+                        instanceId,
+                        submissionId: pair.submission?.id ?? submissionId ?? "",
+                        answer: {questionName: pair.question.name, value},
+                    })
+                }
+                onSaveExternalUser={(answer) =>
+                    saveAnswer({
+                        instanceId,
+                        submissionId: pair.submission?.id ?? submissionId ?? "",
+                        answer,
+                    }).unwrap()
+                }
                 onClose={() => setIsEditing(false)}
             />
         );
