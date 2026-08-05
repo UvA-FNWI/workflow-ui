@@ -2,7 +2,9 @@ import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from './Tabs';
+import { Button } from '../Button/Button';
+import { Icon } from '../Icon';
+import { Tab, TabList, TabPanel, TabPanels, Tabs, TabToolbar } from './Tabs';
 
 const meta: Meta<typeof Tabs> = {
   title: 'Components/Tabs',
@@ -299,6 +301,46 @@ export const MinimalExample = {
       description: {
         story:
           'Minimal tabs setup with no configuration. Defaults to uncontrolled mode with first tab active.',
+      },
+    },
+  },
+} satisfies Story;
+
+export const WithToolbar = {
+  render: () => (
+    <Tabs defaultActiveIndex={0}>
+      <TabList>
+        <Tab>Overview</Tab>
+        <Tab>Settings</Tab>
+      </TabList>
+      <TabToolbar>
+        <div className="ui:flex ui:justify-between ui:px-8 ui:py-4">
+          <div className="ui:flex ui:gap-4">
+            <Button intent="primary">Button 1</Button>
+            <Button intent="secondary">Button 2</Button>
+          </div>
+          <div className="ui:flex ui:items-center ui:gap-2 ui:border ui:p-2">
+            <input placeholder="Search..." />
+            <Icon name="search-line" size="sm" />
+          </div>
+        </div>
+      </TabToolbar>
+      <TabPanels>
+        <TabPanel>
+          <div style={{ padding: '20px' }}>Overview content</div>
+        </TabPanel>
+        <TabPanel>
+          <div style={{ padding: '20px' }}>Settings content</div>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  ),
+  args: {},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Use `TabToolbar` to render content between the tab list and tab panels, such as action buttons or a search input.',
       },
     },
   },
