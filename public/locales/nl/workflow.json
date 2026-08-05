@@ -1,11 +1,22 @@
 {
   "add": "Toevoegen",
   "admin": {
+    "fill_dummy_data_button": "Vul met dummy data",
     "impersonate_role_button": "Voordoen",
     "impersonate_role_placeholder": "Selecteer een rol",
     "impersonate_role_title": "Voordoen als rol",
     "stop_impersonating_button": "Stoppen met voordoen",
     "title": "Admin"
+  },
+  "admin_data": {
+    "back_to_instance": "Terug naar workflow",
+    "back_to_overview": "Terug naar overzicht",
+    "description": "Alle eigenschappen van deze instantie. Wijzigingen zijn direct van kracht en worden vastgelegd in het wijzigingslogboek.",
+    "edit_data": "Gegevens bewerken",
+    "edit_property": "{{property}} bewerken",
+    "load_error": "Kan de eigenschappen van deze instantie niet laden",
+    "no_properties": "Deze workflow heeft geen eigenschappen",
+    "title": "Gegevens"
   },
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",

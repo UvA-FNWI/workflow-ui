@@ -120,6 +120,7 @@ export interface ButtonProps
   loadingText?: ReactNode;
   type?: 'button' | 'submit' | 'reset';
   width?: 'full' | 'regular' | 'none';
+  justify?: 'center' | 'between';
 
   // Icons
   leftIcon?: ReactNode;
@@ -142,6 +143,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       type = 'button',
       width = 'regular',
+      justify = 'center',
       onClick,
       ...restProps
     } = props;
@@ -169,7 +171,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             shape,
             width,
           }),
-          width === 'full' && 'ui:justify-between',
           (disabled || isLoading) && 'ui:disabled:cursor-not-allowed',
           className
         )}
@@ -179,7 +180,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {/* Content */}
         <div
           className={cn(
-            'ui:inline-flex ui:w-full ui:items-center ui:justify-center ui:gap-1',
+            'ui:inline-flex ui:w-full ui:items-center ui:gap-1',
+            justify === 'between' ? 'ui:justify-between' : 'ui:justify-center',
             isLoading && !loadingText && 'ui:invisible',
             isLoading && loadingText && 'ui:hidden'
           )}

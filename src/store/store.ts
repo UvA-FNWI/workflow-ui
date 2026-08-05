@@ -10,6 +10,7 @@ import authReducer from "./authSlice";
 import effectsReducer from "./effectsSlice";
 import errorReducer from "./errorSlice";
 import {impersonationPersistMiddleware} from "./impersonation";
+import openFormReducer from "./openFormSlice";
 
 const listenerMiddleware = createListenerMiddleware();
 
@@ -36,6 +37,7 @@ export const store = configureStore({
         auth: authReducer,
         effects: effectsReducer,
         apiError: errorReducer,
+        openForm: openFormReducer,
         [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

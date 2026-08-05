@@ -36,6 +36,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
   className,
   maxLength,
   rows = 4,
+  size,
+  align,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...rest
@@ -70,6 +72,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
     isFocusVisible,
     isHovered,
     isValid,
+    size,
+    align,
   });
 
   return (

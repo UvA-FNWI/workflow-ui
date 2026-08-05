@@ -1,5 +1,5 @@
 import type {ActionType} from "~/store/api/types/instances.ts";
-import type {CreateExternalUserInput} from "~/store/api/types/users.ts";
+import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
 export type SaveAnswerParams = {
     instanceId: string;
@@ -32,15 +32,15 @@ export type ExecuteActionParams = {
     name: string;
 };
 
-export type UpdatePropertyParams = {
+export type AssignRelatedUserParams = {
     instanceId: string;
     property: string;
-    value: unknown;
+    user: UserSearchResult;
     externalUser?: CreateExternalUserInput;
 };
 
-export type DeletePropertyParams = {
+export type RemoveRelatedUserParams = {
     instanceId: string;
     property: string;
-    itemId?: string;
+    userId: string;
 };

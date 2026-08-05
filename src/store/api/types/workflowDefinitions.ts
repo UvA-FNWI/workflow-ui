@@ -10,4 +10,6 @@ export type WorkflowDefinition = {
     isEmbedded: boolean;
     screens: string[];
     canCreateInstance: boolean;
+    /** Whether the definition has no steps. */
+    isPropertyOnly: boolean;
 };

@@ -52,10 +52,7 @@ export const PageControl = ({
     useEffect(() => {
         const visibleAnswers = answers.filter((a) => a.isVisible);
         visibleAnswers.forEach((answer) => {
-            const valueInForm = form.getValues(answer.questionName);
-            if (valueInForm === undefined) {
-                form.setValue(answer.questionName, answer.value);
-            }
+            form.setValue(answer.questionName, answer.value);
         });
     }, [answers, form]);
 
@@ -213,6 +210,7 @@ export const PageControl = ({
                                                             onChange={field.onChange}
                                                             question={question}
                                                             onSave={save}
+                                                            visibleChoices={answer?.visibleChoices}
                                                             errorMessage={errorMessage}
                                                             isValid={!errorMessage}
                                                         />
