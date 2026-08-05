@@ -9,7 +9,15 @@
   },
   "completed": "Afgerond",
   "empty_title": "Geen scripties gevonden",
-  "import": "Importeren",
+  "import": {
+    "column_selection": "Kies de kolommen die je wilt importeren:",
+    "description": "Geef aan welk bestand en welke data je wilt importeren.",
+    "select_student_number": "Selecteer de kolom met het studentnummer uit jouw Excelbestand:",
+    "staff_info_callout": "Je importeert een medewerker op basis van hun e-mailadres.",
+    "step_indicator": "Stap {{index}} van {{total}}",
+    "title": "Importeren",
+    "upload_file": "Upload document"
+  },
   "load_error": "Je scripties konden niet worden geladen. Probeer het opnieuw.",
   "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
   "open_instance": "Open {{title}}",
