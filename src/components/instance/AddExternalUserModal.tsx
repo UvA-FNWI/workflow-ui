@@ -173,6 +173,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         validateEmail,
         wasEmailVerified,
         createOrganization,
+        initialUser,
     ]);
 
     const handleBackToSearch = useCallback(() => {
