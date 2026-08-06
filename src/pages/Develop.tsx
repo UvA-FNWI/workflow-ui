@@ -15,6 +15,7 @@ import {BackLink} from "~/components/BackLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {ConfigVersionCard} from "~/pages/develop/ConfigVersionCard";
+import {FormEditorCard} from "~/pages/develop/FormEditorCard";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
 import {useGetWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
@@ -103,6 +104,7 @@ function Develop() {
         <Container maxWidth={1280}>
             <BackLink className="mb-4">{t("home")}</BackLink>
             <ConfigVersionCard />
+            <FormEditorCard />
             {definitionsContent}
         </Container>
     );

@@ -51,6 +51,53 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
+  "form_editor": {
+    "add_choice": "Add choice",
+    "back": "Back to develop",
+    "card_title": "Form editor",
+    "choice_text": "Choice text",
+    "description_en": "Description (English)",
+    "description_nl": "Description (Dutch)",
+    "download": "Download changed files",
+    "drag_handle": "Reorder question",
+    "form_not_found": "Form not found: {{path}}",
+    "internal_name": "Internal name",
+    "internal_name_warning": "Renaming orphans existing answers.",
+    "kind": {
+      "Date": "Date",
+      "Document": "Document",
+      "LongText": "Long text",
+      "Missing": "Missing",
+      "MultipleChoice": "Multiple choice",
+      "SingleChoice": "Single choice",
+      "TextField": "Text field",
+      "Unknown": "Unsupported"
+    },
+    "load_failed": "Could not load the workflow configuration.",
+    "missing_properties_one": "1 question points at a property that does not exist. Remove the question or add the property.",
+    "missing_properties_other": "{{count}} questions point at a property that does not exist. Remove them or add the properties.",
+    "mutation_failed": "Could not apply this change.",
+    "new_choice": "New choice",
+    "new_question": "New question",
+    "no_changes": "No files changed yet.",
+    "no_questions": "This page has no questions yet.",
+    "options": "Options",
+    "preview": "Preview",
+    "preview_failed": "The configuration could not be loaded. Check the error and try again.",
+    "question_text": "Question text",
+    "read_only": {
+      "inherited": "Inherited from {{file}}",
+      "missing": "No property named {{name}}",
+      "unsupported": "This type cannot be edited here. Defined in {{file}}"
+    },
+    "remove": "Remove from this page",
+    "remove_choice": "Remove choice",
+    "required": "Required",
+    "tab_form": "Form",
+    "tab_yaml": "YAML",
+    "text_en": "English text",
+    "title": "Form editor"
+  },
   "home": "Home",
   "instance": {
     "calculations": {

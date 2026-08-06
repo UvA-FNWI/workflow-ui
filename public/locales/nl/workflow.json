@@ -51,6 +51,53 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
+  "form_editor": {
+    "add_choice": "Keuzeoptie toevoegen",
+    "back": "Terug naar develop",
+    "card_title": "Formulier bewerken",
+    "choice_text": "Keuzetekst",
+    "description_en": "Beschrijving (Engels)",
+    "description_nl": "Beschrijving (Nederlands)",
+    "download": "Gewijzigde bestanden downloaden",
+    "drag_handle": "Vraag verplaatsen",
+    "form_not_found": "Formulier niet gevonden: {{path}}",
+    "internal_name": "Interne naam",
+    "internal_name_warning": "Hernoemen maakt bestaande antwoorden onbruikbaar.",
+    "kind": {
+      "Date": "Datum",
+      "Document": "Document",
+      "LongText": "Tekst",
+      "Missing": "Ontbreekt",
+      "MultipleChoice": "Meerkeuze",
+      "SingleChoice": "1 keuze",
+      "TextField": "Invulveld",
+      "Unknown": "Niet ondersteund"
+    },
+    "load_failed": "De workflowconfiguratie kon niet worden geladen.",
+    "missing_properties_one": "1 vraag verwijst naar een eigenschap die niet bestaat. Verwijder de vraag of voeg de eigenschap toe.",
+    "missing_properties_other": "{{count}} vragen verwijzen naar een eigenschap die niet bestaat. Verwijder ze of voeg de eigenschappen toe.",
+    "mutation_failed": "Deze wijziging kon niet worden toegepast.",
+    "new_choice": "Nieuwe keuze",
+    "new_question": "Nieuwe vraag",
+    "no_changes": "Nog geen bestanden gewijzigd.",
+    "no_questions": "Deze pagina heeft nog geen vragen.",
+    "options": "Opties",
+    "preview": "Voorbeeld",
+    "preview_failed": "De configuratie kon niet worden geladen. Controleer de fout en probeer het opnieuw.",
+    "question_text": "Vraagtekst",
+    "read_only": {
+      "inherited": "Overgenomen uit {{file}}",
+      "missing": "Geen eigenschap met de naam {{name}}",
+      "unsupported": "Dit type kan hier niet worden bewerkt. Gedefinieerd in {{file}}"
+    },
+    "remove": "Verwijderen van deze pagina",
+    "remove_choice": "Keuzeoptie verwijderen",
+    "required": "Verplicht",
+    "tab_form": "Formulier",
+    "tab_yaml": "YAML",
+    "text_en": "Engelse tekst",
+    "title": "Formulier bewerken"
+  },
   "home": "Home",
   "instance": {
     "calculations": {
