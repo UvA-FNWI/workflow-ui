@@ -5,8 +5,9 @@ import {Button, Callout, Checkbox, Icon, Item, Select, Text} from "@uva-fnwi/dat
 import {useTranslate} from "~/hooks/useTranslate.ts";
 
 type ImportColumnSelectionProps = {
-    columns: string[];
     fileName: string;
+    fileColumns: string[];
+    screenColumns: string[];
     onRemoveFile?: () => void;
 };
 
@@ -19,14 +20,15 @@ type ImportColumnSelectionRowProps = {
 };
 
 export const ImportColumnSelection = ({
-    columns,
     fileName,
+    fileColumns,
+    screenColumns,
     onRemoveFile,
 }: ImportColumnSelectionProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
     const [selectedColumns, setSelectedColumns] = useState<Record<string, string>>(() =>
-        Object.fromEntries(columns.map((col) => [col, ""])),
+        Object.fromEntries(fileColumns.map((col) => [col, ""])),
     );
 
     const handleColumnSelect = (col: string) => (key: Key | null) => {
@@ -56,7 +58,7 @@ export const ImportColumnSelection = ({
                     onChange={handleColumnSelect("Studentnummer")}
                     placeholder={tw("select")}
                 >
-                    {columns.map((col) => (
+                    {fileColumns.map((col) => (
                         <Item key={col}>{col}</Item>
                     ))}
                 </Select>
@@ -64,11 +66,11 @@ export const ImportColumnSelection = ({
 
             <div className="flex flex-col gap-2 py-4">
                 <Text fontWeight="bold">{t("column_selection")}</Text>
-                {columns.map((col) => (
+                {screenColumns.map((col) => (
                     <ImportColumnSelectionRow
                         name={col}
                         key={col}
-                        columns={columns}
+                        columns={fileColumns}
                         selectedColumn={selectedColumns[col]}
                         onSelect={handleColumnSelect(col)}
                         disabledKeys={Object.entries(selectedColumns)

@@ -32,6 +32,7 @@
     "@uva-fnwi/datanose-ui": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
+    "exceljs": "^4.4.0",
     "i18next": "^25.10.10",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-http-backend": "^3.0.6",

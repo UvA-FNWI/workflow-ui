@@ -1,8 +1,9 @@
 import {useState} from "react";
 
-import {Button, Icon, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import {ImportColumnSelection} from "~/components/Import/ImportColumnSelection.tsx";
+import {ImportFileUpload} from "~/components/Import/ImportFileUpload.tsx";
 import {ImportOverview} from "~/components/Import/ImportOverview.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 
@@ -16,6 +17,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t: tw} = useTranslate("workflow");
     const [activeStep, setActiveStep] = useState(1);
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
+    const [fileColumns, setFileColumns] = useState<string[]>([]);
 
     const totalSteps = 3;
     const nextStep = () => {
@@ -38,15 +40,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         setSelectedFile(null);
     };
 
-    const columns = [
-        "Studentnummer",
-        "Vakcode",
-        "Verkort onderwerp",
-        "1e beoordelaar",
-        "2e beoordelaar",
-        "extra rol o.b.v. config",
-        "Examinator",
-    ];
+    const screenColumns = ["Column 1", "Column 2", "Column 3"];
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose}>
@@ -57,26 +51,27 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                 <div className="flex flex-col gap-4 pr-8">
                     <Text>{t("description")}</Text>
                     {activeStep === 1 && (
-                        <Button
-                            intent="secondary"
-                            leftIcon={<Icon name="download-solid" size="sm" color="current" />}
-                            className="w-fit"
-                            size="large"
-                            onClick={() => {
-                                setSelectedFile("Bestandsnaam.pdf");
+                        <ImportFileUpload
+                            onFileSelect={(fileName, cols) => {
+                                setSelectedFile(fileName);
+                                setFileColumns(cols);
+                                setActiveStep(2);
                             }}
-                        >
-                            {t("upload_file")}
-                        </Button>
+                            onFileRemove={() => {
+                                setSelectedFile(null);
+                                setFileColumns([]);
+                            }}
+                        />
                     )}
                     {activeStep === 2 && (
                         <ImportColumnSelection
-                            columns={columns}
                             fileName={selectedFile ?? ""}
+                            fileColumns={fileColumns}
+                            screenColumns={screenColumns}
                             onRemoveFile={handleRemoveFile}
                         />
                     )}
-                    {activeStep === 3 && <ImportOverview data={columns} />}
+                    {activeStep === 3 && <ImportOverview data={fileColumns} />}
                 </div>
             </Modal.Body>
             <Modal.Footer>
