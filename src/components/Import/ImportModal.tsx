@@ -1,8 +1,8 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {useParams} from "react-router";
 
-import {Button, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Modal, Text, useToast} from "@uva-fnwi/datanose-ui";
 
 import {ImportColumnSelection} from "~/components/Import/ImportColumnSelection.tsx";
 import {ImportFileUpload} from "~/components/Import/ImportFileUpload.tsx";
@@ -19,6 +19,7 @@ type ImportModalProps = {
 export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
+    const prevIsOpen = useRef(false);
     const [activeStep, setActiveStep] = useState(1);
     const [fileColumns, setFileColumns] = useState<string[]>([]);
     const [confirm] = useConfirmMutation();
@@ -26,62 +27,70 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const [columnMapping, setColumnMapping] = useState<ColumnMapping[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const [previewData, setPreviewData] = useState<ImportPreview>();
+    const [isLoading, setIsLoading] = useState(false);
+    const toast = useToast();
 
     const {workflowDefinition} = useParams();
+
+    const resetState = () => {
+        setActiveStep(1);
+        setFileColumns([]);
+        setColumnMapping([]);
+        setFile(null);
+        setPreviewData(undefined);
+    };
+
+    useEffect(() => {
+        if (!prevIsOpen.current && isOpen) {
+            resetState();
+        }
+        prevIsOpen.current = isOpen;
+    }, [isOpen]);
 
     if (!workflowDefinition) return;
 
     const totalSteps = 3;
 
-    const nextStep = async () => {
-        let response;
-
+    const isStepValid = (): boolean => {
         switch (activeStep) {
             case 1:
-                if (!file) {
-                    return;
-                }
-                setActiveStep(activeStep + 1);
-                return;
+                return !!file;
             case 2:
-                if (columnMapping.length === 0 || !file) {
-                    return;
-                }
-                response = await preview({
-                    file,
-                    workflowDefinition,
-                    columnMapping,
-                });
-                console.log("response", response);
-                if (response.data) {
-                    setPreviewData(response.data);
-                }
-                setActiveStep(activeStep + 1);
-                return;
+                return columnMapping.length > 1 && !!file;
             case 3:
-                if (!previewData || !file || columnMapping.length === 0) {
-                    return;
-                }
-                await confirm({
-                    file,
-                    workflowDefinition,
-                    columnMapping,
-                });
-                onClose();
-                return;
+                return !!previewData && !!file && columnMapping.length > 0;
+            default:
+                return false;
         }
+    };
+
+    const handleNextStep = async () => {
+        if (!isStepValid()) return;
+
+        if (activeStep === 2) {
+            setIsLoading(true);
+            const response = await preview({file: file!, workflowDefinition, columnMapping});
+            if (response.data) {
+                setPreviewData(response.data);
+                setIsLoading(false);
+            } else {
+                toast.error("Error previewing file");
+            }
+        }
+
+        if (activeStep === totalSteps) {
+            await confirm({file: file!, workflowDefinition, columnMapping});
+            onClose();
+            return;
+        }
+
+        setActiveStep((prev) => prev + 1);
     };
 
     const handleRemoveFile = () => {
         console.log("Remove file");
         setFile(null);
         setActiveStep(1);
-    };
-
-    const handleCancel = () => {
-        onClose();
-        setActiveStep(1);
-        setFile(null);
     };
 
     const screenColumns = ["Column 1", "Column 2", "Column 3"];
@@ -123,18 +132,14 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                 <Button
                     intent="primary"
                     variant="destructive"
-                    disabled={!file || columnMapping.length === 0}
-                    onClick={nextStep}
+                    disabled={!isStepValid()}
+                    onClick={handleNextStep}
                     size="large"
+                    isLoading={isLoading}
                 >
                     {tw("confirm")}
                 </Button>
-                <Button
-                    intent="secondary"
-                    variant="destructive"
-                    size="large"
-                    onClick={handleCancel}
-                >
+                <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
                     {tw("cancel")}
                 </Button>
             </Modal.Footer>
