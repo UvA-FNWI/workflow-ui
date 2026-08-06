@@ -1,4 +1,4 @@
-import {Button, cn, Icon, Menu} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Menu} from "@uva-fnwi/datanose-ui";
 import type {MenuItemDefinition} from "@uva-fnwi/datanose-ui";
 
 import {UserAvatar} from "~/components/instance/UserAvatar";
@@ -87,13 +87,10 @@ export function NavbarUser({
                     ref={triggerRef}
                     aria-label={`${t("user_menu")}: ${displayName}`}
                     intent={"ghost"}
+                    variant={isImpersonating ? "warning" : "default"}
                     size="large"
                     width="none"
-                    className={cn(
-                        "h-auto max-w-72 gap-2 p-1",
-                        isImpersonating &&
-                            "rounded-md bg-amber-100 text-amber-900 hover:bg-amber-200",
-                    )}
+                    className={"h-auto max-w-72 gap-2 p-1"}
                 >
                     <div className="flex flex-row items-center gap-2">
                         <UserAvatar userName={displayName} size="small" />

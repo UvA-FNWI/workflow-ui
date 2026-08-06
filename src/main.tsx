@@ -6,6 +6,7 @@ import {RouterProvider} from "react-router";
 
 import {type AuthEventCallbacks, AuthProvider} from "@uva-fnwi/datanose-core";
 import {ToastProvider} from "@uva-fnwi/datanose-ui";
+import "@uva-fnwi/datanose-ui/styles";
 
 import SessionExpiredModal from "./components/SessionExpiredModal";
 import {

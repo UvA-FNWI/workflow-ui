@@ -19,6 +19,7 @@ const buttonClassGenerator = cva(
       },
       variant: {
         default: '',
+        warning: '',
         destructive: '',
       },
       size: {
@@ -50,6 +51,12 @@ const buttonClassGenerator = cva(
           'ui:disabled:bg-transparent ui:disabled:text-grey-700 ui:dark:disabled:text-grey-400',
       },
 
+      {
+        intent: 'ghost',
+        variant: 'warning',
+        className:
+          'ui:rounded-md ui:bg-amber-100 ui:text-amber-900 ui:hover:bg-amber-200',
+      },
       // Default primary
       {
         intent: 'primary',
