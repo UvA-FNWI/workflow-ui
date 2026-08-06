@@ -3,14 +3,24 @@ import type {Document} from "yaml";
 /** Every config file, parsed. Keys are repo-root-relative paths, exactly as the API returns them. */
 export type ConfigDocs = Map<string, Document>;
 
-/** The six question kinds that map cleanly onto engine types today. */
+/**
+ * The question kinds that map cleanly onto engine types. The ceiling is InputControl: anything it
+ * falls through to "Not supported type..." for stays out, and is edited as yaml instead.
+ */
 export type QuestionKind =
-    | "Document"
     | "TextField"
     | "LongText"
+    | "Email"
+    | "Phone"
+    | "Number"
+    | "Decimal"
     | "Date"
+    | "YesNo"
     | "SingleChoice"
-    | "MultipleChoice";
+    | "MultipleChoice"
+    | "Person"
+    | "People"
+    | "Document";
 
 export type LocalText = {en: string; nl: string};
 
@@ -22,7 +32,7 @@ export type EditorChoice = {
 export type EditorQuestion = {
     /** Internal name, the key in the properties list and the value in a page's fields list. */
     name: string;
-    /** "Unknown" for anything outside the six supported kinds, shown read-only. */
+    /** "Unknown" for anything outside the supported kinds, which falls back to yaml. */
     kind: QuestionKind | "Unknown";
     /** The raw type string, e.g. "String!" or "[User]". */
     rawType: string;
@@ -34,4 +44,11 @@ export type EditorQuestion = {
     definedIn: string;
     /** True when the property comes from an ancestor definition and must not be edited here. */
     isInherited: boolean;
+    /**
+     * Keys present on the property that the visual editor does not model. Any of these forces the
+     * question into yaml mode, the way Home Assistant refuses a card its visual editor can't express.
+     */
+    advancedKeys: string[];
+    /** The whole property as plain JSON, for the preview mapper and the yaml-mode header. */
+    raw: Record<string, unknown>;
 };

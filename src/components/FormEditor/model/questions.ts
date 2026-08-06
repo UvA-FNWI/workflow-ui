@@ -1,6 +1,16 @@
-import {type Document, isMap, isScalar, isSeq, type Scalar, type YAMLMap, type YAMLSeq} from "yaml";
+import {
+    type Document,
+    isMap,
+    isScalar,
+    isSeq,
+    parseDocument,
+    type Scalar,
+    type YAMLMap,
+    type YAMLSeq,
+} from "yaml";
 
 import {unavailableNames, uniqueInternalName} from "~/components/FormEditor/model/names";
+import {nodeToYaml} from "~/components/FormEditor/model/nodeYaml";
 import {
     definitionChain,
     definitionFolderOf,
@@ -46,7 +56,7 @@ function pagesSeq(doc: Document): YAMLSeq | null {
     return isSeq(pages) ? pages : null;
 }
 
-function pageMap(doc: Document, pageName: string): YAMLMap | null {
+export function pageMap(doc: Document, pageName: string): YAMLMap | null {
     const pages = pagesSeq(doc);
     if (!pages) {
         return null;
@@ -85,7 +95,7 @@ export function readPages(
 }
 
 /** Locate a property by name along the inheritance chain, nearest definition first. */
-function findProperty(
+export function findProperty(
     docs: ConfigDocs,
     definitionFolder: string,
     name: string,
@@ -153,10 +163,12 @@ export function readQuestions(
                 choices: [],
                 definedIn: "",
                 isInherited: false,
+                advancedKeys: [],
+                raw: {},
             };
         }
 
-        const raw = found.node.toJSON() as {
+        const raw = (found.node.toJSON() ?? {}) as Record<string, unknown> & {
             type?: string;
             layout?: {multiline?: boolean; type?: string} | null;
             values?: unknown;
@@ -174,8 +186,43 @@ export function readQuestions(
             choices: readChoices(found.node),
             definedIn: found.path,
             isInherited: found.ownerFolder !== definitionFolder,
+            advancedKeys: ADVANCED_KEYS.filter((key) => raw[key] != null),
+            raw,
         };
     });
+}
+
+/**
+ * Property keys the visual editor has no controls for. Editing one of these blind is how a
+ * coordinator silently breaks a condition, so a question carrying any of them opens in yaml mode.
+ */
+const ADVANCED_KEYS = [
+    "condition",
+    "validation",
+    "onSave",
+    "calculation",
+    "subProperties",
+    "rubric",
+    "sources",
+    "results",
+    "filter",
+    "visibility",
+    "inheritedRoles",
+];
+
+export type EditorMode = "visual" | "yaml";
+
+/** Why a question cannot use the visual editor, or null when it can. */
+export type YamlOnlyReason = "missing" | "unsupported" | "advanced" | null;
+
+export function yamlOnlyReason(question: EditorQuestion): YamlOnlyReason {
+    if (question.definedIn === "") {
+        return "missing";
+    }
+    if (question.kind === "Unknown") {
+        return "unsupported";
+    }
+    return question.advancedKeys.length > 0 ? "advanced" : null;
 }
 
 export type ReadOnlyReason = "missing" | "unsupported" | "inherited" | null;
@@ -197,6 +244,8 @@ export type QuestionPatch = {
     descriptionNl?: string;
     descriptionEn?: string;
     isRequired?: boolean;
+    layoutType?: string;
+    allowsExternalUsers?: boolean;
     name?: string;
 };
 
@@ -217,6 +266,7 @@ export function addQuestion(
     pageName: string,
     kind: QuestionKind,
     textNl: string,
+    index?: number,
 ): {name: string; touched: string[]} {
     const definitionFolder = definitionFolderOf(formPath);
     const name = uniqueInternalName(textNl, unavailableNames(docs, definitionFolder));
@@ -238,8 +288,137 @@ export function addQuestion(
     }
 
     fields.add(formDoc.createNode(name));
+    if (index !== undefined && index < fields.items.length - 1) {
+        fields.items.splice(index, 0, fields.items.pop());
+    }
 
     return {name, touched: [targetPath, formPath]};
+}
+
+/**
+ * Swap a question to another kind, keeping its name, text and description. Rewrites type, layout and
+ * values, since those three are what a kind actually is.
+ */
+export function changeQuestionKind(
+    docs: ConfigDocs,
+    formPath: string,
+    name: string,
+    kind: QuestionKind,
+): string[] {
+    const found = requireProperty(docs, formPath, name);
+    const doc = requireDoc(docs, found.path);
+    const {isRequired} = parseTypeString(String(found.node.get("type") ?? ""));
+    const next = newPropertyValue(kind, name, EMPTY_TEXT) as {
+        type: string;
+        layout?: unknown;
+        values?: unknown;
+    };
+    const {underlying, isArray} = parseTypeString(next.type);
+
+    found.node.set("type", buildTypeString(underlying, {isRequired, isArray}));
+    for (const key of ["layout", "values"] as const) {
+        if (next[key] === undefined) {
+            found.node.delete(key);
+        } else if (key === "values" && found.node.has("values")) {
+            // Keep choices the user already typed when moving between the two choice kinds.
+            continue;
+        } else {
+            found.node.set(key, doc.createNode(next[key]));
+        }
+    }
+
+    return [found.path];
+}
+
+/**
+ * Copy an inherited property into this definition so it becomes editable here. Overriding by name is
+ * what the config already does by hand, e.g. Projects/Project redeclaring Project-Base's Reviewer.
+ */
+export function overrideProperty(docs: ConfigDocs, formPath: string, name: string): string[] {
+    const definitionFolder = definitionFolderOf(formPath);
+    const found = findProperty(docs, definitionFolder, name);
+    if (!found) {
+        throw new Error(`Property not found: ${name}`);
+    }
+    if (found.ownerFolder === definitionFolder) {
+        return [];
+    }
+
+    const targetPath = propertyTargetFile(docs, definitionFolder);
+    const targetDoc = requireDoc(docs, targetPath);
+    // Round-tripping through text is the cheapest deep copy that also keeps the comments.
+    const parsedCopy = parseDocument(nodeToYaml(found.node)).contents;
+    if (!isMap(parsedCopy)) {
+        throw new Error(`Property ${name} is not a mapping`);
+    }
+    const copy = parsedCopy as YAMLMap;
+    copy.commentBefore = ` Overrides ${found.ownerFolder}`;
+
+    const properties = propertiesCollection(targetDoc);
+    if (isMap(properties)) {
+        copy.delete("name");
+        properties.set(name, copy);
+    } else {
+        if (!copy.has("name")) {
+            copy.set("name", name);
+        }
+        properties.add(copy);
+    }
+
+    return [targetPath];
+}
+
+/** Every page in the definition tree that lists this property, so deleting it can be honest. */
+export function countFieldUsages(
+    docs: ConfigDocs,
+    formPath: string,
+    name: string,
+): {path: string; page: string}[] {
+    const owner = findProperty(docs, definitionFolderOf(formPath), name)?.ownerFolder;
+    if (!owner) {
+        return [];
+    }
+    return definitionsInheritingFrom(docs, owner).flatMap((folder) =>
+        listFormPaths(docs, folder).flatMap((path) =>
+            readPages(docs, path)
+                .filter((page) =>
+                    fieldsSeq(requireDoc(docs, path), page.name)?.items.some(
+                        (item) => (isScalar(item) ? item.value : item) === name,
+                    ),
+                )
+                .map((page) => ({path, page: page.name})),
+        ),
+    );
+}
+
+/** Delete the property itself plus every field reference to it. */
+export function deleteProperty(docs: ConfigDocs, formPath: string, name: string): string[] {
+    const found = requireProperty(docs, formPath, name);
+    const touched = new Set<string>([found.path]);
+
+    for (const {path, page} of countFieldUsages(docs, formPath, name)) {
+        const fields = fieldsSeq(requireDoc(docs, path), page);
+        const index =
+            fields?.items.findIndex((item) => (isScalar(item) ? item.value : item) === name) ?? -1;
+        if (fields && index !== -1) {
+            fields.delete(index);
+            touched.add(path);
+        }
+    }
+
+    const properties = requireDoc(docs, found.path).get("properties");
+    if (isSeq(properties)) {
+        const index = properties.items.findIndex(
+            (item) => isMap(item) && item.get("name") === name,
+        );
+        if (index !== -1) {
+            properties.delete(index);
+        }
+    } else if (isMap(properties)) {
+        properties.delete(name);
+    }
+
+    return [...touched];
 }
 
 /** Every definition folder whose inheritance chain reaches the given folder, itself included. */
@@ -461,6 +640,29 @@ export function updateQuestion(
             "type",
             buildTypeString(underlying, {isRequired: patch.isRequired, isArray}),
         );
+        touched.add(found.path);
+    }
+    if (patch.layoutType !== undefined) {
+        const layout = found.node.get("layout");
+        if (isMap(layout)) {
+            layout.set("type", patch.layoutType);
+        } else {
+            found.node.set(
+                "layout",
+                requireDoc(docs, found.path).createNode({
+                    type: patch.layoutType,
+                }),
+            );
+        }
+        touched.add(found.path);
+    }
+    if (patch.allowsExternalUsers !== undefined) {
+        // Absent means false to the parser, so drop the key rather than writing a redundant one.
+        if (patch.allowsExternalUsers) {
+            found.node.set("allowsExternalUsers", true);
+        } else {
+            found.node.delete("allowsExternalUsers");
+        }
         touched.add(found.path);
     }
     if (patch.name !== undefined && patch.name !== name) {

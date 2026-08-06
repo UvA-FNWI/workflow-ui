@@ -1,12 +1,19 @@
 import type {LocalText, QuestionKind} from "~/components/FormEditor/model/types";
 
 export const QUESTION_KINDS: readonly QuestionKind[] = [
-    "Document",
     "TextField",
     "LongText",
+    "Email",
+    "Phone",
+    "Number",
+    "Decimal",
     "Date",
+    "YesNo",
     "SingleChoice",
     "MultipleChoice",
+    "Person",
+    "People",
+    "Document",
 ] as const;
 
 /** Mirrors UnderlyingType, IsRequired and IsArray on the C# PropertyDefinition. */
@@ -32,13 +39,13 @@ export function buildTypeString(
 
 type RawProperty = {
     type?: string;
-    layout?: {multiline?: boolean; type?: string} | null;
+    layout?: {multiline?: boolean; type?: string; variant?: string} | null;
     values?: unknown;
 };
 
 /**
- * Which palette button a property came from. Anything outside the six supported kinds is "Unknown"
- * and the editor shows it read-only rather than guessing.
+ * Which palette entry a property came from. Anything outside the supported kinds is "Unknown" and the
+ * editor falls back to yaml rather than guessing.
  */
 export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
     if (typeof raw.type !== "string") {
@@ -51,8 +58,9 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
     if (Array.isArray(raw.values)) {
         return isArray ? "MultipleChoice" : "SingleChoice";
     }
+    // User is the one non-choice type the runtime renders as an array, via UserPicker's multiple mode.
     if (isArray) {
-        return "Unknown";
+        return underlying === "User" ? "People" : "Unknown";
     }
 
     switch (underlying) {
@@ -60,7 +68,21 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
             return "Document";
         case "Date":
             return "Date";
+        case "Int":
+            return "Number";
+        case "Double":
+            return "Decimal";
+        case "Boolean":
+            return "YesNo";
+        case "User":
+            return "Person";
         case "String":
+            if (raw.layout?.variant === "Email") {
+                return "Email";
+            }
+            if (raw.layout?.variant === "Phone") {
+                return "Phone";
+            }
             return raw.layout?.multiline === true ? "LongText" : "TextField";
         default:
             return "Unknown";
@@ -80,6 +102,20 @@ export function newPropertyValue(
             return {name, type: "String", text};
         case "LongText":
             return {name, type: "String", text, layout: {multiline: true}};
+        case "Email":
+            return {name, type: "String", text, layout: {variant: "Email"}};
+        case "Phone":
+            return {name, type: "String", text, layout: {variant: "Phone"}};
+        case "Number":
+            return {name, type: "Int", text};
+        case "Decimal":
+            return {name, type: "Double", text};
+        case "YesNo":
+            return {name, type: "Boolean", text};
+        case "Person":
+            return {name, type: "User", text};
+        case "People":
+            return {name, type: "[User]", text};
         case "Date":
             return {name, type: "Date", text};
         case "SingleChoice":
