@@ -5,14 +5,14 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Tag } from './Tag';
 
 const meta = {
-  title: 'Components/Tag',
+  title: 'Internal/Tag',
   component: Tag,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
         component:
-          'A compact label for displaying a value. Add `onRemove` to make the tag removable; the remove action is keyboard accessible and automatically receives an accessible label for string content.',
+          '⚠️ **Warning:** Do not use `Tag` directly in application code.\n\n `Tag` is an internal building block for `TagInput`.',
       },
     },
   },
@@ -71,7 +71,8 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Use a plain tag to display short, non-interactive metadata.',
+        story:
+          'Default rendering used internally for values managed by `TagInput`.',
       },
     },
   },
@@ -161,7 +162,7 @@ export const CustomStyling: Story = {
     docs: {
       description: {
         story:
-          'Use `className` to adapt the tag while preserving its layout and behavior.',
+          'Verifies that `TagInput` can adapt its internal tag styling through `className`.',
       },
     },
   },

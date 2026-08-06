@@ -40,7 +40,10 @@ export interface TagProps
 }
 
 /**
- * A compact value label with an optional remove action.
+ * Internal value label used by TagInput.
+ *
+ * @internal Use TagInput instead. Tag is not supported as a standalone
+ * component.
  */
 export function Tag({
   children,
