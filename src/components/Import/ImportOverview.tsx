@@ -1,9 +1,10 @@
 import {Text} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import type {ImportPreview} from "~/store/api/types/import.ts";
 
 type ImportOverviewProps = {
-    data: string[];
+    data?: ImportPreview;
 };
 
 export const ImportOverview = ({data}: ImportOverviewProps) => {

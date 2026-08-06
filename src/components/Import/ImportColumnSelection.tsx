@@ -3,12 +3,14 @@ import {type Key, useState} from "react";
 import {Button, Callout, Checkbox, Icon, Item, Select, Text} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import type {ColumnMapping} from "~/store/api/types/import.ts";
 
 type ImportColumnSelectionProps = {
     fileName: string;
     fileColumns: string[];
     screenColumns: string[];
     onRemoveFile?: () => void;
+    onColumnMappingChange?: (mapping: ColumnMapping[]) => void;
 };
 
 type ImportColumnSelectionRowProps = {
@@ -17,6 +19,7 @@ type ImportColumnSelectionRowProps = {
     selectedColumn: string;
     disabledKeys?: string[];
     onSelect: (value: Key | null) => void;
+    onColumnMappingChange?: (mapping: ColumnMapping[]) => void;
 };
 
 export const ImportColumnSelection = ({
@@ -24,6 +27,7 @@ export const ImportColumnSelection = ({
     fileColumns,
     screenColumns,
     onRemoveFile,
+    onColumnMappingChange,
 }: ImportColumnSelectionProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
@@ -32,7 +36,14 @@ export const ImportColumnSelection = ({
     );
 
     const handleColumnSelect = (col: string) => (key: Key | null) => {
-        setSelectedColumns((prev) => ({...prev, [col]: key !== null ? String(key) : ""}));
+        setSelectedColumns((prev) => {
+            const updated = {...prev, [col]: key !== null ? String(key) : ""};
+            const mapping: ColumnMapping[] = Object.entries(updated)
+                .filter(([, val]) => val !== "")
+                .map(([propertyName, excelColumn]) => ({excelColumn, propertyName}));
+            onColumnMappingChange?.(mapping);
+            return updated;
+        });
     };
 
     return (
