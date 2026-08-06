@@ -163,7 +163,7 @@ describe("NavbarUser", () => {
 
         const trigger = screen.getByRole("button", {name: "Gebruikersmenu: Grace Hopper"});
         expect(trigger.textContent).toContain("Je doet je voor als Grace Hopper");
-        expect(trigger.className).toContain("bg-amber-100");
+        expect(trigger.className).toContain("bg-amber-100!");
         fireEvent.keyDown(trigger, {key: "ArrowDown"});
         const stopImpersonationItem = await screen.findByRole("menuitem", {
             name: "Stoppen met voordoen",

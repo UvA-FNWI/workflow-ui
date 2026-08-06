@@ -90,9 +90,9 @@ export function NavbarUser({
                     size="large"
                     width="none"
                     className={cn(
-                        "h-auto max-w-72 gap-2 p-1",
+                        "h-auto! max-w-72 gap-2 p-1!",
                         isImpersonating &&
-                            "rounded-md bg-amber-100 p-1 text-amber-900 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-100 dark:hover:bg-amber-900/60",
+                            "rounded-md! bg-amber-100! text-amber-900! hover:bg-amber-200! dark:bg-amber-900/40! dark:text-amber-100! dark:hover:bg-amber-900/60!",
                     )}
                 >
                     <div className="flex flex-row items-center gap-2">
