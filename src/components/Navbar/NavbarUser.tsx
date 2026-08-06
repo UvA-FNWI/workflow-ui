@@ -86,13 +86,13 @@ export function NavbarUser({
                     {...triggerProps}
                     ref={triggerRef}
                     aria-label={`${t("user_menu")}: ${displayName}`}
-                    intent="ghost"
+                    intent={isImpersonating ? null : "ghost"}
                     size="large"
                     width="none"
                     className={cn(
-                        "h-auto! max-w-72 gap-2 p-1!",
+                        "h-auto max-w-72 gap-2 p-1",
                         isImpersonating &&
-                            "rounded-md! bg-amber-100! text-amber-900! hover:bg-amber-200! dark:bg-amber-900/40! dark:text-amber-100! dark:hover:bg-amber-900/60!",
+                            "ui:rounded-md ui:bg-amber-100 ui:text-amber-900 ui:hover:bg-amber-200",
                     )}
                 >
                     <div className="flex flex-row items-center gap-2">
