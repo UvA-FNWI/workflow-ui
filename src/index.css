@@ -1,4 +1,5 @@
 @import "@uva-fnwi/datanose-ui/fonts";
 @import "@uva-fnwi/datanose-ui/tokens";
+@import "@uva-fnwi/datanose-ui/styles";
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
