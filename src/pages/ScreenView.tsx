@@ -64,7 +64,7 @@ export const ScreenView = () => {
                             <ScreenTableToolbar
                                 search={search}
                                 setSearch={setSearch}
-                                canEdit={canEdit}
+                                canEdit={screen.isBulkEditEnabled && canEdit}
                             />
                         </TabToolbar>
                         <TabPanels>
