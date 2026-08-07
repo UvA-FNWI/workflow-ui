@@ -29,7 +29,7 @@ export function ProgressCard({isLoading, isStudent, steps, currentStep}: Progres
                 ) : (
                     <>
                         <div className="flex flex-col gap-4">
-                            <Heading as="h2">
+                            <Heading as="h2" className="font-semibold">
                                 {t(
                                     isStudent
                                         ? "progress.titleStudent"
