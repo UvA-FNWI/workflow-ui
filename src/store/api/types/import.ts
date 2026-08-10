@@ -1,3 +1,5 @@
+import type {LocalString} from "~/hooks/useTranslate.ts";
+
 export type ImportFileRequest = {
     file: File;
     workflowDefinition: string;
@@ -18,4 +20,10 @@ export type ImportPreviewRow = {
 export type ImportPreview = {
     rows: ImportPreviewRow[];
     globalErrors: string[];
+};
+
+export type ImportableProperty = {
+    name: string;
+    title: LocalString;
+    dataType: string;
 };

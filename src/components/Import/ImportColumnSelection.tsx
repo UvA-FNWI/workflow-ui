@@ -3,12 +3,12 @@ import {type Key, useState} from "react";
 import {Button, Callout, Checkbox, Icon, Item, Select, Text} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {ColumnMapping} from "~/store/api/types/import.ts";
+import type {ColumnMapping, ImportableProperty} from "~/store/api/types/import.ts";
 
 type ImportColumnSelectionProps = {
     fileName: string;
     fileColumns: string[];
-    screenColumns: string[];
+    importableColumns: ImportableProperty[];
     onRemoveFile?: () => void;
     onColumnMappingChange?: (mapping: ColumnMapping[]) => void;
 };
@@ -25,11 +25,11 @@ type ImportColumnSelectionRowProps = {
 export const ImportColumnSelection = ({
     fileName,
     fileColumns,
-    screenColumns,
+    importableColumns,
     onRemoveFile,
     onColumnMappingChange,
 }: ImportColumnSelectionProps) => {
-    const {t} = useTranslate("screens", {keyPrefix: "import"});
+    const {t, l} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
     const [selectedColumns, setSelectedColumns] = useState<Record<string, string>>(() =>
         Object.fromEntries(fileColumns.map((col) => [col, ""])),
@@ -77,15 +77,15 @@ export const ImportColumnSelection = ({
 
             <div className="flex flex-col gap-2 py-4">
                 <Text fontWeight="bold">{t("column_selection")}</Text>
-                {screenColumns.map((col) => (
+                {importableColumns.map((col) => (
                     <ImportColumnSelectionRow
-                        name={col}
-                        key={col}
+                        name={l(col.title) ?? col.name}
+                        key={col.name}
                         columns={fileColumns}
-                        selectedColumn={selectedColumns[col]}
-                        onSelect={handleColumnSelect(col)}
+                        selectedColumn={selectedColumns[col.name]}
+                        onSelect={handleColumnSelect(col.name)}
                         disabledKeys={Object.entries(selectedColumns)
-                            .filter(([key, val]) => key !== col && val !== "")
+                            .filter(([key, val]) => key !== col.name && val !== "")
                             .map(([, val]) => val)}
                     />
                 ))}

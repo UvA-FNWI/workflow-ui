@@ -8,7 +8,11 @@ import {ImportColumnSelection} from "~/components/Import/ImportColumnSelection.t
 import {ImportFileUpload} from "~/components/Import/ImportFileUpload.tsx";
 import {ImportOverview} from "~/components/Import/ImportOverview.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {useConfirmMutation, usePreviewMutation} from "~/store/api/importApi.ts";
+import {
+    useConfirmMutation,
+    useGetColumnNamesQuery,
+    usePreviewMutation,
+} from "~/store/api/importApi.ts";
 import type {ColumnMapping, ImportPreview} from "~/store/api/types/import.ts";
 
 type ImportModalProps = {
@@ -22,16 +26,18 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const prevIsOpen = useRef(false);
     const [activeStep, setActiveStep] = useState(1);
     const [fileColumns, setFileColumns] = useState<string[]>([]);
-    const [confirm] = useConfirmMutation();
-    const [preview] = usePreviewMutation();
     const [columnMapping, setColumnMapping] = useState<ColumnMapping[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const [previewData, setPreviewData] = useState<ImportPreview>();
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
+    const [confirm] = useConfirmMutation();
+    const [preview] = usePreviewMutation();
 
     const {workflowDefinition} = useParams();
-
+    const {data: importableColumns = []} = useGetColumnNamesQuery(workflowDefinition ?? "", {
+        skip: !workflowDefinition || activeStep !== 2,
+    });
     const resetState = () => {
         setActiveStep(1);
         setFileColumns([]);
@@ -93,8 +99,6 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         setActiveStep(1);
     };
 
-    const screenColumns = ["Column 1", "Column 2", "Column 3"];
-
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose}>
             <Modal.Header subTitle={t("step_indicator", {index: activeStep, total: totalSteps})}>
@@ -120,7 +124,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                         <ImportColumnSelection
                             fileName={file?.name ?? ""}
                             fileColumns={fileColumns}
-                            screenColumns={screenColumns}
+                            importableColumns={importableColumns}
                             onRemoveFile={handleRemoveFile}
                             onColumnMappingChange={setColumnMapping}
                         />

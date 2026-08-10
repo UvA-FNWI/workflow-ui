@@ -1,5 +1,9 @@
 import {baseApi} from "~/store/api/baseApi.ts";
-import type {ImportFileRequest, ImportPreview} from "~/store/api/types/import.ts";
+import type {
+    ImportableProperty,
+    ImportFileRequest,
+    ImportPreview,
+} from "~/store/api/types/import.ts";
 
 const buildFormData = ({file, workflowDefinition, columnMapping}: ImportFileRequest): FormData => {
     const formData = new FormData();
@@ -10,6 +14,11 @@ const buildFormData = ({file, workflowDefinition, columnMapping}: ImportFileRequ
 };
 export const importApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
+        getColumnNames: builder.query<ImportableProperty[], string>({
+            query: (workflowDefinition) => ({
+                url: `/Import/Columns/${workflowDefinition}`,
+            }),
+        }),
         preview: builder.mutation<ImportPreview, ImportFileRequest>({
             query: (args) => ({
                 url: `/Import/Preview`,
@@ -27,4 +36,4 @@ export const importApi = baseApi.injectEndpoints({
     }),
 });
 
-export const {usePreviewMutation, useConfirmMutation} = importApi;
+export const {usePreviewMutation, useConfirmMutation, useGetColumnNamesQuery} = importApi;
