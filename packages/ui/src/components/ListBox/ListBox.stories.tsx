@@ -9,6 +9,7 @@ import { Item, ListBox } from './ListBox';
 const meta: Meta<typeof ListBox> = {
   title: 'Components/ListBox',
   component: ListBox,
+  tags: ['autodocs'],
 };
 
 export default meta;

@@ -42,7 +42,7 @@ test.describe("instance admin data page", () => {
                 request.method() === "POST" &&
                 request
                     .url()
-                    .endsWith("/WorkflowInstances/context-admin/properties/Assessment.Grade"),
+                    .endsWith("/WorkflowInstances/context-admin/Properties/Assessment.Grade"),
         );
 
         await page.getByText("Assessment", {exact: true}).click();

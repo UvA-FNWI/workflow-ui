@@ -4,12 +4,12 @@ import type {VersionInfo} from "./types/versions";
 export const versionsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getVersionDetails: builder.query<VersionInfo[], void>({
-            query: () => "/Versions/details",
+            query: () => "/Versions/Details",
         }),
         // Loads a branch (or tag/SHA) as a named preview version.
         loadBranch: builder.mutation<string, string>({
             query: (ref) => ({
-                url: `/Versions/branch?ref=${encodeURIComponent(ref)}`,
+                url: `/Versions/Branch?ref=${encodeURIComponent(ref)}`,
                 method: "POST",
                 responseHandler: "text",
             }),
@@ -17,7 +17,7 @@ export const versionsApi = baseApi.injectEndpoints({
         // Re-pull the default version.
         reloadBaseline: builder.mutation<void, void>({
             query: () => ({
-                url: "/Versions/reload",
+                url: "/Versions/Reload",
                 method: "POST",
             }),
         }),

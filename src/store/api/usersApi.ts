@@ -26,7 +26,7 @@ export const usersApi = baseApi.injectEndpoints({
         }),
         verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({
             query: (body) => ({
-                url: "/Users/verify-email",
+                url: "/Users/VerifyEmail",
                 method: "POST",
                 body,
             }),

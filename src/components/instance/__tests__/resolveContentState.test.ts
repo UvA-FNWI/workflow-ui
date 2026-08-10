@@ -2,6 +2,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     getSubmissionsToShow,
+    hasVersionHistory,
     resolveContentState,
     resolveFormState,
     resolveModalState,
@@ -64,27 +65,18 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
 describe("getSubmissionsToShow", () => {
     it("returns direct submissions when they exist", () => {
         const submissions = [makeSubmission()];
-        const step = makeStep({
-            versions: [
-                {
-                    versionNumber: 1,
-                    eventIds: [],
-                    submittedAt: "",
-                    submissions: [makeSubmission({id: "v-sub"})],
-                },
-            ],
-        });
-        expect(getSubmissionsToShow(submissions, step)).toBe(submissions);
+        expect(getSubmissionsToShow(submissions)).toBe(submissions);
     });
 
-    it("falls back to first version submissions when no direct submissions and one version", () => {
+    it("does not treat a historical version as the current submission", () => {
         const versionSubmissions = [makeSubmission({id: "v-sub"})];
         const step = makeStep({
             versions: [
                 {versionNumber: 1, eventIds: [], submittedAt: "", submissions: versionSubmissions},
             ],
         });
-        expect(getSubmissionsToShow([], step)).toBe(versionSubmissions);
+        expect(step.versions).toHaveLength(1);
+        expect(getSubmissionsToShow([])).toEqual([]);
     });
 
     it("returns empty array when no submissions and multiple versions", () => {
@@ -99,21 +91,43 @@ describe("getSubmissionsToShow", () => {
                 },
             ],
         });
-        expect(getSubmissionsToShow([], step)).toEqual([]);
+        expect(step.versions).toHaveLength(2);
+        expect(getSubmissionsToShow([])).toEqual([]);
     });
+});
 
-    it("single version with multiple submissions: shown via fallback, not duplicated in version history", () => {
-        const sub1 = makeSubmission({id: "v-sub-1"});
-        const sub2 = makeSubmission({id: "v-sub-2"});
+describe("hasVersionHistory", () => {
+    it("returns true for one completed version with submissions", () => {
         const step = makeStep({
             versions: [
-                {versionNumber: 1, eventIds: [], submittedAt: "", submissions: [sub1, sub2]},
+                {
+                    versionNumber: 1,
+                    eventIds: ["Proposal", "ProposalRevise"],
+                    submittedAt: "2026-01-01T00:00:00Z",
+                    submissions: [
+                        makeSubmission({id: "proposal"}),
+                        makeSubmission({id: "proposal-revise"}),
+                    ],
+                },
             ],
         });
-        // getSubmissionsToShow falls back to single version's submissions
-        const shown = getSubmissionsToShow([], step);
-        expect(shown).toEqual([sub1, sub2]);
-        // Note: version history rendering (versions.length > 1 guard) is in StepCardBody
+
+        expect(hasVersionHistory(step)).toBe(true);
+    });
+
+    it("returns false when versions contain no visible submissions", () => {
+        const step = makeStep({
+            versions: [
+                {
+                    versionNumber: 1,
+                    eventIds: ["Proposal"],
+                    submittedAt: "2026-01-01T00:00:00Z",
+                    submissions: [],
+                },
+            ],
+        });
+
+        expect(hasVersionHistory(step)).toBe(false);
     });
 });
 
