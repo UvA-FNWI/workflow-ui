@@ -8,6 +8,7 @@ import {
     RadioGroup,
     Select,
     SelectItem,
+    TagInput,
     TextArea,
 } from "@uva-fnwi/datanose-ui";
 import {parseISO} from "date-fns";
@@ -102,6 +103,18 @@ export const InputControl = ({
     };
 
     if (question.type === "String") {
+        if (question.isArray) {
+            return (
+                <TagInput
+                    value={Array.isArray(value) ? value.map((item) => String(item)) : []}
+                    onChange={(value) => debouncedChange(value)}
+                    maxLength={question.maxLength}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                />
+            );
+        }
+
         const variant =
             question.layout != null && "variant" in question.layout
                 ? question.layout.variant

@@ -42,14 +42,14 @@ app.get("/WorkflowInstances/context-plain", (_, res) => {
 });
 
 // Denied users are redirected before this 403 is shown.
-app.get("/WorkflowInstances/:id/properties", (req, res) => {
+app.get("/WorkflowInstances/:id/Properties", (req, res) => {
     if (req.params.id === propertiesInstanceNonAdmin.id) {
         return res.status(403).json({code: "Forbidden", message: "Access forbidden"});
     }
     res.json(instanceProperties);
 });
 
-app.post("/WorkflowInstances/:id/properties/:path", (req, res) => {
+app.post("/WorkflowInstances/:id/Properties/:path", (req, res) => {
     const {path} = req.params;
     instanceProperties.values[path] = req.body.value;
     if (path === "Name") propertiesInstance.title = req.body.value;

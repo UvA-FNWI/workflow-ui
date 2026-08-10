@@ -36,14 +36,14 @@ type ResolveParams = {
     isDisabled: boolean;
 };
 
-/**
- * Determines which submissions to display for a step.
- * Falls back to first version's submissions when no direct submissions exist.
- */
-export function getSubmissionsToShow(submissions: Submission[], step: WorkflowStep): Submission[] {
-    if (submissions.length > 0) return submissions;
-    if (step.versions?.length === 1) return step.versions[0].submissions;
-    return [];
+/** Returns only live submissions; historical versions are rendered separately. */
+export function getSubmissionsToShow(submissions: Submission[]): Submission[] {
+    return submissions;
+}
+
+/** Indicates whether the step has any historical submissions to render as version cards. */
+export function hasVersionHistory(step: WorkflowStep): boolean {
+    return step.versions?.some((version) => version.submissions.length > 0) ?? false;
 }
 
 /**
@@ -56,7 +56,7 @@ export function resolveContentState({
     resolvedAction,
     isDisabled,
 }: ResolveParams): ContentState {
-    const submissionsToShow = getSubmissionsToShow(submissions, step);
+    const submissionsToShow = getSubmissionsToShow(submissions);
 
     // 1. Submissions exist (split into regular + assessment)
     if (submissionsToShow.length > 0) {

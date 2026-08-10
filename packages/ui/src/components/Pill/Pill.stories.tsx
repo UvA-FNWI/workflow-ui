@@ -5,6 +5,7 @@ import { Pill } from './Pill';
 const meta: Meta<typeof Pill> = {
   title: 'Components/Pill',
   component: Pill,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
