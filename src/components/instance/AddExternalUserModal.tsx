@@ -67,6 +67,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
         setEmailValidationError,
         validateEmail,
         wasEmailVerified,
+        markEmailAsVerified,
     } = useManualUserEmailVerification(emailErrorMessages ?? {});
 
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
@@ -100,9 +101,12 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                 initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
             );
             resetEmailVerification();
+            if (initialUser?.email) {
+                markEmailAsVerified(initialUser.email);
+            }
         }
         prevIsOpen.current = isOpen;
-    }, [initialUser, isOpen, resetEmailVerification]);
+    }, [initialUser, isOpen, markEmailAsVerified, resetEmailVerification]);
 
     const handleSelectOrganizationChange = useCallback(
         (selected: Selection, searchQuery: string) => {
@@ -136,7 +140,9 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
 
     const handleConfirm = useCallback(async () => {
         const isVerified =
-            wasEmailVerified(normalizedEmail) || (await validateEmail(normalizedEmail));
+            wasEmailVerified(normalizedEmail) ||
+            normalizedEmail === initialUser?.email?.trim() ||
+            (await validateEmail(normalizedEmail));
         if (!isVerified) {
             return;
         }
@@ -182,12 +188,16 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     }, [onOpenChange, onBackToSearch]);
 
     const handleEmailBlur = useCallback(async () => {
-        if (normalizedEmail === "" || wasEmailVerified(normalizedEmail)) {
+        if (
+            normalizedEmail === "" ||
+            wasEmailVerified(normalizedEmail) ||
+            normalizedEmail === initialUser?.email?.trim()
+        ) {
             return;
         }
 
         await validateEmail(normalizedEmail);
-    }, [normalizedEmail, validateEmail, wasEmailVerified]);
+    }, [normalizedEmail, validateEmail, wasEmailVerified, initialUser]);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
