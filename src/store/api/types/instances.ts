@@ -110,6 +110,24 @@ export type Role = {
     title: LocalString;
 };
 
+export type AllowedAction = {
+    type: RoleAction;
+    label: LocalString | null;
+    /** Action, form, or property identifier used when no label is configured. */
+    target: string | null;
+};
+
+export type ActiveStepRole = Role & {
+    actions: AllowedAction[];
+};
+
+export type ActiveStep = {
+    name: string;
+    title: LocalString;
+    isCurrent: boolean;
+    roles: ActiveStepRole[];
+};
+
 export type RoleImpersonationResult = {
     instanceId: string;
     role: Role;

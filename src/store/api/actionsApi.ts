@@ -12,6 +12,9 @@ export const actionsApi = baseApi.injectEndpoints({
                 method: "post",
                 body: params,
             }),
+            invalidatesTags: (_result, _error, {instanceId}) => [
+                {type: "InstanceActions", id: instanceId},
+            ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
                 const {data} = await queryFulfilled;
                 dispatch(
