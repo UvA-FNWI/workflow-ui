@@ -33,6 +33,7 @@ export const importApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: {workflowDefinition, rows},
             }),
+            invalidatesTags: ["Screen", "Instance"],
         }),
     }),
 });
