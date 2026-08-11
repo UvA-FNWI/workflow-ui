@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {SearchInput, Tag, TagInput} from "@uva-fnwi/datanose-ui";
+import {Icon, SearchInput, Tag, TagInput} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
@@ -120,7 +120,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
             {isMultiple ? (
                 <TagInput
                     label={label}
-                    placeholder={placeholder ?? t("add")}
+                    placeholder={placeholder}
                     value={valueArray.map((user) => user.userName)}
                     renderTag={({value}) => {
                         const user = valueArray.find((user) => user.userName === value);
@@ -135,12 +135,13 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                             </Tag>
                         );
                     }}
-                    onClick={handleOpenUserPickerModal}
+                    onControlClick={handleOpenUserPickerModal}
                     onKeyDown={handleSearchInputKeyDown}
                     isDisabled={isDisabled}
                     readOnly
-                    aria-label={label ?? t("add")}
-                    className="cursor-pointer"
+                    aria-label={label ?? t("user_picker.search_placeholder")}
+                    rightIcon={<Icon name="search-line" size="md" color="primary" />}
+                    className="cursor-pointer [&_input]:cursor-pointer"
                 />
             ) : (
                 <SearchInput
