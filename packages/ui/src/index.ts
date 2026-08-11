@@ -18,6 +18,7 @@ export {
 export {
   Menu,
   type MenuDefinition,
+  type MenuItemIcon,
   type MenuItemDefinition,
   type MenuItemRenderProps,
   type MenuKey,

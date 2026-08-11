@@ -21,20 +21,18 @@ export function useLanguageMenuItem(): MenuItemDefinition {
     return {
         id: "language",
         textValue: t("language"),
-        cursor: "pointer",
+        icon: (
+            <img
+                src={languageFlags[language]}
+                alt=""
+                aria-hidden="true"
+                className="h-6 w-6 shrink-0"
+            />
+        ),
         content: (
-            <>
-                <img
-                    src={languageFlags[language]}
-                    alt=""
-                    aria-hidden="true"
-                    className="h-6 w-6 shrink-0"
-                />
-                <span className="min-w-0 flex-1 truncate">
-                    {t("language")}: {t(`language_${language}`)}
-                </span>
-                <Icon name="chevron-right-line" size="sm" color="current" decorative />
-            </>
+            <span className="min-w-0 flex-1 truncate">
+                {t("language")}: {t(`language_${language}`)}
+            </span>
         ),
         submenu: {
             ariaLabel: t("language"),
@@ -43,17 +41,17 @@ export function useLanguageMenuItem(): MenuItemDefinition {
             items: languages.map((option) => ({
                 id: option,
                 textValue: t(`language_${option}`),
-                cursor: "pointer",
-                shouldCloseOnSelect: false,
                 onAction: () => void i18n.changeLanguage(option),
+                icon: (
+                    <img
+                        src={languageFlags[option]}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-6 w-6 shrink-0"
+                    />
+                ),
                 content: ({isSelected}) => (
                     <>
-                        <img
-                            src={languageFlags[option]}
-                            alt=""
-                            aria-hidden="true"
-                            className="h-6 w-6 shrink-0"
-                        />
                         <span className="min-w-0 flex-1 truncate">{t(`language_${option}`)}</span>
                         {isSelected && (
                             <Icon name="checkmark-solid" size="sm" color="current" decorative />

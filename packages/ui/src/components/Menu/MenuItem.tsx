@@ -19,6 +19,8 @@ import {
 } from 'react-stately';
 
 import { cn } from '../../utils/cn';
+import { Icon } from '../Icon';
+import type { IconType } from '../Icon/IconTypes';
 import { Popover } from '../Popover/Popover';
 import type {
   MenuDefinition,
@@ -29,6 +31,7 @@ import {
   defaultPopoverClassName,
   resolveContent,
   resolveItemClassName,
+  resolveTextValue,
 } from './menuUtils';
 
 interface MenuItemProps {
@@ -77,11 +80,14 @@ export function MenuList({
   const menuRef = suppliedMenuRef ?? fallbackMenuRef;
   const state = useTreeState<MenuItemDefinition>({
     items,
-    children: item => (
-      <Item key={item.id} textValue={item.textValue}>
-        {item.textValue}
-      </Item>
-    ),
+    children: item => {
+      const textValue = resolveTextValue(item);
+      return (
+        <Item key={item.id} textValue={textValue}>
+          {textValue}
+        </Item>
+      );
+    },
     selectionMode,
     selectedKeys,
     disabledKeys: items.filter(item => item.isDisabled).map(item => item.id),
@@ -171,6 +177,7 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
   }
 
   const submenu = itemDefinition.submenu;
+  const icon = itemDefinition.icon;
 
   return (
     <>
@@ -179,7 +186,30 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
         ref={itemRef}
         className={resolveItemClassName(itemDefinition, renderProps)}
       >
+        {icon !== undefined &&
+          icon !== null &&
+          (typeof icon === 'string' ? (
+            <Icon
+              name={icon as IconType}
+              size="lg"
+              color="current"
+              decorative
+            />
+          ) : (
+            <span className="ui:flex ui:h-6 ui:w-6 ui:shrink-0 ui:items-center ui:justify-center">
+              {icon}
+            </span>
+          ))}
         {resolveContent(itemDefinition.content, renderProps)}
+        {submenu && (
+          <Icon
+            name="chevron-right-line"
+            size="md"
+            color="current"
+            decorative
+            className="ui:ml-auto ui:shrink-0"
+          />
+        )}
       </li>
 
       {submenu && submenuState.isOpen && (

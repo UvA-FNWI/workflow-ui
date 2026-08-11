@@ -30,30 +30,18 @@ export function NavbarUser({
     if (onStartImpersonation) {
         items.push({
             id: "impersonate",
-            textValue: t("impersonate"),
-            cursor: "pointer",
             onAction: onStartImpersonation,
-            content: (
-                <>
-                    <Icon name="touch-id-line" size="lg" color="current" decorative />
-                    <span>{t("impersonate")}</span>
-                </>
-            ),
+            icon: "touch-id-line",
+            content: t("impersonate"),
         });
     }
 
     if (onStopImpersonation) {
         items.push({
             id: "stop-impersonation",
-            textValue: t("stop_impersonation"),
-            cursor: "pointer",
             onAction: onStopImpersonation,
-            content: (
-                <>
-                    <Icon name="cross-small-line" size="lg" color="current" decorative />
-                    <span>{t("stop_impersonation")}</span>
-                </>
-            ),
+            icon: "cross-small-line",
+            content: t("stop_impersonation"),
         });
     }
 
@@ -65,15 +53,9 @@ export function NavbarUser({
 
     items.push({
         id: "logout",
-        textValue: t("logout"),
-        cursor: "pointer",
         onAction: () => void onLogout(),
-        content: (
-            <>
-                <Icon name="logout-line" size="lg" color="current" decorative />
-                <span>{t("logout")}</span>
-            </>
-        ),
+        icon: "logout-line",
+        content: t("logout"),
     });
 
     return (

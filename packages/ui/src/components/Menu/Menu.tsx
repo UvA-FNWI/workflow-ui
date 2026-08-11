@@ -4,11 +4,15 @@ import { AriaPopoverProps, useButton, useMenuTrigger } from 'react-aria';
 import { useMenuTriggerState } from 'react-stately';
 
 import { cn } from '../../utils/cn';
+import type { IconType } from '../Icon/IconTypes';
 import { Popover } from '../Popover/Popover';
 import { MenuList } from './MenuItem';
 import { defaultPopoverClassName } from './menuUtils';
 
 export type MenuKey = string | number;
+export type MenuItemIcon =
+  | IconType
+  | Exclude<ReactNode, string | number | boolean>;
 
 export interface MenuItemRenderProps {
   isDisabled: boolean;
@@ -21,12 +25,13 @@ export interface MenuItemRenderProps {
 
 export interface MenuItemDefinition {
   id: MenuKey;
-  textValue: string;
+  /** Plain text used for keyboard navigation. Inferred when content is a string. */
+  textValue?: string;
+  icon?: MenuItemIcon;
   content: ReactNode | ((renderProps: MenuItemRenderProps) => ReactNode);
   onAction?: () => void;
   isDisabled?: boolean;
   shouldCloseOnSelect?: boolean;
-  cursor?: 'default' | 'pointer';
   className?: string | ((renderProps: MenuItemRenderProps) => string);
   submenu?: MenuDefinition;
 }

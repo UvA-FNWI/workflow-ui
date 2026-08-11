@@ -44,15 +44,11 @@ export function useVersionMenuItem(showVersionPicker: boolean): MenuItemDefiniti
     return {
         id: "version",
         textValue: t("version"),
-        cursor: "pointer",
+        icon: "text-sparkle-line",
         content: (
-            <>
-                <Icon name="text-sparkle-line" size="lg" color="current" decorative />
-                <span className="min-w-0 flex-1 truncate">
-                    {t("version")}: {selectedVersion.label}
-                </span>
-                <Icon name="chevron-right-line" size="sm" color="current" decorative />
-            </>
+            <span className="min-w-0 flex-1 truncate">
+                {t("version")}: {selectedVersion.label}
+            </span>
         ),
         submenu: {
             ariaLabel: t("version"),
@@ -61,7 +57,6 @@ export function useVersionMenuItem(showVersionPicker: boolean): MenuItemDefiniti
             items: versionOptions.map((option) => ({
                 id: option.key,
                 textValue: option.label,
-                cursor: "pointer",
                 onAction: () => handleSelect(option.key),
                 content: ({isSelected}) => (
                     <>

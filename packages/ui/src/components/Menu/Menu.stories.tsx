@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
-import { Menu, MenuItemDefinition } from './Menu';
+import { Icon } from '../Icon';
+import { Menu, MenuItemDefinition, MenuItemRenderProps } from './Menu';
 
 const meta: Meta<typeof Menu> = {
   title: 'Components/Menu',
@@ -16,30 +17,44 @@ export default meta;
 
 type Story = StoryObj<typeof Menu>;
 
+const languageContent = (label: string) =>
+  function LanguageContent({ isSelected }: MenuItemRenderProps) {
+    return (
+      <>
+        <span className="ui:min-w-0 ui:flex-1 ui:truncate">{label}</span>
+        {isSelected && (
+          <Icon name="checkmark-solid" size="sm" color="current" decorative />
+        )}
+      </>
+    );
+  };
+
+const flagIcon = (flag: string) => (
+  <span
+    aria-hidden="true"
+    className="ui:flex ui:h-6 ui:w-6 ui:items-center ui:justify-center ui:text-2xl ui:leading-none"
+  >
+    {flag}
+  </span>
+);
+
 const basicItems: MenuItemDefinition[] = [
   {
     id: 'profile',
-    textValue: 'Profile',
     content: 'Profile',
-    cursor: 'pointer',
   },
   {
     id: 'settings',
-    textValue: 'Settings',
     content: 'Settings',
-    cursor: 'pointer',
   },
   {
     id: 'disabled',
-    textValue: 'Unavailable action',
     content: 'Unavailable action',
     isDisabled: true,
   },
   {
     id: 'logout',
-    textValue: 'Log out',
     content: 'Log out',
-    cursor: 'pointer',
   },
 ];
 
@@ -60,6 +75,87 @@ export const Basic: Story = {
   },
 };
 
+export const WithIcons: Story = {
+  args: {
+    ariaLabel: 'Account actions',
+    trigger: ({ triggerProps, triggerRef }) => (
+      <Button
+        {...triggerProps}
+        ref={triggerRef}
+        aria-label="Open account actions"
+        intent="ghost"
+      >
+        Account actions
+      </Button>
+    ),
+    items: [
+      {
+        id: 'profile',
+        icon: 'user-line',
+        content: 'Profile',
+      },
+      {
+        id: 'settings',
+        icon: 'settings-gear-line',
+        content: 'Settings',
+      },
+      {
+        id: 'logout',
+        icon: 'logout-line',
+        content: 'Log out',
+      },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Pass an icon name to `icon` to render a consistent large, decorative design-system icon.',
+      },
+    },
+  },
+};
+
+export const WithCustomIcons: Story = {
+  args: {
+    ariaLabel: 'Languages',
+    selectionMode: 'single',
+    selectedKeys: ['en'],
+    trigger: ({ triggerProps, triggerRef }) => (
+      <Button
+        {...triggerProps}
+        ref={triggerRef}
+        aria-label="Open languages"
+        intent="ghost"
+      >
+        Languages
+      </Button>
+    ),
+    items: [
+      {
+        id: 'en',
+        textValue: 'English',
+        icon: flagIcon('🇬🇧'),
+        content: languageContent('English'),
+      },
+      {
+        id: 'nl',
+        textValue: 'Dutch',
+        icon: flagIcon('🇳🇱'),
+        content: languageContent('Dutch'),
+      },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Pass any React node to `icon` for custom artwork such as language flags, logos, or avatars.',
+      },
+    },
+  },
+};
+
 export const WithSubmenus: Story = {
   args: {
     ariaLabel: 'Preferences',
@@ -75,10 +171,14 @@ export const WithSubmenus: Story = {
     ),
     items: [
       {
+        id: 'profile',
+        icon: 'user-line',
+        content: 'Profile',
+      },
+      {
         id: 'language',
-        textValue: 'Language',
-        content: 'Language ›',
-        cursor: 'pointer',
+        icon: flagIcon('🇬🇧'),
+        content: 'Language',
         submenu: {
           ariaLabel: 'Language',
           selectionMode: 'single',
@@ -87,24 +187,22 @@ export const WithSubmenus: Story = {
             {
               id: 'en',
               textValue: 'English',
-              content: ({ isSelected }) =>
-                isSelected ? '✓ English' : 'English',
-              cursor: 'pointer',
+              icon: flagIcon('🇬🇧'),
+              content: languageContent('English'),
             },
             {
               id: 'nl',
               textValue: 'Dutch',
-              content: ({ isSelected }) => (isSelected ? '✓ Dutch' : 'Dutch'),
-              cursor: 'pointer',
+              icon: flagIcon('🇳🇱'),
+              content: languageContent('Dutch'),
             },
           ],
         },
       },
       {
         id: 'version',
-        textValue: 'Version',
-        content: 'Version ›',
-        cursor: 'pointer',
+        icon: 'text-sparkle-line',
+        content: 'Version',
         submenu: {
           ariaLabel: 'Version',
           selectionMode: 'single',
@@ -112,15 +210,11 @@ export const WithSubmenus: Story = {
           items: [
             {
               id: 'stable',
-              textValue: 'Stable',
               content: 'Stable',
-              cursor: 'pointer',
             },
             {
               id: 'preview',
-              textValue: 'Preview',
               content: 'Preview',
-              cursor: 'pointer',
             },
           ],
         },

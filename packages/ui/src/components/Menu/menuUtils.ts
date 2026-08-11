@@ -11,6 +11,15 @@ export function resolveContent(
   return typeof content === 'function' ? content(renderProps) : content;
 }
 
+export function resolveTextValue(item: MenuItemDefinition) {
+  if (item.textValue !== undefined) return item.textValue;
+  if (typeof item.content === 'string') return item.content;
+
+  throw new Error(
+    `Menu item "${String(item.id)}" must provide textValue when content is not a string.`
+  );
+}
+
 export function resolveItemClassName(
   item: MenuItemDefinition,
   renderProps: MenuItemRenderProps
@@ -21,8 +30,7 @@ export function resolveItemClassName(
       : item.className;
 
   return cn(
-    'ui:flex ui:min-h-12 ui:items-center ui:gap-3 ui:rounded-xs ui:px-3 ui:py-2 ui:transition-colors ui:outline-none',
-    item.cursor === 'pointer' ? 'ui:cursor-pointer' : 'ui:cursor-default',
+    'ui:flex ui:min-h-12 ui:cursor-pointer ui:items-center ui:gap-3 ui:rounded-xs ui:px-3 ui:py-2 ui:transition-colors ui:outline-none',
     renderProps.isFocused && 'ui:bg-grey-200 ui:dark:bg-grey-800',
     renderProps.isDisabled && 'ui:opacity-50',
     className
