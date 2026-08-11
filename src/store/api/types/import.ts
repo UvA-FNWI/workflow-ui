@@ -33,3 +33,13 @@ export type ImportPreviewError = {
     code: string;
     message: LocalString;
 };
+
+export type ImportConfirmRequest = {
+    workflowDefinition: string;
+    rows: ImportConfirmRow[];
+};
+
+export type ImportConfirmRow = {
+    instanceId: string;
+    values: Record<string, string>;
+};

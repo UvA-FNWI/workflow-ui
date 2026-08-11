@@ -69,11 +69,26 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                     !!file
                 );
             case 3:
-                return !!previewData && !!file && columnMapping.length > 0;
+                return (
+                    !!previewData &&
+                    !!file &&
+                    columnMapping.length > 0 &&
+                    previewData.rows.every((row) => row.validationErrors.length === 0)
+                );
             default:
                 return false;
         }
     };
+
+    const getConfirmRows = (preview: ImportPreview) =>
+        preview.rows
+            .filter((row) => row.validationErrors.length === 0)
+            .map(({instanceId, values}) => ({
+                instanceId,
+                values: Object.fromEntries(
+                    Object.entries(values).filter(([, v]) => v !== null) as [string, string][],
+                ),
+            }));
 
     const handleNextStep = async () => {
         if (!isStepValid()) return;
@@ -92,7 +107,11 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         }
 
         if (activeStep === totalSteps) {
-            await confirm({file: file!, workflowDefinition, columnMapping});
+            if (!previewData) return;
+            await confirm({
+                workflowDefinition,
+                rows: getConfirmRows(previewData!),
+            });
             onClose();
             return;
         }

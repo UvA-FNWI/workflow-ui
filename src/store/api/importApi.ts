@@ -1,6 +1,7 @@
 import {baseApi} from "~/store/api/baseApi.ts";
 import type {
     ImportableProperty,
+    ImportConfirmRequest,
     ImportFileRequest,
     ImportPreview,
 } from "~/store/api/types/import.ts";
@@ -26,11 +27,11 @@ export const importApi = baseApi.injectEndpoints({
                 body: buildFormData(args),
             }),
         }),
-        confirm: builder.mutation<void, ImportFileRequest>({
-            query: (args) => ({
+        confirm: builder.mutation<void, ImportConfirmRequest>({
+            query: ({workflowDefinition, rows}) => ({
                 url: `/Import/Confirm`,
                 method: "POST",
-                body: buildFormData(args),
+                body: {workflowDefinition, rows},
             }),
         }),
     }),
