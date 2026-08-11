@@ -17,7 +17,7 @@
     "translations:generate": "i18next-cli extract",
     "preview": "vite preview",
     "prepare": "husky",
-    "test": "vitest run",
+    "test": "pnpm --filter @uva-fnwi/datanose-ui build && vitest run",
     "test:watch": "vitest",
     "e2e-test": "playwright test",
     "dev:mock-api": "tsx tests/dummy-api.ts"
