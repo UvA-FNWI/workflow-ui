@@ -6,6 +6,7 @@ import { Callout } from './Callout';
 const meta: Meta<typeof Callout> = {
   title: 'Components/Callout',
   component: Callout,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },

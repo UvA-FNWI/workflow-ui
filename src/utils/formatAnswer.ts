@@ -95,7 +95,9 @@ export function formatAnswer(
             }
             return String(value);
 
+        // Summarize structured arrays instead of stringifying each item.
         case "Table":
+        case "Object":
             // Handle table/array data
             if (Array.isArray(value)) {
                 return `${value.length} items`;

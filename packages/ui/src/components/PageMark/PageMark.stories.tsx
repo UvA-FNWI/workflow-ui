@@ -5,6 +5,7 @@ import { PageMark } from './PageMark';
 const meta: Meta<typeof PageMark> = {
   title: 'Components/PageMark',
   component: PageMark,
+  tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
   },

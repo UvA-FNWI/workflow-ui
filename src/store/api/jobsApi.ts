@@ -11,7 +11,7 @@ export const jobsApi = baseApi.injectEndpoints({
         }),
         runJob: builder.mutation<Job, JobParams>({
             query: ({instanceId, jobId}) => ({
-                url: `/Jobs/${instanceId}/${jobId}/run`,
+                url: `/Jobs/${instanceId}/${jobId}/Run`,
                 method: "POST",
             }),
         }),
