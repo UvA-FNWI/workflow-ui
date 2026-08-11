@@ -19,7 +19,7 @@ type ImportModalProps = {
     isOpen: boolean;
     onClose: () => void;
 };
-
+export const StudentNumberKey = "UserName";
 export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
@@ -62,7 +62,12 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
             case 1:
                 return !!file;
             case 2:
-                return columnMapping.length > 1 && !!file;
+                return (
+                    columnMapping.length > 1 &&
+                    columnMapping.find((column) => column.propertyName == StudentNumberKey) !=
+                        undefined &&
+                    !!file
+                );
             case 3:
                 return !!previewData && !!file && columnMapping.length > 0;
             default:
@@ -80,7 +85,9 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                 setPreviewData(response.data);
                 setIsLoading(false);
             } else {
-                toast.error("Error previewing file");
+                setIsLoading(false);
+                toast.error(t("error_importing"));
+                onClose();
             }
         }
 
@@ -100,13 +107,15 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose}>
-            <Modal.Header subTitle={t("step_indicator", {index: activeStep, total: totalSteps})}>
+        <Modal isOpen={isOpen} onOpenChange={onClose} size={activeStep === 3 ? "full" : "sm"}>
+            <Modal.Header
+                subTitle={t("step_indicator", {index: activeStep, total: totalSteps})}
+                description={activeStep == 3 ? t("description_verify") : t("description_select")}
+            >
                 {t("title")}
             </Modal.Header>
-            <Modal.Body>
-                <div className="flex flex-col gap-4 pr-8">
-                    <Text>{t("description")}</Text>
+            <Modal.Body className="max-h-[60vh] overflow-y-auto">
+                <div>
                     {activeStep === 1 && (
                         <ImportFileUpload
                             onFileSelect={(fileName, cols) => {
@@ -129,7 +138,20 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                             onColumnMappingChange={setColumnMapping}
                         />
                     )}
-                    {activeStep === 3 && <ImportOverview data={previewData} />}
+                    {activeStep === 3 && (
+                        <div>
+                            <div className="mb-8 flex gap-2">
+                                <Text fontWeight="bold" size="sm">{`${t("shown_data")}:`}</Text>
+                                <Text size="sm">
+                                    {t("result_indicator", {
+                                        count: "xx",
+                                        total: previewData?.rows.length,
+                                    })}
+                                </Text>
+                            </div>
+                            <ImportOverview data={previewData} />
+                        </div>
+                    )}
                 </div>
             </Modal.Body>
             <Modal.Footer>

@@ -2,6 +2,7 @@ import {type Key, useState} from "react";
 
 import {Button, Callout, Checkbox, Icon, Item, Select, Text} from "@uva-fnwi/datanose-ui";
 
+import {StudentNumberKey} from "~/components/Import/ImportModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {ColumnMapping, ImportableProperty} from "~/store/api/types/import.ts";
 
@@ -65,8 +66,8 @@ export const ImportColumnSelection = ({
             <div className="flex flex-col gap-2 py-4">
                 <Text fontWeight="bold">{t("select_student_number")}</Text>
                 <Select
-                    value={selectedColumns["Studentnummer"]}
-                    onChange={handleColumnSelect("Studentnummer")}
+                    value={selectedColumns[StudentNumberKey]}
+                    onChange={handleColumnSelect(StudentNumberKey)}
                     placeholder={tw("select")}
                 >
                     {fileColumns.map((col) => (

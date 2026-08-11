@@ -227,11 +227,12 @@ BaseModal.displayName = 'Modal';
 
 type ModalHeaderProps = HTMLAttributes<HTMLElement> & {
   subTitle?: string;
+  description?: string;
 };
 
 // Sub-components for compound component pattern
 const ModalHeader = forwardRef<HTMLElement, ModalHeaderProps>(
-  ({ children, className, subTitle, ...props }, ref) => {
+  ({ children, className, subTitle, description, ...props }, ref) => {
     const { onClose, showCloseButton } = useModalContext();
 
     return (
@@ -250,9 +251,14 @@ const ModalHeader = forwardRef<HTMLElement, ModalHeaderProps>(
             </span>
           )}
 
-          <h2 className="ui:font-heading ui:text-2xl ui:text-black ui:dark:text-white">
+          <h2 className="ui:font-heading ui:text-2xl ui:font-semibold ui:text-black ui:dark:text-white">
             {children}
           </h2>
+          {description && (
+            <span className="ui:text-md ui:my-1 ui:text-black ui:dark:text-white">
+              {description}
+            </span>
+          )}
         </div>
         {showCloseButton && (
           <Button

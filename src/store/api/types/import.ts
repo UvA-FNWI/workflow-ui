@@ -18,8 +18,8 @@ export type ImportPreviewRow = {
 };
 
 export type ImportPreview = {
+    columns: ImportableProperty[];
     rows: ImportPreviewRow[];
-    globalErrors: string[];
 };
 
 export type ImportableProperty = {
