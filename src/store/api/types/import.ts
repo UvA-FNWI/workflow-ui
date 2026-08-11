@@ -14,7 +14,7 @@ export type ColumnMapping = {
 export type ImportPreviewRow = {
     instanceId: string;
     values: Record<string, string | null>;
-    errors: string[];
+    validationErrors: ImportPreviewError[];
 };
 
 export type ImportPreview = {
@@ -26,4 +26,10 @@ export type ImportableProperty = {
     name: string;
     title: LocalString;
     dataType: string;
+};
+
+export type ImportPreviewError = {
+    column: string;
+    code: string;
+    message: LocalString;
 };

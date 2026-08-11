@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 
 import {createColumnHelper} from "@tanstack/react-table";
-import {Text} from "@uva-fnwi/datanose-ui";
+import {Callout, Text} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -22,7 +22,29 @@ export const ImportOverview = ({data}: ImportOverviewProps) => {
                 columnHelper.display({
                     id: col.name,
                     header: col.title[i18n.language as keyof typeof col.title] ?? col.name,
-                    cell: ({row}) => row.original.values[col.name] ?? "—",
+                    cell: ({row}) => {
+                        const value = row.original.values[col.name] ?? "—";
+                        const errors = row.original.validationErrors?.filter(
+                            (e) => e.column === col.name,
+                        );
+
+                        if (errors?.length) {
+                            return (
+                                <div className="flex flex-col gap-1">
+                                    {value}
+                                    {errors.map((error, i) => (
+                                        <Callout key={i} type="error">
+                                            {error.message[
+                                                i18n.language as keyof typeof error.message
+                                            ] ?? error.code}
+                                        </Callout>
+                                    ))}
+                                </div>
+                            );
+                        }
+
+                        return value;
+                    },
                 }),
             ) ?? [],
         [data?.columns, i18n.language],
