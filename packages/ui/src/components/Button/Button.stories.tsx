@@ -14,7 +14,7 @@ const commonArgTypes = {
     control: {
       type: 'select' as const,
     },
-    options: ['default', 'warning', 'destructive'],
+    options: ['default', 'destructive'],
   },
   size: {
     control: {

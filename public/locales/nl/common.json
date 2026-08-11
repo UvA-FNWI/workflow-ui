@@ -10,7 +10,7 @@
   "impersonate": "Voordoen als gebruiker",
   "impersonate_modal_title": "Selecteer de gebruiker als wie je je wilt voordoen",
   "impersonate_target_not_found": "Deze gebruiker heeft nog geen Milestones-account, dus je kunt je niet als deze gebruiker voordoen.",
-  "impersonating_as": "Je doet je voor als {{name}}",
+  "impersonating_as": "Je doet je voor als",
   "language": "Taal",
   "language_en": "Engels",
   "language_nl": "Nederlands",

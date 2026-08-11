@@ -10,7 +10,7 @@
   "impersonate": "Impersonate user",
   "impersonate_modal_title": "Select a user to impersonate",
   "impersonate_target_not_found": "This user has no Milestones account yet, so they can't be impersonated.",
-  "impersonating_as": "Impersonating as {{name}}",
+  "impersonating_as": "Impersonating as",
   "language": "Language",
   "language_en": "English",
   "language_nl": "Dutch",

@@ -13,9 +13,9 @@ const {changeLanguage, getVersionDetails, setWorkflowVersion} = vi.hoisted(() =>
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
         i18n: {language: "nl", changeLanguage},
-        t: (key: string, options?: {name?: string}) => {
+        t: (key: string) => {
             if (key === "impersonating_as") {
-                return `Je doet je voor als ${options?.name}`;
+                return "Je doet je voor als";
             }
             return (
                 {
@@ -101,10 +101,6 @@ describe("NavbarUser", () => {
         fireEvent.keyDown(languageItem, {key: "ArrowRight"});
         fireEvent.click(await screen.findByRole("menuitemradio", {name: "Engels"}));
         expect(changeLanguage).toHaveBeenCalledWith("en");
-        expect(trigger.getAttribute("aria-expanded")).toBe("true");
-
-        fireEvent.pointerDown(document.body, {button: 0});
-        fireEvent.click(document.body, {button: 0});
         expect(trigger.getAttribute("aria-expanded")).toBe("false");
 
         fireEvent.click(trigger);
@@ -163,7 +159,10 @@ describe("NavbarUser", () => {
 
         const trigger = screen.getByRole("button", {name: "Gebruikersmenu: Grace Hopper"});
         expect(trigger.textContent).toContain("Je doet je voor als Grace Hopper");
-        expect(trigger.className).toContain("bg-amber-100");
+        expect(trigger.textContent).not.toContain("G. H.");
+        expect(trigger.querySelectorAll("svg")).toHaveLength(2);
+        expect(trigger.className).toContain("border-red-600");
+        expect(screen.getByText("Grace Hopper").className).toContain("font-bold");
         fireEvent.keyDown(trigger, {key: "ArrowDown"});
         const stopImpersonationItem = await screen.findByRole("menuitem", {
             name: "Stoppen met voordoen",

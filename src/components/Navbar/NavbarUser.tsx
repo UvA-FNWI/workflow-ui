@@ -68,22 +68,40 @@ export function NavbarUser({
                     {...triggerProps}
                     ref={triggerRef}
                     aria-label={`${t("user_menu")}: ${displayName}`}
-                    intent={"ghost"}
-                    variant={isImpersonating ? "warning" : "default"}
+                    intent={isImpersonating ? "secondary" : "ghost"}
+                    variant={isImpersonating ? "destructive" : "default"}
+                    leftIcon={
+                        isImpersonating ? (
+                            <Icon
+                                className="h-9"
+                                name="touch-id-line"
+                                size="lg"
+                                color="current"
+                                decorative
+                            />
+                        ) : undefined
+                    }
                     size="large"
                     width="none"
                     className={"h-auto max-w-72 gap-2 p-1"}
                 >
                     <div className="flex flex-row items-center gap-2">
-                        <UserAvatar userName={displayName} size="small" />
+                        {isImpersonating == false && (
+                            <UserAvatar userName={displayName} size="small" />
+                        )}
                         <span className="min-w-0 truncate">
-                            {isImpersonating
-                                ? t("impersonating_as", {name: displayName})
-                                : displayName}
+                            {isImpersonating ? (
+                                <>
+                                    {t("impersonating_as")}{" "}
+                                    <strong className="font-bold">{displayName}</strong>
+                                </>
+                            ) : (
+                                displayName
+                            )}
                         </span>
                         <Icon
                             name={isOpen ? "chevron-up-small-line" : "chevron-down-small-line"}
-                            size="sm"
+                            size="md"
                             color="current"
                             decorative
                         />
