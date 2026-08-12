@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon';
-import { Menu, MenuItemDefinition, MenuItemRenderProps } from './Menu';
+import { Menu, MenuItemRenderProps } from './Menu';
+import { MenuItem } from './MenuItem';
 
 const meta: Meta<typeof Menu> = {
   title: 'Components/Menu',
@@ -38,26 +39,6 @@ const flagIcon = (flag: string) => (
   </span>
 );
 
-const basicItems: MenuItemDefinition[] = [
-  {
-    id: 'profile',
-    content: 'Profile',
-  },
-  {
-    id: 'settings',
-    content: 'Settings',
-  },
-  {
-    id: 'disabled',
-    content: 'Unavailable action',
-    isDisabled: true,
-  },
-  {
-    id: 'logout',
-    content: 'Log out',
-  },
-];
-
 export const Basic: Story = {
   args: {
     ariaLabel: 'User menu',
@@ -71,7 +52,17 @@ export const Basic: Story = {
         Open menu
       </Button>
     ),
-    items: basicItems,
+    children: [
+      <MenuItem key="profile" id="profile" label="Profile" />,
+      <MenuItem key="settings" id="settings" label="Settings" />,
+      <MenuItem
+        key="disabled"
+        id="disabled"
+        label="Unavailable action"
+        isDisabled
+      />,
+      <MenuItem key="logout" id="logout" label="Log out" />,
+    ],
   },
 };
 
@@ -88,22 +79,15 @@ export const WithIcons: Story = {
         Account actions
       </Button>
     ),
-    items: [
-      {
-        id: 'profile',
-        icon: 'user-line',
-        content: 'Profile',
-      },
-      {
-        id: 'settings',
-        icon: 'settings-gear-line',
-        content: 'Settings',
-      },
-      {
-        id: 'logout',
-        icon: 'logout-line',
-        content: 'Log out',
-      },
+    children: [
+      <MenuItem key="profile" id="profile" icon="user-line" label="Profile" />,
+      <MenuItem
+        key="settings"
+        id="settings"
+        icon="settings-gear-line"
+        label="Settings"
+      />,
+      <MenuItem key="logout" id="logout" icon="logout-line" label="Log out" />,
     ],
   },
   parameters: {
@@ -131,19 +115,21 @@ export const WithCustomIcons: Story = {
         Languages
       </Button>
     ),
-    items: [
-      {
-        id: 'en',
-        textValue: 'English',
-        icon: flagIcon('🇬🇧'),
-        content: languageContent('English'),
-      },
-      {
-        id: 'nl',
-        textValue: 'Dutch',
-        icon: flagIcon('🇳🇱'),
-        content: languageContent('Dutch'),
-      },
+    children: [
+      <MenuItem
+        key="en"
+        id="en"
+        textValue="English"
+        icon={flagIcon('🇬🇧')}
+        label={languageContent('English')}
+      />,
+      <MenuItem
+        key="nl"
+        id="nl"
+        textValue="Dutch"
+        icon={flagIcon('🇳🇱')}
+        label={languageContent('Dutch')}
+      />,
     ],
   },
   parameters: {
@@ -169,56 +155,56 @@ export const WithSubmenus: Story = {
         Preferences
       </Button>
     ),
-    items: [
-      {
-        id: 'profile',
-        icon: 'user-line',
-        content: 'Profile',
-      },
-      {
-        id: 'language',
-        icon: flagIcon('🇬🇧'),
-        content: 'Language',
-        submenu: {
-          ariaLabel: 'Language',
-          selectionMode: 'single',
-          selectedKeys: ['en'],
-          items: [
-            {
-              id: 'en',
-              textValue: 'English',
-              icon: flagIcon('🇬🇧'),
-              content: languageContent('English'),
-            },
-            {
-              id: 'nl',
-              textValue: 'Dutch',
-              icon: flagIcon('🇳🇱'),
-              content: languageContent('Dutch'),
-            },
-          ],
-        },
-      },
-      {
-        id: 'version',
-        icon: 'text-sparkle-line',
-        content: 'Version',
-        submenu: {
-          ariaLabel: 'Version',
-          selectionMode: 'single',
-          selectedKeys: ['stable'],
-          items: [
-            {
-              id: 'stable',
-              content: 'Stable',
-            },
-            {
-              id: 'preview',
-              content: 'Preview',
-            },
-          ],
-        },
-      },
+    children: [
+      <MenuItem key="profile" id="profile" icon="user-line" label="Profile" />,
+      <MenuItem
+        key="language"
+        id="language"
+        icon={flagIcon('🇬🇧')}
+        label="Language"
+        selectionMode="single"
+        selectedKeys={['en']}
+      >
+        <MenuItem
+          key="en"
+          id="en"
+          textValue="English"
+          icon={flagIcon('🇬🇧')}
+          label={languageContent('English')}
+        />
+        <MenuItem
+          key="nl"
+          id="nl"
+          textValue="Dutch"
+          icon={flagIcon('🇳🇱')}
+          label={languageContent('Dutch')}
+        />
+      </MenuItem>,
+      <MenuItem
+        key="version"
+        id="version"
+        icon="text-sparkle-line"
+        label="Version"
+        selectionMode="single"
+        selectedKeys={['stable']}
+      >
+        <MenuItem key="stable" id="stable" label="Stable" />
+        <MenuItem key="preview" id="preview" label="Preview" />
+      </MenuItem>,
+      <MenuItem key="appearance" id="appearance" label="Appearance">
+        <MenuItem
+          key="theme"
+          id="theme"
+          label="Theme"
+          selectionMode="single"
+          selectedKeys={['system']}
+        >
+          <MenuItem key="light" id="light" label="Light" />
+          <MenuItem key="dark" id="dark" label="Dark" />
+          <MenuItem key="system" id="system" label="Use system setting" />
+        </MenuItem>
+        <MenuItem key="contrast" id="contrast" label="High contrast" />
+      </MenuItem>,
     ],
   },
 };

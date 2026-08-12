@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { Button } from '../Button/Button';
 import { Menu } from './Menu';
+import { MenuItem } from './MenuItem';
 import { resolveTextValue } from './menuUtils';
 
 vi.mock('../Icon', () => ({
@@ -27,12 +28,12 @@ vi.mock('../Icon', () => ({
 }));
 
 describe('Menu', () => {
-  it('infers textValue from string content and requires it for rich content', () => {
-    expect(resolveTextValue({ id: 'profile', content: 'Profile' })).toBe(
+  it('infers textValue from a string label and requires it for a rich label', () => {
+    expect(resolveTextValue({ id: 'profile', label: 'Profile' })).toBe(
       'Profile'
     );
     expect(() =>
-      resolveTextValue({ id: 'profile', content: <strong>Profile</strong> })
+      resolveTextValue({ id: 'profile', label: <strong>Profile</strong> })
     ).toThrow('must provide textValue');
   });
 
@@ -45,19 +46,14 @@ describe('Menu', () => {
             User menu
           </Button>
         )}
-        items={[
-          {
-            id: 'profile',
-            icon: 'user-line',
-            content: 'Profile',
-          },
-          {
-            id: 'language',
-            icon: <span data-testid="language-flag">🇬🇧</span>,
-            content: 'Language',
-          },
-        ]}
-      />
+      >
+        <MenuItem id="profile" icon="user-line" label="Profile" />
+        <MenuItem
+          id="language"
+          icon={<span data-testid="language-flag">🇬🇧</span>}
+          label="Language"
+        />
+      </Menu>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'User menu' }));
@@ -89,26 +85,13 @@ describe('Menu', () => {
             Preferences
           </Button>
         )}
-        items={[
-          {
-            id: 'profile',
-            content: 'Profile',
-          },
-          {
-            id: 'language',
-            content: 'Language',
-            submenu: {
-              ariaLabel: 'Language',
-              items: [
-                {
-                  id: 'en',
-                  content: 'English',
-                },
-              ],
-            },
-          },
-        ]}
-      />
+      >
+        <MenuItem id="profile" label="Profile" />
+        <MenuItem id="language" label="Language">
+          <MenuItem key="en" id="en" label="English" />
+          <MenuItem key="nl" id="nl" label="Dutch" />
+        </MenuItem>
+      </Menu>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Preferences' }));
@@ -123,5 +106,39 @@ describe('Menu', () => {
     expect(chevron).toHaveAttribute('aria-hidden', 'true');
     expect(chevron).toHaveAttribute('data-size', 'md');
     expect(chevron).toHaveClass('ui:ml-auto', 'ui:shrink-0');
+  });
+
+  it('uses Menu recursively for nested menus', () => {
+    render(
+      <Menu
+        ariaLabel="Preferences"
+        trigger={({ triggerProps, triggerRef }) => (
+          <Button {...triggerProps} ref={triggerRef} intent="ghost">
+            Preferences
+          </Button>
+        )}
+      >
+        <MenuItem id="profile" label="Profile" />
+        <MenuItem id="language" label="Language">
+          <MenuItem key="european" id="european" label="European">
+            <MenuItem key="en" id="en" label="English" />
+            <MenuItem key="nl" id="nl" label="Dutch" />
+          </MenuItem>
+          <MenuItem key="other" id="other" label="Other" />
+        </MenuItem>
+      </Menu>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Preferences' }));
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: 'Language' }), {
+      key: 'ArrowRight',
+    });
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: 'European' }), {
+      key: 'ArrowRight',
+    });
+
+    expect(screen.getByRole('menu', { name: 'Language' })).toBeVisible();
+    expect(screen.getByRole('menu', { name: 'European' })).toBeVisible();
+    expect(screen.getByRole('menuitem', { name: 'English' })).toBeVisible();
   });
 });

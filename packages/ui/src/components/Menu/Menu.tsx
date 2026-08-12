@@ -6,10 +6,11 @@ import { useMenuTriggerState } from 'react-stately';
 import { cn } from '../../utils/cn';
 import type { IconType } from '../Icon/IconTypes';
 import { Popover } from '../Popover/Popover';
-import { MenuList } from './MenuItem';
+import type { MenuItemProps } from './MenuItem';
+import { MenuList } from './MenuList';
 import { defaultPopoverClassName } from './menuUtils';
 
-export type MenuKey = string | number;
+export type MenuKey = string;
 export type MenuItemIcon =
   | IconType
   | Exclude<ReactNode, string | number | boolean>;
@@ -23,22 +24,17 @@ export interface MenuItemRenderProps {
   isSelected: boolean;
 }
 
-export interface MenuItemDefinition {
-  id: MenuKey;
-  /** Plain text used for keyboard navigation. Inferred when content is a string. */
-  textValue?: string;
-  icon?: MenuItemIcon;
-  content: ReactNode | ((renderProps: MenuItemRenderProps) => ReactNode);
-  onAction?: () => void;
-  isDisabled?: boolean;
-  shouldCloseOnSelect?: boolean;
-  className?: string | ((renderProps: MenuItemRenderProps) => string);
-  submenu?: MenuDefinition;
-}
+export type MenuChild =
+  | React.ReactElement<MenuItemProps>
+  | false
+  | null
+  | undefined;
+
+export type MenuChildren = MenuChild | MenuChild[];
 
 export interface MenuDefinition {
   ariaLabel: string;
-  items: MenuItemDefinition[];
+  children: MenuChildren;
   selectionMode?: 'none' | 'single' | 'multiple';
   selectedKeys?: Iterable<MenuKey>;
   popoverClassName?: string;
@@ -57,18 +53,15 @@ export interface MenuProps extends MenuDefinition {
 }
 
 export function Menu({
-  ariaLabel,
-  items,
-  selectionMode,
-  selectedKeys,
-  popoverClassName,
-  offset = 8,
   trigger,
   placement = 'bottom end',
+  offset = 8,
+  popoverClassName,
+  ...definition
 }: MenuProps) {
   const state = useMenuTriggerState({});
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const { menuTriggerProps, menuProps } = useMenuTrigger<MenuItemDefinition>(
+  const { menuTriggerProps, menuProps } = useMenuTrigger<MenuItemProps>(
     { type: 'menu' },
     state,
     triggerRef
@@ -87,14 +80,7 @@ export function Menu({
           offset={offset}
           className={cn('ui:my-0', popoverClassName ?? defaultPopoverClassName)}
         >
-          <MenuList
-            ariaLabel={ariaLabel}
-            items={items}
-            selectionMode={selectionMode}
-            selectedKeys={selectedKeys}
-            ariaProps={menuProps}
-            rootState={state}
-          />
+          <MenuList {...definition} ariaProps={menuProps} rootState={state} />
         </Popover>
       )}
     </>

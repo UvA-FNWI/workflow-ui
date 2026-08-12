@@ -19,12 +19,12 @@ export {
   Menu,
   type MenuDefinition,
   type MenuItemIcon,
-  type MenuItemDefinition,
   type MenuItemRenderProps,
   type MenuKey,
   type MenuProps,
   type MenuTriggerRenderProps,
 } from './components/Menu/Menu';
+export { MenuItem, type MenuItemProps } from './components/Menu/MenuItem';
 export {
   RadioGroup,
   Radio,

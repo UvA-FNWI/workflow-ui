@@ -1,127 +1,74 @@
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useContext, useRef } from 'react';
 
 import {
-  AriaMenuOptions,
-  FocusScope,
   mergeProps,
   useHover,
-  useMenu,
   useMenuItem,
   useSubmenuTrigger,
 } from 'react-aria';
-import {
-  Item,
-  Node,
-  RootMenuTriggerState,
-  TreeState,
-  useSubmenuTriggerState,
-  useTreeState,
-} from 'react-stately';
+import { useSubmenuTriggerState } from 'react-stately';
 
+import { useIsSmallScreen } from '../../hooks/useIsSmallScreen';
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 import type { IconType } from '../Icon/IconTypes';
 import { Popover } from '../Popover/Popover';
 import type {
+  MenuChildren,
   MenuDefinition,
-  MenuItemDefinition,
+  MenuItemIcon,
   MenuItemRenderProps,
+  MenuKey,
 } from './Menu';
+import { MenuContext, MenuList } from './MenuList';
 import {
   defaultPopoverClassName,
-  resolveContent,
   resolveItemClassName,
-  resolveTextValue,
+  resolveLabel,
 } from './menuUtils';
 
-interface MenuItemProps {
-  item: Node<MenuItemDefinition>;
-  state: TreeState<MenuItemDefinition>;
-  menuRef: React.RefObject<HTMLUListElement | null>;
-  rootState: RootMenuTriggerState;
+export interface MenuItemProps {
+  id: MenuKey;
+  /** Plain text used for keyboard navigation. Inferred when label is a string. */
+  textValue?: string;
+  icon?: MenuItemIcon;
+  label: ReactNode | ((renderProps: MenuItemRenderProps) => ReactNode);
+  children?: MenuChildren;
+  onAction?: () => void;
+  isDisabled?: boolean;
+  shouldCloseOnSelect?: boolean;
+  className?: string | ((renderProps: MenuItemRenderProps) => string);
+  selectionMode?: MenuDefinition['selectionMode'];
+  selectedKeys?: MenuDefinition['selectedKeys'];
+  popoverClassName?: string;
+  offset?: number;
 }
 
-interface MenuListProps extends MenuDefinition {
-  rootState: RootMenuTriggerState;
-  ariaProps?: AriaMenuOptions<MenuItemDefinition>;
-  menuRef?: React.RefObject<HTMLUListElement | null>;
+function useMenuContext() {
+  const context = useContext(MenuContext);
+  if (!context) {
+    throw new Error('MenuItem must be rendered inside a Menu.');
+  }
+  return context;
 }
 
-function useIsSmallScreen() {
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-
-  useEffect(() => {
-    if (!window.matchMedia) {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia('(max-width: 639px)');
-    const updateIsSmallScreen = () => setIsSmallScreen(mediaQuery.matches);
-
-    updateIsSmallScreen();
-    mediaQuery.addEventListener('change', updateIsSmallScreen);
-
-    return () => mediaQuery.removeEventListener('change', updateIsSmallScreen);
-  }, []);
-
-  return isSmallScreen;
-}
-
-export function MenuList({
-  ariaLabel,
-  items,
-  selectionMode = 'none',
+export function MenuItem({
+  id,
+  icon,
+  label,
+  children,
+  onAction,
+  isDisabled: isDisabledProp,
+  shouldCloseOnSelect,
+  className,
+  selectionMode,
   selectedKeys,
-  rootState,
-  ariaProps,
-  menuRef: suppliedMenuRef,
-}: MenuListProps) {
-  const fallbackMenuRef = useRef<HTMLUListElement>(null);
-  const menuRef = suppliedMenuRef ?? fallbackMenuRef;
-  const state = useTreeState<MenuItemDefinition>({
-    items,
-    children: item => {
-      const textValue = resolveTextValue(item);
-      return (
-        <Item key={item.id} textValue={textValue}>
-          {textValue}
-        </Item>
-      );
-    },
-    selectionMode,
-    selectedKeys,
-    disabledKeys: items.filter(item => item.isDisabled).map(item => item.id),
-  });
-  const { menuProps } = useMenu(
-    {
-      ...ariaProps,
-      'aria-label': ariaLabel,
-      shouldFocusWrap: true,
-    },
-    state,
-    menuRef
-  );
-
-  return (
-    <FocusScope>
-      <ul {...menuProps} ref={menuRef} className="ui:outline-none">
-        {[...state.collection].map(item => (
-          <MenuItem
-            key={item.key}
-            item={item}
-            state={state}
-            menuRef={menuRef}
-            rootState={rootState}
-          />
-        ))}
-      </ul>
-    </FocusScope>
-  );
-}
-
-export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
+  popoverClassName,
+  offset,
+}: MenuItemProps) {
+  const { state, menuRef, rootState } = useMenuContext();
+  const item = state.collection.getItem(id)!;
   const isSmallScreen = useIsSmallScreen();
-  const itemDefinition = item.value;
   const itemRef = useRef<HTMLLIElement>(null);
   const submenuRef = useRef<HTMLUListElement>(null);
   const submenuState = useSubmenuTriggerState(
@@ -129,24 +76,20 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
     rootState
   );
   const { submenuTriggerProps, submenuProps, popoverProps } =
-    useSubmenuTrigger<MenuItemDefinition>(
+    useSubmenuTrigger<MenuItemProps>(
       {
         parentMenuRef: menuRef,
         submenuRef,
-        isDisabled: itemDefinition?.isDisabled || !itemDefinition?.submenu,
+        isDisabled: isDisabledProp || !children,
       },
       submenuState,
       itemRef
     );
   const { menuItemProps, isDisabled, isFocused, isPressed, isSelected } =
     useMenuItem(
-      itemDefinition?.submenu
+      children
         ? { ...submenuTriggerProps, key: item.key }
-        : {
-            key: item.key,
-            onAction: itemDefinition?.onAction,
-            shouldCloseOnSelect: itemDefinition?.shouldCloseOnSelect,
-          },
+        : { key: item.key, onAction, shouldCloseOnSelect },
       state,
       itemRef
     );
@@ -155,7 +98,7 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
     isDisabled,
     isFocused,
     isHovered,
-    isOpen: !!itemDefinition?.submenu && submenuState.isOpen,
+    isOpen: !!children && submenuState.isOpen,
     isPressed,
     isSelected,
   };
@@ -172,19 +115,12 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
     return false;
   };
 
-  if (!itemDefinition) {
-    return null;
-  }
-
-  const submenu = itemDefinition.submenu;
-  const icon = itemDefinition.icon;
-
   return (
     <>
       <li
         {...mergeProps(menuItemProps, hoverProps)}
         ref={itemRef}
-        className={resolveItemClassName(itemDefinition, renderProps)}
+        className={resolveItemClassName(className, renderProps)}
       >
         {icon !== undefined &&
           icon !== null &&
@@ -200,8 +136,8 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
               {icon}
             </span>
           ))}
-        {resolveContent(itemDefinition.content, renderProps)}
-        {submenu && (
+        {resolveLabel(label, renderProps)}
+        {children && (
           <Icon
             name="chevron-right-line"
             size="md"
@@ -212,22 +148,22 @@ export function MenuItem({ item, state, menuRef, rootState }: MenuItemProps) {
         )}
       </li>
 
-      {submenu && submenuState.isOpen && (
+      {children && submenuState.isOpen && (
         <Popover
           {...popoverProps}
           state={submenuState}
           triggerRef={itemRef}
           trigger="SubmenuTrigger"
           placement={isSmallScreen ? 'bottom start' : 'end top'}
-          offset={submenu.offset ?? 4}
+          offset={offset ?? 4}
           shouldCloseOnInteractOutside={shouldCloseSubmenu}
-          className={cn(
-            'ui:my-0',
-            submenu.popoverClassName ?? defaultPopoverClassName
-          )}
+          className={cn('ui:my-0', popoverClassName ?? defaultPopoverClassName)}
         >
           <MenuList
-            {...submenu}
+            ariaLabel={item.textValue}
+            children={children}
+            selectionMode={selectionMode}
+            selectedKeys={selectedKeys}
             ariaProps={submenuProps}
             menuRef={submenuRef}
             rootState={rootState}
