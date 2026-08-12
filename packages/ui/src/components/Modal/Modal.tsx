@@ -135,19 +135,24 @@ const ModalOverlay = ({
   );
 };
 
+type ModalDialogProps = {
+  children: ReactNode;
+  role?: 'dialog' | 'alertdialog';
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
+};
+
 const ModalDialog = ({
   children,
   role = 'dialog',
-  ...props
-}: {
-  children: ReactNode;
-  role?: 'dialog' | 'alertdialog';
-}) => {
+  ...ariaProps
+}: ModalDialogProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { dialogProps } = useDialog(
     {
       role,
-      ...props,
+      ...ariaProps,
     },
     ref
   );
@@ -189,6 +194,10 @@ const BaseModal = (props: ModalProps) => {
     isDismissable = true,
     isKeyboardDismissDisabled = false,
 
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-describedby': ariaDescribedBy,
+
     ...restProps
   } = props;
 
@@ -206,7 +215,12 @@ const BaseModal = (props: ModalProps) => {
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
     >
-      <ModalDialog role={role}>
+      <ModalDialog
+        role={role}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+      >
         <ModalContext.Provider
           value={{ onClose: handleClose, showCloseButton }}
         >
