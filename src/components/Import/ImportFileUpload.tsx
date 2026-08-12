@@ -1,8 +1,7 @@
 import {FileUpload} from "@uva-fnwi/datanose-ui";
-import ExcelJS from "exceljs";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {extractCellText} from "~/utils/importUtils.ts";
+import {parseColumnsCsv, parseColumnsExcel} from "~/utils/importUtils.ts";
 
 type ImportFileUploadProps = {
     onFileSelect: (file: File, columns: string[]) => void;
@@ -13,18 +12,10 @@ export const ImportFileUpload = ({onFileSelect, onFileRemove}: ImportFileUploadP
     const {t} = useTranslate("screens", {keyPrefix: "import"});
 
     const parseColumns = async (file: File): Promise<string[]> => {
-        const buffer = await file.arrayBuffer();
-        const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.load(buffer);
-
-        const sheet = workbook.worksheets[0];
-        const firstRow = sheet.getRow(1);
-        const values = firstRow.values as unknown[];
-
-        return values
-            .slice(1)
-            .map(extractCellText)
-            .filter((cell): cell is string => cell !== null);
+        if (file.type === "text/csv") {
+            return await parseColumnsCsv(file);
+        }
+        return await parseColumnsExcel(file);
     };
 
     return (

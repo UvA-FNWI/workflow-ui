@@ -1,3 +1,39 @@
+import ExcelJS from "exceljs";
+
+/**
+ * Parses the first column of an Excel file, and returns the column names.
+ * @param file
+ */
+export const parseColumnsExcel = async (file: File): Promise<string[]> => {
+    const buffer = await file.arrayBuffer();
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(buffer);
+
+    const sheet = workbook.worksheets[0];
+    const firstRow = sheet.getRow(1);
+    const values = firstRow.values as unknown[];
+
+    return values
+        .slice(1)
+        .map(extractCellText)
+        .filter((cell): cell is string => cell !== null);
+};
+
+/**
+ * Parses the first column of a CSV file, and returns the column names.
+ * @param file
+ */
+export const parseColumnsCsv = async (file: File): Promise<string[]> => {
+    const text = await file.text();
+    const firstLine = text.split(/\r?\n/)[0];
+    // Detect delimiter (comma or semicolon)
+    const delimiter = firstLine.includes(";") ? ";" : ",";
+    return firstLine
+        .split(delimiter)
+        .map((col) => col.trim().replace(/^"|"$/g, ""))
+        .filter((col) => col.length > 0);
+};
+
 /**
  * Extracts the text from a cell.
  * @param cell
