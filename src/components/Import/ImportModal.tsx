@@ -124,7 +124,6 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     };
 
     const handleRemoveFile = () => {
-        console.log("Remove file");
         setFile(null);
         setActiveStep(1);
     };

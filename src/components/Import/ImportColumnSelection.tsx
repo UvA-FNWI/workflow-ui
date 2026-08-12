@@ -32,19 +32,18 @@ export const ImportColumnSelection = ({
 }: ImportColumnSelectionProps) => {
     const {t, l} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
-    const [selectedColumns, setSelectedColumns] = useState<Record<string, string>>(() =>
-        Object.fromEntries(fileColumns.map((col) => [col, ""])),
-    );
+    const [selectedColumns, setSelectedColumns] = useState<Record<string, string>>({});
 
     const handleColumnSelect = (col: string) => (key: Key | null) => {
+        let mapping: ColumnMapping[] = [];
         setSelectedColumns((prev) => {
             const updated = {...prev, [col]: key !== null ? String(key) : ""};
-            const mapping: ColumnMapping[] = Object.entries(updated)
+            mapping = Object.entries(updated)
                 .filter(([, val]) => val !== "")
                 .map(([propertyName, excelColumn]) => ({excelColumn, propertyName}));
-            onColumnMappingChange?.(mapping);
             return updated;
         });
+        onColumnMappingChange?.(mapping);
     };
 
     return (
@@ -108,7 +107,12 @@ const ImportColumnSelectionRow = ({
             <Checkbox
                 label={name}
                 isSelected={isSelected}
-                onChange={() => setIsSelected(!isSelected)}
+                onChange={() => {
+                    if (isSelected) {
+                        onSelect(null);
+                    }
+                    setIsSelected(!isSelected);
+                }}
             />
             {isSelected && (
                 <div className="ml-auto">
