@@ -1,5 +1,4 @@
-import {Icon} from "@uva-fnwi/datanose-ui";
-import type {MenuItemDefinition} from "@uva-fnwi/datanose-ui";
+import {Icon, MenuItem} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {setWorkflowVersion} from "~/hooks/useVersionedNavigate";
@@ -11,7 +10,7 @@ const DEFAULT_VERSION_KEY = "__default__";
 
 const shortSha = (sha: string) => sha.slice(0, 7);
 
-export function useVersionMenuItem(showVersionPicker: boolean): MenuItemDefinition | null {
+export function useVersionMenuItem(showVersionPicker: boolean) {
     const {i18n, t} = useTranslate("common");
     const {data: details = []} = useGetVersionDetailsQuery(undefined, {
         skip: !showVersionPicker,
@@ -41,32 +40,36 @@ export function useVersionMenuItem(showVersionPicker: boolean): MenuItemDefiniti
     const handleSelect = (key: string) =>
         setWorkflowVersion(key === DEFAULT_VERSION_KEY ? null : key);
 
-    return {
-        id: "version",
-        textValue: t("version"),
-        icon: "text-sparkle-line",
-        content: (
-            <span className="min-w-0 flex-1 truncate">
-                {t("version")}: {selectedVersion.label}
-            </span>
-        ),
-        submenu: {
-            ariaLabel: t("version"),
-            selectionMode: "single",
-            selectedKeys: [selectedVersionKey],
-            items: versionOptions.map((option) => ({
-                id: option.key,
-                textValue: option.label,
-                onAction: () => handleSelect(option.key),
-                content: ({isSelected}) => (
-                    <>
-                        <span className="min-w-0 flex-1 truncate">{option.label}</span>
-                        {isSelected && (
-                            <Icon name="checkmark-solid" size="sm" color="current" decorative />
-                        )}
-                    </>
-                ),
-            })),
-        },
-    };
+    return (
+        <MenuItem
+            key="version"
+            id="version"
+            textValue={t("version")}
+            icon="text-sparkle-line"
+            label={
+                <span className="min-w-0 flex-1 truncate">
+                    {t("version")}: {selectedVersion.label}
+                </span>
+            }
+            selectionMode="single"
+            selectedKeys={[selectedVersionKey]}
+        >
+            {versionOptions.map((option) => (
+                <MenuItem
+                    key={option.key}
+                    id={option.key}
+                    textValue={option.label}
+                    onAction={() => handleSelect(option.key)}
+                    label={({isSelected}) => (
+                        <>
+                            <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                            {isSelected && (
+                                <Icon name="checkmark-solid" size="sm" color="current" decorative />
+                            )}
+                        </>
+                    )}
+                />
+            ))}
+        </MenuItem>
+    );
 }

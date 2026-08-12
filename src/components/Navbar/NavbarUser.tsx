@@ -1,5 +1,4 @@
-import {Button, Icon, Menu} from "@uva-fnwi/datanose-ui";
-import type {MenuItemDefinition} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Menu, MenuItem} from "@uva-fnwi/datanose-ui";
 
 import {UserAvatar} from "~/components/instance/UserAvatar";
 import {useLanguageMenuItem} from "~/components/Navbar/LanguageMenu";
@@ -25,43 +24,10 @@ export function NavbarUser({
     const isImpersonating = !!onStopImpersonation;
     const languageMenuItem = useLanguageMenuItem();
     const versionMenuItem = useVersionMenuItem(showVersionPicker);
-    const items: MenuItemDefinition[] = [];
-
-    if (onStartImpersonation) {
-        items.push({
-            id: "impersonate",
-            onAction: onStartImpersonation,
-            icon: "touch-id-line",
-            content: t("impersonate"),
-        });
-    }
-
-    if (onStopImpersonation) {
-        items.push({
-            id: "stop-impersonation",
-            onAction: onStopImpersonation,
-            icon: "cross-small-line",
-            content: t("stop_impersonation"),
-        });
-    }
-
-    items.push(languageMenuItem);
-
-    if (versionMenuItem) {
-        items.push(versionMenuItem);
-    }
-
-    items.push({
-        id: "logout",
-        onAction: () => void onLogout(),
-        icon: "logout-line",
-        content: t("logout"),
-    });
 
     return (
         <Menu
             ariaLabel={t("user_menu")}
-            items={items}
             placement="bottom end"
             trigger={({isOpen, triggerProps, triggerRef}) => (
                 <Button
@@ -108,6 +74,31 @@ export function NavbarUser({
                     </div>
                 </Button>
             )}
-        />
+        >
+            {onStartImpersonation && (
+                <MenuItem
+                    id="impersonate"
+                    onAction={onStartImpersonation}
+                    icon="touch-id-line"
+                    label={t("impersonate")}
+                />
+            )}
+            {onStopImpersonation && (
+                <MenuItem
+                    id="stop-impersonation"
+                    onAction={onStopImpersonation}
+                    icon="cross-small-line"
+                    label={t("stop_impersonation")}
+                />
+            )}
+            {languageMenuItem}
+            {versionMenuItem}
+            <MenuItem
+                id="logout"
+                onAction={() => void onLogout()}
+                icon="logout-line"
+                label={t("logout")}
+            />
+        </Menu>
     );
 }
