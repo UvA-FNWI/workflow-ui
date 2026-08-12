@@ -15,9 +15,12 @@ const buildFormData = ({file, workflowDefinition, columnMapping}: ImportFileRequ
 };
 export const importApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getColumnNames: builder.query<ImportableProperty[], string>({
-            query: (workflowDefinition) => ({
-                url: `/Import/Columns/${workflowDefinition}`,
+        getColumnNames: builder.query<
+            ImportableProperty[],
+            {workflowDefinition: string; screenName: string}
+        >({
+            query: ({workflowDefinition, screenName}) => ({
+                url: `/Import/Columns/${workflowDefinition}/${screenName}`,
             }),
         }),
         preview: builder.mutation<ImportPreview, ImportFileRequest>({

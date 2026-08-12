@@ -50,9 +50,7 @@ export const ImportColumnSelection = ({
     return (
         <div>
             <div className="flex items-center bg-grey-200 px-4 py-2 dark:bg-grey-800 dark:text-white">
-                <Text size="sm" decoration="underline">
-                    {fileName}
-                </Text>
+                <Text size="sm">{fileName}</Text>
                 <Button
                     intent="ghost"
                     onClick={onRemoveFile}

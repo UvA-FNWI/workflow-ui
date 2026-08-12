@@ -34,10 +34,14 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const [confirm] = useConfirmMutation();
     const [preview] = usePreviewMutation();
 
-    const {workflowDefinition} = useParams();
-    const {data: importableColumns = []} = useGetColumnNamesQuery(workflowDefinition ?? "", {
-        skip: !workflowDefinition || activeStep !== 2,
-    });
+    const {workflowDefinition, screenName} = useParams();
+
+    const {data: importableColumns = []} = useGetColumnNamesQuery(
+        {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
+        {
+            skip: !workflowDefinition || activeStep !== 2,
+        },
+    );
     const resetState = () => {
         setActiveStep(1);
         setFileColumns([]);
