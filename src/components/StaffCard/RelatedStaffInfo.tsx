@@ -85,7 +85,7 @@ export function RelatedStaffInfo({
         <>
             {users.map((user, index) => (
                 <div key={index} className="flex flex-col pb-8">
-                    <UserAvatar userName={user.displayName} />
+                    <UserAvatar userName={user.displayName} picture={user.picture} />
                     {index === 0 && (
                         <div className="flex min-w-0 gap-1">
                             <Text fontWeight="semibold">{l(title)}</Text>

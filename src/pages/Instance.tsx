@@ -37,6 +37,7 @@ function Instance() {
     );
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
+    const studentPicture = getStringField(instance?.fields, "Student.Picture");
 
     return (
         <Container maxWidth={1280}>
@@ -62,6 +63,7 @@ function Instance() {
                         <StudentCard
                             studentEmail={studentEmail}
                             studentName={studentName}
+                            studentPicture={studentPicture}
                             isLoading={isLoading}
                         />
                     </div>
