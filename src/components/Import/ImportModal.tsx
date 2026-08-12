@@ -166,7 +166,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                                 <Text fontWeight="bold" size="sm">{`${t("shown_data")}:`}</Text>
                                 <Text size="sm">
                                     {t("result_indicator", {
-                                        count: previewData?.rows.length,
+                                        amount: previewData?.rows.length,
                                         total: previewData?.rows.length,
                                     })}
                                 </Text>

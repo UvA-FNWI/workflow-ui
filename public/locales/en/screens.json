@@ -15,7 +15,7 @@
     "description_verify": "Verify the linked data you want to import.",
     "error_importing": "Something went wrong while importing the data. Please try again.",
     "no_data": "No data found.",
-    "result_indicator": "{{count}} out of {{total}} results",
+    "result_indicator": "{{amount}} out of {{total}} results",
     "select_student_number": "Select the column with the student number from your Excel file:",
     "shown_data": "Shown data",
     "staff_info_callout": "You import an employee based on their email address.",
