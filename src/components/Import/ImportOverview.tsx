@@ -51,7 +51,7 @@ export const ImportOverview = ({data}: ImportOverviewProps) => {
     );
 
     if (!data?.rows?.length) {
-        return <Text>{t("noData")}</Text>;
+        return <Text>{t("no_data")}</Text>;
     }
 
     return <DataTable data={data.rows} columns={columns} />;

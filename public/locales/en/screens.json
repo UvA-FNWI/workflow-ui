@@ -14,6 +14,7 @@
     "description_select": "Indicate which file and data you want to import.",
     "description_verify": "Verify the linked data you want to import.",
     "error_importing": "Something went wrong while importing the data. Please try again.",
+    "no_data": "No data found.",
     "result_indicator": "{{count}} out of {{total}} results",
     "select_student_number": "Select the column with the student number from your Excel file:",
     "shown_data": "Shown data",
