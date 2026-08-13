@@ -24,13 +24,12 @@ export interface MenuItemRenderProps {
   isSelected: boolean;
 }
 
-export type MenuChild =
+export type MenuChildren =
   | React.ReactElement<MenuItemProps>
-  | false
+  | Iterable<MenuChildren>
+  | boolean
   | null
   | undefined;
-
-export type MenuChildren = MenuChild | MenuChild[];
 
 export interface MenuDefinition {
   ariaLabel: string;
