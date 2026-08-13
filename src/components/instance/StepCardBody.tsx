@@ -77,11 +77,7 @@ export const StepCardBody = ({
                                         {l(submission.form.title)?.toUpperCase()}
                                     </Heading>
                                 )}
-                                <FormSummary
-                                    instanceId={instance.id}
-                                    submission={submission}
-                                    permissions={instance.permissions}
-                                />
+                                <FormSummary instanceId={instance.id} submission={submission} />
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
