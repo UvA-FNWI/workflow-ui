@@ -1,13 +1,12 @@
 import {useState} from "react";
 
-import {Button, Checkbox, Disclosure, Icon, Input, Select, SelectItem} from "@uva-fnwi/datanose-ui";
+import {Button, Checkbox, Disclosure, Icon, Input, Radio, RadioGroup} from "@uva-fnwi/datanose-ui";
 
+import {BilingualPair} from "~/components/FormEditor/BilingualPair";
 import {
     addChoice,
-    changeQuestionKind,
     type ConfigDocs,
     type EditorQuestion,
-    QUESTION_KINDS,
     type QuestionKind,
     type QuestionPatch,
     removeChoice,
@@ -27,40 +26,6 @@ type Props = {
 const CHOICE_KINDS: QuestionKind[] = ["SingleChoice", "MultipleChoice"];
 const PERSON_KINDS: QuestionKind[] = ["Person", "People"];
 const CHOICE_LAYOUTS = ["RadioList", "Dropdown"] as const;
-
-/** Dutch and English side by side, because in this model every user-facing string is really two. */
-function BilingualPair({
-    label,
-    value,
-    isDisabled,
-    onChange,
-}: {
-    label: string;
-    value: {nl: string; en: string};
-    isDisabled: boolean;
-    onChange: (language: "nl" | "en", next: string) => void;
-}) {
-    const {t} = useTranslate("workflow");
-
-    return (
-        <fieldset className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <legend className="mb-1 text-sm font-medium text-grey-700">{label}</legend>
-            {(["nl", "en"] as const).map((language) => (
-                <Input
-                    key={language}
-                    label={
-                        language === "nl"
-                            ? t("form_editor.language.nl")
-                            : t("form_editor.language.en")
-                    }
-                    value={value[language]}
-                    isDisabled={isDisabled}
-                    onChange={(next) => onChange(language, next)}
-                />
-            ))}
-        </fieldset>
-    );
-}
 
 export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Props) {
     const {t} = useTranslate("workflow");
@@ -86,58 +51,20 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                 }
             />
 
-            <div className="flex flex-wrap items-end gap-4">
-                <Select
-                    label={t("form_editor.type")}
-                    className="min-w-44"
+            <div className="flex flex-wrap items-center gap-4">
+                <Checkbox
+                    label={t("form_editor.required")}
+                    isSelected={question.isRequired}
                     isDisabled={isDisabled}
-                    selectedKey={question.kind}
-                    onSelectionChange={(key) =>
-                        apply(() =>
-                            changeQuestionKind(docs, formPath, question.name, key as QuestionKind),
-                        )
-                    }
-                >
-                    {QUESTION_KINDS.map((kind) => (
-                        <SelectItem key={kind}>{t(`form_editor.kind.${kind}`)}</SelectItem>
-                    ))}
-                </Select>
-                {question.kind === "SingleChoice" && (
-                    <Select
-                        label={t("form_editor.choice_layout")}
-                        className="min-w-44"
-                        isDisabled={isDisabled}
-                        selectedKey={layout.type === "Dropdown" ? "Dropdown" : "RadioList"}
-                        onSelectionChange={(key) =>
-                            apply(() =>
-                                updateQuestion(docs, formPath, question.name, {
-                                    layoutType: String(key),
-                                }),
-                            )
-                        }
-                    >
-                        {CHOICE_LAYOUTS.map((type) => (
-                            <SelectItem key={type}>{t(`form_editor.layout.${type}`)}</SelectItem>
-                        ))}
-                    </Select>
-                )}
-                <div className="pb-2">
-                    <Checkbox
-                        label={t("form_editor.required")}
-                        isSelected={question.isRequired}
-                        isDisabled={isDisabled}
-                        onChange={(isSelected) => patch("isRequired", isSelected)}
-                    />
-                </div>
+                    onChange={(isSelected) => patch("isRequired", isSelected)}
+                />
                 {PERSON_KINDS.includes(question.kind as QuestionKind) && (
-                    <div className="pb-2">
-                        <Checkbox
-                            label={t("form_editor.allows_external_users")}
-                            isSelected={question.raw.allowsExternalUsers === true}
-                            isDisabled={isDisabled}
-                            onChange={(isSelected) => patch("allowsExternalUsers", isSelected)}
-                        />
-                    </div>
+                    <Checkbox
+                        label={t("form_editor.allows_external_users")}
+                        isSelected={question.raw.allowsExternalUsers === true}
+                        isDisabled={isDisabled}
+                        onChange={(isSelected) => patch("allowsExternalUsers", isSelected)}
+                    />
                 )}
             </div>
 
@@ -201,8 +128,28 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                 </fieldset>
             )}
 
+            {question.kind === "SingleChoice" && (
+                <RadioGroup
+                    label={t("form_editor.choice_layout")}
+                    description={t("form_editor.choice_layout_hint")}
+                    isDisabled={isDisabled}
+                    value={layout.type === "Dropdown" ? "Dropdown" : "RadioList"}
+                    onChange={(next) =>
+                        apply(() =>
+                            updateQuestion(docs, formPath, question.name, {layoutType: next}),
+                        )
+                    }
+                >
+                    {CHOICE_LAYOUTS.map((type) => (
+                        <Radio key={type} value={type}>
+                            {t(`form_editor.layout.${type}`)}
+                        </Radio>
+                    ))}
+                </RadioGroup>
+            )}
+
             <Disclosure padding="none" shadow="none" border="none">
-                <Disclosure.Header>{t("form_editor.advanced")}</Disclosure.Header>
+                <Disclosure.Header>{t("form_editor.more_options")}</Disclosure.Header>
                 <Disclosure.Content padding="none">
                     <div className="pt-2">
                         <Input

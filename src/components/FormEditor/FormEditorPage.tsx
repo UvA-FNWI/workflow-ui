@@ -15,7 +15,7 @@ import {
 } from "@uva-fnwi/datanose-ui";
 
 import {BackLink} from "~/components/BackLink";
-import {readPages, schemaNameForPath} from "~/components/FormEditor/model";
+import {addPage, deletePage, readPages, schemaNameForPath} from "~/components/FormEditor/model";
 import {NodeYamlEditor} from "~/components/FormEditor/NodeYamlEditor";
 import {PageSection} from "~/components/FormEditor/PageSection";
 import {useConfigFiles} from "~/components/FormEditor/useConfigFiles";
@@ -191,7 +191,7 @@ export function FormEditorPage() {
                         </div>
                         <ul className="flex flex-row gap-1 overflow-x-auto md:flex-col">
                             {pages.map((item, index) => (
-                                <li key={item.name}>
+                                <li key={item.name} className="flex items-center gap-1">
                                     <button
                                         type="button"
                                         aria-current={index === activePage}
@@ -204,9 +204,40 @@ export function FormEditorPage() {
                                     >
                                         {l(item.title) || item.name}
                                     </button>
+                                    <Button
+                                        intent="ghost"
+                                        size="square"
+                                        aria-label={t("form_editor.delete_page", {
+                                            title: l(item.title) || item.name,
+                                        })}
+                                        onClick={() => {
+                                            apply(() => deletePage(docs, formPath, item.name));
+                                            setActivePage((current) =>
+                                                Math.max(0, Math.min(current, pages.length - 2)),
+                                            );
+                                        }}
+                                    >
+                                        <Icon name="trash-line" size="sm" decorative />
+                                    </Button>
                                 </li>
                             ))}
                         </ul>
+                        <Button
+                            intent="secondary"
+                            size="small"
+                            className="mt-2 w-full"
+                            leftIcon={
+                                <Icon name="plus-line" size="sm" color="current" decorative />
+                            }
+                            onClick={() =>
+                                apply(
+                                    () =>
+                                        addPage(docs, formPath, t("form_editor.new_page")).touched,
+                                )
+                            }
+                        >
+                            {t("form_editor.add_page")}
+                        </Button>
                     </nav>
 
                     <div className="min-w-0">
@@ -216,7 +247,7 @@ export function FormEditorPage() {
                                 docs={docs}
                                 formPath={formPath}
                                 pageName={page.name}
-                                pageTitle={l(page.title) || page.name}
+                                pageTitle={page.title}
                                 apply={apply}
                             />
                         ) : (

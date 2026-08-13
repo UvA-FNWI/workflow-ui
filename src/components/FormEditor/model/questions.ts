@@ -94,6 +94,56 @@ export function readPages(
     });
 }
 
+/** Ensure the form has a pages sequence to append to, creating one when it has none yet. */
+function pagesCollection(doc: Document): YAMLSeq {
+    const existing = pagesSeq(doc);
+    if (existing) {
+        return existing;
+    }
+    const created = doc.createNode([]) as YAMLSeq;
+    doc.set("pages", created);
+    return created;
+}
+
+export function addPage(
+    docs: ConfigDocs,
+    formPath: string,
+    titleNl: string,
+): {name: string; touched: string[]} {
+    const doc = requireDoc(docs, formPath);
+    const taken = new Set(readPages(docs, formPath).map((page) => page.name));
+    const name = uniqueInternalName(titleNl, taken);
+    pagesCollection(doc).add(doc.createNode({name, title: {en: titleNl, nl: titleNl}, fields: []}));
+    return {name, touched: [formPath]};
+}
+
+/** Remove a page. Its fields are references, so the properties they point at stay defined. */
+export function deletePage(docs: ConfigDocs, formPath: string, pageName: string): string[] {
+    const pages = pagesSeq(requireDoc(docs, formPath));
+    const index =
+        pages?.items.findIndex((item) => isMap(item) && item.get("name") === pageName) ?? -1;
+    if (!pages || index === -1) {
+        return [];
+    }
+    pages.delete(index);
+    return [formPath];
+}
+
+export function updatePageTitle(
+    docs: ConfigDocs,
+    formPath: string,
+    pageName: string,
+    language: "en" | "nl",
+    value: string,
+): string[] {
+    const page = pageMap(requireDoc(docs, formPath), pageName);
+    if (!page) {
+        return [];
+    }
+    setLocalized(page, "title", language, value);
+    return [formPath];
+}
+
 /** Locate a property by name along the inheritance chain, nearest definition first. */
 export function findProperty(
     docs: ConfigDocs,
@@ -266,7 +316,6 @@ export function addQuestion(
     pageName: string,
     kind: QuestionKind,
     textNl: string,
-    index?: number,
 ): {name: string; touched: string[]} {
     const definitionFolder = definitionFolderOf(formPath);
     const name = uniqueInternalName(textNl, unavailableNames(docs, definitionFolder));
@@ -288,9 +337,6 @@ export function addQuestion(
     }
 
     fields.add(formDoc.createNode(name));
-    if (index !== undefined && index < fields.items.length - 1) {
-        fields.items.splice(index, 0, fields.items.pop());
-    }
 
     return {name, touched: [targetPath, formPath]};
 }

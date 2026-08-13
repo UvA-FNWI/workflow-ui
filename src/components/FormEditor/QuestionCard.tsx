@@ -12,6 +12,7 @@ import {
 
 import {
     applyYamlToNode,
+    changeQuestionKind,
     type ConfigDocs,
     countFieldUsages,
     deleteProperty,
@@ -26,6 +27,7 @@ import {
 import {definitionFolderOf} from "~/components/FormEditor/model";
 import {NodeYamlEditor} from "~/components/FormEditor/NodeYamlEditor";
 import {QuestionConfig} from "~/components/FormEditor/QuestionConfig";
+import {QuestionKindMenu} from "~/components/FormEditor/QuestionKindMenu";
 import {QuestionPreview} from "~/components/FormEditor/QuestionPreview";
 import {useTranslate} from "~/hooks/useTranslate";
 
@@ -69,6 +71,8 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
     const [isYamlMode, setIsYamlMode] = useState(false);
     const menu = usePopoverState();
     const menuTriggerRef = useRef<HTMLButtonElement>(null);
+    const kindMenu = usePopoverState();
+    const kindTriggerRef = useRef<HTMLButtonElement>(null);
 
     /**
      * Located once, not on every render. The yaml editor writes into this exact node, and a keystroke
@@ -86,6 +90,16 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
     const isYaml = isYamlMode || forcedReason !== null;
     const isInherited = question.isInherited;
     const usages = isMissing ? [] : countFieldUsages(docs, formPath, question.name);
+
+    /**
+     * Rewriting type, layout and values under a condition or validation is how one silently breaks,
+     * so the pill only changes the kind for questions the visual editor owns outright.
+     */
+    const canChangeKind = forcedReason === null && !isInherited;
+    const kindLabel =
+        question.kind === "Unknown"
+            ? parseTypeString(question.rawType).underlying || t("form_editor.kind.Missing")
+            : t(`form_editor.kind.${question.kind}`);
 
     const closeMenu = () => menu.close();
     const runAndClose = (action: () => string[]) => {
@@ -105,7 +119,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                     type="button"
                     onClick={() => setIsExpanded((previous) => !previous)}
                     aria-expanded={isExpanded}
-                    className="flex grow items-center gap-2 rounded-xs px-1 py-1 text-left focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
+                    className="flex min-w-0 items-center gap-2 rounded-xs px-1 py-1 text-left focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
                 >
                     <Icon
                         name={isExpanded ? "chevron-down-line" : "chevron-right-line"}
@@ -116,30 +130,53 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                         {l(question.text) || question.name}
                         {question.isRequired && <span aria-hidden="true"> *</span>}
                     </span>
-                    <Pill variant={isMissing ? "red" : "grey"}>
-                        {question.kind === "Unknown"
-                            ? parseTypeString(question.rawType).underlying ||
-                              t("form_editor.kind.Missing")
-                            : t(`form_editor.kind.${question.kind}`)}
-                    </Pill>
-                    {forcedReason !== null && !isMissing && (
-                        <span
-                            className="flex items-center gap-1 text-xs text-grey-600"
-                            title={t("form_editor.yaml_only_short")}
-                        >
-                            <Icon name="code-brackets-line" size="xs" decorative />
-                            {t("form_editor.yaml_only_short")}
-                        </span>
-                    )}
-                    {isInherited && (
-                        <span className="flex items-center gap-1 text-xs text-grey-600">
-                            <Icon name="lock-line" size="xs" decorative />
-                            {t("form_editor.inherited_short")}
-                        </span>
-                    )}
                 </button>
 
+                {canChangeKind ? (
+                    <button
+                        ref={kindTriggerRef}
+                        type="button"
+                        aria-label={t("form_editor.change_type", {type: kindLabel})}
+                        aria-expanded={kindMenu.isOpen}
+                        aria-haspopup="dialog"
+                        onClick={kindMenu.toggle}
+                        className="rounded-full focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
+                    >
+                        <Pill variant="grey" className="gap-1">
+                            <Icon name="square-edit-line" size="xs" color="current" decorative />
+                            {kindLabel}
+                        </Pill>
+                    </button>
+                ) : (
+                    <Pill variant={isMissing ? "red" : "grey"}>{kindLabel}</Pill>
+                )}
+                {kindMenu.isOpen && (
+                    <QuestionKindMenu
+                        label={t("form_editor.change_type", {type: kindLabel})}
+                        state={kindMenu}
+                        triggerRef={kindTriggerRef as React.RefObject<HTMLElement>}
+                        selectedKind={question.kind}
+                        onSelect={(kind) =>
+                            apply(() => changeQuestionKind(docs, formPath, question.name, kind))
+                        }
+                    />
+                )}
+
+                {forcedReason !== null && !isMissing && (
+                    <Pill variant="grey" className="gap-1">
+                        <Icon name="code-brackets-line" size="xs" color="current" decorative />
+                        {t("form_editor.yaml_only_short")}
+                    </Pill>
+                )}
+                {isInherited && (
+                    <Pill variant="grey" className="gap-1">
+                        <Icon name="lock-line" size="xs" color="current" decorative />
+                        {t("form_editor.inherited_short")}
+                    </Pill>
+                )}
+
                 <Button
+                    className="ml-auto"
                     ref={menuTriggerRef}
                     intent="ghost"
                     size="square"

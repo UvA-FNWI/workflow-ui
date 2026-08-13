@@ -15,54 +15,34 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
-import {
-    Button,
-    Heading,
-    Icon,
-    type IconType,
-    Popover,
-    usePopoverState,
-} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Icon, usePopoverState} from "@uva-fnwi/datanose-ui";
 
+import {BilingualPair} from "~/components/FormEditor/BilingualPair";
 import {
     addQuestion,
     applyYamlToNode,
     type ConfigDocs,
     type EditorQuestion,
+    type LocalText,
     nodeToYaml,
     pageMap,
-    QUESTION_KINDS,
     type QuestionKind,
     readQuestions,
     reorderFields,
     requireDoc,
+    updatePageTitle,
 } from "~/components/FormEditor/model";
 import {NodeYamlEditor} from "~/components/FormEditor/NodeYamlEditor";
 import {QuestionCard} from "~/components/FormEditor/QuestionCard";
+import {QuestionKindMenu} from "~/components/FormEditor/QuestionKindMenu";
 import {useTranslate} from "~/hooks/useTranslate";
 
 type Props = {
     docs: ConfigDocs;
     formPath: string;
     pageName: string;
-    pageTitle: string;
+    pageTitle: LocalText | null;
     apply: (action: () => string[]) => void;
-};
-
-const KIND_ICONS: Record<QuestionKind, IconType> = {
-    TextField: "text-line",
-    LongText: "text-block-line",
-    Email: "email-line",
-    Phone: "phone-line",
-    Number: "hashtag-line",
-    Decimal: "math-basic-line",
-    Date: "calendar-line",
-    YesNo: "autocheck-line",
-    SingleChoice: "circle-line",
-    MultipleChoice: "checkmark-line",
-    Person: "user-line",
-    People: "users-line",
-    Document: "article-line",
 };
 
 function SortableCard({
@@ -99,80 +79,22 @@ function SortableCard({
     );
 }
 
-/** A hairline that becomes an add button on hover or focus, so questions can land between others. */
-function InsertDivider({onAdd, isFirst}: {onAdd: (kind: QuestionKind) => void; isFirst?: boolean}) {
-    const {t} = useTranslate("workflow");
-    const popover = usePopoverState();
-    const triggerRef = useRef<HTMLButtonElement>(null);
-
-    return (
-        <div className="group relative flex h-6 items-center justify-center">
-            <div className="absolute inset-x-0 h-px bg-grey-200 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 dark:bg-grey-600" />
-            <Button
-                ref={triggerRef}
-                intent="secondary"
-                size="square"
-                shape="circular"
-                className="relative z-1 h-6 w-6 min-w-0 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
-                aria-label={isFirst ? t("form_editor.add_at_start") : t("form_editor.add_here")}
-                aria-expanded={popover.isOpen}
-                aria-haspopup="dialog"
-                onClick={popover.toggle}
-            >
-                <Icon name="plus-line" size="sm" color="current" decorative />
-            </Button>
-            {popover.isOpen && (
-                <Popover
-                    state={popover}
-                    triggerRef={triggerRef as React.RefObject<HTMLElement>}
-                    placement="bottom"
-                    className="border border-grey-400 bg-white shadow-md outline-none dark:bg-grey-800"
-                >
-                    <dialog
-                        open
-                        aria-label={t("form_editor.add_question")}
-                        className="relative m-0 flex w-56 flex-col p-1"
-                    >
-                        {QUESTION_KINDS.map((kind) => (
-                            <button
-                                key={kind}
-                                type="button"
-                                onClick={() => {
-                                    popover.close();
-                                    onAdd(kind);
-                                }}
-                                className="flex w-full items-center gap-2 rounded-xs px-2 py-1.5 text-left text-sm hover:bg-grey-100 focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none dark:hover:bg-grey-700"
-                            >
-                                <Icon
-                                    name={KIND_ICONS[kind]}
-                                    size="sm"
-                                    color="current"
-                                    decorative
-                                />
-                                {t(`form_editor.kind.${kind}`)}
-                            </button>
-                        ))}
-                    </dialog>
-                </Popover>
-            )}
-        </div>
-    );
-}
-
 export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props) {
-    const {t} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
     const [isYamlMode, setIsYamlMode] = useState(false);
+    const [isRenaming, setIsRenaming] = useState(false);
+    const addMenu = usePopoverState();
+    const addTriggerRef = useRef<HTMLButtonElement>(null);
     const questions = readQuestions(docs, formPath, pageName);
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates}),
     );
 
-    const onAdd = (kind: QuestionKind, index?: number) =>
+    const onAdd = (kind: QuestionKind) =>
         apply(
             () =>
-                addQuestion(docs, formPath, pageName, kind, t("form_editor.new_question"), index)
-                    .touched,
+                addQuestion(docs, formPath, pageName, kind, t("form_editor.new_question")).touched,
         );
 
     const onDragEnd = ({active, over}: DragEndEvent) => {
@@ -191,9 +113,20 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
     return (
         <section>
             <div className="mb-3 flex items-center justify-between gap-3">
-                <Heading as="h2" size="sm">
-                    {pageTitle}
-                </Heading>
+                <div className="flex min-w-0 items-center gap-1">
+                    <Heading as="h2" size="sm">
+                        {l(pageTitle) || pageName}
+                    </Heading>
+                    <Button
+                        intent="ghost"
+                        size="square"
+                        aria-label={t("form_editor.rename_page")}
+                        aria-expanded={isRenaming}
+                        onClick={() => setIsRenaming((previous) => !previous)}
+                    >
+                        <Icon name="square-edit-line" size="sm" decorative />
+                    </Button>
+                </div>
                 <Button
                     intent="ghost"
                     size="small"
@@ -210,6 +143,18 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                     {isYamlMode ? t("form_editor.edit_visually") : t("form_editor.edit_page_yaml")}
                 </Button>
             </div>
+
+            {isRenaming && (
+                <div className="mb-4">
+                    <BilingualPair
+                        label={t("form_editor.page_title")}
+                        value={pageTitle ?? {nl: "", en: ""}}
+                        onChange={(language, next) =>
+                            apply(() => updatePageTitle(docs, formPath, pageName, language, next))
+                        }
+                    />
+                </div>
+            )}
 
             {isYamlMode ? (
                 <NodeYamlEditor
@@ -233,25 +178,49 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                         items={questions.map((question) => question.name)}
                         strategy={verticalListSortingStrategy}
                     >
-                        <InsertDivider isFirst onAdd={(kind) => onAdd(kind, 0)} />
-                        {questions.map((question, index) => (
-                            <div key={question.name}>
+                        <div className="flex flex-col gap-2">
+                            {questions.map((question) => (
                                 <SortableCard
+                                    key={question.name}
                                     docs={docs}
                                     formPath={formPath}
                                     pageName={pageName}
                                     question={question}
                                     apply={apply}
                                 />
-                                <InsertDivider onAdd={(kind) => onAdd(kind, index + 1)} />
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </SortableContext>
                 </DndContext>
             )}
 
             {!isYamlMode && questions.length === 0 && (
                 <p className="py-2 text-sm text-grey-600">{t("form_editor.no_questions")}</p>
+            )}
+
+            {!isYamlMode && (
+                <>
+                    <Button
+                        ref={addTriggerRef}
+                        intent="secondary"
+                        size="small"
+                        className="mt-3 w-full"
+                        leftIcon={<Icon name="plus-line" size="sm" color="current" decorative />}
+                        aria-expanded={addMenu.isOpen}
+                        aria-haspopup="dialog"
+                        onClick={addMenu.toggle}
+                    >
+                        {t("form_editor.add_question")}
+                    </Button>
+                    {addMenu.isOpen && (
+                        <QuestionKindMenu
+                            label={t("form_editor.add_question")}
+                            state={addMenu}
+                            triggerRef={addTriggerRef as React.RefObject<HTMLElement>}
+                            onSelect={onAdd}
+                        />
+                    )}
+                </>
             )}
         </section>
     );
