@@ -23,6 +23,7 @@ const commonArgTypes = {
 const meta: Meta<typeof Input> = {
   title: 'Components/Input',
   component: Input,
+  tags: ['autodocs'],
   argTypes: commonArgTypes,
 };
 

@@ -26,7 +26,7 @@ export const usersApi = baseApi.injectEndpoints({
         }),
         verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({
             query: (body) => ({
-                url: "/Users/verify-email",
+                url: "/Users/VerifyEmail",
                 method: "POST",
                 body,
             }),
@@ -40,7 +40,7 @@ export const usersApi = baseApi.injectEndpoints({
         }),
         updateUserEmail: builder.mutation<UserSearchResult, UpdateUserEmailRequest>({
             query: ({userId, email, instanceId}) => ({
-                url: `/Users/${userId}/email`,
+                url: `/Users/${userId}/Email`,
                 method: "PUT",
                 body: {email, instanceId},
             }),

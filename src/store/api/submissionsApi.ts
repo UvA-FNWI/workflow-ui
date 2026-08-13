@@ -48,7 +48,7 @@ export const submissionsApi = baseApi.injectEndpoints({
         }),
         generateDummySubmissionData: builder.mutation<Submission, SubmissionParams>({
             query: ({instanceId, submissionId}) => ({
-                url: `/Submissions/${instanceId}/${submissionId}/dummyData`,
+                url: `/Submissions/${instanceId}/${submissionId}/DummyData`,
                 method: "post",
             }),
             invalidatesTags: (_result, _error, {instanceId, submissionId}) => [

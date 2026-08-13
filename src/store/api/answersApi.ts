@@ -57,7 +57,7 @@ export const answersApi = baseApi.injectEndpoints({
                 const formData = new FormData();
                 formData.append("file", params.file);
                 return {
-                    url: `Answers/${params.instanceId}/${params.submissionId}/${params.questionName}/artifacts`,
+                    url: `Answers/${params.instanceId}/${params.submissionId}/${params.questionName}/Artifacts`,
                     method: "post",
                     body: formData,
                 };
