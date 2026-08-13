@@ -1,4 +1,4 @@
-import { ReactNode, useContext, useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 
 import {
   mergeProps,
@@ -9,6 +9,7 @@ import {
 import { useSubmenuTriggerState } from 'react-stately';
 
 import { useIsSmallScreen } from '../../hooks/useIsSmallScreen';
+import { useMenuContext } from '../../hooks/useMenuContext';
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 import type { IconType } from '../Icon/IconTypes';
@@ -20,7 +21,7 @@ import type {
   MenuItemRenderProps,
   MenuKey,
 } from './Menu';
-import { MenuContext, MenuList } from './MenuList';
+import { MenuList } from './MenuList';
 import {
   defaultPopoverClassName,
   resolveItemClassName,
@@ -42,14 +43,6 @@ export interface MenuItemProps {
   selectedKeys?: MenuDefinition['selectedKeys'];
   popoverClassName?: string;
   offset?: number;
-}
-
-function useMenuContext() {
-  const context = useContext(MenuContext);
-  if (!context) {
-    throw new Error('MenuItem must be rendered inside a Menu.');
-  }
-  return context;
 }
 
 export function MenuItem({
@@ -137,6 +130,15 @@ export function MenuItem({
             </span>
           ))}
         {resolveLabel(label, renderProps)}
+        {isSelected && (
+          <Icon
+            name="checkmark-solid"
+            size="sm"
+            color="current"
+            decorative
+            className="ui:ml-auto ui:shrink-0"
+          />
+        )}
         {children && (
           <Icon
             name="chevron-right-line"

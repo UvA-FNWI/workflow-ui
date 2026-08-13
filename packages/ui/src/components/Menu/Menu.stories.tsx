@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
-import { Icon } from '../Icon';
-import { Menu, MenuItemRenderProps } from './Menu';
+import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 
 const meta: Meta<typeof Menu> = {
@@ -17,18 +16,6 @@ const meta: Meta<typeof Menu> = {
 export default meta;
 
 type Story = StoryObj<typeof Menu>;
-
-const languageContent = (label: string) =>
-  function LanguageContent({ isSelected }: MenuItemRenderProps) {
-    return (
-      <>
-        <span className="ui:min-w-0 ui:flex-1 ui:truncate">{label}</span>
-        {isSelected && (
-          <Icon name="checkmark-solid" size="sm" color="current" decorative />
-        )}
-      </>
-    );
-  };
 
 const flagIcon = (flag: string) => (
   <span
@@ -121,14 +108,14 @@ export const WithCustomIcons: Story = {
         id="en"
         textValue="English"
         icon={flagIcon('🇬🇧')}
-        label={languageContent('English')}
+        label="English"
       />,
       <MenuItem
         key="nl"
         id="nl"
         textValue="Dutch"
         icon={flagIcon('🇳🇱')}
-        label={languageContent('Dutch')}
+        label="Dutch"
       />,
     ],
   },
@@ -170,14 +157,14 @@ export const WithSubmenus: Story = {
           id="en"
           textValue="English"
           icon={flagIcon('🇬🇧')}
-          label={languageContent('English')}
+          label="English"
         />
         <MenuItem
           key="nl"
           id="nl"
           textValue="Dutch"
           icon={flagIcon('🇳🇱')}
-          label={languageContent('Dutch')}
+          label="Dutch"
         />
       </MenuItem>,
       <MenuItem

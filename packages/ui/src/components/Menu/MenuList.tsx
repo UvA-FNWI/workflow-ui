@@ -1,24 +1,12 @@
-import { createContext, ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 
 import { AriaMenuOptions, FocusScope, useMenu } from 'react-aria';
-import {
-  Item,
-  RootMenuTriggerState,
-  TreeState,
-  useTreeState,
-} from 'react-stately';
+import { Item, RootMenuTriggerState, useTreeState } from 'react-stately';
 
+import { MenuProvider } from '../../hooks/useMenuContext';
 import type { MenuDefinition } from './Menu';
 import type { MenuItemProps } from './MenuItem';
 import { resolveTextValue } from './menuUtils';
-
-interface MenuContextValue {
-  state: TreeState<MenuItemProps>;
-  menuRef: React.RefObject<HTMLUListElement | null>;
-  rootState: RootMenuTriggerState;
-}
-
-export const MenuContext = createContext<MenuContextValue | null>(null);
 
 interface MenuListProps extends MenuDefinition {
   rootState: RootMenuTriggerState;
@@ -68,11 +56,11 @@ export function MenuList({
 
   return (
     <FocusScope>
-      <MenuContext.Provider value={{ state, menuRef, rootState }}>
+      <MenuProvider state={state} menuRef={menuRef} rootState={rootState}>
         <ul {...menuProps} ref={menuRef} className="ui:outline-none">
           {menuItems}
         </ul>
-      </MenuContext.Provider>
+      </MenuProvider>
     </FocusScope>
   );
 }

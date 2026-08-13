@@ -1,4 +1,4 @@
-import {Icon, MenuItem} from "@uva-fnwi/datanose-ui";
+import {MenuItem} from "@uva-fnwi/datanose-ui";
 
 import enFlag from "~/assets/EN.svg";
 import nlFlag from "~/assets/NL.svg";
@@ -52,16 +52,7 @@ export function useLanguageMenuItem() {
                             className="h-6 w-6 shrink-0"
                         />
                     }
-                    label={({isSelected}) => (
-                        <>
-                            <span className="min-w-0 flex-1 truncate">
-                                {t(`language_${option}`)}
-                            </span>
-                            {isSelected && (
-                                <Icon name="checkmark-solid" size="sm" color="current" decorative />
-                            )}
-                        </>
-                    )}
+                    label={t(`language_${option}`)}
                 />
             ))}
         </MenuItem>

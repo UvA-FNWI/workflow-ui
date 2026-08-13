@@ -1,4 +1,4 @@
-import {Icon, MenuItem} from "@uva-fnwi/datanose-ui";
+import {MenuItem} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {setWorkflowVersion} from "~/hooks/useVersionedNavigate";
@@ -60,14 +60,7 @@ export function useVersionMenuItem(showVersionPicker: boolean) {
                     id={option.key}
                     textValue={option.label}
                     onAction={() => handleSelect(option.key)}
-                    label={({isSelected}) => (
-                        <>
-                            <span className="min-w-0 flex-1 truncate">{option.label}</span>
-                            {isSelected && (
-                                <Icon name="checkmark-solid" size="sm" color="current" decorative />
-                            )}
-                        </>
-                    )}
+                    label={option.label}
                 />
             ))}
         </MenuItem>

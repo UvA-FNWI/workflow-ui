@@ -76,6 +76,37 @@ describe('Menu', () => {
     );
   });
 
+  it('renders selected state as part of MenuItem', () => {
+    render(
+      <Menu
+        ariaLabel="Languages"
+        selectionMode="single"
+        selectedKeys={['en']}
+        trigger={({ triggerProps, triggerRef }) => (
+          <Button {...triggerProps} ref={triggerRef} intent="ghost">
+            Languages
+          </Button>
+        )}
+      >
+        <MenuItem id="en" label="English" />
+        <MenuItem id="nl" label="Dutch" />
+      </Menu>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Languages' }));
+
+    expect(
+      screen
+        .getByRole('menuitemradio', { name: 'English' })
+        .querySelector('[data-icon="checkmark-solid"]')
+    ).toBeInTheDocument();
+    expect(
+      screen
+        .getByRole('menuitemradio', { name: 'Dutch' })
+        .querySelector('[data-icon="checkmark-solid"]')
+    ).not.toBeInTheDocument();
+  });
+
   it('adds a larger right chevron only to items that open a submenu', () => {
     render(
       <Menu
