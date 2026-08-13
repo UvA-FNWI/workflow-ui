@@ -1,8 +1,15 @@
-import {cleanup, fireEvent, render, screen} from "@testing-library/react";
+import type {ReactElement} from "react";
+
+import {BrowserRouter} from "react-router";
+
+import {cleanup, fireEvent, render as renderComponent, screen} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {NavbarUser} from "../NavbarUser";
 import nlFlag from "~/assets/NL.svg";
+
+const render = (component: ReactElement) =>
+    renderComponent(<BrowserRouter>{component}</BrowserRouter>);
 
 const {changeLanguage, getVersionDetails, setWorkflowVersion} = vi.hoisted(() => ({
     changeLanguage: vi.fn(),

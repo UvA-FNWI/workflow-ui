@@ -1,3 +1,5 @@
+import {useSearchParams} from "react-router";
+
 import {MenuItem} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
@@ -12,10 +14,11 @@ const shortSha = (sha: string) => sha.slice(0, 7);
 
 export function useVersionMenuItem(showVersionPicker: boolean) {
     const {i18n, t} = useTranslate("common");
+    const [searchParams] = useSearchParams();
     const {data: details = []} = useGetVersionDetailsQuery(undefined, {
         skip: !showVersionPicker,
     });
-    const currentVersion = new URLSearchParams(window.location.search).get("version") ?? "";
+    const currentVersion = searchParams.get("version") ?? "";
     const baseline = details.find((detail) => detail.name === "");
     const selectableVersions = details.filter((detail) => detail.name !== "");
     const versionOptions = [
