@@ -28,13 +28,10 @@ vi.mock('../Icon', () => ({
 }));
 
 describe('Menu', () => {
-  it('infers textValue from a string label and requires it for a rich label', () => {
+  it('infers textValue from the label', () => {
     expect(resolveTextValue({ id: 'profile', label: 'Profile' })).toBe(
       'Profile'
     );
-    expect(() =>
-      resolveTextValue({ id: 'profile', label: <strong>Profile</strong> })
-    ).toThrow('must provide textValue');
   });
 
   it('renders named icons and custom React nodes as leading icons', () => {

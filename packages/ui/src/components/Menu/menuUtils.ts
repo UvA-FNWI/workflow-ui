@@ -5,20 +5,8 @@ import type { MenuItemProps } from './MenuItem';
 export const defaultPopoverClassName =
   'ui:min-w-64 ui:max-w-[calc(100vw-2rem)] ui:rounded-xs ui:border ui:border-grey-300 ui:bg-white ui:p-2 ui:text-grey-900 ui:shadow-lg ui:outline-none ui:dark:border-grey-700 ui:dark:bg-grey-900 ui:dark:text-grey-100';
 
-export function resolveLabel(
-  label: MenuItemProps['label'],
-  renderProps: MenuItemRenderProps
-) {
-  return typeof label === 'function' ? label(renderProps) : label;
-}
-
 export function resolveTextValue(item: MenuItemProps) {
-  if (item.textValue !== undefined) return item.textValue;
-  if (typeof item.label === 'string') return item.label;
-
-  throw new Error(
-    `Menu item "${String(item.id)}" must provide textValue when label is not a string.`
-  );
+  return item.textValue ?? item.label;
 }
 
 export function resolveItemClassName(

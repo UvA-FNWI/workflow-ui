@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react';
+import { useRef } from 'react';
 
 import {
   mergeProps,
@@ -22,18 +22,14 @@ import type {
   MenuKey,
 } from './Menu';
 import { MenuList } from './MenuList';
-import {
-  defaultPopoverClassName,
-  resolveItemClassName,
-  resolveLabel,
-} from './menuUtils';
+import { defaultPopoverClassName, resolveItemClassName } from './menuUtils';
 
 export interface MenuItemProps {
   id: MenuKey;
-  /** Plain text used for keyboard navigation. Inferred when label is a string. */
+  /** Plain text used for keyboard navigation. Defaults to label. */
   textValue?: string;
   icon?: MenuItemIcon;
-  label: ReactNode | ((renderProps: MenuItemRenderProps) => ReactNode);
+  label: string;
   children?: MenuChildren;
   onAction?: () => void;
   isDisabled?: boolean;
@@ -129,7 +125,7 @@ export function MenuItem({
               {icon}
             </span>
           ))}
-        {resolveLabel(label, renderProps)}
+        <span className="ui:min-w-0 ui:flex-1 ui:truncate">{label}</span>
         {isSelected && (
           <Icon
             name="checkmark-solid"

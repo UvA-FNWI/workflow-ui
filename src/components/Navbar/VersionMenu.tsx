@@ -46,11 +46,7 @@ export function useVersionMenuItem(showVersionPicker: boolean) {
             id="version"
             textValue={t("version")}
             icon="text-sparkle-line"
-            label={
-                <span className="min-w-0 flex-1 truncate">
-                    {t("version")}: {selectedVersion.label}
-                </span>
-            }
+            label={`${t("version")}: ${selectedVersion.label}`}
             selectionMode="single"
             selectedKeys={[selectedVersionKey]}
         >

@@ -30,11 +30,7 @@ export function useLanguageMenuItem() {
                     className="h-6 w-6 shrink-0"
                 />
             }
-            label={
-                <span className="min-w-0 flex-1 truncate">
-                    {t("language")}: {t(`language_${language}`)}
-                </span>
-            }
+            label={`${t("language")}: ${t(`language_${language}`)}`}
             selectionMode="single"
             selectedKeys={[language]}
         >
