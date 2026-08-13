@@ -7,9 +7,15 @@ interface StudentCardProps {
     isLoading: boolean;
     studentName?: string;
     studentEmail?: string;
+    studentPicture?: string;
 }
 
-export function StudentCard({isLoading, studentName, studentEmail}: StudentCardProps) {
+export function StudentCard({
+    isLoading,
+    studentName,
+    studentEmail,
+    studentPicture,
+}: StudentCardProps) {
     const {t} = useTranslate("workflow");
 
     return (
@@ -27,7 +33,7 @@ export function StudentCard({isLoading, studentName, studentEmail}: StudentCardP
                     <div className="mb-2 flex flex-col items-center">
                         {studentName && (
                             <>
-                                <UserAvatar userName={studentName} />
+                                <UserAvatar userName={studentName} picture={studentPicture} />
                                 <Heading as="h3" size="sm">
                                     {studentName}
                                 </Heading>

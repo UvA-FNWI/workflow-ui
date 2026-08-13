@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {cn} from "@uva-fnwi/datanose-ui";
 
 const getInitials = (name: string): string => {
@@ -8,12 +10,16 @@ const getInitials = (name: string): string => {
         .map((word) => word.charAt(0).toUpperCase() + ".")
         .join(" ");
 };
+
 interface UserAvatarProps {
     userName: string;
+    picture?: string;
     size?: "small" | "large";
     className?: string;
 }
-export function UserAvatar({userName, size = "large", className}: UserAvatarProps) {
+
+export function UserAvatar({userName, picture, size = "large", className}: UserAvatarProps) {
+    const [imageLoaded, setImageLoaded] = useState(false);
     return (
         <div
             aria-hidden="true"
@@ -23,9 +29,19 @@ export function UserAvatar({userName, size = "large", className}: UserAvatarProp
                 className,
             )}
         >
-            <span className="w-full p-0 text-center leading-none whitespace-normal">
-                {getInitials(userName)}
-            </span>
+            {picture && (
+                <img
+                    src={picture}
+                    alt={userName}
+                    className={`h-full w-full object-cover ${!imageLoaded && "hidden"}`}
+                    onLoad={() => setImageLoaded(true)}
+                />
+            )}
+            {(!picture || !imageLoaded) && (
+                <span className="w-full p-0 text-center leading-none whitespace-normal">
+                    {getInitials(userName)}
+                </span>
+            )}
         </div>
     );
 }
