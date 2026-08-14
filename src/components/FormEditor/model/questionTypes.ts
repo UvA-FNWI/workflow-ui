@@ -2,11 +2,9 @@ import type {LocalText, QuestionKind} from "~/components/FormEditor/model/types"
 
 export const QUESTION_KINDS: readonly QuestionKind[] = [
     "TextField",
-    "LongText",
     "Email",
     "Phone",
     "Number",
-    "Decimal",
     "Date",
     "YesNo",
     "SingleChoice",
@@ -68,10 +66,10 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
             return "Document";
         case "Date":
             return "Date";
+        // Int and Double are one kind here; the decimal checkbox is what picks between them.
         case "Int":
-            return "Number";
         case "Double":
-            return "Decimal";
+            return "Number";
         case "Boolean":
             return "YesNo";
         case "User":
@@ -83,7 +81,8 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
             if (raw.layout?.variant === "Phone") {
                 return "Phone";
             }
-            return raw.layout?.multiline === true ? "LongText" : "TextField";
+            // Multiline is a checkbox on a text question rather than a kind of its own.
+            return "TextField";
         default:
             return "Unknown";
     }
@@ -100,16 +99,12 @@ export function newPropertyValue(
             return {name, type: "File", text};
         case "TextField":
             return {name, type: "String", text};
-        case "LongText":
-            return {name, type: "String", text, layout: {multiline: true}};
         case "Email":
             return {name, type: "String", text, layout: {variant: "Email"}};
         case "Phone":
             return {name, type: "String", text, layout: {variant: "Phone"}};
         case "Number":
             return {name, type: "Int", text};
-        case "Decimal":
-            return {name, type: "Double", text};
         case "YesNo":
             return {name, type: "Boolean", text};
         case "Person":

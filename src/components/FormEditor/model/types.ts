@@ -9,11 +9,9 @@ export type ConfigDocs = Map<string, Document>;
  */
 export type QuestionKind =
     | "TextField"
-    | "LongText"
     | "Email"
     | "Phone"
     | "Number"
-    | "Decimal"
     | "Date"
     | "YesNo"
     | "SingleChoice"

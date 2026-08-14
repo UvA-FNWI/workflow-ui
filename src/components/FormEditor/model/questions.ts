@@ -295,6 +295,10 @@ export type QuestionPatch = {
     descriptionEn?: string;
     isRequired?: boolean;
     layoutType?: string;
+    /** Long text and short text are one kind, told apart by layout.multiline. */
+    isMultiline?: boolean;
+    /** Whole numbers and decimals are one kind, told apart by Int against Double. */
+    isDecimal?: boolean;
     allowsExternalUsers?: boolean;
     name?: string;
 };
@@ -569,6 +573,28 @@ function setLocalized(node: YAMLMap, key: string, language: "en" | "nl", value: 
     });
 }
 
+/**
+ * Write one layout key, or drop it when the value is undefined. An emptied layout goes with it: a
+ * bare `layout: {}` left behind is noise in a file people also read by hand.
+ */
+function setLayoutKey(node: YAMLMap, doc: Document, key: string, value: unknown): void {
+    const layout = node.get("layout");
+    if (value === undefined) {
+        if (isMap(layout)) {
+            layout.delete(key);
+            if (layout.items.length === 0) {
+                node.delete("layout");
+            }
+        }
+        return;
+    }
+    if (isMap(layout)) {
+        layout.set(key, value);
+    } else {
+        node.set("layout", doc.createNode({[key]: value}));
+    }
+}
+
 function valuesSeq(node: YAMLMap, doc: Document): YAMLSeq {
     const existing = node.get("values");
     if (isSeq(existing)) {
@@ -689,17 +715,24 @@ export function updateQuestion(
         touched.add(found.path);
     }
     if (patch.layoutType !== undefined) {
-        const layout = found.node.get("layout");
-        if (isMap(layout)) {
-            layout.set("type", patch.layoutType);
-        } else {
-            found.node.set(
-                "layout",
-                requireDoc(docs, found.path).createNode({
-                    type: patch.layoutType,
-                }),
-            );
-        }
+        setLayoutKey(found.node, requireDoc(docs, found.path), "type", patch.layoutType);
+        touched.add(found.path);
+    }
+    if (patch.isMultiline !== undefined) {
+        setLayoutKey(
+            found.node,
+            requireDoc(docs, found.path),
+            "multiline",
+            patch.isMultiline ? true : undefined,
+        );
+        touched.add(found.path);
+    }
+    if (patch.isDecimal !== undefined) {
+        const {isRequired, isArray} = parseTypeString(String(found.node.get("type") ?? "Int"));
+        found.node.set(
+            "type",
+            buildTypeString(patch.isDecimal ? "Double" : "Int", {isRequired, isArray}),
+        );
         touched.add(found.path);
     }
     if (patch.allowsExternalUsers !== undefined) {

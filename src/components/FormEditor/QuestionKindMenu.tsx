@@ -5,11 +5,9 @@ import {useTranslate} from "~/hooks/useTranslate";
 
 const KIND_ICONS: Record<QuestionKind, IconType> = {
     TextField: "text-line",
-    LongText: "text-block-line",
     Email: "email-line",
     Phone: "phone-line",
     Number: "hashtag-line",
-    Decimal: "math-basic-line",
     Date: "calendar-line",
     YesNo: "autocheck-line",
     SingleChoice: "circle-line",

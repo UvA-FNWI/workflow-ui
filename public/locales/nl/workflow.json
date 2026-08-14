@@ -64,6 +64,7 @@
     "choice_layout_hint": "Wij adviseren om bij meer dan 5 opties een dropdown te gebruiken. Zo blijft de pagina overzichtelijk.",
     "choice_text": "Keuzetekst",
     "choices": "Keuzes",
+    "decimal": "Decimaal getal",
     "delete_everywhere_one": "Vraag verwijderen (op 1 pagina gebruikt)",
     "delete_everywhere_other": "Vraag verwijderen (op {{count}} pagina's gebruikt)",
     "delete_page": "Tabblad {{title}} verwijderen",
@@ -82,18 +83,16 @@
     "internal_name_warning": "Hernoemen maakt bestaande antwoorden onbruikbaar.",
     "kind": {
       "Date": "Datum",
-      "Decimal": "Decimaal getal",
       "Document": "Document",
       "Email": "E-mailadres",
-      "LongText": "Tekst",
       "Missing": "Ontbreekt",
       "MultipleChoice": "Meerkeuze",
       "Number": "Getal",
-      "People": "Personen",
+      "People": "Meerdere personen",
       "Person": "Persoon",
       "Phone": "Telefoonnummer",
       "SingleChoice": "1 keuze",
-      "TextField": "Invulveld",
+      "TextField": "Tekstveld",
       "YesNo": "Ja / nee"
     },
     "language": {
@@ -105,6 +104,7 @@
       "RadioList": "Radioknoppen"
     },
     "load_failed": "De workflowconfiguratie kon niet worden geladen.",
+    "long_text": "Lange tekst",
     "missing_hint": "Er bestaat geen property met de naam {{name}}. Verwijder deze vraag, of vraag een ontwikkelaar de property toe te voegen.",
     "more_options": "Toon meer opties",
     "mutation_failed": "Deze wijziging kon niet worden toegepast.",

@@ -7,6 +7,7 @@ import {
     addChoice,
     type ConfigDocs,
     type EditorQuestion,
+    parseTypeString,
     type QuestionKind,
     type QuestionPatch,
     removeChoice,
@@ -32,7 +33,8 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
     const [nameDraft, setNameDraft] = useState<string | null>(null);
     const patch = (key: keyof QuestionPatch, value: string | boolean) =>
         apply(() => updateQuestion(docs, formPath, question.name, {[key]: value} as QuestionPatch));
-    const layout = (question.raw.layout ?? {}) as {type?: string};
+    const layout = (question.raw.layout ?? {}) as {type?: string; multiline?: boolean};
+    const isDecimal = parseTypeString(question.rawType).underlying === "Double";
 
     return (
         <div className="flex flex-col gap-4">
@@ -58,6 +60,22 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                     isDisabled={isDisabled}
                     onChange={(isSelected) => patch("isRequired", isSelected)}
                 />
+                {question.kind === "TextField" && (
+                    <Checkbox
+                        label={t("form_editor.long_text")}
+                        isSelected={layout.multiline === true}
+                        isDisabled={isDisabled}
+                        onChange={(isSelected) => patch("isMultiline", isSelected)}
+                    />
+                )}
+                {question.kind === "Number" && (
+                    <Checkbox
+                        label={t("form_editor.decimal")}
+                        isSelected={isDecimal}
+                        isDisabled={isDisabled}
+                        onChange={(isSelected) => patch("isDecimal", isSelected)}
+                    />
+                )}
                 {PERSON_KINDS.includes(question.kind as QuestionKind) && (
                     <Checkbox
                         label={t("form_editor.allows_external_users")}
