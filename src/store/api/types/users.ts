@@ -5,6 +5,7 @@ export interface UserSearchResult {
     userName: string;
     displayName: string;
     email: string;
+    picture?: string;
     organization?: Organization | null;
     isExternal: boolean;
     isPending: boolean;
