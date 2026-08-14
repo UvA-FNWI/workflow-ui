@@ -49,6 +49,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
+                {type: "InstanceActions", id: params.instanceId},
             ],
         }),
         saveFile: build.mutation<{success: boolean}, SaveFileParams>({

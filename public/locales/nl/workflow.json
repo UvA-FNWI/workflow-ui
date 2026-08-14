@@ -1,12 +1,16 @@
 {
   "add": "Toevoegen",
   "admin": {
+    "current_step_title": "Huidige stap",
     "fill_dummy_data_button": "Vul met dummy data",
     "impersonate_role_button": "Voordoen",
     "impersonate_role_placeholder": "Selecteer een rol",
     "impersonate_role_title": "Voordoen als rol",
+    "no_actions": "Geen acties beschikbaar",
+    "no_current_step": "Geen actieve stap",
     "stop_impersonating_button": "Stoppen met voordoen",
-    "title": "Admin"
+    "title": "Admin",
+    "who_can_act_title": "Wie kan nu handelen"
   },
   "admin_data": {
     "back_to_instance": "Terug naar workflow",
