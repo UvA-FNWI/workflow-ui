@@ -1,11 +1,10 @@
 import {Heading} from "@uva-fnwi/datanose-ui";
-import {union} from "lodash-es";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOverview.tsx";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {RoleAction, Submission} from "~/store/api/types/submissions.ts";
+import type {Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -14,14 +13,14 @@ type Props = {
     onEditPage?: (pageName: string) => void;
     onSubmit?: () => void;
     collapseAnswers?: boolean;
-    permissions?: RoleAction[];
 };
 
-export const FormSummary = ({instanceId, submission, onEditPage, onSubmit, permissions}: Props) => {
+export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
     const {l} = useTranslate("workflow");
 
-    const effectivePermissions = union(permissions, submission.permissions);
-    const canEdit = effectivePermissions.includes("Edit") && submission.dateSubmitted != null;
+    // Only form-scoped Edit counts: the instance-level permission is form-less (property editing only)
+    // and the backend rejects answer edits based on it. See Action.MatchesForm.
+    const canEdit = submission.permissions.includes("Edit") && submission.dateSubmitted != null;
 
     const pages = submission.form.pages.filter((p) => p.isInCurrentForm);
 
