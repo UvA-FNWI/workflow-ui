@@ -39,6 +39,16 @@ const rawBaseQuery = fetchBaseQuery({
 export const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOptions) => {
     const result = await rawBaseQuery(args, api, extraOptions);
 
+    // The backend loads an unknown ?version= on demand. When it can't, nothing in the app is viewable.
+    // The redirect drops ?version=, so the error page sends no Workflow-Version header and can't loop.
+    if (
+        result.error?.status === 404 &&
+        (result.error.data as {error?: string} | undefined)?.error === "UnknownWorkflowVersion"
+    ) {
+        const version = new URLSearchParams(window.location.search).get("version") ?? "";
+        window.location.replace(`/version-not-found?ref=${encodeURIComponent(version)}`);
+    }
+
     if (
         result.error &&
         typeof result.error.status == "number" &&
