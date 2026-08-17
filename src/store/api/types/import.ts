@@ -3,6 +3,7 @@ import type {LocalString} from "~/hooks/useTranslate.ts";
 export type ImportFileRequest = {
     file: File;
     workflowDefinition: string;
+    screenName: string;
     columnMapping: ColumnMapping[];
 };
 
@@ -36,6 +37,7 @@ export type ImportPreviewError = {
 
 export type ImportConfirmRequest = {
     workflowDefinition: string;
+    screenName: string;
     rows: ImportConfirmRow[];
 };
 

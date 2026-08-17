@@ -19,7 +19,7 @@ type ImportModalProps = {
     isOpen: boolean;
     onClose: () => void;
 };
-export const StudentNumberKey = "UserName";
+export const IdentifierKey = "Student.UserName";
 export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
@@ -57,7 +57,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         prevIsOpen.current = isOpen;
     }, [isOpen]);
 
-    if (!workflowDefinition) return;
+    if (!workflowDefinition || !screenName) return;
 
     const totalSteps = 3;
 
@@ -68,7 +68,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
             case 2:
                 return (
                     columnMapping.length > 1 &&
-                    columnMapping.find((column) => column.propertyName == StudentNumberKey) !=
+                    columnMapping.find((column) => column.propertyName == IdentifierKey) !=
                         undefined &&
                     !!file
                 );
@@ -99,7 +99,12 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
 
         if (activeStep === 2) {
             setIsLoading(true);
-            const response = await preview({file: file!, workflowDefinition, columnMapping});
+            const response = await preview({
+                file: file!,
+                workflowDefinition,
+                screenName,
+                columnMapping,
+            });
             if (response.data) {
                 setPreviewData(response.data);
                 setIsLoading(false);
@@ -114,6 +119,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
             if (!previewData) return;
             await confirm({
                 workflowDefinition,
+                screenName,
                 rows: getConfirmRows(previewData!),
             });
             onClose();

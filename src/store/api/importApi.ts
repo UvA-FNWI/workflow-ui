@@ -6,10 +6,9 @@ import type {
     ImportPreview,
 } from "~/store/api/types/import.ts";
 
-const buildFormData = ({file, workflowDefinition, columnMapping}: ImportFileRequest): FormData => {
+const buildFormData = ({file, columnMapping}: ImportFileRequest): FormData => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("workflowDefinition", workflowDefinition);
     formData.append("columnMapping", JSON.stringify(columnMapping));
     return formData;
 };
@@ -20,21 +19,21 @@ export const importApi = baseApi.injectEndpoints({
             {workflowDefinition: string; screenName: string}
         >({
             query: ({workflowDefinition, screenName}) => ({
-                url: `/Import/Columns/${workflowDefinition}/${screenName}`,
+                url: `/Import/${workflowDefinition}/${screenName}/Columns`,
             }),
         }),
         preview: builder.mutation<ImportPreview, ImportFileRequest>({
-            query: (args) => ({
-                url: `/Import/Preview`,
+            query: (importFileRequest) => ({
+                url: `/Import/${importFileRequest.workflowDefinition}/${importFileRequest.screenName}/Preview`,
                 method: "POST",
-                body: buildFormData(args),
+                body: buildFormData(importFileRequest),
             }),
         }),
         confirm: builder.mutation<void, ImportConfirmRequest>({
-            query: ({workflowDefinition, rows}) => ({
-                url: `/Import/Confirm`,
+            query: ({rows, workflowDefinition, screenName}) => ({
+                url: `/Import/${workflowDefinition}/${screenName}/Confirm`,
                 method: "POST",
-                body: {workflowDefinition, rows},
+                body: {rows},
             }),
             invalidatesTags: ["Screen", "Instance"],
         }),
