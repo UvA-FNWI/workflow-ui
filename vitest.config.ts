@@ -3,13 +3,9 @@ import {defineConfig} from "vitest/config";
 
 export default defineConfig({
     resolve: {
-        alias: [
-            {
-                find: /^@uva-fnwi\/datanose-ui$/,
-                replacement: path.resolve(__dirname, "packages/ui/src/index.ts"),
-            },
-            {find: "~", replacement: path.resolve(__dirname, "src")},
-        ],
+        alias: {
+            "~": path.resolve(__dirname, "src"),
+        },
     },
     test: {
         environment: "jsdom",
