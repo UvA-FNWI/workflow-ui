@@ -1,13 +1,15 @@
 import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
+    ActiveStep,
+    InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
     Role,
     RoleImpersonationResult,
     WorkflowInstance,
 } from "./types/instances";
-import type {DeletePropertyParams, UpdatePropertyParams} from "~/store/api/types/params.ts";
+import type {AssignRelatedUserParams, RemoveRelatedUserParams} from "~/store/api/types/params.ts";
 
 export const instancesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -17,10 +19,28 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getInstances: builder.query<InstanceSummary[], string>({
             query: (workflowDefinition: string) => ({
-                url: `/WorkflowInstances/instances/${workflowDefinition}`,
+                url: `/WorkflowInstances/Instances/${workflowDefinition}`,
                 params: {includeTitle: true},
             }),
             providesTags: ["Instance"],
+        }),
+        getInstanceProperties: builder.query<InstanceProperties, string>({
+            query: (id: string) => `/WorkflowInstances/${id}/Properties`,
+            providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
+        }),
+        saveInstanceProperty: builder.mutation<
+            void,
+            {instanceId: string; path: string; value: unknown}
+        >({
+            query: ({instanceId, path, value}) => ({
+                url: `/WorkflowInstances/${instanceId}/Properties/${path}`,
+                method: "POST",
+                body: {value},
+            }),
+            // Property changes can affect steps and the title.
+            invalidatesTags: (_result, _error, {instanceId}) => [
+                {type: "Instance", id: instanceId},
+            ],
         }),
         createInstance: builder.mutation<WorkflowInstance, {workflowDefinition: string}>({
             query: (body) => ({
@@ -32,20 +52,28 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         recalculateCurrentSteps: builder.mutation<RecalculateCurrentStepsResult, string>({
             query: (workflowDefinition) => ({
-                url: `/WorkflowInstances/instances/${workflowDefinition}/recalculate-current-step`,
+                url: `/WorkflowInstances/Instances/${workflowDefinition}/RecalculateCurrentStep`,
                 method: "POST",
             }),
             invalidatesTags: ["Instance"],
         }),
         getImpersonationRoles: builder.query<Role[], string>({
-            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/roles`,
+            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Impersonation/Roles`,
+        }),
+        getImpersonationActions: builder.query<ActiveStep[], string>({
+            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/actions`,
+            // Mutations that patch the Instance cache directly invalidate InstanceActions instead.
+            providesTags: (_result, _error, instanceId: string) => [
+                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+            ],
         }),
         impersonateRole: builder.mutation<
             RoleImpersonationResult,
             {instanceId: string; roleName: string}
         >({
             query: ({instanceId, roleName}) => ({
-                url: `/WorkflowInstances/${instanceId}/impersonation`,
+                url: `/WorkflowInstances/${instanceId}/Impersonation`,
                 method: "POST",
                 body: {role: roleName},
             }),
@@ -59,21 +87,19 @@ export const instancesApi = baseApi.injectEndpoints({
                 }
             },
         }),
-        updateProperty: builder.mutation<WorkflowInstance, UpdatePropertyParams>({
-            query: ({instanceId, property, value, externalUser}: UpdatePropertyParams) => ({
-                url: `/WorkflowInstances/${instanceId}/properties/${property}`,
+        assignRelatedUser: builder.mutation<void, AssignRelatedUserParams>({
+            query: ({instanceId, property, user, externalUser}: AssignRelatedUserParams) => ({
+                url: `/WorkflowInstances/${instanceId}/RelatedUsers/${property}`,
                 method: "POST",
-                body: {value, externalUser},
+                body: {user, externalUser},
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
             ],
         }),
-        deleteProperty: builder.mutation<WorkflowInstance, DeletePropertyParams>({
-            query: ({instanceId, property, itemId}: DeletePropertyParams) => ({
-                url: itemId
-                    ? `/WorkflowInstances/${instanceId}/properties/${property}/${itemId}`
-                    : `/WorkflowInstances/${instanceId}/properties/${property}`,
+        removeRelatedUser: builder.mutation<void, RemoveRelatedUserParams>({
+            query: ({instanceId, property, userId}: RemoveRelatedUserParams) => ({
+                url: `/WorkflowInstances/${instanceId}/RelatedUsers/${property}/${userId}`,
                 method: "DELETE",
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [

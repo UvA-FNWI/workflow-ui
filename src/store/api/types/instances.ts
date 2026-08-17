@@ -1,11 +1,13 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
     FormLayout,
+    Question,
     RoleAction,
     StepResultsType,
     Submission,
 } from "~/store/api/types/submissions.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
+import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions.ts";
 
 export type WorkflowInstanceField = {
     key: string | null;
@@ -15,7 +17,9 @@ export type WorkflowInstanceField = {
 
 export type WorkflowInstance = {
     id: string;
-    title: LocalString | null;
+    /** Rendered title, not a localized template. */
+    title: string | null;
+    workflowDefinition: WorkflowDefinition;
     currentStep: string | null;
     fields: WorkflowInstanceField[];
     steps: WorkflowStep[];
@@ -39,6 +43,12 @@ export type InstanceSummary = {
     createdOn: string;
     title?: string | null;
 } & Record<string, unknown>;
+
+/** Property definitions plus values keyed by dotted path. */
+export type InstanceProperties = {
+    properties: Question[];
+    values: Record<string, unknown>;
+};
 
 export type RecalculateCurrentStepsResult = {
     total: number;
@@ -98,6 +108,24 @@ export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 export type Role = {
     name: string;
     title: LocalString;
+};
+
+export type AllowedAction = {
+    type: RoleAction;
+    label: LocalString | null;
+    /** Action, form, or property identifier used when no label is configured. */
+    target: string | null;
+};
+
+export type ActiveStepRole = Role & {
+    actions: AllowedAction[];
+};
+
+export type ActiveStep = {
+    name: string;
+    title: LocalString;
+    isCurrent: boolean;
+    roles: ActiveStepRole[];
 };
 
 export type RoleImpersonationResult = {

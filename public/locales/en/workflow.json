@@ -1,12 +1,26 @@
 {
   "add": "Add",
   "admin": {
+    "current_step_title": "Current step",
     "fill_dummy_data_button": "Fill with dummy data",
     "impersonate_role_button": "Impersonate",
     "impersonate_role_placeholder": "Select a role",
     "impersonate_role_title": "Impersonate role",
+    "no_actions": "No actions available",
+    "no_current_step": "No active step",
     "stop_impersonating_button": "Stop impersonating",
-    "title": "Admin"
+    "title": "Admin",
+    "who_can_act_title": "Who can act now"
+  },
+  "admin_data": {
+    "back_to_instance": "Back to instance",
+    "back_to_overview": "Back to overview",
+    "description": "All properties of this instance. Changes take effect immediately and are recorded in the change log.",
+    "edit_data": "Edit data",
+    "edit_property": "Edit {{property}}",
+    "load_error": "Could not load the properties of this instance",
+    "no_properties": "This instance type has no properties",
+    "title": "Data"
   },
   "are_you_sure": "Are you sure?",
   "cancel": "Cancel",

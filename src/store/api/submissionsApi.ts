@@ -22,6 +22,7 @@ export const submissionsApi = baseApi.injectEndpoints({
             invalidatesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Assessments", instanceId},
                 {type: "Assessments", instanceId, submissionId},
+                {type: "InstanceActions", id: instanceId},
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
                 const {data} = await queryFulfilled;
@@ -47,11 +48,12 @@ export const submissionsApi = baseApi.injectEndpoints({
         }),
         generateDummySubmissionData: builder.mutation<Submission, SubmissionParams>({
             query: ({instanceId, submissionId}) => ({
-                url: `/Submissions/${instanceId}/${submissionId}/dummyData`,
+                url: `/Submissions/${instanceId}/${submissionId}/DummyData`,
                 method: "post",
             }),
             invalidatesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Assessments", instanceId, submissionId},
+                {type: "InstanceActions", id: instanceId},
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
                 const {data} = await queryFulfilled;

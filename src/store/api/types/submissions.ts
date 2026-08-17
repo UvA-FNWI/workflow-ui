@@ -81,6 +81,8 @@ export type Question = {
     maxLength?: number;
     sorting?: Sorting;
     linkedTo?: string;
+    /** Properties of an embedded object. */
+    subProperties?: Question[] | null;
 };
 
 export type SortDirection = "Ascending" | "Descending";
@@ -123,7 +125,14 @@ export type Choice = {
 
 export type PageLayout = "Normal" | "Condensed";
 export type StepResultsType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
-export type RoleAction = "ViewAdminTools" | "View" | "Edit" | "Submit";
+export type RoleAction =
+    | "ViewAdminTools"
+    | "View"
+    | "Edit"
+    | "Submit"
+    | "Execute"
+    | "CreateRelatedInstance"
+    | "Undo";
 export type DataType =
     | "File"
     | "Date"

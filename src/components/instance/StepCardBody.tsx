@@ -7,6 +7,7 @@ import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
     getSubmissionsToShow,
+    hasVersionHistory,
     type ModalState,
     resolveFormState,
 } from "~/components/instance/resolveContentState.ts";
@@ -43,11 +44,9 @@ export const StepCardBody = ({
     const {t, l} = useTranslate("workflow");
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
-    const submissionsToShow = getSubmissionsToShow(submissions, step);
+    const submissionsToShow = getSubmissionsToShow(submissions);
     const formState = resolveFormState(resolvedAction);
-    const showVersionCards =
-        (step.versions?.length ?? 0) > 1 &&
-        (step.versions?.flatMap((v) => v.submissions ?? []).length ?? 0) > 1;
+    const showVersionCards = hasVersionHistory(step);
 
     const shouldShowFormTitle = (submissionIndex: number) => submissionIndex > 0;
 
@@ -78,11 +77,7 @@ export const StepCardBody = ({
                                         {l(submission.form.title)?.toUpperCase()}
                                     </Heading>
                                 )}
-                                <FormSummary
-                                    instanceId={instance.id}
-                                    submission={submission}
-                                    permissions={instance.permissions}
-                                />
+                                <FormSummary instanceId={instance.id} submission={submission} />
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (

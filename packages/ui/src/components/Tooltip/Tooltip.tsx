@@ -19,6 +19,8 @@ export interface TooltipProps extends TooltipTriggerProps {
   children: ReactNode;
   /** Additional class name for the tooltip popup */
   className?: string;
+  /** Additional class name for the tooltip trigger */
+  triggerClassName?: string;
 }
 
 function TooltipPopup({
@@ -70,6 +72,7 @@ export function Tooltip({
   children,
   content,
   className,
+  triggerClassName,
   delay = 300,
   ...props
 }: TooltipProps) {
@@ -84,7 +87,7 @@ export function Tooltip({
 
   return (
     <span
-      className="ui:relative ui:inline-flex"
+      className={cn('ui:relative ui:inline-flex', triggerClassName)}
       ref={triggerRef}
       {...triggerProps}
     >

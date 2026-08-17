@@ -1,4 +1,4 @@
-import {useParams} from "react-router";
+import {Navigate, useParams} from "react-router";
 
 import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
@@ -27,11 +27,17 @@ function Instance() {
     if (!isLoading && !instance) {
         return <div>Error loading instance</div>;
     }
+
+    const isPropertyOnly = instance && instance.workflowDefinition.isPropertyOnly;
+    if (isPropertyOnly && instance.canUseAdminTools) {
+        return <Navigate to={`/instance/${id}/admin`} replace />;
+    }
     const canEdit = instance?.permissions.some((permission) =>
         ["Edit", "ViewAdminTools"].includes(permission),
     );
     const studentEmail = getStringField(instance?.fields, "Student.Email");
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
+    const studentPicture = getStringField(instance?.fields, "Student.Picture");
 
     return (
         <Container maxWidth={1280}>
@@ -57,6 +63,7 @@ function Instance() {
                         <StudentCard
                             studentEmail={studentEmail}
                             studentName={studentName}
+                            studentPicture={studentPicture}
                             isLoading={isLoading}
                         />
                     </div>

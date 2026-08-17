@@ -1,13 +1,12 @@
 import {useEffect, useState} from "react";
 
-import {isEmbeddedInCanvas} from "@uva-fnwi/datanose-core";
-import {useAuth} from "@uva-fnwi/datanose-core";
-import {Button, Heading, Select, SelectItem, useToast} from "@uva-fnwi/datanose-ui";
+import {isEmbeddedInCanvas, useAuth} from "@uva-fnwi/datanose-core";
+import {Button, Heading, useToast} from "@uva-fnwi/datanose-ui";
 
-import {VITE_ENV, VITE_WEBAPI_URL} from "../helpers/Environment";
+import {NavbarUser} from "~/components/Navbar/NavbarUser";
 import {UserPickerModal} from "~/components/UserPicker/UserPickerModal";
 import {VersionedLink} from "~/components/VersionedLink";
-import {VersionPicker} from "~/components/VersionPicker";
+import {VITE_ENV, VITE_WEBAPI_URL} from "~/helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users";
 import {useStartImpersonationMutation} from "~/store/api/usersApi";
@@ -20,12 +19,10 @@ import {
 import {triggerApiError} from "~/store/errorSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
-type Language = "en" | "nl";
-
-// Temporary navbar for quick language switching and admin tooling during development.
-function TemporaryNavbar() {
+function Navbar() {
     const {i18n, t} = useTranslate("common");
     const {isAuthenticated, surfLogout} = useAuth();
+    const swaggerUrl = `${VITE_WEBAPI_URL.replace(/\/$/, "")}/swagger`;
     const dispatch = useAppDispatch();
     const toast = useToast();
     const user = useAppSelector(selectCurrentUser);
@@ -94,65 +91,41 @@ function TemporaryNavbar() {
     return (
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
-                <Heading size="sm">Milestones (pilot)</Heading>
+                <VersionedLink to="/" className="no-underline">
+                    <Heading size="sm">Milestones (pilot)</Heading>
+                </VersionedLink>
                 {VITE_ENV !== "production" && (
                     <p className="text-xs text-grey-700 dark:text-grey-300">
-                        {VITE_ENV} | {VITE_WEBAPI_URL}
+                        {VITE_ENV} |{" "}
+                        <a href={swaggerUrl} target="_blank" rel="noreferrer" className="underline">
+                            {VITE_WEBAPI_URL}
+                        </a>
                     </p>
                 )}
             </div>
-            <div className="flex min-w-0 flex-wrap items-center gap-4">
-                {userImpersonation && (
-                    <div className="flex items-center gap-3 rounded-md bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
-                        <span>
-                            {t("impersonating_as", {name: userImpersonation.targetDisplayName})}
-                        </span>
-                        <Button intent="secondary" onClick={handleStopImpersonation} type="button">
-                            {t("stop_impersonation")}
-                        </Button>
-                    </div>
-                )}
-                {isSuperAdmin && !isImpersonating && (
-                    <Button intent="secondary" onClick={() => setIsPickerOpen(true)} type="button">
-                        {t("impersonate")}
-                    </Button>
-                )}
+            <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
                 {isAuthenticated && (
                     <VersionedLink to="/personal" className="text-sm font-medium underline">
                         {t("personal_page")}
                     </VersionedLink>
                 )}
                 {isSuperAdmin && (
-                    <>
-                        <VersionedLink to="/develop" className="text-sm font-medium underline">
-                            {t("develop")}
-                        </VersionedLink>
-                        <VersionPicker />
-                    </>
+                    <VersionedLink to="/develop">
+                        <Button intent="primary">{t("develop")}</Button>
+                    </VersionedLink>
                 )}
-                <label className="flex items-center gap-2 text-sm font-medium text-grey-700 dark:text-grey-200">
-                    {t("language")}
-                    <div className="w-32">
-                        <Select
-                            aria-label={t("language")}
-                            selectedKey={i18n.language}
-                            onChange={(key) => i18n.changeLanguage(String(key) as Language)}
-                        >
-                            <SelectItem key="en">{t("language_en")}</SelectItem>
-                            <SelectItem key="nl">{t("language_nl")}</SelectItem>
-                        </Select>
-                    </div>
-                </label>
-                {isAuthenticated && (
-                    <Button
-                        intent="primary"
-                        variant="destructive"
-                        onClick={() => void surfLogout()}
-                        type="button"
-                        className="max-w-full min-w-0"
-                    >
-                        {t("logout")} ({userImpersonation?.adminDisplayName ?? user?.displayName})
-                    </Button>
+                {isAuthenticated && user && (
+                    <NavbarUser
+                        displayName={userImpersonation?.targetDisplayName ?? user.displayName}
+                        showVersionPicker={isSuperAdmin}
+                        onStartImpersonation={
+                            isSuperAdmin && !isImpersonating
+                                ? () => setIsPickerOpen(true)
+                                : undefined
+                        }
+                        onStopImpersonation={isImpersonating ? handleStopImpersonation : undefined}
+                        onLogout={surfLogout}
+                    />
                 )}
             </div>
             {isSuperAdmin && !isImpersonating && (
@@ -168,4 +141,4 @@ function TemporaryNavbar() {
     );
 }
 
-export default TemporaryNavbar;
+export default Navbar;
