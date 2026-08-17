@@ -158,7 +158,7 @@ export function RelatedStaffInfo({
                                 </Link>
                             </Tooltip>
                         </div>
-                        {canEdit && user.isExternal && user.requiresInvitation && (
+                        {canEdit && user.isExternal && user.isEmailEditable && (
                             <Button
                                 intent="ghost"
                                 size="small"

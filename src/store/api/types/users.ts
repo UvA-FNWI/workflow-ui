@@ -9,7 +9,7 @@ export interface UserSearchResult {
     organization?: Organization | null;
     isExternal: boolean;
     isPending: boolean;
-    requiresInvitation?: boolean;
+    isEmailEditable?: boolean;
     sourceKey?: string | null;
 }
 
