@@ -16,6 +16,16 @@ export {
   type PopoverState,
 } from './components/Popover/Popover';
 export {
+  Menu,
+  type MenuDefinition,
+  type MenuItemIcon,
+  type MenuItemRenderProps,
+  type MenuKey,
+  type MenuProps,
+  type MenuTriggerRenderProps,
+} from './components/Menu/Menu';
+export { MenuItem, type MenuItemProps } from './components/Menu/MenuItem';
+export {
   RadioGroup,
   Radio,
   type RadioGroupProps,
