@@ -1,6 +1,7 @@
 import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
+    ActiveStep,
     InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
@@ -58,6 +59,14 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Impersonation/Roles`,
+        }),
+        getImpersonationActions: builder.query<ActiveStep[], string>({
+            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/actions`,
+            // Mutations that patch the Instance cache directly invalidate InstanceActions instead.
+            providesTags: (_result, _error, instanceId: string) => [
+                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+            ],
         }),
         impersonateRole: builder.mutation<
             RoleImpersonationResult,
