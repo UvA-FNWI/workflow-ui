@@ -9,7 +9,7 @@ export interface UserSearchResult {
     organization?: Organization | null;
     isExternal: boolean;
     isPending: boolean;
-    requiresInvitation?: boolean;
+    isEmailEditable?: boolean;
     sourceKey?: string | null;
 }
 
@@ -42,12 +42,12 @@ export interface VerifyEmailResponse {
 }
 
 export interface UpdateUserEmailRequest {
-    userId: string;
-    email: string;
+    externalUser: CreateExternalUserInput;
     instanceId: string;
 }
 
 export interface CreateExternalUserInput {
+    userId?: string;
     displayName: string;
     email: string;
     organization?: Organization | null;

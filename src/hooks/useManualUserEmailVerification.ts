@@ -94,6 +94,11 @@ export function useManualUserEmailVerification(customMessages?: EmailErrorMessag
         [verifiedEmail],
     );
 
+    const markEmailAsVerified = useCallback((email: string) => {
+        setEmailError(null);
+        setVerifiedEmail(email);
+    }, []);
+
     return {
         emailError,
         isVerifyingEmail,
@@ -102,5 +107,6 @@ export function useManualUserEmailVerification(customMessages?: EmailErrorMessag
         setEmailValidationError,
         validateEmail,
         wasEmailVerified,
+        markEmailAsVerified,
     };
 }
