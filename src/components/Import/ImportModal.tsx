@@ -24,6 +24,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
     const prevIsOpen = useRef(false);
+    const errorHandled = useRef(false);
     const [activeStep, setActiveStep] = useState(1);
     const [fileColumns, setFileColumns] = useState<string[]>([]);
     const [columnMapping, setColumnMapping] = useState<ColumnMapping[]>([]);
@@ -36,7 +37,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
 
     const {workflowDefinition, screenName} = useParams();
 
-    const {data: importableColumns = []} = useGetColumnNamesQuery(
+    const {data: importableColumns = [], error: importableColumnsError} = useGetColumnNamesQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {
             skip: !workflowDefinition || activeStep !== 2,
@@ -56,6 +57,17 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         }
         prevIsOpen.current = isOpen;
     }, [isOpen]);
+
+    useEffect(() => {
+        if (importableColumnsError && !errorHandled.current) {
+            errorHandled.current = true;
+            onClose();
+            toast.error(t("error_importing"));
+        }
+        if (!importableColumnsError) {
+            errorHandled.current = false;
+        }
+    }, [importableColumnsError, onClose, t, toast]);
 
     if (!workflowDefinition || !screenName) return;
 
@@ -116,7 +128,12 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         }
 
         if (activeStep === totalSteps) {
-            if (!previewData) return;
+            if (!previewData) {
+                toast.error(t("error_importing"));
+                resetState();
+                onClose();
+                return;
+            }
             await confirm({
                 workflowDefinition,
                 screenName,
@@ -127,11 +144,6 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         }
 
         setActiveStep((prev) => prev + 1);
-    };
-
-    const handleRemoveFile = () => {
-        setFile(null);
-        setActiveStep(1);
     };
 
     return (
@@ -162,7 +174,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                             fileName={file?.name ?? ""}
                             fileColumns={fileColumns}
                             importableColumns={importableColumns}
-                            onRemoveFile={handleRemoveFile}
+                            onRemoveFile={resetState}
                             onColumnMappingChange={setColumnMapping}
                         />
                     )}

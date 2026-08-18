@@ -17,6 +17,7 @@ import {
 
 import {ScreenTable} from "~/components/ScreenTable";
 import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
+import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useGetScreenQuery} from "~/store/api/screensApi";
 
@@ -30,11 +31,11 @@ export const ScreenView = () => {
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState(0);
 
+    useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
+
     if (!screen) {
         return null;
     }
-
-    const canEdit = true;
 
     return (
         <Container maxWidth={1280}>
@@ -64,7 +65,7 @@ export const ScreenView = () => {
                             <ScreenTableToolbar
                                 search={search}
                                 setSearch={setSearch}
-                                canEdit={screen.isBulkEditEnabled && canEdit}
+                                canEdit={screen.isBulkEditEnabled}
                             />
                         </TabToolbar>
                         <TabPanels>
@@ -84,7 +85,7 @@ export const ScreenView = () => {
                         <ScreenTableToolbar
                             search={search}
                             setSearch={setSearch}
-                            canEdit={canEdit}
+                            canEdit={screen.isBulkEditEnabled}
                         />
                         <ScreenTable
                             columns={screen.columns}
