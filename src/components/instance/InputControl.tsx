@@ -74,7 +74,7 @@ export const InputControl = ({
             if (!saveExternalUser) return;
             const result = await saveExternalUser({
                 questionName: question.name,
-                value: null,
+                value: question.isArray ? (Array.isArray(value) ? value : []) : null,
                 externalUser: newUser,
             });
 
@@ -88,7 +88,7 @@ export const InputControl = ({
 
             throw new Error(`Updated user answer was not returned for question "${question.name}"`);
         },
-        [onChange, saveExternalUser, question.name],
+        [onChange, saveExternalUser, question.isArray, question.name, value],
     );
     const debouncedOnChange = useDebounce(save, 500);
     const debouncedChange = (value: unknown) => {
