@@ -6,6 +6,7 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
+    getStepHierarchy,
     getSubmissionsToShow,
     hasVersionHistory,
     type ModalState,
@@ -47,21 +48,25 @@ export const StepCardBody = ({
     const submissionsToShow = getSubmissionsToShow(submissions);
     const formState = resolveFormState(resolvedAction);
     const showVersionCards = hasVersionHistory(step);
+    const emptyStateMessage = getStepHierarchy(step).some(
+        ({dateCompleted, versions}) =>
+            dateCompleted || versions?.some((version) => version.submissions.length === 0),
+    )
+        ? "instance.unauthorized_submission"
+        : !formState && actions.some((action) => action.type === "SubmitForm")
+          ? "instance.empty_step"
+          : null;
 
     const shouldShowFormTitle = (submissionIndex: number) => submissionIndex > 0;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
             case "empty":
-                // Only show empty message when there's no form open either
-                if (!formState && actions.length === 0 && !showVersionCards) {
-                    return (
-                        <div className="pt-4">
-                            <Text className="italic">{t("instance.empty_step")}</Text>
-                        </div>
-                    );
-                }
-                return null;
+                return emptyStateMessage ? (
+                    <div className="pt-4">
+                        <Text className="italic">{t(emptyStateMessage)}</Text>
+                    </div>
+                ) : null;
 
             case "submissions":
                 return (
