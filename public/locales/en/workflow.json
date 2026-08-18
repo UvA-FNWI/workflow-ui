@@ -83,7 +83,6 @@
     "delete_everywhere_other": "Delete question (used on {{count}} pages)",
     "delete_page": "Delete tab {{title}}",
     "description": "Description",
-    "download": "Download changed files",
     "drag_handle": "Reorder question",
     "edit_form_yaml": "Edit the whole form as YAML",
     "edit_in_yaml": "Edit in YAML",

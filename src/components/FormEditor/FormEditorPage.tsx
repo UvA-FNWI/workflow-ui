@@ -23,7 +23,6 @@ import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useUploadConfigVersionMutation} from "~/store/api/configApi";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
-import {downloadFile} from "~/utils/fileDownload";
 
 /** Whole files are completed against the schema for their location, exactly as workflow-dev maps them. */
 const schemaNameFor = (path: string) => {
@@ -115,16 +114,6 @@ export function FormEditorPage() {
         else window.open(url, "_blank", "noopener,noreferrer");
     };
 
-    const onDownload = () => {
-        const files = allFiles(docs);
-        for (const path of changed) {
-            downloadFile(
-                new Blob([files[path]], {type: "text/yaml"}),
-                path.split("/").at(-1) ?? path,
-            );
-        }
-    };
-
     return (
         <Container maxWidth={1280}>
             <BackLink to="/develop" className="mb-4">
@@ -149,9 +138,6 @@ export function FormEditorPage() {
                                 {changed.length}
                             </Pill>
                         )}
-                    </Button>
-                    <Button intent="secondary" onClick={onDownload} disabled={changed.length === 0}>
-                        {t("form_editor.download")}
                     </Button>
                     <Button
                         intent="primary"
