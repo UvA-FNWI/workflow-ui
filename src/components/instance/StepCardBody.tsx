@@ -6,8 +6,6 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
-    getStepHierarchy,
-    getSubmissionsToShow,
     hasVersionHistory,
     type ModalState,
     resolveFormState,
@@ -28,6 +26,7 @@ type Props = {
     modalState: ModalState;
     activeAction: Action | null;
     resolvedAction: Action | null;
+    emptyStateMessage: string | null;
     setActiveAction: (action: Action | null) => void;
 };
 
@@ -40,32 +39,21 @@ export const StepCardBody = ({
     modalState,
     activeAction,
     resolvedAction,
+    emptyStateMessage,
     setActiveAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
-    const submissionsToShow = getSubmissionsToShow(submissions);
     const formState = resolveFormState(resolvedAction);
     const showVersionCards = hasVersionHistory(step);
-    const emptyStateMessage = getStepHierarchy(step).some(
-        ({dateCompleted, versions}) =>
-            dateCompleted || versions?.some((version) => version.submissions.length === 0),
-    )
-        ? "instance.unauthorized_submission"
-        : !formState &&
-            (actions.length === 0 || actions.some((action) => action.type === "SubmitForm"))
-          ? "instance.empty_step"
-          : null;
-
-    const shouldShowFormTitle = (submissionIndex: number) => submissionIndex > 0;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
             case "empty":
                 return emptyStateMessage ? (
                     <div className="pt-4">
-                        <Text className="italic">{t(emptyStateMessage)}</Text>
+                        <Text className="italic">{emptyStateMessage}</Text>
                     </div>
                 ) : null;
 
@@ -74,7 +62,7 @@ export const StepCardBody = ({
                     <>
                         {contentState.regular.map((submission, index) => (
                             <div key={submission.id} className="flex flex-col gap-2 py-4">
-                                {shouldShowFormTitle(index) && (
+                                {index > 0 && (
                                     <Heading
                                         as="h4"
                                         size="xs"
@@ -92,6 +80,7 @@ export const StepCardBody = ({
                                 submissions={contentState.assessments}
                                 combine={true}
                                 step={step}
+                                emptyMessage={emptyStateMessage}
                             />
                         )}
                     </>
@@ -139,7 +128,7 @@ export const StepCardBody = ({
                     <VersionHistory
                         versions={step.versions ?? []}
                         instanceId={instance.id}
-                        defaultExpandFirst={submissionsToShow.length === 0}
+                        defaultExpandFirst={submissions.length === 0}
                     />
                 )}
             </div>

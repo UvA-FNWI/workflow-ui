@@ -79,6 +79,8 @@ export type WorkflowStep = {
     versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;
     resultsType: StepResultsType;
+    expectsSubmission: boolean;
+    hasSubmission: boolean;
     hierarchyMode: StepHierarchyMode;
 };
 
