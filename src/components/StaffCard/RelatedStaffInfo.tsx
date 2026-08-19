@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Button, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Link, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
 import {EditEmailModal} from "~/components/StaffCard/EditEmailModal.tsx";
@@ -9,7 +9,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {baseApi} from "~/store/api/baseApi.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {RelatedUserRoles, Role} from "~/store/api/types/instances.ts";
-import type {UserSearchResult} from "~/store/api/types/users.ts";
+import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 import {useUpdateUserEmailMutation} from "~/store/api/usersApi.ts";
 import {useAppDispatch} from "~/store/store.ts";
 
@@ -39,10 +39,15 @@ export function RelatedStaffInfo({
         if (!users || users.length <= 0 || !updatedUser.id || !instanceId) {
             return;
         }
-
-        await updateUserEmail({
+        const externalUser: CreateExternalUserInput = {
             userId: updatedUser.id,
             email: updatedUser.email,
+            displayName: updatedUser.displayName,
+            organization: updatedUser.organization,
+        };
+
+        await updateUserEmail({
+            externalUser,
             instanceId,
         }).unwrap();
 
@@ -84,7 +89,7 @@ export function RelatedStaffInfo({
     return (
         <>
             {users.map((user, index) => (
-                <div key={index} className="flex flex-col pb-8">
+                <div key={index} className="flex w-full min-w-0 flex-col pb-8">
                     <UserAvatar userName={user.displayName} picture={user.picture} />
                     {index === 0 && (
                         <div className="flex min-w-0 gap-1">
@@ -115,7 +120,7 @@ export function RelatedStaffInfo({
                         </div>
                     )}
                     <div className="flex min-w-0 gap-1">
-                        <Text>{user.displayName}</Text>
+                        <Text className="wrap-anywhere">{user.displayName}</Text>
                         {canBeRemoved && (
                             <Button
                                 intent="ghost"
@@ -128,20 +133,32 @@ export function RelatedStaffInfo({
                             </Button>
                         )}
                     </div>
-                    {user.organization && <Text>{user.organization?.name}</Text>}
+                    {user.organization && (
+                        <Text className="wrap-anywhere">{user.organization?.name}</Text>
+                    )}
                     <div className="flex flex-row items-center gap-1">
-                        <div className="flex flex-row items-center gap-2">
+                        <div className="flex min-w-0 flex-row items-center gap-2 overflow-hidden">
                             <Icon
                                 className="flex-none"
                                 name="email-line"
                                 color="current"
                                 size="md"
                             />
-                            <Link underline className="truncate" href={`mailto:${user.email}`}>
-                                {user.email}
-                            </Link>
+
+                            <Tooltip
+                                content={user.email}
+                                triggerClassName="min-w-0 overflow-hidden"
+                            >
+                                <Link
+                                    underline
+                                    className="block max-w-full truncate"
+                                    href={`mailto:${user.email}`}
+                                >
+                                    {user.email}
+                                </Link>
+                            </Tooltip>
                         </div>
-                        {canEdit && user.isExternal && user.requiresInvitation && (
+                        {canEdit && user.isExternal && user.isEmailEditable && (
                             <Button
                                 intent="ghost"
                                 size="small"
