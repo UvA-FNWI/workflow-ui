@@ -13,6 +13,8 @@ export type WorkflowInstanceField = {
     key: string | null;
     title: LocalString;
     value: string | string[] | LocalString | null;
+    isHighlighted: boolean;
+    order?: number;
 };
 
 export type WorkflowInstance = {
