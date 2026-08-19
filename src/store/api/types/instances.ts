@@ -1,3 +1,5 @@
+import type {IconType} from "@uva-fnwi/datanose-ui";
+
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
     FormLayout,
@@ -29,8 +31,7 @@ export type WorkflowInstance = {
     canUseAdminTools: boolean;
     canImpersonate: boolean;
     viewerRoles: string[];
-    relatedUserGroups: RelatedUserGroups;
-    resources: Resource[];
+    infoCards: InfoCard[];
 };
 
 /**
@@ -151,24 +152,32 @@ export type RelatedUserGroup = {
     userRoles: RelatedUserRoles[];
 };
 
-export type RelatedUserGroups = {
-    groups: RelatedUserGroup[];
-};
-
-export type ResourceLayout = "Links" | "Text";
-export type ResourceType = "Link" | "Download" | "Text";
-
-export type Resource = {
+type InfoCardBase = {
     name: string;
     title: LocalString;
-    type: ResourceLayout;
-    items?: ResourceItem[];
-    content?: LocalString;
 };
 
-export type ResourceItem = {
+export type InfoCardField = {
+    title: LocalString;
+    value: unknown;
+    href: string | null;
+    icon: IconType | null;
+};
+
+export type InfoCardItem = {
     name: string;
     text: LocalString;
-    type: ResourceType;
-    url?: LocalString;
+    type: "Link" | "Download";
+    url: LocalString;
 };
+
+export type InfoCard =
+    | (InfoCardBase & {
+          type: "User";
+          user: {displayName: string; picture: string | null} | null;
+          fields?: InfoCardField[] | null;
+          emptyText: LocalString | null;
+      })
+    | (InfoCardBase & {type: "RelatedUsers"; groups?: RelatedUserGroup[] | null})
+    | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
+    | (InfoCardBase & {type: "Text"; content?: LocalString | null});

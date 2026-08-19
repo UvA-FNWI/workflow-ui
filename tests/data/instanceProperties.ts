@@ -18,8 +18,7 @@ export const propertiesInstance = {
     canUseAdminTools: true,
     canImpersonate: false,
     viewerRoles: ["Coordinator"],
-    relatedUserGroups: {groups: []},
-    resources: [],
+    infoCards: [],
 };
 
 export const propertiesInstanceNonAdmin = {
