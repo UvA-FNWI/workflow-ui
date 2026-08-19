@@ -53,7 +53,8 @@ export const StepCardBody = ({
             dateCompleted || versions?.some((version) => version.submissions.length === 0),
     )
         ? "instance.unauthorized_submission"
-        : !formState && actions.some((action) => action.type === "SubmitForm")
+        : !formState &&
+            (actions.length === 0 || actions.some((action) => action.type === "SubmitForm"))
           ? "instance.empty_step"
           : null;
 
