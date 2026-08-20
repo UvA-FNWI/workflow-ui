@@ -5,6 +5,7 @@ import i18n from "i18next";
 
 import {
     getStepHierarchy,
+    hasVersionHistory,
     resolveContentState,
     resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
@@ -44,7 +45,8 @@ const shouldAutoOpenForm = (
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
 
-    const stepIds = getStepHierarchy(step).map((s) => s.id);
+    const stepHierarchy = getStepHierarchy(step);
+    const stepIds = stepHierarchy.map((s) => s.id);
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
     );
@@ -68,18 +70,36 @@ export const StepCard = ({step, instance}: Props) => {
     const isDisabled =
         !!instance.currentStep && !isCurrentStep && instance.steps.indexOf(step) > currentStepIndex;
 
-    const contentState = resolveContentState({
-        step,
-        actions,
-        submissions,
-        resolvedAction,
-        isDisabled,
-    });
+    const contentState = resolveContentState(step, submissions);
     const modalState = resolveModalState(activeAction);
+    const hasVisibleSubmission =
+        submissions.length > 0 || stepHierarchy.some((candidate) => hasVersionHistory(candidate));
+    const isFormOpen =
+        resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
+    const emptyStateMessage =
+        !hasVisibleSubmission && stepHierarchy.some(({hasSubmission}) => hasSubmission)
+            ? t("instance.unauthorized_submission")
+            : !isFormOpen && stepHierarchy.some(({expectsSubmission}) => expectsSubmission)
+              ? t("instance.empty_step")
+              : null;
+    const hasBodyContent =
+        actions.length > 0 ||
+        submissions.length > 0 ||
+        hasVersionHistory(step) ||
+        step.resultsType !== "Normal" ||
+        emptyStateMessage !== null;
+    const isContentless = !isDisabled && !hasBodyContent;
 
     return (
-        <Disclosure defaultExpanded={isCurrentStep} isDisabled={isDisabled}>
-            <Disclosure.Header>
+        <Disclosure
+            defaultExpanded={isCurrentStep && hasBodyContent}
+            isDisabled={isDisabled || !hasBodyContent}
+            className={isContentless ? "cursor-default! opacity-100!" : undefined}
+        >
+            <Disclosure.Header
+                showChevron={hasBodyContent}
+                className={isContentless ? "cursor-default!" : undefined}
+            >
                 <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading className="font-semibold">{l(step.title)}</Heading>
@@ -105,19 +125,22 @@ export const StepCard = ({step, instance}: Props) => {
                     )}
                 </div>
             </Disclosure.Header>
-            <Disclosure.Content>
-                <StepCardBody
-                    step={step}
-                    instance={instance}
-                    actions={actions}
-                    submissions={submissions}
-                    contentState={contentState}
-                    modalState={modalState}
-                    activeAction={activeAction}
-                    resolvedAction={resolvedAction}
-                    setActiveAction={setActiveAction}
-                />
-            </Disclosure.Content>
+            {hasBodyContent && (
+                <Disclosure.Content>
+                    <StepCardBody
+                        step={step}
+                        instance={instance}
+                        actions={actions}
+                        submissions={submissions}
+                        contentState={contentState}
+                        modalState={modalState}
+                        activeAction={activeAction}
+                        resolvedAction={resolvedAction}
+                        emptyStateMessage={emptyStateMessage}
+                        setActiveAction={setActiveAction}
+                    />
+                </Disclosure.Content>
+            )}
         </Disclosure>
     );
 };

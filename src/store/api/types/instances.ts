@@ -13,6 +13,8 @@ export type WorkflowInstanceField = {
     key: string | null;
     title: LocalString;
     value: string | string[] | LocalString | null;
+    isHighlighted: boolean;
+    order?: number;
 };
 
 export type WorkflowInstance = {
@@ -79,6 +81,8 @@ export type WorkflowStep = {
     versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;
     resultsType: StepResultsType;
+    expectsSubmission: boolean;
+    hasSubmission: boolean;
     hierarchyMode: StepHierarchyMode;
 };
 
