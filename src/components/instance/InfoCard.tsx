@@ -38,6 +38,7 @@ function InfoCard({card, instanceId}: {card: InfoCardData; instanceId: string}) 
                 instanceId={instanceId}
                 title={card.title}
                 relatedUserGroups={card.groups ?? []}
+                items={card.items}
             />
         );
     if (card.type === "Links") return <LinksCard card={card} />;

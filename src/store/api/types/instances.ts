@@ -178,6 +178,10 @@ export type InfoCard =
           fields?: InfoCardField[] | null;
           emptyText: LocalString | null;
       })
-    | (InfoCardBase & {type: "RelatedUsers"; groups?: RelatedUserGroup[] | null})
+    | (InfoCardBase & {
+          type: "RelatedUsers";
+          groups?: RelatedUserGroup[] | null;
+          items?: InfoCardItem[] | null;
+      })
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
     | (InfoCardBase & {type: "Text"; content?: LocalString | null});

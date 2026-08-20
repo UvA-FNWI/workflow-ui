@@ -1,22 +1,28 @@
 import {useMemo, useState} from "react";
 
-import {Button, Disclosure, Heading, Icon} from "@uva-fnwi/datanose-ui";
+import {Button, Disclosure, Heading, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
 
 import AddStaffModal from "~/components/StaffCard/AddStaffModal.tsx";
 import {RelatedStaffInfo} from "~/components/StaffCard/RelatedStaffInfo.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {LocalString} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
-import type {RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
+import type {InfoCardItem, RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
 type RelatedUsersCardProps = {
     instanceId: string;
     title: LocalString;
     relatedUserGroups: RelatedUserGroup[];
+    items?: InfoCardItem[] | null;
 };
 
-export function RelatedUsersCard({instanceId, title, relatedUserGroups}: RelatedUsersCardProps) {
+export function RelatedUsersCard({
+    instanceId,
+    title,
+    relatedUserGroups,
+    items,
+}: RelatedUsersCardProps) {
     const {l} = useTranslate("workflow");
     const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
     const [addStaffModalData, setAddStaffModalData] = useState<{
@@ -109,6 +115,24 @@ export function RelatedUsersCard({instanceId, title, relatedUserGroups}: Related
                                 ))}
                             </div>
                         ))}
+                    {(items ?? []).map((item) => {
+                        const url = l(item.url);
+                        if (!url) return null;
+                        return (
+                            <div key={item.name} className="flex flex-col gap-1">
+                                <Text fontWeight="semibold">{l(item.text)}</Text>
+                                <Link
+                                    underline
+                                    className="break-all"
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {url.replace(/^https?:\/\//, "")}
+                                </Link>
+                            </div>
+                        );
+                    })}
                 </Disclosure.Content>
             </Disclosure>
             <AddStaffModal
