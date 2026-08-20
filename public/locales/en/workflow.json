@@ -76,6 +76,10 @@
     },
     "empty_step": "Nothing has been submitted yet.",
     "summary": {
+      "change_version": "Version {{version}}",
+      "changed_on": "changed on {{date}}",
+      "changed_on_by": "Changed on {{date}} by {{name}}",
+      "changes_title": "Changes",
       "delete_file": "Delete file",
       "edit_answer": "Edit answer",
       "edit_page": "Edit page",
@@ -86,7 +90,8 @@
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
-      "title": "Summary"
+      "title": "Summary",
+      "view_changes": "View changes"
     },
     "workflowInstance": "Workflow Instance"
   },

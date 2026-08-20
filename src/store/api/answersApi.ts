@@ -18,14 +18,7 @@ export const answersApi = baseApi.injectEndpoints({
                     submissionsApi.util.updateQueryData(
                         "getSubmission",
                         {instanceId: params.instanceId, submissionId: params.submissionId},
-                        (current) => {
-                            current.answers = current.answers.map((oldAnswer) => {
-                                const newAnswer = data.answers.find(
-                                    (answer) => answer.id === oldAnswer.id,
-                                );
-                                return newAnswer ?? oldAnswer;
-                            });
-                        },
+                        () => data.submission,
                     ),
                 );
                 dispatch(

@@ -76,6 +76,10 @@
     },
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
+      "change_version": "Versie {{version}}",
+      "changed_on": "gewijzigd op {{date}}",
+      "changed_on_by": "Gewijzigd op {{date}} door {{name}}",
+      "changes_title": "Wijzigingen",
       "delete_file": "Bestand verwijderen",
       "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
@@ -86,7 +90,8 @@
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
-      "title": "Samenvatting"
+      "title": "Samenvatting",
+      "view_changes": "Wijzigingen bekijken"
     },
     "workflowInstance": "Workflow"
   },
