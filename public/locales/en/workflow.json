@@ -88,6 +88,7 @@
       "show_linked": "Show explanations",
       "title": "Summary"
     },
+    "unauthorized_submission": "You are not authorized to see this submission",
     "workflowInstance": "Workflow Instance"
   },
   "make_a_choice": "Make a choice",
