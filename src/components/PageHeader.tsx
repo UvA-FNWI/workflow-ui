@@ -8,6 +8,7 @@ interface PageHeaderProps {
     title: ReactNode;
     backLabel: ReactNode;
     backTo?: string;
+    description?: ReactNode;
     actions?: ReactNode;
     isLoading?: boolean;
 }
@@ -16,6 +17,7 @@ export function PageHeader({
     title,
     backLabel,
     backTo,
+    description,
     actions,
     isLoading = false,
 }: PageHeaderProps) {
@@ -35,9 +37,12 @@ export function PageHeader({
         <div className="mb-8 flex flex-col gap-2">
             <BackLink to={backTo}>{backLabel}</BackLink>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <Heading as="h1" size="lg">
-                    {title}
-                </Heading>
+                <div className="flex flex-col gap-1">
+                    <Heading as="h1" size="lg">
+                        {title}
+                    </Heading>
+                    {description}
+                </div>
                 {actions}
             </div>
         </div>
