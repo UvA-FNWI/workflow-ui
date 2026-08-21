@@ -123,34 +123,26 @@
   "staff_card": {
     "add_modal": {
       "choose_role": "Choose role",
-      "choose_staff": "Choose staff member",
-      "description": "You want to assign another staff member to the project of <strong>{{studentName}}</strong>.",
-      "info_callout_header": "Inform the added staff member yourself",
-      "info_callout_text": "No automated email is sent. Therefore, inform the staff member yourself about their role in this student's project.",
-      "this_student": "this student",
-      "title": "Assign staff member",
-      "warning_callout_text": "The current {{role}} <strong>{{name}}</strong> will be replaced by the new staff member."
+      "choose_staff": "Choose user",
+      "description": "Assign a user to a role.",
+      "info_callout_header": "Inform the added user yourself",
+      "info_callout_text": "No automated email is sent. Inform the user yourself about their role.",
+      "title": "Assign user",
+      "warning_callout_text": "The current {{role}} <strong>{{name}}</strong> will be replaced by the new user."
     },
-    "confidential_advisers": "Confidential advisers",
-    "confidential_advisers_link": "student.uva.nl/en/information/confidential-advisers",
     "edit_email_modal": {
       "error_email_already_exists": "A user with this email address already exists.",
       "error_internal_email": "Users with UvA mail address cannot be added manually.",
       "title": "Edit email for {{name}}"
     },
-    "remove_staff_confirmation": "Are you sure you want to remove <strong>{{name}}</strong> from this project?",
-    "remove_staff_title": "Remove staff member",
-    "title": "Staff"
+    "remove_staff_confirmation": "Are you sure you want to remove <strong>{{name}}</strong>?",
+    "remove_staff_title": "Remove user"
   },
   "status": {
     "completed_on": "Completed on",
     "submitted": "Submitted"
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
-  "studentCard": {
-    "noStudentInfo": "No student information available",
-    "student": "Student"
-  },
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
