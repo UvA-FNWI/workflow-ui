@@ -1,5 +1,6 @@
 {
   "config_version": "Versie",
+  "create_new": "Nieuw",
   "develop": "Ontwikkelen",
   "errors": {
     "clipboard_copy_failed": "Kopiëren naar klembord mislukt.",
@@ -17,7 +18,6 @@
   "login": "Login",
   "logout": "Uitloggen",
   "personal_page": "Scripties",
-  "create_new": "Nieuw",
   "search_placeholder": "Zoeken...",
   "session_expired_canvas_body": "De sessie is verlopen. Klik op de refresh knop in uw browser om de sessie te verversen.",
   "session_expired_surf_body": "De sessie is verlopen. Klik op de knop om opnieuw in te loggen.",
