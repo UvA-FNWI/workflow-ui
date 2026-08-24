@@ -2,6 +2,7 @@ import {Button, Modal} from "@uva-fnwi/datanose-ui";
 
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {PageControl} from "~/components/instance/PageControl.tsx";
+import {PrefilledAnswersNotice} from "~/components/instance/PrefilledAnswersNotice.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
 import {isPageComplete} from "~/utils/submissionUtils.ts";
@@ -11,9 +12,16 @@ type FormModalProps = {
     onClose: () => void;
     instanceId: string;
     submissionId: string;
+    previousVersion?: number;
 };
 
-export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModalProps) => {
+export const FormModal = ({
+    isOpen,
+    onClose,
+    instanceId,
+    submissionId,
+    previousVersion,
+}: FormModalProps) => {
     const {t, l} = useTranslate("workflow");
 
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery(
@@ -30,6 +38,11 @@ export const FormModal = ({isOpen, onClose, instanceId, submissionId}: FormModal
         <Modal isOpen={isOpen} onOpenChange={onClose}>
             <Modal.Header className="pb-0">{l(submission?.form.title)}</Modal.Header>
             <Modal.Body className="mt-2">
+                <PrefilledAnswersNotice
+                    instanceId={instanceId}
+                    submissionId={submissionId}
+                    previousVersion={previousVersion}
+                />
                 {submission && (
                     <PageControl
                         showTitle={false}

@@ -107,6 +107,14 @@
     "titleStudent": "Jouw voortgang",
     "titleSupervisor": "Voortgang van de student"
   },
+  "repeated_form": {
+    "clear": "Wis vooringevulde velden",
+    "clear_error": "De velden konden niet worden gewist. Probeer het opnieuw.",
+    "confirm_message": "Weet je zeker dat je alle velden wilt wissen?",
+    "confirm_title": "Wis vooringevulde velden",
+    "message": "Er zijn aanpassingen nodig. Daarom hebben we wat je eerder hebt ingevuld alvast overgenomen. Pas alleen aan wat nodig is; wat al goed was, hoef je niet aan te passen.",
+    "question": "Wil je helemaal opnieuw beginnen?"
+  },
   "save": "Opslaan",
   "screens": {
     "actions": "Acties"

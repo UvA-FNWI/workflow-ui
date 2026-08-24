@@ -47,6 +47,7 @@ export const StepCardBody = ({
 
     const formState = resolveFormState(resolvedAction);
     const showVersionCards = hasVersionHistory(step);
+    const previousVersion = step.versions?.at(-1)?.versionNumber;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
@@ -104,6 +105,7 @@ export const StepCardBody = ({
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
                             onClose={() => setActiveAction(null)}
+                            previousVersion={previousVersion}
                         />
                     </div>
                 )}
@@ -179,6 +181,7 @@ export const StepCardBody = ({
                 onClose={() => setActiveAction(null)}
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}
+                previousVersion={previousVersion}
             />
         </>
     );

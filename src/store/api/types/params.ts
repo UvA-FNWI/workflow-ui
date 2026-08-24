@@ -1,6 +1,11 @@
 import type {ActionType} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
+export type SubmissionParams = {
+    instanceId: string;
+    submissionId: string;
+};
+
 export type SaveAnswerParams = {
     instanceId: string;
     submissionId: string;
