@@ -6,6 +6,7 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
+    getPreviousFormVersion,
     hasVersionHistory,
     type ModalState,
     resolveFormState,
@@ -47,7 +48,6 @@ export const StepCardBody = ({
 
     const formState = resolveFormState(resolvedAction);
     const showVersionCards = hasVersionHistory(step);
-    const previousVersion = step.versions?.at(-1)?.versionNumber;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
@@ -105,7 +105,7 @@ export const StepCardBody = ({
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
                             onClose={() => setActiveAction(null)}
-                            previousVersion={previousVersion}
+                            previousVersion={getPreviousFormVersion(step, formState.action.form)}
                         />
                     </div>
                 )}
@@ -181,7 +181,7 @@ export const StepCardBody = ({
                 onClose={() => setActiveAction(null)}
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}
-                previousVersion={previousVersion}
+                previousVersion={getPreviousFormVersion(step, activeAction?.form)}
             />
         </>
     );
