@@ -102,6 +102,7 @@ export const StepCardBody = ({
                 {formState && (
                     <div className="py-4">
                         <FormPage
+                            key={formState.action.form}
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
                             onClose={() => setActiveAction(null)}
