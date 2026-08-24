@@ -7,6 +7,15 @@ import {InstancePropertyRow} from "~/components/instance/InstancePropertyRow";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import type {WorkflowInstance} from "~/store/api/types/instances";
+
+function formNameForChoices(instance: WorkflowInstance | undefined, questionName: string) {
+    const submitted = instance?.submissions.find((s) =>
+        s.form.pages.some((p) => p.questions.some((q) => q.name === questionName)),
+    )?.id;
+    if (submitted) return submitted;
+    return instance?.actions.find((action) => action.form)?.form ?? instance?.submissions[0]?.id;
+}
 
 /** Admin view for reading and editing instance properties. */
 function InstanceAdmin() {
@@ -39,9 +48,7 @@ function InstanceAdmin() {
         content = (
             <div className="flex flex-col gap-4">
                 {data.properties.map((question) => {
-                    const submissionId = instance?.submissions.find((s) =>
-                        s.form.pages.some((p) => p.questions.some((q) => q.name === question.name)),
-                    )?.id;
+                    const submissionId = formNameForChoices(instance, question.name);
                     return (
                         <InstancePropertyRow
                             instanceId={id}

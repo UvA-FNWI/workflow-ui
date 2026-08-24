@@ -1,5 +1,10 @@
 import {baseApi} from "./baseApi";
-import type {GetChoicesParams, SaveAnswerParams, SaveFileParams, SubmissionParams} from "./types/params";
+import type {
+    GetChoicesParams,
+    SaveAnswerParams,
+    SaveFileParams,
+    SubmissionParams,
+} from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
 import type {Choice} from "./types/submissions";
 import {instancesApi} from "~/store/api/instancesApi.ts";
