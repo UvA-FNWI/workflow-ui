@@ -20,6 +20,7 @@ function InstanceAdmin() {
 
     const isPropertyOnly = instance && instance.workflowDefinition.isPropertyOnly;
     const displayTitle = instance?.title ? `${instance.title} | ${t("title")}` : t("title");
+
     useDocumentTitle(displayTitle);
 
     if (instance && !instance.canUseAdminTools) {
@@ -37,15 +38,22 @@ function InstanceAdmin() {
     } else {
         content = (
             <div className="flex flex-col gap-4">
-                {data.properties.map((question) => (
-                    <InstancePropertyRow
-                        key={question.name}
-                        question={question}
-                        path={question.name}
-                        values={data.values}
-                        onSave={(path, value) => saveProperty({instanceId: id, path, value})}
-                    />
-                ))}
+                {data.properties.map((question) => {
+                    const submissionId = instance?.submissions.find((s) =>
+                        s.form.pages.some((p) => p.questions.some((q) => q.name === question.name)),
+                    )?.id;
+                    return (
+                        <InstancePropertyRow
+                            instanceId={id}
+                            submissionId={submissionId}
+                            key={question.name}
+                            question={question}
+                            path={question.name}
+                            values={data.values}
+                            onSave={(path, value) => saveProperty({instanceId: id, path, value})}
+                        />
+                    );
+                })}
             </div>
         );
     }

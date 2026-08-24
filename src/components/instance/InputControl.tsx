@@ -16,6 +16,7 @@ import {parseISO} from "date-fns";
 import {DatePicker} from "~/components/Datepicker/Datepicker";
 import {EmailInput} from "~/components/inputs/EmailInput";
 import {PhoneInput} from "~/components/inputs/PhoneInput";
+import {ReferenceControl} from "~/components/instance/ReferenceControl.tsx";
 import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
@@ -37,6 +38,8 @@ const toDate = (value: unknown) => {
 };
 
 interface InputControlProps {
+    instanceId: string;
+    submissionId: string;
     value?: unknown;
     question: Question;
     onChange?: (val: unknown) => void;
@@ -50,6 +53,8 @@ interface InputControlProps {
 }
 
 export const InputControl = ({
+    instanceId,
+    submissionId,
     value,
     question,
     onChange,
@@ -326,6 +331,20 @@ export const InputControl = ({
                     </Radio>
                 ))}
             </RadioGroup>
+        );
+    }
+
+    if (question.type === "Reference") {
+        return (
+            <ReferenceControl
+                instanceId={instanceId}
+                submissionId={submissionId}
+                value={value}
+                question={question}
+                onChange={(val) => immediateChange(val)}
+                isValid={isValid}
+                errorMessage={errorMessage}
+            />
         );
     }
 

@@ -206,6 +206,8 @@ export const PageControl = ({
                                                         }
                                                     >
                                                         <InputControl
+                                                            instanceId={instanceId}
+                                                            submissionId={submissionId}
                                                             value={field.value}
                                                             onChange={field.onChange}
                                                             question={question}

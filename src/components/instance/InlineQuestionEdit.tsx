@@ -9,6 +9,8 @@ import type {SaveAnswerResult} from "~/store/api/types/returnTypes.ts";
 import type {Question} from "~/store/api/types/submissions.ts";
 
 type Props = {
+    instanceId: string;
+    submissionId?: string;
     question: Question;
     value: unknown;
     visibleChoices?: string[] | null;
@@ -19,6 +21,8 @@ type Props = {
 };
 
 export const InlineQuestionEdit = ({
+    instanceId,
+    submissionId,
     question,
     value,
     visibleChoices,
@@ -43,6 +47,8 @@ export const InlineQuestionEdit = ({
     return (
         <div className="flex flex-col gap-2">
             <InputControl
+                instanceId={instanceId}
+                submissionId={submissionId ?? ""}
                 value={localValue}
                 question={question}
                 onChange={setLocalValue}

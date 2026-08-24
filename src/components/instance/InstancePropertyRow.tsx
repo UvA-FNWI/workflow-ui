@@ -4,10 +4,13 @@ import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import {answersApi} from "~/store/api/answersApi.ts";
 import type {DataType, Question} from "~/store/api/types/submissions.ts";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
 
 type Props = {
+    instanceId: string;
+    submissionId?: string;
     question: Question;
     /** Dotted path from the instance root. */
     path: string;
@@ -16,9 +19,25 @@ type Props = {
 };
 
 const ROW_CLASSES = "grid gap-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] sm:gap-4";
-const EDITABLE_TYPES: DataType[] = ["String", "Int", "Double", "Date", "User", "Boolean", "Choice"];
+const EDITABLE_TYPES: DataType[] = [
+    "String",
+    "Int",
+    "Double",
+    "Date",
+    "User",
+    "Boolean",
+    "Choice",
+    "Reference",
+];
 
-export const InstancePropertyRow = ({question, path, values, onSave}: Props) => {
+export const InstancePropertyRow = ({
+    instanceId,
+    submissionId,
+    question,
+    path,
+    values,
+    onSave,
+}: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isEditing, setIsEditing] = useState(false);
 
@@ -29,6 +48,17 @@ export const InstancePropertyRow = ({question, path, values, onSave}: Props) => 
     const value = values[path];
     const label = l(question.text) ?? question.name;
 
+    const {data: referenceChoices} = answersApi.useGetChoicesQuery(
+        {
+            instanceId,
+            submissionId: submissionId ?? "",
+            questionName: question.name,
+        },
+        {
+            skip: question.type !== "Reference" || !instanceId || !submissionId,
+        },
+    );
+
     if (children?.length) {
         return (
             <details>
@@ -36,6 +66,8 @@ export const InstancePropertyRow = ({question, path, values, onSave}: Props) => 
                 <div className="flex flex-col gap-2 border-l-2 border-grey-200 pl-4">
                     {children.map((child) => (
                         <InstancePropertyRow
+                            instanceId={instanceId}
+                            submissionId={submissionId}
                             key={`${path}.${child.name}`}
                             question={child}
                             path={`${path}.${child.name}`}
@@ -53,6 +85,8 @@ export const InstancePropertyRow = ({question, path, values, onSave}: Props) => 
             <div className={ROW_CLASSES}>
                 <Text fontWeight="semibold">{label}</Text>
                 <InlineQuestionEdit
+                    instanceId={instanceId}
+                    submissionId={submissionId}
                     question={question}
                     value={value}
                     onSave={(newValue) => onSave(path, newValue)}
@@ -62,7 +96,12 @@ export const InstancePropertyRow = ({question, path, values, onSave}: Props) => 
         );
     }
 
-    const formatted = formatAnswer(value, question.type, i18n.language, question.choices);
+    const formatted = formatAnswer(
+        value,
+        question.type,
+        i18n.language,
+        question.type === "Reference" ? referenceChoices : question.choices,
+    );
 
     return (
         <div className={ROW_CLASSES}>

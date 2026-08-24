@@ -37,9 +37,23 @@ export const AnswerCell = ({
     if (!pair) return <Text>-</Text>;
 
     const {answer} = pair;
+    const {data: referenceChoices} = answersApi.useGetChoicesQuery(
+        {
+            instanceId,
+            submissionId: pair.submission?.id ?? submissionId ?? "",
+            questionName: pair.question.name,
+        },
+        {
+            skip:
+                pair.question.type !== "Reference" ||
+                !instanceId ||
+                !(pair.submission?.id ?? submissionId),
+        },
+    );
+    const choices = pair.question.type === "Reference" ? referenceChoices : pair.question.choices;
     const formattedValue =
         answer != null
-            ? formatAnswer(answer.value, pair.question.type, i18n.language, pair.question.choices)
+            ? formatAnswer(answer.value, pair.question.type, i18n.language, choices)
             : noAnswerText;
 
     const answerTitleText = pair.columnTitle ?? pair?.submission?.form?.title;
@@ -59,6 +73,8 @@ export const AnswerCell = ({
     if (isEditing) {
         return (
             <InlineQuestionEdit
+                instanceId={instanceId}
+                submissionId={pair.submission?.id ?? submissionId ?? ""}
                 question={pair.question}
                 value={answer?.value}
                 visibleChoices={answer?.visibleChoices}

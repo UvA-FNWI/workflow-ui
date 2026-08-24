@@ -40,6 +40,7 @@ export const instancesApi = baseApi.injectEndpoints({
             // Property changes can affect steps and the title.
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
+                {type: "Choices", id: instanceId},
             ],
         }),
         createInstance: builder.mutation<WorkflowInstance, {workflowDefinition: string}>({

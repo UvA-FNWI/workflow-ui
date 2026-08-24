@@ -72,6 +72,7 @@ export function formatAnswer(
             }
             return String(value);
 
+        case "Reference":
         case "Choice": {
             const resolveLabel = (v: unknown): string => {
                 const choice = choices?.find((c) => c.name === v);
@@ -105,7 +106,6 @@ export function formatAnswer(
             return String(value);
 
         case "String":
-        case "Reference":
         default:
             // Default string formatting
             if (typeof value === "boolean") {
