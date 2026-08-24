@@ -1,5 +1,6 @@
 {
   "config_version": "Versie",
+  "create_new": "Nieuw",
   "develop": "Ontwikkelen",
   "errors": {
     "clipboard_copy_failed": "Kopiëren naar klembord mislukt.",
