@@ -97,42 +97,44 @@ export function RelatedUsersCard({
                         </div>
                     )}
                 </div>
-                <Disclosure.Content padding="lg" className="flex flex-col gap-4">
-                    {relatedUserGroups.length > 0 &&
-                        relatedUserGroups.map((group, group_index) => (
-                            <div key={`related_${group_index}`}>
-                                <Heading size="sm" className="mb-4 empty:hidden">
-                                    {l(group.title)}
-                                </Heading>
-                                {group.userRoles.map((relatedUserRoles, user_role_index) => (
-                                    <RelatedStaffInfo
-                                        key={`related_${group_index}_${user_role_index}`}
-                                        instanceId={instanceId}
-                                        relatedUserRoles={relatedUserRoles}
-                                        onAddUser={handleOpenAddStaffModal}
-                                        canEdit={relatedUserRoles.canEdit}
-                                    />
-                                ))}
-                            </div>
-                        ))}
-                    {(items ?? []).map((item) => {
-                        const url = l(item.url);
-                        if (!url) return null;
-                        return (
-                            <div key={item.name} className="flex flex-col gap-1">
-                                <Text fontWeight="semibold">{l(item.text)}</Text>
-                                <Link
-                                    underline
-                                    className="break-all"
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {url.replace(/^https?:\/\//, "")}
-                                </Link>
-                            </div>
-                        );
-                    })}
+                <Disclosure.Content padding="lg">
+                    <div className="flex flex-col gap-4 pt-4">
+                        {relatedUserGroups.length > 0 &&
+                            relatedUserGroups.map((group, group_index) => (
+                                <div key={`related_${group_index}`}>
+                                    <Heading size="sm" className="mb-4 empty:hidden">
+                                        {l(group.title)}
+                                    </Heading>
+                                    {group.userRoles.map((relatedUserRoles, user_role_index) => (
+                                        <RelatedStaffInfo
+                                            key={`related_${group_index}_${user_role_index}`}
+                                            instanceId={instanceId}
+                                            relatedUserRoles={relatedUserRoles}
+                                            onAddUser={handleOpenAddStaffModal}
+                                            canEdit={relatedUserRoles.canEdit}
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        {(items ?? []).map((item) => {
+                            const url = l(item.url);
+                            if (!url) return null;
+                            return (
+                                <div key={item.name} className="flex flex-col gap-1">
+                                    <Text fontWeight="semibold">{l(item.text)}</Text>
+                                    <Link
+                                        underline
+                                        className="break-all"
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {url.replace(/^https?:\/\//, "")}
+                                    </Link>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </Disclosure.Content>
             </Disclosure>
             <AddStaffModal
