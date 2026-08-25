@@ -1,7 +1,6 @@
 import {describe, expect, it} from "vitest";
 
 import {
-    getSubmissionsToShow,
     hasVersionHistory,
     resolveContentState,
     resolveFormState,
@@ -22,6 +21,8 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     headerStatus: null,
     hierarchyMode: "Parallel",
     resultsType: "Normal",
+    expectsSubmission: false,
+    hasSubmission: false,
     ...overrides,
 });
 
@@ -60,40 +61,6 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
         step: "step-1",
     },
     ...overrides,
-});
-
-describe("getSubmissionsToShow", () => {
-    it("returns direct submissions when they exist", () => {
-        const submissions = [makeSubmission()];
-        expect(getSubmissionsToShow(submissions)).toBe(submissions);
-    });
-
-    it("does not treat a historical version as the current submission", () => {
-        const versionSubmissions = [makeSubmission({id: "v-sub"})];
-        const step = makeStep({
-            versions: [
-                {versionNumber: 1, eventIds: [], submittedAt: "", submissions: versionSubmissions},
-            ],
-        });
-        expect(step.versions).toHaveLength(1);
-        expect(getSubmissionsToShow([])).toEqual([]);
-    });
-
-    it("returns empty array when no submissions and multiple versions", () => {
-        const step = makeStep({
-            versions: [
-                {versionNumber: 1, eventIds: [], submittedAt: "", submissions: [makeSubmission()]},
-                {
-                    versionNumber: 2,
-                    eventIds: [],
-                    submittedAt: "",
-                    submissions: [makeSubmission({id: "sub-2"})],
-                },
-            ],
-        });
-        expect(step.versions).toHaveLength(2);
-        expect(getSubmissionsToShow([])).toEqual([]);
-    });
 });
 
 describe("hasVersionHistory", () => {
@@ -149,13 +116,7 @@ describe("resolveContentState", () => {
                 },
             ],
         });
-        const result = resolveContentState({
-            step,
-            actions: [],
-            submissions: [],
-            resolvedAction: null,
-            isDisabled: false,
-        });
+        const result = resolveContentState(step, []);
         // Version history is rendered separately, content falls through to empty
         expect(result).toEqual({type: "empty"});
     });
@@ -182,13 +143,7 @@ describe("resolveContentState", () => {
                 step: "step-1",
             },
         });
-        const result = resolveContentState({
-            step: makeStep(),
-            actions: [],
-            submissions: [regular, assessment],
-            resolvedAction: null,
-            isDisabled: false,
-        });
+        const result = resolveContentState(makeStep(), [regular, assessment]);
         expect(result).toEqual({
             type: "submissions",
             regular: [regular],
@@ -197,62 +152,25 @@ describe("resolveContentState", () => {
     });
 
     it("returns 'submissions' (empty lists) when resultsType is not Normal", () => {
-        const result = resolveContentState({
-            step: makeStep({resultsType: "AssessmentPartOverview"}),
-            actions: [],
-            submissions: [],
-            resolvedAction: null,
-            isDisabled: false,
-        });
+        const result = resolveContentState(makeStep({resultsType: "AssessmentPartOverview"}), []);
         expect(result).toEqual({type: "submissions", regular: [], assessments: []});
     });
 
     it("returns 'empty' when nothing exists", () => {
-        const result = resolveContentState({
-            step: makeStep(),
-            actions: [],
-            submissions: [],
-            resolvedAction: null,
-            isDisabled: false,
-        });
+        const result = resolveContentState(makeStep(), []);
         expect(result).toEqual({type: "empty"});
     });
 
-    it("returns 'empty' when disabled and nothing else matches", () => {
-        const result = resolveContentState({
-            step: makeStep(),
-            actions: [],
-            submissions: [],
-            resolvedAction: null,
-            isDisabled: true,
-        });
-        expect(result).toEqual({type: "empty"});
-    });
-
-    it("content state shows submissions even when a form is open (form is overlay)", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Compact"});
+    it("shows submissions as background content", () => {
         const submission = makeSubmission();
-        const result = resolveContentState({
-            step: makeStep(),
-            actions: [action],
-            submissions: [submission],
-            resolvedAction: action,
-            isDisabled: false,
-        });
-        // Form is open but submissions still show as background content
+        const result = resolveContentState(makeStep(), [submission]);
         expect(result.type).toBe("submissions");
     });
 
     it("filters out submissions with no answers from regular list", () => {
         const withAnswers = makeSubmission({id: "with-answers"});
         const withoutAnswers = makeSubmission({id: "no-answers", answers: []});
-        const result = resolveContentState({
-            step: makeStep(),
-            actions: [],
-            submissions: [withAnswers, withoutAnswers],
-            resolvedAction: null,
-            isDisabled: false,
-        });
+        const result = resolveContentState(makeStep(), [withAnswers, withoutAnswers]);
         expect(result).toEqual({
             type: "submissions",
             regular: [withAnswers],

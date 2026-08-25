@@ -109,4 +109,4 @@ export const instancesApi = baseApi.injectEndpoints({
     }),
 });
 
-export const {endpoints: instancesEndpoints} = instancesApi;
+export const {endpoints: instancesEndpoints, useCreateInstanceMutation} = instancesApi;

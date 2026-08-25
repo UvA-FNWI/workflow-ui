@@ -15,28 +15,44 @@ type Props = {
     onEditPage?: (pageName: string) => void;
     step?: WorkflowStep;
     combine: boolean;
+    emptyMessage?: string | null;
 };
 
-export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, combine}: Props) => {
+export const AssessmentOverview = ({
+    instanceId,
+    submissions,
+    onEditPage,
+    step,
+    combine,
+    emptyMessage,
+}: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
-    const {data: assessmentResults} = assessmentsApi.endpoints.getAssessmentResults.useQuery({
-        instanceId,
-        submissionId:
-            step?.resultsType === "AssessmentFinalOverview"
-                ? undefined
-                : step?.resultsType === "AssessmentPartOverview"
-                  ? step.id
-                  : submissions[0]?.id,
-        combine,
-    });
+    const {data: assessmentResults, isLoading} =
+        assessmentsApi.endpoints.getAssessmentResults.useQuery({
+            instanceId,
+            submissionId:
+                step?.resultsType === "AssessmentFinalOverview"
+                    ? undefined
+                    : step?.resultsType === "AssessmentPartOverview"
+                      ? step.id
+                      : submissions[0]?.id,
+            combine,
+        });
 
-    if (!assessmentResults || !assessmentResults?.parts || assessmentResults?.parts?.length == 0) {
-        return (
+    const emptyState =
+        emptyMessage !== null ? (
             <div className="my-4">
-                <Text className="italic">{t("instance.empty_step")}</Text>
+                <Text className="italic">{emptyMessage ?? t("instance.empty_step")}</Text>
             </div>
-        );
+        ) : null;
+
+    if (isLoading) {
+        return null;
+    }
+
+    if (!assessmentResults?.parts.length) {
+        return emptyState;
     }
 
     if (step?.resultsType === "AssessmentFinalOverview") {
@@ -74,7 +90,7 @@ export const AssessmentOverview = ({instanceId, submissions, onEditPage, step, c
     const colsClass = `${colsList[assessmentSubmissions?.length ?? 1]} w-full`;
 
     if (assessmentSubmissions.length === 0) {
-        return null;
+        return emptyState;
     }
 
     return (

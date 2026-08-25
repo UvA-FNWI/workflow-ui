@@ -1,5 +1,6 @@
 import {Button} from "@uva-fnwi/datanose-ui";
 
+import {HighlightedFields} from "~/components/instance/HighlightedFields.tsx";
 import {PageHeader} from "~/components/PageHeader";
 import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
@@ -47,6 +48,7 @@ export function InstanceHeader({
                     </div>
                 )
             }
+            description={<HighlightedFields instanceId={instanceId} />}
         />
     );
 }
