@@ -73,7 +73,7 @@ export const QuestionAnswerList = ({
                                 >
                                     <Text intent="secondary" display="inline">
                                         (
-                                        {t("instance.summary.changed_on", {
+                                        {t("instance.summary.changed_on_inline", {
                                             date: formatDateShort(
                                                 lastChange.changedAt,
                                                 i18n.language,

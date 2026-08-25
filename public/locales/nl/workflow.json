@@ -77,8 +77,9 @@
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
       "change_version": "Versie {{version}}",
-      "changed_on": "gewijzigd op {{date}}",
+      "changed_on": "Gewijzigd op {{date}}",
       "changed_on_by": "Gewijzigd op {{date}} door {{name}}",
+      "changed_on_inline": "gewijzigd op {{date}}",
       "changes_title": "Wijzigingen",
       "delete_file": "Bestand verwijderen",
       "edit_answer": "Antwoord bewerken",

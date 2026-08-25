@@ -77,8 +77,9 @@
     "empty_step": "Nothing has been submitted yet.",
     "summary": {
       "change_version": "Version {{version}}",
-      "changed_on": "changed on {{date}}",
+      "changed_on": "Changed on {{date}}",
       "changed_on_by": "Changed on {{date}} by {{name}}",
+      "changed_on_inline": "changed on {{date}}",
       "changes_title": "Changes",
       "delete_file": "Delete file",
       "edit_answer": "Edit answer",
