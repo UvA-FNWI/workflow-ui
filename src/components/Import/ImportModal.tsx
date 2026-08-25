@@ -13,7 +13,7 @@ import {
     useGetColumnNamesQuery,
     usePreviewMutation,
 } from "~/store/api/importApi.ts";
-import type {ColumnMapping, ImportPreview} from "~/store/api/types/import.ts";
+import type {ColumnMapping, ImportConfirmRow, ImportPreview} from "~/store/api/types/import.ts";
 
 type ImportModalProps = {
     isOpen: boolean;
@@ -114,16 +114,6 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         }
     };
 
-    const getConfirmRows = (preview: ImportPreview) =>
-        preview.rows
-            .filter((row) => row.validationErrors.length === 0)
-            .map(({instanceId, values}) => ({
-                instanceId,
-                values: Object.fromEntries(
-                    Object.entries(values).filter(([, v]) => v !== null) as [string, string][],
-                ),
-            }));
-
     const handleNextStep = async () => {
         if (!isStepValid()) return;
 
@@ -155,7 +145,9 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
             await confirm({
                 workflowDefinition,
                 screenName,
-                rows: getConfirmRows(previewData!),
+                rows: previewData.rows.map(
+                    (row) => ({instanceId: row.instanceId, values: row.values}) as ImportConfirmRow,
+                ),
             });
             onClose();
             return;
