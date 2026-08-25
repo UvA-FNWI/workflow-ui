@@ -35,6 +35,11 @@ export const ImportColumnSelection = ({
     const {t: tw} = useTranslate("workflow");
     const [selectedColumns, setSelectedColumns] = useState<Record<string, string>>({});
 
+    const getDisabledKeys = (currentColumnName: string) =>
+        Object.entries(selectedColumns)
+            .filter(([key, val]) => key !== currentColumnName && val !== "")
+            .map(([, val]) => val);
+
     const handleColumnSelect = (col: string) => (key: Key | null) => {
         let mapping: ColumnMapping[] = [];
         setSelectedColumns((prev) => {
@@ -71,6 +76,7 @@ export const ImportColumnSelection = ({
                     value={selectedColumns[importableColumnIdentifier.name]}
                     onChange={handleColumnSelect(importableColumnIdentifier.name)}
                     placeholder={tw("select")}
+                    disabledKeys={getDisabledKeys(importableColumnIdentifier.name)}
                 >
                     {fileColumns.map((col) => (
                         <Item key={col}>{col}</Item>
@@ -87,9 +93,7 @@ export const ImportColumnSelection = ({
                         columns={fileColumns}
                         selectedColumn={selectedColumns[col.name]}
                         onSelect={handleColumnSelect(col.name)}
-                        disabledKeys={Object.entries(selectedColumns)
-                            .filter(([key, val]) => key !== col.name && val !== "")
-                            .map(([, val]) => val)}
+                        disabledKeys={getDisabledKeys(col.name)}
                     />
                 ))}
             </div>
