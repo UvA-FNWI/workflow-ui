@@ -17,9 +17,8 @@ import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.t
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
 import {useModalState} from "~/hooks/useModalState.ts";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate.ts";
-import type {RelatedUserGroup, Role, WorkflowInstanceField} from "~/store/api/types/instances.ts";
+import type {RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
-import {getStringField} from "~/utils/fieldUtils.ts";
 
 export interface AddStaffModalProps {
     isOpen: boolean;
@@ -30,7 +29,6 @@ export interface AddStaffModalProps {
         externalUser: CreateExternalUserInput | null,
     ) => void;
     isSaving?: boolean;
-    instanceFields?: WorkflowInstanceField[];
     allowsExternalUsers?: boolean;
     instanceRoles: Role[];
     initialRole?: Role;
@@ -43,7 +41,6 @@ export default function AddStaffModal({
     onOpenChange,
     onConfirm,
     isSaving,
-    instanceFields,
     allowsExternalUsers,
     instanceRoles,
     initialRole,
@@ -100,10 +97,6 @@ export default function AddStaffModal({
         handleConfirm: handleConfirmExternalUser,
     } = useModalState<CreateExternalUserInput>(handleCreateExternalUser);
 
-    const studentName =
-        getStringField(instanceFields, "Student.DisplayName") ??
-        t("staff_card.add_modal.this_student");
-
     const isComplete = selectedRole != null && selectedUsers != null;
 
     const handleClose = () => {
@@ -123,12 +116,7 @@ export default function AddStaffModal({
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <Modal.Header>{t("staff_card.add_modal.title")}</Modal.Header>
                 <Modal.Body className="flex flex-col gap-4">
-                    <Text>
-                        <Trans
-                            i18nKey="workflow:staff_card.add_modal.description"
-                            values={{studentName}}
-                        />
-                    </Text>
+                    <Text>{t("staff_card.add_modal.description")}</Text>
 
                     <div>
                         <InputLabel>{t("staff_card.add_modal.choose_role")}</InputLabel>
