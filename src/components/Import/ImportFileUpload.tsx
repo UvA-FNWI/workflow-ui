@@ -20,7 +20,7 @@ export const ImportFileUpload = ({onFileSelect, onFileRemove}: ImportFileUploadP
 
     return (
         <FileUpload
-            accept={[".xlsx", ".xls", ".csv"]}
+            accept={[".xlsx", ".csv"]}
             buttonText={t("upload_file")}
             buttonIntent="secondary"
             buttonSize="large"

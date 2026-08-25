@@ -1,4 +1,5 @@
 import ExcelJS from "exceljs";
+import Papa from "papaparse";
 
 /**
  * Parses the first column of an Excel file, and returns the column names.
@@ -25,13 +26,8 @@ export const parseColumnsExcel = async (file: File): Promise<string[]> => {
  */
 export const parseColumnsCsv = async (file: File): Promise<string[]> => {
     const text = await file.text();
-    const firstLine = text.split(/\r?\n/)[0];
-    // Detect delimiter (comma or semicolon)
-    const delimiter = firstLine.includes(";") ? ";" : ",";
-    return firstLine
-        .split(delimiter)
-        .map((col) => col.trim().replace(/^"|"$/g, ""))
-        .filter((col) => col.length > 0);
+    const result = Papa.parse<string[]>(text.trim(), {preview: 1, skipEmptyLines: true});
+    return result.data[0]?.map((col) => col.trim()).filter((col) => col.length > 0) ?? [];
 };
 
 /**
