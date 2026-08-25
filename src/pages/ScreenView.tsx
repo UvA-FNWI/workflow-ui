@@ -3,7 +3,6 @@ import {useState} from "react";
 import {useParams} from "react-router";
 
 import {
-    Button,
     Card,
     Container,
     Heading,
@@ -20,29 +19,17 @@ import {ScreenTable} from "~/components/ScreenTable";
 import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
-import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
-import {useCreateInstanceMutation} from "~/store/api/instancesApi";
 import {useGetScreenQuery} from "~/store/api/screensApi";
 
 export const ScreenView = () => {
     const {l} = useTranslate("common");
     const {workflowDefinition, screenName} = useParams();
-    const navigate = useVersionedNavigate();
     const {data: screen} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {skip: !workflowDefinition || !screenName},
     );
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState(0);
-    const [createInstance, {isLoading: isCreating}] = useCreateInstanceMutation();
-
-    const handleCreate = async () => {
-        if (!workflowDefinition) return;
-        const result = await createInstance({workflowDefinition});
-        if (result.data) {
-            navigate(`/instance/${result.data.id}`);
-        }
-    };
 
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
 
@@ -58,18 +45,6 @@ export const ScreenView = () => {
                         <Heading as="h1" className="min-w-0 wrap-break-word">
                             {l(screen.workflowDefinition.title)}
                         </Heading>
-                        <div className="flex w-full items-center gap-3 sm:w-auto sm:max-w-none sm:justify-end">
-                            {screen.workflowDefinition.canCreateInstance && (
-                                <Button
-                                    intent="secondary"
-                                    variant="destructive"
-                                    onClick={handleCreate}
-                                    isLoading={isCreating}
-                                >
-                                    {t("create_new")}
-                                </Button>
-                            )}
-                        </div>
                     </div>
                 </div>
                 {screen.groups ? (
@@ -91,6 +66,8 @@ export const ScreenView = () => {
                                 search={search}
                                 setSearch={setSearch}
                                 canEdit={screen.isBulkEditEnabled}
+                                canCreate={screen.workflowDefinition.canCreateInstance}
+                                workflowDefinition={workflowDefinition}
                             />
                         </TabToolbar>
                         <TabPanels>

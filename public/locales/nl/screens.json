@@ -8,6 +8,7 @@
     "title": "Titel"
   },
   "completed": "Afgerond",
+  "create_new": "Nieuw",
   "empty_title": "Geen scripties gevonden",
   "import": {
     "column_selection": "Kies de kolommen die je wilt importeren:",

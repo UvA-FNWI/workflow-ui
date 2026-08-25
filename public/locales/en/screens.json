@@ -8,6 +8,7 @@
     "title": "Title"
   },
   "completed": "Completed",
+  "create_new": "New",
   "empty_title": "No theses found",
   "import": {
     "column_selection": "Choose the columns you want to import:",
