@@ -20,7 +20,6 @@ type ImportColumnSelectionRowProps = {
     selectedColumn: string;
     disabledKeys?: string[];
     onSelect: (value: Key | null) => void;
-    onColumnMappingChange?: (mapping: ColumnMapping[]) => void;
 };
 
 export const ImportColumnSelection = ({
@@ -35,21 +34,20 @@ export const ImportColumnSelection = ({
     const {t: tw} = useTranslate("workflow");
     const [selectedColumns, setSelectedColumns] = useState<Record<string, string>>({});
 
+    const getColumnMapping = (columns: Record<string, string>): ColumnMapping[] =>
+        Object.entries(columns)
+            .filter(([, val]) => val !== "")
+            .map(([propertyName, excelColumn]) => ({excelColumn, propertyName}));
+
     const getDisabledKeys = (currentColumnName: string) =>
         Object.entries(selectedColumns)
             .filter(([key, val]) => key !== currentColumnName && val !== "")
             .map(([, val]) => val);
 
-    const handleColumnSelect = (col: string) => (key: Key | null) => {
-        let mapping: ColumnMapping[] = [];
-        setSelectedColumns((prev) => {
-            const updated = {...prev, [col]: key !== null ? String(key) : ""};
-            mapping = Object.entries(updated)
-                .filter(([, val]) => val !== "")
-                .map(([propertyName, excelColumn]) => ({excelColumn, propertyName}));
-            return updated;
-        });
-        onColumnMappingChange?.(mapping);
+    const handleColumnSelect = (propertyName: string) => (key: Key | null) => {
+        const updated = {...selectedColumns, [propertyName]: key !== null ? String(key) : ""};
+        setSelectedColumns(updated);
+        onColumnMappingChange?.(getColumnMapping(updated));
     };
 
     return (

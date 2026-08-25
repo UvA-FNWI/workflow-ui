@@ -1,5 +1,5 @@
-import ExcelJS from "exceljs";
-import Papa from "papaparse";
+const {default: ExcelJS} = await import("exceljs");
+const {default: Papa} = await import("papaparse");
 
 /**
  * Parses the first column of an Excel file, and returns the column names.

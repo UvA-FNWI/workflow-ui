@@ -20,12 +20,20 @@ type ImportModalProps = {
     onClose: () => void;
 };
 
+const ImportStep = {
+    UploadFile: 1,
+    SelectColumns: 2,
+    Preview: 3,
+} as const;
+
+type ImportStep = (typeof ImportStep)[keyof typeof ImportStep];
+
 export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
     const prevIsOpen = useRef(false);
     const errorHandled = useRef(false);
-    const [activeStep, setActiveStep] = useState(1);
+    const [activeStep, setActiveStep] = useState<ImportStep>(ImportStep.UploadFile);
     const [fileColumns, setFileColumns] = useState<string[]>([]);
     const [columnMapping, setColumnMapping] = useState<ColumnMapping[]>([]);
     const [file, setFile] = useState<File | null>(null);
@@ -44,7 +52,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     } = useGetColumnNamesQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {
-            skip: !workflowDefinition || activeStep !== 2,
+            skip: !workflowDefinition || activeStep !== ImportStep.SelectColumns,
         },
     );
 
@@ -52,7 +60,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const importableColumnIdentifier = data?.identifier;
 
     const resetState = () => {
-        setActiveStep(1);
+        setActiveStep(ImportStep.UploadFile);
         setFileColumns([]);
         setColumnMapping([]);
         setFile(null);
@@ -79,13 +87,11 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
 
     if (!workflowDefinition || !screenName) return;
 
-    const totalSteps = 3;
-
     const isStepValid = (): boolean => {
         switch (activeStep) {
-            case 1:
+            case ImportStep.UploadFile:
                 return !!file;
-            case 2:
+            case ImportStep.SelectColumns:
                 return (
                     !isFetchingImportableColumns &&
                     columnMapping.length > 1 &&
@@ -95,11 +101,12 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                     ) &&
                     !!file
                 );
-            case 3:
+            case ImportStep.Preview:
                 return (
                     !!previewData &&
                     !!file &&
                     columnMapping.length > 0 &&
+                    previewData.rows.length > 0 &&
                     previewData.rows.every((row) => row.validationErrors.length === 0)
                 );
             default:
@@ -120,7 +127,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const handleNextStep = async () => {
         if (!isStepValid()) return;
 
-        if (activeStep === 2) {
+        if (activeStep === ImportStep.SelectColumns) {
             setIsLoading(true);
             const response = await preview({
                 file: file!,
@@ -138,7 +145,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
             }
         }
 
-        if (activeStep === totalSteps) {
+        if (activeStep === ImportStep.Preview) {
             if (!previewData) {
                 toast.error(t("error_importing"));
                 resetState();
@@ -154,14 +161,25 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
             return;
         }
 
-        setActiveStep((prev) => prev + 1);
+        setActiveStep((prev) => (prev + 1) as ImportStep);
     };
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose} size={activeStep === 3 ? "full" : "sm"}>
+        <Modal
+            isOpen={isOpen}
+            onOpenChange={onClose}
+            size={activeStep === ImportStep.Preview ? "full" : "sm"}
+        >
             <Modal.Header
-                subTitle={t("step_indicator", {index: activeStep, total: totalSteps})}
-                description={activeStep == 3 ? t("description_verify") : t("description_select")}
+                subTitle={t("step_indicator", {
+                    index: activeStep,
+                    total: Object.values(ImportStep).length,
+                })}
+                description={
+                    activeStep == ImportStep.Preview
+                        ? t("description_verify")
+                        : t("description_select")
+                }
             >
                 {t("title")}
             </Modal.Header>
@@ -172,7 +190,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                             onFileSelect={(fileName, cols) => {
                                 setFile(fileName);
                                 setFileColumns(cols);
-                                setActiveStep(2);
+                                setActiveStep(ImportStep.SelectColumns);
                             }}
                             onFileRemove={() => {
                                 setFile(null);
@@ -180,7 +198,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                             }}
                         />
                     )}
-                    {activeStep === 2 &&
+                    {activeStep === ImportStep.SelectColumns &&
                         (isFetchingImportableColumns || !importableColumnIdentifier ? (
                             <Text size="sm" intent="secondary">
                                 {t("loading_data")}
@@ -195,7 +213,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                                 onColumnMappingChange={setColumnMapping}
                             />
                         ))}
-                    {activeStep === 3 && (
+                    {activeStep === ImportStep.Preview && (
                         <div>
                             <div className="mb-8 flex gap-2">
                                 <Text fontWeight="bold" size="sm">{`${t("shown_data")}:`}</Text>
