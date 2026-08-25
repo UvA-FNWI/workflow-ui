@@ -19,7 +19,7 @@ type ImportModalProps = {
     isOpen: boolean;
     onClose: () => void;
 };
-export const IdentifierKey = "Student.UserName";
+
 export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tw} = useTranslate("workflow");
@@ -37,12 +37,20 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
 
     const {workflowDefinition, screenName} = useParams();
 
-    const {data: importableColumns = [], error: importableColumnsError} = useGetColumnNamesQuery(
+    const {
+        data,
+        error: importableColumnsError,
+        isFetching: isFetchingImportableColumns,
+    } = useGetColumnNamesQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {
             skip: !workflowDefinition || activeStep !== 2,
         },
     );
+
+    const importableColumns = data?.columns ?? [];
+    const importableColumnIdentifier = data?.identifier;
+
     const resetState = () => {
         setActiveStep(1);
         setFileColumns([]);
@@ -79,9 +87,12 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                 return !!file;
             case 2:
                 return (
+                    !isFetchingImportableColumns &&
                     columnMapping.length > 1 &&
-                    columnMapping.find((column) => column.propertyName == IdentifierKey) !=
-                        undefined &&
+                    !!importableColumnIdentifier &&
+                    columnMapping.some(
+                        (column) => column.propertyName == importableColumnIdentifier.name,
+                    ) &&
                     !!file
                 );
             case 3:
@@ -169,15 +180,21 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                             }}
                         />
                     )}
-                    {activeStep === 2 && (
-                        <ImportColumnSelection
-                            fileName={file?.name ?? ""}
-                            fileColumns={fileColumns}
-                            importableColumns={importableColumns}
-                            onRemoveFile={resetState}
-                            onColumnMappingChange={setColumnMapping}
-                        />
-                    )}
+                    {activeStep === 2 &&
+                        (isFetchingImportableColumns || !importableColumnIdentifier ? (
+                            <Text size="sm" intent="secondary">
+                                {t("loading_data")}
+                            </Text>
+                        ) : (
+                            <ImportColumnSelection
+                                fileName={file?.name ?? ""}
+                                fileColumns={fileColumns}
+                                importableColumns={importableColumns}
+                                importableColumnIdentifier={importableColumnIdentifier}
+                                onRemoveFile={resetState}
+                                onColumnMappingChange={setColumnMapping}
+                            />
+                        ))}
                     {activeStep === 3 && (
                         <div>
                             <div className="mb-8 flex gap-2">

@@ -2,7 +2,6 @@ import {type Key, useState} from "react";
 
 import {Button, Callout, Checkbox, Icon, Item, Select, Text} from "@uva-fnwi/datanose-ui";
 
-import {IdentifierKey} from "~/components/Import/ImportModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {ColumnMapping, ImportableProperty} from "~/store/api/types/import.ts";
 
@@ -10,6 +9,7 @@ type ImportColumnSelectionProps = {
     fileName: string;
     fileColumns: string[];
     importableColumns: ImportableProperty[];
+    importableColumnIdentifier: ImportableProperty;
     onRemoveFile?: () => void;
     onColumnMappingChange?: (mapping: ColumnMapping[]) => void;
 };
@@ -27,6 +27,7 @@ export const ImportColumnSelection = ({
     fileName,
     fileColumns,
     importableColumns,
+    importableColumnIdentifier,
     onRemoveFile,
     onColumnMappingChange,
 }: ImportColumnSelectionProps) => {
@@ -61,10 +62,14 @@ export const ImportColumnSelection = ({
                 </Button>
             </div>
             <div className="flex flex-col gap-2 py-4">
-                <Text fontWeight="bold">{t("select_student_number")}</Text>
+                <Text fontWeight="bold">
+                    {t("select_identifier", {
+                        identifier: l(importableColumnIdentifier.title) ?? t("identifier"),
+                    })}
+                </Text>
                 <Select
-                    value={selectedColumns[IdentifierKey]}
-                    onChange={handleColumnSelect(IdentifierKey)}
+                    value={selectedColumns[importableColumnIdentifier.name]}
+                    onChange={handleColumnSelect(importableColumnIdentifier.name)}
                     placeholder={tw("select")}
                 >
                     {fileColumns.map((col) => (

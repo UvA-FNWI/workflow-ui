@@ -1,6 +1,6 @@
 import {baseApi} from "~/store/api/baseApi.ts";
 import type {
-    ImportableProperty,
+    ImportColumnNamesResponse,
     ImportConfirmRequest,
     ImportFileRequest,
     ImportPreview,
@@ -15,7 +15,7 @@ const buildFormData = ({file, columnMapping}: ImportFileRequest): FormData => {
 export const importApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getColumnNames: builder.query<
-            ImportableProperty[],
+            ImportColumnNamesResponse,
             {workflowDefinition: string; screenName: string}
         >({
             query: ({workflowDefinition, screenName}) => ({

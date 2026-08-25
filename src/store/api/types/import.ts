@@ -12,6 +12,11 @@ export type ColumnMapping = {
     propertyName: string;
 };
 
+export type ImportColumnNamesResponse = {
+    columns: ImportableProperty[];
+    identifier: ImportableProperty;
+};
+
 export type ImportPreviewRow = {
     instanceId: string;
     values: Record<string, string | null>;
