@@ -107,6 +107,14 @@
     "titleStudent": "Your progress",
     "titleSupervisor": "Student's progress"
   },
+  "repeated_form": {
+    "clear": "Clear prefilled fields",
+    "clear_error": "Failed to clear the fields. Please try again.",
+    "confirm_message": "Are you sure you want to clear all fields?",
+    "confirm_title": "Clear prefilled fields",
+    "message": "Adjustments are needed. We have copied over the details you entered earlier for you to adjust as needed.",
+    "question": "Do you want to start over?"
+  },
   "save": "Save",
   "screens": {
     "actions": "Actions"

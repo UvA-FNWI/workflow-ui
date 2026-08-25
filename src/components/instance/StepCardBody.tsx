@@ -6,6 +6,7 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
+    getPreviousFormVersion,
     hasVersionHistory,
     type ModalState,
     resolveFormState,
@@ -101,9 +102,11 @@ export const StepCardBody = ({
                 {formState && (
                     <div className="py-4">
                         <FormPage
+                            key={formState.action.form}
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
                             onClose={() => setActiveAction(null)}
+                            previousVersion={getPreviousFormVersion(step, formState.action.form)}
                         />
                     </div>
                 )}
@@ -179,6 +182,7 @@ export const StepCardBody = ({
                 onClose={() => setActiveAction(null)}
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}
+                previousVersion={getPreviousFormVersion(step, activeAction?.form)}
             />
         </>
     );
