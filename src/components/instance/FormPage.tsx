@@ -14,6 +14,7 @@ import {
 import {PageControl} from "./PageControl";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
+import {PrefilledAnswersNotice} from "~/components/instance/PrefilledAnswersNotice.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page} from "~/store/api/types/submissions";
@@ -25,9 +26,10 @@ type Props = {
     instanceId: string;
     submissionId: string;
     onClose: () => void;
+    previousVersion?: number;
 };
 
-export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
+export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: Props) => {
     const {t, l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
@@ -76,6 +78,11 @@ export const FormPage = ({instanceId, submissionId, onClose}: Props) => {
 
     return (
         <div>
+            <PrefilledAnswersNotice
+                instanceId={instanceId}
+                submissionId={submissionId}
+                previousVersion={previousVersion}
+            />
             {showTabView ? (
                 <Tabs activeIndex={activeTabIndex} onTabChange={setActiveTabIndex}>
                     <TabList>

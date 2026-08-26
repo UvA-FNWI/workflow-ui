@@ -2,9 +2,8 @@ import {applyEffectResult} from "../effectsSlice";
 import {baseApi} from "./baseApi";
 import type {Submission} from "./types/submissions";
 import {instancesApi} from "~/store/api/instancesApi.ts";
+import type {SubmissionParams} from "~/store/api/types/params.ts";
 import type {SubmitSubmissionResult} from "~/store/api/types/returnTypes.ts";
-
-type SubmissionParams = {instanceId: string; submissionId: string};
 
 export const submissionsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
