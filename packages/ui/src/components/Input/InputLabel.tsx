@@ -10,7 +10,7 @@ export const InputLabel: React.FC<InputLabelProps> = ({
   className,
   ...rest
 }) => (
-  <label
+  <span
     {...rest}
     className={cn(
       'ui:text-md ui:mb-1 ui:block ui:font-semibold ui:text-black ui:dark:text-white',
@@ -18,5 +18,5 @@ export const InputLabel: React.FC<InputLabelProps> = ({
     )}
   >
     {children}
-  </label>
+  </span>
 );

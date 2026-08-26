@@ -11,6 +11,7 @@ i18n.use(Backend)
         backend: {
             loadPath: "/locales/{{lng}}/{{ns}}.json",
         },
+        ns: ["common", "workflow", "jobs", "personal"],
         defaultNS: "common",
         debug: true,
         fallbackLng: "en",

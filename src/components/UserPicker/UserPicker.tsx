@@ -110,6 +110,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 readOnly={true}
                 role="button"
                 className="cursor-pointer"
+                aria-label={t("user_picker.title")}
             />
 
             <UserPickerModal

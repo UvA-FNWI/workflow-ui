@@ -1,4 +1,4 @@
-import {type ReactNode, useState} from "react";
+import {useState} from "react";
 
 import type {ColumnDef} from "@tanstack/react-table";
 import {Disclosure, Heading, SearchInput, Text} from "@uva-fnwi/datanose-ui";
@@ -9,7 +9,7 @@ import type {PersonalInstance} from "~/store/api/types/personal";
 import type {PersonalRoleGroup} from "~/utils/personalInstances";
 
 type PersonalDisclosureProps = {
-    title: ReactNode;
+    title: string;
     roleGroups: PersonalRoleGroup[];
     columns: ColumnDef<PersonalInstance>[];
     defaultExpanded?: boolean;
@@ -40,7 +40,8 @@ export function PersonalDisclosure({
                             <SearchInput
                                 value={search}
                                 onChange={setSearch}
-                                placeholder={t("search_placeholder")}
+                                placeholder={t("search_placeholder", {ns: "common"})}
+                                aria-label={t("search_aria_label", {ns: "common", screen: title})}
                             />
                         </div>
                         <div className="flex flex-col gap-6">

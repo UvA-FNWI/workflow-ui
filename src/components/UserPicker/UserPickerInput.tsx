@@ -122,6 +122,7 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
                     ? t("user_picker.search_hint_one")
                     : t("user_picker.search_hint_other")
             }
+            aria-label={t("user_picker.title")}
         />
     );
 };

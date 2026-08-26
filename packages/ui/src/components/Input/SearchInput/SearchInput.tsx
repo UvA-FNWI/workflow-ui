@@ -39,6 +39,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   className,
   size,
   align,
+  'aria-label': ariaLabel,
   ...rest
 }) => {
   const state = useSearchFieldState({
@@ -56,6 +57,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   const { inputProps, labelProps, descriptionProps, errorMessageProps } =
     useSearchField(
       {
+        'aria-label': ariaLabel,
         label,
         description,
         errorMessage,

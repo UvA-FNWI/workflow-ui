@@ -69,6 +69,7 @@ function InstanceJobs() {
                         onChange={setSearch}
                         placeholder={t("search_placeholder", {ns: "common"})}
                         className="w-fit max-w-sm"
+                        aria-label={t("search_aria_label", {ns: "common", screen: "jobs"})}
                     />
                 </div>
                 {isLoading ? (

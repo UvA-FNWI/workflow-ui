@@ -61,10 +61,11 @@ export function AdminCard() {
                 <Heading as="h3" size="sm">
                     {t("admin.title")}
                 </Heading>
-                <Heading as="h4" size="xs">
+                <Heading as="h4" size="xs" id="admin-impersonate-role-label">
                     {t("admin.impersonate_role_title")}
                 </Heading>
                 <Select
+                    aria-labelledby="admin-impersonate-role-label"
                     placeholder={t("admin.impersonate_role_placeholder")}
                     value={selectedRole?.name}
                     onChange={(value) =>

@@ -177,7 +177,10 @@ export const PageControl = ({
                                                     <div>
                                                         <div className="flex justify-between">
                                                             {question.type !== "Boolean" && (
-                                                                <InputLabel key={question.name}>
+                                                                <InputLabel
+                                                                    key={question.name}
+                                                                    id={`${question.name}-label`}
+                                                                >
                                                                     {l(question.text)}
                                                                     {question.percentage != null &&
                                                                         ` (${question.percentage.toLocaleString(i18n.language)}%)`}
@@ -213,6 +216,7 @@ export const PageControl = ({
                                                             visibleChoices={answer?.visibleChoices}
                                                             errorMessage={errorMessage}
                                                             isValid={!errorMessage}
+                                                            ariaLabelledby={`${question.name}-label`}
                                                         />
                                                     </div>
                                                 </div>

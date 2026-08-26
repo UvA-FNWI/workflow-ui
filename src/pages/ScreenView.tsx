@@ -70,6 +70,9 @@ export const ScreenView = () => {
                                 onChange={setSearch}
                                 placeholder={t("search_placeholder")}
                                 className="w-full"
+                                aria-label={t("search_aria_label", {
+                                    screen: t("workflowInstance", {ns: "workflow"}),
+                                })}
                             />
                         </div>
                     </div>

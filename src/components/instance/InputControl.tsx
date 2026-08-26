@@ -47,6 +47,7 @@ interface InputControlProps {
     visibleChoices?: string[] | null;
     isValid?: boolean;
     errorMessage?: string;
+    ariaLabelledby?: string;
 }
 
 export const InputControl = ({
@@ -58,6 +59,7 @@ export const InputControl = ({
     visibleChoices,
     isValid,
     errorMessage,
+    ariaLabelledby,
 }: InputControlProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -111,6 +113,7 @@ export const InputControl = ({
                     maxLength={question.maxLength}
                     isValid={isValid}
                     errorMessage={errorMessage}
+                    aria-labelledby={ariaLabelledby}
                 />
             );
         }
@@ -127,6 +130,7 @@ export const InputControl = ({
                     onChange={(value) => debouncedChange(value)}
                     isValid={isValid}
                     errorMessage={errorMessage}
+                    aria-labelledby={ariaLabelledby}
                 />
             );
         }
@@ -138,6 +142,7 @@ export const InputControl = ({
                     onChange={(value) => debouncedChange(value)}
                     isValid={isValid}
                     errorMessage={errorMessage}
+                    aria-labelledby={ariaLabelledby}
                 />
             );
         }
@@ -165,6 +170,7 @@ export const InputControl = ({
                 maxLength={question.maxLength}
                 isValid={isValid}
                 errorMessage={errorMessage}
+                aria-labelledby={ariaLabelledby}
             />
         );
     }
@@ -184,6 +190,7 @@ export const InputControl = ({
                 formatOptions={{useGrouping: false}}
                 isValid={isValid}
                 errorMessage={errorMessage}
+                aria-labelledby={ariaLabelledby}
             />
         );
     }
@@ -195,6 +202,7 @@ export const InputControl = ({
                 onChange={(newValue) => debouncedChange(newValue)}
                 isValid={isValid}
                 errorMessage={errorMessage}
+                aria-labelledby={ariaLabelledby}
             />
         );
     }
@@ -206,6 +214,7 @@ export const InputControl = ({
                 allowsExternalUsers={question.allowsExternalUsers}
                 onCreateExternalUser={handleCreateExternalUser}
                 selectionMode={question.isArray ? "multiple" : "single"}
+                aria-labelledby={ariaLabelledby}
             />
         );
     }
@@ -216,6 +225,7 @@ export const InputControl = ({
                 label={l(question.text) ?? ""}
                 isSelected={value as boolean}
                 onChange={(newValue) => debouncedChange(newValue)}
+                aria-labelledby={ariaLabelledby}
             />
         );
     }
@@ -246,6 +256,7 @@ export const InputControl = ({
                         placeholder={t("select")}
                         isValid={isValid}
                         errorMessage={errorMessage}
+                        aria-labelledby={ariaLabelledby}
                     >
                         {choices.map((choice) => (
                             <SelectItem key={choice.name}>
@@ -265,6 +276,7 @@ export const InputControl = ({
                     placeholder={t("select")}
                     isValid={isValid}
                     errorMessage={errorMessage}
+                    aria-labelledby={ariaLabelledby}
                 >
                     {choices.map((choice) => (
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
@@ -283,6 +295,7 @@ export const InputControl = ({
                     rubrics={question.rubric ?? []}
                     isValid={isValid}
                     errorMessage={errorMessage}
+                    aria-labelledby={ariaLabelledby}
                 />
             );
         }
@@ -306,6 +319,7 @@ export const InputControl = ({
                             label={l(choice.text) ?? choice.name}
                             isSelected={selectedValues.includes(choice.name)}
                             onChange={(isSelected) => handleCheckboxChange(choice.name, isSelected)}
+                            aria-labelledby={ariaLabelledby}
                         />
                     ))}
                 </div>
@@ -321,6 +335,7 @@ export const InputControl = ({
                 }}
                 isValid={isValid}
                 errorMessage={errorMessage}
+                aria-labelledby={ariaLabelledby}
             >
                 {choices.map((choice) => (
                     <Radio key={choice.name} value={choice.name}>
