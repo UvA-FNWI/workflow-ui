@@ -23,6 +23,7 @@
     "shown_data": "Shown data",
     "staff_info_callout": "You import an employee based on their email address.",
     "step_indicator": "Step {{index}} of {{total}}",
+    "success_importing": "Data successfully imported.",
     "title": "Import",
     "upload_file": "Upload file"
   },

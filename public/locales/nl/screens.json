@@ -23,6 +23,7 @@
     "shown_data": "Getoonde data",
     "staff_info_callout": "Je importeert een medewerker op basis van hun e-mailadres.",
     "step_indicator": "Stap {{index}} van {{total}}",
+    "success_importing": "Gegevens succesvol geïmporteerd.",
     "title": "Importeren",
     "upload_file": "Upload document"
   },

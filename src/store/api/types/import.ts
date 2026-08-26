@@ -19,7 +19,7 @@ export type ImportColumnNamesResponse = {
 
 export type ImportPreviewRow = {
     instanceId: string;
-    values: Record<string, string | null>;
+    values: Record<string, string>;
     validationErrors: ImportPreviewError[];
 };
 

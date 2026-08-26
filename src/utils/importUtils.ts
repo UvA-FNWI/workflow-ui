@@ -1,11 +1,9 @@
-const {default: ExcelJS} = await import("exceljs");
-const {default: Papa} = await import("papaparse");
-
 /**
- * Parses the first column of an Excel file, and returns the column names.
+ * Parses the first column of an Excel file and returns the column names.
  * @param file
  */
 export const parseColumnsExcel = async (file: File): Promise<string[]> => {
+    const {default: ExcelJS} = await import("exceljs");
     const buffer = await file.arrayBuffer();
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(buffer);
@@ -21,10 +19,11 @@ export const parseColumnsExcel = async (file: File): Promise<string[]> => {
 };
 
 /**
- * Parses the first column of a CSV file, and returns the column names.
+ * Parses the first column of a CSV file and returns the column names.
  * @param file
  */
 export const parseColumnsCsv = async (file: File): Promise<string[]> => {
+    const {default: Papa} = await import("papaparse");
     const text = await file.text();
     const result = Papa.parse<string[]>(text.trim(), {preview: 1, skipEmptyLines: true});
     return result.data[0]?.map((col) => col.trim()).filter((col) => col.length > 0) ?? [];
