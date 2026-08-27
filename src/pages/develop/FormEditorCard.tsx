@@ -12,7 +12,7 @@ const formNameOf = (path: string) =>
         ?.replace(/\.yaml$/i, "") ?? "";
 
 export function FormEditorCard() {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate("form_editor");
     const {docs} = useConfigFiles();
 
     if (!docs) {
@@ -22,7 +22,7 @@ export function FormEditorCard() {
     return (
         <Card className="mb-4">
             <Heading as="h2" className="mb-2">
-                {t("form_editor.card_title")}
+                {t("card_title")}
             </Heading>
             {listDefinitionFolders(docs).map((folder) => {
                 const forms = listFormPaths(docs, folder);

@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Icon, InputLabel} from "@uva-fnwi/datanose-ui";
+import {Icon, InputDescription, InputLabel} from "@uva-fnwi/datanose-ui";
 
 import {
     type ConfigDocs,
@@ -15,7 +15,7 @@ import {useTranslate} from "~/hooks/useTranslate";
  * round trip to the server. Answers go nowhere: InputControl only saves when given an onSave.
  */
 export function QuestionPreview({docs, question}: {docs: ConfigDocs; question: EditorQuestion}) {
-    const {t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate("form_editor");
     const [value, setValue] = useState<unknown>(undefined);
     const preview = toPreviewQuestion(docs, question);
     const label = l(question.text) || question.name;
@@ -25,16 +25,16 @@ export function QuestionPreview({docs, question}: {docs: ConfigDocs; question: E
         <div className="bg-grey-50 rounded-xs border border-dashed border-grey-300 p-3 dark:border-grey-600 dark:bg-grey-800">
             <p className="mb-2 flex items-center gap-1 text-xs font-medium tracking-wide text-grey-500 uppercase">
                 <Icon name="visible-line" size="xs" decorative />
-                {t("form_editor.preview_label")}
+                {t("preview_label")}
             </p>
             <InputLabel>
                 {label}
                 {question.isRequired && <span aria-hidden="true"> *</span>}
             </InputLabel>
-            {description && <p className="mb-2 text-sm text-grey-600">{description}</p>}
+            {description && <InputDescription className="mb-2">{description}</InputDescription>}
             {preview === null ? (
                 <p className="mt-1 text-sm text-grey-500 italic">
-                    {t("form_editor.preview_unavailable", {type: question.rawType || "?"})}
+                    {t("preview_unavailable", {type: question.rawType || "?"})}
                 </p>
             ) : (
                 <div className="mt-1">

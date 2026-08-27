@@ -1,19 +1,5 @@
 import type {LocalText, QuestionKind} from "~/components/FormEditor/model/types";
 
-export const QUESTION_KINDS: readonly QuestionKind[] = [
-    "TextField",
-    "Email",
-    "Phone",
-    "Number",
-    "Date",
-    "YesNo",
-    "SingleChoice",
-    "MultipleChoice",
-    "Person",
-    "People",
-    "Document",
-] as const;
-
 /** Mirrors UnderlyingType, IsRequired and IsArray on the C# PropertyDefinition. */
 export function parseTypeString(type: string): {
     underlying: string;

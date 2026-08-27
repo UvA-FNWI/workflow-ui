@@ -60,8 +60,8 @@ describe("QuestionConfig", () => {
 `);
 
         expect(question.kind).toBe("SingleChoice");
-        expect(screen.getByText("form_editor.choice_layout_hint")).toBeInTheDocument();
-        expect(screen.getByRole("radio", {name: "form_editor.layout.RadioList"})).toBeChecked();
+        expect(screen.getByText("choice_layout_hint")).toBeInTheDocument();
+        expect(screen.getByRole("radio", {name: "layout.RadioList"})).toBeChecked();
     });
 
     it("leaves the type out of the body, since the pill in the header owns it", () => {
@@ -71,8 +71,8 @@ describe("QuestionConfig", () => {
     text: {nl: Vraag, en: Question}
 `);
 
-        expect(screen.queryByText("form_editor.choice_layout_hint")).not.toBeInTheDocument();
-        expect(screen.queryByLabelText("form_editor.type")).not.toBeInTheDocument();
-        expect(screen.getByText("form_editor.more_options")).toBeInTheDocument();
+        expect(screen.queryByText("choice_layout_hint")).not.toBeInTheDocument();
+        expect(screen.queryByLabelText("type")).not.toBeInTheDocument();
+        expect(screen.getByText("more_options")).toBeInTheDocument();
     });
 });

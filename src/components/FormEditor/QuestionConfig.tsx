@@ -29,7 +29,7 @@ const PERSON_KINDS: QuestionKind[] = ["Person", "People"];
 const CHOICE_LAYOUTS = ["RadioList", "Dropdown"] as const;
 
 export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Props) {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate("form_editor");
     const [nameDraft, setNameDraft] = useState<string | null>(null);
     const patch = (key: keyof QuestionPatch, value: string | boolean) =>
         apply(() => updateQuestion(docs, formPath, question.name, {[key]: value} as QuestionPatch));
@@ -39,13 +39,13 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
     return (
         <div className="flex flex-col gap-4">
             <BilingualPair
-                label={t("form_editor.question_text")}
+                label={t("question_text")}
                 value={question.text}
                 isDisabled={isDisabled}
                 onChange={(language, next) => patch(language === "nl" ? "textNl" : "textEn", next)}
             />
             <BilingualPair
-                label={t("form_editor.description")}
+                label={t("description")}
                 value={question.description}
                 isDisabled={isDisabled}
                 onChange={(language, next) =>
@@ -55,14 +55,14 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
 
             <div className="flex flex-wrap items-center gap-4">
                 <Checkbox
-                    label={t("form_editor.required")}
+                    label={t("required")}
                     isSelected={question.isRequired}
                     isDisabled={isDisabled}
                     onChange={(isSelected) => patch("isRequired", isSelected)}
                 />
                 {question.kind === "TextField" && (
                     <Checkbox
-                        label={t("form_editor.long_text")}
+                        label={t("long_text")}
                         isSelected={layout.multiline === true}
                         isDisabled={isDisabled}
                         onChange={(isSelected) => patch("isMultiline", isSelected)}
@@ -70,7 +70,7 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                 )}
                 {question.kind === "Number" && (
                     <Checkbox
-                        label={t("form_editor.decimal")}
+                        label={t("decimal")}
                         isSelected={isDecimal}
                         isDisabled={isDisabled}
                         onChange={(isSelected) => patch("isDecimal", isSelected)}
@@ -78,7 +78,7 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                 )}
                 {PERSON_KINDS.includes(question.kind as QuestionKind) && (
                     <Checkbox
-                        label={t("form_editor.allows_external_users")}
+                        label={t("allows_external_users")}
                         isSelected={question.raw.allowsExternalUsers === true}
                         isDisabled={isDisabled}
                         onChange={(isSelected) => patch("allowsExternalUsers", isSelected)}
@@ -89,12 +89,12 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
             {CHOICE_KINDS.includes(question.kind as QuestionKind) && (
                 <fieldset className="flex flex-col gap-2">
                     <legend className="mb-1 text-sm font-medium text-grey-700">
-                        {t("form_editor.choices")}
+                        {t("choices")}
                     </legend>
                     {question.choices.map((choice) => (
                         <div key={choice.name} className="flex items-center gap-2">
                             <Input
-                                aria-label={t("form_editor.choice_text")}
+                                aria-label={t("choice_text")}
                                 value={choice.text.nl}
                                 isDisabled={isDisabled}
                                 onChange={(next) =>
@@ -112,7 +112,7 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                             <Button
                                 intent="ghost"
                                 size="square"
-                                aria-label={t("form_editor.remove_choice")}
+                                aria-label={t("remove_choice")}
                                 disabled={isDisabled}
                                 onClick={() =>
                                     apply(() =>
@@ -131,25 +131,18 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                         disabled={isDisabled}
                         leftIcon={<Icon name="plus-line" size="sm" color="current" decorative />}
                         onClick={() =>
-                            apply(() =>
-                                addChoice(
-                                    docs,
-                                    formPath,
-                                    question.name,
-                                    t("form_editor.new_choice"),
-                                ),
-                            )
+                            apply(() => addChoice(docs, formPath, question.name, t("new_choice")))
                         }
                     >
-                        {t("form_editor.add_choice")}
+                        {t("add_choice")}
                     </Button>
                 </fieldset>
             )}
 
             {question.kind === "SingleChoice" && (
                 <RadioGroup
-                    label={t("form_editor.choice_layout")}
-                    description={t("form_editor.choice_layout_hint")}
+                    label={t("choice_layout")}
+                    description={t("choice_layout_hint")}
                     isDisabled={isDisabled}
                     value={layout.type === "Dropdown" ? "Dropdown" : "RadioList"}
                     onChange={(next) =>
@@ -160,21 +153,21 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                 >
                     {CHOICE_LAYOUTS.map((type) => (
                         <Radio key={type} value={type}>
-                            {t(`form_editor.layout.${type}`)}
+                            {t(`layout.${type}`)}
                         </Radio>
                     ))}
                 </RadioGroup>
             )}
 
             <Disclosure padding="none" shadow="none" border="none">
-                <Disclosure.Header>{t("form_editor.more_options")}</Disclosure.Header>
+                <Disclosure.Header>{t("more_options")}</Disclosure.Header>
                 <Disclosure.Content padding="none">
                     <div className="pt-2">
                         <Input
-                            label={t("form_editor.internal_name")}
+                            label={t("internal_name")}
                             value={nameDraft ?? question.name}
                             isDisabled={isDisabled}
-                            description={t("form_editor.internal_name_warning")}
+                            description={t("internal_name_warning")}
                             onChange={setNameDraft}
                             onBlur={() => {
                                 if (nameDraft !== null && nameDraft !== question.name) {

@@ -28,7 +28,7 @@ type Props = {
 
 /** The kind list, shared by "add a question" and by the type pill on a question card. */
 export function QuestionKindMenu({label, state, triggerRef, onSelect, selectedKind}: Props) {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate("form_editor");
 
     return (
         <Popover
@@ -52,7 +52,7 @@ export function QuestionKindMenu({label, state, triggerRef, onSelect, selectedKi
                         }`}
                     >
                         <Icon name={KIND_ICONS[kind]} size="sm" color="current" decorative />
-                        {t(`form_editor.kind.${kind}`)}
+                        {t(`kind.${kind}`)}
                     </button>
                 ))}
             </dialog>

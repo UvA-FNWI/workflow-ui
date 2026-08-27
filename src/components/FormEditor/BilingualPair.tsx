@@ -14,7 +14,7 @@ export function BilingualPair({
     isDisabled?: boolean;
     onChange: (language: "nl" | "en", next: string) => void;
 }) {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate("form_editor");
 
     return (
         <fieldset className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -22,11 +22,7 @@ export function BilingualPair({
             {(["nl", "en"] as const).map((language) => (
                 <Input
                     key={language}
-                    label={
-                        language === "nl"
-                            ? t("form_editor.language.nl")
-                            : t("form_editor.language.en")
-                    }
+                    label={language === "nl" ? t("language.nl") : t("language.en")}
                     value={value[language]}
                     isDisabled={isDisabled}
                     onChange={(next) => onChange(language, next)}

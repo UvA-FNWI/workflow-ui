@@ -7,18 +7,21 @@ export type ConfigDocs = Map<string, Document>;
  * The question kinds that map cleanly onto engine types. The ceiling is InputControl: anything it
  * falls through to "Not supported type..." for stays out, and is edited as yaml instead.
  */
-export type QuestionKind =
-    | "TextField"
-    | "Email"
-    | "Phone"
-    | "Number"
-    | "Date"
-    | "YesNo"
-    | "SingleChoice"
-    | "MultipleChoice"
-    | "Person"
-    | "People"
-    | "Document";
+export const QUESTION_KINDS = [
+    "TextField",
+    "Email",
+    "Phone",
+    "Number",
+    "Date",
+    "YesNo",
+    "SingleChoice",
+    "MultipleChoice",
+    "Person",
+    "People",
+    "Document",
+] as const;
+
+export type QuestionKind = (typeof QUESTION_KINDS)[number];
 
 export type LocalText = {en: string; nl: string};
 

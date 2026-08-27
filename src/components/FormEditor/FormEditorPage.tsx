@@ -31,7 +31,7 @@ const schemaNameFor = (path: string) => {
 };
 
 export function FormEditorPage() {
-    const {t, l} = useTranslate(["workflow", "common"]);
+    const {t, l} = useTranslate(["form_editor", "common"]);
     const {definition = "", form = ""} = useParams();
     const {data: currentUser, isLoading: isUserLoading} = useGetCurrentUserQuery();
     const {docs, isLoading, error, dirtyPaths, markDirty, reparse, allFiles} = useConfigFiles();
@@ -41,7 +41,7 @@ export function FormEditorPage() {
     const [areFilesOpen, setAreFilesOpen] = useState(false);
     const [failure, setFailure] = useState<string | null>(null);
 
-    useDocumentTitle(t("form_editor.title"));
+    useDocumentTitle(t("title"));
 
     if (isUserLoading) {
         return null;
@@ -52,7 +52,7 @@ export function FormEditorPage() {
     if (error) {
         return (
             <Container maxWidth={1280}>
-                <Callout type="error">{t("form_editor.load_failed")}</Callout>
+                <Callout type="error">{t("load_failed")}</Callout>
             </Container>
         );
     }
@@ -70,9 +70,9 @@ export function FormEditorPage() {
         return (
             <Container maxWidth={1280}>
                 <BackLink to="/develop" className="mb-4">
-                    {t("form_editor.back")}
+                    {t("back")}
                 </BackLink>
-                <Callout type="error">{t("form_editor.form_not_found", {path: formPath})}</Callout>
+                <Callout type="error">{t("form_not_found", {path: formPath})}</Callout>
             </Container>
         );
     }
@@ -89,9 +89,7 @@ export function FormEditorPage() {
             markDirty(action());
         } catch (mutationError) {
             setFailure(
-                mutationError instanceof Error
-                    ? mutationError.message
-                    : t("form_editor.mutation_failed"),
+                mutationError instanceof Error ? mutationError.message : t("mutation_failed"),
             );
         }
     };
@@ -105,7 +103,7 @@ export function FormEditorPage() {
         if ("error" in result) {
             previewTab?.close();
             const data = (result.error as {data?: unknown}).data;
-            setFailure(typeof data === "string" ? data : t("form_editor.preview_failed"));
+            setFailure(typeof data === "string" ? data : t("preview_failed"));
             return;
         }
 
@@ -117,7 +115,7 @@ export function FormEditorPage() {
     return (
         <Container maxWidth={1280}>
             <BackLink to="/develop" className="mb-4">
-                {t("form_editor.back")}
+                {t("back")}
             </BackLink>
 
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -132,7 +130,7 @@ export function FormEditorPage() {
                         disabled={changed.length === 0}
                         leftIcon={<Icon name="code-line" size="sm" color="current" decorative />}
                     >
-                        {t("form_editor.changed_files")}
+                        {t("changed_files")}
                         {changed.length > 0 && (
                             <Pill variant="orange" className="ml-2">
                                 {changed.length}
@@ -143,9 +141,9 @@ export function FormEditorPage() {
                         intent="primary"
                         onClick={onPreview}
                         isLoading={isUploading}
-                        loadingText={t("form_editor.preview")}
+                        loadingText={t("preview")}
                     >
-                        {t("form_editor.preview")}
+                        {t("preview")}
                     </Button>
                 </div>
             </div>
@@ -159,17 +157,17 @@ export function FormEditorPage() {
             <Card>
                 <div className="grid gap-6 md:grid-cols-[13rem_1fr]">
                     <nav
-                        aria-label={t("form_editor.pages")}
+                        aria-label={t("pages")}
                         className="md:border-r md:border-grey-200 md:pr-4 md:dark:border-grey-700"
                     >
                         <div className="mb-2 flex items-center justify-between">
                             <p className="text-xs font-medium tracking-wide text-grey-500 uppercase">
-                                {t("form_editor.pages")}
+                                {t("pages")}
                             </p>
                             <Button
                                 intent="ghost"
                                 size="square"
-                                aria-label={t("form_editor.edit_form_yaml")}
+                                aria-label={t("edit_form_yaml")}
                                 onClick={() => setIsFormYamlOpen(true)}
                             >
                                 <Icon name="code-brackets-line" size="sm" decorative />
@@ -193,7 +191,7 @@ export function FormEditorPage() {
                                     <Button
                                         intent="ghost"
                                         size="square"
-                                        aria-label={t("form_editor.delete_page", {
+                                        aria-label={t("delete_page", {
                                             title: l(item.title) || item.name,
                                         })}
                                         onClick={() => {
@@ -216,13 +214,10 @@ export function FormEditorPage() {
                                 <Icon name="plus-line" size="sm" color="current" decorative />
                             }
                             onClick={() =>
-                                apply(
-                                    () =>
-                                        addPage(docs, formPath, t("form_editor.new_page")).touched,
-                                )
+                                apply(() => addPage(docs, formPath, t("new_page")).touched)
                             }
                         >
-                            {t("form_editor.add_page")}
+                            {t("add_page")}
                         </Button>
                     </nav>
 
@@ -237,7 +232,7 @@ export function FormEditorPage() {
                                 apply={apply}
                             />
                         ) : (
-                            <p className="text-sm text-grey-600">{t("form_editor.no_pages")}</p>
+                            <p className="text-sm text-grey-600">{t("no_pages")}</p>
                         )}
                     </div>
                 </div>
@@ -247,7 +242,7 @@ export function FormEditorPage() {
                 isOpen={isFormYamlOpen}
                 onOpenChange={setIsFormYamlOpen}
                 size="xl"
-                aria-label={t("form_editor.edit_form_yaml")}
+                aria-label={t("edit_form_yaml")}
             >
                 {/* Modal.Header renders its own h2, so pass text rather than another Heading. */}
                 <Modal.Header>{formPath}</Modal.Header>
@@ -265,9 +260,9 @@ export function FormEditorPage() {
                 isOpen={areFilesOpen}
                 onOpenChange={setAreFilesOpen}
                 size="xl"
-                aria-label={t("form_editor.changed_files")}
+                aria-label={t("changed_files")}
             >
-                <Modal.Header>{t("form_editor.changed_files")}</Modal.Header>
+                <Modal.Header>{t("changed_files")}</Modal.Header>
                 <Modal.Body>
                     <div className="flex flex-col gap-4">
                         {changed.map((path) => (

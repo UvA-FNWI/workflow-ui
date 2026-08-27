@@ -58,7 +58,7 @@ describe("QuestionCard", () => {
     it("makes the type pill the control that changes the type", () => {
         renderCard({"Definitions/Thesis/Entity.yaml": TEXT_QUESTION});
 
-        const pill = screen.getByRole("button", {name: /form_editor\.change_type/});
+        const pill = screen.getByRole("button", {name: /change_type/});
         expect(pill).toHaveAttribute("aria-haspopup", "dialog");
     });
 
@@ -73,7 +73,7 @@ properties:
 `,
         });
 
-        expect(screen.queryByRole("button", {name: /form_editor\.change_type/})).toBeNull();
-        expect(screen.getByText("form_editor.inherited_short")).toBeInTheDocument();
+        expect(screen.queryByRole("button", {name: /change_type/})).toBeNull();
+        expect(screen.getByText("inherited_short")).toBeInTheDocument();
     });
 });

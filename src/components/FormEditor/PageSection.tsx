@@ -49,7 +49,7 @@ function SortableCard({
     question,
     ...props
 }: Omit<React.ComponentProps<typeof QuestionCard>, "dragHandle"> & {question: EditorQuestion}) {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate("form_editor");
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
         id: question.name,
     });
@@ -69,7 +69,7 @@ function SortableCard({
                         className="cursor-grab rounded-xs p-1 focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
                         {...attributes}
                         {...listeners}
-                        aria-label={t("form_editor.drag_handle")}
+                        aria-label={t("drag_handle")}
                     >
                         <Icon name="chevron-grabber-vertical-line" decorative />
                     </button>
@@ -80,7 +80,7 @@ function SortableCard({
 }
 
 export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props) {
-    const {t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate("form_editor");
     const [isYamlMode, setIsYamlMode] = useState(false);
     const [isRenaming, setIsRenaming] = useState(false);
     const addMenu = usePopoverState();
@@ -92,10 +92,7 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
     );
 
     const onAdd = (kind: QuestionKind) =>
-        apply(
-            () =>
-                addQuestion(docs, formPath, pageName, kind, t("form_editor.new_question")).touched,
-        );
+        apply(() => addQuestion(docs, formPath, pageName, kind, t("new_question")).touched);
 
     const onDragEnd = ({active, over}: DragEndEvent) => {
         if (!over || active.id === over.id) {
@@ -120,7 +117,7 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                     <Button
                         intent="ghost"
                         size="square"
-                        aria-label={t("form_editor.rename_page")}
+                        aria-label={t("rename_page")}
                         aria-expanded={isRenaming}
                         onClick={() => setIsRenaming((previous) => !previous)}
                     >
@@ -140,14 +137,14 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                     }
                     onClick={() => setIsYamlMode((previous) => !previous)}
                 >
-                    {isYamlMode ? t("form_editor.edit_visually") : t("form_editor.edit_page_yaml")}
+                    {isYamlMode ? t("edit_visually") : t("edit_page_yaml")}
                 </Button>
             </div>
 
             {isRenaming && (
                 <div className="mb-4">
                     <BilingualPair
-                        label={t("form_editor.page_title")}
+                        label={t("page_title")}
                         value={pageTitle ?? {nl: "", en: ""}}
                         onChange={(language, next) =>
                             apply(() => updatePageTitle(docs, formPath, pageName, language, next))
@@ -195,7 +192,7 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
             )}
 
             {!isYamlMode && questions.length === 0 && (
-                <p className="py-2 text-sm text-grey-600">{t("form_editor.no_questions")}</p>
+                <p className="py-2 text-sm text-grey-600">{t("no_questions")}</p>
             )}
 
             {!isYamlMode && (
@@ -210,11 +207,11 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                         aria-haspopup="dialog"
                         onClick={addMenu.toggle}
                     >
-                        {t("form_editor.add_question")}
+                        {t("add_question")}
                     </Button>
                     {addMenu.isOpen && (
                         <QuestionKindMenu
-                            label={t("form_editor.add_question")}
+                            label={t("add_question")}
                             state={addMenu}
                             triggerRef={addTriggerRef as React.RefObject<HTMLElement>}
                             onSelect={onAdd}

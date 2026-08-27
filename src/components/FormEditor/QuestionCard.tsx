@@ -66,7 +66,7 @@ function MenuItem({
 }
 
 export function QuestionCard({docs, formPath, pageName, question, apply, dragHandle}: Props) {
-    const {t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate("form_editor");
     const [isExpanded, setIsExpanded] = useState(false);
     const [isYamlMode, setIsYamlMode] = useState(false);
     const menu = usePopoverState();
@@ -98,8 +98,8 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
     const canChangeKind = forcedReason === null && !isInherited;
     const kindLabel =
         question.kind === "Unknown"
-            ? parseTypeString(question.rawType).underlying || t("form_editor.kind.Missing")
-            : t(`form_editor.kind.${question.kind}`);
+            ? parseTypeString(question.rawType).underlying || t("kind.Missing")
+            : t(`kind.${question.kind}`);
 
     const closeMenu = () => menu.close();
     const runAndClose = (action: () => string[]) => {
@@ -136,7 +136,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                     <button
                         ref={kindTriggerRef}
                         type="button"
-                        aria-label={t("form_editor.change_type", {type: kindLabel})}
+                        aria-label={t("change_type", {type: kindLabel})}
                         aria-expanded={kindMenu.isOpen}
                         aria-haspopup="dialog"
                         onClick={kindMenu.toggle}
@@ -152,7 +152,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                 )}
                 {kindMenu.isOpen && (
                     <QuestionKindMenu
-                        label={t("form_editor.change_type", {type: kindLabel})}
+                        label={t("change_type", {type: kindLabel})}
                         state={kindMenu}
                         triggerRef={kindTriggerRef as React.RefObject<HTMLElement>}
                         selectedKind={question.kind}
@@ -165,13 +165,13 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                 {forcedReason !== null && !isMissing && (
                     <Pill variant="grey" className="gap-1">
                         <Icon name="code-brackets-line" size="xs" color="current" decorative />
-                        {t("form_editor.yaml_only_short")}
+                        {t("yaml_only_short")}
                     </Pill>
                 )}
                 {isInherited && (
                     <Pill variant="grey" className="gap-1">
                         <Icon name="lock-line" size="xs" color="current" decorative />
-                        {t("form_editor.inherited_short")}
+                        {t("inherited_short")}
                     </Pill>
                 )}
 
@@ -180,7 +180,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                     ref={menuTriggerRef}
                     intent="ghost"
                     size="square"
-                    aria-label={t("form_editor.options")}
+                    aria-label={t("options")}
                     aria-expanded={menu.isOpen}
                     aria-haspopup="dialog"
                     onClick={menu.toggle}
@@ -196,7 +196,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                     >
                         <dialog
                             open
-                            aria-label={t("form_editor.options")}
+                            aria-label={t("options")}
                             className="relative m-0 flex w-64 flex-col p-1"
                         >
                             {forcedReason === null && (
@@ -208,9 +208,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                                         closeMenu();
                                     }}
                                 >
-                                    {isYamlMode
-                                        ? t("form_editor.edit_visually")
-                                        : t("form_editor.edit_in_yaml")}
+                                    {isYamlMode ? t("edit_visually") : t("edit_in_yaml")}
                                 </MenuItem>
                             )}
                             {isInherited && !isMissing && (
@@ -221,7 +219,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                                         override();
                                     }}
                                 >
-                                    {t("form_editor.override_here")}
+                                    {t("override_here")}
                                 </MenuItem>
                             )}
                             <MenuItem
@@ -232,7 +230,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                                     )
                                 }
                             >
-                                {t("form_editor.remove_from_page")}
+                                {t("remove_from_page")}
                             </MenuItem>
                             {!isMissing && !isInherited && (
                                 <MenuItem
@@ -244,7 +242,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                                         )
                                     }
                                 >
-                                    {t("form_editor.delete_everywhere", {count: usages.length})}
+                                    {t("delete_everywhere", {count: usages.length})}
                                 </MenuItem>
                             )}
                         </dialog>
@@ -257,7 +255,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                     <div className="min-w-0">
                         {forcedReason !== null && (
                             <Callout type={isMissing ? "error" : "info"} className="mb-3">
-                                {t(`form_editor.yaml_only.${forcedReason}`, {
+                                {t(`yaml_only.${forcedReason}`, {
                                     keys: question.advancedKeys.join(", "),
                                     type: parseTypeString(question.rawType).underlying,
                                     file: question.definedIn,
@@ -268,7 +266,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                             <Callout type="info" className="mb-3">
                                 <div className="flex flex-wrap items-center gap-3">
                                     <span>
-                                        {t("form_editor.inherited_hint", {
+                                        {t("inherited_hint", {
                                             file: question.definedIn,
                                         })}
                                     </span>
@@ -285,7 +283,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                                         }
                                         onClick={override}
                                     >
-                                        {t("form_editor.override_here")}
+                                        {t("override_here")}
                                     </Button>
                                 </div>
                             </Callout>
@@ -293,12 +291,12 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
 
                         {isMissing ? (
                             <p className="text-sm text-grey-600">
-                                {t("form_editor.missing_hint", {name: question.name})}
+                                {t("missing_hint", {name: question.name})}
                             </p>
                         ) : isYaml ? (
                             <>
                                 <p className="mb-2 text-xs text-grey-600">
-                                    {t("form_editor.editing_file", {file: question.definedIn})}
+                                    {t("editing_file", {file: question.definedIn})}
                                 </p>
                                 <NodeYamlEditor
                                     initialText={node ? nodeToYaml(node.node) : ""}
