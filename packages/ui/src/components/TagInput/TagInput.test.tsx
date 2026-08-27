@@ -129,16 +129,31 @@ describe('TagInput', () => {
     expect(screen.getByText('Vue')).toBeInTheDocument();
   });
 
+  it('stays open while using the suggestions scrollbar', () => {
+    render(<TagInput data={['React', 'Vue', 'Svelte']} />);
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+    const listbox = screen.getByRole('listbox');
+    fireEvent.mouseDown(listbox);
+    fireEvent.blur(input);
+
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+
+    fireEvent.mouseUp(window);
+    expect(input).toHaveFocus();
+  });
+
   it('navigates and selects suggestions with the keyboard', () => {
     render(<TagInput data={['React', 'Vue']} />);
     const input = screen.getByRole('combobox');
 
     fireEvent.focus(input);
     fireEvent.keyDown(input, { key: 'ArrowDown' });
-    expect(screen.getByRole('option', { name: 'React' })).toHaveAttribute(
-      'aria-selected',
-      'true'
-    );
+    const activeOption = screen.getByRole('option', { name: 'React' });
+    expect(activeOption).toHaveAttribute('aria-selected', 'true');
+    expect(activeOption).toHaveClass('ui:bg-grey-300');
+    expect(activeOption).not.toHaveClass('ui:bg-navy-100');
 
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(screen.getByText('React')).toBeInTheDocument();
