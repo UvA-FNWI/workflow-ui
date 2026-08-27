@@ -28,56 +28,32 @@ export const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
     ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
 ];
 
-type ResolveParams = {
-    step: WorkflowStep;
-    actions: Action[];
-    submissions: Submission[];
-    resolvedAction: Action | null;
-    isDisabled: boolean;
-};
-
-/** Returns only live submissions; historical versions are rendered separately. */
-export function getSubmissionsToShow(submissions: Submission[]): Submission[] {
-    return submissions;
-}
-
 /** Indicates whether the step has any historical submissions to render as version cards. */
 export function hasVersionHistory(step: WorkflowStep): boolean {
     return step.versions?.some((version) => version.submissions.length > 0) ?? false;
 }
 
+export function getPreviousFormVersion(step: WorkflowStep, form?: string): number | undefined {
+    return getStepHierarchy(step)
+        .flatMap((candidate) => candidate.versions ?? [])
+        .find((version) => version.submissions.some((submission) => submission.id === form))
+        ?.versionNumber;
+}
+
 /**
  * Resolves the background content state (always visible, independent of form).
  */
-export function resolveContentState({
-    step,
-    actions,
-    submissions,
-    resolvedAction,
-    isDisabled,
-}: ResolveParams): ContentState {
-    const submissionsToShow = getSubmissionsToShow(submissions);
-
-    // 1. Submissions exist (split into regular + assessment)
-    if (submissionsToShow.length > 0) {
-        const regular = submissionsToShow.filter((s) => !hasResults(s) && s.answers.length > 0);
-        const assessments = submissionsToShow.filter((s) => hasResults(s));
+export function resolveContentState(step: WorkflowStep, submissions: Submission[]): ContentState {
+    if (submissions.length > 0) {
+        const regular = submissions.filter((s) => !hasResults(s) && s.answers.length > 0);
+        const assessments = submissions.filter(hasResults);
         return {type: "submissions", regular, assessments};
     }
 
-    // 2. Show assessment component even without submissions when resultsType is not Normal
     if (step.resultsType !== "Normal") {
         return {type: "submissions", regular: [], assessments: []};
     }
 
-    // 3. Empty step — no submissions, no form open, no actions, not disabled
-    const isFormOpen =
-        resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
-    if (!isFormOpen && actions.length === 0 && !isDisabled) {
-        return {type: "empty"};
-    }
-
-    // Default: empty (for disabled steps or steps with only actions/form)
     return {type: "empty"};
 }
 

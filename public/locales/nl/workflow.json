@@ -88,6 +88,7 @@
       "show_linked": "Toon toelichtingen",
       "title": "Samenvatting"
     },
+    "unauthorized_submission": "Je hebt geen rechten om dit in te zien",
     "workflowInstance": "Workflow"
   },
   "make_a_choice": "Maak een keuze",
@@ -145,6 +146,14 @@
     "titleStudent": "Jouw voortgang",
     "titleSupervisor": "Voortgang van de student"
   },
+  "repeated_form": {
+    "clear": "Wis vooringevulde velden",
+    "clear_error": "De velden konden niet worden gewist. Probeer het opnieuw.",
+    "confirm_message": "Weet je zeker dat je alle velden wilt wissen?",
+    "confirm_title": "Wis vooringevulde velden",
+    "message": "Er zijn aanpassingen nodig. Daarom hebben we wat je eerder hebt ingevuld alvast overgenomen. Pas alleen aan wat nodig is; wat al goed was, hoef je niet aan te passen.",
+    "question": "Wil je helemaal opnieuw beginnen?"
+  },
   "save": "Opslaan",
   "screens": {
     "actions": "Acties"
@@ -161,34 +170,26 @@
   "staff_card": {
     "add_modal": {
       "choose_role": "Kies een rol",
-      "choose_staff": "Kies een medewerker",
-      "description": "Je wilt voor het project van <strong>{{studentName}}</strong> een andere medewerker toewijzen.",
-      "info_callout_header": "Informeer de toegevoegde medewerker zelf",
-      "info_callout_text": "Er wordt géén automatische mail verstuurd. Dus informeer de medewerker zelf over diens rol bij het project van deze student.",
-      "this_student": "deze student",
-      "title": "Medewerker toewijzen",
-      "warning_callout_text": "De huidige {{role}} <strong>{{name}}</strong> wordt vervangen door de nieuwe medewerker."
+      "choose_staff": "Kies een gebruiker",
+      "description": "Wijs een gebruiker toe aan een rol.",
+      "info_callout_header": "Informeer de toegevoegde gebruiker zelf",
+      "info_callout_text": "Er wordt geen automatische e-mail verstuurd. Informeer de gebruiker zelf over diens rol.",
+      "title": "Gebruiker toewijzen",
+      "warning_callout_text": "De huidige {{role}} <strong>{{name}}</strong> wordt vervangen door de nieuwe gebruiker."
     },
-    "confidential_advisers": "Vertrouwenspersonen",
-    "confidential_advisers_link": "student.uva.nl/informatie/vertrouwenspersonen",
     "edit_email_modal": {
       "error_email_already_exists": "Er bestaat al een gebruiker met dit e-mailadres.",
       "error_internal_email": "Gebruikers met een UvA-mailadres kunnen niet handmatig toegevoegd worden.",
       "title": "E-mailadres bewerken van {{name}}"
     },
-    "remove_staff_confirmation": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen uit dit project?",
-    "remove_staff_title": "Medewerker verwijderen",
-    "title": "Medewerkers"
+    "remove_staff_confirmation": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?",
+    "remove_staff_title": "Gebruiker verwijderen"
   },
   "status": {
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"
   },
   "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
-  "studentCard": {
-    "noStudentInfo": "Geen studentinformatie beschikbaar",
-    "student": "Student"
-  },
   "submit": "Inleveren",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",

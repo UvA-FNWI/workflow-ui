@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useParams} from "react-router";
 
 import {
+    Button,
     Card,
     Container,
     Heading,
@@ -17,17 +18,29 @@ import {
 
 import {ScreenTable} from "~/components/ScreenTable";
 import {useTranslate} from "~/hooks/useTranslate";
+import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
+import {useCreateInstanceMutation} from "~/store/api/instancesApi";
 import {useGetScreenQuery} from "~/store/api/screensApi";
 
 export const ScreenView = () => {
     const {t, l} = useTranslate("common");
     const {workflowDefinition, screenName} = useParams();
+    const navigate = useVersionedNavigate();
     const {data: screen} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {skip: !workflowDefinition || !screenName},
     );
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState(0);
+    const [createInstance, {isLoading: isCreating}] = useCreateInstanceMutation();
+
+    const handleCreate = async () => {
+        if (!workflowDefinition) return;
+        const result = await createInstance({workflowDefinition});
+        if (result.data) {
+            navigate(`/instance/${result.data.id}`);
+        }
+    };
 
     if (!screen) {
         return null;
@@ -41,7 +54,17 @@ export const ScreenView = () => {
                         <Heading as="h1" className="min-w-0 wrap-break-word">
                             {l(screen.workflowDefinition.title)}
                         </Heading>
-                        <div className="w-full sm:w-80 sm:max-w-sm">
+                        <div className="flex w-full items-center gap-3 sm:w-auto sm:max-w-none sm:justify-end">
+                            {screen.workflowDefinition.canCreateInstance && (
+                                <Button
+                                    intent="secondary"
+                                    variant="destructive"
+                                    onClick={handleCreate}
+                                    isLoading={isCreating}
+                                >
+                                    {t("create_new")}
+                                </Button>
+                            )}
                             <SearchInput
                                 value={search}
                                 onChange={setSearch}

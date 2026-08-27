@@ -6,7 +6,7 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
-    getSubmissionsToShow,
+    getPreviousFormVersion,
     hasVersionHistory,
     type ModalState,
     resolveFormState,
@@ -27,6 +27,7 @@ type Props = {
     modalState: ModalState;
     activeAction: Action | null;
     resolvedAction: Action | null;
+    emptyStateMessage: string | null;
     setActiveAction: (action: Action | null) => void;
 };
 
@@ -39,36 +40,30 @@ export const StepCardBody = ({
     modalState,
     activeAction,
     resolvedAction,
+    emptyStateMessage,
     setActiveAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
-    const submissionsToShow = getSubmissionsToShow(submissions);
     const formState = resolveFormState(resolvedAction);
     const showVersionCards = hasVersionHistory(step);
-
-    const shouldShowFormTitle = (submissionIndex: number) => submissionIndex > 0;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
             case "empty":
-                // Only show empty message when there's no form open either
-                if (!formState && actions.length === 0 && !showVersionCards) {
-                    return (
-                        <div className="pt-4">
-                            <Text className="italic">{t("instance.empty_step")}</Text>
-                        </div>
-                    );
-                }
-                return null;
+                return emptyStateMessage ? (
+                    <div className="pt-4">
+                        <Text className="italic">{emptyStateMessage}</Text>
+                    </div>
+                ) : null;
 
             case "submissions":
                 return (
                     <>
                         {contentState.regular.map((submission, index) => (
                             <div key={submission.id} className="flex flex-col gap-2 py-4">
-                                {shouldShowFormTitle(index) && (
+                                {index > 0 && (
                                     <Heading
                                         as="h4"
                                         size="xs"
@@ -86,6 +81,7 @@ export const StepCardBody = ({
                                 submissions={contentState.assessments}
                                 combine={true}
                                 step={step}
+                                emptyMessage={emptyStateMessage}
                             />
                         )}
                     </>
@@ -106,9 +102,11 @@ export const StepCardBody = ({
                 {formState && (
                     <div className="py-4">
                         <FormPage
+                            key={formState.action.form}
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
                             onClose={() => setActiveAction(null)}
+                            previousVersion={getPreviousFormVersion(step, formState.action.form)}
                         />
                     </div>
                 )}
@@ -133,7 +131,7 @@ export const StepCardBody = ({
                     <VersionHistory
                         versions={step.versions ?? []}
                         instanceId={instance.id}
-                        defaultExpandFirst={submissionsToShow.length === 0}
+                        defaultExpandFirst={submissions.length === 0}
                     />
                 )}
             </div>
@@ -184,6 +182,7 @@ export const StepCardBody = ({
                 onClose={() => setActiveAction(null)}
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}
+                previousVersion={getPreviousFormVersion(step, activeAction?.form)}
             />
         </>
     );

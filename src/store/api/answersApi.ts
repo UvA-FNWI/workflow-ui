@@ -1,8 +1,9 @@
 import {baseApi} from "./baseApi";
-import type {SaveAnswerParams, SaveFileParams} from "./types/params";
+import type {SaveAnswerParams, SaveFileParams, SubmissionParams} from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
 import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
+import type {Submission} from "~/store/api/types/submissions.ts";
 
 export const answersApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
@@ -69,6 +70,36 @@ export const answersApi = baseApi.injectEndpoints({
                     submissionId: params.submissionId,
                 },
                 {type: "Instance", id: params.instanceId},
+            ],
+        }),
+        clearAnswers: build.mutation<Submission, SubmissionParams>({
+            query: ({instanceId, submissionId}) => ({
+                url: `Answers/${instanceId}/${submissionId}`,
+                method: "delete",
+            }),
+            async onQueryStarted(params, {dispatch, queryFulfilled}) {
+                const {data} = await queryFulfilled;
+                dispatch(submissionsApi.util.updateQueryData("getSubmission", params, () => data));
+                dispatch(
+                    instancesApi.util.updateQueryData(
+                        "getInstance",
+                        params.instanceId,
+                        (current) => {
+                            const index = current.submissions.findIndex(
+                                (submission) => submission.id === params.submissionId,
+                            );
+                            if (index !== -1) current.submissions[index] = data;
+                        },
+                    ),
+                );
+            },
+            invalidatesTags: (_result, _error, params) => [
+                {
+                    type: "Assessments",
+                    instanceId: params.instanceId,
+                    submissionId: params.submissionId,
+                },
+                {type: "InstanceActions", id: params.instanceId},
             ],
         }),
     }),

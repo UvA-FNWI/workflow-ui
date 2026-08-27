@@ -5,18 +5,25 @@ import {Button, Disclosure, Heading, Icon, Link, Text} from "@uva-fnwi/datanose-
 import AddStaffModal from "~/components/StaffCard/AddStaffModal.tsx";
 import {RelatedStaffInfo} from "~/components/StaffCard/RelatedStaffInfo.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
+import type {LocalString} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
-import type {RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
+import type {InfoCardItem, RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
-type StaffCardProps = {
+type RelatedUsersCardProps = {
     instanceId: string;
+    title: LocalString;
     relatedUserGroups: RelatedUserGroup[];
-    canEdit?: boolean;
+    items?: InfoCardItem[] | null;
 };
 
-export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: StaffCardProps) {
-    const {t, l} = useTranslate("workflow");
+export function RelatedUsersCard({
+    instanceId,
+    title,
+    relatedUserGroups,
+    items,
+}: RelatedUsersCardProps) {
+    const {l} = useTranslate("workflow");
     const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
     const [addStaffModalData, setAddStaffModalData] = useState<{
         allowsExternalUsers: boolean;
@@ -24,25 +31,15 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
         disableRoleSelection?: boolean;
     }>({allowsExternalUsers: false});
 
-    const {data: instance} = instancesEndpoints.getInstance.useQuery(instanceId ?? "", {
-        skip: !instanceId,
-    });
-
     const [assignRelatedUser] = instancesEndpoints.assignRelatedUser.useMutation();
 
     const instanceUserRoles: Role[] = useMemo(() => {
-        return (
-            instance?.relatedUserGroups.groups?.flatMap(
-                (g) =>
-                    g.userRoles
-                        .filter((u) => u.canEdit)
-                        .map((u) => ({
-                            name: u.role,
-                            title: u.title,
-                        })) ?? [],
-            ) ?? []
+        return relatedUserGroups.flatMap((group) =>
+            group.userRoles
+                .filter((role) => role.canEdit)
+                .map((role) => ({name: role.role, title: role.title})),
         );
-    }, [instance]);
+    }, [relatedUserGroups]);
 
     const handleOpenAddStaffModal = (
         allowsExternalUsers: boolean,
@@ -83,9 +80,9 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
             <Disclosure>
                 <div className="flex flex-row items-center justify-between">
                     <Disclosure.Header>
-                        <Heading size="sm">{t("staff_card.title")}</Heading>
+                        <Heading size="sm">{l(title)}</Heading>
                     </Disclosure.Header>
-                    {canEdit && (
+                    {instanceUserRoles.length > 0 && (
                         <div className="pr-6">
                             <Button
                                 intent="secondary"
@@ -100,42 +97,43 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                         </div>
                     )}
                 </div>
-                <Disclosure.Content padding="lg" className="flex flex-col gap-4">
-                    {relatedUserGroups.length > 0 &&
-                        relatedUserGroups.map((group, group_index) => (
-                            <div key={`related_${group_index}`}>
-                                <Heading size="sm" className="mb-4 empty:hidden">
-                                    {l(group.title)}
-                                </Heading>
-                                {group.userRoles.map((relatedUserRoles, user_role_index) => (
-                                    <RelatedStaffInfo
-                                        key={`related_${group_index}_${user_role_index}`}
-                                        instanceId={instanceId}
-                                        relatedUserRoles={relatedUserRoles}
-                                        onAddUser={handleOpenAddStaffModal}
-                                        canEdit={
-                                            relatedUserRoles.canEdit && group.name === "default"
-                                        }
-                                    />
-                                ))}
-                            </div>
-                        ))}
-
-                    <div className="flex flex-col gap-1">
-                        <Text fontWeight="semibold">{t("staff_card.confidential_advisers")}</Text>
-                        <Link
-                            underline
-                            className="break-all"
-                            href={
-                                t("staff_card.confidential_advisers_link").startsWith("http")
-                                    ? t("staff_card.confidential_advisers_link")
-                                    : `https://${t("staff_card.confidential_advisers_link")}`
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {t("staff_card.confidential_advisers_link")}
-                        </Link>
+                <Disclosure.Content padding="lg">
+                    <div className="flex flex-col gap-4 pt-4">
+                        {relatedUserGroups.length > 0 &&
+                            relatedUserGroups.map((group, group_index) => (
+                                <div key={`related_${group_index}`}>
+                                    <Heading size="sm" className="mb-4 empty:hidden">
+                                        {l(group.title)}
+                                    </Heading>
+                                    {group.userRoles.map((relatedUserRoles, user_role_index) => (
+                                        <RelatedStaffInfo
+                                            key={`related_${group_index}_${user_role_index}`}
+                                            instanceId={instanceId}
+                                            relatedUserRoles={relatedUserRoles}
+                                            onAddUser={handleOpenAddStaffModal}
+                                            canEdit={relatedUserRoles.canEdit}
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        {(items ?? []).map((item) => {
+                            const url = l(item.url);
+                            if (!url) return null;
+                            return (
+                                <div key={item.name} className="flex flex-col gap-1">
+                                    <Text fontWeight="semibold">{l(item.text)}</Text>
+                                    <Link
+                                        underline
+                                        className="break-all"
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {url.replace(/^https?:\/\//, "")}
+                                    </Link>
+                                </div>
+                            );
+                        })}
                     </div>
                 </Disclosure.Content>
             </Disclosure>
@@ -143,7 +141,6 @@ export function StaffCard({instanceId, relatedUserGroups, canEdit = false}: Staf
                 isOpen={isAddStaffModalOpen}
                 onOpenChange={() => setIsAddStaffModalOpen(!isAddStaffModalOpen)}
                 onConfirm={handleAddStaff}
-                instanceFields={instance?.fields}
                 allowsExternalUsers={addStaffModalData.allowsExternalUsers}
                 instanceRoles={instanceUserRoles}
                 initialRole={addStaffModalData.initialRole}
