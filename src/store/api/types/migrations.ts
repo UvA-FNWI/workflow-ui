@@ -12,7 +12,7 @@ export type MigrationStatus =
     | "RevertFailed";
 
 export type RenamePropertyDefinition = {
-    workflowDefinition: string;
+    workflowDefinitions: string[];
     oldProperty: string;
     newProperty: string;
 };
@@ -25,12 +25,10 @@ export type MigrationProgress = {
 
 export type Migration = {
     id: string;
-    name: string;
     kind: MigrationKind;
     status: MigrationStatus;
     statusLabel: string;
     definition: RenamePropertyDefinition;
-    description: string | null;
     requestedBy: string;
     requestedAt: string;
     updatedAt: string;
@@ -40,9 +38,7 @@ export type Migration = {
 };
 
 export type CreatePropertyRename = {
-    name: string;
-    workflowDefinition: string;
+    workflowDefinitions: string[];
     oldProperty: string;
     newProperty: string;
-    description?: string;
 };

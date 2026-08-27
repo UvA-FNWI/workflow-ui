@@ -9,16 +9,13 @@ import {
     Card,
     Container,
     Input,
-    InputLabel,
     Modal,
     Pill,
     type PillVariantProps,
     SearchInput,
-    Select,
-    SelectItem,
     Skeleton,
+    TagInput,
     Text,
-    TextArea,
     useToast,
 } from "@uva-fnwi/datanose-ui";
 
@@ -74,23 +71,13 @@ function Migrations() {
 
     const columns = useMemo(
         () => [
-            columnHelper.accessor("name", {
-                header: t("migrations.columns.name"),
-                cell: ({row, getValue}) => (
-                    <div className="flex min-w-48 flex-col gap-1">
-                        <span className="font-medium">{getValue()}</span>
-                        {row.original.description && (
-                            <span className="text-xs text-grey-600 dark:text-grey-300">
-                                {row.original.description}
-                            </span>
-                        )}
-                    </div>
-                ),
-            }),
-            columnHelper.accessor((migration) => migration.definition.workflowDefinition, {
-                id: "workflowDefinition",
-                header: t("migrations.columns.workflow"),
-            }),
+            columnHelper.accessor(
+                (migration) => migration.definition.workflowDefinitions.join(", "),
+                {
+                    id: "workflowDefinition",
+                    header: t("migrations.columns.workflow"),
+                },
+            ),
             columnHelper.accessor(
                 (migration) =>
                     `${migration.definition.oldProperty} → ${migration.definition.newProperty}`,
@@ -206,10 +193,6 @@ function Migrations() {
                 }
             />
 
-            <Callout type="warning" className="mb-4">
-                {t("migrations.quiet_window_warning")}
-            </Callout>
-
             <Card>
                 <div className="mb-4 flex justify-end">
                     <SearchInput
@@ -235,16 +218,18 @@ function Migrations() {
                 )}
             </Card>
 
-            <CreatePropertyRenameModal
-                isOpen={isCreateOpen}
-                workflowDefinitions={definitions}
-                onClose={() => setIsCreateOpen(false)}
-                onCreated={async () => {
-                    setIsCreateOpen(false);
-                    toast.success(t("migrations.create_success"));
-                    await refetch();
-                }}
-            />
+            {isCreateOpen && (
+                <CreatePropertyRenameModal
+                    isOpen
+                    workflowDefinitions={definitions}
+                    onClose={() => setIsCreateOpen(false)}
+                    onCreated={async () => {
+                        setIsCreateOpen(false);
+                        toast.success(t("migrations.create_success"));
+                        await refetch();
+                    }}
+                />
+            )}
 
             <Modal
                 isOpen={confirmation !== null}
@@ -256,12 +241,22 @@ function Migrations() {
                 }}
                 size="sm"
             >
-                <Modal.Header>{t(`migrations.confirm_${confirmation?.action}_title`)}</Modal.Header>
+                <Modal.Header>
+                    {confirmation?.action === "finish"
+                        ? t("migrations.confirm_finish_title")
+                        : t("migrations.confirm_revert_title")}
+                </Modal.Header>
                 <Modal.Body className="flex flex-col gap-4">
                     <Text>
-                        {t(`migrations.confirm_${confirmation?.action}`, {
-                            name: confirmation?.migration.name,
-                        })}
+                        {confirmation?.action === "finish"
+                            ? t("migrations.confirm_finish", {
+                                  oldProperty: confirmation.migration.definition.oldProperty,
+                                  newProperty: confirmation.migration.definition.newProperty,
+                              })
+                            : t("migrations.confirm_revert", {
+                                  oldProperty: confirmation?.migration.definition.oldProperty,
+                                  newProperty: confirmation?.migration.definition.newProperty,
+                              })}
                     </Text>
                     {actionError && <Callout type="error">{actionError}</Callout>}
                 </Modal.Body>
@@ -303,18 +298,14 @@ function CreatePropertyRenameModal({
     const {t} = useTranslate("workflow");
     const [createMigration, {isLoading}] = useCreatePropertyRenameMutation();
     const [form, setForm] = useState<CreatePropertyRename>({
-        name: "",
-        workflowDefinition: "",
+        workflowDefinitions: [],
         oldProperty: "",
         newProperty: "",
-        description: "",
     });
     const [error, setError] = useState<string | null>(null);
-    const selectedDefinition = workflowDefinitions.find(
-        (definition) => definition.name === form.workflowDefinition,
-    );
+    const workflowOptions = workflowDefinitions.map((definition) => definition.name);
 
-    const update = (field: keyof CreatePropertyRename, value: string) =>
+    const update = (field: "oldProperty" | "newProperty", value: string) =>
         setForm((current) => ({...current, [field]: value}));
 
     const close = () => {
@@ -327,19 +318,14 @@ function CreatePropertyRenameModal({
         setError(null);
         try {
             await createMigration({
-                ...form,
-                name: form.name.trim(),
-                workflowDefinition: form.workflowDefinition.trim(),
+                workflowDefinitions: form.workflowDefinitions,
                 oldProperty: form.oldProperty.trim(),
                 newProperty: form.newProperty.trim(),
-                description: form.description?.trim() || undefined,
             }).unwrap();
             setForm({
-                name: "",
-                workflowDefinition: "",
+                workflowDefinitions: [],
                 oldProperty: "",
                 newProperty: "",
-                description: "",
             });
             await onCreated();
         } catch (requestError) {
@@ -348,8 +334,7 @@ function CreatePropertyRenameModal({
     };
 
     const isComplete =
-        form.name.trim() !== "" &&
-        form.workflowDefinition !== "" &&
+        form.workflowDefinitions.length > 0 &&
         form.oldProperty.trim() !== "" &&
         form.newProperty.trim() !== "";
 
@@ -357,52 +342,32 @@ function CreatePropertyRenameModal({
         <Modal isOpen={isOpen} onOpenChange={(open) => !open && close()}>
             <Modal.Header>{t("migrations.create_title")}</Modal.Header>
             <Modal.Body className="flex flex-col gap-4">
-                <Input
-                    label={t("migrations.fields.name")}
-                    value={form.name}
-                    onChange={(value) => update("name", value)}
+                <TagInput
+                    label={t("migrations.fields.workflow")}
+                    placeholder={t("make_a_choice")}
+                    data={workflowOptions}
+                    value={form.workflowDefinitions}
+                    onChange={(values) =>
+                        setForm((current) => ({
+                            ...current,
+                            workflowDefinitions: values.filter((value) =>
+                                workflowOptions.includes(value),
+                            ),
+                        }))
+                    }
+                    acceptValueOnBlur={false}
+                    openOnFocus
+                    clearable
                 />
-                <div>
-                    <InputLabel>{t("migrations.fields.workflow")}</InputLabel>
-                    <Select
-                        placeholder={t("make_a_choice")}
-                        value={form.workflowDefinition}
-                        onChange={(value) =>
-                            setForm((current) => ({
-                                ...current,
-                                workflowDefinition: String(value),
-                                oldProperty: "",
-                            }))
-                        }
-                    >
-                        {workflowDefinitions.map((definition) => (
-                            <SelectItem key={definition.name}>{definition.name}</SelectItem>
-                        ))}
-                    </Select>
-                </div>
-                <div>
-                    <InputLabel>{t("migrations.fields.old_property")}</InputLabel>
-                    <Select
-                        placeholder={t("make_a_choice")}
-                        value={form.oldProperty}
-                        onChange={(value) => update("oldProperty", String(value))}
-                        isDisabled={!selectedDefinition}
-                    >
-                        {selectedDefinition?.properties.map((property) => (
-                            <SelectItem key={property}>{property}</SelectItem>
-                        )) ?? []}
-                    </Select>
-                </div>
+                <Input
+                    label={t("migrations.fields.old_property")}
+                    value={form.oldProperty}
+                    onChange={(value) => update("oldProperty", value)}
+                />
                 <Input
                     label={t("migrations.fields.new_property")}
                     value={form.newProperty}
                     onChange={(value) => update("newProperty", value)}
-                />
-                <TextArea
-                    label={t("migrations.fields.description")}
-                    value={form.description}
-                    onChange={(value) => update("description", value)}
-                    rows={3}
                 />
                 {error && <Callout type="error">{error}</Callout>}
             </Modal.Body>
