@@ -6,6 +6,7 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
+    getCurrentVersionNumber,
     getPreviousFormVersion,
     hasVersionHistory,
     type ModalState,
@@ -61,6 +62,13 @@ export const StepCardBody = ({
             case "submissions":
                 return (
                     <>
+                        {showVersionCards && (
+                            <Heading fontType="heading" size={"sm"} className="font-semibold">
+                                {t("version_card.version_nr", {
+                                    versionNumber: getCurrentVersionNumber(step),
+                                })}
+                            </Heading>
+                        )}
                         {contentState.regular.map((submission, index) => (
                             <div key={submission.id} className="flex flex-col gap-2 py-4">
                                 {index > 0 && (
@@ -101,6 +109,22 @@ export const StepCardBody = ({
                 {/* Form overlay: shown alongside submissions */}
                 {formState && (
                     <div className="py-4">
+                        {actions.length > 1 && activeAction != null && (
+                            <div className="flex justify-between gap-2">
+                                <Text className="uppercase" intent="error" size="xl">
+                                    {l(activeAction.title)}
+                                </Text>
+                                <Button
+                                    intent="secondary"
+                                    variant="default"
+                                    onClick={() => setActiveAction(null)}
+                                    className="mb-4"
+                                    leftIcon={<Icon name="rotate-left-solid" color="current" />}
+                                >
+                                    {t("change_selection")}
+                                </Button>
+                            </div>
+                        )}
                         <FormPage
                             key={formState.action.form}
                             instanceId={instance.id}
