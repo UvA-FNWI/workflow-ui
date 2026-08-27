@@ -1,4 +1,4 @@
-import {Button, Heading, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Heading, Icon, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOverview.tsx";
 import {FormModal} from "~/components/instance/FormModal.tsx";
@@ -62,20 +62,20 @@ export const StepCardBody = ({
             case "submissions":
                 return (
                     <>
-                        {showVersionCards && (
-                            <Heading fontType="heading" size={"sm"} className="font-semibold">
+                        {showVersionCards && !formState && (
+                            <Heading fontType="heading" size={"sm"} className="pt-4 font-semibold">
                                 {t("version_card.version_nr", {
                                     versionNumber: getCurrentVersionNumber(step),
                                 })}
                             </Heading>
                         )}
-                        {contentState.regular.map((submission, index) => (
-                            <div key={submission.id} className="flex flex-col gap-2 py-4">
-                                {index > 0 && (
+                        {contentState.regular.map((submission) => (
+                            <div key={submission.id} className="flex flex-col gap-2">
+                                {contentState.regular.length > 0 && (
                                     <Heading
                                         as="h4"
                                         size="xs"
-                                        className="pb-1 font-semibold text-red-brand"
+                                        className="py-4 pb-1 font-semibold text-red-brand"
                                     >
                                         {l(submission.form.title)?.toUpperCase()}
                                     </Heading>
@@ -109,6 +109,13 @@ export const StepCardBody = ({
                 {/* Form overlay: shown alongside submissions */}
                 {formState && (
                     <div className="py-4">
+                        {showVersionCards && (
+                            <Heading fontType="heading" size={"sm"} className="py-4 font-semibold">
+                                {t("version_card.version_nr", {
+                                    versionNumber: getCurrentVersionNumber(step),
+                                })}
+                            </Heading>
+                        )}
                         {actions.length > 1 && activeAction != null && (
                             <div className="flex justify-between gap-2">
                                 <Text className="uppercase" intent="error" size="xl">
