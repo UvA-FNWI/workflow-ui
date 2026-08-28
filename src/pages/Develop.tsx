@@ -17,6 +17,7 @@ import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {ConfigVersionCard} from "~/pages/develop/ConfigVersionCard";
+import {FormEditorCard} from "~/pages/develop/FormEditorCard";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
 import {useGetWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
@@ -111,6 +112,7 @@ function Develop() {
                 </Button>
             </div>
             <ConfigVersionCard />
+            <FormEditorCard />
             {definitionsContent}
         </Container>
     );
