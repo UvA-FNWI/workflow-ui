@@ -30,7 +30,7 @@ const labelVariants = cva(
       variant: {
         primary: 'ui:bg-orange-500 ui:text-white',
         secondary: 'ui:bg-forest-600 ui:text-white',
-        tertiary: 'ui:bg-grey-600 ui:text-white',
+        tertiary: 'ui:bg-grey-700 ui:text-white',
       },
     },
     defaultVariants: {
@@ -61,8 +61,8 @@ export function PageMark({
   className,
 }: PageMarkProps) {
   return (
-    <div className={cn(pageMarkVariants({ variant, position }), className)}>
+    <aside className={cn(pageMarkVariants({ variant, position }), className)}>
       <div className={labelVariants({ variant })}>{label}</div>
-    </div>
+    </aside>
   );
 }
