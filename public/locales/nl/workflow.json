@@ -77,6 +77,7 @@
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
       "change_version": "Versie {{version}}",
+      "change_version_in_progress": "Versie {{version}} (in behandeling)",
       "changed_on": "Gewijzigd op {{date}}",
       "changed_on_by": "Gewijzigd op {{date}} door {{name}}",
       "changed_on_inline": "gewijzigd op {{date}}",
@@ -91,6 +92,7 @@
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
+      "submitted_on": "Ingediend op {{date}}",
       "title": "Samenvatting",
       "view_changes": "Wijzigingen bekijken"
     },

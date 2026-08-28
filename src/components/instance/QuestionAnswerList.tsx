@@ -28,7 +28,8 @@ export const QuestionAnswerList = ({
         <div className="flex flex-col gap-2">
             {questionAnswerPairs.map((pair) => {
                 const {question, percentage} = pair;
-                const lastChange = pair.answer?.changes?.[0];
+                const latestEdit = pair.answer?.changes?.find((group) => group.changes.length > 1)
+                    ?.changes[0];
 
                 return (
                     <div key={question.name} className="grid grid-cols-2 gap-4">
@@ -43,7 +44,7 @@ export const QuestionAnswerList = ({
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                                 {":"}
                             </Text>
-                            {lastChange && (
+                            {latestEdit && (
                                 <Button
                                     intent="ghost"
                                     size="small"
@@ -65,17 +66,18 @@ export const QuestionAnswerList = ({
                                 instanceId={instanceId}
                                 noAnswerText={t("version_card.no_answer")}
                             />
-                            {lastChange && (
+                            {latestEdit && (
                                 <button
                                     type="button"
                                     className="cursor-pointer"
                                     onClick={() => setHistoryPair(pair)}
+                                    aria-label={t("instance.summary.view_changes")}
                                 >
                                     <Text intent="secondary" display="inline">
                                         (
                                         {t("instance.summary.changed_on_inline", {
                                             date: formatDateShort(
-                                                lastChange.changedAt,
+                                                latestEdit.changedAt,
                                                 i18n.language,
                                             ),
                                         })}

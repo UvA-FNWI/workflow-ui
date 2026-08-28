@@ -77,6 +77,7 @@
     "empty_step": "Nothing has been submitted yet.",
     "summary": {
       "change_version": "Version {{version}}",
+      "change_version_in_progress": "Version {{version}} (in progress)",
       "changed_on": "Changed on {{date}}",
       "changed_on_by": "Changed on {{date}} by {{name}}",
       "changed_on_inline": "changed on {{date}}",
@@ -91,6 +92,7 @@
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
+      "submitted_on": "Submitted on {{date}}",
       "title": "Summary",
       "view_changes": "View changes"
     },
