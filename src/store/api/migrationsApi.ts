@@ -8,20 +8,20 @@ export const migrationsApi = baseApi.injectEndpoints({
         }),
         createPropertyRename: builder.mutation<Migration, CreatePropertyRename>({
             query: (body) => ({
-                url: "/Migrations/property-renames",
+                url: "/Migrations/PropertyRename",
                 method: "POST",
                 body,
             }),
         }),
         finishMigration: builder.mutation<Migration, string>({
             query: (id) => ({
-                url: `/Migrations/${encodeURIComponent(id)}/finish`,
+                url: `/Migrations/${encodeURIComponent(id)}/Finish`,
                 method: "POST",
             }),
         }),
         revertMigration: builder.mutation<Migration, string>({
             query: (id) => ({
-                url: `/Migrations/${encodeURIComponent(id)}/revert`,
+                url: `/Migrations/${encodeURIComponent(id)}/Revert`,
                 method: "POST",
             }),
         }),
