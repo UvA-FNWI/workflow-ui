@@ -153,6 +153,7 @@ export {
   TabList,
   TabPanels,
   TabPanel,
+  TabToolbar,
   useTabsWithRouter,
   useTabsWithUrl,
   type TabsProps,

@@ -1,6 +1,5 @@
 {
   "config_version": "Version",
-  "create_new": "New",
   "develop": "Develop",
   "errors": {
     "clipboard_copy_failed": "Could not copy to clipboard.",
