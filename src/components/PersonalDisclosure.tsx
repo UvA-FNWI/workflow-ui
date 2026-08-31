@@ -23,7 +23,7 @@ export function PersonalDisclosure({
     defaultExpanded,
     isExpanded,
 }: PersonalDisclosureProps) {
-    const {l, t} = useTranslate("personal");
+    const {l, t} = useTranslate("screens");
     const [search, setSearch] = useState("");
 
     return (

@@ -1,0 +1,36 @@
+{
+  "active": "Active",
+  "columns": {
+    "course": "Course",
+    "employees": "Employees",
+    "progress": "Progress",
+    "student_name": "Student name",
+    "title": "Title"
+  },
+  "completed": "Completed",
+  "create_new": "New",
+  "empty_title": "No theses found",
+  "import": {
+    "column_selection": "Choose the columns you want to import:",
+    "description_select": "Indicate which file and data you want to import.",
+    "description_verify": "Verify the linked data you want to import.",
+    "error_importing": "Something went wrong while importing the data. Please try again.",
+    "identifier": "identifying column",
+    "loading_data": "Loading data...",
+    "no_data": "No data found.",
+    "result_indicator": "{{amount}} out of {{total}} results",
+    "select_identifier": "Select the column with the {{identifier}} from your Excel file:",
+    "shown_data": "Shown data",
+    "staff_info_callout": "You import an employee based on their email address.",
+    "step_indicator": "Step {{index}} of {{total}}",
+    "success_importing": "Data successfully imported.",
+    "title": "Import",
+    "upload_file": "Upload file"
+  },
+  "load_error": "Your theses could not be loaded. Please try again.",
+  "no_instances_found": "No theses found for '{{search}}'",
+  "open_instance": "Open {{title}}",
+  "role_title": "You are {{role}} for:",
+  "search_placeholder": "Type a search query",
+  "title": "Theses"
+}

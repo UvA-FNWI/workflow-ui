@@ -18,12 +18,15 @@ import { TabList, TabListProps } from './TabList';
 import { TabPanel } from './TabPanel';
 import { TabPanels, TabPanelsProps } from './TabPanels';
 import { TabRef } from './TabRef';
+import { TabToolbar, TabToolbarProps } from './TabToolbar';
 
 const tabsClassGenerator = cva('Tabs');
 
 type TabsProps = {
   // Only accepts TabList and TabPanels components as children
-  children: Array<ReactElement<TabListProps | TabPanelsProps>>;
+  children: Array<
+    ReactElement<TabListProps | TabPanelsProps | TabToolbarProps>
+  >;
   className?: string;
   // Controlled component props
   activeIndex?: number; // If provided, component is controlled
@@ -48,6 +51,9 @@ const Tabs = forwardRef(
     const tabPanels = children.find(
       child => child.type === TabPanels
     ) as ReactElement<TabPanelsProps>;
+    const tabToolbar = children.find(
+      child => child.type === TabToolbar
+    ) as ReactElement<TabToolbarProps>;
 
     const tabListRef = useRef<HTMLDivElement>(null);
 
@@ -108,6 +114,7 @@ const Tabs = forwardRef(
             tabListRef,
             state,
           })}
+        {tabToolbar}
         {tabPanels && cloneElement(tabPanels, { activeIndex, state })}
       </div>
     );
@@ -116,6 +123,6 @@ const Tabs = forwardRef(
 
 Tabs.displayName = 'Tabs';
 
-export { Tab, Tabs, TabList, TabPanels, TabPanel };
+export { Tab, Tabs, TabList, TabPanels, TabPanel, TabToolbar };
 export type { TabsProps };
 export { useTabsWithRouter, useTabsWithUrl } from './hooks/useTabsWithRouter';

@@ -11,6 +11,7 @@ export type ScreenGroup = {
 export type ScreenData = {
     name: string;
     workflowDefinition: WorkflowDefinition;
+    isBulkEditEnabled: boolean;
     columns: ScreenColumn[];
     rows: ScreenRow[];
     // Present when the screen defines a grouping configuration; rows are then empty.
