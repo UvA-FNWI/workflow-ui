@@ -23,6 +23,18 @@ export type ToastEffect = {
 
 export type ToastType = "Success" | "Error" | "Info" | "Warning" | "Note";
 
+export type AnswerChange = {
+    value: unknown;
+    changedAt: string;
+    changedBy?: string | null;
+};
+
+export type AnswerChangeGroup = {
+    versionNumber: number;
+    isInProgress: boolean;
+    changes: AnswerChange[];
+};
+
 export type Answer = {
     id: string;
     questionName: string;
@@ -31,6 +43,7 @@ export type Answer = {
     validationError?: LocalString;
     visibleChoices?: string[] | null;
     files: StoredFile[];
+    changes?: AnswerChangeGroup[] | null;
 };
 
 export type StoredFile = {
