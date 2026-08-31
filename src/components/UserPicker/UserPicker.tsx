@@ -21,8 +21,6 @@ export interface UserPickerProps {
     selectionMode?: "single" | "multiple";
     /** Whether the picker is disabled */
     isDisabled?: boolean;
-    /** Whether a multiple selection must keep at least one user */
-    isRequired?: boolean;
     /** Modal title */
     modalTitle?: string;
     /** Search placeholder in modal */
@@ -41,7 +39,6 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     onChange,
     selectionMode = "single",
     isDisabled = false,
-    isRequired = false,
     modalTitle,
     searchPlaceholder,
     minSearchLength,
@@ -111,7 +108,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     };
 
     const handleRemoveUser = (userName: string) => {
-        if (isDisabled || (isRequired && valueArray.length <= 1)) return;
+        if (isDisabled) return;
         onChange?.(valueArray.filter((user) => user.userName !== userName));
     };
 
@@ -124,12 +121,11 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                     value={valueArray.map((user) => user.userName)}
                     renderTag={({value}) => {
                         const user = valueArray.find((user) => user.userName === value);
-                        const canRemove = !isDisabled && (!isRequired || valueArray.length > 1);
                         return (
                             <Tag
                                 size="lg"
                                 isDisabled={isDisabled}
-                                onRemove={canRemove ? () => handleRemoveUser(value) : undefined}
+                                onRemove={!isDisabled ? () => handleRemoveUser(value) : undefined}
                             >
                                 {user ? getDisplayString(user) : value}
                             </Tag>

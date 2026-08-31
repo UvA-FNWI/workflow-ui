@@ -77,7 +77,6 @@ const externalUser: UserSearchResult = {
 const renderMultiplePicker = (
     value: UserSearchResult | UserSearchResult[],
     options: {
-        isRequired?: boolean;
         onChange?: (users: UserSearchResult | UserSearchResult[] | null) => void;
     } = {},
 ) => {
@@ -88,7 +87,6 @@ const renderMultiplePicker = (
             <UserPicker
                 value={value}
                 selectionMode="multiple"
-                isRequired={options.isRequired}
                 onChange={onChange}
                 allowsExternalUsers
                 onCreateExternalUser={vi.fn()}
@@ -117,28 +115,14 @@ describe("UserPicker", () => {
         expect(onChange).toHaveBeenCalledWith([externalUser]);
     });
 
-    it("allows removal down to one tag when the user array is required", () => {
-        const {onChange, rerender} = renderMultiplePicker([internalUser, externalUser], {
-            isRequired: true,
-        });
+    it("allows removing the last selected user", () => {
+        const {onChange} = renderMultiplePicker([internalUser]);
 
         fireEvent.click(
             screen.getByRole("button", {name: "Remove Ada Lovelace | ada@example.com"}),
         );
-        expect(onChange).toHaveBeenCalledWith([externalUser]);
 
-        rerender(
-            <UserPicker
-                value={[externalUser]}
-                selectionMode="multiple"
-                isRequired
-                onChange={onChange}
-                allowsExternalUsers
-                onCreateExternalUser={vi.fn()}
-            />,
-        );
-
-        expect(screen.queryByRole("button", {name: /^Remove /})).not.toBeInTheDocument();
+        expect(onChange).toHaveBeenCalledWith([]);
     });
 
     it("opens a clean single-user picker from anywhere in the field", () => {

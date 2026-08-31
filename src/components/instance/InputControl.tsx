@@ -204,7 +204,6 @@ export const InputControl = ({
                 allowsExternalUsers={question.allowsExternalUsers}
                 onCreateExternalUser={handleCreateExternalUser}
                 selectionMode={question.isArray ? "multiple" : "single"}
-                isRequired={question.isRequired}
             />
         );
     }
