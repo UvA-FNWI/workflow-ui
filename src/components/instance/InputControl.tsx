@@ -74,23 +74,21 @@ export const InputControl = ({
             if (!saveExternalUser) return;
             const result = await saveExternalUser({
                 questionName: question.name,
-                value: null,
+                value: question.isArray ? (Array.isArray(value) ? value : []) : null,
                 externalUser: newUser,
             });
 
             const updatedAnswer = result.answers.find(
                 (answer) => answer.questionName === question.name,
             );
-            const updatedUser = updatedAnswer?.value as UserSearchResult | undefined;
-
-            if (updatedUser) {
-                onChange?.(updatedUser);
+            if (updatedAnswer) {
+                onChange?.(updatedAnswer.value);
                 return;
             }
 
             throw new Error(`Updated user answer was not returned for question "${question.name}"`);
         },
-        [onChange, saveExternalUser, question.name],
+        [onChange, saveExternalUser, question.isArray, question.name, value],
     );
     const debouncedOnChange = useDebounce(save, 500);
     const debouncedChange = (value: unknown) => {
