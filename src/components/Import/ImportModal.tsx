@@ -59,6 +59,12 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const importableColumns = data?.columns ?? [];
     const importableColumnIdentifier = data?.identifier;
 
+    const getPreviewModalSize = () => {
+        if (activeStep !== ImportStep.Preview) return "sm";
+        const columnCount = previewData?.columns.length ?? columnMapping.length;
+        return columnCount <= 4 ? "xl" : "full";
+    };
+
     const resetState = () => {
         setActiveStep(ImportStep.UploadFile);
         setFileColumns([]);
@@ -159,11 +165,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     };
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onOpenChange={onClose}
-            size={activeStep === ImportStep.Preview ? "full" : "sm"}
-        >
+        <Modal isOpen={isOpen} onOpenChange={onClose} size={getPreviewModalSize()}>
             <Modal.Header
                 subTitle={t("step_indicator", {
                     index: activeStep,
