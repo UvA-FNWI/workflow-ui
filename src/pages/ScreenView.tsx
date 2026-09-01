@@ -33,7 +33,7 @@ export const ScreenView = () => {
 
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
 
-    if (!screen) {
+    if (!screen || !workflowDefinition) {
         return null;
     }
 
@@ -88,6 +88,8 @@ export const ScreenView = () => {
                             search={search}
                             setSearch={setSearch}
                             canEdit={screen.isBulkEditEnabled}
+                            canCreate={screen.workflowDefinition.canCreateInstance}
+                            workflowDefinition={workflowDefinition}
                         />
                         <ScreenTable
                             columns={screen.columns}
