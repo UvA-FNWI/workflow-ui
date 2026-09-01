@@ -6,13 +6,7 @@ import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
 import {downloadFile} from "~/utils/fileDownload";
-import {
-    formatAllowedFileSize,
-    formatAllowedFileTypes,
-    getAllowedFileSize,
-    getAllowedFileTypes,
-    toFileInputAccept,
-} from "~/utils/fileTypes";
+import {formatAllowedFileSize, formatAllowedFileTypes, toFileInputAccept} from "~/utils/fileTypes";
 
 interface FileUploadTableProps {
     instanceId: string;
@@ -42,15 +36,10 @@ export const FileUploadTable = ({
     onFileSelect,
     onRemoveStoredFile,
 }: FileUploadTableProps) => {
-    const {t, l} = useTranslate("workflow");
+    const {t, l, i18n} = useTranslate("workflow");
     const toast = useToast();
     const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
     const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
-    const fileSizeLimits = questions.map((question) => ({
-        question,
-        size: getAllowedFileSize(question.allowedFileSize),
-    }));
-    const hasDifferentFileSizeLimits = new Set(fileSizeLimits.map(({size}) => size)).size > 1;
 
     const handleFileSelect = async (
         questionName: string,
@@ -115,13 +104,13 @@ export const FileUploadTable = ({
                         const fileName = !hasError
                             ? selectedFile?.name || (!isLoading ? storedFiles[0]?.name : undefined)
                             : undefined;
-                        const allowedFileTypes = getAllowedFileTypes(question.allowedFileTypes);
-                        const allowedFileTypesText = formatAllowedFileTypes(allowedFileTypes);
-                        const allowedFileTypesDescription = t("file_upload.allowed_file_types", {
-                            types: allowedFileTypesText,
-                        });
-                        const allowedFileSize = getAllowedFileSize(question.allowedFileSize);
-                        const allowedFileSizeText = formatAllowedFileSize(allowedFileSize);
+                        const allowedFileTypesText = formatAllowedFileTypes(
+                            question.allowedFileTypes!,
+                            i18n.language,
+                        );
+                        const allowedFileSizeText = formatAllowedFileSize(
+                            question.allowedFileSize!,
+                        );
 
                         return (
                             <tr
@@ -148,13 +137,16 @@ export const FileUploadTable = ({
                                         </div>
                                     )}
                                     <div className="text-sm text-grey-600 dark:text-grey-400">
-                                        {allowedFileTypesDescription}
+                                        {t("file_upload.allowed_file_types", {
+                                            types: allowedFileTypesText,
+                                            size: allowedFileSizeText,
+                                        })}
                                     </div>
                                 </td>
                                 <td className="p-2 align-top">
                                     <div className="flex flex-col gap-2">
                                         <FileUpload
-                                            maxSize={allowedFileSize}
+                                            maxSize={question.allowedFileSize}
                                             onFileSelect={(file: File | null) =>
                                                 handleFileSelect(
                                                     question.name,
@@ -184,7 +176,7 @@ export const FileUploadTable = ({
                                                     size: allowedFileSizeText,
                                                 }),
                                             }}
-                                            accept={toFileInputAccept(allowedFileTypes)}
+                                            accept={toFileInputAccept(question.allowedFileTypes!)}
                                         />
                                         {uploadErrors[question.name] && (
                                             <Text size="sm" intent="error">
@@ -198,21 +190,6 @@ export const FileUploadTable = ({
                     })}
                 </tbody>
             </table>
-            <div className="mt-2 text-sm text-black dark:text-white">
-                {hasDifferentFileSizeLimits
-                    ? fileSizeLimits.map(({question, size}) => (
-                          <div key={question.name}>
-                              {l(question.text)}:{" "}
-                              {t("file_upload.maximum_file_size", {
-                                  size: formatAllowedFileSize(size),
-                              })}
-                          </div>
-                      ))
-                    : fileSizeLimits[0] &&
-                      t("file_upload.max_file_size", {
-                          size: formatAllowedFileSize(fileSizeLimits[0].size),
-                      })}
-            </div>
         </div>
     );
 };

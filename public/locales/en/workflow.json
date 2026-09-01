@@ -54,15 +54,13 @@
     "title": "Add external user"
   },
   "file_upload": {
-    "allowed_file_types": "Allowed files: {{types}}.",
+    "allowed_file_types": "Only {{types}} files, max. {{size}}.",
     "confirm_delete_message": "Are you sure you want to delete this file?",
     "description": "Description",
     "error_file_type": "File type not accepted. Allowed files: {{types}}.",
     "error_max_file_size": "File exceeds maximum size of {{size}}",
     "error_remove_failed": " Failed to remove file. Please try again.",
     "error_upload_failed": "Failed to upload file. Please try again.",
-    "max_file_size": "Maximum {{size}} per file.",
-    "maximum_file_size": "Maximum {{size}}.",
     "no_file_uploaded": "No file uploaded",
     "removed_success": "File removed",
     "upload_file": "Upload file",

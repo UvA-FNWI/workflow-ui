@@ -9,8 +9,6 @@ import {downloadFile} from "~/utils/fileDownload.ts";
 import {
     formatAllowedFileSize,
     formatAllowedFileTypes,
-    getAllowedFileSize,
-    getAllowedFileTypes,
     toFileInputAccept,
 } from "~/utils/fileTypes.ts";
 
@@ -22,7 +20,7 @@ type Props = {
 };
 
 export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Props) => {
-    const {t} = useTranslate("workflow");
+    const {t, i18n} = useTranslate("workflow");
     const [saveFile, {isLoading: isUploading, isError: isUploadError}] =
         answersApi.endpoints.saveFile.useMutation();
     const [saveAnswer, {isLoading: isDeleting, isError: isDeleteError}] =
@@ -31,14 +29,9 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isWaitingForRefetch, setIsWaitingForRefetch] = useState(false);
-    const allowedFileTypes = getAllowedFileTypes(question.allowedFileTypes);
-    const allowedFileTypesText = formatAllowedFileTypes(allowedFileTypes);
-    const fileInputAccept = toFileInputAccept(allowedFileTypes);
-    const allowedFileTypesDescription = t("file_upload.allowed_file_types", {
-        types: allowedFileTypesText,
-    });
-    const allowedFileSize = getAllowedFileSize(question.allowedFileSize);
-    const allowedFileSizeText = formatAllowedFileSize(allowedFileSize);
+    const allowedFileTypesText = formatAllowedFileTypes(question.allowedFileTypes!, i18n.language);
+    const fileInputAccept = toFileInputAccept(question.allowedFileTypes!);
+    const allowedFileSizeText = formatAllowedFileSize(question.allowedFileSize!);
 
     const hasFile = answer?.value != null && (answer.files?.length ?? 0) > 0;
 
@@ -90,7 +83,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
         return (
             <div className="flex flex-col gap-1">
                 <FileUpload
-                    maxSize={allowedFileSize}
+                    maxSize={question.allowedFileSize}
                     accept={fileInputAccept}
                     onFileSelect={handleUpload}
                     buttonText={t("file_upload.upload_file")}
@@ -105,7 +98,10 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                     }}
                 />
                 <Text size="sm" intent="secondary">
-                    {allowedFileTypesDescription}
+                    {t("file_upload.allowed_file_types", {
+                        types: allowedFileTypesText,
+                        size: allowedFileSizeText,
+                    })}
                 </Text>
                 {isUploadError && (
                     <Text size="sm" intent="error">
