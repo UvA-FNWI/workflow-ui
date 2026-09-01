@@ -4,8 +4,9 @@ import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/
 import i18n from "i18next";
 
 import {
+    combineVersionHistory,
     getStepHierarchy,
-    hasVersionHistory,
+    getVersionHistorySteps,
     resolveContentState,
     resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
@@ -46,6 +47,7 @@ export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
 
     const stepHierarchy = getStepHierarchy(step);
+    const versionHistory = combineVersionHistory(getVersionHistorySteps(step));
     const stepIds = stepHierarchy.map((s) => s.id);
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
@@ -83,8 +85,7 @@ export const StepCard = ({step, instance}: Props) => {
 
     const contentState = resolveContentState(step, submissions);
     const modalState = resolveModalState(activeAction);
-    const hasVisibleSubmission =
-        submissions.length > 0 || stepHierarchy.some((candidate) => hasVersionHistory(candidate));
+    const hasVisibleSubmission = submissions.length > 0 || versionHistory.length > 0;
     const isFormOpen =
         resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const emptyStateMessage =
@@ -98,7 +99,7 @@ export const StepCard = ({step, instance}: Props) => {
     const hasBodyContent =
         actions.length > 0 ||
         submissions.length > 0 ||
-        hasVersionHistory(step) ||
+        versionHistory.length > 0 ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
     const isContentless = !isDisabled && !hasBodyContent;
@@ -149,6 +150,7 @@ export const StepCard = ({step, instance}: Props) => {
                         modalState={modalState}
                         activeAction={activeAction}
                         resolvedAction={resolvedAction}
+                        versionHistory={versionHistory}
                         emptyStateMessage={emptyStateMessage}
                         setActiveAction={setActiveAction}
                     />
