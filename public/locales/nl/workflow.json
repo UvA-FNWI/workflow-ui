@@ -116,6 +116,11 @@
     "titleStudent": "Jouw voortgang",
     "titleSupervisor": "Voortgang van de student"
   },
+  "reference": {
+    "empty": "Geen opties beschikbaar",
+    "load_error": "Kon opties niet laden",
+    "loading": "Opties laden…"
+  },
   "repeated_form": {
     "clear": "Wis vooringevulde velden",
     "clear_error": "De velden konden niet worden gewist. Probeer het opnieuw.",
