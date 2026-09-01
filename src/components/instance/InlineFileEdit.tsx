@@ -2,11 +2,17 @@ import {useRef, useState} from "react";
 
 import {Button, FileUpload, Icon, Link, Modal, Text} from "@uva-fnwi/datanose-ui";
 
-import {MAX_FILE_SIZE} from "./constants";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {answersApi} from "~/store/api/answersApi.ts";
 import type {Answer, Question} from "~/store/api/types/submissions.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
+import {
+    formatAllowedFileSize,
+    formatAllowedFileTypes,
+    getAllowedFileSize,
+    getAllowedFileTypes,
+    toFileInputAccept,
+} from "~/utils/fileTypes.ts";
 
 type Props = {
     question: Question;
@@ -25,6 +31,14 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isWaitingForRefetch, setIsWaitingForRefetch] = useState(false);
+    const allowedFileTypes = getAllowedFileTypes(question.allowedFileTypes);
+    const allowedFileTypesText = formatAllowedFileTypes(allowedFileTypes);
+    const fileInputAccept = toFileInputAccept(allowedFileTypes);
+    const allowedFileTypesDescription = t("file_upload.allowed_file_types", {
+        types: allowedFileTypesText,
+    });
+    const allowedFileSize = getAllowedFileSize(question.allowedFileSize);
+    const allowedFileSizeText = formatAllowedFileSize(allowedFileSize);
 
     const hasFile = answer?.value != null && (answer.files?.length ?? 0) > 0;
 
@@ -76,17 +90,23 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
         return (
             <div className="flex flex-col gap-1">
                 <FileUpload
-                    maxSize={MAX_FILE_SIZE}
-                    accept={["application/pdf"]}
+                    maxSize={allowedFileSize}
+                    accept={fileInputAccept}
                     onFileSelect={handleUpload}
                     buttonText={t("file_upload.upload_file")}
                     buttonIntent="primary"
                     buttonVariant="destructive"
                     isLoading={isUploading || isWaitingForRefetch}
                     errorMessages={{
-                        fileSize: t("file_upload.error_max_file_size", {size: "10MB"}),
+                        fileType: t("file_upload.error_file_type", {types: allowedFileTypesText}),
+                        fileSize: t("file_upload.error_max_file_size", {
+                            size: allowedFileSizeText,
+                        }),
                     }}
                 />
+                <Text size="sm" intent="secondary">
+                    {allowedFileTypesDescription}
+                </Text>
                 {isUploadError && (
                     <Text size="sm" intent="error">
                         {t("file_upload.error_upload_failed")}
@@ -124,7 +144,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                     <input
                         ref={fileInputRef}
                         type="file"
-                        accept="application/pdf"
+                        accept={fileInputAccept.join(",")}
                         className="hidden"
                         onChange={handleFileInputChange}
                     />

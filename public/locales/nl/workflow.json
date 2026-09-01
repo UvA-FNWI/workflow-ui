@@ -54,14 +54,16 @@
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
+    "allowed_file_types": "Toegestane bestanden: {{types}}.",
     "confirm_delete_message": "Weet je zeker dat je dit bestand wilt verwijderen?",
     "description": "Beschrijving",
+    "error_file_type": "Bestandstype niet toegestaan. Toegestane bestanden: {{types}}.",
     "error_max_file_size": "Bestand overschrijdt maximale grootte van {{size}}",
     "error_remove_failed": "Verwijderen van bestand mislukt. Probeer het opnieuw.",
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
     "max_file_size": "Maximaal {{size}} per bestand.",
+    "maximum_file_size": "Maximaal {{size}}.",
     "no_file_uploaded": "Geen bestand geüpload",
-    "pdf_only": "Alleen PDF-bestanden kunnen worden geüpload.",
     "removed_success": "Bestand verwijderd",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
