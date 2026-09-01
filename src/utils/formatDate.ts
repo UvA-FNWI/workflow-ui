@@ -52,6 +52,61 @@ export function formatDateShort(date: string | Date, locale: string = "en"): str
 }
 
 /**
+ * Format a datetime string or Date object for display
+ * @param date - The datetime to format (ISO string or Date object)
+ * @param locale - The locale to use for formatting (e.g., 'en', 'nl')
+ * @returns Formatted datetime string
+ */
+export function formatDateTimeShort(date: string | Date, locale: string = "en"): string {
+    return formatDate(date, locale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+}
+
+/**
+ * Format a date with time only when the time is relevant in the user's local timezone.
+ *
+ * If the parsed date resolves to 00:00 in the browser's local timezone, the result is
+ * formatted as a short date only. Otherwise, the result includes both date and time.
+ *
+ * @param date - The date to format (ISO string or Date object)
+ * @param locale - The locale to use for formatting (e.g., 'en', 'nl')
+ * @returns Formatted short date, with time included only when local time is not 00:00
+ */
+export function formatDateShortWithRelevantTime(
+    date: string | Date,
+    locale: string = "en",
+): string {
+    return hasNonDefaultLocalTime(date)
+        ? formatDateTimeShort(date, locale)
+        : formatDateShort(date, locale);
+}
+
+/**
+ * Check whether a date has a non-default time in the user's local timezone.
+ *
+ * A default time is considered to be exactly 00:00 after the date has been converted
+ * to the browser's local timezone. This is useful for timezone-aware deadlines:
+ * a deadline at 00:00 in Amsterdam may still show as 23:00 for a user in London.
+ *
+ * @param date - The date to inspect (ISO string or Date object)
+ * @returns `true` when the local time is not 00:00, otherwise `false`
+ */
+export function hasNonDefaultLocalTime(date: string | Date) {
+    const parsedDate = typeof date === "string" ? new Date(date) : date;
+
+    if (isNaN(parsedDate.getTime())) {
+        return false;
+    }
+
+    return parsedDate.getHours() !== 0 || parsedDate.getMinutes() !== 0;
+}
+
+/**
  * Format a date as relative time (e.g., "2 hours ago", "in 3 days")
  * @param date - The date to format (ISO string or Date object)
  * @param locale - The locale to use for formatting (e.g., 'en', 'nl')

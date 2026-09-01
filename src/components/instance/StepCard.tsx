@@ -17,7 +17,7 @@ import type {
     WorkflowInstance,
     WorkflowStep,
 } from "~/store/api/types/instances.ts";
-import {formatDateShort} from "~/utils/formatDate.ts";
+import {formatDateShort, formatDateShortWithRelevantTime} from "~/utils/formatDate.ts";
 
 const HEADER_STATUS_VARIANT: Record<StepHeaderStatus["type"], PillVariantProps["variant"]> = {
     Info: "grey",
@@ -68,14 +68,22 @@ export const StepCard = ({step, instance}: Props) => {
 
     const deadlineDate =
         step.deadline ?? step.children?.find((c) => c.id == instance.currentStep)?.deadline ?? null;
+
     const submittedDate =
         [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])]
             .filter((date): date is string => Boolean(date))
             .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
+
     const shownDate = submittedDate
-        ? {label: t("status.submitted"), value: submittedDate}
+        ? {
+              label: t("status.submitted"),
+              value: formatDateShort(submittedDate, i18n.language),
+          }
         : deadlineDate
-          ? {label: t("progress.deadline"), value: deadlineDate}
+          ? {
+                label: t("progress.deadline"),
+                value: formatDateShortWithRelevantTime(deadlineDate, i18n.language),
+            }
           : null;
 
     const isDisabled =
@@ -133,7 +141,7 @@ export const StepCard = ({step, instance}: Props) => {
                         <Text as="span" className="shrink-0">
                             <Text fontWeight="semibold">{shownDate.label}</Text>
                             {":\t"}
-                            {formatDateShort(shownDate.value, i18n.language)}
+                            {shownDate.value}
                         </Text>
                     )}
                 </div>
