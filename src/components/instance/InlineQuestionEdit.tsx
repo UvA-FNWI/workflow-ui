@@ -6,12 +6,15 @@ import {InputControl} from "./InputControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {AnswerInput} from "~/store/api/types/params.ts";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes.ts";
-import type {Question} from "~/store/api/types/submissions.ts";
+import type {Choice, Question} from "~/store/api/types/submissions.ts";
 
 type Props = {
     instanceId: string;
     submissionId?: string;
     question: Question;
+    choices?: Choice[];
+    choicesLoading?: boolean;
+    choicesError?: boolean;
     value: unknown;
     visibleChoices?: string[] | null;
     onSave: (value: unknown) => Promise<{error?: unknown}>;
@@ -24,6 +27,9 @@ export const InlineQuestionEdit = ({
     instanceId,
     submissionId,
     question,
+    choices,
+    choicesLoading,
+    choicesError,
     value,
     visibleChoices,
     onSave,
@@ -51,6 +57,9 @@ export const InlineQuestionEdit = ({
                 submissionId={submissionId ?? ""}
                 value={localValue}
                 question={question}
+                choices={choices}
+                choicesLoading={choicesLoading}
+                choicesError={choicesError}
                 onChange={setLocalValue}
                 onSaveExternalUser={onSaveExternalUser}
                 visibleChoices={visibleChoices}

@@ -4,13 +4,12 @@ import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {answersApi} from "~/store/api/answersApi.ts";
+import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {DataType, Question} from "~/store/api/types/submissions.ts";
 import {formatAnswer} from "~/utils/formatAnswer.ts";
 
 type Props = {
     instanceId: string;
-    submissionId?: string;
     question: Question;
     /** Dotted path from the instance root. */
     path: string;
@@ -30,14 +29,7 @@ const EDITABLE_TYPES: DataType[] = [
     "Reference",
 ];
 
-export const InstancePropertyRow = ({
-    instanceId,
-    submissionId,
-    question,
-    path,
-    values,
-    onSave,
-}: Props) => {
+export const InstancePropertyRow = ({instanceId, question, path, values, onSave}: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isEditing, setIsEditing] = useState(false);
 
@@ -48,14 +40,17 @@ export const InstancePropertyRow = ({
     const value = values[path];
     const label = l(question.text) ?? question.name;
 
-    const {data: referenceChoices} = answersApi.useGetChoicesQuery(
+    const {
+        data: referenceChoices,
+        isLoading,
+        isError,
+    } = instancesEndpoints.getPropertyChoices.useQuery(
         {
             instanceId,
-            submissionId: submissionId ?? "",
-            questionName: question.name,
+            path: path,
         },
         {
-            skip: question.type !== "Reference" || !instanceId || !submissionId,
+            skip: question.type !== "Reference" || !instanceId,
         },
     );
 
@@ -67,7 +62,6 @@ export const InstancePropertyRow = ({
                     {children.map((child) => (
                         <InstancePropertyRow
                             instanceId={instanceId}
-                            submissionId={submissionId}
                             key={`${path}.${child.name}`}
                             question={child}
                             path={`${path}.${child.name}`}
@@ -86,8 +80,10 @@ export const InstancePropertyRow = ({
                 <Text fontWeight="semibold">{label}</Text>
                 <InlineQuestionEdit
                     instanceId={instanceId}
-                    submissionId={submissionId}
                     question={question}
+                    choices={question.type === "Reference" ? referenceChoices : question.choices}
+                    choicesLoading={question.type === "Reference" ? isLoading : undefined}
+                    choicesError={question.type === "Reference" ? isError : undefined}
                     value={value}
                     onSave={(newValue) => onSave(path, newValue)}
                     onClose={() => setIsEditing(false)}

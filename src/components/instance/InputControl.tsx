@@ -23,7 +23,7 @@ import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
-import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
+import type {Answer, Choice, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
 import {sortChoices} from "~/utils/sortChoices";
 
@@ -42,6 +42,9 @@ interface InputControlProps {
     submissionId: string;
     value?: unknown;
     question: Question;
+    choices?: Choice[];
+    choicesLoading?: boolean;
+    choicesError?: boolean;
     onChange?: (val: unknown) => void;
     onSave?: (val: AnswerInput) => Promise<SaveAnswerResult>;
     onSaveExternalUser?: (val: AnswerInput) => Promise<SaveAnswerResult>;
@@ -57,6 +60,9 @@ export const InputControl = ({
     submissionId,
     value,
     question,
+    choices,
+    choicesLoading,
+    choicesError,
     onChange,
     onSave,
     onSaveExternalUser,
@@ -341,6 +347,9 @@ export const InputControl = ({
                 submissionId={submissionId}
                 value={value}
                 question={question}
+                choices={choices}
+                choicesLoading={choicesLoading}
+                choicesError={choicesError}
                 onChange={(val) => immediateChange(val)}
                 isValid={isValid}
                 errorMessage={errorMessage}
