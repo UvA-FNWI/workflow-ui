@@ -135,3 +135,10 @@ function GetNameFromUser(userObj: Record<string, unknown>) {
     }
     return String(userObj);
 }
+
+/** True when a Reference value has at least one instance id. GetCurrentChoices 404s otherwise. */
+export function hasReferenceId(value: unknown): boolean {
+    if (value == null || value === "") return false;
+    if (Array.isArray(value)) return value.length > 0;
+    return true;
+}

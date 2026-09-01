@@ -1,6 +1,6 @@
 import {expect, it} from "vitest";
 
-import {formatAnswer} from "~/utils/formatAnswer.ts";
+import {formatAnswer, hasReferenceId} from "~/utils/formatAnswer.ts";
 
 it("formats user arrays", () => {
     expect(formatAnswer([{displayName: "Ada"}, {displayName: "Grace"}], "User")).toBe("Ada, Grace");
@@ -20,4 +20,13 @@ it("formats reference answers using instance titles", () => {
     expect(formatAnswer(["abc", "def"], "Reference", "en", choices)).toBe(
         "Introduction to AI, Statistics",
     );
+});
+
+it("hasReferenceId is false when there is no stored id", () => {
+    expect(hasReferenceId(null)).toBe(false);
+    expect(hasReferenceId(undefined)).toBe(false);
+    expect(hasReferenceId("")).toBe(false);
+    expect(hasReferenceId([])).toBe(false);
+    expect(hasReferenceId("abc")).toBe(true);
+    expect(hasReferenceId(["abc"])).toBe(true);
 });
