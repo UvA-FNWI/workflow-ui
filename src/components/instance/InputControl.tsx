@@ -38,8 +38,8 @@ const toDate = (value: unknown) => {
 };
 
 interface InputControlProps {
-    instanceId: string;
-    submissionId: string;
+    instanceId?: string;
+    submissionId?: string;
     value?: unknown;
     question: Question;
     choices?: Choice[];
@@ -56,8 +56,8 @@ interface InputControlProps {
 }
 
 export const InputControl = ({
-    instanceId,
-    submissionId,
+    instanceId = "",
+    submissionId = "",
     value,
     question,
     choices,
