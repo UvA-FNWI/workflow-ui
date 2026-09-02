@@ -53,11 +53,10 @@ export interface TagInputRenderOptionInput {
   isActive: boolean;
 }
 
-export interface TagInputProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    'defaultValue' | 'disabled' | 'onChange' | 'readOnly' | 'size' | 'value'
-  > {
+export interface TagInputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'defaultValue' | 'disabled' | 'onChange' | 'readOnly' | 'size' | 'value'
+> {
   /** Suggestions displayed below the input. Custom values are still accepted. */
   data?: TagInputData;
   /** Controlled tag values. */

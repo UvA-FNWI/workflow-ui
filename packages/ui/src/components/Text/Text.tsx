@@ -60,7 +60,8 @@ const textVariants = cva('ui:m-0 ui:p-0 ui:font-body', {
 });
 
 interface TextProps
-  extends HTMLAttributes<HTMLParagraphElement | HTMLSpanElement>,
+  extends
+    HTMLAttributes<HTMLParagraphElement | HTMLSpanElement>,
     VariantProps<typeof textVariants> {
   as?: 'b' | 'p' | 'i' | 'span';
   color?: string;

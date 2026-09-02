@@ -24,7 +24,8 @@ const loadingSpinnerVariants = cva(
 );
 
 export interface LoadingSpinnerProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'color'>,
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'color'>,
     VariantProps<typeof loadingSpinnerVariants> {
   /**
    * Screen reader label for accessibility

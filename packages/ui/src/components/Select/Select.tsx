@@ -232,9 +232,9 @@ export interface SelectProps<
   T extends object,
   M extends SelectSelectionMode = 'single',
 > extends Omit<
-    AriaSelectProps<T, M>,
-    'children' | 'validationState' | 'label' | 'description' | 'errorMessage'
-  > {
+  AriaSelectProps<T, M>,
+  'children' | 'validationState' | 'label' | 'description' | 'errorMessage'
+> {
   /** CSS class name for the select trigger */
   className?: string;
   /** Label shown above the select */

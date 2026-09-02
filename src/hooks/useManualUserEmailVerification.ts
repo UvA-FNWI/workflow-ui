@@ -6,9 +6,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {useVerifyEmailMutation} from "~/store/api/usersApi.ts";
 
 type ManualUserEmailErrorCode =
-    | "ManualUserInternalEmail"
-    | "ManualUserEmailAlreadyExists"
-    | "InvalidEmailAddress";
+    "ManualUserInternalEmail" | "ManualUserEmailAlreadyExists" | "InvalidEmailAddress";
 
 type VerifyEmailErrorResponse = {
     errorCode?: ManualUserEmailErrorCode;

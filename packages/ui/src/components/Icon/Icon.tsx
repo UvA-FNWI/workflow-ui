@@ -81,7 +81,8 @@ const injectSprite = async (): Promise<void> => {
 };
 
 export interface IconProps
-  extends Omit<React.SVGProps<SVGSVGElement>, 'name' | 'color'>,
+  extends
+    Omit<React.SVGProps<SVGSVGElement>, 'name' | 'color'>,
     VariantProps<typeof iconVariants> {
   /** Icon name from the sprite (e.g., 'accessibility-line', 'alarm-solid') */
   name: IconType;

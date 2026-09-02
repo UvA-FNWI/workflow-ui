@@ -24,45 +24,43 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
         () => [
             ...columns
                 .filter((col) => col.displayType !== "ExportOnly")
-                .map(
-                    (col): ColumnDef<ScreenRow> => ({
-                        id: String(col.id),
-                        accessorFn: (row) =>
-                            getComparableTableCellValue(
-                                row.values[col.id],
-                                col.dataType,
-                                i18n.language,
-                            ),
-                        header: () => l(col.title),
-                        cell: (info) => {
-                            const value = info.row.original.values[col.id];
-                            const formattedValue = formatTableCellValue(
-                                value,
-                                col.dataType,
-                                i18n.language,
+                .map((col): ColumnDef<ScreenRow> => ({
+                    id: String(col.id),
+                    accessorFn: (row) =>
+                        getComparableTableCellValue(
+                            row.values[col.id],
+                            col.dataType,
+                            i18n.language,
+                        ),
+                    header: () => l(col.title),
+                    cell: (info) => {
+                        const value = info.row.original.values[col.id];
+                        const formattedValue = formatTableCellValue(
+                            value,
+                            col.dataType,
+                            i18n.language,
+                        );
+
+                        // Custom formatting for the progress column
+                        if (col.isCurrentStep && col.dataType === "Object") {
+                            if (isProgressInformation(value)) {
+                                return <TableProgressCell progress={value} />;
+                            }
+                        }
+
+                        if (col.link) {
+                            const rowId = info.row.original.id;
+                            return (
+                                <TableLinkCell to={`/instance/${rowId}`}>
+                                    {formattedValue}
+                                </TableLinkCell>
                             );
+                        }
 
-                            // Custom formatting for the progress column
-                            if (col.isCurrentStep && col.dataType === "Object") {
-                                if (isProgressInformation(value)) {
-                                    return <TableProgressCell progress={value} />;
-                                }
-                            }
-
-                            if (col.link) {
-                                const rowId = info.row.original.id;
-                                return (
-                                    <TableLinkCell to={`/instance/${rowId}`}>
-                                        {formattedValue}
-                                    </TableLinkCell>
-                                );
-                            }
-
-                            return <TableTextCell>{formattedValue}</TableTextCell>;
-                        },
-                        enableSorting: true,
-                    }),
-                ),
+                        return <TableTextCell>{formattedValue}</TableTextCell>;
+                    },
+                    enableSorting: true,
+                })),
             {
                 id: "actions",
                 header: () => <span className="sr-only">{t("screens.actions")}</span>,

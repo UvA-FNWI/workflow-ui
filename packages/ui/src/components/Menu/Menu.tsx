@@ -12,8 +12,7 @@ import { defaultPopoverClassName } from './menuUtils';
 
 export type MenuKey = string;
 export type MenuItemIcon =
-  | IconType
-  | Exclude<ReactNode, string | number | boolean>;
+  IconType | Exclude<ReactNode, string | number | boolean>;
 
 export interface MenuItemRenderProps {
   isDisabled: boolean;

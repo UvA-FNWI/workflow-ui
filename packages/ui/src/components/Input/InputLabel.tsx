@@ -1,7 +1,6 @@
 import { cn } from '../../utils/cn';
 
-export interface InputLabelProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement> {
+export interface InputLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   children: React.ReactNode;
 }
 

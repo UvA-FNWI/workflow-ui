@@ -21,11 +21,10 @@ import { DateField } from './DateField';
 import { dateToDateValue, dateValueToDate } from './utils';
 
 // Public API that accepts Date objects
-export interface DatePickerProps
-  extends Omit<
-    AriaDatePickerProps<DateValue>,
-    'value' | 'defaultValue' | 'onChange'
-  > {
+export interface DatePickerProps extends Omit<
+  AriaDatePickerProps<DateValue>,
+  'value' | 'defaultValue' | 'onChange'
+> {
   label?: string;
   description?: string;
   errorMessage?: string;
@@ -92,10 +91,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
 // Internal component that works with DateValue
 interface DatePickerInnerProps
-  extends Omit<
-      DatePickerProps,
-      'locale' | 'value' | 'defaultValue' | 'onChange'
-    >,
+  extends
+    Omit<DatePickerProps, 'locale' | 'value' | 'defaultValue' | 'onChange'>,
     Pick<
       AriaDatePickerProps<DateValue>,
       'value' | 'defaultValue' | 'onChange'

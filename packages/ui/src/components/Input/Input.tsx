@@ -11,7 +11,8 @@ import { type InputVariantProps, inputVariants } from './InputVariant';
 export type { InputVariantProps };
 
 export interface InputProps
-  extends Omit<
+  extends
+    Omit<
       React.ComponentPropsWithoutRef<'input'>,
       'onChange' | 'disabled' | 'size'
     >,

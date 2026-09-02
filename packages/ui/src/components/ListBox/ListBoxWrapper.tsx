@@ -5,8 +5,10 @@ import { ListProps, ListState, useListState } from 'react-stately';
 
 import { ListBoxProps } from './ListBox';
 
-export interface ListBoxWrapperProps<T extends object>
-  extends Omit<ListBoxProps<T>, 'children'> {
+export interface ListBoxWrapperProps<T extends object> extends Omit<
+  ListBoxProps<T>,
+  'children'
+> {
   /** UI renderer: receives the ListState */
   children: (state: ListState<T>) => React.ReactNode;
 
