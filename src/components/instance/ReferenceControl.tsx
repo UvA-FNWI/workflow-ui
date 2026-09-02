@@ -6,6 +6,7 @@ import {
     RadioGroup,
     Select,
     SelectItem,
+    Text,
 } from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
@@ -76,44 +77,55 @@ export const ReferenceControl = ({
 
     const choiceLabel = (choice: Choice) => l(choice.text)?.trim() || choice.name;
 
-    if (isRadioList && !question.isArray) {
-        return (
-            <RadioGroup
-                value={typeof value === "string" ? value : ""}
-                onChange={onChange}
-                isDisabled={selectState.isDisabled}
-                isValid={selectState.isValid}
-                errorMessage={selectState.errorMessage}
-            >
-                {options.map((choice) => (
-                    <Radio key={choice.name} value={choice.name}>
-                        {choiceLabel(choice)}
-                    </Radio>
-                ))}
-            </RadioGroup>
-        );
-    }
+    const statusMessage = loading
+        ? t("reference.loading")
+        : failed
+          ? t("reference.load_error")
+          : options.length === 0
+            ? t("reference.empty")
+            : undefined;
 
-    if (isRadioList && question.isArray) {
+    if (isRadioList) {
         const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
         return (
             <div className="flex flex-col gap-2">
-                {options.map((choice) => (
-                    <Checkbox
-                        key={choice.name}
-                        label={choiceLabel(choice)}
-                        isSelected={selectedValues.includes(choice.name)}
+                {statusMessage && (
+                    <Text size="sm" intent={failed ? "error" : "secondary"}>
+                        {statusMessage}
+                    </Text>
+                )}
+                {question.isArray ? (
+                    options.map((choice) => (
+                        <Checkbox
+                            key={choice.name}
+                            label={choiceLabel(choice)}
+                            isSelected={selectedValues.includes(choice.name)}
+                            isDisabled={selectState.isDisabled}
+                            isValid={selectState.isValid}
+                            onChange={(isSelected) => {
+                                onChange(
+                                    isSelected
+                                        ? [...selectedValues, choice.name]
+                                        : selectedValues.filter((v) => v !== choice.name),
+                                );
+                            }}
+                        />
+                    ))
+                ) : (
+                    <RadioGroup
+                        value={typeof value === "string" ? value : ""}
+                        onChange={onChange}
                         isDisabled={selectState.isDisabled}
                         isValid={selectState.isValid}
-                        onChange={(isSelected) => {
-                            onChange(
-                                isSelected
-                                    ? [...selectedValues, choice.name]
-                                    : selectedValues.filter((v) => v !== choice.name),
-                            );
-                        }}
-                    />
-                ))}
+                        errorMessage={failed ? undefined : errorMessage}
+                    >
+                        {options.map((choice) => (
+                            <Radio key={choice.name} value={choice.name}>
+                                {choiceLabel(choice)}
+                            </Radio>
+                        ))}
+                    </RadioGroup>
+                )}
             </div>
         );
     }
