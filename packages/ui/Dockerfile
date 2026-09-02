@@ -2,15 +2,13 @@ FROM docker.io/node:24-slim AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@11.25.0 --activate
+RUN npm install --global --allow-scripts=pnpm pnpm@12.2.1
 
 FROM base AS build
 
 WORKDIR /app
 
 COPY package.json pnpm-workspace.yaml ./
-
-RUN pnpm fetch
 
 RUN pnpm install
 
