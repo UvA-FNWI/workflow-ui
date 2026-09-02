@@ -161,6 +161,7 @@ export const ReferenceControl = ({
             onChange={(selectedValue) => {
                 onChange(selectedValue != null ? String(selectedValue) : null);
             }}
+            noResults={t("reference.no_results")}
             {...selectState}
         >
             {(options ?? []).map((choice) => (

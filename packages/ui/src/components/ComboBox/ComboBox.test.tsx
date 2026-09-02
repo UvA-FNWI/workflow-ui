@@ -117,6 +117,31 @@ describe('ComboBox', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('shows noResults when the filter matches nothing', async () => {
+    renderComboBox({ noResults: 'No results' });
+    const input = screen.getByRole('combobox');
+    await openList();
+    fireEvent.change(input, { target: { value: 'zzz' } });
+    await waitFor(() => {
+      expect(screen.getByText('No results')).toBeInTheDocument();
+    });
+    expect(screen.queryByRole('option')).not.toBeInTheDocument();
+  });
+
+  it('uses a custom noResults string', async () => {
+    renderComboBox({ noResults: 'Niets gevonden' });
+    await openList();
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'zzz' },
+    });
+    await waitFor(() => {
+      expect(screen.getByText('Niets gevonden')).toBeInTheDocument();
+      expect(
+        screen.queryByRole('option', { name: 'Niets gevonden' })
+      ).toBeNull();
+    });
+  });
+
   it('supports disabled state', () => {
     renderComboBox({ isDisabled: true });
 

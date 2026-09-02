@@ -119,7 +119,8 @@
   "reference": {
     "empty": "No options available",
     "load_error": "Could not load options",
-    "loading": "Loading options…"
+    "loading": "Loading options…",
+    "no_results": "No results"
   },
   "repeated_form": {
     "clear": "Clear prefilled fields",

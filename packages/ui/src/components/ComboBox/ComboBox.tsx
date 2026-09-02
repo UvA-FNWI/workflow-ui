@@ -113,11 +113,13 @@ const ComboBoxOption = <T extends object>({
 interface ComboBoxListBoxProps<T extends object> extends AriaListBoxOptions<T> {
   state: ComboBoxState<T>;
   listBoxRef: React.RefObject<HTMLUListElement | null>;
+  noResults?: string;
 }
 
 const ComboBoxListBox = <T extends object>({
   state,
   listBoxRef,
+  noResults = 'No results',
   ...props
 }: ComboBoxListBoxProps<T>) => {
   const { listBoxProps } = useListBox(props, state, listBoxRef);
@@ -132,6 +134,14 @@ const ComboBoxListBox = <T extends object>({
         item.type === 'item' ? (
           <ComboBoxOption key={item.key} item={item} state={state} />
         ) : null
+      )}
+      {state.collection.size === 0 && (
+        <li
+          className="ui:text-md ui:px-3 ui:py-2 ui:text-grey-600 ui:dark:text-grey-400"
+          role="presentation"
+        >
+          {noResults}
+        </li>
       )}
     </ul>
   );
@@ -229,6 +239,8 @@ export interface ComboBoxProps<T extends object>
   isValid?: boolean;
   /** ComboBox options */
   children: AriaComboBoxProps<T>['children'];
+  /** Shown in the list when filtering matches nothing */
+  noResults?: string;
 }
 
 export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
@@ -240,6 +252,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     isValid = true,
     isDisabled = false,
     placeholder,
+    noResults,
     ...restProps
   } = props;
 
@@ -315,6 +328,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
           <ComboBoxListBox
             state={state}
             listBoxRef={listBoxRef}
+            noResults={noResults}
             {...listBoxProps}
           />
           <DismissButton onDismiss={state.close} />

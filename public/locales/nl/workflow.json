@@ -119,7 +119,8 @@
   "reference": {
     "empty": "Geen opties beschikbaar",
     "load_error": "Kon opties niet laden",
-    "loading": "Opties laden…"
+    "loading": "Opties laden…",
+    "no_results": "Geen resultaten"
   },
   "repeated_form": {
     "clear": "Wis vooringevulde velden",

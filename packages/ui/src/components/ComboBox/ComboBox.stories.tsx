@@ -95,5 +95,6 @@ export const Filtering: Story = {
   args: {
     label: 'City',
     placeholder: 'Type to filter',
+    noResults: 'No results',
   },
 };
