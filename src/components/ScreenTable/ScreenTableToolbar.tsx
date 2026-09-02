@@ -10,16 +10,16 @@ import {useCreateInstanceMutation} from "~/store/api/instancesApi.ts";
 type ScreenTableToolbarProps = {
     search: string;
     setSearch: (search: string) => void;
-    canEdit?: boolean;
-    canCreate?: boolean;
-    workflowDefinition?: string;
+    canEdit: boolean;
+    canCreate: boolean;
+    workflowDefinition: string;
 };
 
 export const ScreenTableToolbar = ({
     search,
     setSearch,
-    canEdit = false,
-    canCreate = false,
+    canEdit,
+    canCreate,
     workflowDefinition,
 }: ScreenTableToolbarProps) => {
     const {t} = useTranslate("screens");
@@ -29,7 +29,6 @@ export const ScreenTableToolbar = ({
     const [createInstance, {isLoading: isCreating}] = useCreateInstanceMutation();
 
     const handleCreate = async () => {
-        if (!workflowDefinition) return;
         const result = await createInstance({workflowDefinition});
         if (result.data) {
             navigate(`/instance/${result.data.id}`);
