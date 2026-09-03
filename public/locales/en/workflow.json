@@ -116,6 +116,12 @@
     "titleStudent": "Your progress",
     "titleSupervisor": "Student's progress"
   },
+  "reference": {
+    "empty": "No options available",
+    "load_error": "Could not load options",
+    "loading": "Loading options…",
+    "no_results": "No results"
+  },
   "repeated_form": {
     "clear": "Clear prefilled fields",
     "clear_error": "Failed to clear the fields. Please try again.",

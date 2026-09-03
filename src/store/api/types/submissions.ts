@@ -154,5 +154,5 @@ export type DataType =
     | "Int"
     | "Boolean"
     | "Object";
-export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric";
+export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric" | "ComboBox";
 export type FormLayout = "Normal" | "Compact" | "Modal";

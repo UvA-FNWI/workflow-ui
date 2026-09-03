@@ -10,6 +10,7 @@ import type {
     WorkflowInstance,
 } from "./types/instances";
 import type {AssignRelatedUserParams, RemoveRelatedUserParams} from "~/store/api/types/params.ts";
+import type {Choice} from "~/store/api/types/submissions.ts";
 
 export const instancesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -28,6 +29,11 @@ export const instancesApi = baseApi.injectEndpoints({
             query: (id: string) => `/WorkflowInstances/${id}/Properties`,
             providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
         }),
+        getPropertyChoices: builder.query<Choice[], {instanceId: string; path: string}>({
+            query: ({instanceId, path}) =>
+                `/WorkflowInstances/${instanceId}/Properties/${path}/Choices`,
+            providesTags: (_result, _error, {instanceId}) => [{type: "Choices", id: instanceId}],
+        }),
         saveInstanceProperty: builder.mutation<
             void,
             {instanceId: string; path: string; value: unknown}
@@ -40,6 +46,7 @@ export const instancesApi = baseApi.injectEndpoints({
             // Property changes can affect steps and the title.
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
+                {type: "Choices", id: instanceId},
             ],
         }),
         createInstance: builder.mutation<WorkflowInstance, {workflowDefinition: string}>({
