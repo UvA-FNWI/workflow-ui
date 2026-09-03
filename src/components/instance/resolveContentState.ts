@@ -1,4 +1,4 @@
-import type {Action, WorkflowStep} from "~/store/api/types/instances.ts";
+import type {Action, WorkflowStep, WorkflowStepVersion} from "~/store/api/types/instances.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
 /**
@@ -33,12 +33,59 @@ export function hasVersionHistory(step: WorkflowStep): boolean {
     return step.versions?.some((version) => version.submissions.length > 0) ?? false;
 }
 
-export function getCurrentVersionNumber(step: WorkflowStep): number | undefined {
-    const versionsWithSubmissions = step.versions?.filter(
-        (version) => version.submissions.length > 0,
-    );
+/**
+ * Returns the highest version-bearing steps in each branch of a step hierarchy.
+ *
+ * The instance page renders cards for root steps only, while the API can attach
+ * history to a nested step (for example EthicsSubmit after Ethics is reset).
+ * Once a parent has its own history, its descendants are omitted because that
+ * parent version already represents the completed branch.
+ */
+export function getVersionHistorySteps(step: WorkflowStep): WorkflowStep[] {
+    if (hasVersionHistory(step)) return [step];
 
-    if (!versionsWithSubmissions?.length) return undefined;
+    return (step.children ?? []).flatMap((child) => getVersionHistorySteps(child));
+}
+
+/** Combines histories from separate hierarchy branches into one entry per version number. */
+export function combineVersionHistory(steps: WorkflowStep[]): WorkflowStepVersion[] {
+    const versionsByNumber = new Map<number, WorkflowStepVersion>();
+
+    for (const version of steps.flatMap((step) => step.versions ?? [])) {
+        const existing = versionsByNumber.get(version.versionNumber);
+        if (!existing) {
+            versionsByNumber.set(version.versionNumber, {
+                ...version,
+                eventIds: [...version.eventIds],
+                submissions: [...version.submissions],
+            });
+            continue;
+        }
+
+        const submissionsById = new Map(
+            [...existing.submissions, ...version.submissions].map((submission) => [
+                submission.id,
+                submission,
+            ]),
+        );
+        versionsByNumber.set(version.versionNumber, {
+            versionNumber: version.versionNumber,
+            eventIds: [...new Set([...existing.eventIds, ...version.eventIds])],
+            submittedAt:
+                Date.parse(version.submittedAt) > Date.parse(existing.submittedAt)
+                    ? version.submittedAt
+                    : existing.submittedAt,
+            submissions: [...submissionsById.values()],
+        });
+    }
+
+    return [...versionsByNumber.values()].sort((a, b) => b.versionNumber - a.versionNumber);
+}
+
+export function getCurrentVersionNumber(versions: WorkflowStepVersion[]): number | undefined {
+    const versionsWithSubmissions = versions.filter((version) => version.submissions.length > 0);
+
+    if (!versionsWithSubmissions.length) return undefined;
 
     return Math.max(...versionsWithSubmissions.map((version) => version.versionNumber)) + 1;
 }
