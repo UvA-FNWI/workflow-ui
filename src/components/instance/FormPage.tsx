@@ -161,6 +161,7 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
                         instanceId={instanceId}
                         submissionId={submissionId}
                         page={submission.form.pages[0]}
+                        showTitle={false}
                     />
                     <div className="mt-4">
                         <FormSubmitButton

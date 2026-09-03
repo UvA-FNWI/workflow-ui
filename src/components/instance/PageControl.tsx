@@ -252,7 +252,7 @@ export const PageControl = ({
                     </div>
                 )}
 
-                {page.hasResults && (
+                {page.hasResults && weightedQuestions.length > 1 && (
                     <div>
                         <Separator weight="bold" color="black" className="mb-4" />
                         <div className="flex items-center justify-between gap-2 pr-12">
