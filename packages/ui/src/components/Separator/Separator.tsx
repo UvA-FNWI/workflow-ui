@@ -22,7 +22,8 @@ const separatorVariants = cva('', {
 });
 
 export interface SeparatorProps
-  extends HTMLAttributes<HTMLDivElement>,
+  extends
+    HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof separatorVariants> {}
 
 export const Separator = ({

@@ -28,8 +28,10 @@ import { InputLabel } from '../Input/InputLabel';
 import { inputVariants } from '../Input/InputVariant';
 import { selectionVariants } from './ComboBoxVariants';
 
-interface ComboBoxPopoverProps<T extends object>
-  extends Omit<AriaPopoverProps, 'popoverRef'> {
+interface ComboBoxPopoverProps<T extends object> extends Omit<
+  AriaPopoverProps,
+  'popoverRef'
+> {
   children: React.ReactNode;
   state: ComboBoxState<T>;
   popoverRef: React.RefObject<HTMLDivElement | null>;
@@ -217,16 +219,15 @@ const ComboBoxInput = ({
   );
 };
 
-export interface ComboBoxProps<T extends object>
-  extends Omit<
-    AriaComboBoxProps<T>,
-    | 'children'
-    | 'validationState'
-    | 'label'
-    | 'description'
-    | 'errorMessage'
-    | 'selectionMode'
-  > {
+export interface ComboBoxProps<T extends object> extends Omit<
+  AriaComboBoxProps<T>,
+  | 'children'
+  | 'validationState'
+  | 'label'
+  | 'description'
+  | 'errorMessage'
+  | 'selectionMode'
+> {
   /** CSS class name for the combo box input */
   className?: string;
   /** Label shown above the combo box */

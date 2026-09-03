@@ -40,8 +40,7 @@ const sizeToTag: Record<
 };
 
 interface HeadingProps
-  extends HTMLAttributes<HTMLHeadingElement>,
-    HeadingVariantProps {
+  extends HTMLAttributes<HTMLHeadingElement>, HeadingVariantProps {
   as?: HeadingTag;
   color?: string;
 }

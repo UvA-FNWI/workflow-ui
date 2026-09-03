@@ -9,10 +9,8 @@ import { InputLabel } from '../InputLabel';
 import { type InputVariantProps, inputVariants } from '../InputVariant';
 
 export interface TextAreaProps
-  extends Omit<
-      React.ComponentPropsWithoutRef<'textarea'>,
-      'onChange' | 'disabled'
-    >,
+  extends
+    Omit<React.ComponentPropsWithoutRef<'textarea'>, 'onChange' | 'disabled'>,
     InputVariantProps {
   isDisabled?: boolean;
   value?: string;

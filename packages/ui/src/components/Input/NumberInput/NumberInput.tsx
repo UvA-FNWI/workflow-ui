@@ -22,7 +22,8 @@ import { inputVariants } from '../InputVariant';
 export type NumberInputVariantProps = VariantProps<typeof inputVariants>;
 
 export interface NumberInputProps
-  extends Omit<
+  extends
+    Omit<
       React.ComponentPropsWithoutRef<'input'>,
       'onChange' | 'value' | 'defaultValue' | 'type' | 'size'
     >,

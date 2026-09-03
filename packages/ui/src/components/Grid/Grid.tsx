@@ -24,8 +24,7 @@ const gridVariants = cva('ui:grid ui:grid-cols-12 ui:gap-x-6', {
 export type GridVariantProps = VariantProps<typeof gridVariants>;
 
 export interface GridProps
-  extends HTMLAttributes<HTMLDivElement>,
-    GridVariantProps {}
+  extends HTMLAttributes<HTMLDivElement>, GridVariantProps {}
 
 /**
  * 12-column grid with 24px column gutters. Wrap `GridItem` children inside this component.
