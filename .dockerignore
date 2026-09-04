@@ -1,5 +1,7 @@
 .env
 .env.development
 **/node_modules/
+**/.pnpm-store/
 playwright-report/
 **/dist/
+**/storybook-static/
