@@ -4,6 +4,7 @@ import type {
   FocusEvent,
   InputHTMLAttributes,
   KeyboardEvent,
+  MouseEventHandler,
   ReactNode,
 } from 'react';
 
@@ -68,6 +69,10 @@ export interface TagInputProps
   onChange?: (value: string[]) => void;
   /** Called when a tag is removed. */
   onRemove?: (value: string) => void;
+  /** Called when the field control is clicked, excluding nested action buttons. */
+  onControlClick?: MouseEventHandler<HTMLDivElement>;
+  /** Icon displayed after a separator at the end of the field. */
+  rightIcon?: ReactNode;
   /** Controlled text currently being entered. */
   searchValue?: string;
   /** Initial search text for an uncontrolled input. */
@@ -197,6 +202,8 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
       defaultValue = [],
       onChange,
       onRemove,
+      onControlClick,
+      rightIcon,
       searchValue,
       defaultSearchValue = '',
       onSearchChange,
@@ -537,11 +544,16 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
             className={cn(
               controlClasses,
               'ui:flex ui:flex-wrap ui:items-center ui:gap-1.5',
+              rightIcon && 'ui:pr-12',
               className
             )}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => inputRef.current?.focus()}
+            onClick={event => {
+              inputRef.current?.focus();
+              const target = event.target as Element;
+              if (!target.closest?.('button')) onControlClick?.(event);
+            }}
           >
             {tags.map((tag, index) => {
               const handleRemove = () => removeTag(index);
@@ -618,6 +630,26 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
               </button>
             )}
           </div>
+
+          {rightIcon && (
+            <div className="ui:pointer-events-none ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-start">
+              <div className="ui:flex ui:h-full ui:py-3">
+                <div className="ui:h-full ui:w-px ui:bg-grey-600" />
+              </div>
+              <div
+                className={cn(
+                  'ui:flex ui:items-center ui:px-2 ui:pt-2',
+                  size === 'sm'
+                    ? 'ui:h-6'
+                    : size === 'md'
+                      ? 'ui:h-8'
+                      : 'ui:h-10'
+                )}
+              >
+                {rightIcon}
+              </div>
+            </div>
+          )}
 
           {isDropdownVisible && (
             <ul

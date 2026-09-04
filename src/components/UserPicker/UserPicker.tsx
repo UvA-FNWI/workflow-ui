@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {SearchInput} from "@uva-fnwi/datanose-ui";
+import {Icon, SearchInput, Tag, TagInput} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerModal} from "./UserPickerModal";
 import {AddExternalUserModal} from "~/components/instance/AddExternalUserModal.tsx";
@@ -57,6 +57,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     const {t} = useTranslate("workflow");
 
     const valueArray = value ? (Array.isArray(value) ? value : [value]) : [];
+    const isMultiple = selectionMode === "multiple";
 
     const getDisplayString = (user: UserSearchResult) =>
         user.isExternal
@@ -72,7 +73,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     })();
 
     const shouldOpenExternalModal =
-        allowsExternalUsers && valueArray.length === 1 && valueArray[0].isExternal;
+        !isMultiple && allowsExternalUsers && valueArray.length === 1 && valueArray[0].isExternal;
 
     const handleOpenUserPickerModal = () => {
         if (!isDisabled) {
@@ -95,37 +96,81 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     };
 
     const handleConfirmUserPicker = (selectedUsers: UserSearchResult[]) => {
-        onChange?.(selectionMode === "single" ? selectedUsers[0] || null : selectedUsers);
+        const selectedUser = selectedUsers[0];
+        if (!isMultiple) {
+            onChange?.(selectedUser ?? null);
+            return;
+        }
+        if (!selectedUser || valueArray.some((user) => user.userName === selectedUser.userName)) {
+            return;
+        }
+        onChange?.([...valueArray, selectedUser]);
+    };
+
+    const handleRemoveUser = (userName: string) => {
+        if (isDisabled) return;
+        onChange?.(valueArray.filter((user) => user.userName !== userName));
     };
 
     return (
         <>
-            <SearchInput
-                label={label}
-                placeholder={placeholder}
-                value={displayValue}
-                onClick={handleOpenUserPickerModal}
-                onKeyDown={handleSearchInputKeyDown}
-                isDisabled={isDisabled}
-                readOnly={true}
-                role="button"
-                className="cursor-pointer"
-            />
+            {isMultiple ? (
+                <TagInput
+                    label={label}
+                    placeholder={placeholder}
+                    value={valueArray.map((user) => user.userName)}
+                    renderTag={({value}) => {
+                        const user = valueArray.find((user) => user.userName === value);
+                        return (
+                            <Tag
+                                size="lg"
+                                isDisabled={isDisabled}
+                                onRemove={!isDisabled ? () => handleRemoveUser(value) : undefined}
+                            >
+                                {user ? getDisplayString(user) : value}
+                            </Tag>
+                        );
+                    }}
+                    onControlClick={handleOpenUserPickerModal}
+                    onKeyDown={handleSearchInputKeyDown}
+                    isDisabled={isDisabled}
+                    readOnly
+                    aria-label={label ?? t("user_picker.search_placeholder")}
+                    rightIcon={<Icon name="search-line" size="md" color="primary" />}
+                    className="cursor-pointer [&_input]:cursor-pointer"
+                />
+            ) : (
+                <SearchInput
+                    label={label}
+                    placeholder={placeholder}
+                    value={displayValue}
+                    onClick={handleOpenUserPickerModal}
+                    onKeyDown={handleSearchInputKeyDown}
+                    isDisabled={isDisabled}
+                    readOnly={true}
+                    role="button"
+                    className="cursor-pointer"
+                />
+            )}
 
-            <UserPickerModal
-                isOpen={isOpenUserPicker}
-                onOpenChange={setIsOpenUserPicker}
-                initialSelection={
-                    valueArray.length === 1 && valueArray[0].isExternal ? undefined : valueArray
-                }
-                onConfirm={handleConfirmUserPicker}
-                onAddExternalUser={handleOpenExternalUserModal}
-                selectionMode={selectionMode}
-                title={modalTitle}
-                searchPlaceholder={searchPlaceholder}
-                minSearchLength={minSearchLength}
-                allowsExternalUsers={allowsExternalUsers}
-            />
+            {(!isMultiple || isOpenUserPicker) && (
+                <UserPickerModal
+                    isOpen={isOpenUserPicker}
+                    onOpenChange={setIsOpenUserPicker}
+                    initialSelection={
+                        isMultiple || (valueArray.length === 1 && valueArray[0].isExternal)
+                            ? []
+                            : valueArray
+                    }
+                    onConfirm={handleConfirmUserPicker}
+                    onAddExternalUser={handleOpenExternalUserModal}
+                    selectionMode="single"
+                    title={modalTitle}
+                    searchPlaceholder={searchPlaceholder}
+                    minSearchLength={minSearchLength}
+                    allowsExternalUsers={allowsExternalUsers}
+                />
+            )}
 
             <AddExternalUserModal
                 isOpen={isOpenExternal}
@@ -134,7 +179,9 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 onBackToSearch={() => setIsOpenUserPicker(true)}
                 isSaving={isCreatingExternalUser}
                 initialUser={
-                    valueArray.length === 1 && valueArray[0].isExternal ? valueArray[0] : undefined
+                    !isMultiple && valueArray.length === 1 && valueArray[0].isExternal
+                        ? valueArray[0]
+                        : undefined
                 }
             />
         </>

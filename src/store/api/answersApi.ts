@@ -1,12 +1,28 @@
 import {baseApi} from "./baseApi";
-import type {SaveAnswerParams, SaveFileParams, SubmissionParams} from "./types/params";
+import type {
+    GetChoicesParams,
+    SaveAnswerParams,
+    SaveFileParams,
+    SubmissionParams,
+} from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
+import type {Choice} from "./types/submissions";
 import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
 export const answersApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
+        getChoices: build.query<Choice[], GetChoicesParams>({
+            query: (params) =>
+                `Answers/${params.instanceId}/${params.submissionId}/${params.questionName}/Choices`,
+            providesTags: (_result, _error, params) => [{type: "Choices", id: params.instanceId}],
+        }),
+        getCurrentChoices: build.query<Choice[], GetChoicesParams>({
+            query: (params) =>
+                `Answers/${params.instanceId}/${params.submissionId}/${params.questionName}/CurrentChoices`,
+            providesTags: (_result, _error, params) => [{type: "Choices", id: params.instanceId}],
+        }),
         saveAnswer: build.mutation<SaveAnswerResult, SaveAnswerParams>({
             query: (params) => ({
                 url: `Answers/${params.instanceId}/${params.submissionId}/${params.answer.questionName}`,
@@ -19,14 +35,7 @@ export const answersApi = baseApi.injectEndpoints({
                     submissionsApi.util.updateQueryData(
                         "getSubmission",
                         {instanceId: params.instanceId, submissionId: params.submissionId},
-                        (current) => {
-                            current.answers = current.answers.map((oldAnswer) => {
-                                const newAnswer = data.answers.find(
-                                    (answer) => answer.id === oldAnswer.id,
-                                );
-                                return newAnswer ?? oldAnswer;
-                            });
-                        },
+                        () => data.submission,
                     ),
                 );
                 dispatch(
@@ -51,6 +60,7 @@ export const answersApi = baseApi.injectEndpoints({
                     submissionId: params.submissionId,
                 },
                 {type: "InstanceActions", id: params.instanceId},
+                {type: "Choices", id: params.instanceId},
             ],
         }),
         saveFile: build.mutation<{success: boolean}, SaveFileParams>({

@@ -153,6 +153,7 @@ export {
   TabList,
   TabPanels,
   TabPanel,
+  TabToolbar,
   useTabsWithRouter,
   useTabsWithUrl,
   type TabsProps,
@@ -182,6 +183,12 @@ export {
   useProductionView,
   type EnvViewToggleProps,
 } from './components/EnvViewToggle';
+
+export {
+  ComboBox,
+  ComboBoxItem,
+  type ComboBoxProps,
+} from './components/ComboBox/ComboBox';
 
 export { useEnvData, type EnvData } from './hooks/useEnvData';
 

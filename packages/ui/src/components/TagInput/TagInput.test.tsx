@@ -112,6 +112,21 @@ describe('TagInput', () => {
     expect(screen.queryByText('React')).not.toBeInTheDocument();
   });
 
+  it('reports clicks across the field without treating tag actions as field clicks', () => {
+    const onControlClick = vi.fn();
+    render(
+      <TagInput defaultValue={['React']} onControlClick={onControlClick} />
+    );
+    const input = screen.getByRole('combobox');
+
+    fireEvent.click(screen.getByText('React'));
+    fireEvent.click(input.parentElement!);
+    expect(onControlClick).toHaveBeenCalledTimes(2);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Remove React' }));
+    expect(onControlClick).toHaveBeenCalledTimes(2);
+  });
+
   it('filters and selects suggestions with the mouse', () => {
     render(<TagInput label="Libraries" data={['React', 'Vue', 'Svelte']} />);
     const input = screen.getByRole('combobox', { name: 'Libraries' });

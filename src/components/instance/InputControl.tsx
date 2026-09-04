@@ -16,13 +16,14 @@ import {parseISO} from "date-fns";
 import {DatePicker} from "~/components/Datepicker/Datepicker";
 import {EmailInput} from "~/components/inputs/EmailInput";
 import {PhoneInput} from "~/components/inputs/PhoneInput";
+import {ReferenceControl} from "~/components/instance/ReferenceControl.tsx";
 import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
-import type {Answer, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
+import type {Answer, Choice, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
 import {sortChoices} from "~/utils/sortChoices";
 
@@ -37,8 +38,13 @@ const toDate = (value: unknown) => {
 };
 
 interface InputControlProps {
+    instanceId?: string;
+    submissionId?: string;
     value?: unknown;
     question: Question;
+    choices?: Choice[];
+    choicesLoading?: boolean;
+    choicesError?: boolean;
     onChange?: (val: unknown) => void;
     onSave?: (val: AnswerInput) => Promise<SaveAnswerResult>;
     onSaveExternalUser?: (val: AnswerInput) => Promise<SaveAnswerResult>;
@@ -50,8 +56,13 @@ interface InputControlProps {
 }
 
 export const InputControl = ({
+    instanceId = "",
+    submissionId = "",
     value,
     question,
+    choices,
+    choicesLoading,
+    choicesError,
     onChange,
     onSave,
     onSaveExternalUser,
@@ -74,23 +85,21 @@ export const InputControl = ({
             if (!saveExternalUser) return;
             const result = await saveExternalUser({
                 questionName: question.name,
-                value: null,
+                value: question.isArray ? (Array.isArray(value) ? value : []) : null,
                 externalUser: newUser,
             });
 
             const updatedAnswer = result.answers.find(
                 (answer) => answer.questionName === question.name,
             );
-            const updatedUser = updatedAnswer?.value as UserSearchResult | undefined;
-
-            if (updatedUser) {
-                onChange?.(updatedUser);
+            if (updatedAnswer) {
+                onChange?.(updatedAnswer.value);
                 return;
             }
 
             throw new Error(`Updated user answer was not returned for question "${question.name}"`);
         },
-        [onChange, saveExternalUser, question.name],
+        [onChange, saveExternalUser, question.isArray, question.name, value],
     );
     const debouncedOnChange = useDebounce(save, 500);
     const debouncedChange = (value: unknown) => {
@@ -328,6 +337,23 @@ export const InputControl = ({
                     </Radio>
                 ))}
             </RadioGroup>
+        );
+    }
+
+    if (question.type === "Reference") {
+        return (
+            <ReferenceControl
+                instanceId={instanceId}
+                submissionId={submissionId}
+                value={value}
+                question={question}
+                choices={choices}
+                choicesLoading={choicesLoading}
+                choicesError={choicesError}
+                onChange={(val) => immediateChange(val)}
+                isValid={isValid}
+                errorMessage={errorMessage}
+            />
         );
     }
 

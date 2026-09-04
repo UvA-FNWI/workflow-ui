@@ -93,13 +93,15 @@ describe('Modal', () => {
 
     it('allows custom className on Modal.Header', () => {
       render(
-        <Modal isOpen={true} onOpenChange={vi.fn()}>
+        <Modal isOpen={true} onOpenChange={vi.fn()} aria-label="Example modal">
           <Modal.Header className="custom-header">Title</Modal.Header>
           <Modal.Body>Content</Modal.Body>
         </Modal>
       );
 
-      const header = screen.getByRole('heading').parentElement;
+      const header = screen
+        .getByRole('heading', { name: 'Title' })
+        .closest('header');
       expect(header).toHaveClass('custom-header');
     });
 

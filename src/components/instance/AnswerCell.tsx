@@ -8,7 +8,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {answersApi} from "~/store/api/answersApi.ts";
 import type {UserSearchResult} from "~/store/api/types/users.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
-import {formatAnswer} from "~/utils/formatAnswer.ts";
+import {formatAnswer, hasReferenceId} from "~/utils/formatAnswer.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -33,13 +33,29 @@ export const AnswerCell = ({
     const [copied, setCopied] = useState(false);
     const toast = useToast();
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
+    const {data: referenceChoices} = answersApi.useGetCurrentChoicesQuery(
+        {
+            instanceId,
+            submissionId: pair?.submission?.id ?? submissionId ?? "",
+            questionName: pair?.question.name ?? "",
+        },
+        {
+            skip:
+                pair == null ||
+                pair.question.type !== "Reference" ||
+                !instanceId ||
+                !(pair.submission?.id ?? submissionId) ||
+                !hasReferenceId(pair.answer?.value),
+        },
+    );
 
     if (!pair) return <Text>-</Text>;
 
     const {answer} = pair;
+    const choices = pair.question.type === "Reference" ? referenceChoices : pair.question.choices;
     const formattedValue =
         answer != null
-            ? formatAnswer(answer.value, pair.question.type, i18n.language, pair.question.choices)
+            ? formatAnswer(answer.value, pair.question.type, i18n.language, choices)
             : noAnswerText;
 
     const answerTitleText = pair.columnTitle ?? pair?.submission?.form?.title;
@@ -59,6 +75,8 @@ export const AnswerCell = ({
     if (isEditing) {
         return (
             <InlineQuestionEdit
+                instanceId={instanceId}
+                submissionId={pair.submission?.id ?? submissionId ?? ""}
                 question={pair.question}
                 value={answer?.value}
                 visibleChoices={answer?.visibleChoices}

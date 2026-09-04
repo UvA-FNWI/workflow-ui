@@ -24,6 +24,7 @@
   },
   "are_you_sure": "Weet je het zeker?",
   "cancel": "Annuleren",
+  "change_selection": "Wijzig keuze",
   "confirm": "Bevestigen",
   "develop": {
     "columns": {
@@ -76,6 +77,12 @@
     },
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
+      "change_version": "Versie {{version}}",
+      "change_version_in_progress": "Versie {{version}} (in behandeling)",
+      "changed_on": "Gewijzigd op {{date}}",
+      "changed_on_by": "Gewijzigd op {{date}} door {{name}}",
+      "changed_on_inline": "gewijzigd op {{date}}",
+      "changes_title": "Wijzigingen",
       "delete_file": "Bestand verwijderen",
       "edit_answer": "Antwoord bewerken",
       "edit_page": "Pagina bewerken",
@@ -86,7 +93,9 @@
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
-      "title": "Samenvatting"
+      "submitted_on": "Ingediend op {{date}}",
+      "title": "Samenvatting",
+      "view_changes": "Wijzigingen bekijken"
     },
     "unauthorized_submission": "Je hebt geen rechten om dit in te zien",
     "workflowInstance": "Workflow"
@@ -141,6 +150,12 @@
     "deadline": "Deadline",
     "titleStudent": "Jouw voortgang",
     "titleSupervisor": "Voortgang van de student"
+  },
+  "reference": {
+    "empty": "Geen opties beschikbaar",
+    "load_error": "Kon opties niet laden",
+    "loading": "Opties laden…",
+    "no_results": "Geen resultaten"
   },
   "repeated_form": {
     "clear": "Wis vooringevulde velden",

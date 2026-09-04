@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { Icon } from '../Icon';
 import { Tag } from '../Tag';
 import { TagInput } from './TagInput';
 
@@ -111,6 +112,11 @@ const meta: Meta<typeof TagInput> = {
     onRemove: {
       control: false,
       description: 'Called with the value of a removed tag.',
+      table: { category: 'Events' },
+    },
+    onControlClick: {
+      control: false,
+      description: 'Called when the field control is clicked.',
       table: { category: 'Events' },
     },
     onClear: {
@@ -224,6 +230,11 @@ const meta: Meta<typeof TagInput> = {
       description: 'Custom selected-tag renderer.',
       table: { category: 'Appearance' },
     },
+    rightIcon: {
+      control: false,
+      description: 'Icon displayed after a separator at the end of the field.',
+      table: { category: 'Appearance' },
+    },
     className: {
       control: 'text',
       description: 'Classes applied to the field control.',
@@ -288,6 +299,23 @@ export const WithSuggestions: Story = {
       description: {
         story:
           'Suggestions are filtered as the user types and support mouse and arrow-key selection. Values are not limited to the suggestions.',
+      },
+    },
+  },
+};
+
+export const WithRightIcon: Story = {
+  args: {
+    label: 'Users',
+    defaultValue: ['Ada Lovelace', 'Grace Hopper', 'Katherine Johnson'],
+    readOnly: true,
+    rightIcon: <Icon name="search-line" size="md" color="primary" />,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Use `rightIcon` to add an icon after a full-height separator. The icon stays aligned with the first row when tags wrap.',
       },
     },
   },

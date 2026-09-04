@@ -22,7 +22,7 @@ const noInstances: PersonalInstance[] = [];
 export default function Personal() {
     const {data, isLoading, isError} = useGetPersonalInstancesQuery();
     const instances = data?.instances ?? noInstances;
-    const {i18n, l, t} = useTranslate("personal");
+    const {i18n, l, t} = useTranslate("screens");
     const {t: workflowT} = useTranslate("workflow");
     const navigate = useVersionedNavigate();
     useDocumentTitle(t("title"));

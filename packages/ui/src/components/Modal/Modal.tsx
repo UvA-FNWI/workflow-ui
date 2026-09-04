@@ -135,19 +135,24 @@ const ModalOverlay = ({
   );
 };
 
+type ModalDialogProps = {
+  children: ReactNode;
+  role?: 'dialog' | 'alertdialog';
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
+};
+
 const ModalDialog = ({
   children,
   role = 'dialog',
-  ...props
-}: {
-  children: ReactNode;
-  role?: 'dialog' | 'alertdialog';
-}) => {
+  ...ariaProps
+}: ModalDialogProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { dialogProps } = useDialog(
     {
       role,
-      ...props,
+      ...ariaProps,
     },
     ref
   );
@@ -189,6 +194,10 @@ const BaseModal = (props: ModalProps) => {
     isDismissable = true,
     isKeyboardDismissDisabled = false,
 
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-describedby': ariaDescribedBy,
+
     ...restProps
   } = props;
 
@@ -206,7 +215,12 @@ const BaseModal = (props: ModalProps) => {
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
     >
-      <ModalDialog role={role}>
+      <ModalDialog
+        role={role}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+      >
         <ModalContext.Provider
           value={{ onClose: handleClose, showCloseButton }}
         >
@@ -225,9 +239,14 @@ const BaseModal = (props: ModalProps) => {
 
 BaseModal.displayName = 'Modal';
 
+type ModalHeaderProps = HTMLAttributes<HTMLElement> & {
+  subTitle?: string;
+  description?: string;
+};
+
 // Sub-components for compound component pattern
-const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
-  ({ children, className, ...props }, ref) => {
+const ModalHeader = forwardRef<HTMLElement, ModalHeaderProps>(
+  ({ children, className, subTitle, description, ...props }, ref) => {
     const { onClose, showCloseButton } = useModalContext();
 
     return (
@@ -239,9 +258,22 @@ const ModalHeader = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         )}
         {...props}
       >
-        <h2 className="ui:font-heading ui:text-2xl ui:text-black ui:dark:text-white">
-          {children}
-        </h2>
+        <div className="ui:flex ui:flex-col">
+          {subTitle && (
+            <span className="ui:mb-1 ui:text-sm ui:text-grey-400 ui:dark:text-white">
+              {subTitle}
+            </span>
+          )}
+
+          <h2 className="ui:font-heading ui:text-2xl ui:font-semibold ui:text-black ui:dark:text-white">
+            {children}
+          </h2>
+          {description && (
+            <span className="ui:text-md ui:my-1 ui:text-black ui:dark:text-white">
+              {description}
+            </span>
+          )}
+        </div>
         {showCloseButton && (
           <Button
             intent="ghost"

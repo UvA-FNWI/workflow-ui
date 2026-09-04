@@ -66,7 +66,18 @@ export const StepCard = ({step, instance}: Props) => {
         [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
     );
 
-    const deadlineDate = step.deadline ?? null;
+    const deadlineDate =
+        step.deadline ?? step.children?.find((c) => c.id == instance.currentStep)?.deadline ?? null;
+    const submittedDate =
+        [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])]
+            .filter((date): date is string => Boolean(date))
+            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
+    const shownDate = submittedDate
+        ? {label: t("status.submitted"), value: submittedDate}
+        : deadlineDate
+          ? {label: t("progress.deadline"), value: deadlineDate}
+          : null;
+
     const isDisabled =
         !!instance.currentStep && !isCurrentStep && instance.steps.indexOf(step) > currentStepIndex;
 
@@ -77,7 +88,9 @@ export const StepCard = ({step, instance}: Props) => {
     const isFormOpen =
         resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const emptyStateMessage =
-        !hasVisibleSubmission && stepHierarchy.some(({hasSubmission}) => hasSubmission)
+        !isFormOpen &&
+        !hasVisibleSubmission &&
+        stepHierarchy.some(({hasSubmission}) => hasSubmission)
             ? t("instance.unauthorized_submission")
             : !isFormOpen && stepHierarchy.some(({expectsSubmission}) => expectsSubmission)
               ? t("instance.empty_step")
@@ -116,11 +129,11 @@ export const StepCard = ({step, instance}: Props) => {
                             </Pill>
                         )}
                     </div>
-                    {deadlineDate && (
+                    {shownDate && (
                         <Text as="span" className="shrink-0">
-                            <Text fontWeight="semibold">{t("progress.deadline")}</Text>
+                            <Text fontWeight="semibold">{shownDate.label}</Text>
                             {":\t"}
-                            {formatDateShort(deadlineDate, i18n.language)}
+                            {formatDateShort(shownDate.value, i18n.language)}
                         </Text>
                     )}
                 </div>

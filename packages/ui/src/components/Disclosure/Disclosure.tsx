@@ -258,6 +258,7 @@ const DisclosureContent = (
     <div
       {...panelProps}
       ref={ref || panelRef}
+      hidden={!state.isExpanded}
       className={cn(
         state.isExpanded && paddingClasses[padding],
         'ui:py-0 ui:text-grey-900 ui:dark:text-white',

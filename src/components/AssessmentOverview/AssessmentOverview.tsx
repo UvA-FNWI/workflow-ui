@@ -42,7 +42,7 @@ export const AssessmentOverview = ({
 
     const emptyState =
         emptyMessage !== null ? (
-            <div className="my-4">
+            <div className="mt-4">
                 <Text className="italic">{emptyMessage ?? t("instance.empty_step")}</Text>
             </div>
         ) : null;
