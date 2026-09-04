@@ -27,6 +27,21 @@ jobs:
               with:
                   node-version: 20
                   cache: "pnpm"
+            - name: Forbid nested package-manager files
+              run: |
+                  set -euo pipefail
+                  nested=$(find packages -maxdepth 2 \( \
+                    -name pnpm-lock.yaml -o \
+                    -name pnpm-workspace.yaml -o \
+                    -name package-lock.json -o \
+                    -name yarn.lock \
+                  \) -print)
+                  if [ -n "${nested}" ]; then
+                    echo "Nested package-manager files are not allowed:"
+                    echo "${nested}"
+                    echo "Install from the repository root with pnpm."
+                    exit 1
+                  fi
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
             - name: Prettier
