@@ -223,8 +223,6 @@ export const PageControl = ({
                             })}
                             {fileQuestions.length > 0 && (
                                 <FileUploadTable
-                                    instanceId={instanceId}
-                                    submissionId={submissionId}
                                     questions={fileQuestions}
                                     values={fileValuesMap}
                                     answers={submission?.answers}

@@ -120,9 +120,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                         intent="primary"
                         underline
                         className="truncate"
-                        onClick={() =>
-                            downloadFile(answer.files[0], question.name, instanceId, submissionId)
-                        }
+                        onClick={() => downloadFile(answer.files[0])}
                     >
                         {answer.files[0].name}
                     </Link>

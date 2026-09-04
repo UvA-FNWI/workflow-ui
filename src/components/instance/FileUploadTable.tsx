@@ -9,8 +9,6 @@ import {downloadFile} from "~/utils/fileDownload";
 import {formatAllowedFileSize, formatAllowedFileTypes, toFileInputAccept} from "~/utils/fileTypes";
 
 interface FileUploadTableProps {
-    instanceId: string;
-    submissionId: string;
     questions: Question[];
     values: Record<string, File | null>;
     answers?: Answer[];
@@ -28,8 +26,6 @@ interface FileUploadTableProps {
 }
 
 export const FileUploadTable = ({
-    instanceId,
-    submissionId,
     questions,
     values,
     answers,
@@ -156,14 +152,7 @@ export const FileUploadTable = ({
                                             }
                                             showFileName={!hasError && !isLoading}
                                             fileName={fileName}
-                                            onFileNameClick={() =>
-                                                downloadFile(
-                                                    storedFiles[0],
-                                                    question.name,
-                                                    instanceId,
-                                                    submissionId,
-                                                )
-                                            }
+                                            onFileNameClick={() => downloadFile(storedFiles[0])}
                                             buttonText={t("file_upload.upload_file")}
                                             buttonIntent="primary"
                                             buttonVariant="destructive"
