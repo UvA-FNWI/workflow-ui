@@ -1,17 +1,14 @@
 import {createColumnHelper} from "@tanstack/react-table";
-import {Button, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
+import {Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
 
 import {DataTable} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Migration, MigrationStatus} from "~/store/api/types/migrations";
 import {formatDate} from "~/utils/formatDate";
 
-export type MigrationAction = "finish" | "revert";
-
 type MigrationsTableProps = {
     migrations: Migration[];
     globalFilter?: string;
-    onAction: (migration: Migration, action: MigrationAction) => void;
 };
 
 const columnHelper = createColumnHelper<Migration>();
@@ -28,7 +25,7 @@ const statusVariants: Record<MigrationStatus, NonNullable<PillVariantProps["vari
     RevertFailed: "red",
 };
 
-export function MigrationsTable({migrations, globalFilter = "", onAction}: MigrationsTableProps) {
+export function MigrationsTable({migrations, globalFilter = ""}: MigrationsTableProps) {
     const {t, i18n} = useTranslate("workflow");
 
     const columns = [
@@ -75,43 +72,6 @@ export function MigrationsTable({migrations, globalFilter = "", onAction}: Migra
         columnHelper.accessor("updatedAt", {
             header: t("migrations.columns.updated"),
             cell: ({getValue}) => formatDate(getValue(), i18n.language),
-        }),
-        columnHelper.display({
-            id: "actions",
-            header: t("migrations.columns.actions"),
-            cell: ({row}) => {
-                const migration = row.original;
-                const canFinish = ["ReadyToFinish", "FinishFailed"].includes(migration.status);
-                const canRevert = ["ReadyToFinish", "ApplyFailed", "RevertFailed"].includes(
-                    migration.status,
-                );
-                if (!canFinish && !canRevert) return "—";
-
-                return (
-                    <div className="flex gap-2">
-                        {canFinish && (
-                            <Button
-                                intent="primary"
-                                size="small"
-                                onClick={() => onAction(migration, "finish")}
-                            >
-                                {t("migrations.finish")}
-                            </Button>
-                        )}
-                        {canRevert && (
-                            <Button
-                                intent="secondary"
-                                variant="destructive"
-                                size="small"
-                                onClick={() => onAction(migration, "revert")}
-                            >
-                                {t("migrations.revert")}
-                            </Button>
-                        )}
-                    </div>
-                );
-            },
-            enableSorting: false,
         }),
     ];
 

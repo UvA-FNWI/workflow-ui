@@ -102,10 +102,8 @@
   },
   "make_a_choice": "Maak een keuze",
   "migrations": {
-    "action_error": "Kon de migratie niet bijwerken",
     "back_to_develop": "Terug naar Ontwikkelen",
     "columns": {
-      "actions": "Acties",
       "change": "Wijziging",
       "progress": "Voortgang",
       "requested_by": "Aangevraagd door",
@@ -113,13 +111,9 @@
       "updated": "Bijgewerkt",
       "workflow": "Workflowtype"
     },
-    "confirm_finish": "De migratie {{oldProperty}} → {{newProperty}} afronden? De oude waarden worden nog één keer gekopieerd en de paden in het wijzigingslogboek worden hernoemd.",
-    "confirm_finish_title": "Migratie afronden",
-    "confirm_revert": "De migratie {{oldProperty}} → {{newProperty}} terugdraaien? De gekopieerde nieuwe eigenschapswaarden worden verwijderd.",
-    "confirm_revert_title": "Migratie terugdraaien",
-    "create": "Migratie starten",
-    "create_error": "Kon de migratie niet starten",
-    "create_success": "Migratie gestart",
+    "create": "Migratie uitvoeren",
+    "create_error": "Kon de migratie niet uitvoeren",
+    "create_success": "Migratie voltooid",
     "create_title": "Eigenschap hernoemen",
     "empty": "Nog geen migraties",
     "fields": {
@@ -127,13 +121,9 @@
       "old_property": "Oude eigenschapsnaam",
       "workflow": "Workflowtype"
     },
-    "finish": "Afronden",
-    "finish_success": "Migratie afgerond",
     "load_error": "Kon migraties niet laden",
     "new": "Nieuwe migratie",
     "progress": "{{updated}} van {{matched}} instanties bijgewerkt",
-    "revert": "Terugdraaien",
-    "revert_success": "Migratie teruggedraaid",
     "title": "Migraties"
   },
   "name": "Naam",

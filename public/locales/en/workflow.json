@@ -102,10 +102,8 @@
   },
   "make_a_choice": "Make a choice",
   "migrations": {
-    "action_error": "Could not update the migration",
     "back_to_develop": "Back to Develop",
     "columns": {
-      "actions": "Actions",
       "change": "Property change",
       "progress": "Progress",
       "requested_by": "Requested by",
@@ -113,13 +111,9 @@
       "updated": "Updated",
       "workflow": "Workflow type"
     },
-    "confirm_finish": "Finish the {{oldProperty}} → {{newProperty}} migration? The old values will be copied once more and journal paths will be renamed.",
-    "confirm_finish_title": "Finish migration",
-    "confirm_revert": "Revert the {{oldProperty}} → {{newProperty}} migration? The copied new property values will be removed.",
-    "confirm_revert_title": "Revert migration",
-    "create": "Start migration",
-    "create_error": "Could not start the migration",
-    "create_success": "Migration started",
+    "create": "Run migration",
+    "create_error": "Could not run the migration",
+    "create_success": "Migration completed",
     "create_title": "Rename a property",
     "empty": "No migrations yet",
     "fields": {
@@ -127,13 +121,9 @@
       "old_property": "Old property name",
       "workflow": "Workflow type"
     },
-    "finish": "Finish",
-    "finish_success": "Migration finished",
     "load_error": "Could not load migrations",
     "new": "New migration",
     "progress": "{{updated}} of {{matched}} instances updated",
-    "revert": "Revert",
-    "revert_success": "Migration reverted",
     "title": "Migrations"
   },
   "name": "Name",

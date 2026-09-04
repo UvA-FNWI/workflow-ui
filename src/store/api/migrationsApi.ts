@@ -13,24 +13,7 @@ export const migrationsApi = baseApi.injectEndpoints({
                 body,
             }),
         }),
-        finishMigration: builder.mutation<Migration, string>({
-            query: (id) => ({
-                url: `/Migrations/${encodeURIComponent(id)}/Finish`,
-                method: "POST",
-            }),
-        }),
-        revertMigration: builder.mutation<Migration, string>({
-            query: (id) => ({
-                url: `/Migrations/${encodeURIComponent(id)}/Revert`,
-                method: "POST",
-            }),
-        }),
     }),
 });
 
-export const {
-    useGetMigrationsQuery,
-    useCreatePropertyRenameMutation,
-    useFinishMigrationMutation,
-    useRevertMigrationMutation,
-} = migrationsApi;
+export const {useGetMigrationsQuery, useCreatePropertyRenameMutation} = migrationsApi;
