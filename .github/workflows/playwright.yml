@@ -2,6 +2,21 @@ name: End-to-end tests
 on:
     pull_request:
         branches: [main]
+        paths:
+            - src/**
+            - public/**
+            - tests/**
+            - packages/**
+            - package.json
+            - pnpm-lock.yaml
+            - pnpm-workspace.yaml
+            - Dockerfile
+            - tests/Dockerfile
+            - playwright.config.ts
+            - vite.config.ts
+            - tsconfig.json
+            - tsconfig.app.json
+            - .github/workflows/playwright.yml
 jobs:
     test:
         timeout-minutes: 60
