@@ -15,27 +15,20 @@ const columnHelper = createColumnHelper<Migration>();
 
 const statusVariants: Record<MigrationStatus, NonNullable<PillVariantProps["variant"]>> = {
     Applying: "orange",
-    ReadyToFinish: "orange",
-    Finishing: "orange",
     Finished: "green",
-    Reverting: "orange",
-    Reverted: "grey",
-    ApplyFailed: "red",
-    FinishFailed: "red",
-    RevertFailed: "red",
+    Failed: "red",
 };
 
 export function MigrationsTable({migrations, globalFilter = ""}: MigrationsTableProps) {
     const {t, i18n} = useTranslate("workflow");
 
     const columns = [
-        columnHelper.accessor((migration) => migration.definition.workflowDefinitions.join(", "), {
+        columnHelper.accessor((migration) => migration.workflowDefinitions.join(", "), {
             id: "workflowDefinition",
             header: t("migrations.columns.workflow"),
         }),
         columnHelper.accessor(
-            (migration) =>
-                `${migration.definition.oldProperty} → ${migration.definition.newProperty}`,
+            (migration) => `${migration.oldProperty} → ${migration.newProperty}`,
             {
                 id: "change",
                 header: t("migrations.columns.change"),
@@ -54,14 +47,14 @@ export function MigrationsTable({migrations, globalFilter = ""}: MigrationsTable
                 </div>
             ),
         }),
-        columnHelper.accessor((migration) => migration.progress.itemsUpdated, {
+        columnHelper.accessor((migration) => migration.itemsUpdated, {
             id: "progress",
             header: t("migrations.columns.progress"),
             cell: ({row}) => (
                 <span>
                     {t("migrations.progress", {
-                        updated: row.original.progress.itemsUpdated,
-                        matched: row.original.progress.itemsMatched,
+                        updated: row.original.itemsUpdated,
+                        matched: row.original.itemsMatched,
                     })}
                 </span>
             ),
@@ -80,7 +73,7 @@ export function MigrationsTable({migrations, globalFilter = ""}: MigrationsTable
             data={migrations}
             columns={columns}
             globalFilter={globalFilter}
-            getRowId={(migration) => migration.id}
+            getRowId={(migration) => migration.migrationId}
             initialSorting={[{id: "updatedAt", desc: true}]}
             emptyNode={<Text intent="secondary">{t("migrations.empty")}</Text>}
         />

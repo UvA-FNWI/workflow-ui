@@ -1,39 +1,22 @@
 export type MigrationKind = "RenameProperty";
 
-export type MigrationStatus =
-    | "Applying"
-    | "ReadyToFinish"
-    | "Finishing"
-    | "Finished"
-    | "Reverting"
-    | "Reverted"
-    | "ApplyFailed"
-    | "FinishFailed"
-    | "RevertFailed";
-
-export type RenamePropertyDefinition = {
-    workflowDefinitions: string[];
-    oldProperty: string;
-    newProperty: string;
-};
-
-export type MigrationProgress = {
-    itemsMatched: number;
-    itemsUpdated: number;
-    details: Record<string, number>;
-};
+export type MigrationStatus = "Applying" | "Finished" | "Failed";
 
 export type Migration = {
-    id: string;
+    migrationId: string;
     kind: MigrationKind;
     status: MigrationStatus;
     statusLabel: string;
-    definition: RenamePropertyDefinition;
+    workflowDefinitions: string[];
+    oldProperty: string;
+    newProperty: string;
     requestedBy: string;
     requestedAt: string;
     updatedAt: string;
     finishedAt: string | null;
-    progress: MigrationProgress;
+    itemsMatched: number;
+    itemsUpdated: number;
+    journalEntriesUpdated: number;
     error: string | null;
 };
 
