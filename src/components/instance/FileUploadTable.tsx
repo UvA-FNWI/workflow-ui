@@ -2,15 +2,13 @@ import {useState} from "react";
 
 import {FileUpload, Text, useToast} from "@uva-fnwi/datanose-ui";
 
-import {MAX_FILE_SIZE} from "./constants";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Answer, Question} from "~/store/api/types/submissions";
 import {downloadFile} from "~/utils/fileDownload";
+import {formatAllowedFileSize, formatAllowedFileTypes, toFileInputAccept} from "~/utils/fileTypes";
 
 interface FileUploadTableProps {
-    instanceId: string;
-    submissionId: string;
     questions: Question[];
     values: Record<string, File | null>;
     answers?: Answer[];
@@ -28,15 +26,13 @@ interface FileUploadTableProps {
 }
 
 export const FileUploadTable = ({
-    instanceId,
-    submissionId,
     questions,
     values,
     answers,
     onFileSelect,
     onRemoveStoredFile,
 }: FileUploadTableProps) => {
-    const {t, l} = useTranslate("workflow");
+    const {t, l, i18n} = useTranslate("workflow");
     const toast = useToast();
     const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
     const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
@@ -104,6 +100,13 @@ export const FileUploadTable = ({
                         const fileName = !hasError
                             ? selectedFile?.name || (!isLoading ? storedFiles[0]?.name : undefined)
                             : undefined;
+                        const allowedFileTypesText = formatAllowedFileTypes(
+                            question.allowedFileTypes!,
+                            i18n.language,
+                        );
+                        const allowedFileSizeText = formatAllowedFileSize(
+                            question.allowedFileSize!,
+                        );
 
                         return (
                             <tr
@@ -130,13 +133,16 @@ export const FileUploadTable = ({
                                         </div>
                                     )}
                                     <div className="text-sm text-grey-600 dark:text-grey-400">
-                                        {t("file_upload.pdf_only")}
+                                        {t("file_upload.allowed_file_types", {
+                                            types: allowedFileTypesText,
+                                            size: allowedFileSizeText,
+                                        })}
                                     </div>
                                 </td>
                                 <td className="p-2 align-top">
                                     <div className="flex flex-col gap-2">
                                         <FileUpload
-                                            maxSize={MAX_FILE_SIZE}
+                                            maxSize={question.allowedFileSize}
                                             onFileSelect={(file: File | null) =>
                                                 handleFileSelect(
                                                     question.name,
@@ -146,24 +152,20 @@ export const FileUploadTable = ({
                                             }
                                             showFileName={!hasError && !isLoading}
                                             fileName={fileName}
-                                            onFileNameClick={() =>
-                                                downloadFile(
-                                                    storedFiles[0],
-                                                    question.name,
-                                                    instanceId,
-                                                    submissionId,
-                                                )
-                                            }
+                                            onFileNameClick={() => downloadFile(storedFiles[0])}
                                             buttonText={t("file_upload.upload_file")}
                                             buttonIntent="primary"
                                             buttonVariant="destructive"
                                             isLoading={uploadingFiles[question.name]}
                                             errorMessages={{
+                                                fileType: t("file_upload.error_file_type", {
+                                                    types: allowedFileTypesText,
+                                                }),
                                                 fileSize: t("file_upload.error_max_file_size", {
-                                                    size: "10MB",
+                                                    size: allowedFileSizeText,
                                                 }),
                                             }}
-                                            accept={["application/pdf"]}
+                                            accept={toFileInputAccept(question.allowedFileTypes!)}
                                         />
                                         {uploadErrors[question.name] && (
                                             <Text size="sm" intent="error">
@@ -177,9 +179,6 @@ export const FileUploadTable = ({
                     })}
                 </tbody>
             </table>
-            <div className="mt-2 text-sm text-black dark:text-white">
-                {t("file_upload.max_file_size", {size: "10MB"})}
-            </div>
         </div>
     );
 };

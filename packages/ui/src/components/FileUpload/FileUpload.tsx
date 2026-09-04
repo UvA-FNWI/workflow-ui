@@ -91,7 +91,7 @@ export const FileUpload = ({
   const validateFile = (file: File): string | null => {
     // Check file type
     if (accept.length > 0) {
-      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+      const fileName = file.name.toLowerCase();
       const fileType = file.type;
 
       const isAccepted = accept.some(acceptType => {
@@ -100,7 +100,7 @@ export const FileUpload = ({
           return fileType === acceptType;
         }
         // Handle extensions (e.g., '.pdf')
-        return fileExtension === acceptType.toLowerCase();
+        return fileName.endsWith(acceptType.toLowerCase());
       });
 
       if (!isAccepted) {

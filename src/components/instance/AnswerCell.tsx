@@ -116,14 +116,7 @@ export const AnswerCell = ({
                         intent="primary"
                         underline
                         className="truncate"
-                        onClick={() =>
-                            downloadFile(
-                                answer.files[0],
-                                pair.question.name,
-                                instanceId,
-                                submissionId,
-                            )
-                        }
+                        onClick={() => downloadFile(answer.files[0])}
                     >
                         {formattedValue}
                     </Link>
