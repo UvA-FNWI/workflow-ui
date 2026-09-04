@@ -14,6 +14,7 @@ import { InputError } from '../Input/InputError';
 import { InputLabel } from '../Input/InputLabel';
 import { inputVariants } from '../Input/InputVariant';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
+import { selectionVariants } from '../Select/SelectionVariants';
 import { Tag } from '../Tag';
 
 export interface TagInputOption {
@@ -256,6 +257,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
     const descriptionId = `${inputId}-description`;
     const errorId = `${inputId}-error`;
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const isMouseDownInDropdownRef = useRef(false);
     const [uncontrolledValue, setUncontrolledValue] =
       useState<string[]>(defaultValue);
     const [uncontrolledSearch, setUncontrolledSearch] =
@@ -493,6 +495,8 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
     };
 
     const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+      if (isMouseDownInDropdownRef.current) return;
+
       setIsFocused(false);
       if (acceptValueOnBlur && !isDisabled && !readOnly && search.trim()) {
         submitSearch();
@@ -500,6 +504,18 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
       setDropdownOpen(false);
       setActiveIndex(-1);
       onBlur?.(event);
+    };
+
+    const handleDropdownMouseDown = () => {
+      isMouseDownInDropdownRef.current = true;
+      window.addEventListener(
+        'mouseup',
+        () => {
+          isMouseDownInDropdownRef.current = false;
+          inputRef.current?.focus({ preventScroll: true });
+        },
+        { once: true }
+      );
     };
 
     const generatedDescribedBy = [
@@ -639,6 +655,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
             <ul
               id={listboxId}
               role="listbox"
+              onMouseDown={handleDropdownMouseDown}
               className={cn(
                 'ui:absolute ui:z-50 ui:mt-1 ui:max-h-64 ui:w-full ui:overflow-y-auto ui:rounded-xs ui:border ui:border-grey-300 ui:bg-grey-100 ui:p-1 ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900',
                 dropdownClassName
@@ -667,15 +684,13 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
                       aria-selected={isActive}
                       aria-disabled={option.disabled || undefined}
                       className={cn(
-                        'ui:flex ui:items-center ui:rounded-sm ui:px-3 ui:py-2 ui:text-sm ui:transition-colors ui:duration-150',
-                        option.disabled
-                          ? 'ui:cursor-not-allowed ui:opacity-50'
-                          : 'ui:cursor-pointer',
-                        isActive &&
-                          'ui:bg-navy-100 ui:text-navy-900 ui:dark:bg-grey-700 ui:dark:text-white',
-                        !isActive &&
-                          !option.disabled &&
-                          'ui:hover:bg-grey-300 ui:dark:hover:bg-grey-700'
+                        'ui:text-md ui:flex ui:items-center ui:justify-between ui:gap-2 ui:rounded-sm ui:px-3 ui:py-2 ui:transition-colors ui:duration-150 ui:outline-none',
+                        selectionVariants({
+                          isSelected: false,
+                          isHovered: isActive,
+                          isDisabled: option.disabled,
+                          isFocusVisible: false,
+                        })
                       )}
                       onMouseDown={event => event.preventDefault()}
                       onMouseEnter={() => {

@@ -101,6 +101,31 @@
     "workflowInstance": "Workflow"
   },
   "make_a_choice": "Maak een keuze",
+  "migrations": {
+    "back_to_develop": "Terug naar Ontwikkelen",
+    "columns": {
+      "change": "Wijziging",
+      "progress": "Voortgang",
+      "requested_by": "Aangevraagd door",
+      "status": "Status",
+      "updated": "Bijgewerkt",
+      "workflow": "Workflowtype"
+    },
+    "create": "Migratie uitvoeren",
+    "create_error": "Kon de migratie niet uitvoeren",
+    "create_success": "Migratie voltooid",
+    "create_title": "Eigenschap hernoemen",
+    "empty": "Nog geen migraties",
+    "fields": {
+      "new_property": "Nieuwe eigenschapsnaam",
+      "old_property": "Oude eigenschapsnaam",
+      "workflow": "Workflowtype"
+    },
+    "load_error": "Kon migraties niet laden",
+    "new": "Nieuwe migratie",
+    "progress": "{{updated}} van {{matched}} instanties bijgewerkt",
+    "title": "Migraties"
+  },
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",

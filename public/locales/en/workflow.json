@@ -101,6 +101,31 @@
     "workflowInstance": "Workflow Instance"
   },
   "make_a_choice": "Make a choice",
+  "migrations": {
+    "back_to_develop": "Back to Develop",
+    "columns": {
+      "change": "Property change",
+      "progress": "Progress",
+      "requested_by": "Requested by",
+      "status": "Status",
+      "updated": "Updated",
+      "workflow": "Workflow type"
+    },
+    "create": "Run migration",
+    "create_error": "Could not run the migration",
+    "create_success": "Migration completed",
+    "create_title": "Rename a property",
+    "empty": "No migrations yet",
+    "fields": {
+      "new_property": "New property name",
+      "old_property": "Old property name",
+      "workflow": "Workflow type"
+    },
+    "load_error": "Could not load migrations",
+    "new": "New migration",
+    "progress": "{{updated}} of {{matched}} instances updated",
+    "title": "Migrations"
+  },
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
