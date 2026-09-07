@@ -5,6 +5,9 @@ on:
         types: [opened, synchronize, reopened, ready_for_review]
         paths:
             - packages/ui/**
+            - pnpm-lock.yaml
+            - pnpm-workspace.yaml
+            - .github/workflows/pr-deployment-storybook.yml
 
 jobs:
     build:
@@ -22,11 +25,10 @@ jobs:
             - name: Build and push container
               env:
                   PR_NUMBER: ${{ github.event.number }}
-              working-directory: ./packages/ui
               run: |
                   set -euxo pipefail
                   TAG="pr-${PR_NUMBER}"
-                  docker build -f Dockerfile -t "datanosecr.azurecr.io/storybook-ui:${TAG}" .
+                  docker build -f packages/ui/Dockerfile -t "datanosecr.azurecr.io/storybook-ui:${TAG}" .
                   docker push "datanosecr.azurecr.io/storybook-ui:${TAG}"
 
             - name: Push chart and deploy

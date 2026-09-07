@@ -3,6 +3,22 @@ name: build and deploy pr app
 on:
     pull_request:
         types: [opened, synchronize, reopened, ready_for_review]
+        paths:
+            - src/**
+            - public/**
+            - index.html
+            - package.json
+            - pnpm-lock.yaml
+            - pnpm-workspace.yaml
+            - packages/**
+            - Dockerfile
+            - nginx.conf
+            - vite.config.ts
+            - tsconfig.json
+            - tsconfig.app.json
+            - tsconfig.node.json
+            - charts/workflow-ui/**
+            - .github/workflows/pr-deployment.yml
 
 jobs:
     build:

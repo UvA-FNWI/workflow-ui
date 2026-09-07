@@ -22,11 +22,16 @@ import { Checkbox } from '@uva-fnwi/datanose-ui';
 
 ## Development
 
+This package is part of the workflow-ui pnpm workspace. From the **repository root**:
+
 ```bash
-pnpm storybook
-pnpm test
-pnpm build
+pnpm install
+pnpm --filter @uva-fnwi/datanose-ui storybook
+pnpm --filter @uva-fnwi/datanose-ui test
+pnpm --filter @uva-fnwi/datanose-ui build
 ```
+
+After the root install, `pnpm test`, `pnpm storybook`, and `pnpm build` work from this directory. `pnpm install` here joins the root workspace. `npm install` or `yarn install` or `bun install` should not be used. React comes from the workspace catalog (root README).
 
 ## Versioning & Releases
 
