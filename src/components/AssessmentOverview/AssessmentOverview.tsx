@@ -84,6 +84,9 @@ export const AssessmentOverview = ({
         assessmentSubmissions.length > 0 &&
         assessmentSubmissions.some((s) => s.weightedAverage > 0);
 
+    const hideFinalGrade =
+        assessmentSubmissions.length == 1 && assessmentSubmissions[0].percentage == 100;
+
     const form = assessmentResults.parts[0]?.form ?? submissions[0]?.form;
 
     const colsList = ["grid-cols-2", "grid-cols-3", "grid-cols-4", "grid-cols-5", "grid-cols-6"]; // +1 for the first column which stretches two columns
@@ -125,7 +128,7 @@ export const AssessmentOverview = ({
                 ))}
 
                 {/* Final grade */}
-                {hasWeightedAverage && (
+                {hasWeightedAverage && !hideFinalGrade && (
                     <div className={`grid gap-4 ${colsClass}`}>
                         <Text fontWeight="semibold" size="xl" className="col-span-2 w-48 sm:w-80">
                             {t("instance.calculations.final_grade").toUpperCase()}
