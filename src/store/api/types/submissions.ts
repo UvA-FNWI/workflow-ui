@@ -94,6 +94,9 @@ export type Question = {
     maxLength?: number;
     sorting?: Sorting;
     linkedTo?: string;
+    allowedFileTypes?: string[];
+    /** Maximum file size in bytes. */
+    allowedFileSize?: number;
     /** Properties of an embedded object. */
     subProperties?: Question[] | null;
 };
