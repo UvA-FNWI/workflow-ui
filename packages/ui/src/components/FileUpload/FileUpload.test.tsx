@@ -131,6 +131,23 @@ describe('FileUpload', () => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
 
+    it('accepts compound file extensions', () => {
+      const handleFileSelect = vi.fn();
+      render(
+        <FileUpload accept={['.tar.gz']} onFileSelect={handleFileSelect} />
+      );
+
+      const input = document.querySelector(
+        'input[type="file"]'
+      ) as HTMLInputElement;
+      const file = new File(['content'], 'archive.TAR.GZ');
+
+      fireEvent.change(input, { target: { files: [file] } });
+
+      expect(handleFileSelect).toHaveBeenCalledWith(file);
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
     it('displays custom error message for file type', () => {
       render(
         <FileUpload
