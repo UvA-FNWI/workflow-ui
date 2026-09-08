@@ -9,7 +9,7 @@ export const selectionVariants = cva(
         false: 'ui:text-grey-900 ui:dark:text-white',
       },
       isHovered: {
-        true: 'ui:bg-grey-300 ui:dark:bg-grey-700',
+        true: 'ui:bg-grey-200 ui:dark:bg-grey-800',
         false: undefined,
       },
       isDisabled: {
@@ -20,12 +20,29 @@ export const selectionVariants = cva(
         true: 'ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:ring-orange-500',
         false: undefined,
       },
+      isFocused: {
+        true: 'ui:bg-grey-200 ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:bg-grey-800 ui:dark:ring-orange-500',
+        false: undefined,
+      },
     },
     defaultVariants: {
       isDisabled: false,
       isFocusVisible: false,
+      isFocused: false,
       isHovered: false,
       isSelected: false,
     },
+    compoundVariants: [
+      {
+        isSelected: true,
+        isHovered: true,
+        class: 'ui:bg-grey-400 ui:dark:bg-grey-600',
+      },
+      {
+        isSelected: true,
+        isFocused: true,
+        class: 'ui:bg-grey-400 ui:dark:bg-grey-600',
+      },
+    ],
   }
 );

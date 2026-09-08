@@ -14,7 +14,7 @@ import { InputError } from '../Input/InputError';
 import { InputLabel } from '../Input/InputLabel';
 import { inputVariants } from '../Input/InputVariant';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
-import { Tag } from '../Tag';
+import { SelectedTags } from '../SelectedTags/SelectedTags';
 
 export interface TagInputOption {
   value: string;
@@ -538,29 +538,27 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
               if (!target.closest?.('button')) onControlClick?.(event);
             }}
           >
-            {tags.map((tag, index) => {
-              const handleRemove = () => removeTag(index);
-              return (
-                <Fragment key={`${tag}-${index}`}>
-                  {renderTag ? (
-                    renderTag({
-                      value: tag,
-                      onRemove: handleRemove,
-                      isDisabled: isDisabled || readOnly,
-                    })
-                  ) : (
-                    <Tag
-                      size={size}
-                      isDisabled={isDisabled || readOnly}
-                      onRemove={handleRemove}
-                      className={tagClassName}
-                    >
-                      {tag}
-                    </Tag>
-                  )}
-                </Fragment>
-              );
-            })}
+            <SelectedTags
+              items={tags.map((tag, index) => ({
+                key: index,
+                rendered: tag,
+              }))}
+              layout="contents"
+              size={size}
+              isDisabled={isDisabled || readOnly}
+              tagClassName={tagClassName}
+              onRemove={key => removeTag(Number(key))}
+              renderTag={
+                renderTag
+                  ? (item, handleRemove) =>
+                      renderTag({
+                        value: String(item.rendered),
+                        onRemove: handleRemove,
+                        isDisabled: isDisabled || readOnly,
+                      })
+                  : undefined
+              }
+            />
 
             <input
               {...inputProps}
