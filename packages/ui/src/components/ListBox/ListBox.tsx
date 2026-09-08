@@ -6,7 +6,8 @@ import { ListBoxItem } from './ListBoxItem';
 import { ListBoxWrapper } from './ListBoxWrapper';
 
 export interface ListBoxProps<T extends object>
-  extends Omit<ListProps<T>, 'children' | 'filter' | 'collection'>,
+  extends
+    Omit<ListProps<T>, 'children' | 'filter' | 'collection'>,
     Pick<
       AriaListBoxOptions<T>,
       'autoFocus' | 'shouldFocusWrap' | 'shouldSelectOnPressUp' | 'linkBehavior'

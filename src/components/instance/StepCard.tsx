@@ -65,6 +65,7 @@ export const StepCard = ({step, instance}: Props) => {
     const currentStepIndex = instance.steps.findIndex((s) =>
         [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
     );
+    const isAfterCurrentStep = instance.steps.indexOf(step) > currentStepIndex;
 
     const deadlineDate =
         step.deadline ?? step.children?.find((c) => c.id == instance.currentStep)?.deadline ?? null;
@@ -78,8 +79,14 @@ export const StepCard = ({step, instance}: Props) => {
           ? {label: t("progress.deadline"), value: deadlineDate}
           : null;
 
-    const isDisabled =
-        !!instance.currentStep && !isCurrentStep && instance.steps.indexOf(step) > currentStepIndex;
+    // An unfinished alongside obligation can move the current step backward. Steps that are
+    // already completed or still have available actions must remain usable regardless of order.
+    const isUnavailableFutureStep =
+        !step.dateCompleted &&
+        actions.length === 0 &&
+        !!instance.currentStep &&
+        !isCurrentStep &&
+        isAfterCurrentStep;
 
     const contentState = resolveContentState(step, submissions);
     const modalState = resolveModalState(activeAction);
@@ -101,12 +108,12 @@ export const StepCard = ({step, instance}: Props) => {
         hasVersionHistory(step) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
-    const isContentless = !isDisabled && !hasBodyContent;
+    const isContentless = !isUnavailableFutureStep && !hasBodyContent;
 
     return (
         <Disclosure
             defaultExpanded={isCurrentStep && hasBodyContent}
-            isDisabled={isDisabled || !hasBodyContent}
+            isDisabled={isUnavailableFutureStep || !hasBodyContent}
             className={isContentless ? "cursor-default! opacity-100!" : undefined}
         >
             <Disclosure.Header
