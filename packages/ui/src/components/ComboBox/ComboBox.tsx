@@ -26,25 +26,31 @@ import { InputDescription } from '../Input/InputDescription';
 import { InputError } from '../Input/InputError';
 import { InputLabel } from '../Input/InputLabel';
 import { inputVariants } from '../Input/InputVariant';
+import { SelectedTags } from '../SelectedTags/SelectedTags';
 import { selectionVariants } from './ComboBoxVariants';
 
-interface ComboBoxPopoverProps<T extends object> extends Omit<
-  AriaPopoverProps,
-  'popoverRef'
-> {
+type ComboBoxSelectionMode = 'single' | 'multiple';
+
+interface ComboBoxPopoverProps<
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+> extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: React.ReactNode;
-  state: ComboBoxState<T>;
+  state: ComboBoxState<T, M>;
   popoverRef: React.RefObject<HTMLDivElement | null>;
   triggerRef: React.RefObject<HTMLElement | null>;
 }
 
-const ComboBoxPopover = <T extends object>({
+const ComboBoxPopover = <
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+>({
   children,
   state,
   popoverRef,
   triggerRef,
   ...props
-}: ComboBoxPopoverProps<T>) => {
+}: ComboBoxPopoverProps<T, M>) => {
   const { popoverProps } = usePopover(
     {
       ...props,
@@ -58,7 +64,7 @@ const ComboBoxPopover = <T extends object>({
 
   const popoverStyle: CSSProperties = {
     ...popoverProps.style,
-    minWidth: triggerRef.current?.offsetWidth,
+    width: triggerRef.current?.offsetWidth,
   };
 
   return (
@@ -75,17 +81,23 @@ const ComboBoxPopover = <T extends object>({
   );
 };
 
-interface ComboBoxOptionProps<T extends object> {
+interface ComboBoxOptionProps<
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+> {
   item: Node<T>;
-  state: ComboBoxState<T>;
+  state: ComboBoxState<T, M>;
 }
 
-const ComboBoxOption = <T extends object>({
+const ComboBoxOption = <
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+>({
   item,
   state,
-}: ComboBoxOptionProps<T>) => {
+}: ComboBoxOptionProps<T, M>) => {
   const ref = useRef<HTMLLIElement>(null);
-  const { optionProps, isSelected, isDisabled } = useOption(
+  const { optionProps, isSelected, isDisabled, isFocused } = useOption(
     { key: item.key },
     state,
     ref
@@ -104,26 +116,34 @@ const ComboBoxOption = <T extends object>({
           isHovered,
           isDisabled,
           isFocusVisible,
+          isFocused,
         })
       )}
     >
       <span className="ui:flex-1 ui:truncate">{item.rendered}</span>
+      {isSelected && <Icon name="checkmark-solid" size="sm" decorative />}
     </li>
   );
 };
 
-interface ComboBoxListBoxProps<T extends object> extends AriaListBoxOptions<T> {
-  state: ComboBoxState<T>;
+interface ComboBoxListBoxProps<
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+> extends AriaListBoxOptions<T> {
+  state: ComboBoxState<T, M>;
   listBoxRef: React.RefObject<HTMLUListElement | null>;
   noResults?: string;
 }
 
-const ComboBoxListBox = <T extends object>({
+const ComboBoxListBox = <
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+>({
   state,
   listBoxRef,
   noResults = 'No results',
   ...props
-}: ComboBoxListBoxProps<T>) => {
+}: ComboBoxListBoxProps<T, M>) => {
   const { listBoxProps } = useListBox(props, state, listBoxRef);
 
   return (
@@ -134,7 +154,7 @@ const ComboBoxListBox = <T extends object>({
     >
       {[...state.collection].map(item =>
         item.type === 'item' ? (
-          <ComboBoxOption key={item.key} item={item} state={state} />
+          <ComboBoxOption<T, M> key={item.key} item={item} state={state} />
         ) : null
       )}
       {state.collection.size === 0 && (
@@ -149,9 +169,13 @@ const ComboBoxListBox = <T extends object>({
   );
 };
 
-interface ComboBoxInputProps {
+interface ComboBoxInputProps<
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+> {
   inputProps: React.InputHTMLAttributes<HTMLInputElement>;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  fieldRef: React.RefObject<HTMLDivElement | null>;
   buttonProps: AriaButtonProps;
   buttonRef: React.RefObject<HTMLButtonElement | null>;
   isOpen: boolean;
@@ -159,11 +183,16 @@ interface ComboBoxInputProps {
   className?: string;
   isDisabled?: boolean;
   isValid?: boolean;
+  state: ComboBoxState<T, M>;
 }
 
-const ComboBoxInput = ({
+const ComboBoxInput = <
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+>({
   inputProps,
   inputRef,
+  fieldRef,
   buttonProps,
   buttonRef,
   isOpen,
@@ -171,7 +200,8 @@ const ComboBoxInput = ({
   className,
   isDisabled,
   isValid,
-}: ComboBoxInputProps) => {
+  state,
+}: ComboBoxInputProps<T, M>) => {
   const { focusProps, isFocusVisible } = useFocusRing();
   const { buttonProps: triggerProps } = useButton(buttonProps, buttonRef);
   const { hoverProps, isHovered } = useHover({
@@ -184,21 +214,62 @@ const ComboBoxInput = ({
     isHovered,
     isValid,
   });
+  const isMultiple = state.selectionManager.selectionMode === 'multiple';
+
+  const input = (
+    <input
+      {...mergeProps(inputProps, focusProps, {
+        onPointerDown: (event: React.PointerEvent<HTMLInputElement>) => {
+          if (isDisabled || event.button !== 0 || isOpen) return;
+          onOpen();
+        },
+      })}
+      ref={inputRef}
+      className={cn(
+        isMultiple
+          ? 'ui:min-w-32 ui:flex-1 ui:border-0 ui:bg-transparent ui:p-0 ui:text-left ui:outline-none'
+          : cn(fieldClasses, 'ui:pr-10', className),
+        isMultiple && className
+      )}
+    />
+  );
 
   return (
-    <div className="ui:relative">
-      <input
-        {...mergeProps(inputProps, focusProps, hoverProps, {
-          onPointerDown: (event: React.PointerEvent<HTMLInputElement>) => {
-            if (isDisabled || event.button !== 0 || isOpen) return;
-            onOpen();
+    <div ref={fieldRef} className="ui:relative">
+      {isMultiple ? (
+        <div
+          {...hoverProps}
+          className={cn(
+            fieldClasses,
+            'ui:flex ui:min-h-10 ui:flex-nowrap ui:items-center ui:gap-1.5 ui:overflow-hidden ui:pr-10',
+            className
+          )}
+        >
+          <SelectedTags
+            items={state.selectedItems}
+            isDisabled={isDisabled}
+            className="ui:max-w-[70%] ui:flex-none"
+            onRemove={key => {
+              state.setValue(
+                state.selectedItems.flatMap(selectedItem =>
+                  selectedItem.key === key ? [] : [selectedItem.key]
+                )
+              );
+              inputRef.current?.focus();
+            }}
+          />
+          {input}
+        </div>
+      ) : (
+        <div {...hoverProps}>{input}</div>
+      )}
+      <button
+        {...mergeProps(triggerProps, {
+          onClick: () => {
+            inputRef.current?.focus();
+            if (!isOpen) onOpen();
           },
         })}
-        ref={inputRef}
-        className={cn(fieldClasses, 'ui:pr-10', className)}
-      />
-      <button
-        {...triggerProps}
         ref={buttonRef}
         type="button"
         disabled={isDisabled}
@@ -219,14 +290,12 @@ const ComboBoxInput = ({
   );
 };
 
-export interface ComboBoxProps<T extends object> extends Omit<
-  AriaComboBoxProps<T>,
-  | 'children'
-  | 'validationState'
-  | 'label'
-  | 'description'
-  | 'errorMessage'
-  | 'selectionMode'
+export interface ComboBoxProps<
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+> extends Omit<
+  AriaComboBoxProps<T, M>,
+  'children' | 'validationState' | 'label' | 'description' | 'errorMessage'
 > {
   /** CSS class name for the combo box input */
   className?: string;
@@ -239,12 +308,15 @@ export interface ComboBoxProps<T extends object> extends Omit<
   /** Marks the combo box as valid or invalid */
   isValid?: boolean;
   /** ComboBox options */
-  children: AriaComboBoxProps<T>['children'];
+  children: AriaComboBoxProps<T, M>['children'];
   /** Shown in the list when filtering matches nothing */
   noResults?: string;
 }
 
-export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
+export function ComboBox<
+  T extends object,
+  M extends ComboBoxSelectionMode = 'single',
+>(props: ComboBoxProps<T, M>) {
   const {
     className,
     label,
@@ -258,7 +330,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
   } = props;
 
   const { contains } = useFilter({ sensitivity: 'base' });
-  const state = useComboBoxState<T>({
+  const state = useComboBoxState<T, M>({
     ...restProps,
     defaultFilter: contains,
     allowsEmptyCollection: true,
@@ -271,6 +343,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
   });
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const fieldRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listBoxRef = useRef<HTMLUListElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -283,7 +356,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     descriptionProps,
     errorMessageProps,
     isInvalid: isInvalidFromState,
-  } = useComboBox(
+  } = useComboBox<T, M>(
     {
       ...restProps,
       label,
@@ -308,6 +381,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
       <ComboBoxInput
         inputProps={inputProps}
         inputRef={inputRef}
+        fieldRef={fieldRef}
         buttonProps={buttonProps}
         buttonRef={buttonRef}
         isOpen={state.isOpen}
@@ -315,18 +389,19 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
         className={className}
         isDisabled={isDisabled}
         isValid={!invalid}
+        state={state}
       />
 
       {state.isOpen && (
         <ComboBoxPopover
           state={state}
           popoverRef={popoverRef}
-          triggerRef={inputRef as React.RefObject<HTMLElement>}
+          triggerRef={fieldRef as React.RefObject<HTMLElement>}
           placement="bottom start"
           shouldFlip
         >
           <DismissButton onDismiss={state.close} />
-          <ComboBoxListBox
+          <ComboBoxListBox<T, M>
             state={state}
             listBoxRef={listBoxRef}
             noResults={noResults}

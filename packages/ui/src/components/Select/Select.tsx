@@ -24,6 +24,7 @@ import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 import { InputLabel } from '../Input/InputLabel';
 import { inputVariants } from '../Input/InputVariant';
+import { SelectedTags } from '../SelectedTags/SelectedTags';
 import { selectionVariants } from './SelectionVariants';
 
 type SelectSelectionMode = 'single' | 'multiple';
@@ -59,7 +60,7 @@ const SelectPopover = <
 
   const popoverStyle: CSSProperties = {
     ...popoverProps.style,
-    minWidth: triggerRef.current?.offsetWidth,
+    width: triggerRef.current?.offsetWidth,
   };
 
   return (
@@ -92,7 +93,7 @@ const SelectOption = <
   state,
 }: SelectOptionProps<T, M>) => {
   const ref = useRef<HTMLLIElement>(null);
-  const { optionProps, isSelected, isDisabled } = useOption(
+  const { optionProps, isSelected, isDisabled, isFocused } = useOption(
     { key: item.key },
     state,
     ref
@@ -111,10 +112,12 @@ const SelectOption = <
           isHovered,
           isDisabled,
           isFocusVisible,
+          isFocused,
         })
       )}
     >
       <span className="ui:flex-1 ui:truncate">{item.rendered}</span>
+      {isSelected && <Icon name="checkmark-solid" size="sm" decorative />}
     </li>
   );
 };
@@ -189,6 +192,61 @@ export const SelectInput = <
     isHovered,
     isValid,
   });
+
+  if (state.selectionManager.selectionMode === 'multiple') {
+    return (
+      <div
+        {...hoverProps}
+        className={cn(
+          triggerClasses,
+          'ui:relative ui:flex ui:min-h-10 ui:items-center ui:gap-2 ui:overflow-hidden ui:text-left ui:focus-within:ring-2 ui:focus-within:ring-navy-600 ui:focus-within:ring-offset-2 ui:dark:focus-within:ring-orange-500 ui:dark:focus-within:ring-offset-grey-900',
+          className
+        )}
+      >
+        <button
+          {...mergeProps(buttonProps, focusProps)}
+          ref={triggerRef}
+          disabled={isDisabled}
+          className="ui:absolute ui:inset-0 ui:z-0 ui:flex ui:items-center ui:justify-end ui:px-3 ui:outline-none"
+        >
+          <span className="ui:sr-only">
+            {state.selectedItems.length > 0
+              ? state.selectedItems.map(item => item.rendered).join(', ')
+              : placeholder}
+          </span>
+          <Icon
+            name="chevron-down-small-line"
+            size="sm"
+            color="secondary"
+            aria-hidden
+            className={cn(
+              'ui:shrink-0 ui:transition-transform ui:duration-200',
+              state.isOpen && 'ui:rotate-180'
+            )}
+          />
+        </button>
+        {state.selectedItems.length > 0 ? (
+          <SelectedTags
+            items={state.selectedItems}
+            isDisabled={isDisabled}
+            className="ui:pointer-events-none ui:relative ui:z-10 ui:pr-8"
+            onRemove={key => {
+              state.selectionManager.setSelectedKeys(
+                [...state.selectionManager.selectedKeys].filter(
+                  selectedKey => selectedKey !== key
+                )
+              );
+              triggerRef.current?.focus();
+            }}
+          />
+        ) : (
+          <span className="ui:pointer-events-none ui:relative ui:z-10 ui:min-w-0 ui:flex-1 ui:truncate ui:pr-8 ui:text-grey-600 ui:dark:text-grey-400">
+            {placeholder}
+          </span>
+        )}
+      </div>
+    );
+  }
 
   return (
     <button
