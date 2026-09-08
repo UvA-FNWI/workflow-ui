@@ -1,7 +1,6 @@
 import { cn } from '../../utils/cn';
 
-export interface InputDescriptionProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface InputDescriptionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 

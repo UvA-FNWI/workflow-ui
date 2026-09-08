@@ -5,8 +5,7 @@ import type {Submission} from "~/store/api/types/submissions.ts";
  * Background content state — what fills the card body regardless of any open form.
  */
 export type ContentState =
-    | {type: "submissions"; regular: Submission[]; assessments: Submission[]}
-    | {type: "empty"};
+    {type: "submissions"; regular: Submission[]; assessments: Submission[]} | {type: "empty"};
 
 /**
  * Form overlay state — shown alongside the background content (not exclusive).
@@ -17,9 +16,7 @@ export type FormState = {type: "inPage"; action: Action} | null;
  * Modal overlay state — dialog shown on top of everything.
  */
 export type ModalState =
-    | {type: "formModal"; action: Action}
-    | {type: "confirmationModal"; action: Action}
-    | null;
+    {type: "formModal"; action: Action} | {type: "confirmationModal"; action: Action} | null;
 
 const hasResults = (submission: Submission) => submission.form.pages.some((p) => p.hasResults);
 
