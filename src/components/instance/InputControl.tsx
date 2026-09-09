@@ -118,6 +118,7 @@ export const InputControl = ({
                     value={Array.isArray(value) ? value.map((item) => String(item)) : []}
                     onChange={(value) => debouncedChange(value)}
                     maxLength={question.maxLength}
+                    minLength={question.minLength}
                     isValid={isValid}
                     errorMessage={errorMessage}
                 />
@@ -153,13 +154,26 @@ export const InputControl = ({
 
         const isMultilineString =
             question.layout != null && "multiline" in question.layout && question.layout.multiline;
-        const lengthValidationDescription = question.maxLength
-            ? t("string_validation", {
-                  maxInputLength: question.maxLength,
-                  remainingInputLength:
-                      question.maxLength - (typeof value === "string" ? value.length : 0),
-              })
-            : "";
+
+        const minRemaining = question.minLength
+            ? question.minLength - (typeof value === "string" ? value.length : 0)
+            : 0;
+
+        const lengthValidationDescription = [
+            question.minLength &&
+                t("string_validation_min", {minInputLength: question.minLength}) +
+                    (minRemaining > 0
+                        ? t("string_validation_min_remaining", {remainingInputLength: minRemaining})
+                        : ""),
+            question.maxLength &&
+                t("string_validation_max", {
+                    maxInputLength: question.maxLength,
+                    remainingInputLength:
+                        question.maxLength - (typeof value === "string" ? value.length : 0),
+                }),
+        ]
+            .filter(Boolean)
+            .join("\n");
 
         const StringField = isMultilineString ? TextArea : Input;
 
@@ -172,6 +186,7 @@ export const InputControl = ({
                 onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
                 description={lengthValidationDescription}
                 maxLength={question.maxLength}
+                minLength={question.minLength}
                 isValid={isValid}
                 errorMessage={errorMessage}
             />
