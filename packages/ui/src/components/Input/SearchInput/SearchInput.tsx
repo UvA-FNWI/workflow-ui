@@ -15,7 +15,8 @@ import { inputVariants } from '../InputVariant';
 export type SearchInputVariantProps = VariantProps<typeof inputVariants>;
 
 export interface SearchInputProps
-  extends Omit<React.ComponentPropsWithoutRef<'input'>, 'onChange' | 'size'>,
+  extends
+    Omit<React.ComponentPropsWithoutRef<'input'>, 'onChange' | 'size'>,
     SearchInputVariantProps {
   value?: string;
   defaultValue?: string;

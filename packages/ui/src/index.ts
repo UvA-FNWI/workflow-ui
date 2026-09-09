@@ -184,6 +184,12 @@ export {
   type EnvViewToggleProps,
 } from './components/EnvViewToggle';
 
+export {
+  ComboBox,
+  ComboBoxItem,
+  type ComboBoxProps,
+} from './components/ComboBox/ComboBox';
+
 export { useEnvData, type EnvData } from './hooks/useEnvData';
 
 export { cn } from './utils/cn';

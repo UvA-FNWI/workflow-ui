@@ -12,6 +12,12 @@ export type SaveAnswerParams = {
     answer: AnswerInput;
 };
 
+export type GetChoicesParams = {
+    instanceId: string;
+    submissionId: string;
+    questionName: string;
+};
+
 export type AnswerInput = {
     questionName: string;
     value: unknown;

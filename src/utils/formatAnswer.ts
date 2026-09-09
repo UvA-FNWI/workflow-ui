@@ -72,6 +72,7 @@ export function formatAnswer(
             }
             return String(value);
 
+        case "Reference":
         case "Choice": {
             const resolveLabel = (v: unknown): string => {
                 const choice = choices?.find((c) => c.name === v);
@@ -105,7 +106,6 @@ export function formatAnswer(
             return String(value);
 
         case "String":
-        case "Reference":
         default:
             // Default string formatting
             if (typeof value === "boolean") {
@@ -134,4 +134,11 @@ function GetNameFromUser(userObj: Record<string, unknown>) {
         return userObj.email;
     }
     return String(userObj);
+}
+
+/** True when a Reference value has at least one instance id. GetCurrentChoices 404s otherwise. */
+export function hasReferenceId(value: unknown): boolean {
+    if (value == null || value === "") return false;
+    if (Array.isArray(value)) return value.length > 0;
+    return true;
 }
