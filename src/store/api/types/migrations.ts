@@ -4,13 +4,12 @@ export type MigrationStatus = "Applying" | "Finished" | "Failed";
 
 export type Migration = {
     migrationId: string;
+    scope: string;
     kind: MigrationKind;
     status: MigrationStatus;
-    statusLabel: string;
     workflowDefinitions: string[];
     oldProperty: string;
     newProperty: string;
-    requestedBy: string;
     requestedAt: string;
     updatedAt: string;
     finishedAt: string | null;

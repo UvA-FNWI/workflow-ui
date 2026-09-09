@@ -21,6 +21,11 @@ const statusVariants: Record<MigrationStatus, NonNullable<PillVariantProps["vari
 
 export function MigrationsTable({migrations, globalFilter = ""}: MigrationsTableProps) {
     const {t, i18n} = useTranslate("workflow");
+    const statusLabels: Record<MigrationStatus, string> = {
+        Applying: t("migrations.status.applying"),
+        Finished: t("migrations.status.finished"),
+        Failed: t("migrations.status.failed"),
+    };
 
     const columns = [
         columnHelper.accessor((migration) => migration.workflowDefinitions.join(", "), {
@@ -34,7 +39,8 @@ export function MigrationsTable({migrations, globalFilter = ""}: MigrationsTable
                 header: t("migrations.columns.change"),
             },
         ),
-        columnHelper.accessor("statusLabel", {
+        columnHelper.accessor((migration) => statusLabels[migration.status], {
+            id: "status",
             header: t("migrations.columns.status"),
             cell: ({row, getValue}) => (
                 <div className="flex min-w-44 flex-col gap-1">
@@ -58,9 +64,6 @@ export function MigrationsTable({migrations, globalFilter = ""}: MigrationsTable
                     })}
                 </span>
             ),
-        }),
-        columnHelper.accessor("requestedBy", {
-            header: t("migrations.columns.requested_by"),
         }),
         columnHelper.accessor("updatedAt", {
             header: t("migrations.columns.updated"),

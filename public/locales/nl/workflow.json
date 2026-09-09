@@ -106,7 +106,6 @@
     "columns": {
       "change": "Wijziging",
       "progress": "Voortgang",
-      "requested_by": "Aangevraagd door",
       "status": "Status",
       "updated": "Bijgewerkt",
       "workflow": "Workflowtype"
@@ -114,6 +113,11 @@
     "empty": "Nog geen migraties",
     "load_error": "Kon migraties niet laden",
     "progress": "{{updated}} van {{matched}} instanties bijgewerkt",
+    "status": {
+      "applying": "Bezig",
+      "failed": "Mislukt",
+      "finished": "Voltooid"
+    },
     "title": "Migraties"
   },
   "name": "Naam",

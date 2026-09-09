@@ -106,7 +106,6 @@
     "columns": {
       "change": "Property change",
       "progress": "Progress",
-      "requested_by": "Requested by",
       "status": "Status",
       "updated": "Updated",
       "workflow": "Workflow type"
@@ -114,6 +113,11 @@
     "empty": "No migrations yet",
     "load_error": "Could not load migrations",
     "progress": "{{updated}} of {{matched}} instances updated",
+    "status": {
+      "applying": "Applying",
+      "failed": "Failed",
+      "finished": "Finished"
+    },
     "title": "Migrations"
   },
   "name": "Name",
