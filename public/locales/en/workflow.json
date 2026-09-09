@@ -111,18 +111,8 @@
       "updated": "Updated",
       "workflow": "Workflow type"
     },
-    "create": "Run migration",
-    "create_error": "Could not run the migration",
-    "create_success": "Migration completed",
-    "create_title": "Rename a property",
     "empty": "No migrations yet",
-    "fields": {
-      "new_property": "New property name",
-      "old_property": "Old property name",
-      "workflow": "Workflow type"
-    },
     "load_error": "Could not load migrations",
-    "new": "New migration",
     "progress": "{{updated}} of {{matched}} instances updated",
     "title": "Migrations"
   },

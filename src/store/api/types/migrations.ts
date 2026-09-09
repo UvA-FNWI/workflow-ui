@@ -19,9 +19,3 @@ export type Migration = {
     journalEntriesUpdated: number;
     error: string | null;
 };
-
-export type CreatePropertyRename = {
-    workflowDefinitions: string[];
-    oldProperty: string;
-    newProperty: string;
-};

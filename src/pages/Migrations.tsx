@@ -2,31 +2,19 @@ import {useState} from "react";
 
 import {Navigate} from "react-router";
 
-import {
-    Button,
-    Card,
-    Container,
-    SearchInput,
-    Skeleton,
-    Text,
-    useToast,
-} from "@uva-fnwi/datanose-ui";
+import {Card, Container, SearchInput, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
-import {CreateMigrationModal, MigrationsTable} from "~/components/Migrations";
+import {MigrationsTable} from "~/components/Migrations";
 import {PageHeader} from "~/components/PageHeader";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useGetMigrationsQuery} from "~/store/api/migrationsApi";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
-import {useGetWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 
 function Migrations() {
     const {t} = useTranslate(["workflow", "common"]);
-    const toast = useToast();
     const {data: currentUser, isLoading: isUserLoading} = useGetCurrentUserQuery();
-    const {data: definitions = []} = useGetWorkflowDefinitionsQuery({includeAll: true});
-    const {data: migrations = [], isLoading, isError, refetch} = useGetMigrationsQuery();
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const {data: migrations = [], isLoading, isError} = useGetMigrationsQuery();
     const [search, setSearch] = useState("");
 
     useDocumentTitle(t("migrations.title"));
@@ -40,11 +28,6 @@ function Migrations() {
                 title={t("migrations.title")}
                 backLabel={t("migrations.back_to_develop")}
                 backTo="/develop"
-                actions={
-                    <Button intent="primary" onClick={() => setIsCreateOpen(true)}>
-                        {t("migrations.new")}
-                    </Button>
-                }
             />
 
             <Card>
@@ -64,19 +47,6 @@ function Migrations() {
                     <MigrationsTable migrations={migrations} globalFilter={search} />
                 )}
             </Card>
-
-            {isCreateOpen && (
-                <CreateMigrationModal
-                    isOpen
-                    workflowDefinitions={definitions}
-                    onClose={() => setIsCreateOpen(false)}
-                    onCreated={async () => {
-                        setIsCreateOpen(false);
-                        toast.success(t("migrations.create_success"));
-                        await refetch();
-                    }}
-                />
-            )}
         </Container>
     );
 }
