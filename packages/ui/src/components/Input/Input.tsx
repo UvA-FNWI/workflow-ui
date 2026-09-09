@@ -11,8 +11,7 @@ import { type InputVariantProps, inputVariants } from './InputVariant';
 export type { InputVariantProps };
 
 export interface InputProps
-  extends
-    Omit<
+  extends Omit<
       React.ComponentPropsWithoutRef<'input'>,
       'onChange' | 'disabled' | 'size'
     >,
@@ -40,6 +39,7 @@ export const Input: React.FC<InputProps> = ({
   isDisabled = false,
   className,
   maxLength,
+  minLength,
   leftIcon,
   rightIcon,
   size,
@@ -62,7 +62,8 @@ export const Input: React.FC<InputProps> = ({
         'aria-labelledby': ariaLabelledBy,
         isDisabled,
         validationState: !isValid ? 'invalid' : 'valid',
-        maxLength: maxLength,
+        maxLength,
+        minLength,
       },
       ref
     );

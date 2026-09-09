@@ -9,8 +9,10 @@ import { InputLabel } from '../InputLabel';
 import { type InputVariantProps, inputVariants } from '../InputVariant';
 
 export interface TextAreaProps
-  extends
-    Omit<React.ComponentPropsWithoutRef<'textarea'>, 'onChange' | 'disabled'>,
+  extends Omit<
+      React.ComponentPropsWithoutRef<'textarea'>,
+      'onChange' | 'disabled'
+    >,
     InputVariantProps {
   isDisabled?: boolean;
   value?: string;
@@ -33,6 +35,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   isDisabled = false,
   className,
   maxLength,
+  minLength,
   rows = 4,
   size,
   align,
@@ -55,6 +58,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         isDisabled,
         validationState: !isValid ? 'invalid' : 'valid',
         maxLength,
+        minLength,
         inputElementType: 'textarea',
       },
       ref

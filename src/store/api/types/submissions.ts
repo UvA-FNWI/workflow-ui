@@ -92,6 +92,7 @@ export type Question = {
     workflowDefinition?: string;
     layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
+    minLength?: number;
     sorting?: Sorting;
     linkedTo?: string;
     allowedFileTypes?: string[];
@@ -142,7 +143,13 @@ export type Choice = {
 export type PageLayout = "Normal" | "Condensed";
 export type StepResultsType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
 export type RoleAction =
-    "ViewAdminTools" | "View" | "Edit" | "Submit" | "Execute" | "CreateRelatedInstance" | "Undo";
+    | "ViewAdminTools"
+    | "View"
+    | "Edit"
+    | "Submit"
+    | "Execute"
+    | "CreateRelatedInstance"
+    | "Undo";
 export type DataType =
     | "File"
     | "Date"

@@ -165,7 +165,9 @@
     "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"
   },
-  "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
+  "string_validation_max": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
+  "string_validation_min": "Minimaal aantal tekens {{minInputLength}}.",
+  "string_validation_min_remaining": " Nog {{remainingInputLength}} vereist.",
   "submit": "Inleveren",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",

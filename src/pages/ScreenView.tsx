@@ -26,7 +26,7 @@ export const ScreenView = () => {
     const {workflowDefinition, screenName} = useParams();
     const {data: screen} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
-        {skip: !workflowDefinition || !screenName},
+        {skip: !workflowDefinition || !screenName, refetchOnMountOrArgChange: true},
     );
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState(0);
