@@ -82,6 +82,6 @@ export const API_TAG_TYPES = [
 export const baseApi = createApi({
     reducerPath: "api",
     baseQuery: baseQueryWithErrorHandling,
-    tagTypes: API_TAG_TYPES,
+    tagTypes: [...API_TAG_TYPES, "Settings"],
     endpoints: () => ({}),
 });

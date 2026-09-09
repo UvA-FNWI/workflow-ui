@@ -55,7 +55,7 @@ const ScreenContent = () => {
         storageKey: getScreenTabStorageKey(workflowDefinition, screenName),
     });
 
-    useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
+    useDocumentTitle(screen ? l(screen.title) || l(screen.workflowDefinition.title) : null);
 
     const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
     const bulkActions = screen?.bulkActions ?? [];
@@ -104,6 +104,13 @@ const ScreenContent = () => {
             personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
         >
             <Card>
+                <div className="mb-4">
+                    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <Heading as="h1" className="min-w-0 wrap-break-word">
+                            {l(screen.title) || l(screen.workflowDefinition.title)}
+                        </Heading>
+                    </div>
+                </div>
                 {screen.groups ? (
                     <Tabs
                         activeIndex={activeTab}

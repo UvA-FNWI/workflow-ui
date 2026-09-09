@@ -12,6 +12,7 @@ export type ScreenGroup = {
 
 export type ScreenData = {
     name: string;
+    title: LocalString | null;
     workflowDefinition: WorkflowDefinition;
     isBulkEditEnabled: boolean;
     columns: ScreenColumn[];
