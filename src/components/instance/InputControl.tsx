@@ -198,7 +198,7 @@ export const InputControl = ({
         return (
             <NumberInput
                 value={Number.isFinite(value) ? (value as number) : undefined}
-                step={isInt ? 1 : 0.01}
+                step={isInt ? 1 : 0.1}
                 minValue={isInt ? -2_147_483_648 : undefined}
                 maxValue={isInt ? 2_147_483_647 : undefined}
                 onChange={(value) => {
