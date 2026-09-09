@@ -23,6 +23,7 @@ export function formatDate(
             day: "numeric",
             hour: "2-digit",
             minute: "2-digit",
+            timeZone: "Europe/Amsterdam",
             ...options,
         };
 
@@ -48,7 +49,81 @@ export function formatDateShort(date: string | Date, locale: string = "en"): str
         day: "2-digit",
         hour: undefined,
         minute: undefined,
+        timeZone: "Europe/Amsterdam",
     });
+}
+
+/**
+ * Format a datetime string or Date object for display
+ * @param date - The datetime to format (ISO string or Date object)
+ * @param locale - The locale to use for formatting (e.g., 'en', 'nl')
+ * @returns Formatted datetime string
+ */
+export function formatDateTimeShort(date: string | Date, locale: string = "en"): string {
+    return formatDate(date, locale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Europe/Amsterdam",
+    });
+}
+
+/**
+ * Format a date with time only when the time is relevant, expressed in the
+ * Amsterdam timezone. If the user's local timezone differs from Amsterdam,
+ * a note is appended clarifying that the time is in Amsterdam time.
+ *
+ * If the parsed date resolves to 00:00 in Amsterdam time, the result is
+ * formatted as a short date only. Otherwise, the result includes both date
+ * and time (in Amsterdam time), plus a timezone note if applicable.
+ *
+ * @param date - The date to format (ISO string or Date object)
+ * @param locale - The locale to use for formatting (e.g., 'en', 'nl')
+ * @param amsterdamTimeNote - Translated text to append when the user's timezone differs from Amsterdam (e.g. "(Amsterdam time)")
+ * @returns Formatted short date, with Amsterdam time included when relevant
+ */
+export function formatDateShortWithRelevantTime(
+    date: string | Date,
+    locale: string = "en",
+    amsterdamTimeNote?: string,
+): string {
+    if (!hasNonDefaultAmsterdamTime(date)) {
+        return formatDateShort(date, locale);
+    }
+
+    const formatted = formatDateTimeShort(date, locale);
+
+    return Intl.DateTimeFormat().resolvedOptions().timeZone === "Europe/Amsterdam"
+        ? formatted
+        : `${formatted} ${amsterdamTimeNote}`;
+}
+
+/**
+ * Check whether a date has a non-default time in the Amsterdam timezone.
+ *
+ * A default time is considered to be exactly 00:00 in Amsterdam. This is
+ * useful for timezone-aware deadlines sent by the server in Amsterdam time.
+ *
+ * @param date - The date to inspect (ISO string or Date object)
+ * @returns `true` when the Amsterdam time is not 00:00, otherwise `false`
+ */
+export function hasNonDefaultAmsterdamTime(date: string | Date): boolean {
+    const parsedDate = typeof date === "string" ? new Date(date) : date;
+
+    if (isNaN(parsedDate.getTime())) {
+        return false;
+    }
+
+    const time = parsedDate.toLocaleTimeString("en-GB", {
+        timeZone: "Europe/Amsterdam",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+    });
+
+    return time !== "00:00";
 }
 
 /**
