@@ -35,7 +35,8 @@ export const linkClassGenerator = cva(
 );
 
 export interface LinkProps
-  extends AnchorHTMLAttributes<HTMLAnchorElement>,
+  extends
+    AnchorHTMLAttributes<HTMLAnchorElement>,
     VariantProps<typeof linkClassGenerator> {
   children: ReactNode;
 }

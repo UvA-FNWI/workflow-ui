@@ -29,8 +29,7 @@ const tagVariants = cva(
 export type TagVariantProps = VariantProps<typeof tagVariants>;
 
 export interface TagProps
-  extends Omit<ComponentPropsWithoutRef<'span'>, 'children'>,
-    TagVariantProps {
+  extends Omit<ComponentPropsWithoutRef<'span'>, 'children'>, TagVariantProps {
   /** Tag content. */
   children: ReactNode;
   /** Shows a remove button and runs when it is activated. */

@@ -28,11 +28,10 @@ import {
 export type { DateRange } from './utils';
 
 // Public API that accepts Date objects
-export interface DateRangePickerProps
-  extends Omit<
-    AriaDateRangePickerProps<DateValue>,
-    'value' | 'defaultValue' | 'onChange'
-  > {
+export interface DateRangePickerProps extends Omit<
+  AriaDateRangePickerProps<DateValue>,
+  'value' | 'defaultValue' | 'onChange'
+> {
   label?: string;
   description?: string;
   errorMessage?: string;
@@ -96,7 +95,8 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
 // Internal component that works with DateValue
 interface DateRangePickerInnerProps
-  extends Omit<
+  extends
+    Omit<
       DateRangePickerProps,
       'locale' | 'value' | 'defaultValue' | 'onChange'
     >,

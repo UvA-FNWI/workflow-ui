@@ -110,12 +110,12 @@ const buttonClassGenerator = cva(
 type ButtonVariantProps = VariantProps<typeof buttonClassGenerator>;
 // Require the intent
 interface ReqButtonVariantProps
-  extends Omit<ButtonVariantProps, 'intent'>,
+  extends
+    Omit<ButtonVariantProps, 'intent'>,
     Required<Pick<ButtonVariantProps, 'intent'>> {}
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    ReqButtonVariantProps {
+  extends ButtonHTMLAttributes<HTMLButtonElement>, ReqButtonVariantProps {
   isLoading?: boolean;
   loadingText?: ReactNode;
   type?: 'button' | 'submit' | 'reset';
