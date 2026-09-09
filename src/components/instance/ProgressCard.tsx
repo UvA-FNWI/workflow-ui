@@ -19,7 +19,7 @@ export function ProgressCard({
     currentStep,
     stopMessage,
 }: ProgressCardProps) {
-    const {l} = useTranslate("workflow");
+    const {l, t} = useTranslate("workflow");
 
     if (isLoading) {
         return (
@@ -42,7 +42,7 @@ export function ProgressCard({
             <div className="flex flex-col gap-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <Heading as="h2" className="font-semibold">
-                        {l(card.title)}
+                        {l(card.title) || t("progress.title")}
                     </Heading>
                     {message && <Pill variant="red">{message}</Pill>}
                 </div>

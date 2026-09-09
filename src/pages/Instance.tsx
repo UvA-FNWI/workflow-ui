@@ -4,14 +4,12 @@ import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
 import {AdminCard} from "~/components/instance/AdminCard";
 import {ContentCard} from "~/components/instance/ContentCard";
-import {CorrespondenceCard} from "~/components/instance/CorrespondenceCard.tsx";
-import {HistoryCard} from "~/components/instance/HistoryCard.tsx";
 import {InfoCards} from "~/components/instance/InfoCard.tsx";
 import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
+import {RelatedScreens} from "~/components/instance/RelatedScreens";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
-import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
@@ -20,8 +18,8 @@ function Instance() {
         skip: !id,
     });
 
-    const studentName = getStringField(instance?.fields, "Student.DisplayName");
-    useDocumentTitle(studentName);
+    const displayTitle = instance?.title;
+    useDocumentTitle(displayTitle);
 
     // Error state: early return when not loading and no instance
     if (!isLoading && !instance) {
@@ -32,43 +30,40 @@ function Instance() {
     if (isPropertyOnly && instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}/admin`} replace />;
     }
-    const courseName = getLocalStringField(instance?.fields, "Course.Name");
-    const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
-    const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];
 
     return (
         <Container maxWidth={1280}>
             <InstanceHeader
-                courseName={courseName}
+                title={instance?.title}
                 instanceId={id}
-                pinnedActions={instance?.pinnedActions ?? []}
+                parentId={instance?.parentId}
+                canUseAdminTools={instance?.canUseAdminTools ?? false}
                 isLoading={isLoading}
             />
             <Grid>
-                <GridItem span={{base: 12, md: 9}} className="flex flex-col gap-8">
+                <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">
                     <ProgressCard
                         isLoading={isLoading}
-                        card={progressCard}
                         steps={instance?.steps ?? []}
                         currentStep={instance?.currentStep ?? ""}
                         stopMessage={instance?.stopMessage}
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
-                    {instance?.permissions.includes("ViewCorrespondence") && id && (
-                        <CorrespondenceCard instanceId={id} />
-                    )}
-                    {instance?.permissions.includes("ViewHistory") && id && (
-                        <HistoryCard instanceId={id} />
-                    )}
-                </GridItem>
-                <GridItem span={{base: 12, md: 3}} className="flex flex-col gap-6">
-                    <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
-                    {(instance?.canUseAdminTools || instance?.canImpersonate) && (
-                        <AdminCard
-                            canUseAdminTools={instance.canUseAdminTools}
-                            canImpersonate={instance.canImpersonate}
+                    {instance && (
+                        <RelatedScreens
+                            parentId={instance.id}
+                            screens={instance.relatedScreens ?? []}
                         />
                     )}
+                </GridItem>
+                <GridItem span={{base: 12, sm: 3}} className="flex flex-col gap-6">
+                    <InfoCards
+                        cards={instance?.infoCards ?? []}
+                        instanceId={id ?? ""}
+                        isLoading={isLoading}
+                    />
+                    {instance?.canImpersonate && <AdminCard />}
+                    {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
             </Grid>
         </Container>

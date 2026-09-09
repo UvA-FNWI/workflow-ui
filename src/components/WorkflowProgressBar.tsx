@@ -32,6 +32,11 @@ const iconClassGenerator = cva("flex items-center justify-center rounded-full bo
             completed: true,
             className: "border-green-600 bg-green-600 text-white",
         },
+        {
+            color: "success",
+            completed: false,
+            className: "border-green-600 bg-white text-green-600",
+        },
     ],
     defaultVariants: {
         color: "danger",

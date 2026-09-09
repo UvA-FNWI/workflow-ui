@@ -7,6 +7,7 @@ import {NavbarUser} from "~/components/Navbar/NavbarUser";
 import {UserPickerModal} from "~/components/UserPicker/UserPickerModal";
 import {VersionedLink} from "~/components/VersionedLink";
 import {VITE_ENV, VITE_WEBAPI_URL} from "~/helpers/Environment";
+import {useAppName} from "~/hooks/useAppName";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users";
 import {useStartImpersonationMutation} from "~/store/api/usersApi";
@@ -22,6 +23,7 @@ import {useAppDispatch, useAppSelector} from "~/store/store";
 
 function Navbar() {
     const {i18n, t} = useTranslate("common");
+    const appName = useAppName();
     const {isAuthenticated, surfLogout} = useAuth();
     const swaggerUrl = `${VITE_WEBAPI_URL.replace(/\/$/, "")}/swagger`;
     const dispatch = useAppDispatch();
@@ -61,7 +63,7 @@ function Navbar() {
                 status?: number;
                 data?: {errorCode?: string; message?: string};
             };
-            // The target hasn't logged in to Milestones yet, so there's no account to impersonate.
+            // The target hasn't logged in yet, so there's no account to impersonate.
             if (fetchError.data?.errorCode === "ImpersonationTargetNotFound") {
                 toast.error(t("impersonate_target_not_found"));
                 return;
@@ -94,7 +96,7 @@ function Navbar() {
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
                 <VersionedLink to="/" className="no-underline">
-                    <Heading size="sm">Milestones (pilot)</Heading>
+                    <Heading size="sm">{appName}</Heading>
                 </VersionedLink>
                 {VITE_ENV !== "production" && (
                     <p className="text-xs text-grey-700 dark:text-grey-300">

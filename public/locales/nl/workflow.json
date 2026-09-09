@@ -1,6 +1,6 @@
 {
-  "action_failed": "De actie is mislukt. Probeer het opnieuw.",
   "add": "Toevoegen",
+  "app_name": "Workflow",
   "admin": {
     "current_step_title": "Huidige stap",
     "fill_dummy_data_button": "Vul met dummy data",
@@ -24,15 +24,9 @@
     "title": "Gegevens"
   },
   "are_you_sure": "Weet je het zeker?",
+  "cancel": "Annuleren",
   "change_selection": "Wijzig keuze",
-  "correspondence": {
-    "content": "Inhoud",
-    "empty": "Geen automatische mails gevonden",
-    "recipients": "Ontvanger(s)",
-    "subject": "Onderwerp",
-    "title": "Automatische mails"
-  },
-  "date": "Datum",
+  "confirm": "Bevestigen",
   "develop": {
     "columns": {
       "created": "Aangemaakt",
@@ -42,13 +36,11 @@
     "load_error": "Kon instanties niet laden",
     "loading": "Laden…",
     "new": "Nieuw {{name}}",
-    "no_definition_selected": "Selecteer een definitie om instanties van dat type te tonen.",
     "no_definitions": "Geen projecttypes beschikbaar",
     "no_instances": "Nog geen instanties",
     "recalculate_current_steps": "Stappen herberekenen",
     "recalculate_current_steps_error": "Kon de huidige stappen niet herberekenen",
     "recalculate_current_steps_success": "{{total}} instanties gecontroleerd: {{updated}} bijgewerkt en {{unchanged}} ongewijzigd",
-    "select_definition": "Kies een definitie",
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
@@ -63,7 +55,6 @@
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
-    "allowed_any_file_type": "Elk bestandstype, max. {{size}}.",
     "allowed_file_types": "Alleen {{types}}-bestanden, max. {{size}}.",
     "confirm_delete_message": "Weet je zeker dat je dit bestand wilt verwijderen?",
     "description": "Beschrijving",
@@ -73,33 +64,20 @@
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
     "no_file_uploaded": "Geen bestand geüpload",
     "removed_success": "Bestand verwijderd",
-    "select_files": "Bestanden selecteren",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "form": "Formulier",
-  "form_load_failed": "Het formulier kon niet worden geladen. Probeer het opnieuw.",
-  "history": {
-    "by": "Door",
-    "empty": "Er is nog geen geschiedenis",
-    "status": "Status",
-    "title": "Geschiedenis",
-    "undo_reason_empty": "Er is geen reden voor ongedaan maken opgegeven"
-  },
   "home": "Home",
   "instance": {
+    "parent": "Terug naar onderwerp",
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
       "calculated_grade": "Berekend cijfer: ",
+      "discrepancy_warning": "Er is een groot verschil tussen de cijfers van de verschillende beoordelaars. Bespreek de cijfers voordat je indient en raadpleeg de coördinator indien nodig.",
       "final_grade": "Eindcijfer",
       "grading_incomplete": "Beoordeling nog niet volledig"
     },
-    "deadline_passed": "De deadline is verstreken. Je kunt dit formulier niet meer indienen.",
     "empty_step": "Er is nog niets ingeleverd.",
-    "shared_loading": "Gedeeld werk laden…",
-    "shared_restricted": "Je hebt geen toestemming om dit gedeelde werk te bekijken.",
-    "shared_step": "Gedeelde stap",
-    "shared_unavailable": "Gedeeld werk is niet beschikbaar. Controleer de gekoppelde instantie.",
     "summary": {
       "change_version": "Versie {{version}}",
       "change_version_in_progress": "Versie {{version}} (in behandeling)",
@@ -114,7 +92,6 @@
       "hide_answers": "Verberg onderdelen en toelichting",
       "hide_linked": "Verberg toelichtingen",
       "replace_file": "Bestand vervangen",
-      "reversed_on_by": "Teruggedraaid op {{date}} door {{name}}",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
@@ -126,43 +103,20 @@
     "workflowInstance": "Workflow"
   },
   "make_a_choice": "Maak een keuze",
-  "migrations": {
-    "back_to_develop": "Terug naar Ontwikkelen",
-    "columns": {
-      "change": "Wijziging",
-      "progress": "Voortgang",
-      "status": "Status",
-      "updated": "Bijgewerkt",
-      "workflow": "Workflowtype"
-    },
-    "empty": "Nog geen migraties",
-    "load_error": "Kon migraties niet laden",
-    "progress": "{{updated}} van {{matched}} instanties bijgewerkt",
-    "status": {
-      "applying": "Bezig",
-      "failed": "Mislukt",
-      "finished": "Voltooid"
-    },
-    "title": "Migraties"
-  },
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
   "overview": {
-    "choose_course_title": "Kies je vak",
-    "coordinator_view": "Alle registers",
-    "default_no_access": "Je hebt nog geen toegang tot registers.",
-    "default_subtitle": "Selecteer een register om te openen.",
-    "default_title": "Registers",
-    "no_access": "Je hebt nog geen toegang tot vakken.",
-    "page_title": "Overzicht",
-    "personal_view": "Mijn dossiers"
+    "default_no_access": "Je hebt nog geen toegang.",
+    "default_subtitle": "Selecteer een item om te openen.",
+    "default_title": "Overzicht",
+    "page_title": "Overzicht"
   },
   "previous": "Vorige",
   "progress": {
-    "amsterdam_time": "Amsterdamse tijd",
     "completed": "Voltooid",
-    "deadline": "Deadline"
+    "deadline": "Deadline",
+    "title": "Voortgang"
   },
   "reference": {
     "empty": "Geen opties beschikbaar",
@@ -178,7 +132,6 @@
     "message": "Er zijn aanpassingen nodig. Daarom hebben we wat je eerder hebt ingevuld alvast overgenomen. Pas alleen aan wat nodig is; wat al goed was, hoef je niet aan te passen.",
     "question": "Wil je helemaal opnieuw beginnen?"
   },
-  "retry": "Opnieuw proberen",
   "save": "Opslaan",
   "screens": {
     "actions": "Acties"
@@ -212,29 +165,10 @@
   },
   "status": {
     "completed_on": "Voltooid op",
-    "deadline_passed": "Deadline verstreken",
     "submitted": "Ingeleverd"
   },
-  "string_validation_max": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
-  "string_validation_min": "Minimaal aantal tekens {{minInputLength}}.",
-  "string_validation_min_remaining": " Nog {{remainingInputLength}} vereist.",
+  "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
   "submit": "Inleveren",
-  "undo": {
-    "action": "Actie",
-    "candidate_changed": "De actie die ongedaan kan worden gemaakt is gewijzigd. De workflow is vernieuwd.",
-    "confirm": "Terugdraaien",
-    "error": "De actie kon niet ongedaan worden gemaakt. Probeer het opnieuw.",
-    "execute_action": "Uitgevoerde actie",
-    "form": "Formulier",
-    "form_submission": "Formulierinzending",
-    "occurred_at": "Uitgevoerd op",
-    "open": "Actie voor {{step}} ongedaan maken",
-    "operation_type": "Type actie",
-    "reason": "Reden",
-    "reason_description": "Leg uit waarom deze actie ongedaan wordt gemaakt.",
-    "step": "Stap",
-    "title": "Actie ongedaan maken"
-  },
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",
