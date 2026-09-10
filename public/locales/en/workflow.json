@@ -163,6 +163,7 @@
   },
   "status": {
     "completed_on": "Completed on",
+    "deadline_passed": "Deadline passed",
     "submitted": "Submitted"
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",

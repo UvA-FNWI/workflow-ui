@@ -163,6 +163,7 @@
   },
   "status": {
     "completed_on": "Voltooid op",
+    "deadline_passed": "Deadline verstreken",
     "submitted": "Ingeleverd"
   },
   "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",

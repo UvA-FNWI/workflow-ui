@@ -78,6 +78,8 @@ export type WorkflowStep = {
     event: string;
     dateCompleted: string | null;
     deadline: string | null;
+    deadlinePassed: boolean;
+    deadlineMessage: LocalString | null;
     children: WorkflowStep[] | null;
     versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;

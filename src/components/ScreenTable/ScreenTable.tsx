@@ -26,6 +26,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                 .filter((col) => col.displayType !== "ExportOnly")
                 .map((col): ColumnDef<ScreenRow> => ({
                     id: String(col.id),
+                    ...(col.isCurrentStep && col.dataType === "Object" ? {size: 200} : {}),
                     accessorFn: (row) =>
                         getComparableTableCellValue(
                             row.values[col.id],
@@ -63,6 +64,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                 })),
             {
                 id: "actions",
+                size: 64,
                 header: () => <span className="sr-only">{t("screens.actions")}</span>,
                 enableSorting: false,
                 cell: ({row}) => {
