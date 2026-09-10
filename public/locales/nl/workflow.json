@@ -1,6 +1,5 @@
 {
   "add": "Toevoegen",
-  "app_name": "Workflow",
   "admin": {
     "current_step_title": "Huidige stap",
     "fill_dummy_data_button": "Vul met dummy data",
@@ -23,7 +22,34 @@
     "no_properties": "Deze workflow heeft geen eigenschappen",
     "title": "Gegevens"
   },
+  "app_name": "Workflow",
   "are_you_sure": "Weet je het zeker?",
+  "bom": {
+    "applicable_list": {
+      "empty": "Er zijn nog geen maatregelen van toepassing. Rond classificatie en routeringsvragen op het onderwerp af.",
+      "purpose": "Alleen-lezen voorbeeld van maatregelen die voor dit onderwerp gelden. Gebruik Synchroniseren hieronder om implementatieregels aan te maken — deze lijst is niet bewerkbaar.",
+      "title_one": "Toepasselijke maatregel ({{count}})",
+      "title_other": "Toepasselijke maatregelen ({{count}})"
+    },
+    "export": "Exporteer JSON",
+    "filter": {
+      "no_results": "Geen maatregelen gevonden voor dit filter.",
+      "placeholder": "Filter op ID, titel, status of toelichting…"
+    },
+    "import": "Importeer JSON",
+    "measure": {
+      "background": "Achtergrond maatregel"
+    },
+    "summary": {
+      "applicable": "Toepasselijk",
+      "catalogue": "Catalogus totaal",
+      "filtered_hint_one": "{{count}} catalogusmaatregel is verborgen door toepasbaarheidsregels.",
+      "filtered_hint_other": "{{count}} catalogusmaatregelen zijn verborgen door toepasbaarheidsregels.",
+      "handled": "Afgehandeld (met status)",
+      "recorded": "Vastgelegde regels"
+    },
+    "sync_applicable": "Toepasselijke synchroniseren"
+  },
   "cancel": "Annuleren",
   "change_selection": "Wijzig keuze",
   "confirm": "Bevestigen",
@@ -44,6 +70,10 @@
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
+  "embedded_list": {
+    "empty": "Nog geen regels. Voeg een regel toe om de implementatiestatus vast te leggen.",
+    "item": "Regel {{index}}"
+  },
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
     "description": "Staat iemand niet in de lijst? Dan mag je deze zelf toevoegen. Vul onderstaande gegevens in:",
@@ -69,7 +99,6 @@
   },
   "home": "Home",
   "instance": {
-    "parent": "Terug naar onderwerp",
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
       "calculated_grade": "Berekend cijfer: ",
@@ -78,7 +107,37 @@
       "grading_incomplete": "Beoordeling nog niet volledig"
     },
     "empty_step": "Er is nog niets ingeleverd.",
+    "follow_up_assessments": {
+      "description": "Aanvullende privacybeoordelingen op basis van je RoPA-antwoorden.",
+      "title": "Vervolgbeoordelingen"
+    },
+    "groups": {
+      "general": "Algemeen",
+      "privacy": "Privacy",
+      "security": "Security"
+    },
+    "messages": {
+      "body": "Opmerking",
+      "close": "Sluiten",
+      "closed": "Gesloten",
+      "closed_count_one": "Toon {{count}} gesloten opmerking",
+      "closed_count_other": "Toon {{count}} gesloten opmerkingen",
+      "empty": "Nog geen opmerkingen.",
+      "field_label": "Opmerkingen bij dit veld",
+      "hide_closed": "Gesloten opmerkingen verbergen",
+      "new": "Nieuwe opmerking",
+      "reply": "Reageren",
+      "reply_placeholder": "Schrijf een reactie",
+      "show_closed_one": "Toon {{count}} gesloten opmerking",
+      "show_closed_other": "Toon {{count}} gesloten opmerkingen",
+      "title": "Opmerkingen"
+    },
+    "parent": "Terug naar onderwerp",
+    "step": {
+      "optional": "Niet-blokkerend"
+    },
     "summary": {
+      "back_to_summary": "Terug naar samenvatting",
       "change_version": "Versie {{version}}",
       "change_version_in_progress": "Versie {{version}} (in behandeling)",
       "changed_on": "Gewijzigd op {{date}}",
@@ -87,6 +146,7 @@
       "changes_title": "Wijzigingen",
       "delete_file": "Bestand verwijderen",
       "edit_answer": "Antwoord bewerken",
+      "edit_form": "Bewerken in formulier",
       "edit_page": "Pagina bewerken",
       "explanation": "Toelichting",
       "hide_answers": "Verberg onderdelen en toelichting",
@@ -99,6 +159,11 @@
       "title": "Samenvatting",
       "view_changes": "Wijzigingen bekijken"
     },
+    "transfer_summary": {
+      "location": "Verwerkingslocatie",
+      "non_eea": "Buiten de EER",
+      "title": "Doorgiftebeoordeling (afgeleid)"
+    },
     "unauthorized_submission": "Je hebt geen rechten om dit in te zien",
     "workflowInstance": "Workflow"
   },
@@ -106,12 +171,6 @@
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
-  "overview": {
-    "default_no_access": "Je hebt nog geen toegang.",
-    "default_subtitle": "Selecteer een item om te openen.",
-    "default_title": "Overzicht",
-    "page_title": "Overzicht"
-  },
   "previous": "Vorige",
   "progress": {
     "completed": "Voltooid",
@@ -124,6 +183,7 @@
     "loading": "Opties laden…",
     "no_results": "Geen resultaten"
   },
+  "remove": "Verwijderen",
   "repeated_form": {
     "clear": "Wis vooringevulde velden",
     "clear_error": "De velden konden niet worden gewist. Probeer het opnieuw.",
@@ -164,7 +224,6 @@
     "remove_staff_title": "Gebruiker verwijderen"
   },
   "status": {
-    "completed_on": "Voltooid op",
     "submitted": "Ingeleverd"
   },
   "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",

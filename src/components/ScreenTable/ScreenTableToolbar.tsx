@@ -6,7 +6,7 @@ import {ImportModal} from "~/components/Import/ImportModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate.ts";
 import {useCreateInstanceMutation} from "~/store/api/instancesApi.ts";
-import type {BulkAction} from "~/store/api/types/screens";
+import {type FromScreen, instanceFromScreenState} from "~/utils/overviewEntries";
 
 type ScreenTableToolbarProps = {
     search: string;
@@ -14,9 +14,8 @@ type ScreenTableToolbarProps = {
     canEdit: boolean;
     canCreate: boolean;
     workflowDefinition: string;
-    bulkActions?: BulkAction[];
-    selectedCount?: number;
-    onBulkAction?: (action: BulkAction) => void;
+    parentId?: string;
+    fromScreen?: FromScreen;
 };
 
 export const ScreenTableToolbar = ({
@@ -25,40 +24,27 @@ export const ScreenTableToolbar = ({
     canEdit,
     canCreate,
     workflowDefinition,
-    bulkActions = [],
-    selectedCount = 0,
-    onBulkAction,
+    parentId,
+    fromScreen,
 }: ScreenTableToolbarProps) => {
-    const {t, l} = useTranslate("screens");
+    const {t} = useTranslate("screens");
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const navigate = useVersionedNavigate();
 
     const [createInstance, {isLoading: isCreating}] = useCreateInstanceMutation();
 
     const handleCreate = async () => {
-        const result = await createInstance({workflowDefinition});
+        const result = await createInstance({workflowDefinition, parentId});
         if (result.data) {
-            navigate(`/instance/${result.data.id}`);
+            navigate(`/instance/${result.data.id}`, {
+                state: fromScreen ? instanceFromScreenState(fromScreen) : undefined,
+            });
         }
     };
 
     return (
         <>
-            <div className="flex w-full flex-wrap items-center gap-4">
-                {bulkActions.map((action) => (
-                    <Button
-                        key={action.action}
-                        intent="secondary"
-                        variant="destructive"
-                        leftIcon={
-                            <Icon name={action.icon.type} size="sm" color="current" decorative />
-                        }
-                        disabled={selectedCount === 0}
-                        onClick={() => onBulkAction?.(action)}
-                    >
-                        {l(action.label)}
-                    </Button>
-                ))}
+            <div className="flex w-full">
                 {canEdit && (
                     <Button
                         intent="secondary"
@@ -70,8 +56,8 @@ export const ScreenTableToolbar = ({
                     </Button>
                 )}
 
-                {canCreate && (
-                    <div className="lg:ml-auto">
+                <div className="ml-auto flex items-center gap-4">
+                    {canCreate && (
                         <Button
                             intent="secondary"
                             variant="destructive"
@@ -80,18 +66,12 @@ export const ScreenTableToolbar = ({
                         >
                             {t("create_new")}
                         </Button>
-                    </div>
-                )}
-                <div
-                    className={`order-first w-full lg:order-0 lg:w-auto ${canCreate ? "" : "lg:ml-auto"}`}
-                >
+                    )}
                     <SearchInput
-                        aria-label={t("search_placeholder")}
                         value={search}
                         onChange={setSearch}
                         placeholder={t("search_placeholder")}
                         size="md"
-                        className="w-full"
                     />
                 </div>
             </div>

@@ -2,9 +2,9 @@ import {useState} from "react";
 
 import {useParams} from "react-router";
 
-import type {RowSelectionState} from "@tanstack/react-table";
 import {
     Card,
+    Container,
     Pill,
     Tab,
     TabList,
@@ -12,113 +12,45 @@ import {
     TabPanels,
     Tabs,
     TabToolbar,
-    useTabsWithLocalStorage,
 } from "@uva-fnwi/datanose-ui";
 
-import {HomePage} from "~/components/HomePage";
+import {PageHeader} from "~/components/PageHeader";
 import {ScreenTable} from "~/components/ScreenTable";
-import {BulkActionModal} from "~/components/ScreenTable/BulkActionModal";
-import {filterScreenRows} from "~/components/ScreenTable/filterScreenRows";
 import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
-import {PersonalContent} from "~/pages/Personal";
 import {useGetScreenQuery} from "~/store/api/screensApi";
-import type {BulkAction, ScreenRow} from "~/store/api/types/screens";
-
-function getScreenTabStorageKey(workflowDefinition = "", screenName = "") {
-    return ["workflow", "screen", workflowDefinition, screenName, "active-tab"]
-        .map(encodeURIComponent)
-        .join(":");
-}
+import type {FromScreen} from "~/utils/overviewEntries";
 
 export const ScreenView = () => {
+    const {l, t} = useTranslate("workflow");
     const {workflowDefinition, screenName} = useParams();
-    return <ScreenContent key={`${workflowDefinition}:${screenName}`} />;
-};
-
-const ScreenContent = () => {
-    const {l, i18n} = useTranslate("common");
-    const {workflowDefinition, screenName} = useParams();
-    const {currentData: screen, isFetching} = useGetScreenQuery(
+    const {data: screen} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {skip: !workflowDefinition || !screenName},
     );
     const [search, setSearch] = useState("");
-    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-    const [bulkSelection, setBulkSelection] = useState<{
-        action: BulkAction;
-        rows: ScreenRow[];
-    } | null>(null);
-    const {activeIndex: activeTab, onTabChange: setActiveTab} = useTabsWithLocalStorage({
-        tabs: screen?.groups?.map((group) => group.name) ?? [],
-        storageKey: getScreenTabStorageKey(workflowDefinition, screenName),
-    });
+    const [activeTab, setActiveTab] = useState(0);
 
-    useDocumentTitle(screen ? l(screen.title) || l(screen.workflowDefinition.title) : null);
-
-    const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
-    const bulkActions = screen?.bulkActions ?? [];
-    const selectedRows = filterScreenRows(
-        screen?.columns ?? [],
-        rows,
-        search,
-        i18n.language,
-    ).filter((row) => rowSelection[row.id]);
-    const toolbarBulkProps = {
-        bulkActions,
-        selectedCount: selectedRows.length,
-        onBulkAction: (action: BulkAction) => setBulkSelection({action, rows: selectedRows}),
-    };
-    const selectionProps = bulkActions.length
-        ? {rowSelection, onRowSelectionChange: setRowSelection}
-        : {};
-    const changeSearch = (value: string) => {
-        setSearch(value);
-        setRowSelection({});
-    };
+    const title = screen ? l(screen.title) || l(screen.workflowDefinition.title) : null;
+    useDocumentTitle(title);
 
     if (!screen || !workflowDefinition || !screenName) {
-        return isFetching ? (
-            <HomePage title={null} isLoading>
-                {null}
-            </HomePage>
-        ) : null;
+        return null;
     }
 
-    const toolbar = (
-        <ScreenTableToolbar
-            search={search}
-            setSearch={changeSearch}
-            canEdit={screen.isBulkEditEnabled}
-            canCreate={screen.workflowDefinition.canCreateInstance}
-            workflowDefinition={workflowDefinition}
-            {...toolbarBulkProps}
-        />
-    );
-    const title = l(screen.workflowDefinition.title);
+    const fromScreen: FromScreen = {
+        workflowDefinition,
+        screenName,
+        title: screen.title,
+    };
+
     return (
-        <HomePage
-            title={title}
-            coordinatorTabLabel={title}
-            personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
-        >
+        <Container maxWidth={1280}>
+            <PageHeader title={title ?? workflowDefinition} backLabel={t("home")} backTo="/" />
             <Card>
-                <div className="mb-4">
-                    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <Heading as="h1" className="min-w-0 wrap-break-word">
-                            {l(screen.title) || l(screen.workflowDefinition.title)}
-                        </Heading>
-                    </div>
-                </div>
                 {screen.groups ? (
-                    <Tabs
-                        activeIndex={activeTab}
-                        onTabChange={(index) => {
-                            setActiveTab(index);
-                            setRowSelection({});
-                        }}
-                    >
+                    <Tabs activeIndex={activeTab} onTabChange={setActiveTab}>
                         <TabList>
                             {screen.groups.map((group, index) => (
                                 <Tab key={group.name}>
@@ -131,7 +63,16 @@ const ScreenContent = () => {
                                 </Tab>
                             ))}
                         </TabList>
-                        <TabToolbar className="py-4">{toolbar}</TabToolbar>
+                        <TabToolbar className="py-4">
+                            <ScreenTableToolbar
+                                search={search}
+                                setSearch={setSearch}
+                                canEdit={screen.isBulkEditEnabled}
+                                canCreate={screen.workflowDefinition.canCreateInstance}
+                                workflowDefinition={workflowDefinition}
+                                fromScreen={fromScreen}
+                            />
+                        </TabToolbar>
                         <TabPanels>
                             {screen.groups.map((group) => (
                                 <TabPanel key={group.name}>
@@ -139,7 +80,7 @@ const ScreenContent = () => {
                                         columns={screen.columns}
                                         rows={group.rows}
                                         globalFilter={search}
-                                        {...selectionProps}
+                                        fromScreen={fromScreen}
                                     />
                                 </TabPanel>
                             ))}
@@ -147,27 +88,23 @@ const ScreenContent = () => {
                     </Tabs>
                 ) : (
                     <div className="flex flex-col gap-4">
-                        {toolbar}
+                        <ScreenTableToolbar
+                            search={search}
+                            setSearch={setSearch}
+                            canEdit={screen.isBulkEditEnabled}
+                            canCreate={screen.workflowDefinition.canCreateInstance}
+                            workflowDefinition={workflowDefinition}
+                            fromScreen={fromScreen}
+                        />
                         <ScreenTable
                             columns={screen.columns}
                             rows={screen.rows}
                             globalFilter={search}
-                            {...selectionProps}
+                            fromScreen={fromScreen}
                         />
                     </div>
                 )}
             </Card>
-            {bulkSelection && (
-                <BulkActionModal
-                    workflowDefinition={workflowDefinition}
-                    screenName={screenName}
-                    action={bulkSelection.action}
-                    columns={screen.columns}
-                    rows={bulkSelection.rows}
-                    onClose={() => setBulkSelection(null)}
-                    onComplete={() => setRowSelection({})}
-                />
-            )}
-        </HomePage>
+        </Container>
     );
 };

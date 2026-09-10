@@ -1,6 +1,5 @@
 {
   "add": "Add",
-  "app_name": "Workflow",
   "admin": {
     "current_step_title": "Current step",
     "fill_dummy_data_button": "Fill with dummy data",
@@ -23,7 +22,34 @@
     "no_properties": "This instance type has no properties",
     "title": "Data"
   },
+  "app_name": "Workflow",
   "are_you_sure": "Are you sure?",
+  "bom": {
+    "applicable_list": {
+      "empty": "No measures apply yet. Complete classification and routing questions on the subject.",
+      "purpose": "Read-only preview of measures that apply to this subject. Use Sync below to create implementation rows — this list is not editable.",
+      "title_one": "Applicable measure ({{count}})",
+      "title_other": "Applicable measures ({{count}})"
+    },
+    "export": "Export JSON",
+    "filter": {
+      "no_results": "No measures match your filter.",
+      "placeholder": "Filter by ID, title, status or remarks…"
+    },
+    "import": "Import JSON",
+    "measure": {
+      "background": "Measure background"
+    },
+    "summary": {
+      "applicable": "Applicable",
+      "catalogue": "Catalogue total",
+      "filtered_hint_one": "{{count}} catalogue measure is hidden by applicability rules.",
+      "filtered_hint_other": "{{count}} catalogue measures are hidden by applicability rules.",
+      "handled": "Handled (with status)",
+      "recorded": "Recorded rows"
+    },
+    "sync_applicable": "Sync applicable measures"
+  },
   "cancel": "Cancel",
   "change_selection": "Change selection",
   "confirm": "Confirm",
@@ -44,6 +70,10 @@
     "title": "Develop"
   },
   "email": "Email address",
+  "embedded_list": {
+    "empty": "No items yet. Add a row to record measure implementation.",
+    "item": "Item {{index}}"
+  },
   "external_user_add": {
     "back_to_search": "Back to search",
     "description": "Can't you find someone in the list? You can add them yourself. Fill in the details below:",
@@ -69,7 +99,6 @@
   },
   "home": "Home",
   "instance": {
-    "parent": "Back to subject",
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
       "calculated_grade": "Calculated grade: ",
@@ -78,7 +107,37 @@
       "grading_incomplete": "Grading not yet complete"
     },
     "empty_step": "Nothing has been submitted yet.",
+    "follow_up_assessments": {
+      "description": "Additional privacy assessments required based on your RoPA answers.",
+      "title": "Follow-up assessments"
+    },
+    "groups": {
+      "general": "General",
+      "privacy": "Privacy",
+      "security": "Security"
+    },
+    "messages": {
+      "body": "Comment",
+      "close": "Close",
+      "closed": "Closed",
+      "closed_count_one": "Show {{count}} closed comment",
+      "closed_count_other": "Show {{count}} closed comments",
+      "empty": "No comments yet.",
+      "field_label": "Comments on this field",
+      "hide_closed": "Hide closed comments",
+      "new": "New comment",
+      "reply": "Reply",
+      "reply_placeholder": "Write a reply",
+      "show_closed_one": "Show {{count}} closed comment",
+      "show_closed_other": "Show {{count}} closed comments",
+      "title": "Comments"
+    },
+    "parent": "Back to subject",
+    "step": {
+      "optional": "Non-blocking"
+    },
     "summary": {
+      "back_to_summary": "Back to summary",
       "change_version": "Version {{version}}",
       "change_version_in_progress": "Version {{version}} (in progress)",
       "changed_on": "Changed on {{date}}",
@@ -87,6 +146,7 @@
       "changes_title": "Changes",
       "delete_file": "Delete file",
       "edit_answer": "Edit answer",
+      "edit_form": "Edit in form",
       "edit_page": "Edit page",
       "explanation": "Explanation",
       "hide_answers": "Hide parts and explanations",
@@ -99,6 +159,11 @@
       "title": "Summary",
       "view_changes": "View changes"
     },
+    "transfer_summary": {
+      "location": "Processing location",
+      "non_eea": "Outside EEA",
+      "title": "Transfer assessment (derived)"
+    },
     "unauthorized_submission": "You are not authorized to see this submission",
     "workflowInstance": "Workflow Instance"
   },
@@ -106,12 +171,6 @@
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
-  "overview": {
-    "default_no_access": "You don't have access yet.",
-    "default_subtitle": "Select an item to open.",
-    "default_title": "Overview",
-    "page_title": "Overview"
-  },
   "previous": "Previous",
   "progress": {
     "completed": "Completed",
@@ -124,6 +183,7 @@
     "loading": "Loading options…",
     "no_results": "No results"
   },
+  "remove": "Remove",
   "repeated_form": {
     "clear": "Clear prefilled fields",
     "clear_error": "Failed to clear the fields. Please try again.",
@@ -164,7 +224,6 @@
     "remove_staff_title": "Remove user"
   },
   "status": {
-    "completed_on": "Completed on",
     "submitted": "Submitted"
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",

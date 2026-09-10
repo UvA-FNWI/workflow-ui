@@ -37,6 +37,7 @@ function Instance() {
                 title={instance?.title}
                 instanceId={id}
                 parentId={instance?.parentId}
+                workflowDefinition={instance?.workflowDefinition}
                 canUseAdminTools={instance?.canUseAdminTools ?? false}
                 isLoading={isLoading}
             />

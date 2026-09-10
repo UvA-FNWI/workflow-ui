@@ -17,6 +17,37 @@ export type OverviewEntry = {
 export const overviewScreenUrl = (workflowDefinition: string, screenName: string) =>
     `/screens/${workflowDefinition}/${screenName}`;
 
+export type FromScreen = {
+    workflowDefinition: string;
+    screenName: string;
+    title?: LocalString | null;
+};
+
+export type FromScreenLocationState = {
+    fromScreen?: FromScreen;
+};
+
+export function readFromScreen(state: unknown): FromScreen | undefined {
+    if (!state || typeof state !== "object" || !("fromScreen" in state)) return undefined;
+    const fromScreen = (state as FromScreenLocationState).fromScreen;
+    if (!fromScreen?.workflowDefinition || !fromScreen.screenName) return undefined;
+    return fromScreen;
+}
+
+export function instanceFromScreenState(fromScreen: FromScreen): FromScreenLocationState {
+    return {fromScreen};
+}
+
+/** Lowest-index screen of a definition — the register that owns its instances. */
+export function primaryRegisterScreen(definition: WorkflowDefinition): WorkflowScreen | undefined {
+    if (definition.screens.length === 0) return undefined;
+    return definition.screens.reduce((best, screen) => {
+        const bestIndex = best.index ?? Number.MAX_SAFE_INTEGER;
+        const screenIndex = screen.index ?? Number.MAX_SAFE_INTEGER;
+        return screenIndex < bestIndex ? screen : best;
+    });
+}
+
 function entryLabel(
     def: WorkflowDefinition,
     screen: WorkflowScreen,
