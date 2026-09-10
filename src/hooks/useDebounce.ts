@@ -12,13 +12,18 @@ import {debounce} from "lodash-es";
  *
  * @param callback - The function to debounce. This can take any number of arguments.
  * @param delay - The number of milliseconds to delay invoking the callback.
+ * @param options.flushOnUnmount - Run a pending callback on cleanup instead of discarding it.
  * @returns A debounced version of the callback function.
  *
  * @example
  * const debouncedCallback = useDebounce(someFunction, 500);
  * debouncedCallback(value);
  */
-export function useDebounce(callback: (...args: unknown[]) => void, delay: number) {
+export function useDebounce(
+    callback: (...args: unknown[]) => void,
+    delay: number,
+    {flushOnUnmount = false}: {flushOnUnmount?: boolean} = {},
+) {
     const callbackRef = useRef(callback);
     const debouncedFnRef = useRef<ReturnType<typeof debounce> | null>(null);
 
@@ -27,14 +32,16 @@ export function useDebounce(callback: (...args: unknown[]) => void, delay: numbe
     }, [callback]);
 
     useEffect(() => {
-        debouncedFnRef.current = debounce((...args: unknown[]) => {
+        const debounced = debounce((...args: unknown[]) => {
             callbackRef.current(...args);
         }, delay);
+        debouncedFnRef.current = debounced;
 
         return () => {
-            debouncedFnRef.current?.cancel();
+            if (flushOnUnmount) debounced.flush();
+            debounced.cancel();
         };
-    }, [delay]);
+    }, [delay, flushOnUnmount]);
 
     return useMemo(
         () =>

@@ -75,7 +75,9 @@ export const InputControl = ({
     const save = useCallback(
         (value: unknown) => {
             if (!onSave) return;
-            void onSave({questionName: question.name, value});
+            void onSave({questionName: question.name, value}).catch((error) => {
+                console.error("Failed to save answer:", error);
+            });
         },
         [question.name, onSave],
     );
@@ -101,7 +103,7 @@ export const InputControl = ({
         },
         [onChange, saveExternalUser, question.isArray, question.name, value],
     );
-    const debouncedOnChange = useDebounce(save, 500);
+    const debouncedOnChange = useDebounce(save, 500, {flushOnUnmount: true});
     const debouncedChange = (value: unknown) => {
         onChange?.(value);
         debouncedOnChange(value);

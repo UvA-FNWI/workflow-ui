@@ -10,6 +10,7 @@ import type {Choice} from "./types/submissions";
 import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
+import {queueAnswerSave} from "~/utils/queueAnswerSave.ts";
 
 export const answersApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
@@ -24,13 +25,22 @@ export const answersApi = baseApi.injectEndpoints({
             providesTags: (_result, _error, params) => [{type: "Choices", id: params.instanceId}],
         }),
         saveAnswer: build.mutation<SaveAnswerResult, SaveAnswerParams>({
-            query: (params) => ({
-                url: `Answers/${params.instanceId}/${params.submissionId}/${params.answer.questionName}`,
-                method: "post",
-                body: params.answer,
-            }),
+            async queryFn(params, _api, _extraOptions, baseQuery) {
+                return queueAnswerSave(params.instanceId, async () => {
+                    const result = await baseQuery({
+                        url: `Answers/${params.instanceId}/${params.submissionId}/${params.answer.questionName}`,
+                        method: "post",
+                        body: params.answer,
+                    });
+                    return result.error
+                        ? {error: result.error}
+                        : {data: result.data as SaveAnswerResult};
+                });
+            },
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => null);
+                if (!result) return;
+                const {data} = result;
                 dispatch(
                     submissionsApi.util.updateQueryData(
                         "getSubmission",

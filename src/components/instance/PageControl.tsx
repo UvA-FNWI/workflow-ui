@@ -1,8 +1,9 @@
-import {useCallback, useEffect, useMemo} from "react";
+import {useCallback, useEffect, useMemo, useRef} from "react";
 
 import {Controller, useForm} from "react-hook-form";
 
 import {cn, Heading, InputLabel, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {isEqual} from "lodash-es";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {InputControl} from "./InputControl";
@@ -46,22 +47,49 @@ export const PageControl = ({
 
     const form = useForm({defaultValues: formValues});
 
-    // Sync form values from submission when questions become visible again.
-    // When a conditionally hidden question's Controller unmounts, react-hook-form unregisters
-    // the field and the value is lost. When the question reappears, restore from submission data.
+    const localEdits = useRef(new Map<string, symbol>());
+    useEffect(() => {
+        localEdits.current = new Map();
+    }, [instanceId, submissionId, page.name]);
+
+    // Refresh untouched fields and newly visible questions, but keep drafts while their
+    // debounce or save is pending. A response contains the entire submission snapshot.
     useEffect(() => {
         const visibleAnswers = answers.filter((a) => a.isVisible);
         visibleAnswers.forEach((answer) => {
-            form.setValue(answer.questionName, answer.value);
+            if (
+                !localEdits.current.has(answer.questionName) &&
+                !isEqual(form.getValues(answer.questionName), answer.value)
+            ) {
+                form.setValue(answer.questionName, answer.value);
+            }
         });
-    }, [answers, form]);
+    }, [answers, form, instanceId, submissionId, page.name]);
+
+    const markEdited = (questionName: string, value: unknown) => {
+        if (!isEqual(form.getValues(questionName), value)) {
+            localEdits.current.set(questionName, Symbol());
+        }
+    };
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
 
     const save = useCallback(
-        (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}).unwrap(),
-        [instanceId, submissionId, saveAnswer],
+        async (val: AnswerInput) => {
+            const edits = localEdits.current;
+            const edit = edits.get(val.questionName);
+            const result = await saveAnswer({instanceId, submissionId, answer: val}).unwrap();
+            if (localEdits.current === edits && edits.get(val.questionName) === edit) {
+                const savedAnswer = result.answers.find((a) => a.questionName === val.questionName);
+                if (savedAnswer) {
+                    edits.delete(val.questionName);
+                    form.setValue(val.questionName, savedAnswer.value);
+                }
+            }
+            return result;
+        },
+        [instanceId, submissionId, saveAnswer, form],
     );
 
     const removeFileAnswer = useCallback(
@@ -209,7 +237,10 @@ export const PageControl = ({
                                                             instanceId={instanceId}
                                                             submissionId={submissionId}
                                                             value={field.value}
-                                                            onChange={field.onChange}
+                                                            onChange={(value) => {
+                                                                markEdited(question.name, value);
+                                                                field.onChange(value);
+                                                            }}
                                                             question={question}
                                                             onSave={save}
                                                             visibleChoices={answer?.visibleChoices}
