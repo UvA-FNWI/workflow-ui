@@ -42,9 +42,11 @@ export function isPageComplete(
             const hasError = !!answer?.validationError;
 
             const hasValue =
-                answer?.value != null &&
-                answer.value !== "" &&
-                (!Array.isArray(answer.value) || answer.value.length > 0);
+                question.type === "Check"
+                    ? answer?.value === true
+                    : answer?.value != null &&
+                      answer.value !== "" &&
+                      (!Array.isArray(answer.value) || answer.value.length > 0);
             return hasValue && !hasError;
         });
 }
