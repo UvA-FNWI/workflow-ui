@@ -110,6 +110,9 @@ export const instancesApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: {role: roleName},
             }),
+            invalidatesTags: (_result, _error, {instanceId}) => [
+                {type: "Instance", id: instanceId},
+            ],
             async onQueryStarted(_arg, {dispatch, queryFulfilled}) {
                 try {
                     const {data} = await queryFulfilled;
