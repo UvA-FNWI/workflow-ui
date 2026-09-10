@@ -10,6 +10,7 @@ import type {Choice} from "./types/submissions";
 import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
+import {trackAnswerSave} from "~/utils/flushPendingAnswers.ts";
 import {queueAnswerSave} from "~/utils/queueAnswerSave.ts";
 
 export const answersApi = baseApi.injectEndpoints({
@@ -38,6 +39,16 @@ export const answersApi = baseApi.injectEndpoints({
                 });
             },
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
+                trackAnswerSave(
+                    params.instanceId,
+                    params.submissionId,
+                    params.answer.questionName,
+                    queryFulfilled,
+                    () => {
+                        const retry = dispatch(answersApi.endpoints.saveAnswer.initiate(params));
+                        return retry.unwrap().finally(() => retry.reset());
+                    },
+                );
                 const result = await queryFulfilled.catch(() => null);
                 if (!result) return;
                 const {data} = result;
@@ -74,6 +85,18 @@ export const answersApi = baseApi.injectEndpoints({
             ],
         }),
         saveFile: build.mutation<{success: boolean}, SaveFileParams>({
+            onQueryStarted(params, {dispatch, queryFulfilled}) {
+                trackAnswerSave(
+                    params.instanceId,
+                    params.submissionId,
+                    params.questionName,
+                    queryFulfilled,
+                    () => {
+                        const retry = dispatch(answersApi.endpoints.saveFile.initiate(params));
+                        return retry.unwrap().finally(() => retry.reset());
+                    },
+                );
+            },
             query: (params) => {
                 const formData = new FormData();
                 formData.append("file", params.file);

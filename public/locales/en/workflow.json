@@ -91,6 +91,7 @@
       "hide_linked": "Hide explanations",
       "replace_file": "Replace file",
       "save_error": "Failed to save. Please try again.",
+      "submit_error": "Submission failed. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
       "submitted_on": "Submitted on {{date}}",

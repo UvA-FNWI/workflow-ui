@@ -43,11 +43,13 @@ export function useDebounce(
         };
     }, [delay, flushOnUnmount]);
 
-    return useMemo(
-        () =>
-            (...args: unknown[]) => {
-                debouncedFnRef.current?.(...args);
-            },
-        [],
-    );
+    return useMemo(() => {
+        const schedule = (...args: unknown[]) => {
+            debouncedFnRef.current?.(...args);
+        };
+        schedule.flush = () => {
+            debouncedFnRef.current?.flush();
+        };
+        return schedule;
+    }, []);
 }

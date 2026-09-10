@@ -91,6 +91,7 @@
       "hide_linked": "Verberg toelichtingen",
       "replace_file": "Bestand vervangen",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
+      "submit_error": "Indienen mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
       "submitted_on": "Ingediend op {{date}}",
