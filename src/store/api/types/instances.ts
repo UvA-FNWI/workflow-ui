@@ -74,7 +74,9 @@ export type StepHierarchyMode = "Sequential" | "Parallel";
 export type UndoCandidate = {
     type: "FormSubmission" | "ExecuteAction";
     step: string;
+    stepTitle: LocalString;
     form: string;
+    sourceTitle: LocalString;
     occurredAt: string;
     operationId: string;
 };

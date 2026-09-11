@@ -127,7 +127,6 @@ export const StepCard = ({step, instance}: Props) => {
             candidate={step.undoCandidate}
             instanceId={instance.id}
             returnFocusRef={cardRef}
-            topLevelStep={step}
         />
     );
 

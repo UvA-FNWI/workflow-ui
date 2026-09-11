@@ -3,10 +3,9 @@ import {type RefObject, useState} from "react";
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 import {Button, Modal, TextArea, useToast} from "@uva-fnwi/datanose-ui";
 
-import {getStepHierarchy} from "~/components/instance/resolveContentState";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesApi, instancesEndpoints} from "~/store/api/instancesApi";
-import type {UndoCandidate, WorkflowStep} from "~/store/api/types/instances";
+import type {UndoCandidate} from "~/store/api/types/instances";
 import {useAppDispatch} from "~/store/store";
 import {formatDate} from "~/utils/formatDate";
 
@@ -14,14 +13,13 @@ type Props = {
     candidate: UndoCandidate;
     instanceId: string;
     returnFocusRef: RefObject<HTMLElement | null>;
-    topLevelStep: WorkflowStep;
 };
 
 const isStaleCandidate = (error: unknown) =>
     ((error as FetchBaseQueryError | undefined)?.data as {errorCode?: string} | undefined)
         ?.errorCode === "UndoCandidateChanged";
 
-export function UndoControl({candidate, instanceId, returnFocusRef, topLevelStep}: Props) {
+export function UndoControl({candidate, instanceId, returnFocusRef}: Props) {
     const {t, l, i18n} = useTranslate("workflow");
     const dispatch = useAppDispatch();
     const toast = useToast();
@@ -30,8 +28,8 @@ export function UndoControl({candidate, instanceId, returnFocusRef, topLevelStep
     const [undo, {isLoading}] = instancesEndpoints.undo.useMutation();
 
     const normalizedReason = reason.trim();
-    const owningStep = getStepHierarchy(topLevelStep).find(({id}) => id === candidate.step);
-    const owningStepTitle = l(owningStep?.title) ?? candidate.step;
+    const owningStepTitle = l(candidate.stepTitle) ?? candidate.step;
+    const sourceTitle = l(candidate.sourceTitle) ?? candidate.form;
     const operation =
         candidate.type === "FormSubmission"
             ? {type: t("undo.form_submission"), sourceLabel: t("undo.form")}
@@ -94,16 +92,11 @@ export function UndoControl({candidate, instanceId, returnFocusRef, topLevelStep
                 <Modal.Body>
                     <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
                         <dt className="font-semibold">{t("undo.step")}</dt>
-                        <dd>
-                            <span>{owningStepTitle}</span>
-                            {owningStepTitle !== candidate.step && (
-                                <span className="ml-1">({candidate.step})</span>
-                            )}
-                        </dd>
+                        <dd>{owningStepTitle}</dd>
                         <dt className="font-semibold">{t("undo.operation_type")}</dt>
                         <dd>{operation.type}</dd>
                         <dt className="font-semibold">{operation.sourceLabel}</dt>
-                        <dd>{candidate.form}</dd>
+                        <dd>{sourceTitle}</dd>
                         <dt className="font-semibold">{t("undo.occurred_at")}</dt>
                         <dd>{formatDate(candidate.occurredAt, i18n.language)}</dd>
                     </dl>
