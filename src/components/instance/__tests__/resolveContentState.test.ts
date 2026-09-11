@@ -16,8 +16,6 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     event: "event-1",
     dateCompleted: null,
     deadline: null,
-    deadlinePassed: false,
-    deadlineMessage: null,
     children: null,
     versions: null,
     headerStatus: null,

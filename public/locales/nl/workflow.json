@@ -75,6 +75,7 @@
       "final_grade": "Eindcijfer",
       "grading_incomplete": "Beoordeling nog niet volledig"
     },
+    "deadline_passed": "Je hebt niet op tijd ingeleverd. Je kunt deze stap niet meer indienen.",
     "empty_step": "Er is nog niets ingeleverd.",
     "summary": {
       "change_version": "Versie {{version}}",

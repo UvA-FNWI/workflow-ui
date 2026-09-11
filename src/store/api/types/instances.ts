@@ -60,7 +60,7 @@ export type RecalculateCurrentStepsResult = {
 };
 
 export type StepHeaderStatus = {
-    type: "Info" | "Attention" | "Success";
+    type: "Info" | "Attention" | "Success" | "Error";
     label: LocalString;
 };
 
@@ -71,15 +71,19 @@ export type IconVariant = {
 
 export type StepHierarchyMode = "Sequential" | "Parallel";
 
+export type StepDeadline = {
+    date: string | null;
+    isClosed: boolean;
+    message: LocalString | null;
+};
+
 export type WorkflowStep = {
     id: string;
     title: LocalString;
     icon: IconVariant | null;
     event: string;
     dateCompleted: string | null;
-    deadline: string | null;
-    deadlinePassed: boolean;
-    deadlineMessage: LocalString | null;
+    deadline: StepDeadline | null;
     children: WorkflowStep[] | null;
     versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;

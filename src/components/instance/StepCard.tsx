@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Disclosure, Heading, Icon, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
+import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
 import {
@@ -24,6 +24,7 @@ const HEADER_STATUS_VARIANT: Record<StepHeaderStatus["type"], PillVariantProps["
     Info: "grey",
     Attention: "orange",
     Success: "green",
+    Error: "red",
 };
 
 function mapHeaderStatusType(type: StepHeaderStatus["type"]): PillVariantProps["variant"] {
@@ -64,7 +65,9 @@ export const StepCard = ({step, instance}: Props) => {
     const availableActiveAction = actions.find((action) => action.id === activeAction?.id) ?? null;
     const resolvedAction = availableActiveAction ?? autoOpenAction;
 
-    const deadlineMessages = stepHierarchy.filter((candidate) => candidate.deadlineMessage != null);
+    const deadlineMessages = stepHierarchy.filter(
+        (candidate) => candidate.deadline?.message != null || candidate.deadline?.isClosed,
+    );
 
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
     const currentStepIndex = instance.steps.findIndex((s) =>
@@ -73,7 +76,9 @@ export const StepCard = ({step, instance}: Props) => {
     const isAfterCurrentStep = instance.steps.indexOf(step) > currentStepIndex;
 
     const deadlineDate =
-        step.deadline ?? step.children?.find((c) => c.id == instance.currentStep)?.deadline ?? null;
+        step.deadline?.date ??
+        step.children?.find((c) => c.id == instance.currentStep)?.deadline?.date ??
+        null;
     const submittedDate =
         [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])]
             .filter((date): date is string => Boolean(date))
@@ -130,17 +135,6 @@ export const StepCard = ({step, instance}: Props) => {
                 <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading className="font-semibold">{l(step.title)}</Heading>
-                        {step.deadlinePassed && (
-                            <Pill variant="red" className="gap-1 bg-[#FDD4CD]! text-[#AE1800]!">
-                                <Icon
-                                    name="triangle-exclamation-line"
-                                    size="sm"
-                                    color="current"
-                                    decorative
-                                />
-                                {t("status.deadline_passed")}
-                            </Pill>
-                        )}
                         {/* If we don't have a header status, we can show the date completed */}
                         {step.dateCompleted && !step.headerStatus && (
                             <Pill variant="green">
@@ -168,7 +162,7 @@ export const StepCard = ({step, instance}: Props) => {
                     {deadlineMessages.map((candidate) => (
                         <div key={candidate.id} className="py-4">
                             <MarkdownRenderer>
-                                {l(candidate.deadlineMessage) ?? ""}
+                                {l(candidate.deadline?.message) || t("instance.deadline_passed")}
                             </MarkdownRenderer>
                         </div>
                     ))}
