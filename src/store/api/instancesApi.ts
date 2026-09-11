@@ -64,6 +64,16 @@ export const instancesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["Instance"],
         }),
+        undo: builder.mutation<
+            WorkflowInstance,
+            {instanceId: string; operationId: string; reason: string}
+        >({
+            query: ({instanceId, operationId, reason}) => ({
+                url: `/WorkflowInstances/${instanceId}/Undo`,
+                method: "POST",
+                body: {operationId, reason},
+            }),
+        }),
         getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Impersonation/Roles`,
         }),
