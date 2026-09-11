@@ -126,3 +126,4 @@ Tabs.displayName = 'Tabs';
 export { Tab, Tabs, TabList, TabPanels, TabPanel, TabToolbar };
 export type { TabsProps };
 export { useTabsWithRouter, useTabsWithUrl } from './hooks/useTabsWithRouter';
+export { useTabsWithLocalStorage } from './hooks/useTabsWithLocalStorage';
