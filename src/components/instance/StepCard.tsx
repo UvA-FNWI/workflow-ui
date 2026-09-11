@@ -66,7 +66,9 @@ export const StepCard = ({step, instance}: Props) => {
     const resolvedAction = availableActiveAction ?? autoOpenAction;
 
     const deadlineMessages = stepHierarchy.filter(
-        (candidate) => candidate.deadline?.message != null || candidate.deadline?.isClosed,
+        (candidate) =>
+            candidate.deadline?.message != null ||
+            (candidate.deadline?.type === "Hard" && candidate.deadline.isPassed),
     );
 
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
@@ -144,7 +146,10 @@ export const StepCard = ({step, instance}: Props) => {
                         )}
                         {step.headerStatus && (
                             <Pill variant={mapHeaderStatusType(step.headerStatus.type)}>
-                                {l(step.headerStatus.label)}
+                                {l(step.headerStatus.label) ||
+                                    (stepHierarchy.some((candidate) => candidate.deadline?.isPassed)
+                                        ? t("status.deadline_passed")
+                                        : null)}
                             </Pill>
                         )}
                     </div>

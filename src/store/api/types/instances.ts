@@ -61,7 +61,7 @@ export type RecalculateCurrentStepsResult = {
 
 export type StepHeaderStatus = {
     type: "Info" | "Attention" | "Success" | "Error";
-    label: LocalString;
+    label: LocalString | null;
 };
 
 export type IconVariant = {
@@ -73,7 +73,8 @@ export type StepHierarchyMode = "Sequential" | "Parallel";
 
 export type StepDeadline = {
     date: string | null;
-    isClosed: boolean;
+    type: "Soft" | "Hard";
+    isPassed: boolean;
     message: LocalString | null;
 };
 

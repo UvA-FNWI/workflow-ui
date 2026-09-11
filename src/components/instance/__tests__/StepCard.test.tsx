@@ -2,7 +2,12 @@ import {cleanup, render, screen} from "@testing-library/react";
 import {afterEach, expect, it, vi} from "vitest";
 
 import {StepCard} from "../StepCard.tsx";
-import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
+import type {
+    Action,
+    StepDeadline,
+    WorkflowInstance,
+    WorkflowStep,
+} from "~/store/api/types/instances.ts";
 
 vi.mock("~/hooks/useTranslate.ts", () => ({
     useTranslate: () => ({
@@ -19,7 +24,12 @@ vi.mock("~/components/instance/StepCardBody.tsx", () => ({
 
 afterEach(cleanup);
 
-const deadline = {date: "2000-01-01T00:00:00Z", isClosed: false, message: null};
+const deadline: StepDeadline = {
+    date: "2000-01-01T00:00:00Z",
+    type: "Hard",
+    isPassed: false,
+    message: null,
+};
 
 const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     id: "Step",
@@ -78,7 +88,7 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
 
 const expiredStatus = {
     type: "Error",
-    label: {en: "Deadline passed", nl: "Deadline verstreken"},
+    label: null,
 } as const;
 const expiredMessage = {en: "**Too late.** Contact your coordinator.", nl: "Te laat."};
 
@@ -88,27 +98,31 @@ it("replaces an already open form with the configured hard deadline message afte
     expect(screen.getByText("Proposal")).toBeInTheDocument();
 
     const expiredStep = makeStep({
-        deadline: {...deadline, isClosed: true, message: expiredMessage},
+        deadline: {...deadline, isPassed: true, message: expiredMessage},
         headerStatus: expiredStatus,
         expectsSubmission: false,
     });
     rerender(<StepCard step={expiredStep} instance={makeInstance(expiredStep)} />);
 
     expect(screen.getByText("Too late.").tagName).toBe("STRONG");
-    expect(screen.getByText("Deadline passed")).toBeInTheDocument();
+    expect(screen.getByText("status.deadline_passed")).toBeInTheDocument();
     expect(screen.queryByTestId("step-content")).not.toBeInTheDocument();
 });
 
 it("keeps the form available for a passed soft deadline", () => {
-    const step = makeStep({headerStatus: expiredStatus});
+    const step = makeStep({
+        headerStatus: expiredStatus,
+        deadline: {...deadline, type: "Soft", isPassed: true},
+    });
     render(<StepCard step={step} instance={makeInstance(step, [action])} />);
 
     expect(screen.getByText("Proposal")).toBeInTheDocument();
-    expect(screen.getByText("Deadline passed")).toBeInTheDocument();
+    expect(screen.getByText("status.deadline_passed")).toBeInTheDocument();
+    expect(screen.queryByText("instance.deadline_passed")).not.toBeInTheDocument();
 });
 
 it("shows a child deadline message while another parallel child's form remains available", () => {
-    const child = makeStep({deadline: {...deadline, isClosed: true, message: expiredMessage}});
+    const child = makeStep({deadline: {...deadline, isPassed: true, message: expiredMessage}});
     const sibling = makeStep({id: "Sibling"});
     const parent = makeStep({id: "Parent", children: [child, sibling], hierarchyMode: "Parallel"});
     render(
@@ -124,15 +138,22 @@ it("shows a child deadline message while another parallel child's form remains a
 
 it("replaces the parent card content when its expired child has no remaining actions", () => {
     const child = makeStep({
-        deadline: {...deadline, isClosed: true, message: expiredMessage},
+        deadline: {...deadline, isPassed: true, message: expiredMessage},
         headerStatus: expiredStatus,
         expectsSubmission: false,
     });
-    const parent = makeStep({id: "Parent", children: [child], expectsSubmission: false});
+    const parent = makeStep({
+        id: "Parent",
+        deadline: null,
+        headerStatus: expiredStatus,
+        children: [child],
+        expectsSubmission: false,
+    });
     render(<StepCard step={parent} instance={makeInstance(parent)} />);
 
     expect(screen.getByText("Too late.")).toBeInTheDocument();
     expect(screen.queryByTestId("step-content")).not.toBeInTheDocument();
+    expect(screen.getByText("status.deadline_passed")).toBeInTheDocument();
 });
 
 it("preserves completed step content without a deadline warning", () => {
@@ -140,11 +161,21 @@ it("preserves completed step content without a deadline warning", () => {
     render(<StepCard step={step} instance={makeInstance(step)} />);
 
     expect(screen.getByTestId("step-content")).toBeInTheDocument();
-    expect(screen.queryByText("Deadline passed")).not.toBeInTheDocument();
+    expect(screen.queryByText("status.deadline_passed")).not.toBeInTheDocument();
 });
 
 it("shows the default message when the backend reports closure without custom text", () => {
-    const step = makeStep({deadline: {...deadline, isClosed: true}, expectsSubmission: false});
+    const step = makeStep({deadline: {...deadline, isPassed: true}, expectsSubmission: false});
     render(<StepCard step={step} instance={makeInstance(step)} />);
     expect(screen.getByText("instance.deadline_passed")).toBeInTheDocument();
+});
+
+it("keeps a configured header label when a deadline has passed", () => {
+    const step = makeStep({
+        deadline: {...deadline, isPassed: true},
+        headerStatus: {type: "Error", label: {en: "Contact staff", nl: "Neem contact op"}},
+    });
+    render(<StepCard step={step} instance={makeInstance(step)} />);
+    expect(screen.getByText("Contact staff")).toBeInTheDocument();
+    expect(screen.queryByText("status.deadline_passed")).not.toBeInTheDocument();
 });
