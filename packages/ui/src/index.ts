@@ -156,6 +156,7 @@ export {
   TabToolbar,
   useTabsWithRouter,
   useTabsWithUrl,
+  useTabsWithLocalStorage,
   type TabsProps,
 } from './components/Tabs/Tabs';
 
