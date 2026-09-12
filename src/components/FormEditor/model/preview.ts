@@ -7,7 +7,7 @@ import type {Choice, DataType, Question} from "~/store/api/types/submissions";
  * Object, DateTime - falls through to its "Not supported type..." string, so the editor shows its own
  * "no preview" note instead of leaking that.
  */
-const SCALAR_TYPES: DataType[] = ["String", "Int", "Double", "Date", "Boolean", "User"];
+const SCALAR_TYPES: DataType[] = ["String", "Int", "Double", "Date", "Check", "User"];
 
 const asChoices = (values: unknown): Choice[] =>
     Array.isArray(values)
