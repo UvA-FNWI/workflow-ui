@@ -12,4 +12,5 @@ export type WorkflowDefinition = {
     canCreateInstance: boolean;
     /** Whether the definition has no steps. */
     isPropertyOnly: boolean;
+    properties: string[];
 };

@@ -101,6 +101,25 @@
     "workflowInstance": "Workflow Instance"
   },
   "make_a_choice": "Make a choice",
+  "migrations": {
+    "back_to_develop": "Back to Develop",
+    "columns": {
+      "change": "Property change",
+      "progress": "Progress",
+      "status": "Status",
+      "updated": "Updated",
+      "workflow": "Workflow type"
+    },
+    "empty": "No migrations yet",
+    "load_error": "Could not load migrations",
+    "progress": "{{updated}} of {{matched}} instances updated",
+    "status": {
+      "applying": "Applying",
+      "failed": "Failed",
+      "finished": "Finished"
+    },
+    "title": "Migrations"
+  },
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",

@@ -101,6 +101,25 @@
     "workflowInstance": "Workflow"
   },
   "make_a_choice": "Maak een keuze",
+  "migrations": {
+    "back_to_develop": "Terug naar Ontwikkelen",
+    "columns": {
+      "change": "Wijziging",
+      "progress": "Voortgang",
+      "status": "Status",
+      "updated": "Bijgewerkt",
+      "workflow": "Workflowtype"
+    },
+    "empty": "Nog geen migraties",
+    "load_error": "Kon migraties niet laden",
+    "progress": "{{updated}} van {{matched}} instanties bijgewerkt",
+    "status": {
+      "applying": "Bezig",
+      "failed": "Mislukt",
+      "finished": "Voltooid"
+    },
+    "title": "Migraties"
+  },
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
