@@ -105,7 +105,7 @@ const getStepPositions = (steps: WorkflowStep[]): number[] => {
     if (steps.length <= 1) return steps.map(() => MIN_POSITION);
 
     const deadlines = steps.map((step) =>
-        step.deadline ? new Date(step.deadline).getTime() : null,
+        step.deadline?.date ? new Date(step.deadline.date).getTime() : null,
     );
     const deadlineIndices = deadlines.reduce<number[]>((acc, d, i) => {
         if (d !== null) acc.push(i);
@@ -248,10 +248,10 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                                     content={
                                         <span className="flex flex-col items-center">
                                             <span>{l(step.title) ?? step.id}</span>
-                                            {step.deadline && (
+                                            {step.deadline?.date && (
                                                 <span>
                                                     {t("progress.deadline")}:{" "}
-                                                    {formatDeadline(step.deadline)}
+                                                    {formatDeadline(step.deadline.date)}
                                                 </span>
                                             )}
                                         </span>

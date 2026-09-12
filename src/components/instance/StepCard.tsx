@@ -10,6 +10,7 @@ import {
     resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
 import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
+import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {
     Action,
@@ -23,6 +24,7 @@ const HEADER_STATUS_VARIANT: Record<StepHeaderStatus["type"], PillVariantProps["
     Info: "grey",
     Attention: "orange",
     Success: "green",
+    Error: "red",
 };
 
 function mapHeaderStatusType(type: StepHeaderStatus["type"]): PillVariantProps["variant"] {
@@ -59,7 +61,15 @@ export const StepCard = ({step, instance}: Props) => {
 
     const [activeAction, setActiveAction] = useState<Action | null>(autoOpenAction);
 
-    const resolvedAction = activeAction ?? autoOpenAction;
+    // A refresh can revoke an action while its form or modal is still open.
+    const availableActiveAction = actions.find((action) => action.id === activeAction?.id) ?? null;
+    const resolvedAction = availableActiveAction ?? autoOpenAction;
+
+    const deadlineMessages = stepHierarchy.filter(
+        (candidate) =>
+            candidate.deadline?.message != null ||
+            (candidate.deadline?.type === "Hard" && candidate.deadline.isPassed),
+    );
 
     const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
     const currentStepIndex = instance.steps.findIndex((s) =>
@@ -68,7 +78,9 @@ export const StepCard = ({step, instance}: Props) => {
     const isAfterCurrentStep = instance.steps.indexOf(step) > currentStepIndex;
 
     const deadlineDate =
-        step.deadline ?? step.children?.find((c) => c.id == instance.currentStep)?.deadline ?? null;
+        step.deadline?.date ??
+        step.children?.find((c) => c.id == instance.currentStep)?.deadline?.date ??
+        null;
     const submittedDate =
         [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])]
             .filter((date): date is string => Boolean(date))
@@ -83,13 +95,14 @@ export const StepCard = ({step, instance}: Props) => {
     // already completed or still have available actions must remain usable regardless of order.
     const isUnavailableFutureStep =
         !step.dateCompleted &&
+        deadlineMessages.length === 0 &&
         actions.length === 0 &&
         !!instance.currentStep &&
         !isCurrentStep &&
         isAfterCurrentStep;
 
     const contentState = resolveContentState(step, submissions);
-    const modalState = resolveModalState(activeAction);
+    const modalState = resolveModalState(availableActiveAction);
     const hasVisibleSubmission =
         submissions.length > 0 || stepHierarchy.some((candidate) => hasVersionHistory(candidate));
     const isFormOpen =
@@ -102,12 +115,13 @@ export const StepCard = ({step, instance}: Props) => {
             : !isFormOpen && stepHierarchy.some(({expectsSubmission}) => expectsSubmission)
               ? t("instance.empty_step")
               : null;
-    const hasBodyContent =
+    const hasStepContent =
         actions.length > 0 ||
         submissions.length > 0 ||
         hasVersionHistory(step) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
+    const hasBodyContent = deadlineMessages.length > 0 || hasStepContent;
     const isContentless = !isUnavailableFutureStep && !hasBodyContent;
 
     return (
@@ -132,7 +146,10 @@ export const StepCard = ({step, instance}: Props) => {
                         )}
                         {step.headerStatus && (
                             <Pill variant={mapHeaderStatusType(step.headerStatus.type)}>
-                                {l(step.headerStatus.label)}
+                                {l(step.headerStatus.label) ||
+                                    (stepHierarchy.some((candidate) => candidate.deadline?.isPassed)
+                                        ? t("status.deadline_passed")
+                                        : null)}
                             </Pill>
                         )}
                     </div>
@@ -147,18 +164,27 @@ export const StepCard = ({step, instance}: Props) => {
             </Disclosure.Header>
             {hasBodyContent && (
                 <Disclosure.Content>
-                    <StepCardBody
-                        step={step}
-                        instance={instance}
-                        actions={actions}
-                        submissions={submissions}
-                        contentState={contentState}
-                        modalState={modalState}
-                        activeAction={activeAction}
-                        resolvedAction={resolvedAction}
-                        emptyStateMessage={emptyStateMessage}
-                        setActiveAction={setActiveAction}
-                    />
+                    {deadlineMessages.map((candidate) => (
+                        <div key={candidate.id} className="py-4">
+                            <MarkdownRenderer>
+                                {l(candidate.deadline?.message) || t("instance.deadline_passed")}
+                            </MarkdownRenderer>
+                        </div>
+                    ))}
+                    {hasStepContent && (
+                        <StepCardBody
+                            step={step}
+                            instance={instance}
+                            actions={actions}
+                            submissions={submissions}
+                            contentState={contentState}
+                            modalState={modalState}
+                            activeAction={availableActiveAction}
+                            resolvedAction={resolvedAction}
+                            emptyStateMessage={emptyStateMessage}
+                            setActiveAction={setActiveAction}
+                        />
+                    )}
                 </Disclosure.Content>
             )}
         </Disclosure>
