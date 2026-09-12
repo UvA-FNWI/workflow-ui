@@ -53,7 +53,7 @@ export const instanceProperties = {
                 {name: "PassFail", text: {en: "Pass/fail", nl: "Voldaan/niet voldaan"}},
             ],
         }),
-        question("GradeGap", "Boolean", {text: {en: "Grade gap", nl: "Cijferkloof"}}),
+        question("GradeGap", "Check", {text: {en: "Grade gap", nl: "Cijferkloof"}}),
         question("Coordinator", "User", {
             text: {en: "Coordinator", nl: "Coördinator"},
             isArray: true,

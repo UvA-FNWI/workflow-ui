@@ -176,7 +176,7 @@ export const PageControl = ({
                                                 >
                                                     <div>
                                                         <div className="flex justify-between">
-                                                            {question.type !== "Boolean" && (
+                                                            {question.type !== "Check" && (
                                                                 <InputLabel key={question.name}>
                                                                     {l(question.text)}
                                                                     {question.percentage != null &&
