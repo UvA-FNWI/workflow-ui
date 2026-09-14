@@ -162,7 +162,7 @@ export type DataType =
     | "Double"
     | "Reference"
     | "Int"
-    | "Boolean"
+    | "Check"
     | "Object";
 export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric" | "ComboBox";
 export type FormLayout = "Normal" | "Compact" | "Modal";
