@@ -46,19 +46,12 @@ export function UndoControl({candidate, instanceId, returnFocusRef}: Props) {
         if (!normalizedReason || normalizedReason.length > 1000) return;
 
         try {
-            const refreshedInstance = await undo({
+            await undo({
                 instanceId,
                 operationId: candidate.operationId,
                 reason: normalizedReason,
             }).unwrap();
             close();
-            dispatch(
-                instancesApi.util.updateQueryData(
-                    "getInstance",
-                    instanceId,
-                    () => refreshedInstance,
-                ),
-            );
             restoreFocus();
         } catch (error) {
             if (isStaleCandidate(error)) {
