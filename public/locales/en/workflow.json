@@ -165,7 +165,9 @@
     "completed_on": "Completed on",
     "submitted": "Submitted"
   },
-  "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
+  "string_validation_max": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
+  "string_validation_min": "Minimum number of characters {{minInputLength}}.",
+  "string_validation_min_remaining": " {{remainingInputLength}} more required.",
   "submit": "Submit",
   "user_picker": {
     "no_results": "No users found",
