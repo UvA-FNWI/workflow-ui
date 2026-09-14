@@ -108,6 +108,12 @@ export const FileUploadTable = ({
                             question.allowedFileSize!,
                         );
 
+                        const statusIndicatorClass = hasValidFile
+                            ? "bg-green-600"
+                            : question.isRequired
+                              ? "bg-red-brand"
+                              : "bg-grey-600";
+
                         return (
                             <tr
                                 key={question.name}
@@ -115,7 +121,7 @@ export const FileUploadTable = ({
                             >
                                 <td className="align-center p-2">
                                     <div
-                                        className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-600" : "bg-red-brand"}`}
+                                        className={`h-3 w-3 rounded-full ${statusIndicatorClass}`}
                                         aria-label={
                                             hasValidFile
                                                 ? t("file_upload.uploaded")
