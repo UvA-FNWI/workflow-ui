@@ -180,6 +180,8 @@ export const PageControl = ({
                                                                 <InputLabel key={question.name}>
                                                                     {l(question.text)}
                                                                     {question.percentage != null &&
+                                                                        weightedQuestions.length >
+                                                                            1 &&
                                                                         ` (${question.percentage.toLocaleString(i18n.language)}%)`}
                                                                 </InputLabel>
                                                             )}
