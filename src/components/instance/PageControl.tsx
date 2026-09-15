@@ -36,7 +36,10 @@ export const PageControl = ({
     });
 
     const answers = useMemo(() => submission?.answers ?? [], [submission]);
-    const visibleQuestions = page.questions.filter((q) => {
+    const questions = page.elements
+        .filter((element) => element.kind === "Question")
+        .map((element) => element.question!);
+    const visibleQuestions = questions.filter((q) => {
         const a = answers.find((x) => x.questionName === q.name);
         return !a || a.isVisible;
     });
@@ -115,7 +118,7 @@ export const PageControl = ({
     );
 
     const pageResult = data?.pageResults?.[0];
-    const weightedQuestions = page.questions.filter((question) => question.percentage != null);
+    const weightedQuestions = questions.filter((question) => question.percentage != null);
     const totalPercentage = Number(
         weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toFixed(2),
     );

@@ -66,7 +66,7 @@ export type Page = {
     title: LocalString;
     introduction?: LocalString;
     layout: PageLayout;
-    questions: Question[];
+    elements: PageElement[];
     hasResults: boolean;
     isInCurrentForm: boolean;
 };
@@ -99,6 +99,21 @@ export type Question = {
     allowedFileSize?: number;
     /** Properties of an embedded object. */
     subProperties?: Question[] | null;
+};
+
+export type PageElementKind = "Question" | "Text" | "Callout";
+
+export type PageElement = {
+    kind: PageElementKind;
+    question?: Question;
+    callout?: Callout;
+    text?: LocalString;
+};
+
+export type Callout = {
+    variant: "Info" | "Warning" | "Error" | "Success";
+    title?: LocalString;
+    text?: LocalString;
 };
 
 export type SortDirection = "Ascending" | "Descending";
@@ -142,7 +157,13 @@ export type Choice = {
 export type PageLayout = "Normal" | "Condensed";
 export type StepResultsType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
 export type RoleAction =
-    "ViewAdminTools" | "View" | "Edit" | "Submit" | "Execute" | "CreateRelatedInstance" | "Undo";
+    | "ViewAdminTools"
+    | "View"
+    | "Edit"
+    | "Submit"
+    | "Execute"
+    | "CreateRelatedInstance"
+    | "Undo";
 export type DataType =
     | "File"
     | "Date"
