@@ -176,7 +176,7 @@ export const StepCard = ({step, instance}: Props) => {
             {hasBodyContent && (
                 <Disclosure.Content>
                     {deadlineMessages.map((candidate) => (
-                        <div key={candidate.id} className="py-4">
+                        <div key={candidate.id} className="pt-4">
                             <MarkdownRenderer>
                                 {l(candidate.deadline?.message) || t("instance.deadline_passed")}
                             </MarkdownRenderer>
