@@ -1,6 +1,7 @@
 import {Navigate, useSearchParams} from "react-router";
 
 import {
+    Button,
     Card,
     Container,
     Heading,
@@ -14,6 +15,7 @@ import {
 import {BackLink} from "~/components/BackLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
+import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {ConfigVersionCard} from "~/pages/develop/ConfigVersionCard";
 import {FormEditorCard} from "~/pages/develop/FormEditorCard";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
@@ -25,6 +27,7 @@ function Develop() {
     const {data: currentUser, isLoading: isUserLoading} = useGetCurrentUserQuery();
     const {data: definitions} = useGetWorkflowDefinitionsQuery({includeAll: true});
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useVersionedNavigate();
 
     useDocumentTitle("Develop");
 
@@ -102,7 +105,12 @@ function Develop() {
 
     return (
         <Container maxWidth={1280}>
-            <BackLink className="mb-4">{t("home")}</BackLink>
+            <div className="mb-4 flex items-center justify-between gap-4">
+                <BackLink>{t("home")}</BackLink>
+                <Button intent="secondary" onClick={() => navigate("/develop/migrations")}>
+                    {t("migrations.title")}
+                </Button>
+            </div>
             <ConfigVersionCard />
             <FormEditorCard />
             {definitionsContent}
