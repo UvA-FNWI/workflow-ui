@@ -168,6 +168,22 @@
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
   "submit": "Submit",
+  "undo": {
+    "action": "Action",
+    "candidate_changed": "The undo candidate changed. The workflow has been refreshed.",
+    "confirm": "Undo",
+    "error": "The operation could not be undone. Please try again.",
+    "execute_action": "Execute action",
+    "form": "Form",
+    "form_submission": "Form submission",
+    "occurred_at": "Occurred at",
+    "open": "Undo operation for {{step}}",
+    "operation_type": "Operation type",
+    "reason": "Reason",
+    "reason_description": "Explain why this operation is being undone.",
+    "step": "Step",
+    "title": "Undo operation"
+  },
   "user_picker": {
     "no_results": "No users found",
     "not_in_list": "Not in list",
