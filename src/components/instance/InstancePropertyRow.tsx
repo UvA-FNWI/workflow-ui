@@ -24,7 +24,7 @@ const EDITABLE_TYPES: DataType[] = [
     "Double",
     "Date",
     "User",
-    "Boolean",
+    "Check",
     "Choice",
     "Reference",
 ];

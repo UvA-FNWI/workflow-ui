@@ -13,6 +13,7 @@ import {
     TabPanels,
     Tabs,
     TabToolbar,
+    useTabsWithLocalStorage,
 } from "@uva-fnwi/datanose-ui";
 
 import {ScreenTable} from "~/components/ScreenTable";
@@ -21,15 +22,24 @@ import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useGetScreenQuery} from "~/store/api/screensApi";
 
+function getScreenTabStorageKey(workflowDefinition = "", screenName = "") {
+    return ["workflow", "screen", workflowDefinition, screenName, "active-tab"]
+        .map(encodeURIComponent)
+        .join(":");
+}
+
 export const ScreenView = () => {
     const {l} = useTranslate("common");
     const {workflowDefinition, screenName} = useParams();
-    const {data: screen} = useGetScreenQuery(
+    const {currentData: screen} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {skip: !workflowDefinition || !screenName},
     );
     const [search, setSearch] = useState("");
-    const [activeTab, setActiveTab] = useState(0);
+    const {activeIndex: activeTab, onTabChange: setActiveTab} = useTabsWithLocalStorage({
+        tabs: screen?.groups?.map((group) => group.name) ?? [],
+        storageKey: getScreenTabStorageKey(workflowDefinition, screenName),
+    });
 
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
 

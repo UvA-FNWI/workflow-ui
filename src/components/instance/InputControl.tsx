@@ -219,7 +219,7 @@ export const InputControl = ({
         );
     }
 
-    if (question.type === "Boolean") {
+    if (question.type === "Check") {
         return (
             <Checkbox
                 label={l(question.text) ?? ""}
