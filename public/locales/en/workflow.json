@@ -112,6 +112,7 @@
   },
   "previous": "Previous",
   "progress": {
+    "amsterdam_time": "Amsterdam time",
     "completed": "Completed",
     "deadline": "Deadline",
     "titleStudent": "Your progress",
