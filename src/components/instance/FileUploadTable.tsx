@@ -108,6 +108,12 @@ export const FileUploadTable = ({
                             question.allowedFileSize!,
                         );
 
+                        const statusIndicatorClass = hasValidFile
+                            ? "bg-green-600"
+                            : question.isRequired
+                              ? "bg-red-brand"
+                              : "bg-grey-600";
+
                         return (
                             <tr
                                 key={question.name}
@@ -115,7 +121,7 @@ export const FileUploadTable = ({
                             >
                                 <td className="align-center p-2">
                                     <div
-                                        className={`h-3 w-3 rounded-full ${hasValidFile ? "bg-green-600" : "bg-red-brand"}`}
+                                        className={`h-3 w-3 rounded-full ${statusIndicatorClass}`}
                                         aria-label={
                                             hasValidFile
                                                 ? t("file_upload.uploaded")
@@ -124,7 +130,14 @@ export const FileUploadTable = ({
                                     />
                                 </td>
                                 <td className="align-center p-2">
-                                    <div className="font-medium">{l(question.text)}</div>
+                                    <div className="flex justify-between gap-1">
+                                        <div className="font-medium">{l(question.text)}</div>
+                                        {!question.isRequired && (
+                                            <Text className="text-grey-900 italic" size="sm">
+                                                {t("optional")}
+                                            </Text>
+                                        )}
+                                    </div>
                                     {question.description && (
                                         <div className="text-sm text-grey-600 dark:text-grey-400">
                                             <MarkdownRenderer>
@@ -165,6 +178,7 @@ export const FileUploadTable = ({
                                                     size: allowedFileSizeText,
                                                 }),
                                             }}
+                                            hasError={!!uploadErrors[question.name]}
                                             accept={toFileInputAccept(question.allowedFileTypes!)}
                                         />
                                         {uploadErrors[question.name] && (
