@@ -14,7 +14,8 @@ import {useGetCurrentUserQuery} from "~/store/api/usersApi";
 function Migrations() {
     const {t} = useTranslate(["workflow", "common"]);
     const {data: currentUser, isLoading: isUserLoading} = useGetCurrentUserQuery();
-    const {data: migrations = [], isLoading, isError} = useGetMigrationsQuery();
+    const {data: migrations = [], isLoading, isError, error} = useGetMigrationsQuery();
+    const errorMessage = (error as {data?: {message?: unknown}} | undefined)?.data?.message;
     const [search, setSearch] = useState("");
 
     useDocumentTitle(t("migrations.title"));
@@ -42,7 +43,11 @@ function Migrations() {
                 {isLoading ? (
                     <Skeleton className="h-64 w-full" />
                 ) : isError ? (
-                    <Text intent="error">{t("migrations.load_error")}</Text>
+                    <Text intent="error">
+                        {typeof errorMessage === "string" && errorMessage
+                            ? errorMessage
+                            : t("migrations.load_error")}
+                    </Text>
                 ) : (
                     <MigrationsTable migrations={migrations} globalFilter={search} />
                 )}
