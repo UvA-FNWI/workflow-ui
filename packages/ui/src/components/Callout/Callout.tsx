@@ -30,8 +30,7 @@ export type CalloutType = NonNullable<
 >;
 
 export interface CalloutProps
-  extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof calloutVariants> {
+  extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof calloutVariants> {
   header?: ReactNode;
   action?: ReactNode;
   icon?: ReactNode;
