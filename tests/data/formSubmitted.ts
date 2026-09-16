@@ -409,6 +409,8 @@ export const formSubmitted = {
                                     },
                                     layout: null,
                                     subProperties: null,
+                                    allowedFileTypes: ["pdf", "doc", "docx"],
+                                    allowedFileSize: 10_000_000,
                                 },
                             },
                             {
@@ -435,6 +437,8 @@ export const formSubmitted = {
                                     },
                                     layout: null,
                                     subProperties: null,
+                                    allowedFileTypes: ["pdf", "doc", "docx"],
+                                    allowedFileSize: 10_000_000,
                                 },
                             },
                         ],
