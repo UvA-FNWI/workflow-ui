@@ -11,7 +11,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {Page, PageElementType} from "~/store/api/types/submissions";
+import type {Page, PageElement as PageElementType} from "~/store/api/types/submissions";
 import {isPageComplete} from "~/utils/submissionUtils.ts";
 
 type PageControlProps = {

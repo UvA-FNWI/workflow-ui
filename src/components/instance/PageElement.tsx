@@ -9,7 +9,7 @@ import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import type {AnswerInput} from "~/store/api/types/params";
-import type {Answer, PageElementType} from "~/store/api/types/submissions";
+import type {Answer, PageElement as PageElementType} from "~/store/api/types/submissions";
 
 type PageElementProps = {
     instanceId: string;
@@ -39,6 +39,7 @@ export const PageElement = ({
 
     switch (element.kind) {
         case "Text":
+            if (!element.text) return null;
             return (
                 <Text size="lg" as="span">
                     <MarkdownRenderer>{l(element.text)}</MarkdownRenderer>
@@ -48,8 +49,8 @@ export const PageElement = ({
             if (!element.callout || !element.callout.variant) return null;
             return (
                 <Callout
-                    type={element.callout?.variant.toLowerCase() as CalloutType}
-                    header={l(element.callout?.title)}
+                    type={element.callout.variant.toLowerCase() as CalloutType}
+                    header={l(element.callout.title)}
                 >
                     {element.callout.text && (
                         <MarkdownRenderer>{l(element.callout.text)}</MarkdownRenderer>
