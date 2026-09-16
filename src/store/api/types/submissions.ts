@@ -1,6 +1,8 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {ApiErrorState} from "~/store/api/types/returnTypes.ts";
 
+export type MessageVariant = "Success" | "Error" | "Info" | "Warning" | "Note";
+
 export type Submission = {
     id: string;
     dateSubmitted?: string;
@@ -17,11 +19,9 @@ export type EffectResult = {
 };
 
 export type ToastEffect = {
-    type: ToastType;
+    type: MessageVariant;
     message: LocalString;
 };
-
-export type ToastType = "Success" | "Error" | "Info" | "Warning" | "Note";
 
 export type AnswerChange = {
     value: unknown;
@@ -66,7 +66,7 @@ export type Page = {
     title: LocalString;
     introduction?: LocalString;
     layout: PageLayout;
-    elements: PageElement[];
+    elements: PageElementType[];
     hasResults: boolean;
     isInCurrentForm: boolean;
 };
@@ -103,7 +103,7 @@ export type Question = {
 
 export type PageElementKind = "Question" | "Text" | "Callout";
 
-export type PageElement = {
+export type PageElementType = {
     kind: PageElementKind;
     question?: Question;
     callout?: Callout;
@@ -111,7 +111,7 @@ export type PageElement = {
 };
 
 export type Callout = {
-    variant: "Info" | "Warning" | "Error" | "Success";
+    variant: MessageVariant;
     title?: LocalString;
     text?: LocalString;
 };

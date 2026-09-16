@@ -25,10 +25,13 @@ const calloutVariants = cva(
   }
 );
 
-type CalloutType = NonNullable<VariantProps<typeof calloutVariants>['type']>;
+export type CalloutType = NonNullable<
+  VariantProps<typeof calloutVariants>['type']
+>;
 
 export interface CalloutProps
-  extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof calloutVariants> {
+  extends HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof calloutVariants> {
   header?: ReactNode;
   action?: ReactNode;
   icon?: ReactNode;
