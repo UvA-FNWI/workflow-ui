@@ -128,7 +128,7 @@ export const FileUploadTable = ({
                                     {question.description && (
                                         <div className="text-sm text-grey-600 dark:text-grey-400">
                                             <MarkdownRenderer>
-                                                {l(question.description) ?? ""}
+                                                {l(question.description)}
                                             </MarkdownRenderer>
                                         </div>
                                     )}

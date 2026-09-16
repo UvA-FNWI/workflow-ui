@@ -108,7 +108,7 @@ export function RubricPopover({
                                         >
                                             <div className="px-2 py-2">
                                                 <MarkdownRenderer>
-                                                    {l(rubricEntry.description) ?? ""}
+                                                    {l(rubricEntry.description)}
                                                 </MarkdownRenderer>
                                             </div>
                                         </div>
