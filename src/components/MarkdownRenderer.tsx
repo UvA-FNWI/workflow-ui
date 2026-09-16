@@ -1,7 +1,6 @@
 import Markdown from "react-markdown";
 
 import {Heading, Text} from "@uva-fnwi/datanose-ui";
-import rehypeRaw from "rehype-raw";
 
 interface MarkdownRendererProps {
     children?: string;
@@ -11,7 +10,6 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
     if (!children) return null;
     return (
         <Markdown
-            rehypePlugins={[rehypeRaw]}
             components={{
                 h1: ({children: nodeChildren}) => (
                     <Heading as="h1" size="xl">
@@ -53,11 +51,6 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
                     <li>
                         <Text as="span">{nodeChildren}</Text>
                     </li>
-                ),
-                strong: ({children: nodeChildren}) => (
-                    <Text as="b" fontWeight="semibold">
-                        {nodeChildren}
-                    </Text>
                 ),
                 a: ({children: nodeChildren, href}) => (
                     <Text as="span" display="inline" className="text-red-500 hover:underline">
