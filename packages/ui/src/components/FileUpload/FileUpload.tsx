@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { cva } from 'class-variance-authority';
 
@@ -49,6 +49,8 @@ export interface FileUploadProps {
   isLoading?: boolean;
   /** Callback when file name is clicked */
   onFileNameClick?: () => void;
+  /** Whether the file upload has an external error */
+  hasError?: boolean;
 }
 
 export const FileUpload = ({
@@ -66,6 +68,7 @@ export const FileUpload = ({
   errorMessages = {},
   isLoading = false,
   onFileNameClick,
+  hasError = false,
 }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -78,6 +81,16 @@ export const FileUpload = ({
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
+
+  useEffect(() => {
+    if (hasError) {
+      setSelectedFile(null);
+      setError(null);
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
+    }
+  }, [hasError]);
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
@@ -151,7 +164,8 @@ export const FileUpload = ({
   // Build accept attribute for input
   const acceptAttribute = accept.length > 0 ? accept.join(',') : undefined;
 
-  const showUploadButton = (!selectedFile && !fileName) || error;
+  const showUploadButton =
+    (!selectedFile && !fileName) || error || hasError || isLoading;
   const fileNameToShow = selectedFile ? selectedFile.name : fileName;
 
   return (
@@ -181,7 +195,7 @@ export const FileUpload = ({
         </Button>
       )}
 
-      {showFileName && (selectedFile || fileName) && !error && (
+      {showFileName && (selectedFile || fileName) && !error && !hasError && (
         <div
           className={cn(
             'ui:flex ui:min-w-0 ui:items-center ui:justify-between',
