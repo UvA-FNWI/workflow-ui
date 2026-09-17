@@ -284,7 +284,6 @@ export const InputControl = ({
             );
         }
 
-
         if (isChoiceType("ComboBox") && !question.isArray) {
             const choiceText = (choice: Choice) => l(choice.text) ?? choice.name;
             return (
