@@ -115,6 +115,10 @@
     "amsterdam_time": "Amsterdamse tijd",
     "completed": "Voltooid",
     "deadline": "Deadline",
+    "deadline_changed": "Deadline aangepast",
+    "previous_deadline": "Was",
+    "deadline_change_reason": "Reden",
+    "deadline_reason_unknown": "Niet vastgelegd",
     "titleStudent": "Jouw voortgang",
     "titleSupervisor": "Voortgang van de student"
   },
@@ -187,5 +191,24 @@
   "version_card": {
     "no_answer": "Geen antwoord gegeven",
     "version_nr": "Versie {{versionNumber}}"
+  },
+  "postponement": {
+    "errors": {
+      "InvalidChanges": "Kies een latere datum voor minstens één aanpasbare deadline. Is een deadline gewijzigd, open het venster opnieuw."
+    },
+    "introduction": "Je wilt {{ Student.Name }} uitstel verlenen. Kies welke deadlines je wilt aanpassen.",
+    "save_error": "De deadlines konden niet worden aangepast. Probeer het opnieuw.",
+    "scope": "Geef uitstel:",
+    "all": "Voor alle aanpasbare deadlines",
+    "individual": "Per deadline",
+    "amount": "Verzet alle deadlines met:",
+    "unit": "Eenheid",
+    "days": "Dagen",
+    "weeks": "Weken",
+    "current_date": "Huidige datum",
+    "new_date": "Nieuwe datum",
+    "callout_title": "Moet de examencommissie uitstel verlenen?",
+    "callout_body": "Mail de examencommissie. Zij zullen de datum aanpassen.",
+    "no_deadlines": "Er zijn geen aanpasbare deadlines met een datum."
   }
 }

@@ -2,6 +2,7 @@ import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
+    Form,
     FormLayout,
     Question,
     RoleAction,
@@ -76,6 +77,9 @@ export type StepDeadline = {
     type: "Soft" | "Hard";
     isPassed: boolean;
     message: LocalString | null;
+    previousDate?: string | null;
+    changeReason?: string | null;
+    property?: string | null;
 };
 
 export type WorkflowStep = {
@@ -106,6 +110,7 @@ export type Action = {
     id: string;
     type: ActionType;
     form?: string;
+    modalForm?: Form;
     title: LocalString;
     mail?: string;
     steps: string[];
@@ -114,7 +119,7 @@ export type Action = {
     autoOpenForm?: boolean;
 };
 
-export type ActionType = "SubmitForm" | "Execute";
+export type ActionType = "SubmitForm" | "Execute" | "PostponeDeadlines";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 
 export type Role = {

@@ -3,6 +3,7 @@ import {useState} from "react";
 import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
+import {DeadlineTooltip} from "~/components/instance/deadlines/DeadlineTooltip.tsx";
 import {
     getStepHierarchy,
     hasVersionHistory,
@@ -77,25 +78,24 @@ export const StepCard = ({step, instance}: Props) => {
     );
     const isAfterCurrentStep = instance.steps.indexOf(step) > currentStepIndex;
 
-    const deadlineDate =
-        step.deadline?.date ??
-        step.children?.find((c) => c.id == instance.currentStep)?.deadline?.date ??
+    const deadline =
+        (step.deadline?.date ? step.deadline : null) ??
+        step.children?.find((c) => c.id == instance.currentStep)?.deadline ??
         null;
     const submittedDate =
         [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])]
             .filter((date): date is string => Boolean(date))
             .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
-
     const shownDate = submittedDate
         ? {
               label: t("status.submitted"),
               value: formatDateShort(submittedDate, i18n.language),
           }
-        : deadlineDate
+        : deadline?.date
           ? {
                 label: t("progress.deadline"),
                 value: formatDateShortWithRelevantTime(
-                    deadlineDate,
+                    deadline.date,
                     i18n.language,
                     `(${t("progress.amsterdam_time")})`,
                 ),
@@ -165,10 +165,18 @@ export const StepCard = ({step, instance}: Props) => {
                         )}
                     </div>
                     {shownDate && (
-                        <Text as="span" className="shrink-0">
-                            <Text fontWeight="semibold">{shownDate.label}</Text>
-                            {":\t"}
-                            {shownDate.value}
+                        <Text as="span" className="inline-flex shrink-0 items-center gap-1">
+                            {!submittedDate && deadline?.previousDate && (
+                                <DeadlineTooltip
+                                    previousDate={deadline.previousDate}
+                                    reason={deadline.changeReason}
+                                />
+                            )}
+                            <span>
+                                <Text fontWeight="semibold">{shownDate.label}</Text>
+                                {":\t"}
+                                {shownDate.value}
+                            </span>
                         </Text>
                     )}
                 </div>

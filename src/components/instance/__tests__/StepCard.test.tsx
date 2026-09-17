@@ -1,4 +1,4 @@
-import {cleanup, render, screen} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, expect, it, vi} from "vitest";
 
 import {StepCard} from "../StepCard.tsx";
@@ -91,6 +91,37 @@ const expiredStatus = {
     label: null,
 } as const;
 const expiredMessage = {en: "**Too late.** Contact your coordinator.", nl: "Te laat."};
+
+it("shows the previous date and saved reason on hover, including on unavailable steps", async () => {
+    const step = makeStep({
+        deadline: {
+            ...deadline,
+            previousDate: "1999-12-25T23:00:00Z",
+            changeReason: "Other\nResearch delay",
+        },
+        expectsSubmission: false,
+    });
+    render(<StepCard step={step} instance={makeInstance(step)} />);
+    const icon = screen.getByRole("img", {name: "progress.deadline_changed"});
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    fireEvent.pointerMove(icon.parentElement!, {pointerType: "mouse"});
+    fireEvent.pointerEnter(icon.parentElement!, {pointerType: "mouse"});
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip).toHaveTextContent("26/12/1999");
+    expect(tooltip).toHaveTextContent("Other Research delay");
+});
+
+it("only marks changed deadlines, not submitted dates", () => {
+    const step = makeStep();
+    const {rerender} = render(<StepCard step={step} instance={makeInstance(step)} />);
+    expect(screen.queryByRole("img", {name: "progress.deadline_changed"})).not.toBeInTheDocument();
+    const completed = makeStep({
+        dateCompleted: "2000-01-02T00:00:00Z",
+        deadline: {...deadline, previousDate: "1999-12-25T23:00:00Z"},
+    });
+    rerender(<StepCard step={completed} instance={makeInstance(completed)} />);
+    expect(screen.queryByRole("img", {name: "progress.deadline_changed"})).not.toBeInTheDocument();
+});
 
 it("replaces an already open form with the configured hard deadline message after a refresh", () => {
     const step = makeStep();

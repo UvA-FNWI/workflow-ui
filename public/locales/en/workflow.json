@@ -115,6 +115,10 @@
     "amsterdam_time": "Amsterdam time",
     "completed": "Completed",
     "deadline": "Deadline",
+    "deadline_changed": "Deadline changed",
+    "previous_deadline": "Was",
+    "deadline_change_reason": "Reason",
+    "deadline_reason_unknown": "Not recorded",
     "titleStudent": "Your progress",
     "titleSupervisor": "Student's progress"
   },
@@ -187,5 +191,24 @@
   "version_card": {
     "no_answer": "No answer provided",
     "version_nr": "Version {{versionNumber}}"
+  },
+  "postponement": {
+    "errors": {
+      "InvalidChanges": "Choose a later date for at least one extendable deadline. If a deadline changed, reopen the modal."
+    },
+    "introduction": "You are about to grant this student an extension. Choose which deadlines to extend.",
+    "save_error": "The deadlines could not be updated. Please try again.",
+    "scope": "Grant an extension:",
+    "all": "For all extendable deadlines",
+    "individual": "Per deadline",
+    "amount": "Extend all deadlines by:",
+    "unit": "Unit",
+    "days": "Days",
+    "weeks": "Weeks",
+    "current_date": "Current date",
+    "new_date": "New date",
+    "callout_title": "Does the examination board need to grant the extension?",
+    "callout_body": "Email the examination board. They will adjust the date.",
+    "no_deadlines": "There are no extendable deadlines with a date."
   }
 }

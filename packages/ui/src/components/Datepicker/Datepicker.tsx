@@ -137,7 +137,7 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
         {...groupProps}
         className={cn(
           inputClasses,
-          'ui:flex ui:items-center ui:justify-between',
+          'ui:relative ui:flex ui:items-center ui:justify-between',
           className
         )}
       >
