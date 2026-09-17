@@ -2,6 +2,8 @@ import {useCallback} from "react";
 
 import {
     Checkbox,
+    ComboBox,
+    ComboBoxItem,
     Input,
     NumberInput,
     Radio,
@@ -279,6 +281,29 @@ export const InputControl = ({
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
                     ))}
                 </Select>
+            );
+        }
+
+
+        if (isChoiceType("ComboBox") && !question.isArray) {
+            const choiceText = (choice: Choice) => l(choice.text) ?? choice.name;
+            return (
+                <ComboBox
+                    value={typeof value === "string" ? value : null}
+                    onChange={(selectedValue) => {
+                        immediateChange(selectedValue != null ? String(selectedValue) : null);
+                    }}
+                    placeholder={t("select")}
+                    noResults={t("search_and_select.no_results")}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                >
+                    {choices.map((choice) => (
+                        <ComboBoxItem key={choice.name} textValue={choiceText(choice)}>
+                            {choiceText(choice)}
+                        </ComboBoxItem>
+                    ))}
+                </ComboBox>
             );
         }
 
