@@ -168,6 +168,22 @@
   },
   "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
   "submit": "Inleveren",
+  "undo": {
+    "action": "Actie",
+    "candidate_changed": "De actie die ongedaan kan worden gemaakt is gewijzigd. De workflow is vernieuwd.",
+    "confirm": "Ongedaan maken",
+    "error": "De actie kon niet ongedaan worden gemaakt. Probeer het opnieuw.",
+    "execute_action": "Uitgevoerde actie",
+    "form": "Formulier",
+    "form_submission": "Formulierinzending",
+    "occurred_at": "Uitgevoerd op",
+    "open": "Actie voor {{step}} ongedaan maken",
+    "operation_type": "Type actie",
+    "reason": "Reden",
+    "reason_description": "Leg uit waarom deze actie ongedaan wordt gemaakt.",
+    "step": "Stap",
+    "title": "Actie ongedaan maken"
+  },
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",
