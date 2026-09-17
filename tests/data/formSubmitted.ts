@@ -90,7 +90,12 @@ export const formSubmitted = {
                     },
                     event: "Start",
                     dateCompleted: "2025-12-29T15:22:51.923Z",
-                    deadline: "2026-02-23T06:02:11.487Z",
+                    deadline: {
+                        date: "2026-02-23T06:02:11.487Z",
+                        type: "Soft",
+                        isPassed: false,
+                        message: null,
+                    },
                     children: null,
                 },
                 {
