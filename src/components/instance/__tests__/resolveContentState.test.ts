@@ -1,6 +1,8 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    combineVersionHistory,
+    getVersionHistorySteps,
     hasVersionHistory,
     resolveContentState,
     resolveFormState,
@@ -95,6 +97,97 @@ describe("hasVersionHistory", () => {
         });
 
         expect(hasVersionHistory(step)).toBe(false);
+    });
+});
+
+describe("getVersionHistorySteps", () => {
+    const version = {
+        versionNumber: 1,
+        eventIds: ["Ethics"],
+        submittedAt: "2026-01-01T00:00:00Z",
+        submissions: [makeSubmission({id: "Ethics"})],
+    };
+
+    it("returns nested history when the root step has no versions", () => {
+        const ethicsSubmit = makeStep({id: "EthicsSubmit", versions: [version]});
+        const ethics = makeStep({
+            id: "Ethics",
+            children: [ethicsSubmit, makeStep({id: "EthicsFeedback"})],
+        });
+
+        expect(getVersionHistorySteps(ethics)).toEqual([ethicsSubmit]);
+    });
+
+    it("uses parent history without also rendering overlapping child history", () => {
+        const ethics = makeStep({
+            id: "Ethics",
+            versions: [version],
+            children: [makeStep({id: "EthicsSubmit", versions: [version]})],
+        });
+
+        expect(getVersionHistorySteps(ethics)).toEqual([ethics]);
+    });
+});
+
+describe("combineVersionHistory", () => {
+    it("combines submissions and events with the same version number", () => {
+        const ethicsSubmit = makeStep({
+            id: "EthicsSubmit",
+            versions: [
+                {
+                    versionNumber: 1,
+                    eventIds: ["Ethics"],
+                    submittedAt: "2026-01-01T10:00:00Z",
+                    submissions: [makeSubmission({id: "Ethics"})],
+                },
+            ],
+        });
+        const ethicsFeedback = makeStep({
+            id: "EthicsFeedback",
+            versions: [
+                {
+                    versionNumber: 1,
+                    eventIds: ["ReviseEthics"],
+                    submittedAt: "2026-01-02T10:00:00Z",
+                    submissions: [makeSubmission({id: "ReviseEthics"})],
+                },
+            ],
+        });
+
+        expect(combineVersionHistory([ethicsSubmit, ethicsFeedback])).toEqual([
+            {
+                versionNumber: 1,
+                eventIds: ["Ethics", "ReviseEthics"],
+                submittedAt: "2026-01-02T10:00:00Z",
+                submissions: [
+                    expect.objectContaining({id: "Ethics"}),
+                    expect.objectContaining({id: "ReviseEthics"}),
+                ],
+            },
+        ]);
+    });
+
+    it("keeps different version numbers separate and orders newest first", () => {
+        const step = makeStep({
+            versions: [
+                {
+                    versionNumber: 1,
+                    eventIds: ["Ethics"],
+                    submittedAt: "2026-01-01T10:00:00Z",
+                    submissions: [makeSubmission({id: "Ethics-v1"})],
+                },
+                {
+                    versionNumber: 2,
+                    eventIds: ["Ethics"],
+                    submittedAt: "2026-01-02T10:00:00Z",
+                    submissions: [makeSubmission({id: "Ethics-v2"})],
+                },
+            ],
+        });
+
+        expect(combineVersionHistory([step]).map((version) => version.versionNumber)).toEqual([
+            2, 1,
+        ]);
     });
 });
 
