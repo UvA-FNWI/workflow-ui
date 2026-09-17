@@ -33,7 +33,7 @@ export const ScreenView = () => {
     const {workflowDefinition, screenName} = useParams();
     const {currentData: screen} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
-        {skip: !workflowDefinition || !screenName},
+        {skip: !workflowDefinition || !screenName, refetchOnMountOrArgChange: true},
     );
     const [search, setSearch] = useState("");
     const {activeIndex: activeTab, onTabChange: setActiveTab} = useTabsWithLocalStorage({

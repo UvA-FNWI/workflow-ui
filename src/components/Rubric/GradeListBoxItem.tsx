@@ -67,7 +67,7 @@ export function GradeListBoxItem({
                     isFocusVisible: isFocused,
                     isHovered,
                 }),
-                "flex min-h-8 flex-1 items-center justify-center border-grey-200 text-sm focus:ring-offset-1",
+                "flex min-h-8 flex-1 items-center justify-center border-grey-200 p-2 text-sm focus:ring-offset-1",
                 isLastItem ? "border-b-0" : "border-b",
                 className,
             )}
