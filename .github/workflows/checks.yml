@@ -23,7 +23,9 @@ jobs:
                     -name pnpm-lock.yaml -o \
                     -name pnpm-workspace.yaml -o \
                     -name package-lock.json -o \
-                    -name yarn.lock \
+                    -name yarn.lock -o \
+                    -name bun.lock -o \
+                    -name bun.lockb \
                   \) -print)
                   if [ -n "${nested}" ]; then
                     echo "Nested package-manager files are not allowed:"

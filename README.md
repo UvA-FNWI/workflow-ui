@@ -10,7 +10,7 @@ Install **once from this directory**. There is a single lockfile (`pnpm-lock.yam
 pnpm install
 ```
 
-`pnpm install` from `packages/ui` or `packages/core` uses this workspace (no nested lockfile). `npm install` or `yarn install` or `bun install` should not be used. Add dependencies from the root with `--filter`, or from a package folder with `pnpm add`. After a root install, `pnpm test`, `pnpm exec tsc`, and `pnpm storybook` from a package folder are fine.
+`pnpm install` from `packages/ui` or `packages/core` uses this workspace (no nested lockfile). `npm install` or `yarn install` or `bun install` should not be used. Add app dependencies at the root with `-w`, package dependencies with `--filter`, or `pnpm add` from a package folder. After a root install, `pnpm test`, `pnpm exec tsc`, and `pnpm storybook` from a package folder are fine.
 
 ```bash
 pnpm dev
@@ -35,8 +35,8 @@ That updates the catalog entry. Leave the `overrides:` values as `"catalog:"` so
 
 ```bash
 # App (workspace root)
-pnpm add some-pkg
-pnpm add -D some-dev-pkg
+pnpm add -w some-pkg
+pnpm add -wD some-dev-pkg
 
 # A workspace package
 pnpm --filter @uva-fnwi/datanose-ui add some-pkg
