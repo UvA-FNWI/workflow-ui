@@ -31,12 +31,13 @@ export function WorkflowActions({instanceId, actions, steps = []}: Props) {
                     />
                 ) : null;
             case "PostponeDeadlines":
-                return action.modalForm ? (
+                return action.form ? (
                     <PostponeDeadlineModal
                         key={action.id}
                         instanceId={instanceId}
                         actionName={action.name}
-                        form={action.modalForm}
+                        title={action.title}
+                        onLoadingChange={setIsLoading}
                         deadlines={getExtendableDeadlines(steps)}
                         onClose={onClose}
                     />
@@ -61,10 +62,12 @@ export function WorkflowActions({instanceId, actions, steps = []}: Props) {
             {buttons.map(({action}) => (
                 <Button
                     key={action.id}
-                    {...actionIntentToButtonProps(action.intent)}
+                    {...(action.type === "PostponeDeadlines"
+                        ? {intent: "secondary" as const, variant: "destructive" as const}
+                        : actionIntentToButtonProps(action.intent))}
                     isLoading={active?.action.id === action.id && isLoading}
                     onClick={() => {
-                        setIsLoading(action.type === "SubmitForm");
+                        setIsLoading(true);
                         setSelectedAction(action.id);
                     }}
                 >

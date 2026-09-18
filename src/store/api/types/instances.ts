@@ -2,7 +2,6 @@ import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
-    Form,
     FormLayout,
     Question,
     RoleAction,
@@ -80,6 +79,7 @@ export type StepDeadline = {
     previousDate?: string | null;
     changeReason?: string | null;
     property?: string | null;
+    maxDate?: string | null;
 };
 
 export type WorkflowStep = {
@@ -110,7 +110,6 @@ export type Action = {
     id: string;
     type: ActionType;
     form?: string;
-    modalForm?: Form;
     title: LocalString;
     mail?: string;
     steps: string[];

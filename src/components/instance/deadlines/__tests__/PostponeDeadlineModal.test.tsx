@@ -7,18 +7,19 @@ import {PostponeDeadlineModal} from "../PostponeDeadlineModal";
 import type {ExtendableDeadline} from "~/store/api/types/deadlines";
 import type {Form} from "~/store/api/types/submissions";
 
-const {postpone} = vi.hoisted(() => ({postpone: vi.fn()}));
+const {postpone, loadForm} = vi.hoisted(() => ({postpone: vi.fn(), loadForm: vi.fn()}));
 vi.mock("react-i18next", () => ({useTranslation: () => ({i18n: {language: "en"}})}));
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
         t: (key: string) => key,
-        l: (value: {en: string}) => value.en,
+        l: (value?: {en: string}) => value?.en,
         i18n: {language: "en"},
     }),
 }));
 vi.mock("~/store/api/deadlinesApi", () => ({
     deadlinesApi: {
         endpoints: {
+            getPostponementForm: {useQuery: loadForm},
             postponeDeadlines: {
                 useMutation: () => {
                     const [error, setError] = useState<unknown>();
@@ -43,36 +44,41 @@ const deadlines: ExtendableDeadline[] = [
         date: "2027-01-01T12:00:00+01:00",
     },
 ];
+const form = {
+    name: "ExtensionDialog",
+    layout: "Modal",
+    title: {en: "Configured modal title", nl: "Ingestelde modaltitel"},
+    pages: [
+        {
+            name: "Reason",
+            questions: [
+                {
+                    name: "PostponementReason",
+                    type: "Choice",
+                    text: {en: "Configured reason"},
+                    choices: [
+                        {name: "Research", text: {en: "Research delay"}},
+                        {name: "Other", text: {en: "Other"}},
+                    ],
+                },
+                {
+                    name: "PostponementExplanation",
+                    type: "String",
+                    text: {en: "Configured explanation"},
+                },
+            ],
+        },
+    ],
+} as Form;
 const props = {
     instanceId: "instance",
     actionName: "GrantExtension",
-    form: {
-        name: "ExtensionDialog",
-        type: "PostponeDeadline",
-        layout: "Modal",
-        title: {en: "Configured modal title", nl: "Ingestelde modaltitel"},
-        pages: [
-            {
-                name: "Reason",
-                questions: [
-                    {
-                        name: "Reason",
-                        type: "Choice",
-                        text: {en: "Configured reason"},
-                        choices: [
-                            {name: "Research", text: {en: "Research delay"}},
-                            {name: "Other", text: {en: "Other"}},
-                        ],
-                    },
-                    {name: "Explanation", type: "String", text: {en: "Configured explanation"}},
-                ],
-            },
-        ],
-    } as Form,
+    title: {en: "Extend deadlines", nl: "Uitstel verlenen"},
     deadlines,
     onClose: vi.fn(),
 };
 beforeEach(() => {
+    loadForm.mockReset().mockReturnValue({currentData: form, isFetching: false, isError: false});
     postpone.mockReset().mockResolvedValue({data: {}});
     props.onClose.mockReset();
     vi.useFakeTimers({toFake: ["Date"]});
@@ -189,4 +195,98 @@ it("clears the explanation when switching reasons", async () => {
     await chooseReason("Other");
     expect(screen.getByLabelText("Configured explanation")).toHaveValue("");
     expect(screen.getByRole("button", {name: "confirm"})).toBeDisabled();
+});
+
+it("renders the configured Markdown introduction from the loaded form", () => {
+    loadForm.mockReturnValue({
+        currentData: {
+            ...form,
+            pages: [
+                {
+                    ...form.pages[0],
+                    introduction: {
+                        en: "Extend for **Ada** in **Research Methods**.",
+                        nl: "Uitstel voor Ada.",
+                    },
+                },
+            ],
+        },
+        isFetching: false,
+        isError: false,
+    });
+    render(<PostponeDeadlineModal {...props} />);
+    expect(screen.getByText("Ada").tagName).toBe("STRONG");
+    expect(screen.getByText("Research Methods")).toBeInTheDocument();
+    expect(screen.queryByText("postponement.introduction")).not.toBeInTheDocument();
+});
+
+it("enforces the remaining all-deadlines allowance and accepts its boundary", async () => {
+    render(
+        <PostponeDeadlineModal {...props} deadlines={[{...deadlines[0], maxDate: "2027-01-08"}]} />,
+    );
+    chooseDates();
+    await chooseReason("Research delay");
+    const amount = screen.getByLabelText("postponement.amount");
+    expect(amount).toHaveAttribute("max", "7");
+    fireEvent.change(amount, {target: {value: "8"}});
+    expect(screen.getByRole("button", {name: "confirm"})).toBeDisabled();
+    fireEvent.change(amount, {target: {value: "7"}});
+    fireEvent.click(screen.getByRole("button", {name: "confirm"}));
+    await waitFor(() => expect(postpone).toHaveBeenCalledOnce());
+    expect(postpone.mock.lastCall?.[0].request.changes[0].newDate).toBe("2027-01-08");
+});
+
+it("rounds the remaining allowance down when switching to weeks", async () => {
+    render(
+        <PostponeDeadlineModal {...props} deadlines={[{...deadlines[0], maxDate: "2027-01-11"}]} />,
+    );
+    chooseDates();
+    await chooseReason("Research delay");
+    fireEvent.click(screen.getByRole("button", {name: /postponement.unit/}));
+    fireEvent.click(await screen.findByRole("option", {name: "postponement.weeks"}));
+    const amount = screen.getByLabelText("postponement.amount");
+    expect(amount).toHaveAttribute("max", "1");
+    fireEvent.change(amount, {target: {value: "2"}});
+    expect(screen.getByRole("button", {name: "confirm"})).toBeDisabled();
+    fireEvent.change(amount, {target: {value: "1"}});
+    fireEvent.click(screen.getByRole("button", {name: "confirm"}));
+    await waitFor(() => expect(postpone).toHaveBeenCalledOnce());
+});
+
+it("disables individual dates beyond the limit and accepts the latest allowed date", async () => {
+    render(
+        <PostponeDeadlineModal {...props} deadlines={[{...deadlines[0], maxDate: "2027-01-08"}]} />,
+    );
+    fireEvent.click(screen.getByRole("radio", {name: "postponement.individual"}));
+    const picker = screen.getByRole("group", {name: "postponement.new_date: Proposal"});
+    fireEvent.click(within(picker).getByRole("button"));
+    const calendar = await screen.findByRole("grid", {name: "January 2027"});
+    expect(
+        within(calendar).getByRole("button", {name: /Saturday, 9 January 2027/}),
+    ).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(within(calendar).getByRole("button", {name: /Friday, 8 January 2027/}));
+    await chooseReason("Research delay");
+    fireEvent.click(screen.getByRole("button", {name: "confirm"}));
+    await waitFor(() => expect(postpone).toHaveBeenCalledOnce());
+});
+
+it("blocks all at an exhausted limit while leaving other individual dates available", () => {
+    render(
+        <PostponeDeadlineModal
+            {...props}
+            deadlines={[
+                {...deadlines[0], maxDate: "2027-01-01"},
+                {...deadlines[0], property: "Other", title: {en: "Other", nl: "Andere"}},
+            ]}
+        />,
+    );
+    fireEvent.click(screen.getByRole("radio", {name: "postponement.all"}));
+    expect(screen.getByLabelText("postponement.amount")).toBeDisabled();
+    expect(screen.getByText("postponement.all_limit_reached")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("radio", {name: "postponement.individual"}));
+    expect(screen.getByText("postponement.limit_reached")).toBeInTheDocument();
+    expect(
+        screen.queryByRole("group", {name: "postponement.new_date: Proposal"}),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("group", {name: "postponement.new_date: Other"})).toBeInTheDocument();
 });

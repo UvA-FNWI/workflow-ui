@@ -2,10 +2,15 @@ import {applyEffectResult} from "../effectsSlice";
 import {baseApi} from "./baseApi";
 import {instancesApi} from "./instancesApi";
 import type {PostponeDeadlinesRequest, PostponeDeadlinesResponse} from "./types/deadlines";
+import type {Form} from "./types/submissions";
 
 type Params = {instanceId: string};
 export const deadlinesApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
+        getPostponementForm: build.query<Form, Params & {actionName: string}>({
+            query: ({instanceId, actionName}) =>
+                `PostponeDeadline/${instanceId}/${encodeURIComponent(actionName)}`,
+        }),
         postponeDeadlines: build.mutation<
             PostponeDeadlinesResponse,
             Params & {actionName: string; request: PostponeDeadlinesRequest}

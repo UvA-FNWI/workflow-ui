@@ -1,42 +1,97 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
-import {Button, Callout, Modal, Radio, RadioGroup, Text} from "@uva-fnwi/datanose-ui";
+import {
+    Button,
+    Callout,
+    LoadingSpinner,
+    Modal,
+    Radio,
+    RadioGroup,
+    Text,
+} from "@uva-fnwi/datanose-ui";
 
 import {PostponeAllDeadlines} from "./PostponeAllDeadlines";
-import {deadlineDate, postponeByDays} from "./postponeDeadline";
+import {deadlineDate, postponeByDays, remainingPostponementDays} from "./postponeDeadline";
 import {PostponeDeadlineReason} from "./PostponeDeadlineReason";
 import {PostponeIndividualDeadlines} from "./PostponeIndividualDeadlines";
-import {useTranslate} from "~/hooks/useTranslate";
+import {MarkdownRenderer} from "~/components/MarkdownRenderer";
+import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 import {deadlinesApi} from "~/store/api/deadlinesApi";
 import type {
     DeadlineChange,
     ExtendableDeadline,
     PostponementError,
 } from "~/store/api/types/deadlines";
-import type {Form} from "~/store/api/types/submissions";
 
 type Props = {
     onClose: () => void;
     instanceId: string;
     actionName: string;
-    form: Form;
+    title: LocalString;
+    onLoadingChange?: (loading: boolean) => void;
     deadlines: ExtendableDeadline[];
 };
 
-export function PostponeDeadlineModal({onClose, instanceId, actionName, form, deadlines}: Props) {
+export function PostponeDeadlineModal({
+    onClose,
+    instanceId,
+    actionName,
+    title,
+    onLoadingChange,
+    deadlines,
+}: Props) {
     const {t, l} = useTranslate("workflow");
+    const {
+        currentData: form,
+        isFetching,
+        isError,
+        refetch,
+    } = deadlinesApi.endpoints.getPostponementForm.useQuery(
+        {instanceId, actionName},
+        {refetchOnMountOrArgChange: true},
+    );
+    useEffect(() => onLoadingChange?.(isFetching), [isFetching, onLoadingChange]);
     const [mode, setMode] = useState("");
     const [amount, setAmount] = useState("");
     const [unit, setUnit] = useState("days");
     const [dates, setDates] = useState<Record<string, string>>({});
     const [reason, setReason] = useState({choice: "", explanation: ""});
-    const questions = form.pages.flatMap((page) => page.questions);
+    const questions = form?.pages.flatMap((page) => page.questions) ?? [];
     const reasonQuestion = questions.find((question) => question.name === "PostponementReason");
     const explanationQuestion = questions.find(
         (question) => question.name === "PostponementExplanation",
     );
     const reasons = reasonQuestion?.choices ?? [];
     const [postpone, {isLoading, error}] = deadlinesApi.endpoints.postponeDeadlines.useMutation();
+
+    const maximumDays = remainingPostponementDays(deadlines);
+    // Recheck authorization on every opening before showing cached metadata.
+    if (!form || isFetching || isError) {
+        return (
+            <Modal isOpen onOpenChange={onClose} aria-label={l(title)}>
+                <Modal.Header>{l(title)}</Modal.Header>
+                <Modal.Body>
+                    {isError && !isFetching ? (
+                        <Callout type="error">{t("form_loading.error")}</Callout>
+                    ) : (
+                        <div role="status" aria-label={t("form_loading.loading")}>
+                            <LoadingSpinner />
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    {isError && !isFetching && (
+                        <Button intent="primary" onClick={() => void refetch()}>
+                            {t("form_loading.retry")}
+                        </Button>
+                    )}
+                    <Button intent="secondary" onClick={onClose}>
+                        {t("cancel")}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        );
+    }
 
     let changes: DeadlineChange[] = [];
     if (mode === "all") {
@@ -49,11 +104,22 @@ export function PostponeDeadlineModal({onClose, instanceId, actionName, form, de
                 previousDate: deadline.date,
                 newDate: dates[deadline.property]!,
             }));
-        if (changes.some((change) => change.newDate <= deadlineDate(change.previousDate)))
+        if (
+            changes.some((change) => {
+                const maximum = deadlines.find(
+                    (deadline) => deadline.property === change.property,
+                )?.maxDate;
+                return (
+                    change.newDate <= deadlineDate(change.previousDate) ||
+                    (maximum != null && change.newDate > maximum)
+                );
+            })
+        )
             changes = [];
     }
 
     const submit = async () => {
+        if (!changes.length) return;
         const choice = reasons.find((choice) => choice.name === reason.choice);
         let description = l(choice?.text) || reason.choice;
         if (reason.choice === "Other") description += "\n" + reason.explanation.trim();
@@ -82,10 +148,14 @@ export function PostponeDeadlineModal({onClose, instanceId, actionName, form, de
         : t("postponement.save_error");
 
     return (
-        <Modal isOpen onOpenChange={onClose}>
+        <Modal isOpen onOpenChange={onClose} aria-label={l(form.title)}>
             <Modal.Header className="pb-0">{l(form.title)}</Modal.Header>
             <div className="px-6">
-                <Text>{t("postponement.introduction")}</Text>
+                <Text as="span">
+                    <MarkdownRenderer>
+                        {l(form.pages[0]?.introduction) || t("postponement.introduction")}
+                    </MarkdownRenderer>
+                </Text>
             </div>
             <Modal.Body>
                 {!deadlines.length ? (
@@ -108,6 +178,7 @@ export function PostponeDeadlineModal({onClose, instanceId, actionName, form, de
                             <PostponeAllDeadlines
                                 amount={amount}
                                 unit={unit}
+                                maximumDays={maximumDays}
                                 onAmountChange={setAmount}
                                 onUnitChange={setUnit}
                             />

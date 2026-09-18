@@ -15,6 +15,8 @@ type Props = {
 
 export function PostponeDeadlineField({deadline, value, onChange}: Props) {
     const {t, l, i18n} = useTranslate("workflow");
+    const limitReached =
+        deadline.maxDate != null && deadline.maxDate <= deadlineDate(deadline.date);
     return (
         <div className="flex flex-col gap-2 border-b border-grey-200 pb-4">
             <Text fontWeight="semibold" className="uppercase">
@@ -24,18 +26,27 @@ export function PostponeDeadlineField({deadline, value, onChange}: Props) {
                 <Text fontWeight="semibold">{t("postponement.current_date")}</Text>
                 <Text fontWeight="semibold">{t("postponement.new_date")}</Text>
                 <Text>{formatDateShortWithRelevantTime(deadline.date, i18n.language)}</Text>
-                <DatePicker
-                    aria-label={t("postponement.new_date") + ": " + l(deadline.title)}
-                    // Start the calendar at a selectable date, even for future deadlines.
-                    minValue={dateToDateValue(parseISO(deadlineDate(deadline.date)))?.add({
-                        days: 1,
-                    })}
-                    value={value ? parseISO(value) : null}
-                    onChange={(date) => {
-                        // DatePicker uses local dates; preserve the selected calendar day.
-                        onChange(date ? format(date, "yyyy-MM-dd") : "");
-                    }}
-                />
+                {limitReached ? (
+                    <Text>{t("postponement.limit_reached")}</Text>
+                ) : (
+                    <DatePicker
+                        aria-label={t("postponement.new_date") + ": " + l(deadline.title)}
+                        // Start the calendar at a selectable date, even for future deadlines.
+                        minValue={dateToDateValue(parseISO(deadlineDate(deadline.date)))?.add({
+                            days: 1,
+                        })}
+                        maxValue={
+                            deadline.maxDate
+                                ? dateToDateValue(parseISO(deadline.maxDate))
+                                : undefined
+                        }
+                        value={value ? parseISO(value) : null}
+                        onChange={(date) => {
+                            // DatePicker uses local dates; preserve the selected calendar day.
+                            onChange(date ? format(date, "yyyy-MM-dd") : "");
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

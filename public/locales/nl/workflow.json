@@ -194,7 +194,8 @@
   },
   "postponement": {
     "errors": {
-      "InvalidChanges": "Kies een latere datum voor minstens één aanpasbare deadline. Is een deadline gewijzigd, open het venster opnieuw."
+      "InvalidChanges": "Kies een latere datum voor minstens één aanpasbare deadline. Is een deadline gewijzigd, open het venster opnieuw.",
+      "MaximumExtensionExceeded": "Een deadline overschrijdt het maximale totale uitstel."
     },
     "introduction": "Je wilt {{ Student.Name }} uitstel verlenen. Kies welke deadlines je wilt aanpassen.",
     "save_error": "De deadlines konden niet worden aangepast. Probeer het opnieuw.",
@@ -209,6 +210,14 @@
     "new_date": "Nieuwe datum",
     "callout_title": "Moet de examencommissie uitstel verlenen?",
     "callout_body": "Mail de examencommissie. Zij zullen de datum aanpassen.",
-    "no_deadlines": "Er zijn geen aanpasbare deadlines met een datum."
+    "no_deadlines": "Er zijn geen aanpasbare deadlines met een datum.",
+    "remaining_days": "Maximaal resterend uitstel: {{count}} dagen.",
+    "all_limit_reached": "Minstens één deadline heeft de limiet bereikt. Stel andere deadlines afzonderlijk uit.",
+    "limit_reached": "Het maximale uitstel is bereikt."
+  },
+  "form_loading": {
+    "loading": "Formulier laden…",
+    "error": "Het formulier kon niet worden geladen.",
+    "retry": "Opnieuw proberen"
   }
 }

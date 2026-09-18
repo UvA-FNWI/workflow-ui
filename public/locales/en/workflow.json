@@ -194,7 +194,8 @@
   },
   "postponement": {
     "errors": {
-      "InvalidChanges": "Choose a later date for at least one extendable deadline. If a deadline changed, reopen the modal."
+      "InvalidChanges": "Choose a later date for at least one extendable deadline. If a deadline changed, reopen the modal.",
+      "MaximumExtensionExceeded": "A deadline exceeds its maximum total extension."
     },
     "introduction": "You are about to grant this student an extension. Choose which deadlines to extend.",
     "save_error": "The deadlines could not be updated. Please try again.",
@@ -209,6 +210,14 @@
     "new_date": "New date",
     "callout_title": "Does the examination board need to grant the extension?",
     "callout_body": "Email the examination board. They will adjust the date.",
-    "no_deadlines": "There are no extendable deadlines with a date."
+    "no_deadlines": "There are no extendable deadlines with a date.",
+    "remaining_days": "Maximum remaining extension: {{count}} days.",
+    "all_limit_reached": "At least one deadline has reached its limit. Extend other deadlines individually.",
+    "limit_reached": "The maximum extension has been reached."
+  },
+  "form_loading": {
+    "loading": "Loading form…",
+    "error": "The form could not be loaded.",
+    "retry": "Try again"
   }
 }

@@ -14,6 +14,8 @@ export function deadlineDate(date: string): string {
 
 export function postponeByDays(deadlines: ExtendableDeadline[], days: number): DeadlineChange[] {
     if (!Number.isSafeInteger(days) || days <= 0) return [];
+    const maximum = remainingPostponementDays(deadlines);
+    if (maximum != null && days > maximum) return [];
     const changes = deadlines.map((deadline) => {
         const date = new Date(`${deadlineDate(deadline.date)}T00:00:00Z`);
         date.setUTCDate(date.getUTCDate() + days);
@@ -24,6 +26,25 @@ export function postponeByDays(deadlines: ExtendableDeadline[], days: number): D
         };
     });
     return changes.every((change) => /^\d{4}-\d{2}-\d{2}$/.test(change.newDate)) ? changes : [];
+}
+
+// Subtract calendar dates in UTC so daylight-saving transitions still count as one day.
+export function remainingPostponementDays(deadlines: ExtendableDeadline[]): number | undefined {
+    const remaining = deadlines.flatMap((deadline) =>
+        deadline.maxDate
+            ? [
+                  Math.max(
+                      0,
+                      Math.round(
+                          (Date.parse(`${deadline.maxDate}T00:00:00Z`) -
+                              Date.parse(`${deadlineDate(deadline.date)}T00:00:00Z`)) /
+                              86_400_000,
+                      ),
+                  ),
+              ]
+            : [],
+    );
+    return remaining.length ? Math.min(...remaining) : undefined;
 }
 
 // Reuse evaluated dates already present on the instance; a property reference opts into extension.
@@ -39,6 +60,7 @@ export function getExtendableDeadlines(steps: WorkflowStep[]): ExtendableDeadlin
                 property: step.deadline.property,
                 title: step.title,
                 date: step.deadline.date,
+                maxDate: step.deadline.maxDate,
             });
         }
         step.children?.forEach(visit);

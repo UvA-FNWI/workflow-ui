@@ -8,11 +8,33 @@ import type {Action} from "~/store/api/types/instances";
 import type {Form} from "~/store/api/types/submissions";
 
 const loading = vi.hoisted(() => ({value: false}));
+const {loadForm, retry} = vi.hoisted(() => ({loadForm: vi.fn(), retry: vi.fn()}));
+const loadedForm: Form = {
+    name: "ExtensionDialog",
+    title: {en: "Configured form", nl: "Ingesteld formulier"},
+    layout: "Modal",
+    pages: [],
+};
+vi.mock("~/store/api/deadlinesApi", () => ({
+    deadlinesApi: {
+        endpoints: {
+            getPostponementForm: {useQuery: loadForm},
+            postponeDeadlines: {useMutation: () => [vi.fn(), {isLoading: false}]},
+        },
+    },
+}));
 beforeEach(() => {
     loading.value = false;
+    retry.mockReset();
+    loadForm.mockReset().mockReturnValue({
+        currentData: loadedForm,
+        isFetching: false,
+        isError: false,
+        refetch: retry,
+    });
 });
 vi.mock("~/hooks/useTranslate", () => ({
-    useTranslate: () => ({l: (value: {en: string}) => value.en}),
+    useTranslate: () => ({l: (value?: {en: string}) => value?.en, t: (key: string) => key}),
 }));
 type ModalProps = {
     submissionId?: string;
@@ -30,22 +52,6 @@ vi.mock("../FormModal", () => ({
             </div>
         );
     },
-}));
-vi.mock("../deadlines/PostponeDeadlineModal", () => ({
-    PostponeDeadlineModal: ({
-        actionName,
-        form,
-        onClose,
-    }: {
-        actionName: string;
-        form: Form;
-        onClose: () => void;
-    }) => (
-        <div role="dialog">
-            {actionName}: {form.title.en}
-            <button onClick={onClose}>Cancel</button>
-        </div>
-    ),
 }));
 afterEach(cleanup);
 const action: Action = {
@@ -89,27 +95,72 @@ it("shows loading reported by the form modal on the selected button", () => {
     expect(button).not.toBeDisabled();
 });
 
-it("selects the dedicated modal by form type and opens it without loading", () => {
-    const execute: Action = {
+it("loads the configured form only when the postponement modal opens", () => {
+    const postponed: Action = {
         ...action,
-        type: "Execute",
+        type: "PostponeDeadlines",
         name: "GrantExtension",
-        modalForm: {
-            name: "ExtensionDialog",
-            title: {en: "Configured form", nl: "Ingesteld formulier"},
-            type: "PostponeDeadline",
-            layout: "Modal",
-            pages: [],
-        },
+        form: "ExtensionDialog",
     };
-    render(<WorkflowActions instanceId="instance" actions={[execute]} />);
+    render(<WorkflowActions instanceId="instance" actions={[postponed]} />);
+    expect(loadForm).not.toHaveBeenCalled();
     const button = screen.getByRole("button", {name: "Open form"});
     fireEvent.click(button);
+    expect(loadForm).toHaveBeenCalledWith(
+        {instanceId: "instance", actionName: "GrantExtension"},
+        {refetchOnMountOrArgChange: true},
+    );
     expect(button).not.toBeDisabled();
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    expect(screen.getByRole("dialog")).toHaveTextContent("GrantExtension: Configured form");
-    fireEvent.click(screen.getByRole("button", {name: "Cancel"}));
+    expect(screen.getByRole("dialog")).toHaveTextContent("Configured form");
+    fireEvent.click(screen.getByRole("button", {name: "cancel"}));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+});
+
+it("waits for fresh metadata on reopening and allows cancellation while loading", () => {
+    loadForm.mockReturnValue({
+        currentData: loadedForm,
+        isFetching: true,
+        isError: false,
+        refetch: retry,
+    });
+    const postponed: Action = {...action, type: "PostponeDeadlines"};
+    const {rerender} = render(<WorkflowActions instanceId="instance" actions={[postponed]} />);
+    const button = screen.getByRole("button", {name: "Open form"});
+    fireEvent.click(button);
+    expect(button).toBeDisabled();
+    expect(screen.getByRole("status", {name: "form_loading.loading"})).toBeInTheDocument();
+    expect(screen.queryByText("Configured form")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name: "cancel"}));
+    fireEvent.click(button);
+    loadForm.mockReturnValue({
+        currentData: loadedForm,
+        isFetching: false,
+        isError: false,
+        refetch: retry,
+    });
+    rerender(<WorkflowActions instanceId="instance" actions={[postponed]} />);
+    expect(screen.getByRole("dialog")).toHaveTextContent("Configured form");
+    expect(button).not.toBeDisabled();
+});
+
+it("offers retry after a load error without revealing cached metadata", () => {
+    loadForm.mockReturnValue({
+        currentData: loadedForm,
+        isFetching: false,
+        isError: true,
+        refetch: retry,
+    });
+    render(
+        <WorkflowActions
+            instanceId="instance"
+            actions={[{...action, type: "PostponeDeadlines"}]}
+        />,
+    );
+    fireEvent.click(screen.getByRole("button", {name: "Open form"}));
+    expect(screen.getByText("form_loading.error")).toBeInTheDocument();
+    expect(screen.queryByText("Configured form")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name: "form_loading.retry"}));
+    expect(retry).toHaveBeenCalledOnce();
 });
 
 it("does not render buttons for unsupported actions", () => {

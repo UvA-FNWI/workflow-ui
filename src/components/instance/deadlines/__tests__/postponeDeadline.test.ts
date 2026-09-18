@@ -1,6 +1,11 @@
 import {describe, expect, it} from "vitest";
 
-import {deadlineDate, getExtendableDeadlines, postponeByDays} from "../postponeDeadline";
+import {
+    deadlineDate,
+    getExtendableDeadlines,
+    postponeByDays,
+    remainingPostponementDays,
+} from "../postponeDeadline";
 import type {WorkflowStep} from "~/store/api/types/instances";
 
 const deadlines = [
@@ -69,4 +74,16 @@ describe("deadline postponement", () => {
             expect(postponeByDays(deadlines, days)).toEqual([]);
         },
     );
+});
+
+it("uses the smallest remaining allowance across deadlines and keeps unset dates unlimited", () => {
+    const limited = [
+        {...deadlines[0], maxDate: "2027-04-04"},
+        {...deadlines[1], maxDate: "2027-04-15"},
+    ];
+    expect(remainingPostponementDays(limited)).toBe(7);
+    expect(postponeByDays(limited, 7)).toHaveLength(2);
+    expect(postponeByDays(limited, 8)).toEqual([]);
+    expect(remainingPostponementDays(deadlines)).toBeUndefined();
+    expect(remainingPostponementDays([{...deadlines[0], maxDate: "2027-03-28"}])).toBe(0);
 });
