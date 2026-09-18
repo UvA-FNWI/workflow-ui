@@ -85,4 +85,25 @@ describe("InputControl", () => {
             }),
         );
     });
+
+    it("renders a combobox instead of radios when choice layout is ComboBox", () => {
+        const country: Question = {
+            name: "Country",
+            type: "Choice",
+            text: {en: "Country", nl: "Land"},
+            weight: null,
+            percentage: null,
+            isRequired: true,
+            isArray: false,
+            hideInResults: false,
+            allowsExternalUsers: false,
+            choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
+            layout: {type: "ComboBox"},
+        };
+
+        render(<InputControl question={country} />);
+
+        expect(screen.getByRole("combobox")).toBeInTheDocument();
+        expect(screen.queryByRole("radio")).not.toBeInTheDocument();
+    });
 });
