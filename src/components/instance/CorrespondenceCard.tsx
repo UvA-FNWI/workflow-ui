@@ -139,11 +139,9 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
             </Disclosure>
             <Modal isOpen={!!selectedMail} onOpenChange={() => setSelectedMail(null)} size="xl">
                 <Modal.Header>
-                    <Heading className="font-semibold">
-                        {selectedMail?.subject
-                            ? `${t("correspondence.subject")}: ${selectedMail.subject}`
-                            : t("correspondence.subject")}
-                    </Heading>
+                    {selectedMail?.subject
+                        ? `${t("correspondence.subject")}: ${selectedMail.subject}`
+                        : t("correspondence.subject")}
                 </Modal.Header>
                 <Modal.Body>
                     <div className="flex flex-col gap-4 py-4">
