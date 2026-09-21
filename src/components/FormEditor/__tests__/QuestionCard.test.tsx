@@ -15,8 +15,8 @@ const FORM_PATH = "Definitions/Thesis/Forms/Proposal.yaml";
 const FORM = `name: Proposal
 pages:
   - name: Content
-    fields:
-      - Question
+    elements:
+      - question: Question
 `;
 
 beforeAll(async () => {
