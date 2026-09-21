@@ -1,3 +1,5 @@
+import type {ReactNode} from "react";
+
 import Markdown from "react-markdown";
 
 import {Heading, Text} from "@uva-fnwi/datanose-ui";
@@ -8,39 +10,31 @@ interface MarkdownRendererProps {
 
 export function MarkdownRenderer({children}: MarkdownRendererProps) {
     if (!children) return null;
+
+    const renderAsText = ({children}: {children?: ReactNode}) => (
+        <Text as="p" className="my-1 block">
+            {children}
+        </Text>
+    );
+
     return (
         <Markdown
             components={{
                 h1: ({children: nodeChildren}) => (
-                    <Heading as="h1" size="xl">
+                    <Heading as="h4" size="sm" fontType="body">
                         {nodeChildren}
                     </Heading>
                 ),
                 h2: ({children: nodeChildren}) => (
-                    <Heading as="h2" size="lg">
-                        {nodeChildren}
-                    </Heading>
-                ),
-                h3: ({children: nodeChildren}) => (
-                    <Heading as="h3" size="md">
-                        {nodeChildren}
-                    </Heading>
-                ),
-                h4: ({children: nodeChildren}) => (
-                    <Heading as="h4" size="sm">
-                        {nodeChildren}
-                    </Heading>
-                ),
-                h5: ({children: nodeChildren}) => (
                     <Heading as="h5" size="xs">
                         {nodeChildren}
                     </Heading>
                 ),
-                p: ({children}) => (
-                    <Text as="p" className="my-1 block">
-                        {children}
-                    </Text>
-                ),
+                h3: renderAsText,
+                h4: renderAsText,
+                h5: renderAsText,
+                h6: renderAsText,
+                p: renderAsText,
                 ul: ({children: nodeChildren}) => (
                     <ul className="my-1 list-disc pl-5">{nodeChildren}</ul>
                 ),
