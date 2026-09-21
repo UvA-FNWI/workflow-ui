@@ -58,7 +58,13 @@ export const PageElement = ({
                 </Callout>
             );
         case "Question": {
-            if (!element.question || !answer || !formControl || element.question.type == "File")
+            if (
+                !element.question ||
+                !answer ||
+                !formControl ||
+                element.question.type == "File" ||
+                !answer.isVisible
+            )
                 return null;
             const question = element.question;
             const errorMessage = answer?.validationError && l(answer.validationError);

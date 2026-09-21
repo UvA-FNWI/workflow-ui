@@ -37,7 +37,7 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
                     </Heading>
                 ),
                 p: ({children}) => (
-                    <Text as="p" className="my-1">
+                    <Text as="p" className="my-1 block">
                         {children}
                     </Text>
                 ),
