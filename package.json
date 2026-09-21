@@ -52,7 +52,7 @@
     "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
     "react-router": "^7.14.2",
-    "react-stately": "^3.46.0",
+    "react-stately": "3.50.0",
     "yaml": "^2.9.0"
   },
   "devDependencies": {

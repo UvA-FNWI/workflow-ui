@@ -2,6 +2,7 @@ import { act } from 'react';
 
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 import { Checkbox } from './Checkbox';
@@ -104,11 +105,11 @@ describe('Checkbox Component', () => {
       expect(onChange).toHaveBeenCalledWith(true);
     });
 
-    test('can be toggled by clicking the label text', () => {
+    test('can be toggled by clicking the label text', async () => {
       const onChange = vi.fn();
       render(<Checkbox {...defaultProps} onChange={onChange} />);
 
-      fireEvent.click(screen.getByText('Test Checkbox'));
+      await userEvent.click(screen.getByText('Test Checkbox'));
       expect(onChange).toHaveBeenCalledWith(true);
     });
 
