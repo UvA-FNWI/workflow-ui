@@ -83,6 +83,7 @@
       "final_grade": "Final grade",
       "grading_incomplete": "Grading not yet complete"
     },
+    "deadline_passed": "The deadline has passed. You can no longer submit this form.",
     "empty_step": "Nothing has been submitted yet.",
     "summary": {
       "change_version": "Version {{version}}",
@@ -172,6 +173,7 @@
   },
   "status": {
     "completed_on": "Completed on",
+    "deadline_passed": "Deadline passed",
     "submitted": "Submitted"
   },
   "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
