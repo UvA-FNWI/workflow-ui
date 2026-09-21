@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
 import {createColumnHelper} from "@tanstack/react-table";
 import {
@@ -26,8 +26,11 @@ interface CorrespondenceCardProps {
 
 const columnHelper = createColumnHelper<Correspondence>();
 function disableLinks(html: string): string {
-    const style = "<style>a{pointer-events:none!important;cursor:default!important;}</style>";
-    return html.includes("</head>") ? html.replace("</head>", `${style}</head>`) : style + html;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const style = doc.createElement("style");
+    style.textContent = "a{pointer-events:none!important;cursor:default!important;}";
+    doc.head.appendChild(style);
+    return doc.documentElement.outerHTML;
 }
 
 export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
@@ -42,58 +45,64 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
     );
     if (error) throw error;
 
-    const columns = [
-        columnHelper.accessor("subject", {
-            header: t("correspondence.subject"),
-            cell: (info) => {
-                const subject = info.getValue();
-                return (
-                    <Link
-                        className="underline"
-                        onClick={() =>
-                            setSelectedMail({
-                                ...info.row.original,
-                                attachments: [
-                                    "attachment_with_a_very_long_name_1.pdf",
-                                    "attachment_another_attachment_2.pdf",
-                                    "attachment_with_a_very_long_name_1.pdf",
-                                ],
-                            })
-                        }
-                    >
-                        {subject || "—"}
-                    </Link>
-                );
-            },
-            enableSorting: false,
-        }),
-        columnHelper.accessor("timestamp", {
-            header: t("correspondence.date"),
-            cell: (info) => {
-                const date = info.getValue();
-                return <Text>{date ? formatDateTimeShort(date, i18n.language) : "—"}</Text>;
-            },
-            enableSorting: false,
-        }),
-        columnHelper.accessor("recipients", {
-            header: t("correspondence.recipients"),
-            cell: (info) => {
-                const recipients = info.getValue();
-                if (!recipients || recipients.length === 0) return <Text>—</Text>;
+    const columns = useMemo(
+        () => [
+            columnHelper.accessor("subject", {
+                header: t("correspondence.subject"),
+                cell: (info) => {
+                    const subject = info.getValue();
+                    return (
+                        <Link
+                            className="underline"
+                            onClick={() => setSelectedMail(info.row.original)}
+                        >
+                            {subject || "—"}
+                        </Link>
+                    );
+                },
+                enableSorting: false,
+            }),
+            columnHelper.accessor("timestamp", {
+                header: t("correspondence.date"),
+                cell: (info) => {
+                    const date = info.getValue();
+                    return <Text>{date ? formatDateTimeShort(date, i18n.language) : "—"}</Text>;
+                },
+                sortDescFirst: true,
+            }),
+            columnHelper.accessor("recipients", {
+                header: t("correspondence.recipients"),
+                cell: (info) => {
+                    const recipients = info.getValue();
+                    if (!recipients || recipients.length === 0) return <Text>—</Text>;
 
-                return (
-                    <div className="flex flex-col gap-1">
-                        {recipients.map((r) => (
-                            <Tooltip content={r.email} key={r.email}>
-                                <Text key={`${r.type}-${r.email}`}>{`${r.type}: ${r.name}`}</Text>
-                            </Tooltip>
-                        ))}
-                    </div>
-                );
-            },
-            enableSorting: false,
-        }),
-    ];
+                    return (
+                        <div className="flex flex-col items-start gap-1">
+                            {recipients.map((r) => (
+                                <Tooltip
+                                    content={r.email}
+                                    key={`${r.type}-${r.email}`}
+                                    className="w-fit"
+                                >
+                                    <div className="flex flex-row gap-1">
+                                        <Text className="text-grey-700">{`${r.type}:`}</Text>
+                                        <Text>{r.name}</Text>
+                                    </div>
+                                </Tooltip>
+                            ))}
+                        </div>
+                    );
+                },
+                enableSorting: false,
+            }),
+        ],
+        [t],
+    );
+
+    const disabledBody = useMemo(
+        () => (selectedMail?.body ? disableLinks(selectedMail.body) : null),
+        [selectedMail],
+    );
 
     return (
         <>
@@ -102,37 +111,34 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                     <Heading className="font-semibold">{t("correspondence.title")}</Heading>
                 </Disclosure.Header>
                 <Disclosure.Content>
-                    {isFetching ? (
-                        <div className="flex flex-col gap-4">
-                            <Skeleton className="h-6 w-32" />
-                            <Separator />
-                            <div className="flex items-center gap-8">
-                                <Skeleton className="h-5 w-24" />
-                                <Skeleton className="h-4 flex-1" />
+                    <div className="px-2 py-4">
+                        {isFetching ? (
+                            <div className="flex flex-col gap-4">
+                                <Skeleton className="h-6 w-32" />
+                                <Separator />
+                                <div className="flex items-center gap-8">
+                                    <Skeleton className="h-5 w-24" />
+                                    <Skeleton className="h-4 flex-1" />
+                                </div>
                             </div>
-                        </div>
-                    ) : data && data.length > 0 ? (
-                        <DataTable
-                            data={data}
-                            columns={columns}
-                            getRowId={(_row, index) => String(index)}
-                            emptyNode={
-                                <Text className="px-4 pb-4">{t("correspondence.empty")}</Text>
-                            }
-                        />
-                    ) : (
-                        <Text className="px-4 pb-4">{t("correspondence.empty")}</Text>
-                    )}
+                        ) : data && data.length > 0 ? (
+                            <DataTable
+                                data={data}
+                                columns={columns}
+                                getRowId={(row) => row.id}
+                                emptyNode={
+                                    <Text className="px-4 pb-4">{t("correspondence.empty")}</Text>
+                                }
+                                textSize="base"
+                            />
+                        ) : (
+                            <Text className="px-4 pb-4">{t("correspondence.empty")}</Text>
+                        )}
+                    </div>
                 </Disclosure.Content>
             </Disclosure>
             <Modal isOpen={!!selectedMail} onOpenChange={() => setSelectedMail(null)} size="xl">
-                <Modal.Header
-                    subTitle={
-                        selectedMail
-                            ? formatDateTimeShort(selectedMail.timestamp, i18n.language)
-                            : undefined
-                    }
-                >
+                <Modal.Header>
                     <Heading className="font-semibold">
                         {selectedMail?.subject
                             ? `${t("correspondence.subject")}: ${selectedMail.subject}`
@@ -140,20 +146,41 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                     </Heading>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 py-4">
+                        {selectedMail && (
+                            <div className="flex flex-col gap-2">
+                                <div className="grid w-fit grid-cols-2 gap-4">
+                                    <Text className="font-semibold">{`${t("correspondence.date")}:`}</Text>
+                                    <Text>
+                                        {formatDateTimeShort(selectedMail.timestamp, i18n.language)}
+                                    </Text>
+                                    <Text className="font-semibold">
+                                        {`${t("correspondence.recipients")}`}:
+                                    </Text>
+                                    <div>
+                                        {selectedMail.recipients.map((r) => (
+                                            <div
+                                                key={`${r.type}-${r.email}`}
+                                                className="flex flex-row gap-4"
+                                            >
+                                                <Text className="text-grey-700">{`${r.type}:`}</Text>
+                                                <Text>{`${r.name} <${r.email}> `}</Text>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         <iframe
                             title={
                                 selectedMail?.subject
                                     ? `${t("correspondence.content")}: ${selectedMail.subject}`
                                     : t("correspondence.content")
                             }
-                            srcDoc={
-                                selectedMail?.body
-                                    ? disableLinks(selectedMail.body)
-                                    : t("correspondence.empty")
-                            }
+                            srcDoc={disabledBody ?? t("correspondence.empty")}
                             sandbox=""
-                            className="h-[40vh] w-full rounded border border-grey-200"
+                            referrerPolicy="no-referrer"
+                            className="my-4 h-[40vh] w-full rounded border border-grey-200"
                         />
                         {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
                             <div className="flex flex-wrap justify-start gap-2">
@@ -163,7 +190,7 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                                         key={attachment}
                                     >
                                         <Icon name="attachment-line" />
-                                        <Text key={attachment}>{attachment}</Text>
+                                        <Text>{attachment}</Text>
                                     </div>
                                 ))}
                             </div>
