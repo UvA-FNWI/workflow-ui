@@ -20,17 +20,18 @@ import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {Correspondence} from "~/store/api/types/correspondence.ts";
 import {formatDateTimeShort} from "~/utils/formatDate.ts";
 
-interface CorrespondenceCardProps {
-    instanceId: string;
-}
-
 const columnHelper = createColumnHelper<Correspondence>();
+
 function disableLinks(html: string): string {
     const doc = new DOMParser().parseFromString(html, "text/html");
     const style = doc.createElement("style");
     style.textContent = "a{pointer-events:none!important;cursor:default!important;}";
     doc.head.appendChild(style);
     return doc.documentElement.outerHTML;
+}
+
+interface CorrespondenceCardProps {
+    instanceId: string;
 }
 
 export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
@@ -99,11 +100,6 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
         [t],
     );
 
-    const disabledBody = useMemo(
-        () => (selectedMail?.body ? disableLinks(selectedMail.body) : null),
-        [selectedMail],
-    );
-
     return (
         <>
             <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
@@ -137,65 +133,68 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                     </div>
                 </Disclosure.Content>
             </Disclosure>
-            <Modal isOpen={!!selectedMail} onOpenChange={() => setSelectedMail(null)} size="xl">
-                <Modal.Header>
-                    {selectedMail?.subject
-                        ? `${t("correspondence.subject")}: ${selectedMail.subject}`
-                        : t("correspondence.subject")}
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="flex flex-col gap-4 py-4">
-                        {selectedMail && (
-                            <div className="flex flex-col gap-2">
-                                <div className="grid w-fit grid-cols-2 gap-4">
-                                    <Text className="font-semibold">{`${t("correspondence.date")}:`}</Text>
-                                    <Text>
-                                        {formatDateTimeShort(selectedMail.timestamp, i18n.language)}
-                                    </Text>
-                                    <Text className="font-semibold">
-                                        {`${t("correspondence.recipients")}`}:
-                                    </Text>
-                                    <div>
-                                        {selectedMail.recipients.map((r) => (
-                                            <div
-                                                key={`${r.type}-${r.email}`}
-                                                className="flex flex-row gap-4"
-                                            >
-                                                <Text className="text-grey-700">{`${r.type}:`}</Text>
-                                                <Text>{`${r.name} <${r.email}> `}</Text>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        <iframe
-                            title={
-                                selectedMail?.subject
-                                    ? `${t("correspondence.content")}: ${selectedMail.subject}`
-                                    : t("correspondence.content")
-                            }
-                            srcDoc={disabledBody ?? t("correspondence.empty")}
-                            sandbox=""
-                            referrerPolicy="no-referrer"
-                            className="my-4 h-[40vh] w-full rounded border border-grey-200"
-                        />
-                        {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-                            <div className="flex flex-wrap justify-start gap-2">
-                                {selectedMail.attachments.map((attachment) => (
-                                    <div
-                                        className="flex w-fit items-center gap-4 rounded-lg bg-grey-200 p-2"
-                                        key={attachment}
-                                    >
-                                        <Icon name="attachment-line" />
-                                        <Text>{attachment}</Text>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </Modal.Body>
-            </Modal>
+            <CorrespondenceModal selectedMail={selectedMail} setSelectedMail={setSelectedMail} />
         </>
+    );
+}
+
+interface CorrespondenceModalProps {
+    selectedMail: Correspondence | null;
+    setSelectedMail: (mail: Correspondence | null) => void;
+}
+
+function CorrespondenceModal({selectedMail, setSelectedMail}: CorrespondenceModalProps) {
+    const {t} = useTranslate("workflow");
+
+    const disabledBody = useMemo(
+        () => (selectedMail?.body ? disableLinks(selectedMail?.body) : null),
+        [selectedMail],
+    );
+
+    if (!selectedMail) return null;
+
+    return (
+        <Modal isOpen={!!selectedMail} onOpenChange={() => setSelectedMail(null)} size="xl">
+            <Modal.Header>{`${t("correspondence.subject")}: ${selectedMail.subject}`}</Modal.Header>
+            <Modal.Body>
+                <div className="flex flex-col gap-4 py-4">
+                    <div className="grid w-fit grid-cols-2 gap-4">
+                        <Text className="font-semibold">{`${t("correspondence.date")}:`}</Text>
+                        <Text>{formatDateTimeShort(selectedMail.timestamp, i18n.language)}</Text>
+                        <Text className="font-semibold">
+                            {`${t("correspondence.recipients")}`}:
+                        </Text>
+                        <div>
+                            {selectedMail.recipients.map((r) => (
+                                <div key={`${r.type}-${r.email}`} className="flex flex-row gap-4">
+                                    <Text className="text-grey-700">{`${r.type}:`}</Text>
+                                    <Text>{`${r.name} <${r.email}> `}</Text>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <iframe
+                        title={`${t("correspondence.content")}: ${selectedMail.subject}`}
+                        srcDoc={disabledBody ?? t("correspondence.empty")}
+                        sandbox=""
+                        referrerPolicy="no-referrer"
+                        className="my-4 h-[40vh] w-full rounded border border-grey-200"
+                    />
+                    {selectedMail.attachments.length > 0 && (
+                        <div className="flex flex-wrap justify-start gap-2">
+                            {selectedMail.attachments.map((attachment) => (
+                                <div
+                                    className="flex w-fit items-center gap-4 rounded-lg bg-grey-200 p-2"
+                                    key={attachment}
+                                >
+                                    <Icon name="attachment-line" />
+                                    <Text>{attachment}</Text>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </Modal.Body>
+        </Modal>
     );
 }
