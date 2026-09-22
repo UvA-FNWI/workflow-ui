@@ -36,44 +36,50 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
             <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
                 <div className="flex flex-col gap-6">
-                    {version.submissions.map((submission) => (
-                        <div key={submission.id} className="flex flex-col gap-2">
-                            {version.submissions.length > 0 && (
-                                <Heading
-                                    as="h4"
-                                    size="xs"
-                                    className="pt-4 pb-1 font-semibold text-red-brand"
-                                >
-                                    {l(submission.form.title)?.toUpperCase()}
-                                </Heading>
-                            )}
-                            {submission.form.pages.map((page) => {
-                                const questionAnswerPairs = getVisibleQuestionAnswerPairs(
-                                    page.questions,
-                                    submission.answers,
-                                );
+                    {version.submissions.map((submission) => {
+                        const pages = submission.form.pages.filter(
+                            (p) => p.isInCurrentForm && p.isActive,
+                        );
 
-                                return (
-                                    <div key={page.name} className="py-2">
-                                        {submission.form.pages.length > 1 && (
-                                            <Heading
-                                                size="xs"
-                                                as="h4"
-                                                className="pb-2 font-semibold"
-                                            >
-                                                {l(page.title)?.toUpperCase()}
-                                            </Heading>
-                                        )}
-                                        <QuestionAnswerList
-                                            questionAnswerPairs={questionAnswerPairs}
-                                            instanceId={instanceId}
-                                            submissionId={submission.id}
-                                        />
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ))}
+                        return (
+                            <div key={submission.id} className="flex flex-col gap-2">
+                                {version.submissions.length > 0 && (
+                                    <Heading
+                                        as="h4"
+                                        size="xs"
+                                        className="pt-4 pb-1 font-semibold text-red-brand"
+                                    >
+                                        {l(submission.form.title)?.toUpperCase()}
+                                    </Heading>
+                                )}
+                                {pages.map((page) => {
+                                    const questionAnswerPairs = getVisibleQuestionAnswerPairs(
+                                        page.questions,
+                                        submission.answers,
+                                    );
+
+                                    return (
+                                        <div key={page.name} className="py-2">
+                                            {submission.form.pages.length > 1 && (
+                                                <Heading
+                                                    size="xs"
+                                                    as="h4"
+                                                    className="pb-2 font-semibold"
+                                                >
+                                                    {l(page.title)?.toUpperCase()}
+                                                </Heading>
+                                            )}
+                                            <QuestionAnswerList
+                                                questionAnswerPairs={questionAnswerPairs}
+                                                instanceId={instanceId}
+                                                submissionId={submission.id}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        );
+                    })}
                 </div>
             </Disclosure.Content>
         </Disclosure>

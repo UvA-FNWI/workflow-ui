@@ -69,6 +69,7 @@ export type Page = {
     questions: Question[];
     hasResults: boolean;
     isInCurrentForm: boolean;
+    isActive: boolean;
 };
 
 export type Question = {

@@ -66,6 +66,12 @@ const Tabs = forwardRef(
     // Determine if component is controlled
     const isControlled = controlledActiveIndex !== undefined;
 
+    // Determine if tab is enabled
+    const disabledKeys = tabs.reduce<string[]>((acc, tab, index) => {
+      if (tab.props.disabled) acc.push(index.toString());
+      return acc;
+    }, []);
+
     // Use react-stately for state management
     const state = useTabListState({
       children: tabs.map((tab, index) => (
@@ -73,6 +79,7 @@ const Tabs = forwardRef(
           {tab.props.children}
         </Item>
       )),
+      disabledKeys,
       selectedKey: isControlled ? controlledActiveIndex?.toString() : undefined,
       defaultSelectedKey: defaultActiveIndex.toString(),
       onSelectionChange: key => {
