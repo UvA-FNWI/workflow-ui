@@ -1,18 +1,18 @@
 import {Card, Heading, Separator, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {WorkflowProgressBar} from "~/components/WorkflowProgressBar";
-import {useTranslate} from "~/hooks/useTranslate";
+import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowStep} from "~/store/api/types/instances";
 
 interface ProgressCardProps {
+    title: LocalString;
     isLoading: boolean;
-    isStudent: boolean;
     steps: WorkflowStep[];
     currentStep: string;
 }
 
-export function ProgressCard({isLoading, isStudent, steps, currentStep}: ProgressCardProps) {
-    const {t} = useTranslate("workflow");
+export function ProgressCard({title, isLoading, steps, currentStep}: ProgressCardProps) {
+    const {l} = useTranslate("workflow");
 
     return (
         <Card>
@@ -30,11 +30,7 @@ export function ProgressCard({isLoading, isStudent, steps, currentStep}: Progres
                     <>
                         <div className="flex flex-col gap-4">
                             <Heading as="h2" className="font-semibold">
-                                {t(
-                                    isStudent
-                                        ? "progress.titleStudent"
-                                        : "progress.titleSupervisor",
-                                )}
+                                {l(title)}
                             </Heading>
                             <Separator className="mt-2" />
                         </div>

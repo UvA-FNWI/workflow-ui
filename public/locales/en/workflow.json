@@ -114,9 +114,7 @@
   "progress": {
     "amsterdam_time": "Amsterdam time",
     "completed": "Completed",
-    "deadline": "Deadline",
-    "titleStudent": "Your progress",
-    "titleSupervisor": "Student's progress"
+    "deadline": "Deadline"
   },
   "reference": {
     "empty": "No options available",
