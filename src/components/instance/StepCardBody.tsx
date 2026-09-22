@@ -63,7 +63,12 @@ export const StepCardBody = ({
                 return (
                     <>
                         {showVersionCards && !formState && (
-                            <Heading fontType="heading" size={"sm"} className="pt-4 font-semibold">
+                            <Heading
+                                fontType="heading"
+                                size="sm"
+                                as="h3"
+                                className="pt-4 font-semibold"
+                            >
                                 {t("version_card.version_nr", {
                                     versionNumber: getCurrentVersionNumber(step),
                                 })}
