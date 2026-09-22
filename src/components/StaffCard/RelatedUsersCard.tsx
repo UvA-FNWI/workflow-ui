@@ -80,7 +80,9 @@ export function RelatedUsersCard({
             <Disclosure>
                 <div className="flex flex-row items-center justify-between">
                     <Disclosure.Header>
-                        <Heading size="sm">{l(title)}</Heading>
+                        <Heading as="h3" size="sm">
+                            {l(title)}
+                        </Heading>
                     </Disclosure.Header>
                     {instanceUserRoles.length > 0 && (
                         <div className="pr-6">
