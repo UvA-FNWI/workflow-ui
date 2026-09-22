@@ -40,7 +40,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                         <div key={submission.id} className="flex flex-col gap-2">
                             {version.submissions.length > 0 && (
                                 <Heading
-                                    as="h4"
+                                    as="h3"
                                     size="xs"
                                     className="pt-4 pb-1 font-semibold text-red-brand"
                                 >
