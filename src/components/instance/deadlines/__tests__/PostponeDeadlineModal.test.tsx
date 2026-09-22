@@ -16,11 +16,11 @@ vi.mock("~/hooks/useTranslate", () => ({
         i18n: {language: "en"},
     }),
 }));
-vi.mock("~/store/api/deadlinesApi", () => ({
-    deadlinesApi: {
+vi.mock("~/store/api/actionsApi", () => ({
+    actionsApi: {
         endpoints: {
-            getPostponementForm: {useQuery: loadForm},
-            postponeDeadlines: {
+            getActionForm: {useQuery: loadForm},
+            executeAction: {
                 useMutation: () => {
                     const [error, setError] = useState<unknown>();
                     return [
@@ -97,7 +97,7 @@ async function chooseReason(name: string) {
     fireEvent.click(await screen.findByRole("option", {name}));
 }
 
-it("starts without a reason and submits all input together through the dedicated endpoint", async () => {
+it("starts without a reason and submits all input together through the action endpoint", async () => {
     render(<PostponeDeadlineModal {...props} />);
     expect(screen.getByText("Configured modal title")).toBeInTheDocument();
     expect(screen.getByText("postponement.introduction")).toBeInTheDocument();
@@ -109,9 +109,10 @@ it("starts without a reason and submits all input together through the dedicated
     fireEvent.click(screen.getByRole("button", {name: "confirm"}));
     await waitFor(() => expect(props.onClose).toHaveBeenCalledOnce());
     expect(postpone).toHaveBeenCalledWith({
+        type: "PostponeDeadlines",
         instanceId: "instance",
-        actionName: "GrantExtension",
-        request: {
+        name: "GrantExtension",
+        input: {
             reason: "Research delay",
             changes: [
                 {property: "Deadline", previousDate: deadlines[0].date, newDate: "2027-01-08"},
@@ -132,8 +133,8 @@ it("requires an explanation only for Other and sends its trimmed value", async (
     });
     fireEvent.click(screen.getByRole("button", {name: "confirm"}));
     await waitFor(() => expect(postpone).toHaveBeenCalledOnce());
-    expect(postpone.mock.lastCall?.[0].request.reason).toBe("Other\nWaiting for data");
-    expect(postpone.mock.lastCall?.[0].request).not.toHaveProperty("explanation");
+    expect(postpone.mock.lastCall?.[0].input.reason).toBe("Other\nWaiting for data");
+    expect(postpone.mock.lastCall?.[0].input).not.toHaveProperty("explanation");
 });
 
 it("cancel saves nothing and reopening starts with a blank reason", async () => {
@@ -180,7 +181,7 @@ it("opens a future deadline at a valid month and accepts its first selection", a
     await chooseReason("Research delay");
     fireEvent.click(screen.getByRole("button", {name: "confirm"}));
     await waitFor(() => expect(postpone).toHaveBeenCalledOnce());
-    expect(postpone.mock.lastCall?.[0].request.changes[0].newDate).toBe("2028-12-03");
+    expect(postpone.mock.lastCall?.[0].input.changes[0].newDate).toBe("2028-12-03");
 });
 
 it("clears the explanation when switching reasons", async () => {
@@ -233,7 +234,7 @@ it("enforces the remaining all-deadlines allowance and accepts its boundary", as
     fireEvent.change(amount, {target: {value: "7"}});
     fireEvent.click(screen.getByRole("button", {name: "confirm"}));
     await waitFor(() => expect(postpone).toHaveBeenCalledOnce());
-    expect(postpone.mock.lastCall?.[0].request.changes[0].newDate).toBe("2027-01-08");
+    expect(postpone.mock.lastCall?.[0].input.changes[0].newDate).toBe("2027-01-08");
 });
 
 it("rounds the remaining allowance down when switching to weeks", async () => {

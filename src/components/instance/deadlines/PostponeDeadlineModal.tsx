@@ -16,7 +16,7 @@ import {PostponeDeadlineReason} from "./PostponeDeadlineReason";
 import {PostponeIndividualDeadlines} from "./PostponeIndividualDeadlines";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
-import {deadlinesApi} from "~/store/api/deadlinesApi";
+import {actionsApi} from "~/store/api/actionsApi";
 import type {
     DeadlineChange,
     ExtendableDeadline,
@@ -46,7 +46,7 @@ export function PostponeDeadlineModal({
         isFetching,
         isError,
         refetch,
-    } = deadlinesApi.endpoints.getPostponementForm.useQuery(
+    } = actionsApi.endpoints.getActionForm.useQuery(
         {instanceId, actionName},
         {refetchOnMountOrArgChange: true},
     );
@@ -62,7 +62,7 @@ export function PostponeDeadlineModal({
         (question) => question.name === "PostponementExplanation",
     );
     const reasons = reasonQuestion?.choices ?? [];
-    const [postpone, {isLoading, error}] = deadlinesApi.endpoints.postponeDeadlines.useMutation();
+    const [executeAction, {isLoading, error}] = actionsApi.endpoints.executeAction.useMutation();
 
     const maximumDays = remainingPostponementDays(deadlines);
     // Recheck authorization on every opening before showing cached metadata.
@@ -124,10 +124,11 @@ export function PostponeDeadlineModal({
         let description = l(choice?.text) || reason.choice;
         if (reason.choice === "Other") description += "\n" + reason.explanation.trim();
 
-        const result = await postpone({
+        const result = await executeAction({
+            type: "PostponeDeadlines",
             instanceId,
-            actionName,
-            request: {
+            name: actionName,
+            input: {
                 changes,
                 reason: description,
             },

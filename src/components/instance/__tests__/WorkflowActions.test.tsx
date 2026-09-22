@@ -15,11 +15,11 @@ const loadedForm: Form = {
     layout: "Modal",
     pages: [],
 };
-vi.mock("~/store/api/deadlinesApi", () => ({
-    deadlinesApi: {
+vi.mock("~/store/api/actionsApi", () => ({
+    actionsApi: {
         endpoints: {
-            getPostponementForm: {useQuery: loadForm},
-            postponeDeadlines: {useMutation: () => [vi.fn(), {isLoading: false}]},
+            getActionForm: {useQuery: loadForm},
+            executeAction: {useMutation: () => [vi.fn(), {isLoading: false}]},
         },
     },
 }));
