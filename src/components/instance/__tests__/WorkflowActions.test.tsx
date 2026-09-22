@@ -4,7 +4,7 @@ import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, beforeEach, expect, it, vi} from "vitest";
 
 import {WorkflowActions} from "../WorkflowActions";
-import type {Action} from "~/store/api/types/instances";
+import type {Action, WorkflowStep} from "~/store/api/types/instances";
 import type {Form} from "~/store/api/types/submissions";
 
 const loading = vi.hoisted(() => ({value: false}));
@@ -65,6 +65,28 @@ const action: Action = {
     title: {en: "Open form", nl: "Formulier openen"},
 };
 
+const deadlineStep: WorkflowStep = {
+    id: "Contract",
+    title: {en: "Contract", nl: "Overeenkomst"},
+    icon: null,
+    event: "Contract",
+    dateCompleted: null,
+    deadline: {
+        property: "ContractDeadline",
+        date: "2027-01-01T12:00:00+01:00",
+        type: "Soft",
+        isPassed: false,
+        message: null,
+    },
+    children: null,
+    versions: null,
+    headerStatus: null,
+    resultsType: "Normal",
+    expectsSubmission: false,
+    hasSubmission: false,
+    hierarchyMode: "Sequential",
+};
+
 it("shows only workflow-level modal actions and closes the modal on cancel", () => {
     const {rerender} = render(
         <WorkflowActions
@@ -102,7 +124,7 @@ it("loads the configured form only when the postponement modal opens", () => {
         name: "GrantExtension",
         form: "ExtensionDialog",
     };
-    render(<WorkflowActions instanceId="instance" actions={[postponed]} />);
+    render(<WorkflowActions instanceId="instance" actions={[postponed]} steps={[deadlineStep]} />);
     expect(loadForm).not.toHaveBeenCalled();
     const button = screen.getByRole("button", {name: "Open form"});
     fireEvent.click(button);
@@ -124,7 +146,9 @@ it("waits for fresh metadata on reopening and allows cancellation while loading"
         refetch: retry,
     });
     const postponed: Action = {...action, type: "PostponeDeadlines"};
-    const {rerender} = render(<WorkflowActions instanceId="instance" actions={[postponed]} />);
+    const {rerender} = render(
+        <WorkflowActions instanceId="instance" actions={[postponed]} steps={[deadlineStep]} />,
+    );
     const button = screen.getByRole("button", {name: "Open form"});
     fireEvent.click(button);
     expect(button).toBeDisabled();
@@ -138,7 +162,9 @@ it("waits for fresh metadata on reopening and allows cancellation while loading"
         isError: false,
         refetch: retry,
     });
-    rerender(<WorkflowActions instanceId="instance" actions={[postponed]} />);
+    rerender(
+        <WorkflowActions instanceId="instance" actions={[postponed]} steps={[deadlineStep]} />,
+    );
     expect(screen.getByRole("dialog")).toHaveTextContent("Configured form");
     expect(button).not.toBeDisabled();
 });
@@ -154,6 +180,7 @@ it("offers retry after a load error without revealing cached metadata", () => {
         <WorkflowActions
             instanceId="instance"
             actions={[{...action, type: "PostponeDeadlines"}]}
+            steps={[deadlineStep]}
         />,
     );
     fireEvent.click(screen.getByRole("button", {name: "Open form"}));
@@ -174,4 +201,46 @@ it("does not render buttons for unsupported actions", () => {
         />,
     );
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
+});
+
+it("hides postponement without usable deadlines and shows it for a nested deadline with allowance", () => {
+    const postponed: Action = {...action, type: "PostponeDeadlines"};
+    const {rerender} = render(<WorkflowActions instanceId="instance" actions={[postponed]} />);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    for (const deadline of [
+        null,
+        {...deadlineStep.deadline!, date: null},
+        {...deadlineStep.deadline!, property: null},
+        {...deadlineStep.deadline!, maxDate: "2027-01-01"},
+        {...deadlineStep.deadline!, maxDate: "2026-12-31"},
+    ]) {
+        rerender(
+            <WorkflowActions
+                instanceId="instance"
+                actions={[postponed]}
+                steps={[{...deadlineStep, deadline}]}
+            />,
+        );
+        expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    }
+    expect(loadForm).not.toHaveBeenCalled();
+    rerender(
+        <WorkflowActions
+            instanceId="instance"
+            actions={[postponed]}
+            steps={[
+                {
+                    ...deadlineStep,
+                    deadline: null,
+                    children: [
+                        {
+                            ...deadlineStep,
+                            deadline: {...deadlineStep.deadline!, maxDate: "2027-01-02"},
+                        },
+                    ],
+                },
+            ]}
+        />,
+    );
+    expect(screen.getByRole("button", {name: "Open form"})).toBeInTheDocument();
 });

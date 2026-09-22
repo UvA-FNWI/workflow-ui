@@ -2,7 +2,7 @@ import {useState} from "react";
 
 import {Button} from "@uva-fnwi/datanose-ui";
 
-import {getExtendableDeadlines} from "./deadlines/postponeDeadline";
+import {deadlineDate, getExtendableDeadlines} from "./deadlines/postponeDeadline";
 import {PostponeDeadlineModal} from "./deadlines/PostponeDeadlineModal";
 import {FormModal} from "./FormModal";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -15,6 +15,10 @@ export function WorkflowActions({instanceId, actions, steps = []}: Props) {
     const {l} = useTranslate("workflow");
     const [selectedAction, setSelectedAction] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const deadlines = getExtendableDeadlines(steps);
+    const canExtend = deadlines.some(
+        (deadline) => !deadline.maxDate || deadline.maxDate > deadlineDate(deadline.date),
+    );
 
     function renderModal(action: Action) {
         const onClose = () => setSelectedAction(null);
@@ -31,14 +35,14 @@ export function WorkflowActions({instanceId, actions, steps = []}: Props) {
                     />
                 ) : null;
             case "PostponeDeadlines":
-                return action.form ? (
+                return action.form && canExtend ? (
                     <PostponeDeadlineModal
                         key={action.id}
                         instanceId={instanceId}
                         actionName={action.name}
                         title={action.title}
                         onLoadingChange={setIsLoading}
-                        deadlines={getExtendableDeadlines(steps)}
+                        deadlines={deadlines}
                         onClose={onClose}
                     />
                 ) : null;
