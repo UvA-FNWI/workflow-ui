@@ -110,25 +110,26 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                     <div className="px-2 py-4">
                         {isFetching ? (
                             <div className="flex flex-col gap-4">
-                                <Skeleton className="h-6 w-32" />
-                                <Separator />
-                                <div className="flex items-center gap-8">
-                                    <Skeleton className="h-5 w-24" />
-                                    <Skeleton className="h-4 flex-1" />
+                                <div className="flex items-center gap-4">
+                                    <Skeleton className="h-6 flex-1" />
+                                    <Skeleton className="h-6 flex-1" />
+                                    <Skeleton className="h-6 flex-1" />
                                 </div>
+                                <Separator />
+                                <Skeleton className="h-6" />
+                                <Skeleton className="h-6" />
+                                <Skeleton className="h-6" />
                             </div>
-                        ) : data && data.length > 0 ? (
+                        ) : (
                             <DataTable
-                                data={data}
+                                data={data ?? []}
                                 columns={columns}
                                 getRowId={(row) => row.id}
                                 emptyNode={
-                                    <Text className="px-4 pb-4">{t("correspondence.empty")}</Text>
+                                    <Text className="italic">{t("correspondence.empty")}</Text>
                                 }
                                 textSize="base"
                             />
-                        ) : (
-                            <Text className="px-4 pb-4">{t("correspondence.empty")}</Text>
                         )}
                     </div>
                 </Disclosure.Content>
