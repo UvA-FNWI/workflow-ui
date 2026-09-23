@@ -26,6 +26,14 @@
   "cancel": "Cancel",
   "change_selection": "Change selection",
   "confirm": "Confirm",
+  "correspondence": {
+    "content": "Content",
+    "date": "Date",
+    "empty": "No automated emails found",
+    "recipients": "Recipient(s)",
+    "subject": "Subject",
+    "title": "Automated emails"
+  },
   "develop": {
     "columns": {
       "created": "Created",
