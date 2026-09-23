@@ -142,14 +142,12 @@ export const PageControl = ({
         ? `${pageResult?.weightedAverage?.toLocaleString(i18n.language) ?? 0}`
         : t("instance.calculations.grading_incomplete");
 
-    const getElementKey = (element: PageElementType) => {
+    const getElementKey = (element: PageElementType, index: number) => {
         switch (element.kind) {
             case "Text":
-                return `text-${l(element.text)?.substring(0, 10)}`;
-            case "Callout": {
-                const calloutText = l(element.callout?.title) ?? l(element.callout?.text);
-                return `callout-${element.callout?.variant}-${calloutText?.substring(0, 10)}`;
-            }
+                return `text-${index}`;
+            case "Callout":
+                return `callout-${index}`;
             case "Question":
                 return `question-${element.question?.name}`;
         }
@@ -168,7 +166,7 @@ export const PageControl = ({
                 {page.elements.length > 0 && (
                     <div>
                         <form className="flex flex-col gap-6">
-                            {page.elements.map((element) => {
+                            {page.elements.map((element, index) => {
                                 const answer =
                                     element.kind === "Question"
                                         ? answers.find(
@@ -177,7 +175,7 @@ export const PageControl = ({
                                         : undefined;
                                 return (
                                     <PageElement
-                                        key={getElementKey(element)}
+                                        key={getElementKey(element, index)}
                                         instanceId={instanceId}
                                         submissionId={submissionId}
                                         element={element}

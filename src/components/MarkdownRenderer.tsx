@@ -12,7 +12,7 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
     if (!children) return null;
 
     const renderAsText = ({children}: {children?: ReactNode}) => (
-        <Text as="p" className="my-1" display="block">
+        <Text as="p" className="wrap-break-word" display="block">
             {children}
         </Text>
     );
@@ -35,6 +35,12 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
                 h5: renderAsText,
                 h6: renderAsText,
                 p: renderAsText,
+                pre: renderAsText,
+                code: ({children: nodeChildren}) => (
+                    <Text as="span" className="wrap-break-word" display="block">
+                        {nodeChildren}
+                    </Text>
+                ),
                 ul: ({children: nodeChildren}) => (
                     <ul className="my-1 list-disc pl-5">{nodeChildren}</ul>
                 ),

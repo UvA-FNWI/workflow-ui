@@ -41,9 +41,9 @@ export const PageElement = ({
         case "Text":
             if (!element.text) return null;
             return (
-                <Text size="lg" as="span">
+                <div className="flex flex-col gap-2">
                     <MarkdownRenderer>{l(element.text)}</MarkdownRenderer>
-                </Text>
+                </div>
             );
         case "Callout":
             if (!element.callout || !element.callout.variant) return null;
