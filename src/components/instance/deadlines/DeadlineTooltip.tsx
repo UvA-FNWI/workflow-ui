@@ -2,7 +2,7 @@ import {Icon, Tooltip} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import {formatDateShortWithRelevantTime} from "~/utils/formatDate.ts";
+import {formatDateShort} from "~/utils/formatDate.ts";
 
 type Props = {previousDate: string; reason?: string | null};
 
@@ -16,11 +16,7 @@ export function DeadlineTooltip({previousDate, reason}: Props) {
                 <>
                     <span className="block">
                         {t("progress.previous_deadline")}:{" "}
-                        {formatDateShortWithRelevantTime(
-                            previousDate,
-                            i18n.language,
-                            `(${t("progress.amsterdam_time")})`,
-                        )}
+                        {formatDateShort(previousDate, i18n.language)}
                     </span>
                     <span className="block">
                         {t("progress.deadline_change_reason")}:{" "}

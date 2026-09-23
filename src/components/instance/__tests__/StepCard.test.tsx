@@ -92,6 +92,34 @@ const expiredStatus = {
 } as const;
 const expiredMessage = {en: "**Too late.** Contact your coordinator.", nl: "Te laat."};
 
+it("shows property deadlines as Amsterdam dates without a time", async () => {
+    const step = makeStep({
+        deadline: {
+            ...deadline,
+            property: "Deadline",
+            date: "2027-03-27T23:30:00Z",
+            previousDate: "2027-03-26T23:30:00Z",
+        },
+    });
+    const {rerender} = render(<StepCard step={step} instance={makeInstance(step)} />);
+    const shownDate = screen.getByText("progress.deadline").parentElement;
+    expect(shownDate).toHaveTextContent("28/03/2027");
+    expect(shownDate).not.toHaveTextContent("00:30");
+
+    const icon = screen.getByRole("img", {name: "progress.deadline_changed"});
+    fireEvent.pointerMove(icon.parentElement!, {pointerType: "mouse"});
+    fireEvent.pointerEnter(icon.parentElement!, {pointerType: "mouse"});
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip).toHaveTextContent("27/03/2027");
+    expect(tooltip).not.toHaveTextContent("00:30");
+
+    const calculated = makeStep({
+        deadline: {...step.deadline!, property: null, previousDate: null},
+    });
+    rerender(<StepCard step={calculated} instance={makeInstance(calculated)} />);
+    expect(screen.getByText("progress.deadline").parentElement).toHaveTextContent("00:30");
+});
+
 it("shows the previous date and saved reason on hover, including on unavailable steps", async () => {
     const step = makeStep({
         deadline: {

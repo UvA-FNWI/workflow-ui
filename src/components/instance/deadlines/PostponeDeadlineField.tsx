@@ -5,7 +5,7 @@ import {deadlineDate} from "./postponeDeadline";
 import {DatePicker} from "~/components/Datepicker/Datepicker";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {ExtendableDeadline} from "~/store/api/types/deadlines";
-import {formatDateShortWithRelevantTime} from "~/utils/formatDate";
+import {formatDateShort} from "~/utils/formatDate";
 
 type Props = {
     deadline: ExtendableDeadline;
@@ -25,7 +25,7 @@ export function PostponeDeadlineField({deadline, value, onChange}: Props) {
             <div className="grid grid-cols-2 items-center gap-x-3 gap-y-2">
                 <Text fontWeight="semibold">{t("postponement.current_date")}</Text>
                 <Text fontWeight="semibold">{t("postponement.new_date")}</Text>
-                <Text>{formatDateShortWithRelevantTime(deadline.date, i18n.language)}</Text>
+                <Text>{formatDateShort(deadline.date, i18n.language)}</Text>
                 {limitReached ? (
                     <Text>{t("postponement.limit_reached")}</Text>
                 ) : (

@@ -171,6 +171,8 @@ it("opens a future deadline at a valid month and accepts its first selection", a
     const future = [{...deadlines[0], date: "2028-12-02T12:00:00+01:00"}];
     render(<PostponeDeadlineModal {...props} deadlines={future} />);
     fireEvent.click(screen.getByRole("radio", {name: "postponement.individual"}));
+    expect(screen.getByText("02/12/2028")).toBeInTheDocument();
+    expect(screen.queryByText(/12:00/)).not.toBeInTheDocument();
     const picker = screen.getByRole("group", {name: "postponement.new_date: Proposal"});
     fireEvent.click(within(picker).getByRole("button"));
     const calendar = await screen.findByRole("grid", {name: "December 2028"});

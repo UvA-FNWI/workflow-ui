@@ -94,11 +94,13 @@ export const StepCard = ({step, instance}: Props) => {
         : deadline?.date
           ? {
                 label: t("progress.deadline"),
-                value: formatDateShortWithRelevantTime(
-                    deadline.date,
-                    i18n.language,
-                    `(${t("progress.amsterdam_time")})`,
-                ),
+                value: deadline.property
+                    ? formatDateShort(deadline.date, i18n.language)
+                    : formatDateShortWithRelevantTime(
+                          deadline.date,
+                          i18n.language,
+                          `(${t("progress.amsterdam_time")})`,
+                      ),
             }
           : null;
 
