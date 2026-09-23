@@ -167,7 +167,7 @@ export const StepCard = ({step, instance}: Props) => {
                         )}
                     </div>
                     {shownDate && (
-                        <Text as="span" className="inline-flex shrink-0 items-center gap-1">
+                        <span className="inline-flex shrink-0 items-center gap-1">
                             {!submittedDate && deadline?.previousDate && (
                                 <DeadlineTooltip
                                     previousDate={deadline.previousDate}
@@ -179,7 +179,7 @@ export const StepCard = ({step, instance}: Props) => {
                                 {":\t"}
                                 {shownDate.value}
                             </span>
-                        </Text>
+                        </span>
                     )}
                 </div>
             </Disclosure.Header>
