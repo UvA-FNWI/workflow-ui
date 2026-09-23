@@ -12,7 +12,7 @@ export function MarkdownRenderer({children}: MarkdownRendererProps) {
     if (!children) return null;
 
     const renderAsText = ({children}: {children?: ReactNode}) => (
-        <Text as="p" className="my-1 block">
+        <Text as="p" className="my-1" display="block">
             {children}
         </Text>
     );
