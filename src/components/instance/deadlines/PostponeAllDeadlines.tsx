@@ -47,12 +47,9 @@ export function PostponeAllDeadlines({
             </div>
             {maximumDays != null && (
                 <Text>
-                    {t(
-                        maximumDays === 0
-                            ? "postponement.all_limit_reached"
-                            : "postponement.remaining_days",
-                        {count: maximumDays},
-                    )}
+                    {maximumDays === 0
+                        ? t("postponement.all_limit_reached")
+                        : t("postponement.remaining_days", {count: maximumDays})}
                 </Text>
             )}
         </div>

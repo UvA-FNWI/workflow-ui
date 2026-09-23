@@ -140,12 +140,12 @@ export function PostponeDeadlineModal({
         error && typeof error === "object" && "data" in error
             ? (error.data as PostponementError[])
             : undefined;
+    const errorMessages: Record<PostponementError, string> = {
+        InvalidChanges: t("postponement.errors.InvalidChanges"),
+        MaximumExtensionExceeded: t("postponement.errors.MaximumExtensionExceeded"),
+    };
     const errorMessage = Array.isArray(errors)
-        ? errors
-              .map((code) =>
-                  t(`postponement.errors.${code}`, {defaultValue: t("postponement.save_error")}),
-              )
-              .join("\n")
+        ? errors.map((code) => errorMessages[code] ?? t("postponement.save_error")).join("\n")
         : t("postponement.save_error");
 
     return (
