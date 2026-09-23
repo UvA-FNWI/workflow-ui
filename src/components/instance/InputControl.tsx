@@ -103,7 +103,7 @@ export const InputControl = ({
         },
         [onChange, saveExternalUser, question.isArray, question.name, value],
     );
-    const debouncedOnChange = useDebounce(save, 500);
+    const debouncedOnChange = useDebounce(save, 500, true);
     const debouncedChange = (value: unknown) => {
         onChange?.(value);
         debouncedOnChange(value);
