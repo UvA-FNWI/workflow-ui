@@ -149,6 +149,7 @@ export type RoleAction =
     | "Execute"
     | "PostponeDeadlines"
     | "CreateRelatedInstance"
+    | "ViewCorrespondence"
     | "Undo";
 export type DataType =
     | "File"
