@@ -44,20 +44,16 @@ function Instance() {
             />
             <Grid>
                 <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">
-                    {progressCard && (
-                        <ProgressCard
-                            isLoading={isLoading}
-                            title={progressCard.title}
-                            steps={instance?.steps ?? []}
-                            currentStep={instance?.currentStep ?? ""}
-                        />
-                    )}
+                    <ProgressCard
+                        isLoading={isLoading}
+                        card={progressCard}
+                        steps={instance?.steps ?? []}
+                        currentStep={instance?.currentStep ?? ""}
+                    />
                     <ContentCard instance={instance} isLoading={isLoading} />
                 </GridItem>
                 <GridItem span={{base: 12, sm: 3}} className="flex flex-col gap-6">
-                    {infoCards.length > 0 && (
-                        <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
-                    )}
+                    <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
                     {instance?.canImpersonate && <AdminCard />}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
