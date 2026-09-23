@@ -68,7 +68,7 @@ const Tabs = forwardRef(
 
     // Determine which tabs are disabled
     const disabledKeys = tabs.reduce<string[]>((acc, tab, index) => {
-      if (tab.props.disabled) acc.push(index.toString());
+      if (tab.props.disabled || tab.props.hidden) acc.push(index.toString());
       return acc;
     }, []);
 

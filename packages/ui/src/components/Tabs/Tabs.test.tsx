@@ -93,16 +93,57 @@ describe('Tabs', () => {
         <TabList>
           <Tab>Tab 1</Tab>
           <Tab disabled>Tab 2</Tab>
+          <Tab>Tab 3</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>Content 1</TabPanel>
           <TabPanel>Content 2</TabPanel>
+          <TabPanel>Content 3</TabPanel>
         </TabPanels>
       </Tabs>
     );
 
     fireEvent.click(screen.getByText('Tab 2'));
     expect(mockOnTabChange).not.toHaveBeenCalled();
+
+    const firstTab = screen.getByText('Tab 1');
+    firstTab.focus();
+
+    // Arrow right should skip the disabled "Tab 2" and go straight to "Tab 3"
+    fireEvent.keyDown(firstTab, { key: 'ArrowRight' });
+
+    expect(mockOnTabChange).toHaveBeenCalledWith(2);
+    expect(mockOnTabChange).not.toHaveBeenCalledWith(1);
+  });
+
+  test('respects hidden tabs', () => {
+    const mockOnTabChange = vi.fn();
+
+    render(
+      <Tabs activeIndex={0} onTabChange={mockOnTabChange}>
+        <TabList>
+          <Tab>Tab 1</Tab>
+          <Tab hidden>Tab 2</Tab>
+          <Tab>Tab 3</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>Content 1</TabPanel>
+          <TabPanel>Content 2</TabPanel>
+          <TabPanel>Content 3</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    expect(screen.queryByText('Tab 2')).not.toBeInTheDocument();
+
+    const firstTab = screen.getByText('Tab 1');
+    firstTab.focus();
+
+    // Arrow right should skip the hidden "Tab 2" and go straight to "Tab 3"
+    fireEvent.keyDown(firstTab, { key: 'ArrowRight' });
+
+    expect(mockOnTabChange).toHaveBeenCalledWith(2);
+    expect(mockOnTabChange).not.toHaveBeenCalledWith(1);
   });
 
   test('exposes imperative handle methods', () => {
