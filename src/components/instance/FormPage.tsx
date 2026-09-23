@@ -60,7 +60,9 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
     // For some assessment forms not all tabs are enabled
     const goToNextEnabledTab = (current: number, direction: 1 | -1) => {
         const isEnabled = (i: number) =>
-            i < pages.length ? pages[i].isInCurrentForm : i === pages.length && areAllPagesComplete;
+            i < pages.length
+                ? pages[i].isInCurrentForm && pages[i].isActive
+                : i === pages.length && areAllPagesComplete;
 
         const nextIndex =
             Array.from({length: totalTabs}, (_, i) => i)
