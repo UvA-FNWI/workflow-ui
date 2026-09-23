@@ -8,6 +8,8 @@ FROM base AS prod
 
 WORKDIR /app
 
+ENV CI=true
+
 COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
 COPY packages ./packages
 
