@@ -28,9 +28,13 @@ export const AssessmentPageSection = ({
 }: AssessmentPageSectionProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
+    const questions = page.elements
+        .filter((element) => element.kind === "Question")
+        .map((element) => element.question!);
+
     const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
         getVisibleQuestionAnswerPairs(
-            page.questions,
+            questions,
             sourceResult.answers,
             submissions.find((s) => s.id == sourceResult.id),
             sourceResult.title,
@@ -52,8 +56,8 @@ export const AssessmentPageSection = ({
                         fontType="heading"
                     >
                         {l(page.title)}
-                        {page.questions.some((question) => question.percentage != null) &&
-                            ` (${page.questions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toLocaleString(i18n.language)}%)`}
+                        {questions.some((question) => question.percentage != null) &&
+                            ` (${questions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toLocaleString(i18n.language)}%)`}
                     </Heading>
                     {onEditPage && resultsType === "Normal" && page.isInCurrentForm && (
                         <Button

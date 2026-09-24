@@ -48,8 +48,11 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                                 </Heading>
                             )}
                             {submission.form.pages.map((page) => {
+                                const questions = page.elements
+                                    .filter((element) => element.kind === "Question")
+                                    .map((element) => element.question!);
                                 const questionAnswerPairs = getVisibleQuestionAnswerPairs(
-                                    page.questions,
+                                    questions,
                                     submission.answers,
                                 );
 

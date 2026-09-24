@@ -48,7 +48,7 @@ function InfoCard({card, instanceId}: {card: InfoCardData; instanceId: string}) 
             <Heading as="h3" size="sm">
                 {l(card.title)}
             </Heading>
-            <MarkdownRenderer>{l(card.content) ?? ""}</MarkdownRenderer>
+            <MarkdownRenderer>{l(card.content)}</MarkdownRenderer>
         </Card>
     );
 }

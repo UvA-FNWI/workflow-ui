@@ -31,7 +31,7 @@ export type EditorChoice = {
 };
 
 export type EditorQuestion = {
-    /** Internal name, the key in the properties list and the value in a page's fields list. */
+    /** Internal name, the key in the properties list and the value in a page's elements list. */
     name: string;
     /** "Unknown" for anything outside the supported kinds, which falls back to yaml. */
     kind: QuestionKind | "Unknown";

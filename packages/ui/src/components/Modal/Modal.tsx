@@ -9,6 +9,7 @@ import {
 
 import { FocusScope, useDialog, useModalOverlay } from 'react-aria';
 import { createPortal } from 'react-dom';
+import { useOverlayTriggerState } from 'react-stately';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 
@@ -101,18 +102,10 @@ const ModalOverlay = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  // Create a simple state that mimics OverlayTriggerState
-  const state = {
+  const state = useOverlayTriggerState({
     isOpen: true,
-    setOpen: (isOpen: boolean) => {
-      if (!isOpen) {
-        onClose();
-      }
-    },
-    open: () => {},
-    close: onClose,
-    toggle: () => onClose(),
-  };
+    onOpenChange: isOpen => !isOpen && onClose(),
+  });
 
   const { modalProps, underlayProps } = useModalOverlay(
     {
