@@ -186,6 +186,7 @@ export const PageControl = ({
                                         }
                                         answer={answer}
                                         formControl={form.control}
+                                        showPercentages={weightedQuestions.length > 1}
                                     />
                                 );
                             })}
