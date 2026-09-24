@@ -28,6 +28,15 @@ pnpm add @uva-fnwi/datanose-core
 }
 ```
 
+When working **in this repo**, install from the repository root (`pnpm install`). There is no package-local lockfile. After that:
+
+```bash
+pnpm --filter @uva-fnwi/datanose-core test
+pnpm --filter @uva-fnwi/datanose-core build
+```
+
+React is shared via the workspace catalog (root README). `pnpm install` in this folder joins the root workspace. `npm install` or `yarn install` or `bun install` should not be used.
+
 ## Usage
 
 ### Option 1: `AuthProvider` + `useAuth` (recommended for React apps)
