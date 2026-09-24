@@ -9,6 +9,7 @@ import type {
     RoleImpersonationResult,
     WorkflowInstance,
 } from "./types/instances";
+import type {Correspondence} from "~/store/api/types/correspondence.ts";
 import type {AssignRelatedUserParams, RemoveRelatedUserParams} from "~/store/api/types/params.ts";
 import type {Choice} from "~/store/api/types/submissions.ts";
 
@@ -112,6 +113,9 @@ export const instancesApi = baseApi.injectEndpoints({
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
             ],
+        }),
+        getCorrespondence: builder.query<Correspondence[], string>({
+            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Correspondence`,
         }),
     }),
 });
