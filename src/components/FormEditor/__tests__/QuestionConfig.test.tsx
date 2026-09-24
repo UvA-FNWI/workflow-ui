@@ -28,8 +28,8 @@ const renderConfig = (properties: string) => {
             parseDocument(`name: Proposal
 pages:
   - name: Content
-    fields:
-      - Question
+    elements:
+      - question: Question
 `),
         ],
         ["Definitions/Thesis/Entity.yaml", parseDocument(`name: Thesis\n${properties}`)],

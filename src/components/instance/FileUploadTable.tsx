@@ -73,7 +73,7 @@ export const FileUploadTable = ({
     };
 
     return (
-        <div className="max-w-full gap-2 overflow-x-auto">
+        <div className="mb-2 max-w-full gap-2 overflow-x-auto">
             <table className="border-collapse">
                 <thead>
                     <tr className="border-b border-grey-300 dark:border-grey-600">
@@ -141,7 +141,7 @@ export const FileUploadTable = ({
                                     {question.description && (
                                         <div className="text-sm text-grey-600 dark:text-grey-400">
                                             <MarkdownRenderer>
-                                                {l(question.description) ?? ""}
+                                                {l(question.description)}
                                             </MarkdownRenderer>
                                         </div>
                                     )}
