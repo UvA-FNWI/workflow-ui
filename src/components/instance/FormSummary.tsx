@@ -52,8 +52,11 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
     return (
         <div key={submission.id} className="flex flex-col gap-6">
             {pages.map((page) => {
+                const questions = page.elements
+                    .filter((element) => element.kind === "Question")
+                    .map((element) => element.question!);
                 const questionAnswerPairs = getVisibleQuestionAnswerPairs(
-                    page.questions,
+                    questions,
                     submission.answers,
                 );
 
