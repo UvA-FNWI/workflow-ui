@@ -6,7 +6,7 @@ export const screensApi = baseApi.injectEndpoints({
         getScreen: builder.query<ScreenData, {workflowDefinition: string; screenName: string}>({
             query: ({workflowDefinition, screenName}) =>
                 `/Screens/${workflowDefinition}/${screenName}`,
-            keepUnusedDataFor: 0,
+            keepUnusedDataFor: 0, // // This is necessary to prevent stale data in the screens
             providesTags: (_result, _error, {workflowDefinition, screenName}) => [
                 {type: "Screen", id: `${workflowDefinition}-${screenName}`},
             ],
