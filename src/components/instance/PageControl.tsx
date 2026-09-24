@@ -186,6 +186,7 @@ export const PageControl = ({
                                         }
                                         answer={answer}
                                         formControl={form.control}
+                                        showPercentages={weightedQuestions.length > 1}
                                     />
                                 );
                             })}
@@ -202,7 +203,7 @@ export const PageControl = ({
                     </div>
                 )}
 
-                {page.hasResults && (
+                {page.hasResults && weightedQuestions.length > 1 && (
                     <div className="my-4">
                         <Separator weight="bold" color="black" className="mb-4" />
                         <div className="flex items-center justify-between gap-2 pr-12">

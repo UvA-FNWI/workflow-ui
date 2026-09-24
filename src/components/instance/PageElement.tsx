@@ -18,6 +18,7 @@ type PageElementProps = {
     showCompact?: boolean;
     answer?: Answer;
     formControl?: Control<FieldValues>;
+    showPercentages?: boolean;
 };
 
 export const PageElement = ({
@@ -27,6 +28,7 @@ export const PageElement = ({
     showCompact = false,
     answer,
     formControl,
+    showPercentages = false,
 }: PageElementProps) => {
     const {l, t, i18n} = useTranslate("workflow");
 
@@ -88,6 +90,7 @@ export const PageElement = ({
                                             <InputLabel key={question.name}>
                                                 {l(question.text)}
                                                 {question.percentage != null &&
+                                                    showPercentages &&
                                                     ` (${question.percentage.toLocaleString(i18n.language)}%)`}
                                             </InputLabel>
                                         )}

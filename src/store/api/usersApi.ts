@@ -37,6 +37,7 @@ export const usersApi = baseApi.injectEndpoints({
                 method: "POST",
                 body,
             }),
+            invalidatesTags: ["Screen"],
         }),
         updateUserEmail: builder.mutation<UserSearchResult, UpdateUserEmailRequest>({
             query: ({externalUser, instanceId}) => ({
@@ -46,6 +47,7 @@ export const usersApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, {externalUser}) => [
                 {type: "User", id: externalUser?.userId},
+                "Screen",
             ],
         }),
     }),

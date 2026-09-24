@@ -53,18 +53,20 @@ describe('TextArea Component', () => {
     );
   });
 
-  test('forwards rows, maxLength, and custom className', () => {
+  test('forwards rows, maxLength, minLength, and custom className', () => {
     render(
       <TextArea
         aria-label="Notes"
         rows={6}
         maxLength={250}
+        minLength={10}
         className="custom-textarea-class"
       />
     );
 
     expect(screen.getByRole('textbox')).toHaveAttribute('rows', '6');
     expect(screen.getByRole('textbox')).toHaveAttribute('maxlength', '250');
+    expect(screen.getByRole('textbox')).toHaveAttribute('minlength', '10');
     expect(screen.getByRole('textbox')).toHaveClass(
       'custom-textarea-class',
       'ui:min-h-28',

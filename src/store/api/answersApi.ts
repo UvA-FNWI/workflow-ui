@@ -61,6 +61,7 @@ export const answersApi = baseApi.injectEndpoints({
                 },
                 {type: "InstanceActions", id: params.instanceId},
                 {type: "Choices", id: params.instanceId},
+                "Screen",
             ],
         }),
         saveFile: build.mutation<{success: boolean}, SaveFileParams>({
@@ -80,6 +81,7 @@ export const answersApi = baseApi.injectEndpoints({
                     submissionId: params.submissionId,
                 },
                 {type: "Instance", id: params.instanceId},
+                "Screen",
             ],
         }),
         clearAnswers: build.mutation<Submission, SubmissionParams>({
@@ -110,6 +112,7 @@ export const answersApi = baseApi.injectEndpoints({
                     submissionId: params.submissionId,
                 },
                 {type: "InstanceActions", id: params.instanceId},
+                "Screen",
             ],
         }),
     }),
