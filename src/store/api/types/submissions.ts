@@ -91,6 +91,7 @@ export type Question = {
     workflowDefinition?: string;
     layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
+    minLength?: number;
     sorting?: Sorting;
     linkedTo?: string;
     allowedFileTypes?: string[];

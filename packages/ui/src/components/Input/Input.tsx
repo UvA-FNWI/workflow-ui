@@ -40,6 +40,7 @@ export const Input: React.FC<InputProps> = ({
   isDisabled = false,
   className,
   maxLength,
+  minLength,
   leftIcon,
   rightIcon,
   size,
@@ -62,7 +63,8 @@ export const Input: React.FC<InputProps> = ({
         'aria-labelledby': ariaLabelledBy,
         isDisabled,
         validationState: !isValid ? 'invalid' : 'valid',
-        maxLength: maxLength,
+        maxLength,
+        minLength,
       },
       ref
     );
