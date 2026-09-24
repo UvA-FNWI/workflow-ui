@@ -53,7 +53,9 @@ export const PageElement = ({
                     header={l(element.callout.title)}
                 >
                     {element.callout.text && (
-                        <MarkdownRenderer>{l(element.callout.text)}</MarkdownRenderer>
+                        <MarkdownRenderer className="leading-tight">
+                            {l(element.callout.text)}
+                        </MarkdownRenderer>
                     )}
                 </Callout>
             );
