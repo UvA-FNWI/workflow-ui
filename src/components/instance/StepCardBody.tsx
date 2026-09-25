@@ -63,7 +63,12 @@ export const StepCardBody = ({
                 return (
                     <>
                         {showVersionCards && !formState && (
-                            <Heading fontType="heading" size={"sm"} className="pt-4 font-semibold">
+                            <Heading
+                                fontType="heading"
+                                size="sm"
+                                as="h3"
+                                className="pt-4 font-semibold"
+                            >
                                 {t("version_card.version_nr", {
                                     versionNumber: getCurrentVersionNumber(step),
                                 })}
@@ -73,7 +78,7 @@ export const StepCardBody = ({
                             <div key={submission.id} className="flex flex-col gap-2">
                                 {contentState.regular.length > 0 && (
                                     <Heading
-                                        as="h4"
+                                        as="h3"
                                         size="xs"
                                         className="py-4 pb-1 font-semibold text-red-brand"
                                     >
@@ -110,7 +115,12 @@ export const StepCardBody = ({
                 {formState && (
                     <div className="py-4">
                         {showVersionCards && (
-                            <Heading fontType="heading" size={"sm"} className="py-4 font-semibold">
+                            <Heading
+                                fontType="heading"
+                                size="sm"
+                                as="h3"
+                                className="py-4 font-semibold"
+                            >
                                 {t("version_card.version_nr", {
                                     versionNumber: getCurrentVersionNumber(step),
                                 })}

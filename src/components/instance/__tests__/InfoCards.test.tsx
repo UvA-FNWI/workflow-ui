@@ -61,3 +61,32 @@ it("renders configured cards in order and expands compact user fields", () => {
     expect(screen.getByText("Cohort")).toBeTruthy();
     expect(screen.getByText("Maintenance")).toBeTruthy();
 });
+
+it("does not render a card for Progress type entries", () => {
+    const cards: InfoCard[] = [
+        {name: "Progress", type: "Progress", title: {en: "Progress", nl: "Voortgang"}},
+        {
+            name: "Notice",
+            type: "Text",
+            title: {en: "Notice", nl: "Melding"},
+            content: {en: "Some content", nl: "Wat inhoud"},
+        },
+    ];
+
+    render(<InfoCards cards={cards} instanceId="project-1" />);
+
+    expect(screen.queryByText("Progress")).toBeNull();
+    expect(screen.getAllByRole("heading").map((heading) => heading.textContent)).toEqual([
+        "Notice",
+    ]);
+});
+
+it("renders a skeleton loader when isLoading is true, regardless of cards", () => {
+    const cards: InfoCard[] = [
+        {name: "Progress", type: "Progress", title: {en: "Progress", nl: "Voortgang"}},
+    ];
+    const {container} = render(<InfoCards cards={cards} instanceId="project-1" isLoading />);
+
+    expect(container.querySelectorAll("[class*='animate-pulse']").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("heading")).toBeNull();
+});

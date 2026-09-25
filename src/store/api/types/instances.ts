@@ -195,4 +195,5 @@ export type InfoCard =
           items?: InfoCardItem[] | null;
       })
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
-    | (InfoCardBase & {type: "Text"; content?: LocalString | null});
+    | (InfoCardBase & {type: "Text"; content?: LocalString | null})
+    | (InfoCardBase & {type: "Progress"});
