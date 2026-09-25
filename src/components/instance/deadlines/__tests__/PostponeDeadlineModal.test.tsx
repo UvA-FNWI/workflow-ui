@@ -51,20 +51,35 @@ const form = {
     pages: [
         {
             name: "Reason",
-            questions: [
+            elements: [
+                {kind: "Text", text: {en: "Configured introduction"}},
                 {
-                    name: "PostponementReason",
-                    type: "Choice",
-                    text: {en: "Configured reason"},
-                    choices: [
-                        {name: "Research", text: {en: "Research delay"}},
-                        {name: "Other", text: {en: "Other"}},
-                    ],
+                    kind: "Callout",
+                    callout: {
+                        variant: "Info",
+                        title: {en: "Configured board notice"},
+                        text: {en: "Email the **board**."},
+                    },
                 },
                 {
-                    name: "PostponementExplanation",
-                    type: "String",
-                    text: {en: "Configured explanation"},
+                    kind: "Question",
+                    question: {
+                        name: "PostponementReason",
+                        type: "Choice",
+                        text: {en: "Configured reason"},
+                        choices: [
+                            {name: "Research", text: {en: "Research delay"}},
+                            {name: "Other", text: {en: "Other"}},
+                        ],
+                    },
+                },
+                {
+                    kind: "Question",
+                    question: {
+                        name: "PostponementExplanation",
+                        type: "String",
+                        text: {en: "Configured explanation"},
+                    },
                 },
             ],
         },
@@ -100,9 +115,11 @@ async function chooseReason(name: string) {
 it("starts without a reason and submits all input together through the action endpoint", async () => {
     render(<PostponeDeadlineModal {...props} />);
     expect(screen.getByText("Configured modal title")).toBeInTheDocument();
-    expect(screen.getByText("postponement.introduction")).toBeInTheDocument();
+    expect(screen.getByText("Configured introduction")).toBeInTheDocument();
     expect(screen.queryByRole("button", {name: /Configured reason/})).not.toBeInTheDocument();
     chooseDates();
+    expect(screen.getByText("Configured board notice")).toBeInTheDocument();
+    expect(screen.getByText("board").tagName).toBe("STRONG");
     expect(screen.getByRole("button", {name: "confirm"})).toBeDisabled();
     await chooseReason("Research delay");
     expect(postpone).not.toHaveBeenCalled();
@@ -207,10 +224,16 @@ it("renders the configured Markdown introduction from the loaded form", () => {
             pages: [
                 {
                     ...form.pages[0],
-                    introduction: {
-                        en: "Extend for **Ada** in **Research Methods**.",
-                        nl: "Uitstel voor Ada.",
-                    },
+                    elements: [
+                        {
+                            kind: "Text",
+                            text: {
+                                en: "Extend for **Ada** in **Research Methods**.",
+                                nl: "Uitstel voor Ada.",
+                            },
+                        },
+                        ...form.pages[0].elements.slice(1),
+                    ],
                 },
             ],
         },
@@ -220,7 +243,6 @@ it("renders the configured Markdown introduction from the loaded form", () => {
     render(<PostponeDeadlineModal {...props} />);
     expect(screen.getByText("Ada").tagName).toBe("STRONG");
     expect(screen.getByText("Research Methods")).toBeInTheDocument();
-    expect(screen.queryByText("postponement.introduction")).not.toBeInTheDocument();
 });
 
 it("enforces the remaining all-deadlines allowance and accepts its boundary", async () => {

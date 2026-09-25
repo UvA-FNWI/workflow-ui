@@ -1,4 +1,4 @@
-import {Callout, Select, SelectItem, TextArea} from "@uva-fnwi/datanose-ui";
+import {Select, SelectItem, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import type {Question} from "~/store/api/types/submissions";
@@ -19,9 +19,6 @@ export function PostponeDeadlineReason({
     const {t, l} = useTranslate("workflow");
     return (
         <>
-            <Callout type="info" className="mb-4" header={t("postponement.callout_title")}>
-                {t("postponement.callout_body")}
-            </Callout>
             <Select
                 label={l(reasonQuestion.text)}
                 placeholder={t("select")}

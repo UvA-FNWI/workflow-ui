@@ -146,8 +146,6 @@
     "all": "Voor alle aanpasbare deadlines",
     "all_limit_reached": "Minstens één deadline heeft de limiet bereikt. Stel andere deadlines afzonderlijk uit.",
     "amount": "Verzet alle deadlines met:",
-    "callout_body": "Mail de examencommissie. Zij zullen de datum aanpassen.",
-    "callout_title": "Moet de examencommissie uitstel verlenen?",
     "current_date": "Huidige datum",
     "days": "Dagen",
     "errors": {
@@ -155,7 +153,6 @@
       "MaximumExtensionExceeded": "Een deadline overschrijdt het maximale totale uitstel."
     },
     "individual": "Per deadline",
-    "introduction": "Je wilt deze student uitstel verlenen. Kies welke deadlines je wilt aanpassen.",
     "limit_reached": "Het maximale uitstel is bereikt.",
     "new_date": "Nieuwe datum",
     "no_deadlines": "Er zijn geen aanpasbare deadlines met een datum.",

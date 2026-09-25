@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {
     Button,
     Callout,
+    type CalloutType,
     LoadingSpinner,
     Modal,
     Radio,
@@ -56,11 +57,15 @@ export function PostponeDeadlineModal({
     const [unit, setUnit] = useState("days");
     const [dates, setDates] = useState<Record<string, string>>({});
     const [reason, setReason] = useState({choice: "", explanation: ""});
-    const questions = form?.pages.flatMap((page) => page.questions) ?? [];
-    const reasonQuestion = questions.find((question) => question.name === "PostponementReason");
-    const explanationQuestion = questions.find(
-        (question) => question.name === "PostponementExplanation",
-    );
+    const elements = form?.pages.flatMap((page) => page.elements) ?? [];
+    const introduction = elements.find((element) => element.kind === "Text")?.text;
+    const callout = elements.find((element) => element.kind === "Callout")?.callout;
+    const reasonQuestion = elements.find(
+        (element) => element.question?.name === "PostponementReason",
+    )?.question;
+    const explanationQuestion = elements.find(
+        (element) => element.question?.name === "PostponementExplanation",
+    )?.question;
     const reasons = reasonQuestion?.choices ?? [];
     const [executeAction, {isLoading, error}] = actionsApi.endpoints.executeAction.useMutation();
 
@@ -151,13 +156,13 @@ export function PostponeDeadlineModal({
     return (
         <Modal isOpen onOpenChange={onClose} aria-label={l(form.title)}>
             <Modal.Header className="pb-0">{l(form.title)}</Modal.Header>
-            <div className="px-6">
-                <Text as="span">
-                    <MarkdownRenderer>
-                        {l(form.pages[0]?.introduction) || t("postponement.introduction")}
-                    </MarkdownRenderer>
-                </Text>
-            </div>
+            {introduction && (
+                <div className="px-6">
+                    <Text as="span">
+                        <MarkdownRenderer>{l(introduction)}</MarkdownRenderer>
+                    </Text>
+                </div>
+            )}
             <Modal.Body>
                 {!deadlines.length ? (
                     <Text>{t("postponement.no_deadlines")}</Text>
@@ -194,6 +199,15 @@ export function PostponeDeadlineModal({
                             />
                         )}
                     </div>
+                )}
+                {mode && callout && (
+                    <Callout
+                        type={callout.variant.toLowerCase() as CalloutType}
+                        header={l(callout.title)}
+                        className="mb-4"
+                    >
+                        {callout.text && <MarkdownRenderer>{l(callout.text)}</MarkdownRenderer>}
+                    </Callout>
                 )}
                 {mode && reasonQuestion && explanationQuestion && (
                     <PostponeDeadlineReason
