@@ -8,7 +8,11 @@ export {
 } from './components/Callout/Callout';
 export { Card, type CardVariantProps } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
-export { DatePicker, type DatePickerProps } from './components/Datepicker';
+export {
+  DatePicker,
+  dateToDateValue,
+  type DatePickerProps,
+} from './components/Datepicker';
 export {
   DateRangePicker,
   type DateRangePickerProps,

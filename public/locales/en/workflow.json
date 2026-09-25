@@ -74,6 +74,11 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
+  "form_loading": {
+    "error": "The form could not be loaded.",
+    "loading": "Loading form…",
+    "retry": "Try again"
+  },
   "home": "Home",
   "instance": {
     "calculations": {
@@ -137,11 +142,36 @@
     "choose_course_title": "Choose your course",
     "no_access": "You don't have access to any courses yet."
   },
+  "postponement": {
+    "all": "For all extendable deadlines",
+    "all_limit_reached": "At least one deadline has reached its limit. Extend other deadlines individually.",
+    "amount": "Extend all deadlines by:",
+    "current_date": "Current date",
+    "days": "Days",
+    "errors": {
+      "InvalidChanges": "Choose a later date for at least one extendable deadline. If a deadline changed, reopen the modal.",
+      "MaximumExtensionExceeded": "A deadline exceeds its maximum total extension."
+    },
+    "individual": "Per deadline",
+    "limit_reached": "The maximum extension has been reached.",
+    "new_date": "New date",
+    "no_deadlines": "There are no extendable deadlines with a date.",
+    "remaining_days_one": "Maximum remaining extension: {{count}} day.",
+    "remaining_days_other": "Maximum remaining extension: {{count}} days.",
+    "save_error": "The deadlines could not be updated. Please try again.",
+    "scope": "Grant an extension:",
+    "unit": "Unit",
+    "weeks": "Weeks"
+  },
   "previous": "Previous",
   "progress": {
     "amsterdam_time": "Amsterdam time",
     "completed": "Completed",
     "deadline": "Deadline",
+    "deadline_change_reason": "Reason",
+    "deadline_changed": "Deadline changed",
+    "deadline_reason_unknown": "Not recorded",
+    "previous_deadline": "Was",
     "titleStudent": "Your progress",
     "titleSupervisor": "Student's progress"
   },

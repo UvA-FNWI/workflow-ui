@@ -1,16 +1,20 @@
 import {Button} from "@uva-fnwi/datanose-ui";
 
+import {WorkflowActions} from "./WorkflowActions";
 import {HighlightedFields} from "~/components/instance/HighlightedFields.tsx";
 import {PageHeader} from "~/components/PageHeader";
 import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
+import type {Action, WorkflowStep} from "~/store/api/types/instances";
 
 interface InstanceHeaderProps {
     courseName?: LocalString | string | null;
     instanceId?: string;
     canUseAdminTools?: boolean;
     isLoading: boolean;
+    actions?: Action[];
+    steps?: WorkflowStep[];
 }
 
 export function InstanceHeader({
@@ -18,6 +22,8 @@ export function InstanceHeader({
     instanceId,
     canUseAdminTools = false,
     isLoading,
+    actions = [],
+    steps = [],
 }: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
     const {page} = useJobTranslations();
@@ -32,19 +38,28 @@ export function InstanceHeader({
             backLabel={t("home")}
             isLoading={isLoading}
             actions={
-                canUseAdminTools &&
                 instanceId && (
-                    <div className="flex gap-2">
-                        <VersionedLink to={`/instance/${instanceId}/admin`}>
-                            <Button intent="secondary" type="button">
-                                {t("admin_data.edit_data")}
-                            </Button>
-                        </VersionedLink>
-                        <VersionedLink to={`/instance/${instanceId}/jobs`}>
-                            <Button intent="secondary" type="button">
-                                {page.viewJobs}
-                            </Button>
-                        </VersionedLink>
+                    <div className="flex flex-wrap gap-2">
+                        <WorkflowActions
+                            key={instanceId}
+                            instanceId={instanceId}
+                            actions={actions}
+                            steps={steps}
+                        />
+                        {canUseAdminTools && (
+                            <>
+                                <VersionedLink to={`/instance/${instanceId}/admin`}>
+                                    <Button intent="secondary" type="button">
+                                        {t("admin_data.edit_data")}
+                                    </Button>
+                                </VersionedLink>
+                                <VersionedLink to={`/instance/${instanceId}/jobs`}>
+                                    <Button intent="secondary" type="button">
+                                        {page.viewJobs}
+                                    </Button>
+                                </VersionedLink>
+                            </>
+                        )}
                     </div>
                 )
             }
