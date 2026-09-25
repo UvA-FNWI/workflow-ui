@@ -7,6 +7,7 @@ import {
     getStepHierarchy,
     hasVersionHistory,
     resolveContentState,
+    resolveFormState,
     resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
 import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
@@ -18,6 +19,7 @@ import type {
     WorkflowInstance,
     WorkflowStep,
 } from "~/store/api/types/instances.ts";
+import type {Submission} from "~/store/api/types/submissions.ts";
 import {formatDateShort, formatDateShortWithRelevantTime} from "~/utils/formatDate.ts";
 
 const HEADER_STATUS_VARIANT: Record<StepHeaderStatus["type"], PillVariantProps["variant"]> = {
@@ -27,154 +29,105 @@ const HEADER_STATUS_VARIANT: Record<StepHeaderStatus["type"], PillVariantProps["
     Error: "red",
 };
 
-function mapHeaderStatusType(type: StepHeaderStatus["type"]): PillVariantProps["variant"] {
-    return HEADER_STATUS_VARIANT[type];
-}
-
 type Props = {
     step: WorkflowStep;
     instance: WorkflowInstance;
+    nested?: boolean;
+    rootStep?: WorkflowStep;
 };
 
-const shouldAutoOpenForm = (
-    action: Action,
-    submissions: {dateSubmitted?: string; form: {name: string}}[],
-) =>
-    action.type === "SubmitForm" &&
-    action.autoOpenForm !== false &&
-    !submissions.some((s) => s.dateSubmitted && s.form.name === action.form);
-
-export const StepCard = ({step, instance}: Props) => {
+export const StepCard = ({step, instance, nested = false, rootStep = step}: Props) => {
     const {t, l} = useTranslate("workflow");
 
-    const stepHierarchy = getStepHierarchy(step);
-    const stepIds = stepHierarchy.map((s) => s.id);
+    const childRows =
+        !nested && step.childrenLayout === "CollapsibleRows" ? (step.children ?? []) : [];
+    const showChildRows = childRows.length > 0;
+
+    // Child rows own their content; combined cards include the whole hierarchy.
+    const fullHierarchy = getStepHierarchy(step);
+    const contentStep = showChildRows ? getParentContent(step) : step;
+    const contentSteps = showChildRows ? [contentStep] : fullHierarchy;
+    const allStepIds = new Set(fullHierarchy.map((candidate) => candidate.id));
+    const contentStepIds = showChildRows ? new Set([step.id]) : allStepIds;
     const actions = instance.actions.filter((action) =>
-        action.steps.some((actionStepId) => stepIds.includes(actionStepId)),
+        action.steps.some((actionStepId) => contentStepIds.has(actionStepId)),
     );
-    const submissions = instance.submissions.filter((s) => stepIds.includes(s.form.step ?? ""));
+    const submissions = instance.submissions.filter((s) => contentStepIds.has(s.form.step ?? ""));
 
-    const autoOpenAction =
-        actions.length === 1 && actions[0] && shouldAutoOpenForm(actions[0], submissions)
-            ? actions[0]
-            : null;
-
-    const [activeAction, setActiveAction] = useState<Action | null>(autoOpenAction);
-
-    // A refresh can revoke an action while its form or modal is still open.
-    const availableActiveAction = actions.find((action) => action.id === activeAction?.id) ?? null;
-    const resolvedAction = availableActiveAction ?? autoOpenAction;
-
-    const deadlineMessages = stepHierarchy.filter(
+    const deadlineMessages = contentSteps.filter(
         (candidate) =>
             candidate.deadline?.message != null ||
             (candidate.deadline?.type === "Hard" && candidate.deadline.isPassed),
     );
 
-    const isCurrentStep = stepIds.includes(instance.currentStep ?? "");
+    // Availability includes child actions even when they render in separate rows.
+    const isCurrentStep = allStepIds.has(instance.currentStep ?? "");
     const currentStepIndex = instance.steps.findIndex((s) =>
         [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
     );
-    const isAfterCurrentStep = instance.steps.indexOf(step) > currentStepIndex;
-
-    const deadlineDate =
-        step.deadline?.date ??
-        step.children?.find((c) => c.id == instance.currentStep)?.deadline?.date ??
-        null;
-    const submittedDate =
-        [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])]
-            .filter((date): date is string => Boolean(date))
-            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
-
-    const shownDate = submittedDate
-        ? {
-              label: t("status.submitted"),
-              value: formatDateShort(submittedDate, i18n.language),
-          }
-        : deadlineDate
-          ? {
-                label: t("progress.deadline"),
-                value: formatDateShortWithRelevantTime(
-                    deadlineDate,
-                    i18n.language,
-                    `(${t("progress.amsterdam_time")})`,
-                ),
-            }
-          : null;
+    const isAfterCurrentStep = instance.steps.indexOf(rootStep) > currentStepIndex;
 
     // An unfinished alongside obligation can move the current step backward. Steps that are
     // already completed or still have available actions must remain usable regardless of order.
+    const hasAvailableAction = instance.actions.some((action) =>
+        action.steps.some((id) => allStepIds.has(id)),
+    );
     const isUnavailableFutureStep =
         !step.dateCompleted &&
         deadlineMessages.length === 0 &&
-        actions.length === 0 &&
+        !hasAvailableAction &&
         !!instance.currentStep &&
         !isCurrentStep &&
         isAfterCurrentStep;
 
-    const contentState = resolveContentState(step, submissions);
-    const modalState = resolveModalState(availableActiveAction);
-    const hasVisibleSubmission =
-        submissions.length > 0 || stepHierarchy.some((candidate) => hasVersionHistory(candidate));
-    const isFormOpen =
-        resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
-    const emptyStateMessage =
-        !isFormOpen &&
-        !hasVisibleSubmission &&
-        stepHierarchy.some(({hasSubmission}) => hasSubmission)
-            ? t("instance.unauthorized_submission")
-            : !isFormOpen && stepHierarchy.some(({expectsSubmission}) => expectsSubmission)
-              ? t("instance.empty_step")
-              : null;
+    const {activeAction, resolvedAction, setActiveAction} = useStepActions(actions, submissions);
+
+    const hasVisibleSubmission = submissions.length > 0 || contentSteps.some(hasVersionHistory);
+    let emptyStateMessage: string | null = null;
+    if (!resolveFormState(resolvedAction)) {
+        if (!hasVisibleSubmission && contentSteps.some((candidate) => candidate.hasSubmission)) {
+            emptyStateMessage = t("instance.unauthorized_submission");
+        } else if (contentSteps.some((candidate) => candidate.expectsSubmission)) {
+            emptyStateMessage = t("instance.empty_step");
+        }
+    }
+
     const hasStepContent =
         actions.length > 0 ||
         submissions.length > 0 ||
-        hasVersionHistory(step) ||
+        hasVersionHistory(contentStep) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
-    const hasBodyContent = deadlineMessages.length > 0 || hasStepContent;
+    const hasBodyContent = deadlineMessages.length > 0 || hasStepContent || childRows.length > 0;
     const isContentless = !isUnavailableFutureStep && !hasBodyContent;
+    const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
 
     return (
         <Disclosure
-            defaultExpanded={isCurrentStep && hasBodyContent}
+            isExpanded={isExpanded}
+            onExpandedChange={setIsExpanded}
             isDisabled={isUnavailableFutureStep || !hasBodyContent}
-            className={isContentless ? "cursor-default! opacity-100!" : undefined}
+            shadow={nested ? "none" : undefined}
+            border={nested ? "none" : undefined}
+            className={
+                nested
+                    ? "rounded-none! border-b border-grey-300"
+                    : isContentless
+                      ? "cursor-default! opacity-100!"
+                      : undefined
+            }
         >
-            <Disclosure.Header
-                showChevron={hasBodyContent}
-                className={isContentless ? "cursor-default!" : undefined}
-            >
-                <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <Heading className="font-semibold">{l(step.title)}</Heading>
-                        {/* If we don't have a header status, we can show the date completed */}
-                        {step.dateCompleted && !step.headerStatus && (
-                            <Pill variant="green">
-                                {t("status.completed_on")}{" "}
-                                {formatDateShort(step.dateCompleted, i18n.language)}
-                            </Pill>
-                        )}
-                        {step.headerStatus && (
-                            <Pill variant={mapHeaderStatusType(step.headerStatus.type)}>
-                                {l(step.headerStatus.label) ||
-                                    (stepHierarchy.some((candidate) => candidate.deadline?.isPassed)
-                                        ? t("status.deadline_passed")
-                                        : null)}
-                            </Pill>
-                        )}
-                    </div>
-                    {shownDate && (
-                        <Text as="span" className="shrink-0">
-                            <Text fontWeight="semibold">{shownDate.label}</Text>
-                            {":\t"}
-                            {shownDate.value}
-                        </Text>
-                    )}
-                </div>
-            </Disclosure.Header>
+            <StepCardHeader
+                step={step}
+                nested={nested}
+                hasBodyContent={hasBodyContent}
+                isContentless={isContentless}
+                submissions={submissions}
+                currentStep={instance.currentStep}
+                deadlinePassed={contentSteps.some((candidate) => candidate.deadline?.isPassed)}
+            />
             {hasBodyContent && (
-                <Disclosure.Content>
+                <Disclosure.Content padding={nested ? "none" : undefined}>
                     {deadlineMessages.map((candidate) => (
                         <div key={candidate.id} className="pt-4">
                             <MarkdownRenderer>
@@ -182,22 +135,162 @@ export const StepCard = ({step, instance}: Props) => {
                             </MarkdownRenderer>
                         </div>
                     ))}
-                    {hasStepContent && (
+                    {/* Closed rows must not mount an automatically opened form. */}
+                    {hasStepContent && (!nested || isExpanded) && (
                         <StepCardBody
-                            step={step}
+                            step={contentStep}
                             instance={instance}
                             actions={actions}
                             submissions={submissions}
-                            contentState={contentState}
-                            modalState={modalState}
-                            activeAction={availableActiveAction}
+                            contentState={resolveContentState(contentStep, submissions)}
+                            modalState={resolveModalState(activeAction)}
+                            activeAction={activeAction}
                             resolvedAction={resolvedAction}
                             emptyStateMessage={emptyStateMessage}
                             setActiveAction={setActiveAction}
                         />
                     )}
+                    {childRows.map((child) => (
+                        <StepCard
+                            key={child.id}
+                            step={child}
+                            instance={instance}
+                            nested
+                            rootStep={rootStep}
+                        />
+                    ))}
                 </Disclosure.Content>
             )}
         </Disclosure>
     );
 };
+
+function useStepActions(actions: Action[], submissions: Submission[]) {
+    const [onlyAction] = actions;
+    const autoOpenAction =
+        actions.length === 1 &&
+        onlyAction?.type === "SubmitForm" &&
+        onlyAction.autoOpenForm !== false &&
+        !submissions.some((s) => s.dateSubmitted && s.form.name === onlyAction.form)
+            ? onlyAction
+            : null;
+    const [selectedAction, setActiveAction] = useState<Action | null>(autoOpenAction);
+
+    // A refresh can revoke an action while its form or modal is still open.
+    const activeAction = actions.find((action) => action.id === selectedAction?.id) ?? null;
+    return {activeAction, resolvedAction: activeAction ?? autoOpenAction, setActiveAction};
+}
+
+function getParentContent(step: WorkflowStep): WorkflowStep {
+    return {
+        ...step,
+        versions:
+            step.versions
+                ?.map((version) => ({
+                    ...version,
+                    submissions: version.submissions.filter(
+                        (submission) => submission.form.step === step.id,
+                    ),
+                }))
+                .filter((version) => version.submissions.length > 0) ?? null,
+    };
+}
+
+function latestDate(dates: (string | null | undefined)[]): string | null {
+    return (
+        dates
+            .filter((date): date is string => Boolean(date))
+            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null
+    );
+}
+
+function StepCardHeader({
+    step,
+    nested,
+    hasBodyContent,
+    isContentless,
+    submissions,
+    currentStep,
+    deadlinePassed,
+}: {
+    step: WorkflowStep;
+    nested: boolean;
+    hasBodyContent: boolean;
+    isContentless: boolean;
+    submissions: Submission[];
+    currentStep: WorkflowInstance["currentStep"];
+    deadlinePassed: boolean;
+}) {
+    const {t, l} = useTranslate("workflow");
+
+    const shownDate = getHeaderDate(step, submissions, nested, currentStep);
+
+    return (
+        <Disclosure.Header
+            nested={nested}
+            showChevron={hasBodyContent}
+            className={isContentless ? "cursor-default!" : undefined}
+        >
+            <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                    <Heading as={nested ? "h4" : "h3"} className="font-semibold">
+                        {l(step.title)}
+                    </Heading>
+                    {step.dateCompleted && !step.headerStatus && (
+                        <Pill variant="green">
+                            {t("status.completed_on")}{" "}
+                            {formatDateShort(step.dateCompleted, i18n.language)}
+                        </Pill>
+                    )}
+                    {step.headerStatus && (
+                        <Pill variant={HEADER_STATUS_VARIANT[step.headerStatus.type]}>
+                            {l(step.headerStatus.label) ||
+                                (deadlinePassed ? t("status.deadline_passed") : null)}
+                        </Pill>
+                    )}
+                </div>
+                {shownDate && (
+                    <Text as="span" className="shrink-0">
+                        <Text fontWeight="semibold">
+                            {shownDate.submitted ? t("status.submitted") : t("progress.deadline")}
+                        </Text>
+                        {":\t"}
+                        {shownDate.submitted
+                            ? formatDateShort(shownDate.date, i18n.language)
+                            : formatDateShortWithRelevantTime(
+                                  shownDate.date,
+                                  i18n.language,
+                                  `(${t("progress.amsterdam_time")})`,
+                              )}
+                    </Text>
+                )}
+            </div>
+        </Disclosure.Header>
+    );
+}
+
+function getHeaderDate(
+    step: WorkflowStep,
+    submissions: Submission[],
+    nested: boolean,
+    currentStep: WorkflowInstance["currentStep"],
+) {
+    // Outer cards retain their completion date; rows use visible submissions and history.
+    const submissionDates = nested
+        ? [
+              ...submissions.map((submission) => submission.dateSubmitted),
+              ...(step.versions
+                  ?.filter((version) => version.submissions.length > 0)
+                  .map((version) => version.submittedAt) ?? []),
+          ]
+        : [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])];
+    const submittedDate = latestDate(submissionDates);
+    if (submittedDate) return {date: submittedDate, submitted: true};
+
+    const deadlineDate =
+        step.deadline?.date ??
+        step.children?.find((child) => child.id === currentStep)?.deadline?.date;
+    if (deadlineDate) return {date: deadlineDate, submitted: false};
+
+    return null;
+}

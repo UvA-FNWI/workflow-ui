@@ -1,4 +1,4 @@
-import {cleanup, render, screen} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen, within} from "@testing-library/react";
 import {afterEach, expect, it, vi} from "vitest";
 
 import {StepCard} from "../StepCard.tsx";
@@ -8,6 +8,7 @@ import type {
     WorkflowInstance,
     WorkflowStep,
 } from "~/store/api/types/instances.ts";
+import type {Submission} from "~/store/api/types/submissions.ts";
 
 vi.mock("~/hooks/useTranslate.ts", () => ({
     useTranslate: () => ({
@@ -17,8 +18,25 @@ vi.mock("~/hooks/useTranslate.ts", () => ({
 }));
 
 vi.mock("~/components/instance/StepCardBody.tsx", () => ({
-    StepCardBody: ({resolvedAction}: {resolvedAction: Action | null}) => (
-        <div data-testid="step-content">{resolvedAction?.form ?? "Submission content"}</div>
+    StepCardBody: ({
+        step,
+        actions,
+        resolvedAction,
+        emptyStateMessage,
+    }: {
+        step: WorkflowStep;
+        actions: Action[];
+        resolvedAction: Action | null;
+        emptyStateMessage: string | null;
+    }) => (
+        <div data-testid={`step-content-${step.id}`}>
+            <span data-testid="step-content">{resolvedAction?.form ?? "Submission content"}</span>
+            {emptyStateMessage && <span>{emptyStateMessage}</span>}
+            <span data-testid={`actions-${step.id}`}>{actions.map((a) => a.id).join(",")}</span>
+            <span data-testid={`version-count-${step.id}`}>
+                {step.versions?.flatMap((version) => version.submissions).length ?? 0}
+            </span>
+        </div>
     ),
 }));
 
@@ -45,6 +63,7 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     expectsSubmission: true,
     hasSubmission: false,
     hierarchyMode: "Sequential",
+    childrenLayout: "Combined",
     ...overrides,
 });
 
@@ -180,3 +199,155 @@ it("keeps a configured header label when a deadline has passed", () => {
     expect(screen.getByText("Contact staff")).toBeInTheDocument();
     expect(screen.queryByText("status.deadline_passed")).not.toBeInTheDocument();
 });
+
+it("renders configured children as independently expandable rows with their own actions", () => {
+    const first = makeStep({id: "Report1", title: {en: "Report 1", nl: "Rapport 1"}});
+    const second = makeStep({id: "Report2", title: {en: "Report 2", nl: "Rapport 2"}});
+    const parent = makeStep({
+        id: "Reports",
+        title: {en: "Reports", nl: "Rapporten"},
+        children: [first, second],
+        childrenLayout: "CollapsibleRows",
+    } as Partial<WorkflowStep>);
+    const instance = makeInstance(parent, [
+        {...action, id: "first", form: "FirstForm", steps: [first.id]},
+        {...action, id: "second", form: "SecondForm", steps: [second.id]},
+        {...action, id: "shared", form: "SharedForm", steps: [first.id, second.id]},
+    ]);
+    instance.currentStep = first.id;
+
+    render(<StepCard step={parent} instance={instance} />);
+
+    expect(screen.getByRole("button", {name: /Report 1/})).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("button", {name: /Report 2/})).toHaveAttribute(
+        "aria-expanded",
+        "false",
+    );
+    expect(screen.getByTestId("actions-Report1")).toHaveTextContent("first,shared");
+    expect(screen.queryByTestId("step-content-Report2")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", {name: /Report 2/}));
+    expect(screen.getByRole("button", {name: /Report 1/})).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("button", {name: /Report 2/})).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("actions-Report2")).toHaveTextContent("second,shared");
+});
+
+it("keeps parent content above children without repeating child history", () => {
+    const child = makeStep({
+        id: "Report1",
+        title: {en: "Report 1", nl: "Rapport 1"},
+        headerStatus: {type: "Info", label: {en: "Awaiting review", nl: "In beoordeling"}},
+        dateCompleted: null,
+    });
+    const childSubmission = {
+        id: "submission",
+        dateSubmitted: "2026-09-20T12:00:00Z",
+        form: {
+            name: "ReportForm",
+            title: {en: "Report", nl: "Rapport"},
+            layout: "Normal",
+            pages: [],
+            step: child.id,
+        },
+        answers: [],
+        permissions: [],
+    } satisfies Submission;
+    const parent = makeStep({
+        id: "Reports",
+        title: {en: "Reports", nl: "Rapporten"},
+        children: [child],
+        childrenLayout: "CollapsibleRows",
+        versions: [
+            {
+                versionNumber: 1,
+                eventIds: [],
+                submittedAt: "2026-09-20T12:00:00Z",
+                submissions: [childSubmission],
+            },
+        ],
+    } as Partial<WorkflowStep>);
+    const instance = makeInstance(parent, [
+        {...action, id: "parent", form: "ParentForm", steps: [parent.id]},
+    ]);
+    instance.currentStep = child.id;
+    instance.submissions = [childSubmission];
+
+    render(<StepCard step={parent} instance={instance} />);
+
+    expect(
+        within(screen.getByTestId("step-content-Reports")).getByText("ParentForm"),
+    ).toBeVisible();
+    expect(screen.getByTestId("version-count-Reports")).toHaveTextContent("0");
+    expect(screen.getByRole("button", {name: /Report 1/})).toHaveTextContent("Awaiting review");
+    expect(screen.getByRole("button", {name: /Report 1/})).toHaveTextContent("20/09/2026");
+});
+
+it("shows future child headers but does not expand rows without content", () => {
+    const current = makeStep({id: "Current", title: {en: "Current", nl: "Huidig"}});
+    const future = makeStep({
+        id: "Future",
+        title: {en: "Future", nl: "Toekomstig"},
+        expectsSubmission: false,
+        deadline: null,
+    });
+    const parent = makeStep({
+        id: "Reports",
+        children: [current, future],
+        childrenLayout: "CollapsibleRows",
+    } as Partial<WorkflowStep>);
+    const instance = makeInstance(parent);
+    instance.currentStep = current.id;
+
+    render(<StepCard step={parent} instance={instance} />);
+
+    expect(screen.getByRole("button", {name: /Future/})).toBeDisabled();
+    expect(screen.queryByTestId("step-content-Future")).not.toBeInTheDocument();
+});
+
+it("does not show a submission date from history the viewer cannot access", () => {
+    const child = makeStep({
+        id: "Report1",
+        title: {en: "Report 1", nl: "Rapport 1"},
+        versions: [
+            {
+                versionNumber: 1,
+                eventIds: [],
+                submittedAt: "2026-09-20T12:00:00Z",
+                submissions: [],
+            },
+        ],
+    });
+    const parent = makeStep({
+        id: "Reports",
+        children: [child],
+        childrenLayout: "CollapsibleRows",
+    } as Partial<WorkflowStep>);
+    const instance = makeInstance(parent);
+    instance.currentStep = child.id;
+
+    render(<StepCard step={parent} instance={instance} />);
+
+    const header = screen.getByRole("button", {name: /Report 1/});
+    expect(header).toHaveTextContent("progress.deadline");
+    expect(header).not.toHaveTextContent("status.submitted");
+});
+
+it.each([
+    {hasSubmission: true, actions: [], message: "instance.unauthorized_submission"},
+    {hasSubmission: false, actions: [], message: "instance.empty_step"},
+    {hasSubmission: true, actions: [action], message: null},
+])(
+    "resolves the empty message with hasSubmission=$hasSubmission and actions=$actions.length",
+    ({hasSubmission, actions, message}) => {
+        const step = makeStep({hasSubmission});
+        render(<StepCard step={step} instance={makeInstance(step, actions)} />);
+
+        for (const key of ["instance.unauthorized_submission", "instance.empty_step"]) {
+            if (key === message) {
+                expect(screen.getByText(key)).toBeInTheDocument();
+            } else {
+                expect(screen.queryByText(key)).not.toBeInTheDocument();
+            }
+        }
+    },
+);
