@@ -1,19 +1,17 @@
 import {useCallback, useEffect, useMemo} from "react";
 
-import {Controller, useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
 
-import {cn, Heading, InputLabel, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Heading, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
-import {InputControl} from "./InputControl";
-import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
+import {PageElement} from "~/components/instance/PageElement.tsx";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {AnswerInput} from "~/store/api/types/params";
-import type {Page} from "~/store/api/types/submissions";
+import type {Page, PageElement as PageElementType} from "~/store/api/types/submissions";
 import {isPageComplete} from "~/utils/submissionUtils.ts";
 
 type PageControlProps = {
@@ -36,7 +34,10 @@ export const PageControl = ({
     });
 
     const answers = useMemo(() => submission?.answers ?? [], [submission]);
-    const visibleQuestions = page.questions.filter((q) => {
+    const questions = page.elements
+        .filter((element) => element.kind === "Question")
+        .map((element) => element.question!);
+    const visibleQuestions = questions.filter((q) => {
         const a = answers.find((x) => x.questionName === q.name);
         return !a || a.isVisible;
     });
@@ -58,11 +59,6 @@ export const PageControl = ({
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
-
-    const save = useCallback(
-        (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}).unwrap(),
-        [instanceId, submissionId, saveAnswer],
-    );
 
     const removeFileAnswer = useCallback(
         async (questionName: string) => {
@@ -93,10 +89,25 @@ export const PageControl = ({
         [instanceId, submissionId, saveFile],
     );
 
-    const {fileQuestions, regularQuestions, fileValuesMap} = useFileQuestions({
+    const {fileQuestions, fileValuesMap} = useFileQuestions({
         questions: visibleQuestions,
         control: form.control,
     });
+
+    const handleFileSelect = useCallback(
+        async (questionName: string, file: File | null) => {
+            // Always update form value (file or null)
+            form.setValue(questionName, file);
+            if (file) {
+                const result = await saveFileAnswer(questionName, file);
+                // Clear local file on error
+                if (!result.success) form.setValue(questionName, null);
+                return result;
+            }
+            return {success: true, error: null};
+        },
+        [form, saveFileAnswer],
+    );
 
     const areWeightedQuestionsComplete = useMemo(
         () => !!submission && isPageComplete(page, submission, true),
@@ -115,7 +126,7 @@ export const PageControl = ({
     );
 
     const pageResult = data?.pageResults?.[0];
-    const weightedQuestions = page.questions.filter((question) => question.percentage != null);
+    const weightedQuestions = questions.filter((question) => question.percentage != null);
     const totalPercentage = Number(
         weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toFixed(2),
     );
@@ -131,95 +142,51 @@ export const PageControl = ({
         ? `${pageResult?.weightedAverage?.toLocaleString(i18n.language) ?? 0}`
         : t("instance.calculations.grading_incomplete");
 
+    const getElementKey = (element: PageElementType, index: number) => {
+        switch (element.kind) {
+            case "Text":
+                return `text-${index}`;
+            case "Callout":
+                return `callout-${index}`;
+            case "Question":
+                return `question-${element.question?.name}`;
+        }
+    };
+
     return (
         <>
             <div className="mb-4 flex flex-col gap-4">
-                <div>
-                    {showTitle && (
-                        <Heading size="sm" className="pb-2">
-                            {l(page.title)}
-                            {weightedQuestions.length > 0 &&
-                                ` (${totalPercentage.toLocaleString(i18n.language)}%)`}
-                        </Heading>
-                    )}
-                    {page.introduction && (
-                        <Text size="lg" as="span">
-                            <MarkdownRenderer>{l(page.introduction) ?? ""}</MarkdownRenderer>
-                        </Text>
-                    )}
-                </div>
-                {(regularQuestions.length > 0 || fileQuestions.length > 0) && (
+                {showTitle && (
+                    <Heading size="sm" className="pb-2">
+                        {l(page.title)}
+                        {weightedQuestions.length > 0 &&
+                            ` (${totalPercentage.toLocaleString(i18n.language)}%)`}
+                    </Heading>
+                )}
+                {page.elements.length > 0 && (
                     <div>
-                        <form>
-                            {regularQuestions.map((question) => {
-                                const showCompact =
-                                    submission?.form.layout === "Compact" &&
-                                    question.type === "Choice";
-                                const answer = answers.find(
-                                    (a) => a.questionName === question.name,
-                                );
-                                const errorMessage =
-                                    answer?.validationError && l(answer.validationError);
+                        <form className="flex flex-col gap-6">
+                            {page.elements.map((element, index) => {
+                                const answer =
+                                    element.kind === "Question"
+                                        ? answers.find(
+                                              (a) => a.questionName === element.question!.name,
+                                          )
+                                        : undefined;
                                 return (
-                                    <Controller
-                                        key={question.name}
-                                        control={form.control}
-                                        name={question.name}
-                                        render={({field}) => {
-                                            return (
-                                                <div
-                                                    className={cn(
-                                                        "mb-6",
-                                                        showCompact &&
-                                                            "flex flex-row items-start justify-between",
-                                                    )}
-                                                >
-                                                    <div>
-                                                        <div className="flex justify-between">
-                                                            {question.type !== "Check" && (
-                                                                <InputLabel key={question.name}>
-                                                                    {l(question.text)}
-                                                                    {question.percentage != null &&
-                                                                        ` (${question.percentage.toLocaleString(i18n.language)}%)`}
-                                                                </InputLabel>
-                                                            )}
-                                                            {!question.isRequired && (
-                                                                <Text
-                                                                    className="text-grey-900 italic"
-                                                                    size="sm"
-                                                                >
-                                                                    {t("optional")}
-                                                                </Text>
-                                                            )}
-                                                        </div>
-                                                        {question.description && (
-                                                            <div className="mr-2 mb-1 text-sm text-grey-600 dark:text-grey-400">
-                                                                <MarkdownRenderer>
-                                                                    {l(question.description) ?? ""}
-                                                                </MarkdownRenderer>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div
-                                                        className={
-                                                            showCompact ? "w-24 shrink-0" : "w-full"
-                                                        }
-                                                    >
-                                                        <InputControl
-                                                            instanceId={instanceId}
-                                                            submissionId={submissionId}
-                                                            value={field.value}
-                                                            onChange={field.onChange}
-                                                            question={question}
-                                                            onSave={save}
-                                                            visibleChoices={answer?.visibleChoices}
-                                                            errorMessage={errorMessage}
-                                                            isValid={!errorMessage}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            );
-                                        }}
+                                    <PageElement
+                                        key={getElementKey(element, index)}
+                                        instanceId={instanceId}
+                                        submissionId={submissionId}
+                                        element={element}
+                                        showCompact={
+                                            submission?.form.layout === "Compact" &&
+                                            element.kind === "Question" &&
+                                            element.question!.type === "Choice"
+                                        }
+                                        answer={answer}
+                                        formControl={form.control}
+                                        showPercentages={weightedQuestions.length > 1}
                                     />
                                 );
                             })}
@@ -228,21 +195,7 @@ export const PageControl = ({
                                     questions={fileQuestions}
                                     values={fileValuesMap}
                                     answers={submission?.answers}
-                                    onFileSelect={async (questionName, file) => {
-                                        // Always update form value (file or null)
-                                        form.setValue(questionName, file);
-
-                                        if (file) {
-                                            const result = await saveFileAnswer(questionName, file);
-                                            // Clear local file on error
-                                            if (!result.success) {
-                                                form.setValue(questionName, null);
-                                            }
-                                            return result;
-                                        }
-
-                                        return {success: true, error: null};
-                                    }}
+                                    onFileSelect={handleFileSelect}
                                     onRemoveStoredFile={removeFileAnswer}
                                 />
                             )}
@@ -250,8 +203,8 @@ export const PageControl = ({
                     </div>
                 )}
 
-                {page.hasResults && (
-                    <div>
+                {page.hasResults && weightedQuestions.length > 1 && (
+                    <div className="my-4">
                         <Separator weight="bold" color="black" className="mb-4" />
                         <div className="flex items-center justify-between gap-2 pr-12">
                             <Text size="xl" fontWeight="semibold">

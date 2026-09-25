@@ -14,6 +14,7 @@ export const jobsApi = baseApi.injectEndpoints({
                 url: `/Jobs/${instanceId}/${jobId}/Run`,
                 method: "POST",
             }),
+            invalidatesTags: ["Screen"],
         }),
     }),
 });

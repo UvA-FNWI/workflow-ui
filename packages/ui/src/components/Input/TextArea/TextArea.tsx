@@ -33,6 +33,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   isDisabled = false,
   className,
   maxLength,
+  minLength,
   rows = 4,
   size,
   align,
@@ -55,6 +56,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         isDisabled,
         validationState: !isValid ? 'invalid' : 'valid',
         maxLength,
+        minLength,
         inputElementType: 'textarea',
       },
       ref

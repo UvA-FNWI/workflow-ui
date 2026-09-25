@@ -1,6 +1,12 @@
 import {describe, expect, it} from "vitest";
 
-import type {Answer, Page, Question, Submission} from "~/store/api/types/submissions.ts";
+import type {
+    Answer,
+    Page,
+    PageElement,
+    Question,
+    Submission,
+} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs, isPageComplete} from "~/utils/submissionUtils.ts";
 
 const question = (overrides: Partial<Question> = {}): Question => ({
@@ -31,7 +37,7 @@ const page = (questions: Question[]): Page => ({
     name: "page",
     title: {en: "Page", nl: "Pagina"},
     layout: "Normal",
-    questions,
+    elements: questions.map((question): PageElement => ({kind: "Question", question})),
     hasResults: true,
     isInCurrentForm: true,
 });

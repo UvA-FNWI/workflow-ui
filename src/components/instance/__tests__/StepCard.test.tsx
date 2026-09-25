@@ -71,6 +71,7 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
         inheritsFrom: null,
         isEmbedded: false,
         screens: [],
+        properties: [],
         canCreateInstance: false,
         isPropertyOnly: false,
     },

@@ -17,6 +17,7 @@ export const configApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: files,
             }),
+            invalidatesTags: ["Screen", "Workflow"],
         }),
     }),
 });
