@@ -44,7 +44,7 @@ function Instance() {
                 isLoading={isLoading}
             />
             <Grid>
-                <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">
+                <GridItem span={{base: 12, md: 9}} className="flex flex-col gap-8">
                     <ProgressCard
                         isLoading={isLoading}
                         card={progressCard}
@@ -56,7 +56,7 @@ function Instance() {
                         <CorrespondenceCard instanceId={id} />
                     )}
                 </GridItem>
-                <GridItem span={{base: 12, sm: 3}} className="flex flex-col gap-6">
+                <GridItem span={{base: 12, md: 3}} className="flex flex-col gap-6">
                     <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
                     {instance?.canImpersonate && <AdminCard />}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
