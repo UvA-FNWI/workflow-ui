@@ -36,7 +36,7 @@ export function PersonalDisclosure({
                     <Text className="pt-4">{t("empty_title")}</Text>
                 ) : (
                     <>
-                        <div className="flex justify-end py-4">
+                        <div className="flex justify-end pt-4">
                             <SearchInput
                                 size={"md"}
                                 value={search}

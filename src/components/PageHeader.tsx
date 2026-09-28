@@ -26,20 +26,11 @@ export function PageHeader({
     if (isLoading) {
         return (
             <div className={cn("mb-8 flex flex-col gap-2", className)} aria-busy="true">
-                {/* {backLabel ? (
-                    <Skeleton className="h-2 my-3 w-14 bg-grey-400! dark:bg-grey-700!" />
-                 ) : (
-                    <div className="min-h-[20px]" />
-                )} */}
-
                 <div className="my-3 h-2" />
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-col gap-1">
                         <Skeleton className="h-4 w-48 max-w-full bg-grey-400! dark:bg-grey-700!" />
-                        {description && (
-                            <div className="h-5 w-64 max-w-full" />
-                            //<Skeleton className="h-5 w-64 max-w-full bg-grey-400! dark:bg-grey-700!" />
-                        )}
+                        {description && <div className="h-5 w-64 max-w-full" />}
                     </div>
                     {actions && (
                         <Skeleton className="h-10 w-28 shrink-0 bg-grey-400! dark:bg-grey-700!" />
