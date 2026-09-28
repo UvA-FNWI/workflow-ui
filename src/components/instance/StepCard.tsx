@@ -147,7 +147,9 @@ export const StepCard = ({step, instance}: Props) => {
             >
                 <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <Heading className="font-semibold">{l(step.title)}</Heading>
+                        <Heading as="h2" className="font-semibold">
+                            {l(step.title)}
+                        </Heading>
                         {/* If we don't have a header status, we can show the date completed */}
                         {step.dateCompleted && !step.headerStatus && (
                             <Pill variant="green">
