@@ -16,17 +16,17 @@ pages:
     title:
       nl: Inhoud
       en: Content
-    fields:
-      - WorkingTitle
+    elements:
+      - question: WorkingTitle
   - name: Planning
     title: Planning
-    fields: []
+    elements: []
 `),
         ],
     ]) as ConfigDocs;
 
 describe("page mutations", () => {
-    it("adds a page with a slugged name and an empty fields list", () => {
+    it("adds a page with a slugged name and an empty elements list", () => {
         const docs = form();
 
         expect(addPage(docs, FORM_PATH, "Nieuw tabblad")).toEqual({
@@ -37,7 +37,7 @@ describe("page mutations", () => {
             name: "NieuwTabblad",
             title: {nl: "Nieuw tabblad", en: "Nieuw tabblad"},
         });
-        expect(docs.get(FORM_PATH)?.toString()).toContain("fields: []");
+        expect(docs.get(FORM_PATH)?.toString()).toContain("elements: []");
     });
 
     it("gives a second page of the same title a distinct name", () => {

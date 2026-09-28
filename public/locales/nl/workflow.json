@@ -110,6 +110,25 @@
     "workflowInstance": "Workflow"
   },
   "make_a_choice": "Maak een keuze",
+  "migrations": {
+    "back_to_develop": "Terug naar Ontwikkelen",
+    "columns": {
+      "change": "Wijziging",
+      "progress": "Voortgang",
+      "status": "Status",
+      "updated": "Bijgewerkt",
+      "workflow": "Workflowtype"
+    },
+    "empty": "Nog geen migraties",
+    "load_error": "Kon migraties niet laden",
+    "progress": "{{updated}} van {{matched}} instanties bijgewerkt",
+    "status": {
+      "applying": "Bezig",
+      "failed": "Mislukt",
+      "finished": "Voltooid"
+    },
+    "title": "Migraties"
+  },
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
@@ -122,9 +141,7 @@
   "progress": {
     "amsterdam_time": "Amsterdamse tijd",
     "completed": "Voltooid",
-    "deadline": "Deadline",
-    "titleStudent": "Jouw voortgang",
-    "titleSupervisor": "Voortgang van de student"
+    "deadline": "Deadline"
   },
   "reference": {
     "empty": "Geen opties beschikbaar",
@@ -176,7 +193,9 @@
     "deadline_passed": "Deadline verstreken",
     "submitted": "Ingeleverd"
   },
-  "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
+  "string_validation_max": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
+  "string_validation_min": "Minimaal aantal tekens {{minInputLength}}.",
+  "string_validation_min_remaining": " Nog {{remainingInputLength}} vereist.",
   "submit": "Inleveren",
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
