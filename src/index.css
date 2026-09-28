@@ -3,6 +3,8 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-html {
-    overflow: hidden;
+@layer base {
+    html {
+        overflow: hidden;
+    }
 }
