@@ -56,9 +56,39 @@ const existingUser: UserSearchResult = {
     isPending: false,
 };
 
-afterEach(cleanup);
+afterEach(() => {
+    cleanup();
+    vi.useRealTimers();
+});
 
 describe("InputControl", () => {
+    it("saves the latest pending text value once when unmounted", () => {
+        vi.useFakeTimers();
+        const textQuestion: Question = {
+            name: "Comments",
+            type: "String",
+            text: {en: "Comments", nl: "Opmerkingen"},
+            weight: null,
+            percentage: null,
+            isRequired: false,
+            isArray: false,
+            hideInResults: false,
+            allowsExternalUsers: false,
+            choices: [],
+        };
+        const onSave = vi.fn().mockResolvedValue({});
+        const {unmount} = render(<InputControl question={textQuestion} value="" onSave={onSave} />);
+        const input = screen.getByRole("textbox");
+
+        fireEvent.change(input, {target: {value: "draft"}});
+        fireEvent.change(input, {target: {value: "final"}});
+        unmount();
+        vi.runAllTimers();
+
+        expect(onSave).toHaveBeenCalledTimes(1);
+        expect(onSave).toHaveBeenCalledWith({questionName: "Comments", value: "final"});
+    });
+
     it("includes the current user array when creating an external user", async () => {
         const onSaveExternalUser = vi.fn().mockResolvedValue({
             answers: [{questionName: question.name, value: [existingUser]}],
