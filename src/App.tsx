@@ -17,18 +17,24 @@ import {VITE_ENV} from "~/helpers/Environment";
 function App() {
     const envData = useEnvData(VITE_ENV);
     const {isProductionView} = useProductionView();
+    const backgroundClassName = `dark:bg-stone-900 ${!isProductionView && envData ? envData.bgClassName : "bg-grey-300"}`;
 
     return (
         <div
-            className={`min-h-screen w-full text-black dark:bg-stone-900 dark:text-white ${!isProductionView && envData ? envData.bgClassName : "bg-grey-300"}`}
+            className={`flex h-dvh w-full flex-col overflow-hidden text-black dark:text-white ${backgroundClassName}`}
         >
-            <Navbar />
-            <PreviewBanner />
+            <div className="shrink-0">
+                <Navbar />
+                <PreviewBanner />
+            </div>
             <EffectsWrapper />
             <ErrorWrapper />
 
             <ToastRegion />
-            <main>
+            <main
+                className={`min-h-0 flex-1 overflow-y-auto ${backgroundClassName}`}
+                style={{scrollbarGutter: "stable both-edges"}}
+            >
                 <Outlet />
             </main>
             {envData && !isProductionView && (

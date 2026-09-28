@@ -5,6 +5,7 @@ import {PageHeader} from "~/components/PageHeader";
 import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
+import {useAppSelector} from "~/store/store";
 
 interface InstanceHeaderProps {
     courseName?: LocalString | string | null;
@@ -21,6 +22,7 @@ export function InstanceHeader({
 }: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
     const {page} = useJobTranslations();
+    const homePath = useAppSelector((state) => state.homeNavigation.homePath);
 
     const displayTitle =
         (typeof courseName === "string" ? courseName : l(courseName)) ||
@@ -30,6 +32,7 @@ export function InstanceHeader({
         <PageHeader
             title={displayTitle}
             backLabel={t("home")}
+            backTo={homePath}
             isLoading={isLoading}
             actions={
                 canUseAdminTools &&
