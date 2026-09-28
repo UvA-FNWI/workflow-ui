@@ -32,6 +32,8 @@ function Instance() {
         return <Navigate to={`/instance/${id}/admin`} replace />;
     }
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
+    const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
+    const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];
 
     return (
         <Container maxWidth={1280}>
@@ -45,7 +47,7 @@ function Instance() {
                 <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">
                     <ProgressCard
                         isLoading={isLoading}
-                        isStudent={instance?.viewerRoles?.includes("Student") ?? false}
+                        card={progressCard}
                         steps={instance?.steps ?? []}
                         currentStep={instance?.currentStep ?? ""}
                     />
@@ -55,11 +57,7 @@ function Instance() {
                     )}
                 </GridItem>
                 <GridItem span={{base: 12, sm: 3}} className="flex flex-col gap-6">
-                    <InfoCards
-                        cards={instance?.infoCards ?? []}
-                        instanceId={id ?? ""}
-                        isLoading={isLoading}
-                    />
+                    <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
                     {instance?.canImpersonate && <AdminCard />}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
                 </GridItem>
