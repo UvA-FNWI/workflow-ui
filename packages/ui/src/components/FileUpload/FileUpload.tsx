@@ -166,12 +166,7 @@ export const FileUpload = ({
 
   const showUploadButton =
     (!selectedFile && !fileName) || error || hasError || isLoading;
-  const fileNameToShow = selectedFile ? selectedFile.name : fileName;
-
-  // Reset the selected file so we don't remember old file names
-  useEffect(() => {
-    setSelectedFile(null);
-  }, [fileName]);
+  const fileNameToShow = fileName ?? selectedFile?.name;
 
   return (
     <div className={cn(fileUploadClassGenerator(), className)}>
