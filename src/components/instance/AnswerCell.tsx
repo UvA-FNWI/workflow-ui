@@ -115,7 +115,7 @@ export const AnswerCell = ({
                     <Link
                         intent="primary"
                         underline
-                        className="truncate"
+                        className="block truncate"
                         onClick={() => downloadFile(answer.files[0])}
                     >
                         {formattedValue}
