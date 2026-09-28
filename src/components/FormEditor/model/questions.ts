@@ -65,13 +65,18 @@ export function pageMap(doc: Document, pageName: string): YAMLMap | null {
     return isMap(match) ? match : null;
 }
 
-export function fieldsSeq(doc: Document, pageName: string): YAMLSeq | null {
+export function elementsSeq(doc: Document, pageName: string): YAMLSeq | null {
     const page = pageMap(doc, pageName);
     if (!page) {
         return null;
     }
-    const fields = page.get("fields");
-    return isSeq(fields) ? fields : null;
+    const elements = page.get("elements");
+    return isSeq(elements) ? elements : null;
+}
+
+function elementQuestionName(item: unknown): string | null {
+    const question = isMap(item) ? item.get("question") : undefined;
+    return typeof question === "string" ? question : null;
 }
 
 export function readPages(
@@ -113,11 +118,13 @@ export function addPage(
     const doc = requireDoc(docs, formPath);
     const taken = new Set(readPages(docs, formPath).map((page) => page.name));
     const name = uniqueInternalName(titleNl, taken);
-    pagesCollection(doc).add(doc.createNode({name, title: {en: titleNl, nl: titleNl}, fields: []}));
+    pagesCollection(doc).add(
+        doc.createNode({name, title: {en: titleNl, nl: titleNl}, elements: []}),
+    );
     return {name, touched: [formPath]};
 }
 
-/** Remove a page. Its fields are references, so the properties they point at stay defined. */
+/** Remove a page. Its question-type elements are references, so the properties they point at stay defined. */
 export function deletePage(docs: ConfigDocs, formPath: string, pageName: string): string[] {
     const pages = pagesSeq(requireDoc(docs, formPath));
     const index =
@@ -191,55 +198,57 @@ export function readQuestions(
     pageName: string,
 ): EditorQuestion[] {
     const definitionFolder = definitionFolderOf(formPath);
-    const fields = fieldsSeq(requireDoc(docs, formPath), pageName);
-    if (!fields) {
+    const elements = elementsSeq(requireDoc(docs, formPath), pageName);
+    if (!elements) {
         return [];
     }
 
-    return fields.items.map((item) => {
-        const name = String((item as {value?: unknown}).value ?? item);
-        const found = findProperty(docs, definitionFolder, name);
+    return elements.items
+        .map((item) => elementQuestionName(item))
+        .filter((name): name is string => name !== null)
+        .map((name) => {
+            const found = findProperty(docs, definitionFolder, name);
 
-        // A field pointing at a property that does not exist would make the parser throw. Show it as an
-        // unknown row so the editor stays usable and the problem is visible.
-        if (!found) {
+            // A field pointing at a property that does not exist would make the parser throw. Show it as an
+            // unknown row so the editor stays usable and the problem is visible.
+            if (!found) {
+                return {
+                    name,
+                    kind: "Unknown" as const,
+                    rawType: "",
+                    isRequired: false,
+                    text: EMPTY_TEXT,
+                    description: EMPTY_TEXT,
+                    choices: [],
+                    definedIn: "",
+                    isInherited: false,
+                    advancedKeys: [],
+                    raw: {},
+                };
+            }
+
+            const raw = (found.node.toJSON() ?? {}) as Record<string, unknown> & {
+                type?: string;
+                layout?: {multiline?: boolean; type?: string} | null;
+                values?: unknown;
+                text?: unknown;
+                description?: unknown;
+            };
+
             return {
                 name,
-                kind: "Unknown" as const,
-                rawType: "",
-                isRequired: false,
-                text: EMPTY_TEXT,
-                description: EMPTY_TEXT,
-                choices: [],
-                definedIn: "",
-                isInherited: false,
-                advancedKeys: [],
-                raw: {},
+                kind: kindOf(raw),
+                rawType: raw.type ?? "",
+                isRequired: raw.type ? parseTypeString(raw.type).isRequired : false,
+                text: readLocalText(raw.text),
+                description: readLocalText(raw.description),
+                choices: readChoices(found.node),
+                definedIn: found.path,
+                isInherited: found.ownerFolder !== definitionFolder,
+                advancedKeys: ADVANCED_KEYS.filter((key) => raw[key] != null),
+                raw,
             };
-        }
-
-        const raw = (found.node.toJSON() ?? {}) as Record<string, unknown> & {
-            type?: string;
-            layout?: {multiline?: boolean; type?: string} | null;
-            values?: unknown;
-            text?: unknown;
-            description?: unknown;
-        };
-
-        return {
-            name,
-            kind: kindOf(raw),
-            rawType: raw.type ?? "",
-            isRequired: raw.type ? parseTypeString(raw.type).isRequired : false,
-            text: readLocalText(raw.text),
-            description: readLocalText(raw.description),
-            choices: readChoices(found.node),
-            definedIn: found.path,
-            isInherited: found.ownerFolder !== definitionFolder,
-            advancedKeys: ADVANCED_KEYS.filter((key) => raw[key] != null),
-            raw,
-        };
-    });
+        });
 }
 
 /**
@@ -324,9 +333,9 @@ export function addQuestion(
     const definitionFolder = definitionFolderOf(formPath);
     const name = uniqueInternalName(textNl, unavailableNames(docs, definitionFolder));
     const formDoc = requireDoc(docs, formPath);
-    const fields = fieldsSeq(formDoc, pageName);
-    if (!fields) {
-        throw new Error(`Page not found or has no fields list: ${pageName}`);
+    const elements = elementsSeq(formDoc, pageName);
+    if (!elements) {
+        throw new Error(`Page not found or has no elements list: ${pageName}`);
     }
     const targetPath = propertyTargetFile(docs, definitionFolder);
     const targetDoc = requireDoc(docs, targetPath);
@@ -340,7 +349,7 @@ export function addQuestion(
         properties.add(targetDoc.createNode(value));
     }
 
-    fields.add(formDoc.createNode(name));
+    elements.add(formDoc.createNode({question: name}));
 
     return {name, touched: [targetPath, formPath]};
 }
@@ -432,8 +441,8 @@ export function countFieldUsages(
         listFormPaths(docs, folder).flatMap((path) =>
             readPages(docs, path)
                 .filter((page) =>
-                    fieldsSeq(requireDoc(docs, path), page.name)?.items.some(
-                        (item) => (isScalar(item) ? item.value : item) === name,
+                    elementsSeq(requireDoc(docs, path), page.name)?.items.some(
+                        (item) => elementQuestionName(item) === name,
                     ),
                 )
                 .map((page) => ({path, page: page.name})),
@@ -441,17 +450,16 @@ export function countFieldUsages(
     );
 }
 
-/** Delete the property itself plus every field reference to it. */
+/** Delete the property itself plus every question-type element reference to it. */
 export function deleteProperty(docs: ConfigDocs, formPath: string, name: string): string[] {
     const found = requireProperty(docs, formPath, name);
     const touched = new Set<string>([found.path]);
 
     for (const {path, page} of countFieldUsages(docs, formPath, name)) {
-        const fields = fieldsSeq(requireDoc(docs, path), page);
-        const index =
-            fields?.items.findIndex((item) => (isScalar(item) ? item.value : item) === name) ?? -1;
-        if (fields && index !== -1) {
-            fields.delete(index);
+        const elements = elementsSeq(requireDoc(docs, path), page);
+        const index = elements?.items.findIndex((item) => elementQuestionName(item) === name) ?? -1;
+        if (elements && index !== -1) {
+            elements.delete(index);
             touched.add(path);
         }
     }
@@ -505,13 +513,10 @@ function renameProperty(
         for (const path of listFormPaths(docs, folder)) {
             const doc = requireDoc(docs, path);
             for (const page of readPages(docs, path)) {
-                const fields = fieldsSeq(doc, page.name);
-                fields?.items.forEach((item, index) => {
-                    if (isScalar(item) && item.value === from) {
-                        (item as Scalar).value = to;
-                        touched.add(path);
-                    } else if (item === from) {
-                        fields.set(index, to);
+                const elements = elementsSeq(doc, page.name);
+                elements?.items.forEach((item) => {
+                    if (isMap(item) && item.get("question") === from) {
+                        item.set("question", to);
                         touched.add(path);
                     }
                 });
@@ -759,19 +764,19 @@ export function removeField(
     pageName: string,
     name: string,
 ): string[] {
-    const fields = fieldsSeq(requireDoc(docs, formPath), pageName);
-    if (!fields) {
+    const elements = elementsSeq(requireDoc(docs, formPath), pageName);
+    if (!elements) {
         return [];
     }
-    const index = fields.items.findIndex((item) => (isScalar(item) ? item.value : item) === name);
+    const index = elements.items.findIndex((item) => elementQuestionName(item) === name);
     if (index === -1) {
         return [];
     }
-    fields.delete(index);
+    elements.delete(index);
     return [formPath];
 }
 
-export function reorderFields(
+export function reorderElements(
     docs: ConfigDocs,
     formPath: string,
     pageName: string,
@@ -781,14 +786,14 @@ export function reorderFields(
     if (from === to || from < 0 || to < 0 || !Number.isInteger(from) || !Number.isInteger(to)) {
         return [];
     }
-    const fields = fieldsSeq(requireDoc(docs, formPath), pageName);
-    if (!fields) {
+    const elements = elementsSeq(requireDoc(docs, formPath), pageName);
+    if (!elements) {
         return [];
     }
-    if (from >= fields.items.length || to >= fields.items.length) {
+    if (from >= elements.items.length || to >= elements.items.length) {
         return [];
     }
-    const [moved] = fields.items.splice(from, 1);
-    fields.items.splice(to, 0, moved);
+    const [moved] = elements.items.splice(from, 1);
+    elements.items.splice(to, 0, moved);
     return [formPath];
 }

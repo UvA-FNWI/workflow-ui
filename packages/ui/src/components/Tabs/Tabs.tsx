@@ -66,9 +66,9 @@ const Tabs = forwardRef(
     // Determine if component is controlled
     const isControlled = controlledActiveIndex !== undefined;
 
-    // Determine if tab is enabled
+    // Determine which tabs are disabled
     const disabledKeys = tabs.reduce<string[]>((acc, tab, index) => {
-      if (tab.props.disabled) acc.push(index.toString());
+      if (tab.props.disabled || tab.props.hidden) acc.push(index.toString());
       return acc;
     }, []);
 

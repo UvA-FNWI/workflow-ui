@@ -79,6 +79,7 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
         rubric: Array.isArray(raw.rubric) ? (raw.rubric as Question["rubric"]) : undefined,
         layout: asObject(raw.layout) as Question["layout"],
         maxLength: typeof raw.maxLength === "number" ? raw.maxLength : undefined,
+        minLength: typeof raw.minLength === "number" ? raw.minLength : undefined,
         sorting: asObject(raw.sorting) as Question["sorting"],
     };
 }

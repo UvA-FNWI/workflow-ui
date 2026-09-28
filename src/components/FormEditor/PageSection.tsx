@@ -28,7 +28,7 @@ import {
     pageMap,
     type QuestionKind,
     readQuestions,
-    reorderFields,
+    reorderElements,
     requireDoc,
     updatePageTitle,
 } from "~/components/FormEditor/model";
@@ -101,7 +101,7 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
         const from = questions.findIndex((question) => question.name === active.id);
         const to = questions.findIndex((question) => question.name === over.id);
         if (from >= 0 && to >= 0) {
-            apply(() => reorderFields(docs, formPath, pageName, from, to));
+            apply(() => reorderElements(docs, formPath, pageName, from, to));
         }
     };
 

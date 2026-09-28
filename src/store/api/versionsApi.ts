@@ -13,6 +13,7 @@ export const versionsApi = baseApi.injectEndpoints({
                 method: "POST",
                 responseHandler: "text",
             }),
+            invalidatesTags: ["Screen", "Workflow"],
         }),
         // Re-pull the default version.
         reloadBaseline: builder.mutation<void, void>({
@@ -20,6 +21,7 @@ export const versionsApi = baseApi.injectEndpoints({
                 url: "/Versions/Reload",
                 method: "POST",
             }),
+            invalidatesTags: ["Screen", "Workflow"],
         }),
     }),
 });

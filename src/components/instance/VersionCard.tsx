@@ -24,7 +24,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
         >
             <Disclosure.Header nested={true}>
                 <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <Heading fontType="heading" size={"sm"} className="font-semibold">
+                    <Heading as="h3" fontType="heading" size={"sm"} className="font-semibold">
                         {t("version_card.version_nr", {versionNumber: version.versionNumber})}
                     </Heading>
                     <Text as="span">
@@ -45,7 +45,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                             <div key={submission.id} className="flex flex-col gap-2">
                                 {version.submissions.length > 0 && (
                                     <Heading
-                                        as="h4"
+                                        as="h3"
                                         size="xs"
                                         className="pt-4 pb-1 font-semibold text-red-brand"
                                     >
@@ -53,8 +53,12 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                                     </Heading>
                                 )}
                                 {pages.map((page) => {
+                                    const questions = page.elements
+                                        .filter((element) => element.kind === "Question")
+                                        .map((element) => element.question!);
+
                                     const questionAnswerPairs = getVisibleQuestionAnswerPairs(
-                                        page.questions,
+                                        questions,
                                         submission.answers,
                                     );
 
