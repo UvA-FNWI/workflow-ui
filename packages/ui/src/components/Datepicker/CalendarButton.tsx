@@ -23,9 +23,11 @@ export function CalendarButton(
       intent="ghost"
       {...buttonProps}
       ref={triggerRef}
-      leftIcon={<Icon name="calendar-search-line" size="md" color="primary" />}
-      className="ui:flex ui:items-center ui:justify-center ui:rounded ui:px-0 ui:pl-2 ui:text-grey-600 ui:transition-colors ui:hover:enabled:bg-grey-300 ui:dark:hover:enabled:bg-grey-700"
-    />
+      size="small"
+      className="ui:flex ui:items-center ui:justify-center ui:rounded ui:px-0 ui:text-grey-600 ui:transition-colors ui:hover:enabled:bg-grey-300 ui:dark:hover:enabled:bg-grey-700"
+    >
+      <Icon name="calendar-search-line" size="md" color="primary" />
+    </Button>
   );
 }
 
