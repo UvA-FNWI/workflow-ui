@@ -136,4 +136,28 @@ describe("InputControl", () => {
         expect(screen.getByRole("combobox")).toBeInTheDocument();
         expect(screen.queryByRole("radio")).not.toBeInTheDocument();
     });
+
+    it("renders an array ComboBox with removable selections", () => {
+        const onChange = vi.fn();
+        const country: Question = {
+            name: "Country",
+            type: "Choice",
+            text: {en: "Country", nl: "Land"},
+            weight: null,
+            percentage: null,
+            isRequired: false,
+            isArray: true,
+            hideInResults: false,
+            allowsExternalUsers: false,
+            choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
+            layout: {type: "ComboBox"},
+        };
+
+        render(<InputControl question={country} value={["NL"]} onChange={onChange} />);
+
+        expect(screen.getByRole("combobox")).toBeInTheDocument();
+        expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+        fireEvent.click(screen.getByRole("button", {name: "Remove NL"}));
+        expect(onChange).toHaveBeenCalledWith([]);
+    });
 });

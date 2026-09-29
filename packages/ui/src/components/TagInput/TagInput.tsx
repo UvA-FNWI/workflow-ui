@@ -8,7 +8,7 @@ import type {
   ReactNode,
 } from 'react';
 
-import { mergeProps, useFocusRing } from 'react-aria';
+import { mergeProps, useFocusRing, useHover } from 'react-aria';
 
 import { cn } from '../../utils/cn';
 import { InputDescription } from '../Input/InputDescription';
@@ -25,7 +25,14 @@ export interface TagInputRenderTagInput {
 
 export interface TagInputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  'defaultValue' | 'disabled' | 'onChange' | 'readOnly' | 'size' | 'value'
+  | 'defaultValue'
+  | 'disabled'
+  | 'form'
+  | 'name'
+  | 'onChange'
+  | 'readOnly'
+  | 'size'
+  | 'value'
 > {
   /** Controlled tag values. */
   value?: string[];
@@ -33,36 +40,10 @@ export interface TagInputProps extends Omit<
   defaultValue?: string[];
   /** Called with the complete tag list whenever it changes. */
   onChange?: (value: string[]) => void;
-  /** Called when a tag is removed. */
-  onRemove?: (value: string) => void;
-  /** Called when the field is clicked, excluding tag and clear buttons. */
+  /** Called when the field is clicked, excluding tag buttons. */
   onControlClick?: MouseEventHandler<HTMLDivElement>;
   /** Icon displayed at the end of the field. */
   rightIcon?: ReactNode;
-  /** Controlled text currently being entered. */
-  searchValue?: string;
-  /** Initial search text for an uncontrolled input. */
-  defaultSearchValue?: string;
-  /** Called whenever the search text changes. */
-  onSearchChange?: (value: string) => void;
-  /** Maximum number of tags. */
-  maxTags?: number;
-  /** Called when a value cannot be added because maxTags was reached. */
-  onMaxTags?: (value: string) => void;
-  /** Allows the same value to be added more than once. */
-  allowDuplicates?: boolean;
-  /** Custom duplicate check. */
-  isDuplicate?: (value: string, currentValues: string[]) => boolean;
-  /** Called when a duplicate value is submitted. */
-  onDuplicate?: (value: string) => void;
-  /** Characters that create and split tags. Defaults to comma. */
-  splitChars?: string[];
-  /** Adds unfinished text when focus leaves the input. */
-  acceptValueOnBlur?: boolean;
-  /** Shows a clear button when tags are present. */
-  clearable?: boolean;
-  /** Called after all tags are cleared. */
-  onClear?: () => void;
   /** Custom tag renderer. */
   renderTag?: (input: TagInputRenderTagInput) => ReactNode;
   /** Label above the input. */
@@ -81,24 +62,11 @@ export interface TagInputProps extends Omit<
   size?: 'sm' | 'md' | 'lg';
   /** Class applied to the field control. */
   className?: string;
-  /** Class applied to the outer component wrapper. */
-  wrapperClassName?: string;
-  /** Class applied to each default Tag. */
-  tagClassName?: string;
-  /** Divider used to serialize values into the hidden form input. */
-  hiddenInputValuesDivider?: string;
 }
 
-function splitTags(value: string, splitChars: string[]): string[] {
-  if (splitChars.length === 0) {
-    return [value.trim()].filter(Boolean);
-  }
-
-  const escapedChars = splitChars.map(char =>
-    char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  );
+function splitTags(value: string): string[] {
   return value
-    .split(new RegExp(escapedChars.join('|'), 'g'))
+    .split(',')
     .map(tag => tag.trim())
     .filter(Boolean);
 }
@@ -110,33 +78,11 @@ function defaultIsDuplicate(value: string, currentValues: string[]) {
   );
 }
 
-function appendTag(
-  currentValues: string[],
-  rawValue: string,
-  rules: {
-    allowDuplicates: boolean;
-    isDuplicate: NonNullable<TagInputProps['isDuplicate']>;
-    maxTags: number;
-    onDuplicate?: TagInputProps['onDuplicate'];
-    onMaxTags?: TagInputProps['onMaxTags'];
-  }
-) {
+function appendTag(currentValues: string[], rawValue: string) {
   const value = rawValue.trim();
-  if (!value) return { values: currentValues, result: 'empty' as const };
-
-  if (rules.isDuplicate(value, currentValues)) {
-    rules.onDuplicate?.(value);
-    if (!rules.allowDuplicates) {
-      return { values: currentValues, result: 'duplicate' as const };
-    }
-  }
-
-  if (currentValues.length >= rules.maxTags) {
-    rules.onMaxTags?.(value);
-    return { values: currentValues, result: 'max' as const };
-  }
-
-  return { values: [...currentValues, value], result: 'added' as const };
+  return value && !defaultIsDuplicate(value, currentValues)
+    ? [...currentValues, value]
+    : currentValues;
 }
 
 export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
@@ -145,21 +91,8 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
       value,
       defaultValue = [],
       onChange,
-      onRemove,
       onControlClick,
       rightIcon,
-      searchValue,
-      defaultSearchValue = '',
-      onSearchChange,
-      maxTags = Infinity,
-      onMaxTags,
-      allowDuplicates = false,
-      isDuplicate = defaultIsDuplicate,
-      onDuplicate,
-      splitChars = [','],
-      acceptValueOnBlur = true,
-      clearable = false,
-      onClear,
       renderTag,
       label,
       description,
@@ -169,12 +102,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
       readOnly = false,
       size = 'lg',
       className,
-      wrapperClassName,
-      tagClassName,
-      hiddenInputValuesDivider = ',',
       id,
-      name,
-      form,
       placeholder,
       required,
       onFocus,
@@ -195,20 +123,11 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [uncontrolledValue, setUncontrolledValue] =
       useState<string[]>(defaultValue);
-    const [uncontrolledSearch, setUncontrolledSearch] =
-      useState(defaultSearchValue);
-    const [isHovered, setIsHovered] = useState(false);
+    const [search, setSearch] = useState('');
     const { focusProps, isFocusVisible } = useFocusRing();
+    const { hoverProps, isHovered } = useHover({ isDisabled });
 
     const tags = value ?? uncontrolledValue;
-    const search = searchValue ?? uncontrolledSearch;
-    const rules = {
-      allowDuplicates,
-      isDuplicate,
-      maxTags,
-      onDuplicate,
-      onMaxTags,
-    };
 
     const setInputRef = (node: HTMLInputElement | null) => {
       inputRef.current = node;
@@ -226,47 +145,22 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
       onChange?.(nextValue);
     };
 
-    const updateSearch = (nextValue: string) => {
-      if (searchValue === undefined) {
-        setUncontrolledSearch(nextValue);
-      }
-      onSearchChange?.(nextValue);
-    };
-
-    const addOne = (rawValue: string) => {
-      const { values, result } = appendTag(tags, rawValue, rules);
-      if (values !== tags) updateTags(values);
-      return result;
-    };
-
     const addMany = (newTags: string[]) => {
       const nextValue = newTags.reduce(
-        (values, rawValue) => appendTag(values, rawValue, rules).values,
+        (values, rawValue) => appendTag(values, rawValue),
         tags
       );
       if (nextValue !== tags) updateTags(nextValue);
     };
 
     const submitSearch = () => {
-      const result = addOne(search);
-      if (result === 'added' || result === 'duplicate' || result === 'empty') {
-        updateSearch('');
-      }
+      addMany([search]);
+      setSearch('');
     };
 
     const removeTag = (index: number) => {
       if (isDisabled || readOnly) return;
-      const removedTag = tags[index];
       updateTags(tags.filter((_, tagIndex) => tagIndex !== index));
-      onRemove?.(removedTag);
-      inputRef.current?.focus();
-    };
-
-    const clearTags = () => {
-      if (isDisabled || readOnly) return;
-      updateTags([]);
-      updateSearch('');
-      onClear?.();
       inputRef.current?.focus();
     };
 
@@ -287,10 +181,10 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
         return;
       }
 
-      if (splitChars.includes(event.key) && search.trim()) {
+      if (event.key === ',' && search.trim()) {
         event.preventDefault();
-        addMany(splitTags(search, splitChars));
-        updateSearch('');
+        addMany(splitTags(search));
+        setSearch('');
         return;
       }
 
@@ -305,16 +199,13 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
 
       event.preventDefault();
       addMany(
-        splitTags(
-          `${search}${event.clipboardData.getData('text/plain')}`,
-          splitChars
-        )
+        splitTags(`${search}${event.clipboardData.getData('text/plain')}`)
       );
-      updateSearch('');
+      setSearch('');
     };
 
     const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
-      if (acceptValueOnBlur && !isDisabled && !readOnly && search.trim()) {
+      if (!isDisabled && !readOnly && search.trim()) {
         submitSearch();
       }
       onBlur?.(event);
@@ -338,19 +229,18 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
     });
 
     return (
-      <div className={wrapperClassName}>
+      <div>
         {label && <InputLabel htmlFor={inputId}>{label}</InputLabel>}
 
         <div className="ui:relative">
           <div
+            {...hoverProps}
             className={cn(
               controlClasses,
               'ui:flex ui:flex-wrap ui:items-center ui:gap-1.5',
               rightIcon && 'ui:pr-12',
               className
             )}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             onClick={event => {
               inputRef.current?.focus();
               if (!(event.target as Element).closest('button')) {
@@ -373,7 +263,6 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
                       size={size}
                       isDisabled={isDisabled || readOnly}
                       onRemove={handleRemove}
-                      className={tagClassName}
                     >
                       {tag}
                     </Tag>
@@ -390,33 +279,20 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
               placeholder={placeholder}
               disabled={isDisabled}
               readOnly={readOnly}
-              form={form}
               required={required && tags.length === 0}
               autoComplete={inputProps.autoComplete ?? 'off'}
-              aria-label={label ? ariaLabel : (ariaLabel ?? 'Tags')}
+              aria-label={ariaLabel ?? (label ? undefined : 'Tags')}
               aria-labelledby={ariaLabelledBy}
               aria-describedby={describedBy}
               aria-invalid={!isValid || undefined}
               className="ui:min-w-[8rem] ui:flex-1 ui:border-0 ui:bg-transparent ui:p-0 ui:text-inherit ui:outline-none ui:placeholder:text-grey-600 ui:disabled:cursor-not-allowed ui:dark:placeholder:text-grey-400"
               onChange={event => {
-                updateSearch(event.currentTarget.value);
+                setSearch(event.currentTarget.value);
               }}
               {...mergeProps(focusProps, { onFocus, onBlur: handleBlur })}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
             />
-
-            {clearable && tags.length > 0 && !isDisabled && !readOnly && (
-              <button
-                type="button"
-                aria-label="Clear tags"
-                className="ui:inline-flex ui:h-6 ui:w-6 ui:shrink-0 ui:cursor-pointer ui:items-center ui:justify-center ui:rounded-xs ui:border-0 ui:bg-transparent ui:p-0 ui:text-lg ui:text-grey-600 ui:hover:bg-grey-300 ui:focus-visible:ring-2 ui:focus-visible:ring-navy-600 ui:focus-visible:outline-none ui:dark:text-grey-400 ui:dark:hover:bg-grey-700 ui:dark:focus-visible:ring-sky-500"
-                onMouseDown={event => event.preventDefault()}
-                onClick={clearTags}
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            )}
           </div>
           {rightIcon && (
             <div className="ui:pointer-events-none ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-start">
@@ -444,15 +320,6 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
         )}
         {!isValid && errorMessage && (
           <InputError id={errorId}>{errorMessage}</InputError>
-        )}
-
-        {name && (
-          <input
-            type="hidden"
-            name={name}
-            form={form}
-            value={tags.join(hiddenInputValuesDivider)}
-          />
         )}
       </div>
     );

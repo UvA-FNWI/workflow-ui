@@ -17,9 +17,9 @@ describe('TagInput', () => {
     expect(input).toHaveValue('');
   });
 
-  it('splits typed and pasted values using splitChars', () => {
+  it('splits typed and pasted comma-separated values', () => {
     const onChange = vi.fn();
-    render(<TagInput splitChars={[',', '|']} onChange={onChange} />);
+    render(<TagInput onChange={onChange} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'React' } });
@@ -27,7 +27,7 @@ describe('TagInput', () => {
     expect(onChange).toHaveBeenLastCalledWith(['React']);
 
     fireEvent.paste(input, {
-      clipboardData: { getData: () => 'Vue | Svelte' },
+      clipboardData: { getData: () => 'Vue, Svelte' },
     });
     expect(onChange).toHaveBeenLastCalledWith(['React', 'Vue', 'Svelte']);
   });
@@ -42,73 +42,26 @@ describe('TagInput', () => {
     expect(screen.getByText('React')).toBeInTheDocument();
   });
 
-  it('can keep unfinished text on blur', () => {
-    render(<TagInput acceptValueOnBlur={false} />);
-    const input = screen.getByRole('textbox');
-
-    fireEvent.change(input, { target: { value: 'React' } });
-    fireEvent.blur(input);
-
-    expect(screen.queryByText('React')).not.toBeInTheDocument();
-    expect(input).toHaveValue('React');
-  });
-
-  it('rejects case-insensitive duplicates unless allowed', () => {
-    const onDuplicate = vi.fn();
+  it('rejects case-insensitive duplicates', () => {
     const onChange = vi.fn();
-    render(
-      <TagInput
-        defaultValue={['React']}
-        onDuplicate={onDuplicate}
-        onChange={onChange}
-      />
-    );
+    render(<TagInput defaultValue={['React']} onChange={onChange} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'react' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onDuplicate).toHaveBeenCalledWith('react');
     expect(onChange).not.toHaveBeenCalled();
     expect(screen.getAllByText(/react/i)).toHaveLength(1);
   });
 
-  it('supports duplicate values when allowDuplicates is set', () => {
-    render(<TagInput defaultValue={['React']} allowDuplicates />);
-    const input = screen.getByRole('textbox');
-
-    fireEvent.change(input, { target: { value: 'React' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
-
-    expect(screen.getAllByText('React')).toHaveLength(2);
-  });
-
-  it('enforces maxTags and reports rejected values', () => {
-    const onMaxTags = vi.fn();
-    render(
-      <TagInput defaultValue={['React']} maxTags={1} onMaxTags={onMaxTags} />
-    );
-    const input = screen.getByRole('textbox');
-
-    fireEvent.change(input, { target: { value: 'Vue' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
-
-    expect(onMaxTags).toHaveBeenCalledWith('Vue');
-    expect(screen.queryByText('Vue')).not.toBeInTheDocument();
-    expect(input).toHaveValue('Vue');
-  });
-
   it('removes the last tag with Backspace and tags with their remove buttons', () => {
-    const onRemove = vi.fn();
-    render(<TagInput defaultValue={['React', 'Vue']} onRemove={onRemove} />);
+    render(<TagInput defaultValue={['React', 'Vue']} />);
     const input = screen.getByRole('textbox');
 
     fireEvent.keyDown(input, { key: 'Backspace' });
-    expect(onRemove).toHaveBeenCalledWith('Vue');
     expect(screen.queryByText('Vue')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove React' }));
-    expect(onRemove).toHaveBeenCalledWith('React');
     expect(screen.queryByText('React')).not.toBeInTheDocument();
   });
 
@@ -127,43 +80,12 @@ describe('TagInput', () => {
     expect(onControlClick).toHaveBeenCalledTimes(2);
   });
 
-  it('clears all values and serializes values for forms', () => {
-    const onClear = vi.fn();
-    const { container } = render(
-      <TagInput
-        defaultValue={['React', 'Vue']}
-        clearable
-        name="topics"
-        hiddenInputValuesDivider="|"
-        onClear={onClear}
-      />
-    );
-
-    expect(container.querySelector('input[type="hidden"]')).toHaveValue(
-      'React|Vue'
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Clear tags' }));
-
-    expect(onClear).toHaveBeenCalledOnce();
-    expect(container.querySelector('input[type="hidden"]')).toHaveValue('');
-  });
-
-  it('supports controlled values and search text', () => {
+  it('supports controlled values', () => {
     const onChange = vi.fn();
-    const onSearchChange = vi.fn();
-    render(
-      <TagInput
-        value={['React']}
-        searchValue="Vue"
-        onChange={onChange}
-        onSearchChange={onSearchChange}
-      />
-    );
+    render(<TagInput value={['React']} onChange={onChange} />);
     const input = screen.getByRole('textbox');
 
-    fireEvent.change(input, { target: { value: 'Svelte' } });
-    expect(onSearchChange).toHaveBeenCalledWith('Svelte');
-
+    fireEvent.change(input, { target: { value: 'Vue' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onChange).toHaveBeenCalledWith(['React', 'Vue']);
   });
