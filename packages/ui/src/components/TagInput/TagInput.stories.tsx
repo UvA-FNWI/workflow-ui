@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Icon } from '../Icon';
 import { Tag } from '../Tag';
 import { TagInput } from './TagInput';
 
@@ -14,7 +13,7 @@ const meta: Meta<typeof TagInput> = {
     docs: {
       description: {
         component:
-          'Captures a list of text values with optional suggestions. Users can submit custom tags with Enter, split values with commas, paste multiple values, navigate suggestions with the keyboard, and remove the final tag with Backspace. The component supports both controlled and uncontrolled state.',
+          'Captures free-form text values as tags. Enter, separators, paste, and blur can add values; Backspace removes the final tag. Supports controlled and uncontrolled state.',
       },
     },
   },
@@ -46,38 +45,6 @@ const meta: Meta<typeof TagInput> = {
       control: 'text',
       description: 'Placeholder displayed in the text entry area.',
       table: { category: 'Content' },
-    },
-    data: {
-      control: 'object',
-      description:
-        'Suggestions as strings, option objects, or grouped option objects. Custom values remain valid.',
-      table: { category: 'Suggestions' },
-    },
-    limit: {
-      control: { type: 'number', min: 1 },
-      description: 'Maximum number of visible suggestions.',
-      table: {
-        category: 'Suggestions',
-        defaultValue: { summary: 'Infinity' },
-      },
-    },
-    openOnFocus: {
-      control: 'boolean',
-      description: 'Opens available suggestions when the field receives focus.',
-      table: {
-        category: 'Suggestions',
-        defaultValue: { summary: 'true' },
-      },
-    },
-    filter: {
-      control: false,
-      description: 'Custom suggestion filtering function.',
-      table: { category: 'Suggestions' },
-    },
-    renderOption: {
-      control: false,
-      description: 'Custom suggestion renderer.',
-      table: { category: 'Suggestions' },
     },
     value: {
       control: 'object',
@@ -114,11 +81,6 @@ const meta: Meta<typeof TagInput> = {
       description: 'Called with the value of a removed tag.',
       table: { category: 'Events' },
     },
-    onControlClick: {
-      control: false,
-      description: 'Called when the field control is clicked.',
-      table: { category: 'Events' },
-    },
     onClear: {
       control: false,
       description: 'Called after all tags are cleared.',
@@ -132,11 +94,6 @@ const meta: Meta<typeof TagInput> = {
     onMaxTags: {
       control: false,
       description: 'Called when a value exceeds the tag limit.',
-      table: { category: 'Events' },
-    },
-    onOptionSubmit: {
-      control: false,
-      description: 'Called when a custom value or suggestion is accepted.',
       table: { category: 'Events' },
     },
     maxTags: {
@@ -208,14 +165,6 @@ const meta: Meta<typeof TagInput> = {
         defaultValue: { summary: 'false' },
       },
     },
-    loading: {
-      control: 'boolean',
-      description: 'Displays a loading indicator after the text field.',
-      table: {
-        category: 'State',
-        defaultValue: { summary: 'false' },
-      },
-    },
     size: {
       control: 'select',
       options: ['sm', 'md', 'lg'],
@@ -230,11 +179,6 @@ const meta: Meta<typeof TagInput> = {
       description: 'Custom selected-tag renderer.',
       table: { category: 'Appearance' },
     },
-    rightIcon: {
-      control: false,
-      description: 'Icon displayed after a separator at the end of the field.',
-      table: { category: 'Appearance' },
-    },
     className: {
       control: 'text',
       description: 'Classes applied to the field control.',
@@ -243,11 +187,6 @@ const meta: Meta<typeof TagInput> = {
     wrapperClassName: {
       control: 'text',
       description: 'Classes applied to the component wrapper.',
-      table: { category: 'Styling' },
-    },
-    dropdownClassName: {
-      control: 'text',
-      description: 'Classes applied to the suggestions dropdown.',
       table: { category: 'Styling' },
     },
     tagClassName: {
@@ -280,61 +219,6 @@ export const Default: Story = {
       description: {
         story:
           'Type a value and press Enter. Commas and pasted comma-separated text also create tags.',
-      },
-    },
-  },
-};
-
-export const WithSuggestions: Story = {
-  args: {
-    label: 'Libraries',
-    description: 'Choose a suggestion or type a custom value.',
-    placeholder: 'Pick or enter a library',
-    data: ['React', 'Angular', 'Vue', 'Svelte'],
-    defaultValue: ['React'],
-    clearable: true,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Suggestions are filtered as the user types and support mouse and arrow-key selection. Values are not limited to the suggestions.',
-      },
-    },
-  },
-};
-
-export const WithRightIcon: Story = {
-  args: {
-    label: 'Users',
-    defaultValue: ['Ada Lovelace', 'Grace Hopper', 'Katherine Johnson'],
-    readOnly: true,
-    rightIcon: <Icon name="search-line" size="md" color="primary" />,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Use `rightIcon` to add an icon after a full-height separator. The icon stays aligned with the first row when tags wrap.',
-      },
-    },
-  },
-};
-
-export const GroupedSuggestions: Story = {
-  args: {
-    label: 'Technologies',
-    placeholder: 'Choose or enter technologies',
-    data: [
-      { group: 'Frontend', items: ['React', 'Angular', 'Svelte'] },
-      { group: 'Backend', items: ['Express', 'Django', 'Rails'] },
-    ],
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Suggestion data can be grouped. Selected suggestions are removed from the list unless duplicates are allowed.',
       },
     },
   },
@@ -402,7 +286,6 @@ function ControlledExample() {
     <div className="ui:flex ui:flex-col ui:gap-3">
       <TagInput
         label="Controlled tag input"
-        data={['React', 'Angular', 'Vue', 'Svelte']}
         value={value}
         onChange={setValue}
         searchValue={searchValue}
@@ -430,47 +313,19 @@ export const Controlled: Story = {
   },
 };
 
-const optionDetails: Record<string, { emoji: string; description: string }> = {
-  Apples: { emoji: '🍎', description: 'Crisp and juicy' },
-  Bread: { emoji: '🍞', description: 'Freshly baked' },
-  Bananas: { emoji: '🍌', description: 'Naturally sweet' },
-};
-
-export const CustomRendering: Story = {
+export const CustomTags: Story = {
   args: {
     label: 'Groceries',
-    description: 'Suggestions and selected tags can both be customized.',
-    placeholder: 'Choose groceries',
-    data: Object.keys(optionDetails),
     defaultValue: ['Apples'],
-    renderOption: ({ option }) => (
-      <div className="ui:flex ui:items-center ui:gap-3">
-        <span className="ui:text-xl">{optionDetails[option.value].emoji}</span>
-        <span>
-          <span className="ui:block ui:font-medium">{option.label}</span>
-          <span className="ui:block ui:text-xs ui:text-grey-600 ui:dark:text-grey-400">
-            {optionDetails[option.value].description}
-          </span>
-        </span>
-      </div>
-    ),
     renderTag: ({ value, onRemove, isDisabled }) => (
       <Tag
         isDisabled={isDisabled}
         onRemove={onRemove}
-        className="ui:bg-forest-200 ui:text-forest-900 ui:dark:bg-forest-800 ui:dark:text-forest-100"
+        className="ui:bg-forest-200"
       >
-        {optionDetails[value]?.emoji} {value}
+        {value}
       </Tag>
     ),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Use `renderOption` and `renderTag` when suggestions or selected values need richer presentation.',
-      },
-    },
   },
 };
 
@@ -485,18 +340,13 @@ export const States: Story = {
         errorMessage="A project topic is required."
         isValid={false}
       />
-      <TagInput
-        label="Loading suggestions"
-        placeholder="Search technologies"
-        loading
-      />
     </div>
   ),
   parameters: {
     docs: {
       description: {
         story:
-          'Disabled, read-only, invalid, and loading states use the same conventions as the other form components.',
+          'Disabled, read-only, and invalid states use the same conventions as the other form fields.',
       },
     },
   },

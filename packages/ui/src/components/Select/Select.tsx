@@ -209,9 +209,9 @@ export const SelectInput = <
           disabled={isDisabled}
           className="ui:absolute ui:inset-0 ui:z-0 ui:flex ui:items-center ui:justify-end ui:px-3 ui:outline-none"
         >
-          <span className="ui:sr-only">
+          <span {...valueProps} className="ui:sr-only">
             {state.selectedItems.length > 0
-              ? state.selectedItems.map(item => item.rendered).join(', ')
+              ? state.selectedItems.map(item => item.textValue).join(', ')
               : placeholder}
           </span>
           <Icon

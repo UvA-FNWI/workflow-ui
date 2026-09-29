@@ -224,12 +224,19 @@ const ComboBoxInput = <
           onOpen();
         },
       })}
+      onKeyDown={event => {
+        if (event.key === 'ArrowDown' && !state.isOpen && state.inputValue) {
+          event.preventDefault();
+          state.open('first', 'input');
+          return;
+        }
+        inputProps.onKeyDown?.(event);
+      }}
       ref={inputRef}
       className={cn(
         isMultiple
-          ? 'ui:min-w-32 ui:flex-1 ui:border-0 ui:bg-transparent ui:p-0 ui:text-left ui:outline-none'
-          : cn(fieldClasses, 'ui:pr-10', className),
-        isMultiple && className
+          ? 'ui:min-w-0 ui:flex-1 ui:border-0 ui:bg-transparent ui:p-0 ui:text-left ui:outline-none'
+          : cn(fieldClasses, 'ui:pr-10', className)
       )}
     />
   );

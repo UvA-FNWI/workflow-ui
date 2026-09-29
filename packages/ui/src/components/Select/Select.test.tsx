@@ -87,6 +87,24 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Draft, Approved');
   });
 
+  it('removes a selected tag', () => {
+    const onChange = vi.fn();
+    render(
+      <Select<object, 'multiple'>
+        label="Status"
+        selectionMode="multiple"
+        value={['draft', 'approved']}
+        onChange={onChange}
+      >
+        <Item key="draft">Draft</Item>
+        <Item key="approved">Approved</Item>
+      </Select>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Draft' }));
+    expect(onChange).toHaveBeenCalledWith(['approved']);
+  });
+
   it('renders comma-separated labels when multiple values are selected', () => {
     render(
       <Select<object, 'multiple'>
