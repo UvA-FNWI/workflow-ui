@@ -1,10 +1,10 @@
 import {useState} from "react";
 
 import {createColumnHelper} from "@tanstack/react-table";
-import {Button, Icon, linkClassGenerator, Pill} from "@uva-fnwi/datanose-ui";
+import {Button, cn, Icon, linkClassGenerator, Pill} from "@uva-fnwi/datanose-ui";
 
 import {JobModal} from "./JobModal";
-import {DataTable} from "~/components/Table";
+import {DataTable, TableTextCell} from "~/components/Table";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import type {Job, JobStatus} from "~/store/api/types/jobs";
 import {formatDate} from "~/utils/formatDate";
@@ -38,11 +38,14 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
                     <button
                         type="button"
                         onClick={() => setSelectedJobId(rowId)}
-                        className={linkClassGenerator({
-                            intent: "primary",
-                            underline: true,
-                            size: "sm",
-                        })}
+                        className={cn(
+                            "text-left wrap-anywhere",
+                            linkClassGenerator({
+                                intent: "primary",
+                                underline: true,
+                                size: "sm",
+                            }),
+                        )}
                     >
                         {sourceValue}
                     </button>
@@ -70,19 +73,23 @@ export const JobsTable = ({jobs, instanceId, globalFilter = "", refetch}: JobsTa
                 return executedOn ? formatDate(executedOn, i18n.language) : "—";
             },
         }),
-        columnHelper.accessor("createdBy", {
+        columnHelper.accessor("createdByDisplayName", {
             header: columnLabels.createdBy,
-            cell: (info) => info.getValue() || "—",
+            cell: (info) => <TableTextCell>{info.getValue() || "—"}</TableTextCell>,
         }),
         columnHelper.accessor("message", {
             header: columnLabels.message,
-            cell: (info) => info.getValue() || "—",
+            cell: (info) => <TableTextCell>{info.getValue() || "—"}</TableTextCell>,
         }),
-        columnHelper.accessor("id", {
+        columnHelper.display({
+            id: "actions",
             header: "",
             enableSorting: false,
-            cell: (info) => {
-                const rowId = info.getValue();
+            size: 56,
+            minSize: 56,
+            maxSize: 56,
+            cell: ({row}) => {
+                const rowId = row.original.id;
 
                 return (
                     <div className="flex w-auto justify-end p-0">

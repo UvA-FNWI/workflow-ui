@@ -56,7 +56,7 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
         case "Int":
         case "Double":
             return "Number";
-        case "Boolean":
+        case "Check":
             return "YesNo";
         case "User":
             return "Person";
@@ -92,7 +92,7 @@ export function newPropertyValue(
         case "Number":
             return {name, type: "Int", text};
         case "YesNo":
-            return {name, type: "Boolean", text};
+            return {name, type: "Check", text};
         case "Person":
             return {name, type: "User", text};
         case "People":

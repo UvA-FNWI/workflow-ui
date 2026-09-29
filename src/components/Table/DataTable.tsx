@@ -30,6 +30,7 @@ type DataTableProps<TData> = {
     initialSorting?: SortingState;
     onSortingChange?: (sorting: SortingState) => void;
     emptyNode?: ReactNode;
+    textSize?: "sm" | "base" | "lg";
 };
 
 export function DataTable<TData>({
@@ -42,6 +43,7 @@ export function DataTable<TData>({
     initialSorting = [],
     onSortingChange,
     emptyNode,
+    textSize = "sm",
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
@@ -85,13 +87,15 @@ export function DataTable<TData>({
     if (rows.length === 0 && emptyNode !== undefined) {
         return emptyNode;
     }
+    const textSizeClass =
+        textSize === "sm" ? "text-sm" : textSize === "base" ? "text-base" : "text-lg";
 
     return (
         // contain:paint isolates the horizontal scroll so a wide table scrolls
         // within this box instead of leaking page-level scroll on mobile.
         <div className="overflow-x-auto contain-[paint]">
             <table
-                className={`w-full border-collapse text-sm ${isFixed ? "min-w-3xl table-fixed" : ""}`}
+                className={`w-full border-collapse ${textSizeClass} ${isFixed ? "min-w-3xl table-fixed" : ""}`}
             >
                 <thead className="border-b border-grey-300">
                     {table.getHeaderGroups().map((headerGroup) => (

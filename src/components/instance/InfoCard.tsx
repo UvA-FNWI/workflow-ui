@@ -31,6 +31,7 @@ export function InfoCards({cards, instanceId, isLoading}: InfoCardsProps) {
 
 function InfoCard({card, instanceId}: {card: InfoCardData; instanceId: string}) {
     const {l} = useTranslate("workflow");
+    if (card.type === "Progress") return null;
     if (card.type === "User") return <UserCard card={card} />;
     if (card.type === "RelatedUsers")
         return (
@@ -48,7 +49,7 @@ function InfoCard({card, instanceId}: {card: InfoCardData; instanceId: string}) 
             <Heading as="h3" size="sm">
                 {l(card.title)}
             </Heading>
-            <MarkdownRenderer>{l(card.content) ?? ""}</MarkdownRenderer>
+            <MarkdownRenderer>{l(card.content)}</MarkdownRenderer>
         </Card>
     );
 }

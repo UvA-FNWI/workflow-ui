@@ -9,6 +9,7 @@ import type {
     RoleImpersonationResult,
     WorkflowInstance,
 } from "./types/instances";
+import type {Correspondence} from "~/store/api/types/correspondence.ts";
 import type {AssignRelatedUserParams, RemoveRelatedUserParams} from "~/store/api/types/params.ts";
 import type {Choice} from "~/store/api/types/submissions.ts";
 
@@ -47,6 +48,7 @@ export const instancesApi = baseApi.injectEndpoints({
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
                 {type: "Choices", id: instanceId},
+                "Screen",
             ],
         }),
         createInstance: builder.mutation<WorkflowInstance, {workflowDefinition: string}>({
@@ -55,14 +57,14 @@ export const instancesApi = baseApi.injectEndpoints({
                 method: "POST",
                 body,
             }),
-            invalidatesTags: ["Instance"],
+            invalidatesTags: ["Instance", "Screen"],
         }),
         recalculateCurrentSteps: builder.mutation<RecalculateCurrentStepsResult, string>({
             query: (workflowDefinition) => ({
                 url: `/WorkflowInstances/Instances/${workflowDefinition}/RecalculateCurrentStep`,
                 method: "POST",
             }),
-            invalidatesTags: ["Instance"],
+            invalidatesTags: ["Instance", "Screen"],
         }),
         getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Impersonation/Roles`,
@@ -102,6 +104,7 @@ export const instancesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
+                "Screen",
             ],
         }),
         removeRelatedUser: builder.mutation<void, RemoveRelatedUserParams>({
@@ -111,7 +114,11 @@ export const instancesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "Instance", id: instanceId},
+                "Screen",
             ],
+        }),
+        getCorrespondence: builder.query<Correspondence[], string>({
+            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Correspondence`,
         }),
     }),
 });

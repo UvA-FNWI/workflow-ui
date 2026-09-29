@@ -121,7 +121,7 @@ const ComboBoxOption = <
       )}
     >
       <span className="ui:flex-1 ui:truncate">{item.rendered}</span>
-      {isSelected && <Icon name="checkmark-solid" size="sm" decorative />}
+      {isSelected && <Icon name="checkmark-solid" size="sm" aria-hidden />}
     </li>
   );
 };

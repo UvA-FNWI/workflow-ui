@@ -100,7 +100,9 @@ describe('Select', () => {
       </Select>
     );
 
-    expect(screen.getByRole('button')).toHaveTextContent('Draft, Approved');
+    expect(screen.getByRole('button', { name: /Status/ })).toHaveTextContent(
+      'Draft, Approved'
+    );
   });
 
   it('supports disabled state', () => {

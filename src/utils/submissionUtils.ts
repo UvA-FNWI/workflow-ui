@@ -32,7 +32,9 @@ export function isPageComplete(
     submission: Submission,
     weightedOnly?: boolean,
 ): boolean {
-    return page.questions
+    return page.elements
+        .filter((element) => element.kind === "Question")
+        .map((element) => element.question!)
         .filter((q) => q.isRequired && (!weightedOnly || (q.weight && q.weight > 0)))
         .every((question) => {
             const answer = submission.answers.find((a) => a.questionName === question.name);
@@ -42,9 +44,11 @@ export function isPageComplete(
             const hasError = !!answer?.validationError;
 
             const hasValue =
-                answer?.value != null &&
-                answer.value !== "" &&
-                (!Array.isArray(answer.value) || answer.value.length > 0);
+                question.type === "Check"
+                    ? answer?.value === true
+                    : answer?.value != null &&
+                      answer.value !== "" &&
+                      (!Array.isArray(answer.value) || answer.value.length > 0);
             return hasValue && !hasError;
         });
 }

@@ -33,7 +33,7 @@ export function PersonalDisclosure({
             </Disclosure.Header>
             <Disclosure.Content>
                 {roleGroups.length === 0 ? (
-                    <Text className="pt-4">{t("empty_title")}</Text>
+                    <Text className="pt-4 italic">{t("empty_title")}</Text>
                 ) : (
                     <>
                         <div className="mb-6 flex justify-end pt-4">
@@ -43,10 +43,10 @@ export function PersonalDisclosure({
                                 placeholder={t("search_placeholder")}
                             />
                         </div>
-                        <div className="flex flex-col gap-6">
+                        <div className="flex flex-col gap-12">
                             {roleGroups.map(({role, instances}) => (
                                 <section key={role.name} className="overflow-hidden">
-                                    <Heading as="h3" size="sm" className="pb-4">
+                                    <Heading as="h3" size="sm" className="pb-4 pl-6">
                                         {t("role_title", {
                                             role: (
                                                 l(role.title) || formatIdentifier(role.name)
