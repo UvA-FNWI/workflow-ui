@@ -254,8 +254,8 @@ const ComboBoxInput = <
             className="ui:max-w-[70%] ui:flex-none"
             onRemove={key => {
               state.setValue(
-                state.selectedItems.flatMap(selectedItem =>
-                  selectedItem.key === key ? [] : [selectedItem.key]
+                [...state.selectionManager.selectedKeys].filter(
+                  selectedKey => selectedKey !== key
                 )
               );
               inputRef.current?.focus();
