@@ -8,6 +8,8 @@ import type {
   ReactNode,
 } from 'react';
 
+import { mergeProps, useFocusRing } from 'react-aria';
+
 import { cn } from '../../utils/cn';
 import { InputDescription } from '../Input/InputDescription';
 import { InputError } from '../Input/InputError';
@@ -195,8 +197,8 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
       useState<string[]>(defaultValue);
     const [uncontrolledSearch, setUncontrolledSearch] =
       useState(defaultSearchValue);
-    const [isFocused, setIsFocused] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const { focusProps, isFocusVisible } = useFocusRing();
 
     const tags = value ?? uncontrolledValue;
     const search = searchValue ?? uncontrolledSearch;
@@ -311,13 +313,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
       updateSearch('');
     };
 
-    const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
-      setIsFocused(true);
-      onFocus?.(event);
-    };
-
     const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
-      setIsFocused(false);
       if (acceptValueOnBlur && !isDisabled && !readOnly && search.trim()) {
         submitSearch();
       }
@@ -334,7 +330,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
 
     const controlClasses = inputVariants({
       isDisabled,
-      isFocusVisible: isFocused,
+      isFocusVisible,
       isHovered,
       isValid,
       size,
@@ -405,8 +401,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
               onChange={event => {
                 updateSearch(event.currentTarget.value);
               }}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
+              {...mergeProps(focusProps, { onFocus, onBlur: handleBlur })}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
             />

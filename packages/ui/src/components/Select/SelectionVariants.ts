@@ -21,7 +21,7 @@ export const selectionVariants = cva(
         false: undefined,
       },
       isFocused: {
-        true: 'ui:bg-grey-200 ui:ring-2 ui:ring-navy-600 ui:ring-inset ui:dark:bg-grey-800 ui:dark:ring-orange-500',
+        true: 'ui:bg-grey-200 ui:dark:bg-grey-800',
         false: undefined,
       },
     },

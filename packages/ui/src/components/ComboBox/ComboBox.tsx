@@ -97,17 +97,13 @@ const ComboBoxOption = <
   state,
 }: ComboBoxOptionProps<T, M>) => {
   const ref = useRef<HTMLLIElement>(null);
-  const { optionProps, isSelected, isDisabled, isFocused } = useOption(
-    { key: item.key },
-    state,
-    ref
-  );
+  const { optionProps, isSelected, isDisabled, isFocused, isFocusVisible } =
+    useOption({ key: item.key }, state, ref);
   const { hoverProps, isHovered } = useHover({ isDisabled });
-  const { focusProps, isFocusVisible } = useFocusRing();
 
   return (
     <li
-      {...mergeProps(optionProps, hoverProps, focusProps)}
+      {...mergeProps(optionProps, hoverProps)}
       ref={ref}
       className={cn(
         'ui:text-md ui:flex ui:items-center ui:justify-between ui:gap-2 ui:rounded-sm ui:px-3 ui:py-2 ui:transition-colors ui:duration-150 ui:outline-none',
