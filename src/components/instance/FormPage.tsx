@@ -90,12 +90,14 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
                     <TabList>
                         {[
                             ...pages.map((page, index) => (
-                                <Tab key={index} disabled={!page.isActive}>
-                                    {l(page.title)}
+                                <Tab key={index} disabled={!page.isActive || !page.isInCurrentForm}>
+                                    <span className={!page.isActive ? "line-through" : ""}>
+                                        {l(page.title)}
+                                    </span>
                                     {page.isActive && isPageComplete(page) && (
                                         <Icon
                                             name="circle-checkmark-solid"
-                                            size="xs"
+                                            size="sm"
                                             color="success"
                                             className="ml-1"
                                         />
