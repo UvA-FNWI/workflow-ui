@@ -60,8 +60,8 @@ export type RecalculateCurrentStepsResult = {
 };
 
 export type StepHeaderStatus = {
-    type: "Info" | "Attention" | "Success";
-    label: LocalString;
+    type: "Info" | "Attention" | "Success" | "Error";
+    label: LocalString | null;
 };
 
 export type IconVariant = {
@@ -81,13 +81,20 @@ export type UndoCandidate = {
     operationId: string;
 };
 
+export type StepDeadline = {
+    date: string | null;
+    type: "Soft" | "Hard";
+    isPassed: boolean;
+    message: LocalString | null;
+};
+
 export type WorkflowStep = {
     id: string;
     title: LocalString;
     icon: IconVariant | null;
     event: string;
     dateCompleted: string | null;
-    deadline: string | null;
+    deadline: StepDeadline | null;
     children: WorkflowStep[] | null;
     versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;
@@ -199,4 +206,5 @@ export type InfoCard =
           items?: InfoCardItem[] | null;
       })
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
-    | (InfoCardBase & {type: "Text"; content?: LocalString | null});
+    | (InfoCardBase & {type: "Text"; content?: LocalString | null})
+    | (InfoCardBase & {type: "Progress"});

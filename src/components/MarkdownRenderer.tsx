@@ -1,30 +1,71 @@
+import type {ReactNode} from "react";
+
 import Markdown from "react-markdown";
 
-import rehypeRaw from "rehype-raw";
+import {cn, Heading, Text} from "@uva-fnwi/datanose-ui";
 
 interface MarkdownRendererProps {
-    children: string;
+    children?: string;
+    className?: string;
 }
 
-export function MarkdownRenderer({children}: MarkdownRendererProps) {
+export function MarkdownRenderer({children, className}: MarkdownRendererProps) {
+    if (!children) return null;
+
+    const renderAsText = ({children}: {children?: ReactNode}) => (
+        <Text as="p" className={cn("wrap-break-word", className)} display="block">
+            {children}
+        </Text>
+    );
+
     return (
         <Markdown
-            rehypePlugins={[rehypeRaw]}
             components={{
-                p: ({children}) => <p className="my-1">{children}</p>,
+                h1: ({children: nodeChildren}) => (
+                    <Heading as="h4" size="sm" fontType="body" className={className}>
+                        {nodeChildren}
+                    </Heading>
+                ),
+                h2: ({children: nodeChildren}) => (
+                    <Heading as="h5" size="xs" className={className}>
+                        {nodeChildren}
+                    </Heading>
+                ),
+                h3: renderAsText,
+                h4: renderAsText,
+                h5: renderAsText,
+                h6: renderAsText,
+                p: renderAsText,
+                pre: renderAsText,
+                code: ({children: nodeChildren}) => (
+                    <Text as="span" className={cn("wrap-break-word", className)} display="block">
+                        {nodeChildren}
+                    </Text>
+                ),
                 ul: ({children: nodeChildren}) => (
-                    <ul className="my-1 list-disc pl-5">{nodeChildren}</ul>
+                    <ul className={cn("my-1 list-disc pl-5", className)}>{nodeChildren}</ul>
                 ),
                 ol: ({children: nodeChildren}) => (
-                    <ol className="my-1 list-decimal pl-5">{nodeChildren}</ol>
+                    <ol className={cn("my-1 list-decimal pl-5", className)}>{nodeChildren}</ol>
                 ),
-                strong: ({children: nodeChildren}) => (
-                    <strong className="font-semibold">{nodeChildren}</strong>
+                li: ({children: nodeChildren}) => (
+                    <li>
+                        <Text as="span" className={className}>
+                            {nodeChildren}
+                        </Text>
+                    </li>
                 ),
                 a: ({children: nodeChildren, href}) => (
-                    <a className="text-red-500 hover:underline" href={href} target="_blank">
-                        {nodeChildren}
-                    </a>
+                    <Text
+                        as="span"
+                        display="inline"
+                        className={cn("text-red-500 hover:underline", className)}
+                    >
+                        <a href={href} target="_blank" rel="noreferrer">
+                            {nodeChildren}
+                            <span className="sr-only"> (opens in new tab)</span>
+                        </a>
+                    </Text>
                 ),
             }}
         >

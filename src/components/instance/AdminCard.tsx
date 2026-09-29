@@ -79,7 +79,7 @@ export function AdminCard() {
                         </SelectItem>
                     )) ?? []}
                 </Select>
-                <div className="flex w-full flex-col gap-2 md:flex-row">
+                <div className="flex w-full flex-row flex-wrap gap-2">
                     <Button
                         onClick={() =>
                             impersonateRole({
@@ -94,7 +94,7 @@ export function AdminCard() {
                         }
                         intent="primary"
                         leftIcon={<Icon name="user-line" size="sm" color="current" />}
-                        className="flex-1"
+                        className="min-w-24 flex-1"
                     >
                         {t("admin.impersonate_role_button")}
                     </Button>
@@ -107,7 +107,7 @@ export function AdminCard() {
                                 window.location.reload();
                             }}
                             leftIcon={<Icon name="cross-small-line" size="sm" color="current" />}
-                            className="flex-1"
+                            className="min-w-24 flex-1"
                         >
                             {t("admin.stop_impersonating_button")}
                         </Button>
@@ -160,10 +160,19 @@ export function AdminCard() {
                                         );
                                         return (
                                             <li key={role.name}>
-                                                <Text as="span" size="sm">
+                                                <Text
+                                                    as="span"
+                                                    size="sm"
+                                                    className="min-w-18 flex-1"
+                                                >
                                                     {l(role.title)}
                                                 </Text>
-                                                <Text as="span" size="sm" intent="secondary">
+                                                <Text
+                                                    as="span"
+                                                    size="sm"
+                                                    intent="secondary"
+                                                    className="min-w-18 flex-1"
+                                                >
                                                     {" · "}
                                                     {[...labels].join(" · ")}
                                                 </Text>

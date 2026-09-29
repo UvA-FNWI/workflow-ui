@@ -1,6 +1,8 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {ApiErrorState} from "~/store/api/types/returnTypes.ts";
 
+export type MessageVariant = "Success" | "Error" | "Info" | "Warning" | "Note";
+
 export type Submission = {
     id: string;
     dateSubmitted?: string;
@@ -17,11 +19,9 @@ export type EffectResult = {
 };
 
 export type ToastEffect = {
-    type: ToastType;
+    type: MessageVariant;
     message: LocalString;
 };
-
-export type ToastType = "Success" | "Error" | "Info" | "Warning" | "Note";
 
 export type AnswerChange = {
     value: unknown;
@@ -64,9 +64,8 @@ export type Page = {
     index: number;
     name: string;
     title: LocalString;
-    introduction?: LocalString;
     layout: PageLayout;
-    questions: Question[];
+    elements: PageElement[];
     hasResults: boolean;
     isInCurrentForm: boolean;
 };
@@ -92,6 +91,7 @@ export type Question = {
     workflowDefinition?: string;
     layout?: TextLayoutOptions | ChoiceLayoutOptions;
     maxLength?: number;
+    minLength?: number;
     sorting?: Sorting;
     linkedTo?: string;
     allowedFileTypes?: string[];
@@ -99,6 +99,21 @@ export type Question = {
     allowedFileSize?: number;
     /** Properties of an embedded object. */
     subProperties?: Question[] | null;
+};
+
+export type PageElementKind = "Question" | "Text" | "Callout";
+
+export type PageElement = {
+    kind: PageElementKind;
+    question?: Question;
+    callout?: Callout;
+    text?: LocalString;
+};
+
+export type Callout = {
+    variant: MessageVariant;
+    title?: LocalString;
+    text?: LocalString;
 };
 
 export type SortDirection = "Ascending" | "Descending";
@@ -142,7 +157,14 @@ export type Choice = {
 export type PageLayout = "Normal" | "Condensed";
 export type StepResultsType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
 export type RoleAction =
-    "ViewAdminTools" | "View" | "Edit" | "Submit" | "Execute" | "CreateRelatedInstance" | "Undo";
+    | "ViewAdminTools"
+    | "View"
+    | "Edit"
+    | "Submit"
+    | "Execute"
+    | "CreateRelatedInstance"
+    | "Undo"
+    | "ViewCorrespondence";
 export type DataType =
     | "File"
     | "Date"
@@ -155,7 +177,7 @@ export type DataType =
     | "Double"
     | "Reference"
     | "Int"
-    | "Boolean"
+    | "Check"
     | "Object";
 export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric" | "ComboBox";
 export type FormLayout = "Normal" | "Compact" | "Modal";

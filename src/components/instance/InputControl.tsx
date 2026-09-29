@@ -2,6 +2,8 @@ import {useCallback} from "react";
 
 import {
     Checkbox,
+    ComboBox,
+    ComboBoxItem,
     Input,
     NumberInput,
     Radio,
@@ -101,7 +103,7 @@ export const InputControl = ({
         },
         [onChange, saveExternalUser, question.isArray, question.name, value],
     );
-    const debouncedOnChange = useDebounce(save, 500);
+    const debouncedOnChange = useDebounce(save, 500, true);
     const debouncedChange = (value: unknown) => {
         onChange?.(value);
         debouncedOnChange(value);
@@ -118,6 +120,7 @@ export const InputControl = ({
                     value={Array.isArray(value) ? value.map((item) => String(item)) : []}
                     onChange={(value) => debouncedChange(value)}
                     maxLength={question.maxLength}
+                    minLength={question.minLength}
                     isValid={isValid}
                     errorMessage={errorMessage}
                 />
@@ -153,13 +156,26 @@ export const InputControl = ({
 
         const isMultilineString =
             question.layout != null && "multiline" in question.layout && question.layout.multiline;
-        const lengthValidationDescription = question.maxLength
-            ? t("string_validation", {
-                  maxInputLength: question.maxLength,
-                  remainingInputLength:
-                      question.maxLength - (typeof value === "string" ? value.length : 0),
-              })
-            : "";
+
+        const minRemaining = question.minLength
+            ? question.minLength - (typeof value === "string" ? value.length : 0)
+            : 0;
+
+        const lengthValidationDescription = [
+            question.minLength &&
+                t("string_validation_min", {minInputLength: question.minLength}) +
+                    (minRemaining > 0
+                        ? t("string_validation_min_remaining", {remainingInputLength: minRemaining})
+                        : ""),
+            question.maxLength &&
+                t("string_validation_max", {
+                    maxInputLength: question.maxLength,
+                    remainingInputLength:
+                        question.maxLength - (typeof value === "string" ? value.length : 0),
+                }),
+        ]
+            .filter(Boolean)
+            .join("\n");
 
         const StringField = isMultilineString ? TextArea : Input;
 
@@ -172,6 +188,7 @@ export const InputControl = ({
                 onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
                 description={lengthValidationDescription}
                 maxLength={question.maxLength}
+                minLength={question.minLength}
                 isValid={isValid}
                 errorMessage={errorMessage}
             />
@@ -183,7 +200,7 @@ export const InputControl = ({
         return (
             <NumberInput
                 value={Number.isFinite(value) ? (value as number) : undefined}
-                step={isInt ? 1 : 0.01}
+                step={isInt ? 1 : 0.1}
                 minValue={isInt ? -2_147_483_648 : undefined}
                 maxValue={isInt ? 2_147_483_647 : undefined}
                 onChange={(value) => {
@@ -219,7 +236,7 @@ export const InputControl = ({
         );
     }
 
-    if (question.type === "Boolean") {
+    if (question.type === "Check") {
         return (
             <Checkbox
                 label={l(question.text) ?? ""}
@@ -279,6 +296,28 @@ export const InputControl = ({
                         <SelectItem key={choice.name}>{l(choice.text) ?? choice.name}</SelectItem>
                     ))}
                 </Select>
+            );
+        }
+
+        if (isChoiceType("ComboBox") && !question.isArray) {
+            const choiceText = (choice: Choice) => l(choice.text) ?? choice.name;
+            return (
+                <ComboBox
+                    value={typeof value === "string" ? value : null}
+                    onChange={(selectedValue) => {
+                        immediateChange(selectedValue != null ? String(selectedValue) : null);
+                    }}
+                    placeholder={t("select")}
+                    noResults={t("search_and_select.no_results")}
+                    isValid={isValid}
+                    errorMessage={errorMessage}
+                >
+                    {choices.map((choice) => (
+                        <ComboBoxItem key={choice.name} textValue={choiceText(choice)}>
+                            {choiceText(choice)}
+                        </ComboBoxItem>
+                    ))}
+                </ComboBox>
             );
         }
 

@@ -52,7 +52,7 @@ export const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOp
     if (
         result.error &&
         typeof result.error.status == "number" &&
-        result.error.status > 500 &&
+        result.error.status >= 500 &&
         result.error.status < 600
     ) {
         api.dispatch(
