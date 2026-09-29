@@ -6,9 +6,7 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
-    getCurrentVersionNumber,
     getPreviousFormVersion,
-    hasVersionHistory,
     type ModalState,
     resolveFormState,
 } from "~/components/instance/resolveContentState.ts";
@@ -48,7 +46,15 @@ export const StepCardBody = ({
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
     const formState = resolveFormState(resolvedAction);
-    const showVersionCards = hasVersionHistory(step);
+    const history = step.versions?.history ?? [];
+    const currentVersionNumber =
+        history.length > 0 ? step.versions?.current?.versionNumber : undefined;
+
+    const versionHeading = currentVersionNumber != null && (
+        <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
+            {t("version_card.version_nr", {versionNumber: currentVersionNumber})}
+        </Heading>
+    );
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
@@ -62,18 +68,7 @@ export const StepCardBody = ({
             case "submissions":
                 return (
                     <>
-                        {showVersionCards && !formState && (
-                            <Heading
-                                fontType="heading"
-                                size="sm"
-                                as="h3"
-                                className="pt-4 font-semibold"
-                            >
-                                {t("version_card.version_nr", {
-                                    versionNumber: getCurrentVersionNumber(step),
-                                })}
-                            </Heading>
-                        )}
+                        {!formState && versionHeading}
                         {contentState.regular.map((submission) => (
                             <div key={submission.id} className="flex flex-col gap-2">
                                 {contentState.regular.length > 0 && (
@@ -114,18 +109,7 @@ export const StepCardBody = ({
                 {/* Form overlay: shown alongside submissions */}
                 {formState && (
                     <div className="py-4">
-                        {showVersionCards && (
-                            <Heading
-                                fontType="heading"
-                                size="sm"
-                                as="h3"
-                                className="py-4 font-semibold"
-                            >
-                                {t("version_card.version_nr", {
-                                    versionNumber: getCurrentVersionNumber(step),
-                                })}
-                            </Heading>
-                        )}
+                        {formState && versionHeading}
                         {actions.length > 1 && activeAction != null && (
                             <div className="flex justify-between gap-2">
                                 <Text className="uppercase" intent="error" size="xl">
@@ -168,13 +152,11 @@ export const StepCardBody = ({
                 )}
 
                 {/* Version history: always at the bottom */}
-                {showVersionCards && (
-                    <VersionHistory
-                        versions={step.versions ?? []}
-                        instanceId={instance.id}
-                        defaultExpandFirst={submissions.length === 0}
-                    />
-                )}
+                <VersionHistory
+                    versions={history}
+                    instanceId={instance.id}
+                    defaultExpandFirst={submissions.length === 0}
+                />
             </div>
 
             {/* Confirmation Modal */}

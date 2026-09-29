@@ -86,18 +86,24 @@ export type WorkflowStep = {
     dateCompleted: string | null;
     deadline: StepDeadline | null;
     children: WorkflowStep[] | null;
-    versions: WorkflowStepVersion[] | null;
     headerStatus: StepHeaderStatus | null;
     resultsType: StepResultsType;
     expectsSubmission: boolean;
     hasSubmission: boolean;
     hierarchyMode: StepHierarchyMode;
+    versions: WorkflowStepVersions | null;
+};
+
+export type WorkflowStepVersions = {
+    current: WorkflowStepVersion | null;
+    history: WorkflowStepVersion[];
 };
 
 export type WorkflowStepVersion = {
     versionNumber: number;
-    eventIds: string[];
-    submittedAt: string;
+    //eventIds: string[];
+    //submittedAt: string;
+    completionTimestamp: string | null;
     submissions: Submission[];
 };
 

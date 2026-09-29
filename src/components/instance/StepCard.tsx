@@ -5,7 +5,6 @@ import i18n from "i18next";
 
 import {
     getStepHierarchy,
-    hasVersionHistory,
     resolveContentState,
     resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
@@ -114,8 +113,7 @@ export const StepCard = ({step, instance}: Props) => {
 
     const contentState = resolveContentState(step, submissions);
     const modalState = resolveModalState(availableActiveAction);
-    const hasVisibleSubmission =
-        submissions.length > 0 || stepHierarchy.some((candidate) => hasVersionHistory(candidate));
+    const hasVisibleSubmission = submissions.length > 0 || !!step.versions?.current;
     const isFormOpen =
         resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
     const emptyStateMessage =
@@ -129,7 +127,7 @@ export const StepCard = ({step, instance}: Props) => {
     const hasStepContent =
         actions.length > 0 ||
         submissions.length > 0 ||
-        hasVersionHistory(step) ||
+        (step.versions?.history.length ?? 0) > 0 ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
     const hasBodyContent = deadlineMessages.length > 0 || hasStepContent;

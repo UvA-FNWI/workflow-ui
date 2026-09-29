@@ -29,7 +29,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                     </Heading>
                     <Text as="span">
                         <Text fontWeight="semibold">{t("status.submitted")}:</Text>{" "}
-                        {formatDateShort(version.submittedAt, i18n.language)}
+                        {formatDateShort(version.completionTimestamp ?? "", i18n.language)}
                     </Text>
                 </div>
             </Disclosure.Header>
