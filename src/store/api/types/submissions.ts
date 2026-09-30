@@ -162,7 +162,6 @@ export type RoleAction =
     | "Edit"
     | "Submit"
     | "Execute"
-    | "PostponeDeadlines"
     | "CreateRelatedInstance"
     | "ViewCorrespondence"
     | "Undo";

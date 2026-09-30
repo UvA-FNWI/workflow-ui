@@ -6,7 +6,7 @@ import {PageHeader} from "~/components/PageHeader";
 import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
-import type {Action, WorkflowStep} from "~/store/api/types/instances";
+import type {Action} from "~/store/api/types/instances";
 
 interface InstanceHeaderProps {
     courseName?: LocalString | string | null;
@@ -14,7 +14,6 @@ interface InstanceHeaderProps {
     canUseAdminTools?: boolean;
     isLoading: boolean;
     actions?: Action[];
-    steps?: WorkflowStep[];
 }
 
 export function InstanceHeader({
@@ -23,7 +22,6 @@ export function InstanceHeader({
     canUseAdminTools = false,
     isLoading,
     actions = [],
-    steps = [],
 }: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
     const {page} = useJobTranslations();
@@ -44,7 +42,6 @@ export function InstanceHeader({
                             key={instanceId}
                             instanceId={instanceId}
                             actions={actions}
-                            steps={steps}
                         />
                         {canUseAdminTools && (
                             <>

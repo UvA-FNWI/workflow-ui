@@ -1,13 +1,14 @@
 import {Icon, Tooltip} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
+import type {LocalString} from "~/hooks/useTranslate";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 
-type Props = {previousDate: string; reason?: string | null};
+type Props = {previousDate: string; reason?: LocalString | null};
 
 export function DeadlineTooltip({previousDate, reason}: Props) {
-    const {t} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
 
     return (
         <Tooltip
@@ -20,7 +21,7 @@ export function DeadlineTooltip({previousDate, reason}: Props) {
                     </span>
                     <span className="block">
                         {t("progress.deadline_change_reason")}:{" "}
-                        {reason || t("progress.deadline_reason_unknown")}
+                        {(reason && l(reason)) || t("progress.deadline_reason_unknown")}
                     </span>
                 </>
             }

@@ -126,7 +126,7 @@ it("shows the previous date and saved reason on hover, including on unavailable 
         deadline: {
             ...deadline,
             previousDate: "1999-12-25T23:00:00Z",
-            changeReason: "Other\nResearch delay",
+            changeReason: {en: "Other\nResearch delay", nl: "Overig\nVertraging onderzoek"},
         },
         expectsSubmission: false,
     });

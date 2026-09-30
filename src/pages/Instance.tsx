@@ -41,7 +41,6 @@ function Instance() {
                 canUseAdminTools={instance?.canUseAdminTools ?? false}
                 isLoading={isLoading}
                 actions={instance?.actions}
-                steps={instance?.steps}
             />
             <Grid>
                 <GridItem span={{base: 12, sm: 9}} className="flex flex-col gap-8">

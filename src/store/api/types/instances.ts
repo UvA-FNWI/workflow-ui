@@ -77,9 +77,8 @@ export type StepDeadline = {
     isPassed: boolean;
     message: LocalString | null;
     previousDate?: string | null;
-    changeReason?: string | null;
+    changeReason?: LocalString | null;
     property?: string | null;
-    maxDate?: string | null;
 };
 
 export type WorkflowStep = {
@@ -118,7 +117,7 @@ export type Action = {
     autoOpenForm?: boolean;
 };
 
-export type ActionType = "SubmitForm" | "Execute" | "PostponeDeadlines";
+export type ActionType = "SubmitForm" | "Execute";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 
 export type Role = {

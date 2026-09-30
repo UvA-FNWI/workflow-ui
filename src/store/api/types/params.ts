@@ -41,7 +41,6 @@ export type ExecuteActionParams = {
     instanceId: string;
     type: ActionType;
     name: string;
-    input?: unknown;
 };
 
 export type AssignRelatedUserParams = {

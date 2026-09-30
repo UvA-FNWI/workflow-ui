@@ -74,11 +74,6 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
-  "form_loading": {
-    "error": "Het formulier kon niet worden geladen.",
-    "loading": "Formulier laden…",
-    "retry": "Opnieuw proberen"
-  },
   "home": "Home",
   "instance": {
     "calculations": {
@@ -141,27 +136,6 @@
     "choose_course_subtitle": "Selecteer een vak om verder te gaan.",
     "choose_course_title": "Kies je vak",
     "no_access": "Je hebt nog geen toegang tot vakken."
-  },
-  "postponement": {
-    "all": "Voor alle aanpasbare deadlines",
-    "all_limit_reached": "Minstens één deadline heeft de limiet bereikt. Stel andere deadlines afzonderlijk uit.",
-    "amount": "Verzet alle deadlines met:",
-    "current_date": "Huidige datum",
-    "days": "Dagen",
-    "errors": {
-      "InvalidChanges": "Kies een latere datum voor minstens één aanpasbare deadline. Is een deadline gewijzigd, open het venster opnieuw.",
-      "MaximumExtensionExceeded": "Een deadline overschrijdt het maximale totale uitstel."
-    },
-    "individual": "Per deadline",
-    "limit_reached": "Het maximale uitstel is bereikt.",
-    "new_date": "Nieuwe datum",
-    "no_deadlines": "Er zijn geen aanpasbare deadlines met een datum.",
-    "remaining_days_one": "Maximaal resterend uitstel: {{count}} dag.",
-    "remaining_days_other": "Maximaal resterend uitstel: {{count}} dagen.",
-    "save_error": "De deadlines konden niet worden aangepast. Probeer het opnieuw.",
-    "scope": "Geef uitstel:",
-    "unit": "Eenheid",
-    "weeks": "Weken"
   },
   "previous": "Vorige",
   "progress": {

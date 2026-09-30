@@ -2,74 +2,34 @@ import {useState} from "react";
 
 import {Button} from "@uva-fnwi/datanose-ui";
 
-import {deadlineDate, getExtendableDeadlines} from "./deadlines/postponeDeadline";
-import {PostponeDeadlineModal} from "./deadlines/PostponeDeadlineModal";
 import {FormModal} from "./FormModal";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {Action, WorkflowStep} from "~/store/api/types/instances";
+import type {Action} from "~/store/api/types/instances";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps";
 
-type Props = {instanceId: string; actions: Action[]; steps?: WorkflowStep[]};
+type Props = {instanceId: string; actions: Action[]};
 
-export function WorkflowActions({instanceId, actions, steps = []}: Props) {
+export function WorkflowActions({instanceId, actions}: Props) {
     const {l} = useTranslate("workflow");
     const [selectedAction, setSelectedAction] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const deadlines = getExtendableDeadlines(steps);
-    const canExtend = deadlines.some(
-        (deadline) => !deadline.maxDate || deadline.maxDate > deadlineDate(deadline.date),
+
+    const buttons = actions.filter(
+        (action) =>
+            action.type === "SubmitForm" &&
+            action.form &&
+            action.steps.length === 0 &&
+            action.formLayout === "Modal",
     );
-
-    function renderModal(action: Action) {
-        const onClose = () => setSelectedAction(null);
-        switch (action.type) {
-            case "SubmitForm":
-                return action.form ? (
-                    <FormModal
-                        key={action.id}
-                        isOpen
-                        instanceId={instanceId}
-                        submissionId={action.form}
-                        onClose={onClose}
-                        onLoadingChange={setIsLoading}
-                    />
-                ) : null;
-            case "PostponeDeadlines":
-                return action.form && canExtend ? (
-                    <PostponeDeadlineModal
-                        key={action.id}
-                        instanceId={instanceId}
-                        actionName={action.name}
-                        title={action.title}
-                        onLoadingChange={setIsLoading}
-                        deadlines={deadlines}
-                        onClose={onClose}
-                    />
-                ) : null;
-            default:
-                return null;
-        }
-    }
-
-    const buttons = actions
-        .filter(
-            (action) =>
-                action.steps.length === 0 &&
-                (action.type === "PostponeDeadlines" || action.formLayout === "Modal"),
-        )
-        .map((action) => ({action, modal: renderModal(action)}))
-        .filter(({modal}) => modal !== null);
-    const active = buttons.find(({action}) => action.id === selectedAction);
+    const active = buttons.find((action) => action.id === selectedAction);
 
     return (
         <>
-            {buttons.map(({action}) => (
+            {buttons.map((action) => (
                 <Button
                     key={action.id}
-                    {...(action.type === "PostponeDeadlines"
-                        ? {intent: "secondary" as const, variant: "destructive" as const}
-                        : actionIntentToButtonProps(action.intent))}
-                    isLoading={active?.action.id === action.id && isLoading}
+                    {...actionIntentToButtonProps(action.intent)}
+                    isLoading={active?.id === action.id && isLoading}
                     onClick={() => {
                         setIsLoading(true);
                         setSelectedAction(action.id);
@@ -78,7 +38,16 @@ export function WorkflowActions({instanceId, actions, steps = []}: Props) {
                     {l(action.title)}
                 </Button>
             ))}
-            {active?.modal}
+            {active?.form && (
+                <FormModal
+                    key={active.id}
+                    isOpen
+                    instanceId={instanceId}
+                    submissionId={active.form}
+                    onClose={() => setSelectedAction(null)}
+                    onLoadingChange={setIsLoading}
+                />
+            )}
         </>
     );
 }
