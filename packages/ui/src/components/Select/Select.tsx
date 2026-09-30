@@ -60,7 +60,7 @@ const SelectPopover = <
 
   const popoverStyle: CSSProperties = {
     ...popoverProps.style,
-    width: triggerRef.current?.offsetWidth,
+    minWidth: triggerRef.current?.offsetWidth,
   };
 
   return (
