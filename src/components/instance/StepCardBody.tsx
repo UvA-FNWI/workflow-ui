@@ -5,10 +5,10 @@ import {FormModal} from "~/components/instance/FormModal.tsx";
 import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
-    type ContentState,
+    type FormState,
     getPreviousFormVersion,
-    type ModalState,
-    resolveFormState,
+    resolveContentState,
+    resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
 import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -22,12 +22,10 @@ type Props = {
     instance: WorkflowInstance;
     actions: Action[];
     submissions: Submission[];
-    contentState: ContentState;
-    modalState: ModalState;
     activeAction: Action | null;
-    resolvedAction: Action | null;
+    formState: FormState;
     emptyStateMessage: string | null;
-    setActiveAction: (action: Action | null) => void;
+    onSelectAction: (action: Action | null) => void;
 };
 
 export const StepCardBody = ({
@@ -35,40 +33,36 @@ export const StepCardBody = ({
     instance,
     actions,
     submissions,
-    contentState,
-    modalState,
     activeAction,
-    resolvedAction,
+    formState,
     emptyStateMessage,
-    setActiveAction,
+    onSelectAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
-    const [executeAction] = actionsEndpoints.executeAction.useMutation();
+    const close = () => onSelectAction(null);
 
-    const formState = resolveFormState(resolvedAction);
-    const history = step.versions?.history ?? [];
-    const currentVersionNumber =
-        history.length > 0 ? step.versions?.current?.versionNumber : undefined;
+    const contentState = resolveContentState(step, submissions);
+    const modalState = resolveModalState(activeAction);
 
-    const versionHeading = currentVersionNumber != null && (
+    const currentVersion = step.versions?.current?.versionNumber;
+    const versionHeading = currentVersion != null && (
         <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
-            {t("version_card.version_nr", {versionNumber: currentVersionNumber})}
+            {t("version_card.version_nr", {versionNumber: currentVersion})}
         </Heading>
     );
 
-    const renderBackgroundContent = () => {
-        switch (contentState.type) {
-            case "empty":
-                return emptyStateMessage ? (
-                    <div className="pt-4">
-                        <Text className="italic">{emptyStateMessage}</Text>
-                    </div>
-                ) : null;
-
-            case "submissions":
-                return (
+    return (
+        <>
+            <div className="flex flex-col gap-4">
+                {/* Submissions or empty */}
+                {contentState.type === "empty" ? (
+                    emptyStateMessage && (
+                        <div className="pt-4">
+                            <Text className="italic">{emptyStateMessage}</Text>
+                        </div>
+                    )
+                ) : (
                     <>
-                        {!formState && versionHeading}
                         {contentState.regular.map((submission) => (
                             <div key={submission.id} className="flex flex-col gap-2">
                                 {contentState.regular.length > 0 && (
@@ -93,21 +87,10 @@ export const StepCardBody = ({
                             />
                         )}
                     </>
-                );
-        }
-    };
+                )}
 
-    // Action buttons show when form is NOT open and actions exist
-    const showActionButtons = !formState && actions.length > 0;
-
-    return (
-        <>
-            <div className="flex flex-col gap-4">
-                {/* Background content: submissions or empty */}
-                {renderBackgroundContent()}
-
-                {/* Form overlay: shown alongside submissions */}
-                {formState && (
+                {/* Form or action buttons */}
+                {formState ? (
                     <div className="py-4">
                         {formState && versionHeading}
                         {actions.length > 1 && activeAction != null && (
@@ -118,7 +101,7 @@ export const StepCardBody = ({
                                 <Button
                                     intent="secondary"
                                     variant="default"
-                                    onClick={() => setActiveAction(null)}
+                                    onClick={() => onSelectAction(null)}
                                     className="mb-4"
                                     leftIcon={<Icon name="rotate-left-solid" color="current" />}
                                 >
@@ -130,83 +113,98 @@ export const StepCardBody = ({
                             key={formState.action.form}
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
-                            onClose={() => setActiveAction(null)}
+                            onClose={() => onSelectAction(null)}
                             previousVersion={getPreviousFormVersion(step, formState.action.form)}
                         />
                     </div>
+                ) : (
+                    <ActionButtons actions={actions} onSelect={onSelectAction} />
                 )}
 
-                {/* Action buttons */}
-                {showActionButtons && (
-                    <div className="flex flex-wrap gap-2 pt-2">
-                        {actions.map((a) => (
-                            <Button
-                                key={a.id}
-                                onClick={() => setActiveAction(a)}
-                                {...actionIntentToButtonProps(a.intent)}
-                            >
-                                {l(a.title)}
-                            </Button>
-                        ))}
-                    </div>
-                )}
-
-                {/* Version history: always at the bottom */}
                 <VersionHistory
-                    versions={history}
+                    versions={step.versions?.history ?? []}
                     instanceId={instance.id}
                     defaultExpandFirst={submissions.length === 0}
                 />
             </div>
 
-            {/* Confirmation Modal */}
-            <Modal
-                isOpen={modalState?.type === "confirmationModal"}
-                onOpenChange={() => setActiveAction(null)}
-            >
-                <Modal.Header className="pb-0">
-                    {activeAction && l(activeAction.title)}
-                </Modal.Header>
-                <Modal.Body className="mt-2">
-                    <p>{t("are_you_sure")}</p>
-                </Modal.Body>
-                {activeAction && (
-                    <Modal.Footer>
-                        <Button
-                            intent="primary"
-                            variant="destructive"
-                            size="large"
-                            onClick={() => {
-                                executeAction({
-                                    instanceId: instance.id,
-                                    name: activeAction.name,
-                                    type: activeAction.type,
-                                });
-                                setActiveAction(null);
-                            }}
-                        >
-                            {t("confirm")}
-                        </Button>
-                        <Button
-                            intent="secondary"
-                            variant="destructive"
-                            size="large"
-                            onClick={() => setActiveAction(null)}
-                        >
-                            {t("cancel")}
-                        </Button>
-                    </Modal.Footer>
-                )}
-            </Modal>
-
-            {/* Form Modal */}
+            <ConfirmActionModal
+                action={modalState?.type === "confirmationModal" ? modalState.action : null}
+                instanceId={instance.id}
+                onClose={close}
+            />
             <FormModal
                 isOpen={modalState?.type === "formModal"}
-                onClose={() => setActiveAction(null)}
+                onClose={close}
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}
                 previousVersion={getPreviousFormVersion(step, activeAction?.form)}
             />
         </>
+    );
+};
+
+const ActionButtons = ({
+    actions,
+    onSelect,
+}: {
+    actions: Action[];
+    onSelect: (action: Action) => void;
+}) => {
+    const {l} = useTranslate("workflow");
+    if (actions.length === 0) return null;
+
+    return (
+        <div className="flex flex-wrap gap-2 pt-2">
+            {actions.map((action) => (
+                <Button
+                    key={action.id}
+                    onClick={() => onSelect(action)}
+                    {...actionIntentToButtonProps(action.intent)}
+                >
+                    {l(action.title)}
+                </Button>
+            ))}
+        </div>
+    );
+};
+
+const ConfirmActionModal = ({
+    action,
+    instanceId,
+    onClose,
+}: {
+    action: Action | null;
+    instanceId: string;
+    onClose: () => void;
+}) => {
+    const {t, l} = useTranslate("workflow");
+    const [executeAction] = actionsEndpoints.executeAction.useMutation();
+
+    return (
+        <Modal isOpen={action != null} onOpenChange={(open) => !open && onClose()}>
+            <Modal.Header className="pb-0">{action && l(action.title)}</Modal.Header>
+            <Modal.Body className="mt-2">
+                <p>{t("are_you_sure")}</p>
+            </Modal.Body>
+            {action && (
+                <Modal.Footer>
+                    <Button
+                        intent="primary"
+                        variant="destructive"
+                        size="large"
+                        onClick={() => {
+                            executeAction({instanceId, name: action.name, type: action.type});
+                            onClose();
+                        }}
+                    >
+                        {t("confirm")}
+                    </Button>
+                    <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
+                        {t("cancel")}
+                    </Button>
+                </Modal.Footer>
+            )}
+        </Modal>
     );
 };

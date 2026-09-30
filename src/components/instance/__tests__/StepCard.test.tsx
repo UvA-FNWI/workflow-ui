@@ -2,6 +2,7 @@ import {cleanup, render, screen} from "@testing-library/react";
 import {afterEach, expect, it, vi} from "vitest";
 
 import {StepCard} from "../StepCard.tsx";
+import type {FormState} from "~/components/instance/resolveContentState.ts";
 import type {
     Action,
     StepDeadline,
@@ -13,12 +14,13 @@ vi.mock("~/hooks/useTranslate.ts", () => ({
     useTranslate: () => ({
         l: (value?: {en: string}) => value?.en ?? "",
         t: (key: string) => key,
+        i18n: {language: "en"},
     }),
 }));
 
 vi.mock("~/components/instance/StepCardBody.tsx", () => ({
-    StepCardBody: ({resolvedAction}: {resolvedAction: Action | null}) => (
-        <div data-testid="step-content">{resolvedAction?.form ?? "Submission content"}</div>
+    StepCardBody: ({formState}: {formState: FormState}) => (
+        <div data-testid="step-content">{formState?.action.form ?? "Submission content"}</div>
     ),
 }));
 

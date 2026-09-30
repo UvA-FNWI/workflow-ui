@@ -1,34 +1,13 @@
 import {useState} from "react";
 
-import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
-import i18n from "i18next";
+import {Disclosure} from "@uva-fnwi/datanose-ui";
 
-import {
-    getStepHierarchy,
-    resolveContentState,
-    resolveModalState,
-} from "~/components/instance/resolveContentState.ts";
+import {getStepHierarchy, resolveFormState} from "~/components/instance/resolveContentState.ts";
 import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
+import {StepCardHeader} from "~/components/instance/StepCardHeader.tsx";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
-import type {
-    Action,
-    StepHeaderStatus,
-    WorkflowInstance,
-    WorkflowStep,
-} from "~/store/api/types/instances.ts";
-import {formatDateShort, formatDateShortWithRelevantTime} from "~/utils/formatDate.ts";
-
-const HEADER_STATUS_VARIANT: Record<StepHeaderStatus["type"], PillVariantProps["variant"]> = {
-    Info: "grey",
-    Attention: "orange",
-    Success: "green",
-    Error: "red",
-};
-
-function mapHeaderStatusType(type: StepHeaderStatus["type"]): PillVariantProps["variant"] {
-    return HEADER_STATUS_VARIANT[type];
-}
+import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";
 
 type Props = {
     step: WorkflowStep;
@@ -76,31 +55,6 @@ export const StepCard = ({step, instance}: Props) => {
     );
     const isAfterCurrentStep = instance.steps.indexOf(step) > currentStepIndex;
 
-    const deadlineDate =
-        step.deadline?.date ??
-        step.children?.find((c) => c.id == instance.currentStep)?.deadline?.date ??
-        null;
-    const submittedDate =
-        [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])]
-            .filter((date): date is string => Boolean(date))
-            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
-
-    const shownDate = submittedDate
-        ? {
-              label: t("status.submitted"),
-              value: formatDateShort(submittedDate, i18n.language),
-          }
-        : deadlineDate
-          ? {
-                label: t("progress.deadline"),
-                value: formatDateShortWithRelevantTime(
-                    deadlineDate,
-                    i18n.language,
-                    `(${t("progress.amsterdam_time")})`,
-                ),
-            }
-          : null;
-
     // An unfinished alongside obligation can move the current step backward. Steps that are
     // already completed or still have available actions must remain usable regardless of order.
     const isUnavailableFutureStep =
@@ -111,17 +65,15 @@ export const StepCard = ({step, instance}: Props) => {
         !isCurrentStep &&
         isAfterCurrentStep;
 
-    const contentState = resolveContentState(step, submissions);
-    const modalState = resolveModalState(availableActiveAction);
-    const hasVisibleSubmission = submissions.length > 0 || !!step.versions?.current;
-    const isFormOpen =
-        resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal";
+    const formState = resolveFormState(resolvedAction);
+    const hasVisibleSubmission = submissions.length > 0 || step.versions?.current != null;
+
     const emptyStateMessage =
-        !isFormOpen &&
+        !formState &&
         !hasVisibleSubmission &&
         stepHierarchy.some(({hasSubmission}) => hasSubmission)
             ? t("instance.unauthorized_submission")
-            : !isFormOpen && stepHierarchy.some(({expectsSubmission}) => expectsSubmission)
+            : !formState && stepHierarchy.some(({expectsSubmission}) => expectsSubmission)
               ? t("instance.empty_step")
               : null;
     const hasStepContent =
@@ -143,35 +95,7 @@ export const StepCard = ({step, instance}: Props) => {
                 showChevron={hasBodyContent}
                 className={isContentless ? "cursor-default!" : undefined}
             >
-                <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <Heading as="h2" className="font-semibold">
-                            {l(step.title)}
-                        </Heading>
-                        {/* If we don't have a header status, we can show the date completed */}
-                        {step.dateCompleted && !step.headerStatus && (
-                            <Pill variant="green">
-                                {t("status.completed_on")}{" "}
-                                {formatDateShort(step.dateCompleted, i18n.language)}
-                            </Pill>
-                        )}
-                        {step.headerStatus && (
-                            <Pill variant={mapHeaderStatusType(step.headerStatus.type)}>
-                                {l(step.headerStatus.label) ||
-                                    (stepHierarchy.some((candidate) => candidate.deadline?.isPassed)
-                                        ? t("status.deadline_passed")
-                                        : null)}
-                            </Pill>
-                        )}
-                    </div>
-                    {shownDate && (
-                        <Text as="span" className="shrink-0">
-                            <Text fontWeight="semibold">{shownDate.label}</Text>
-                            {":\t"}
-                            {shownDate.value}
-                        </Text>
-                    )}
-                </div>
+                <StepCardHeader step={step} currentStepId={instance.currentStep} />
             </Disclosure.Header>
             {hasBodyContent && (
                 <Disclosure.Content>
@@ -188,12 +112,10 @@ export const StepCard = ({step, instance}: Props) => {
                             instance={instance}
                             actions={actions}
                             submissions={submissions}
-                            contentState={contentState}
-                            modalState={modalState}
                             activeAction={availableActiveAction}
-                            resolvedAction={resolvedAction}
+                            formState={formState}
                             emptyStateMessage={emptyStateMessage}
-                            setActiveAction={setActiveAction}
+                            onSelectAction={setActiveAction}
                         />
                     )}
                 </Disclosure.Content>
