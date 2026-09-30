@@ -31,6 +31,7 @@ const CHOICE_LAYOUTS = ["RadioList", "Dropdown"] as const;
 export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Props) {
     const {t} = useTranslate("form_editor");
     const [nameDraft, setNameDraft] = useState<string | null>(null);
+    const [fileTypesDraft, setFileTypesDraft] = useState<string | null>(null);
     const patch = (key: keyof QuestionPatch, value: string | boolean) =>
         apply(() => updateQuestion(docs, formPath, question.name, {[key]: value} as QuestionPatch));
     const layout = (question.raw.layout ?? {}) as {type?: string; multiline?: boolean};
@@ -84,7 +85,46 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                         onChange={(isSelected) => patch("allowsExternalUsers", isSelected)}
                     />
                 )}
+                {question.kind === "Document" && (
+                    <Checkbox
+                        label={t("multiple_files")}
+                        isSelected={parseTypeString(question.rawType).isArray}
+                        isDisabled={isDisabled}
+                        onChange={(isSelected) => patch("isArray", isSelected)}
+                    />
+                )}
             </div>
+
+            {question.kind === "Document" && (
+                <div className="flex flex-wrap gap-4">
+                    <Input
+                        label={t("allowed_file_types")}
+                        description={t("allowed_file_types_hint")}
+                        value={
+                            fileTypesDraft ??
+                            (Array.isArray(question.raw.allowedFileTypes)
+                                ? question.raw.allowedFileTypes.join(", ")
+                                : "")
+                        }
+                        isDisabled={isDisabled}
+                        onChange={setFileTypesDraft}
+                        onBlur={() => {
+                            if (fileTypesDraft !== null) patch("allowedFileTypes", fileTypesDraft);
+                            setFileTypesDraft(null);
+                        }}
+                    />
+                    <Input
+                        label={t("allowed_file_size")}
+                        value={
+                            question.raw.allowedFileSize == null
+                                ? ""
+                                : String(question.raw.allowedFileSize)
+                        }
+                        isDisabled={isDisabled}
+                        onChange={(value) => patch("allowedFileSize", value)}
+                    />
+                </div>
+            )}
 
             {CHOICE_KINDS.includes(question.kind as QuestionKind) && (
                 <fieldset className="flex flex-col gap-2">

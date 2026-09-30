@@ -59,21 +59,26 @@ export const PageControl = ({
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
+    const [deleteFile] = answersApi.endpoints.deleteFile.useMutation();
 
     const removeFileAnswer = useCallback(
-        async (questionName: string) => {
+        async (questionName: string, artifactId?: string) => {
             try {
-                await saveAnswer({
-                    instanceId,
-                    submissionId,
-                    answer: {questionName, value: null},
-                }).unwrap();
+                if (artifactId) {
+                    await deleteFile({instanceId, submissionId, questionName, artifactId}).unwrap();
+                } else {
+                    await saveAnswer({
+                        instanceId,
+                        submissionId,
+                        answer: {questionName, value: null},
+                    }).unwrap();
+                }
             } catch (error) {
                 console.error("Failed to remove file answer:", error);
                 throw error;
             }
         },
-        [instanceId, submissionId, saveAnswer],
+        [instanceId, submissionId, saveAnswer, deleteFile],
     );
 
     const saveFileAnswer = useCallback(

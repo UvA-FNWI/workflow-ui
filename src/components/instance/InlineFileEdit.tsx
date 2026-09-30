@@ -4,6 +4,8 @@ import {Button, FileUpload, Icon, Link, Modal, Text} from "@uva-fnwi/datanose-ui
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {answersApi} from "~/store/api/answersApi.ts";
+import {instancesApi} from "~/store/api/instancesApi.ts";
+import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {Answer, Question} from "~/store/api/types/submissions.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
 import {
@@ -25,10 +27,26 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
         answersApi.endpoints.saveFile.useMutation();
     const [saveAnswer, {isLoading: isDeleting, isError: isDeleteError}] =
         answersApi.endpoints.saveAnswer.useMutation();
+    const [deleteFile, {isLoading: isDeletingOne}] = answersApi.endpoints.deleteFile.useMutation();
+    const {isFetching: isRefreshingInstance} = instancesApi.endpoints.getInstance.useQuery(
+        instanceId,
+        {
+            skip: !question.isArray,
+        },
+    );
+    const {isFetching: isRefreshingSubmission} = submissionsApi.endpoints.getSubmission.useQuery(
+        {instanceId, submissionId},
+        {skip: !question.isArray},
+    );
+    const mutationLock = useRef(false);
+    const [isMutatingFiles, setIsMutatingFiles] = useState(false);
+    const [fileMutationError, setFileMutationError] = useState<string | null>(null);
+    const areFilesBusy = isMutatingFiles || isRefreshingInstance || isRefreshingSubmission;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isWaitingForRefetch, setIsWaitingForRefetch] = useState(false);
+    const [isSizeError, setIsSizeError] = useState(false);
     const allowedFileTypesText = formatAllowedFileTypes(question.allowedFileTypes!, i18n.language);
     const fileInputAccept = toFileInputAccept(question.allowedFileTypes!);
     const allowedFileSizeText = formatAllowedFileSize(question.allowedFileSize!);
@@ -58,6 +76,120 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
         if (file) void handleUpload(file);
         e.target.value = "";
     };
+
+    const mutateFiles = async (action: () => Promise<void>, errorMessage: string) => {
+        if (mutationLock.current || areFilesBusy) return;
+        mutationLock.current = true;
+        setIsMutatingFiles(true);
+        setFileMutationError(null);
+        try {
+            await action();
+        } catch {
+            setFileMutationError(errorMessage);
+        } finally {
+            mutationLock.current = false;
+            setIsMutatingFiles(false);
+        }
+    };
+
+    if (question.isArray) {
+        const files = answer?.files ?? [];
+        return (
+            <div className="flex flex-col gap-2">
+                {files.map((file) => (
+                    <div
+                        key={file.id}
+                        className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2"
+                    >
+                        <Link
+                            intent="primary"
+                            underline
+                            className="block min-w-0 truncate"
+                            title={file.name}
+                            onClick={() => downloadFile(file)}
+                        >
+                            {file.name}
+                        </Link>
+                        <Button
+                            intent="ghost"
+                            size="square"
+                            aria-label={`${t("instance.summary.delete_file")}: ${file.name}`}
+                            isLoading={isDeletingOne}
+                            disabled={areFilesBusy}
+                            onClick={() =>
+                                mutateFiles(async () => {
+                                    await deleteFile({
+                                        instanceId,
+                                        submissionId,
+                                        questionName: question.name,
+                                        artifactId: file.id,
+                                    }).unwrap();
+                                }, t("file_upload.error_remove_failed"))
+                            }
+                        >
+                            <Icon name="trash-line" size="sm" color="current" />
+                        </Button>
+                    </div>
+                ))}
+                <Button
+                    intent="primary"
+                    variant="destructive"
+                    className="w-fit"
+                    leftIcon={<Icon name="upload-line" size="sm" color="current" />}
+                    isLoading={areFilesBusy}
+                    disabled={areFilesBusy}
+                    onClick={() => fileInputRef.current?.click()}
+                >
+                    {t("file_upload.select_files")}
+                </Button>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    disabled={areFilesBusy}
+                    multiple
+                    className="sr-only"
+                    aria-label={t("file_upload.select_files")}
+                    accept={fileInputAccept.join(",")}
+                    onChange={async (event) => {
+                        if (mutationLock.current || areFilesBusy) return;
+                        const selected = Array.from(event.target.files ?? []);
+                        event.target.value = "";
+                        setIsSizeError(false);
+                        if (
+                            selected.reduce(
+                                (sum, file) => sum + file.size,
+                                files.reduce((sum, file) => sum + file.length, 0),
+                            ) > question.allowedFileSize!
+                        ) {
+                            setIsSizeError(true);
+                            return;
+                        }
+                        if (!selected.length) return;
+                        await mutateFiles(async () => {
+                            for (const file of selected) {
+                                await saveFile({
+                                    instanceId,
+                                    submissionId,
+                                    questionName: question.name,
+                                    file,
+                                }).unwrap();
+                            }
+                        }, t("file_upload.error_upload_failed"));
+                    }}
+                />
+                {isSizeError && (
+                    <Text size="sm" intent="error">
+                        {t("file_upload.error_max_file_size", {size: allowedFileSizeText})}
+                    </Text>
+                )}
+                {fileMutationError && (
+                    <Text size="sm" intent="error">
+                        {fileMutationError}
+                    </Text>
+                )}
+            </div>
+        );
+    }
 
     if (!hasFile) {
         if (!isEditing) {
