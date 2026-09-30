@@ -2,9 +2,12 @@ import {useState} from "react";
 
 import {Disclosure} from "@uva-fnwi/datanose-ui";
 
-import {getStepHierarchy, resolveFormState} from "~/components/instance/resolveContentState.ts";
-import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
-import {StepCardHeader} from "~/components/instance/StepCardHeader.tsx";
+import {
+    getStepHierarchy,
+    resolveFormState,
+} from "~/components/instance/StepCard/resolveContentState.ts";
+import {StepCardBody} from "~/components/instance/StepCard/StepCardBody.tsx";
+import {StepCardHeader} from "~/components/instance/StepCard/StepCardHeader.tsx";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {Action, WorkflowInstance, WorkflowStep} from "~/store/api/types/instances.ts";

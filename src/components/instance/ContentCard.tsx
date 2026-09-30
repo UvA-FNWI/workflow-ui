@@ -1,6 +1,6 @@
 import {Card, Skeleton} from "@uva-fnwi/datanose-ui";
 
-import {StepCard} from "~/components/instance/StepCard";
+import {StepCard} from "~/components/instance/StepCard/StepCard.tsx";
 import type {WorkflowInstance} from "~/store/api/types/instances";
 
 interface ContentCardProps {

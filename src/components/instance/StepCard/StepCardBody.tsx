@@ -9,7 +9,7 @@ import {
     getPreviousFormVersion,
     resolveContentState,
     resolveModalState,
-} from "~/components/instance/resolveContentState.ts";
+} from "~/components/instance/StepCard/resolveContentState.ts";
 import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";

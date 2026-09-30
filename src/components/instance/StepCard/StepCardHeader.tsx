@@ -1,6 +1,6 @@
 import {Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
 
-import {getStepHierarchy} from "~/components/instance/resolveContentState.ts";
+import {getStepHierarchy} from "~/components/instance/StepCard/resolveContentState.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {StepHeaderStatus, WorkflowStep} from "~/store/api/types/instances.ts";
 import {formatDateShort, formatDateShortWithRelevantTime} from "~/utils/formatDate.ts";
