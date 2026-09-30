@@ -1,7 +1,5 @@
 import {useCallback, useRef, useState} from "react";
 
-import {flushSync} from "react-dom";
-
 import {Button, Icon, Modal} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
@@ -57,14 +55,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             <Modal.Body>
                 <UserPickerInput
                     initialSelection={initialSelection}
-                    onSelectionChange={(users) => {
-                        if (selectionMode === "single" && users.length > 0) {
-                            flushSync(() => setSelectedUsers(users));
-                            confirmButtonRef.current?.focus();
-                        } else {
-                            setSelectedUsers(users);
-                        }
-                    }}
+                    onSelectionChange={setSelectedUsers}
                     searchPlaceholder={searchPlaceholder}
                     showSearchHint={true}
                     selectionMode={selectionMode}

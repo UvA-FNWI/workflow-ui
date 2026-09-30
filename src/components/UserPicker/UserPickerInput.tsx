@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useMemo, useRef, useState} from "react";
 
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
@@ -33,6 +33,7 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
     showSelectedEmail = false,
 }) => {
     const {t} = useTranslate("workflow");
+    const confirmButtonRef = useRef<HTMLButtonElement>(null);
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
     const resetSearch = searchState.reset;
@@ -75,8 +76,17 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
                           .filter((user): user is UserSearchResult => user !== undefined);
 
             onSelectionChange?.(selected);
+
+            if (
+                selectionMode === "single" &&
+                keys !== "all" &&
+                keys.size > 0 &&
+                selected.length > 0
+            ) {
+                confirmButtonRef.current?.focus();
+            }
         },
-        [usersCache, onSelectionChange],
+        [selectionMode, usersCache, onSelectionChange],
     );
 
     const searchPlaceholderText = searchPlaceholder ?? t("user_picker.search_placeholder");
