@@ -28,8 +28,10 @@ export function UndoControl({candidate, instanceId, returnFocusRef}: Props) {
     const [undo, {isLoading}] = instancesEndpoints.undo.useMutation();
 
     const normalizedReason = reason.trim();
-    const owningStepTitle = l(candidate.stepTitle) ?? candidate.step;
-    const sourceTitle = l(candidate.sourceTitle) ?? candidate.form;
+    const owningStepTitle = l(candidate.stepTitle) || t("undo.step");
+    const sourceTitle =
+        l(candidate.sourceTitle) ||
+        t(candidate.type === "FormSubmission" ? "undo.form" : "undo.action");
     const operation =
         candidate.type === "FormSubmission"
             ? {type: t("undo.form_submission"), sourceLabel: t("undo.form")}
