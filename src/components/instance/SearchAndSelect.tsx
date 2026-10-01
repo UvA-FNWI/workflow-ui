@@ -123,7 +123,12 @@ export function SearchAndSelect({
     const state = getPickerState();
 
     return (
-        <div>
+        <div
+            onKeyDownCapture={(event) => {
+                // Consume Enter before selecting a result can move focus to a button.
+                if (event.key === "Enter") event.preventDefault();
+            }}
+        >
             <SearchInput
                 label={label}
                 placeholder={placeholder ?? t("search_and_select.search_placeholder")}

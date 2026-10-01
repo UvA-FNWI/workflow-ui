@@ -13,7 +13,7 @@ export const inputVariants = cva(
         false: '',
       },
       isHovered: {
-        true: 'ui:border-navy-600 ui:dark:border-sky-500',
+        true: 'ui:border-grey-800 ui:dark:border-grey-200',
         false: '',
       },
       isValid: {

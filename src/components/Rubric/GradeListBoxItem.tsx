@@ -57,7 +57,8 @@ export function GradeListBoxItem({
     );
 
     return (
-        <div
+        <li
+            ref={ref}
             {...optionProps}
             {...hoverProps}
             className={cn(
@@ -73,6 +74,6 @@ export function GradeListBoxItem({
             )}
         >
             {item.value?.grade}
-        </div>
+        </li>
     );
 }
