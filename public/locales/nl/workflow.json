@@ -200,7 +200,7 @@
   "undo": {
     "action": "Actie",
     "candidate_changed": "De actie die ongedaan kan worden gemaakt is gewijzigd. De workflow is vernieuwd.",
-    "confirm": "Ongedaan maken",
+    "confirm": "Terugdraaien",
     "error": "De actie kon niet ongedaan worden gemaakt. Probeer het opnieuw.",
     "execute_action": "Uitgevoerde actie",
     "form": "Formulier",
