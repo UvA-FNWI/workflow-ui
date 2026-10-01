@@ -27,7 +27,6 @@ export type WorkflowInstance = {
     currentStep: string | null;
     fields: WorkflowInstanceField[];
     steps: WorkflowStep[];
-    submissions: Submission[];
     actions: Action[];
     permissions: RoleAction[];
     canUseAdminTools: boolean;
