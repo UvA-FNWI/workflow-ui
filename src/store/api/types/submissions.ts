@@ -69,6 +69,7 @@ export type Page = {
     elements: PageElement[];
     hasResults: boolean;
     isInCurrentForm: boolean;
+    isActive: boolean;
 };
 
 export type Question = {

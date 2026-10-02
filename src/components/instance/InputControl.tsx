@@ -299,14 +299,21 @@ export const InputControl = ({
             );
         }
 
-        if (isChoiceType("ComboBox") && !question.isArray) {
-            const choiceText = (choice: Choice) => l(choice.text) ?? choice.name;
+        if (isChoiceType("ComboBox")) {
+            const choiceText = (choice: Choice) => l(choice.text)?.trim() || choice.name;
+            const comboBoxValue = question.isArray
+                ? Array.isArray(value)
+                    ? value.map((v) => String(v))
+                    : []
+                : typeof value === "string"
+                  ? value
+                  : null;
             return (
                 <ComboBox
-                    value={typeof value === "string" ? value : null}
-                    onChange={(selectedValue) => {
-                        immediateChange(selectedValue != null ? String(selectedValue) : null);
-                    }}
+                    selectionMode={question.isArray ? "multiple" : "single"}
+                    aria-label={l(question.text)?.trim() || question.name}
+                    value={comboBoxValue}
+                    onChange={immediateChange}
                     placeholder={t("select")}
                     noResults={t("search_and_select.no_results")}
                     isValid={isValid}

@@ -38,12 +38,7 @@ export interface TagProps
   removeLabel?: string;
 }
 
-/**
- * Internal value label used by TagInput.
- *
- * @internal Use TagInput instead. Tag is not supported as a standalone
- * component.
- */
+/** Removable value label shared by tag fields and pickers. */
 export function Tag({
   children,
   onRemove,
@@ -66,9 +61,12 @@ export function Tag({
         <button
           type="button"
           aria-label={removeLabel ?? fallbackRemoveLabel}
-          className="ui:-mr-1 ui:inline-flex ui:h-5 ui:w-5 ui:shrink-0 ui:cursor-pointer ui:items-center ui:justify-center ui:rounded-xs ui:bg-transparent ui:p-0 ui:text-current ui:hover:bg-black/10 ui:focus-visible:ring-2 ui:focus-visible:ring-navy-600 ui:focus-visible:outline-none ui:dark:hover:bg-white/10 ui:dark:focus-visible:ring-sky-500"
+          className="ui:pointer-events-auto ui:-mr-1 ui:inline-flex ui:h-5 ui:w-5 ui:shrink-0 ui:cursor-pointer ui:items-center ui:justify-center ui:rounded-xs ui:bg-transparent ui:p-0 ui:text-current ui:hover:bg-black/10 ui:focus-visible:ring-2 ui:focus-visible:ring-navy-600 ui:focus-visible:outline-none ui:dark:hover:bg-white/10 ui:dark:focus-visible:ring-sky-500"
           onMouseDown={event => event.preventDefault()}
-          onClick={onRemove}
+          onClick={event => {
+            event.stopPropagation();
+            onRemove();
+          }}
         >
           <Icon name="cross-small-line" size="xs" decorative />
         </button>

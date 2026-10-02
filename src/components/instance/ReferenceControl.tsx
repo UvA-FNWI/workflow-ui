@@ -130,7 +130,7 @@ export const ReferenceControl = ({
         );
     }
 
-    if (question.isArray) {
+    if (question.isArray && layoutType !== "ComboBox") {
         const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
         return (
             <Select
@@ -156,10 +156,26 @@ export const ReferenceControl = ({
     }
 
     return (
-        <ComboBox
-            value={typeof value === "string" ? value : null}
+        <ComboBox<object, "single" | "multiple">
+            selectionMode={question.isArray ? "multiple" : "single"}
+            aria-label={l(question.text)?.trim() || question.name}
+            value={
+                question.isArray
+                    ? Array.isArray(value)
+                        ? value.map((v) => String(v))
+                        : []
+                    : typeof value === "string"
+                      ? value
+                      : null
+            }
             onChange={(selectedValue) => {
-                onChange(selectedValue != null ? String(selectedValue) : null);
+                onChange(
+                    Array.isArray(selectedValue)
+                        ? selectedValue.map((v) => String(v))
+                        : selectedValue != null
+                          ? String(selectedValue)
+                          : null,
+                );
             }}
             noResults={t("reference.no_results")}
             {...selectState}

@@ -1,7 +1,7 @@
 import type {ComponentProps} from "react";
 
 import "@testing-library/jest-dom/vitest";
-import {cleanup, render, screen} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import {ReferenceControl} from "../ReferenceControl";
@@ -83,4 +83,18 @@ describe("ReferenceControl RadioList", () => {
         expect(screen.getByText("reference.loading")).toBeInTheDocument();
         expect(screen.queryByRole("radio")).not.toBeInTheDocument();
     });
+});
+
+it("renders an array ComboBox with removable references", () => {
+    const onChange = vi.fn();
+    renderControl({
+        question: {...referenceQuestion(true), layout: {type: "ComboBox"}},
+        choices: [department],
+        value: [department.name],
+        onChange,
+    });
+
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name: "Remove ICTS"}));
+    expect(onChange).toHaveBeenCalledWith([]);
 });
