@@ -70,6 +70,7 @@ export type IconVariant = {
 };
 
 export type StepHierarchyMode = "Sequential" | "Parallel";
+export type StepChildrenLayout = "Combined" | "CollapsibleRows";
 
 export type StepDeadline = {
     date: string | null;
@@ -92,6 +93,7 @@ export type WorkflowStep = {
     expectsSubmission: boolean;
     hasSubmission: boolean;
     hierarchyMode: StepHierarchyMode;
+    childrenLayout: StepChildrenLayout;
 };
 
 export type WorkflowStepVersion = {
