@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Icon, InputDescription, InputLabel} from "@uva-fnwi/datanose-ui";
+import {Icon, InputDescription, InputLabel, Text} from "@uva-fnwi/datanose-ui";
 
 import {
     type ConfigDocs,
@@ -27,10 +27,12 @@ export function QuestionPreview({docs, question}: {docs: ConfigDocs; question: E
                 <Icon name="visible-line" size="xs" decorative />
                 {t("preview_label")}
             </p>
-            <InputLabel>
-                {label}
-                {question.isRequired && <span aria-hidden="true"> *</span>}
-            </InputLabel>
+            <div className="flex gap-1">
+                <InputLabel>{label}</InputLabel>
+                {!question.isRequired && (
+                    <Text className="text-grey-900 italic">{t("optional", {ns: "workflow"})}</Text>
+                )}
+            </div>
             {description && <InputDescription className="mb-2">{description}</InputDescription>}
             {preview === null ? (
                 <p className="mt-1 text-sm text-grey-500 italic">

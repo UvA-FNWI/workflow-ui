@@ -40,6 +40,7 @@ const page = (questions: Question[]): Page => ({
     elements: questions.map((question): PageElement => ({kind: "Question", question})),
     hasResults: true,
     isInCurrentForm: true,
+    isActive: true,
 });
 
 const submission = (questions: Question[], answers: Answer[]): Submission => ({

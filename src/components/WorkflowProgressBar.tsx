@@ -235,7 +235,7 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
             <div className="flex min-w-0 flex-col gap-2 sm:min-w-md">
                 <div className="relative h-8">
                     {displaySteps.map((step, index) => {
-                        const isCompleted = index < currentStepIndex;
+                        const isCompleted = Boolean(step.dateCompleted);
                         const position = positions[index];
 
                         return (

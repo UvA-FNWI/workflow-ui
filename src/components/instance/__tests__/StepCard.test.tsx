@@ -218,6 +218,8 @@ it("renders configured children as independently expandable rows with their own 
 
     render(<StepCard step={parent} instance={instance} />);
 
+    expect(screen.getByRole("heading", {name: "Reports", level: 2})).toBeInTheDocument();
+    expect(screen.getByRole("heading", {name: "Report 1", level: 3})).toBeInTheDocument();
     expect(screen.getByRole("button", {name: /Report 1/})).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("button", {name: /Report 2/})).toHaveAttribute(
         "aria-expanded",

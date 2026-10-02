@@ -141,9 +141,7 @@
   "progress": {
     "amsterdam_time": "Amsterdamse tijd",
     "completed": "Voltooid",
-    "deadline": "Deadline",
-    "titleStudent": "Jouw voortgang",
-    "titleSupervisor": "Voortgang van de student"
+    "deadline": "Deadline"
   },
   "reference": {
     "empty": "Geen opties beschikbaar",
