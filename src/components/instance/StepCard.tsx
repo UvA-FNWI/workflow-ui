@@ -233,7 +233,11 @@ function StepCardHeader({
         >
             <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
-                    <Heading as={nested ? "h4" : "h3"} className="font-semibold">
+                    <Heading
+                        as={nested ? "h4" : "h3"}
+                        size={nested ? "sm" : "md"}
+                        className="font-semibold"
+                    >
                         {l(step.title)}
                     </Heading>
                     {step.dateCompleted && !step.headerStatus && (
