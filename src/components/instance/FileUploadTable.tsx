@@ -238,7 +238,7 @@ export const FileUploadTable = ({
                                                 <Button
                                                     intent="primary"
                                                     variant="destructive"
-                                                    className="w-fit"
+                                                    className="self-start"
                                                     leftIcon={
                                                         <Icon
                                                             name="upload-line"
