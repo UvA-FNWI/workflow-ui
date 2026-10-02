@@ -95,14 +95,15 @@ export function UndoControl({candidate, instanceId, returnFocusRef}: Props) {
                         <dt className="font-semibold">{t("undo.occurred_at")}</dt>
                         <dd>{formatDate(candidate.occurredAt, i18n.language)}</dd>
                     </dl>
-                    <TextArea
-                        className="mt-4"
-                        label={t("undo.reason")}
-                        description={t("undo.reason_description")}
-                        value={reason}
-                        maxLength={1000}
-                        onChange={setReason}
-                    />
+                    <div className="mt-4">
+                        <TextArea
+                            label={t("undo.reason")}
+                            description={t("undo.reason_description")}
+                            value={reason}
+                            maxLength={1000}
+                            onChange={setReason}
+                        />
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
