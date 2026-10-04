@@ -50,6 +50,7 @@ export type StoredFile = {
     id: string;
     name: string;
     accessToken: string;
+    length: number;
 };
 
 export type Form = {
