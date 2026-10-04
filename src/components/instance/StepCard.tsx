@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {type ReactNode, useRef, useState} from "react";
 
 import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
@@ -11,6 +11,7 @@ import {
     resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
 import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
+import {UndoControl} from "~/components/instance/UndoControl.tsx";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {
@@ -38,6 +39,7 @@ type Props = {
 
 export const StepCard = ({step, instance, nested = false, rootStep = step}: Props) => {
     const {t, l} = useTranslate("workflow");
+    const cardRef = useRef<HTMLDivElement>(null);
 
     const childRows =
         !nested && step.childrenLayout === "CollapsibleRows" ? (step.children ?? []) : [];
@@ -102,10 +104,22 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
     const isContentless = !isUnavailableFutureStep && !hasBodyContent;
     const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
 
+    const undoControl = step.undoCandidate && (
+        <UndoControl
+            candidate={step.undoCandidate}
+            instanceId={instance.id}
+            returnFocusRef={cardRef}
+        />
+    );
+
     return (
         <Disclosure
             isExpanded={isExpanded}
             onExpandedChange={setIsExpanded}
+            ref={cardRef}
+            role="group"
+            aria-label={l(step.title)}
+            tabIndex={-1}
             isDisabled={isUnavailableFutureStep || !hasBodyContent}
             shadow={nested ? "none" : undefined}
             border={nested ? "none" : undefined}
@@ -125,6 +139,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                 submissions={submissions}
                 currentStep={instance.currentStep}
                 deadlinePassed={contentSteps.some((candidate) => candidate.deadline?.isPassed)}
+                actions={undoControl}
             />
             {hasBodyContent && (
                 <Disclosure.Content padding={nested ? "none" : undefined}>
@@ -212,6 +227,7 @@ function StepCardHeader({
     submissions,
     currentStep,
     deadlinePassed,
+    actions,
 }: {
     step: WorkflowStep;
     nested: boolean;
@@ -220,6 +236,7 @@ function StepCardHeader({
     submissions: Submission[];
     currentStep: WorkflowInstance["currentStep"];
     deadlinePassed: boolean;
+    actions?: ReactNode;
 }) {
     const {t, l} = useTranslate("workflow");
 
@@ -230,6 +247,7 @@ function StepCardHeader({
             nested={nested}
             showChevron={hasBodyContent}
             className={isContentless ? "cursor-default!" : undefined}
+            actions={actions}
         >
             <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">

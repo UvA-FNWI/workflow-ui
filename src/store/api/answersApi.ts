@@ -84,6 +84,24 @@ export const answersApi = baseApi.injectEndpoints({
                 "Screen",
             ],
         }),
+        deleteFile: build.mutation<
+            {success: boolean},
+            {instanceId: string; submissionId: string; questionName: string; artifactId: string}
+        >({
+            query: ({instanceId, submissionId, questionName, artifactId}) => ({
+                url: `Answers/${instanceId}/${submissionId}/${questionName}/Artifacts/${artifactId}`,
+                method: "delete",
+            }),
+            invalidatesTags: (_result, _error, params) => [
+                {
+                    type: "Submission",
+                    instanceId: params.instanceId,
+                    submissionId: params.submissionId,
+                },
+                {type: "Instance", id: params.instanceId},
+                "Screen",
+            ],
+        }),
         clearAnswers: build.mutation<Submission, SubmissionParams>({
             query: ({instanceId, submissionId}) => ({
                 url: `Answers/${instanceId}/${submissionId}`,

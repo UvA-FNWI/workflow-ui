@@ -62,6 +62,7 @@
     "title": "Add external user"
   },
   "file_upload": {
+    "allowed_any_file_type": "Any file type, max. {{size}}.",
     "allowed_file_types": "Only {{types}} files, max. {{size}}.",
     "confirm_delete_message": "Are you sure you want to delete this file?",
     "description": "Description",
@@ -71,6 +72,7 @@
     "error_upload_failed": "Failed to upload file. Please try again.",
     "no_file_uploaded": "No file uploaded",
     "removed_success": "File removed",
+    "select_files": "Select files",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
@@ -197,6 +199,22 @@
   "string_validation_min": "Minimum number of characters {{minInputLength}}.",
   "string_validation_min_remaining": " {{remainingInputLength}} more required.",
   "submit": "Submit",
+  "undo": {
+    "action": "Action",
+    "candidate_changed": "The undo candidate changed. The workflow has been refreshed.",
+    "confirm": "Undo",
+    "error": "The operation could not be undone. Please try again.",
+    "execute_action": "Execute action",
+    "form": "Form",
+    "form_submission": "Form submission",
+    "occurred_at": "Occurred at",
+    "open": "Undo operation for {{step}}",
+    "operation_type": "Operation type",
+    "reason": "Reason",
+    "reason_description": "Explain why this operation is being undone.",
+    "step": "Step",
+    "title": "Undo operation"
+  },
   "user_picker": {
     "no_results": "No users found",
     "not_in_list": "Not in list",
