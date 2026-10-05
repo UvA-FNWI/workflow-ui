@@ -9,8 +9,6 @@ export type WorkflowDefinition = {
     inheritsFrom: string | null;
     isEmbedded: boolean;
     screens: string[];
-    /** Navigation hint populated by the Accessible endpoint. */
-    hasOverviewAccess?: boolean;
     canCreateInstance: boolean;
     /** Whether the definition has no steps. */
     isPropertyOnly: boolean;

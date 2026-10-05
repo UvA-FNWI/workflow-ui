@@ -27,15 +27,14 @@ export function HomeLayout() {
     const {data: definitions, isError} = useGetAccessibleWorkflowDefinitionsQuery();
     const {data: personal} = useGetPersonalInstancesQuery();
     const screens =
-        definitions
-            ?.filter((definition) => definition.hasOverviewAccess)
-            .flatMap((definition) =>
-                definition.screens.map((name) => `/screens/${definition.name}/${name}`),
-            ) ?? [];
+        definitions?.flatMap((definition) =>
+            definition.screens.map((name) => `/screens/${definition.name}/${name}`),
+        ) ?? [];
+    const hasMultipleWorkflows = (definitions?.length ?? 0) > 1;
     const hasCoordinatorView = screens.length > 0;
     const hasPersonalView = (personal?.roles.length ?? 0) > 0;
     const isPersonal = pathname === "/personal";
-    const coordinatorHome = screens.length === 1 ? screens[0] : "/";
+    const coordinatorHome = hasMultipleWorkflows ? "/" : (screens[0] ?? "/personal");
     const coordinatorTarget = screens.includes(coordinatorPath) ? coordinatorPath : coordinatorHome;
     const {activeIndex, onTabChange} = useTabsWithLocalStorage({
         tabs: ["coordinator", "personal"],
@@ -54,8 +53,8 @@ export function HomeLayout() {
     if (definitions && pathname === "/") {
         if (!hasCoordinatorView) {
             redirect = "/personal";
-        } else if (screens.length === 1) {
-            redirect = screens[0];
+        } else if (!hasMultipleWorkflows) {
+            redirect = coordinatorHome;
         }
     }
 
@@ -86,7 +85,7 @@ export function HomeLayout() {
                             navigate(coordinatorTarget);
                         }
                     },
-                    showBackToChoices: !isPersonal && pathname !== "/" && screens.length > 1,
+                    showBackToChoices: !isPersonal && pathname !== "/" && hasMultipleWorkflows,
                 } satisfies HomeLayoutContext
             }
         />

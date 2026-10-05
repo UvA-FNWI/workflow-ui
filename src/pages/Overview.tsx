@@ -44,9 +44,9 @@ function Overview() {
 
     if (!accessibleDefinitions) return null;
 
-    const screens = accessibleDefinitions
-        .filter((definition) => definition.hasOverviewAccess)
-        .flatMap((definition) => definition.screens.map((name) => ({definition, name})));
+    const screens = accessibleDefinitions.flatMap((definition) =>
+        definition.screens.map((name) => ({definition, name})),
+    );
 
     return (
         <HomePage title={t("overview.choose_course_title")} personalContent={<PersonalContent />}>
