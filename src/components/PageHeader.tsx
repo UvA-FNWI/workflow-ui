@@ -29,7 +29,7 @@ export function PageHeader({
                 <div className="my-3 h-2" />
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-col gap-1">
-                        <Skeleton className="h-4 w-48 max-w-full bg-grey-400! dark:bg-grey-700!" />
+                        <div className="h-4 w-48 max-w-full" />
                         {description && <div className="h-5 w-64 max-w-full" />}
                     </div>
                     {actions && (
