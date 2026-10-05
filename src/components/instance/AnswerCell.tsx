@@ -111,15 +111,20 @@ export const AnswerCell = ({
                         instanceId={instanceId}
                         submissionId={pair.submission?.id ?? submissionId ?? ""}
                     />
-                ) : answer.value != null ? (
-                    <Link
-                        intent="primary"
-                        underline
-                        className="truncate"
-                        onClick={() => downloadFile(answer.files[0])}
-                    >
-                        {formattedValue}
-                    </Link>
+                ) : answer.files?.length ? (
+                    <div className="flex flex-col gap-1">
+                        {answer.files.map((file) => (
+                            <Link
+                                key={file.id}
+                                intent="primary"
+                                underline
+                                className="block truncate"
+                                onClick={() => downloadFile(file)}
+                            >
+                                {file.name}
+                            </Link>
+                        ))}
+                    </div>
                 ) : (
                     <Text className="min-w-0 wrap-break-word whitespace-pre-wrap">
                         {formattedValue ? formattedValue : "-"}

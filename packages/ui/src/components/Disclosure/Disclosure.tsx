@@ -68,6 +68,8 @@ export interface DisclosureProps extends DisclosureVariantProps {
   // Accessibility
   'aria-label'?: string;
   'aria-labelledby'?: string;
+  role?: HTMLAttributes<HTMLDivElement>['role'];
+  tabIndex?: number;
 
   // Ref
   ref?: React.Ref<HTMLDivElement>;
@@ -170,6 +172,7 @@ BaseDisclosure.displayName = 'Disclosure';
 const DisclosureHeader = (
   props: HTMLAttributes<HTMLButtonElement> & {
     children: ReactNode;
+    actions?: ReactNode;
     showChevron?: boolean;
     nested?: boolean;
     ref?: React.Ref<HTMLButtonElement>;
@@ -177,6 +180,7 @@ const DisclosureHeader = (
 ) => {
   const {
     children,
+    actions,
     className,
     showChevron = true,
     nested = false,
@@ -202,35 +206,38 @@ const DisclosureHeader = (
         nested ? 'ui:px-0 ui:py-4' : 'ui:px-6 ui:py-6'
       )}
     >
-      <button
-        // useDisclosure's buttonProps also carry React Aria press props
-        // (onPress/onPressStart/isDisabled) meant for useButton, not a native
-        // <button>. We toggle via onClick below, so take only the ARIA wiring.
-        id={buttonProps.id}
-        aria-expanded={buttonProps['aria-expanded']}
-        aria-controls={buttonProps['aria-controls']}
-        ref={ref || buttonRef}
-        type="button"
-        onClick={handleClick}
-        disabled={isDisabled}
-        className={cn(
-          'ui:flex ui:w-full ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
-          'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
-          isDisabled ? 'ui:cursor-not-allowed' : 'ui:cursor-pointer',
-          className
-        )}
-        {...restProps}
-      >
-        <div className="ui:flex-1">{children}</div>
-        {showChevron && (
-          <Icon
-            name={state.isExpanded ? openedIcon : closedIcon}
-            size="sm"
-            color="primary"
-            className="ui:transition-transform ui:duration-200"
-          />
-        )}
-      </button>
+      <div className="ui:flex ui:w-full ui:items-center ui:gap-2">
+        <button
+          // useDisclosure's buttonProps also carry React Aria press props
+          // (onPress/onPressStart/isDisabled) meant for useButton, not a native
+          // <button>. We toggle via onClick below, so take only the ARIA wiring.
+          id={buttonProps.id}
+          aria-expanded={buttonProps['aria-expanded']}
+          aria-controls={buttonProps['aria-controls']}
+          ref={ref || buttonRef}
+          type="button"
+          onClick={handleClick}
+          disabled={isDisabled}
+          className={cn(
+            'ui:flex ui:min-w-0 ui:flex-1 ui:items-center ui:justify-between ui:gap-4 ui:text-left ui:transition-colors',
+            'focus:ui:outline-none focus-visible:ui:ring-2 focus-visible:ui:ring-blue-500 focus-visible:ui:ring-offset-2',
+            isDisabled ? 'ui:cursor-not-allowed' : 'ui:cursor-pointer',
+            className
+          )}
+          {...restProps}
+        >
+          <div className="ui:flex-1">{children}</div>
+          {showChevron && (
+            <Icon
+              name={state.isExpanded ? openedIcon : closedIcon}
+              size="sm"
+              color="primary"
+              className="ui:transition-transform ui:duration-200"
+            />
+          )}
+        </button>
+        {actions}
+      </div>
     </div>
   );
 };

@@ -52,6 +52,7 @@ export const AssessmentPageSection = ({
                 <div className="col-span-2 flex w-48 items-center sm:w-80">
                     <Heading
                         size="xs"
+                        as="h3"
                         className="min-w-0 font-semibold wrap-break-word"
                         fontType="heading"
                     >

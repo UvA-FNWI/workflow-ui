@@ -98,13 +98,7 @@ export {
 export { Tag, type TagProps, type TagVariantProps } from './components/Tag';
 export {
   TagInput,
-  type TagInputData,
-  type TagInputFilterInput,
-  type TagInputGroup,
-  type TagInputOption,
-  type TagInputParsedOption,
   type TagInputProps,
-  type TagInputRenderOptionInput,
   type TagInputRenderTagInput,
 } from './components/TagInput';
 

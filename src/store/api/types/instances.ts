@@ -71,6 +71,14 @@ export type IconVariant = {
 
 export type StepHierarchyMode = "Sequential" | "Parallel";
 
+export type UndoCandidate = {
+    type: "FormSubmission" | "ExecuteAction";
+    stepTitle: LocalString;
+    sourceTitle: LocalString;
+    occurredAt: string;
+    operationId: string;
+};
+
 export type StepDeadline = {
     date: string | null;
     type: "Soft" | "Hard";
@@ -95,6 +103,7 @@ export type WorkflowStep = {
     expectsSubmission: boolean;
     hasSubmission: boolean;
     hierarchyMode: StepHierarchyMode;
+    undoCandidate?: UndoCandidate | null;
 };
 
 export type WorkflowStepVersion = {
@@ -198,4 +207,5 @@ export type InfoCard =
           items?: InfoCardItem[] | null;
       })
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
-    | (InfoCardBase & {type: "Text"; content?: LocalString | null});
+    | (InfoCardBase & {type: "Text"; content?: LocalString | null})
+    | (InfoCardBase & {type: "Progress"});

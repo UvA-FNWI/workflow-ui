@@ -44,7 +44,7 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
     }
     // User is the one non-choice type the runtime renders as an array, via UserPicker's multiple mode.
     if (isArray) {
-        return underlying === "User" ? "People" : "Unknown";
+        return underlying === "User" ? "People" : underlying === "File" ? "Document" : "Unknown";
     }
 
     switch (underlying) {

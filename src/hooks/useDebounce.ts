@@ -18,7 +18,11 @@ import {debounce} from "lodash-es";
  * const debouncedCallback = useDebounce(someFunction, 500);
  * debouncedCallback(value);
  */
-export function useDebounce(callback: (...args: unknown[]) => void, delay: number) {
+export function useDebounce(
+    callback: (...args: unknown[]) => void,
+    delay: number,
+    flushOnUnmount = false,
+) {
     const callbackRef = useRef(callback);
     const debouncedFnRef = useRef<ReturnType<typeof debounce> | null>(null);
 
@@ -32,9 +36,10 @@ export function useDebounce(callback: (...args: unknown[]) => void, delay: numbe
         }, delay);
 
         return () => {
-            debouncedFnRef.current?.cancel();
+            if (flushOnUnmount) debouncedFnRef.current?.flush();
+            else debouncedFnRef.current?.cancel();
         };
-    }, [delay]);
+    }, [delay, flushOnUnmount]);
 
     return useMemo(
         () =>

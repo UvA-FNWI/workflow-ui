@@ -62,6 +62,7 @@
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
+    "allowed_any_file_type": "Elk bestandstype, max. {{size}}.",
     "allowed_file_types": "Alleen {{types}}-bestanden, max. {{size}}.",
     "confirm_delete_message": "Weet je zeker dat je dit bestand wilt verwijderen?",
     "description": "Beschrijving",
@@ -71,6 +72,7 @@
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
     "no_file_uploaded": "Geen bestand geüpload",
     "removed_success": "Bestand verwijderd",
+    "select_files": "Bestanden selecteren",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
@@ -203,6 +205,22 @@
   "string_validation_min": "Minimaal aantal tekens {{minInputLength}}.",
   "string_validation_min_remaining": " Nog {{remainingInputLength}} vereist.",
   "submit": "Inleveren",
+  "undo": {
+    "action": "Actie",
+    "candidate_changed": "De actie die ongedaan kan worden gemaakt is gewijzigd. De workflow is vernieuwd.",
+    "confirm": "Terugdraaien",
+    "error": "De actie kon niet ongedaan worden gemaakt. Probeer het opnieuw.",
+    "execute_action": "Uitgevoerde actie",
+    "form": "Formulier",
+    "form_submission": "Formulierinzending",
+    "occurred_at": "Uitgevoerd op",
+    "open": "Actie voor {{step}} ongedaan maken",
+    "operation_type": "Type actie",
+    "reason": "Reden",
+    "reason_description": "Leg uit waarom deze actie ongedaan wordt gemaakt.",
+    "step": "Stap",
+    "title": "Actie ongedaan maken"
+  },
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",
