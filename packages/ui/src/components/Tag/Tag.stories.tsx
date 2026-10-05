@@ -5,14 +5,13 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Tag } from './Tag';
 
 const meta = {
-  title: 'Internal/Tag',
+  title: 'Components/Tag',
   component: Tag,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component:
-          '⚠️ **Warning:** Do not use `Tag` directly in application code.\n\n `Tag` is an internal building block for `TagInput`.',
+        component: 'Displays a value with an optional remove action.',
       },
     },
   },
@@ -71,8 +70,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Default rendering used internally for values managed by `TagInput`.',
+        story: 'Default value label used by tag fields and pickers.',
       },
     },
   },
@@ -161,8 +159,7 @@ export const CustomStyling: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Verifies that `TagInput` can adapt its internal tag styling through `className`.',
+        story: 'Use `className` to adapt the tag colors.',
       },
     },
   },

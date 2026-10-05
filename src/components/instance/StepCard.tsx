@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useRef, useState} from "react";
 
 import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
@@ -10,6 +10,7 @@ import {
     resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
 import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
+import {UndoControl} from "~/components/instance/UndoControl.tsx";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {
@@ -46,6 +47,7 @@ const shouldAutoOpenForm = (
 
 export const StepCard = ({step, instance}: Props) => {
     const {t, l} = useTranslate("workflow");
+    const cardRef = useRef<HTMLDivElement>(null);
 
     const stepHierarchy = getStepHierarchy(step);
     const stepIds = stepHierarchy.map((s) => s.id);
@@ -134,9 +136,35 @@ export const StepCard = ({step, instance}: Props) => {
         emptyStateMessage !== null;
     const hasBodyContent = deadlineMessages.length > 0 || hasStepContent;
     const isContentless = !isUnavailableFutureStep && !hasBodyContent;
+    const statusPill = step.headerStatus
+        ? {
+              variant: mapHeaderStatusType(step.headerStatus.type),
+              label:
+                  l(step.headerStatus.label) ||
+                  (stepHierarchy.some((candidate) => candidate.deadline?.isPassed)
+                      ? t("status.deadline_passed")
+                      : null),
+          }
+        : step.dateCompleted
+          ? {
+                variant: "green" as const,
+                label: `${t("status.completed_on")} ${formatDateShort(step.dateCompleted, i18n.language)}`,
+            }
+          : null;
+    const undoControl = step.undoCandidate && (
+        <UndoControl
+            candidate={step.undoCandidate}
+            instanceId={instance.id}
+            returnFocusRef={cardRef}
+        />
+    );
 
     return (
         <Disclosure
+            ref={cardRef}
+            role="group"
+            aria-label={l(step.title)}
+            tabIndex={-1}
             defaultExpanded={isCurrentStep && hasBodyContent}
             isDisabled={isUnavailableFutureStep || !hasBodyContent}
             className={isContentless ? "cursor-default! opacity-100!" : undefined}
@@ -144,27 +172,14 @@ export const StepCard = ({step, instance}: Props) => {
             <Disclosure.Header
                 showChevron={hasBodyContent}
                 className={isContentless ? "cursor-default!" : undefined}
+                actions={undoControl}
             >
                 <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading as="h2" className="font-semibold">
                             {l(step.title)}
                         </Heading>
-                        {/* If we don't have a header status, we can show the date completed */}
-                        {step.dateCompleted && !step.headerStatus && (
-                            <Pill variant="green">
-                                {t("status.completed_on")}{" "}
-                                {formatDateShort(step.dateCompleted, i18n.language)}
-                            </Pill>
-                        )}
-                        {step.headerStatus && (
-                            <Pill variant={mapHeaderStatusType(step.headerStatus.type)}>
-                                {l(step.headerStatus.label) ||
-                                    (stepHierarchy.some((candidate) => candidate.deadline?.isPassed)
-                                        ? t("status.deadline_passed")
-                                        : null)}
-                            </Pill>
-                        )}
+                        {statusPill && <Pill variant={statusPill.variant}>{statusPill.label}</Pill>}
                     </div>
                     {shownDate && (
                         <Text as="span" className="shrink-0">

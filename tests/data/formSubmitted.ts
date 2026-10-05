@@ -334,6 +334,7 @@ export const formSubmitted = {
                         layout: "Normal",
                         hasResults: false,
                         isInCurrentForm: true,
+                        isActive: true,
                         elements: [
                             {
                                 kind: "Question",
@@ -458,6 +459,7 @@ export const formSubmitted = {
                         layout: "Normal",
                         hasResults: false,
                         isInCurrentForm: true,
+                        isActive: true,
                         elements: [
                             {
                                 kind: "Question",
@@ -549,6 +551,7 @@ export const formSubmitted = {
                         layout: "Normal",
                         hasResults: false,
                         isInCurrentForm: true,
+                        isActive: true,
                         elements: [
                             {
                                 kind: "Question",

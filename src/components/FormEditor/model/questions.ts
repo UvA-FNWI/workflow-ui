@@ -303,6 +303,9 @@ export type QuestionPatch = {
     descriptionNl?: string;
     descriptionEn?: string;
     isRequired?: boolean;
+    isArray?: boolean;
+    allowedFileTypes?: string;
+    allowedFileSize?: string;
     layoutType?: string;
     /** Long text and short text are one kind, told apart by layout.multiline. */
     isMultiline?: boolean;
@@ -710,13 +713,32 @@ export function updateQuestion(
         setLocalized(found.node, "description", "en", patch.descriptionEn);
         touched.add(found.path);
     }
-    if (patch.isRequired !== undefined) {
-        const type = String(found.node.get("type") ?? "String");
-        const {underlying, isArray} = parseTypeString(type);
+    if (patch.isRequired !== undefined || patch.isArray !== undefined) {
+        const type = parseTypeString(
+            String(found.node.get("type") ?? (patch.isRequired !== undefined ? "String" : "File")),
+        );
         found.node.set(
             "type",
-            buildTypeString(underlying, {isRequired: patch.isRequired, isArray}),
+            buildTypeString(type.underlying, {
+                isRequired: patch.isRequired ?? type.isRequired,
+                isArray: patch.isArray ?? type.isArray,
+            }),
         );
+        touched.add(found.path);
+    }
+    if (patch.allowedFileTypes !== undefined) {
+        const types = patch.allowedFileTypes
+            .split(",")
+            .map((type) => type.trim())
+            .filter(Boolean);
+        if (types.length) found.node.set("allowedFileTypes", types);
+        else found.node.delete("allowedFileTypes");
+        touched.add(found.path);
+    }
+    if (patch.allowedFileSize !== undefined) {
+        const size = Number(patch.allowedFileSize);
+        if (Number.isInteger(size) && size > 0) found.node.set("allowedFileSize", size);
+        else found.node.delete("allowedFileSize");
         touched.add(found.path);
     }
     if (patch.layoutType !== undefined) {

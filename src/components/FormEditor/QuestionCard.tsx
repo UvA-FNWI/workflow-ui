@@ -126,10 +126,14 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                         size="sm"
                         decorative
                     />
-                    <span className="truncate font-medium">
-                        {l(question.text) || question.name}
-                        {question.isRequired && <span aria-hidden="true"> *</span>}
-                    </span>
+                    <div className="flex items-center gap-2 truncate font-medium">
+                        <span>{l(question.text) || question.name} </span>
+                        {!question.isRequired && (
+                            <span className="pr-1 text-grey-900 italic">
+                                {t("optional", {ns: "workflow"})}
+                            </span>
+                        )}
+                    </div>
                 </button>
 
                 {canChangeKind ? (
