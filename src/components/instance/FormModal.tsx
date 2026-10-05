@@ -1,3 +1,5 @@
+import {useEffect} from "react";
+
 import {Button, Modal} from "@uva-fnwi/datanose-ui";
 
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
@@ -10,6 +12,7 @@ import {isPageComplete} from "~/utils/submissionUtils.ts";
 type FormModalProps = {
     isOpen: boolean;
     onClose: () => void;
+    onLoadingChange?: (loading: boolean) => void;
     instanceId: string;
     submissionId: string;
     previousVersion?: number;
@@ -18,13 +21,14 @@ type FormModalProps = {
 export const FormModal = ({
     isOpen,
     onClose,
+    onLoadingChange,
     instanceId,
     submissionId,
     previousVersion,
 }: FormModalProps) => {
     const {t, l} = useTranslate("workflow");
 
-    const {data: submission} = submissionsEndpoints.getSubmission.useQuery(
+    const {data: submission, isFetching} = submissionsEndpoints.getSubmission.useQuery(
         {
             instanceId,
             submissionId,
@@ -32,7 +36,11 @@ export const FormModal = ({
         {skip: !isOpen},
     );
 
-    if (!submission) return isOpen ? <div>Loading...</div> : null;
+    useEffect(() => {
+        onLoadingChange?.(isFetching && !submission);
+    }, [isFetching, submission, onLoadingChange]);
+
+    if (!submission) return null;
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose}>

@@ -165,8 +165,8 @@ export type RoleAction =
     | "Submit"
     | "Execute"
     | "CreateRelatedInstance"
-    | "Undo"
-    | "ViewCorrespondence";
+    | "ViewCorrespondence"
+    | "Undo";
 export type DataType =
     | "File"
     | "Date"

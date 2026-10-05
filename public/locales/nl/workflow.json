@@ -143,7 +143,13 @@
   "progress": {
     "amsterdam_time": "Amsterdamse tijd",
     "completed": "Voltooid",
-    "deadline": "Deadline"
+    "deadline": "Deadline",
+    "deadline_change_reason": "Reden",
+    "deadline_changed": "Deadline aangepast",
+    "deadline_reason_unknown": "Niet vastgelegd",
+    "previous_deadline": "Was",
+    "titleStudent": "Jouw voortgang",
+    "titleSupervisor": "Voortgang van de student"
   },
   "reference": {
     "empty": "Geen opties beschikbaar",

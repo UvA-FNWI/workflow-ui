@@ -12,20 +12,24 @@ export const actionsApi = baseApi.injectEndpoints({
                 method: "post",
                 body: params,
             }),
-            invalidatesTags: (_result, _error, {instanceId}) => [
-                {type: "InstanceActions", id: instanceId},
-                "Screen",
-            ],
+            invalidatesTags: (result, _error, {instanceId}) =>
+                result ? [{type: "InstanceActions", id: instanceId}, {type: "Screen"}] : [],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        () => data.instance,
-                    ),
-                );
-                dispatch(applyEffectResult(data.result));
+                try {
+                    const {data} = await queryFulfilled;
+                    if (data.instance) {
+                        dispatch(
+                            instancesApi.util.updateQueryData(
+                                "getInstance",
+                                params.instanceId,
+                                () => data.instance,
+                            ),
+                        );
+                    }
+                    dispatch(applyEffectResult(data.result));
+                } catch {
+                    // The caller displays validation errors when an action cannot be executed.
+                }
             },
         }),
     }),

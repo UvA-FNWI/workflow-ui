@@ -143,7 +143,13 @@
   "progress": {
     "amsterdam_time": "Amsterdam time",
     "completed": "Completed",
-    "deadline": "Deadline"
+    "deadline": "Deadline",
+    "deadline_change_reason": "Reason",
+    "deadline_changed": "Deadline changed",
+    "deadline_reason_unknown": "Not recorded",
+    "previous_deadline": "Was",
+    "titleStudent": "Your progress",
+    "titleSupervisor": "Student's progress"
   },
   "reference": {
     "empty": "No options available",

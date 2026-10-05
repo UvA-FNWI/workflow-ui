@@ -84,6 +84,9 @@ export type StepDeadline = {
     type: "Soft" | "Hard";
     isPassed: boolean;
     message: LocalString | null;
+    previousDate?: string | null;
+    changeReason?: LocalString | null;
+    property?: string | null;
 };
 
 export type WorkflowStep = {
