@@ -6,7 +6,6 @@ import CodeMirror from "@uiw/react-codemirror";
 import {Callout} from "@uva-fnwi/datanose-ui";
 
 import {
-    flatten,
     type JsonSchema,
     loadSchema,
     resolvePointer,
@@ -49,7 +48,7 @@ function useSchemaTarget(schema: Props["schema"]): SchemaTarget | null {
         if (!root) {
             return null;
         }
-        return {root, start: pointer ? flatten(resolvePointer(root, pointer), root) : root};
+        return {root, start: pointer ? resolvePointer(root, pointer) : root};
     }, [root, pointer]);
 }
 

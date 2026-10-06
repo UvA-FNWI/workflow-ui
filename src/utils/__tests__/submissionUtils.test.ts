@@ -5,21 +5,22 @@ import type {
     Page,
     PageElement,
     Question,
+    QuestionBase,
     Submission,
 } from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs, isPageComplete} from "~/utils/submissionUtils.ts";
 
-const question = (overrides: Partial<Question> = {}): Question => ({
+const question = (
+    overrides: Partial<QuestionBase & {type: "Double" | "Check"}> = {},
+): Question => ({
     name: "question",
     type: "Double",
     text: {en: "Question", nl: "Vraag"},
     isRequired: false,
     isArray: false,
-    choices: [],
     hideInResults: false,
     weight: null,
     percentage: null,
-    allowsExternalUsers: false,
     ...overrides,
 });
 

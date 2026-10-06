@@ -81,7 +81,13 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                 <InlineQuestionEdit
                     instanceId={instanceId}
                     question={question}
-                    choices={question.type === "Reference" ? referenceChoices : question.choices}
+                    choices={
+                        question.type === "Reference"
+                            ? referenceChoices
+                            : question.type === "Choice"
+                              ? question.choices
+                              : undefined
+                    }
                     choicesLoading={question.type === "Reference" ? isLoading : undefined}
                     choicesError={question.type === "Reference" ? isError : undefined}
                     value={value}
@@ -96,7 +102,11 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
         value,
         question.type,
         i18n.language,
-        question.type === "Reference" ? referenceChoices : question.choices,
+        question.type === "Reference"
+            ? referenceChoices
+            : question.type === "Choice"
+              ? question.choices
+              : undefined,
     );
 
     return (

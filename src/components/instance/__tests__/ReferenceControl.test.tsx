@@ -5,7 +5,7 @@ import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import {ReferenceControl} from "../ReferenceControl";
-import type {Question} from "~/store/api/types/submissions";
+import type {ReferenceQuestion} from "~/store/api/types/submissions";
 
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
@@ -21,7 +21,7 @@ vi.mock("~/store/api/answersApi", () => ({
 }));
 
 const department = {name: "dept-1", text: {en: "ICTS", nl: "ICTS"}};
-function referenceQuestion(isArray: boolean): Question {
+function referenceQuestion(isArray: boolean): ReferenceQuestion {
     return {
         name: "Department",
         type: "Reference",
@@ -31,8 +31,6 @@ function referenceQuestion(isArray: boolean): Question {
         isRequired: false,
         isArray,
         hideInResults: false,
-        allowsExternalUsers: false,
-        choices: [],
         layout: {type: "RadioList"},
         workflowDefinition: "Department",
     };

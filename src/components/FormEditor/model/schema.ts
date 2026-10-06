@@ -18,6 +18,7 @@ export type JsonSchema = {
     oneOf?: JsonSchema[];
     anyOf?: JsonSchema[];
     allOf?: JsonSchema[];
+    not?: JsonSchema;
 };
 
 const BASE = "https://raw.githubusercontent.com/UvA-FNWI/workflow-api/refs/heads/main/Schemas";
@@ -66,14 +67,21 @@ const MAX_DEPTH = 8;
 /**
  * Collapse one schema node into a single object with usable properties. NJsonSchema writes
  * nullability as oneOf [null, X] and polymorphic fields (layout) as oneOf of several refs, so
- * merging the branches is what turns those into "here are the keys you may type". Recursion is
+ * branches are selected by the mapping's type when known, or merged while the type is unset. Recursion is
  * capped because Condition refers back to itself through Logical.
  */
-export function flatten(schema: JsonSchema | undefined, root: JsonSchema, depth = 0): JsonSchema {
+export function flatten(
+    schema: JsonSchema | undefined,
+    root: JsonSchema,
+    depth = 0,
+    value?: unknown,
+): JsonSchema {
     if (!schema || depth > MAX_DEPTH) {
         return {};
     }
-    const node = schema.$ref ? flatten(resolvePointer(root, schema.$ref), root, depth + 1) : schema;
+    const node = schema.$ref
+        ? flatten(resolvePointer(root, schema.$ref), root, depth + 1, value)
+        : schema;
     const branches = node.oneOf ?? node.anyOf ?? node.allOf;
     if (!branches) {
         return node;
@@ -83,8 +91,19 @@ export function flatten(schema: JsonSchema | undefined, root: JsonSchema, depth 
     delete merged.oneOf;
     delete merged.anyOf;
     delete merged.allOf;
+    const type = value && typeof value === "object" ? (value as {type?: unknown}).type : undefined;
     for (const branch of branches) {
-        const resolved = flatten(branch, root, depth + 1);
+        const variant = branch.$ref ? resolvePointer(root, branch.$ref) : branch;
+        const typeConstraint = variant.properties?.type;
+        if (
+            typeof type === "string" &&
+            typeConstraint &&
+            ((typeConstraint.enum && !typeConstraint.enum.includes(type)) ||
+                typeConstraint.not?.enum?.includes(type))
+        ) {
+            continue;
+        }
+        const resolved = flatten(branch, root, depth + 1, value);
         if (resolved.type === "null") {
             continue;
         }
@@ -92,7 +111,9 @@ export function flatten(schema: JsonSchema | undefined, root: JsonSchema, depth 
             // Branches can define the same key differently: layout.type is one enum for a choice and
             // another for a table. Keep both as a union so completion offers every legal value.
             const existing = merged.properties![key];
-            merged.properties![key] = existing ? {oneOf: [existing, value]} : value;
+            merged.properties![key] = existing
+                ? {anyOf: [...(existing.anyOf ?? [existing]), value]}
+                : value;
         }
         merged.type ??= resolved.type;
         merged.items ??= resolved.items;
@@ -102,19 +123,28 @@ export function flatten(schema: JsonSchema | undefined, root: JsonSchema, depth 
 }
 
 /** Arrays are transparent: a key under `properties:` belongs to the item, not to the list. */
-function intoItems(schema: JsonSchema, root: JsonSchema): JsonSchema {
-    return schema.items ? flatten(schema.items, root) : schema;
+function intoItems(schema: JsonSchema, root: JsonSchema, value?: unknown): JsonSchema {
+    return schema.items ? flatten(schema.items, root, 0, value) : schema;
 }
 
+type ValueAt = (path: string[]) => unknown;
+
 /** Walk a key path down from a starting schema, returning {} when the path leaves the schema. */
-export function schemaAt(root: JsonSchema, start: JsonSchema, path: string[]): JsonSchema {
-    let current = flatten(start, root);
+export function schemaAt(
+    root: JsonSchema,
+    start: JsonSchema,
+    path: string[],
+    valueAt?: ValueAt,
+): JsonSchema {
+    let current = flatten(start, root, 0, valueAt?.([]));
+    const prefix: string[] = [];
     for (const key of path) {
-        const next = intoItems(current, root).properties?.[key];
+        const next = intoItems(current, root, valueAt?.(prefix)).properties?.[key];
         if (!next) {
             return {};
         }
-        current = flatten(next, root);
+        prefix.push(key);
+        current = flatten(next, root, 0, valueAt?.(prefix));
     }
     return current;
 }
@@ -125,8 +155,9 @@ export function keyCompletions(
     root: JsonSchema,
     start: JsonSchema,
     path: string[],
+    valueAt?: ValueAt,
 ): SchemaCompletion[] {
-    const node = intoItems(schemaAt(root, start, path), root);
+    const node = intoItems(schemaAt(root, start, path, valueAt), root, valueAt?.(path));
     return Object.entries(node.properties ?? {}).map(([label, definition]) => {
         const resolved = flatten(definition, root);
         return {
@@ -142,8 +173,9 @@ export function valueCompletions(
     start: JsonSchema,
     path: string[],
     key: string,
+    valueAt?: ValueAt,
 ): SchemaCompletion[] {
-    const parent = intoItems(schemaAt(root, start, path), root);
+    const parent = intoItems(schemaAt(root, start, path, valueAt), root, valueAt?.(path));
     const node = flatten(parent.properties?.[key], root);
     if (node.enum?.length) {
         return [...new Set(node.enum.map(String))].map((label) => ({label}));

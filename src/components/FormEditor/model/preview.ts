@@ -1,13 +1,19 @@
 import {parseTypeString} from "~/components/FormEditor/model/questionTypes";
 import type {ConfigDocs, EditorQuestion} from "~/components/FormEditor/model/types";
-import type {Choice, DataType, Question} from "~/store/api/types/submissions";
+import type {
+    Choice,
+    ChoiceQuestion,
+    Question,
+    QuestionBase,
+    StringQuestion,
+} from "~/store/api/types/submissions";
 
 /**
  * Exactly the types InputControl branches on. Anything else - File, Currency, Table, Reference,
  * Object, DateTime - falls through to its "Not supported type..." string, so the editor shows its own
  * "no preview" note instead of leaking that.
  */
-const SCALAR_TYPES: DataType[] = ["String", "Int", "Double", "Date", "Check", "User"];
+const SCALAR_TYPES = ["String", "Int", "Double", "Date", "Check", "User"] as const;
 
 const asChoices = (values: unknown): Choice[] =>
     Array.isArray(values)
@@ -59,14 +65,13 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
     const inline = asChoices(raw.values);
     const choices = inline.length > 0 ? inline : valueSetChoices(docs, underlying);
     const scalar = SCALAR_TYPES.find((type) => type === underlying);
-    const type: DataType | null = choices.length > 0 ? "Choice" : (scalar ?? null);
+    const type = choices.length > 0 ? "Choice" : (scalar ?? null);
     if (type === null) {
         return null;
     }
 
-    return {
+    const common: QuestionBase = {
         name: question.name,
-        type,
         text: question.text,
         description: question.description,
         weight: null,
@@ -74,12 +79,33 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
         isRequired,
         isArray,
         hideInResults: raw.hideInResults === true,
-        allowsExternalUsers: raw.allowsExternalUsers === true,
-        choices,
-        rubric: Array.isArray(raw.rubric) ? (raw.rubric as Question["rubric"]) : undefined,
-        layout: asObject(raw.layout) as Question["layout"],
-        maxLength: typeof raw.maxLength === "number" ? raw.maxLength : undefined,
-        minLength: typeof raw.minLength === "number" ? raw.minLength : undefined,
-        sorting: asObject(raw.sorting) as Question["sorting"],
     };
+
+    switch (type) {
+        case "String":
+            return {
+                ...common,
+                type,
+                layout: asObject(raw.layout) as StringQuestion["layout"],
+                maxLength: typeof raw.maxLength === "number" ? raw.maxLength : undefined,
+                minLength: typeof raw.minLength === "number" ? raw.minLength : undefined,
+            };
+        case "Choice":
+            return {
+                ...common,
+                type,
+                choices,
+                rubric: Array.isArray(raw.rubric)
+                    ? (raw.rubric as ChoiceQuestion["rubric"])
+                    : undefined,
+                layout: asObject(raw.layout) as ChoiceQuestion["layout"],
+                sorting: asObject(raw.sorting) as ChoiceQuestion["sorting"],
+            };
+        case "User":
+            return {...common, type, allowsExternalUsers: raw.allowsExternalUsers === true};
+        case "Date":
+            return {...common, type, isDeadline: false};
+        default:
+            return {...common, type};
+    }
 }

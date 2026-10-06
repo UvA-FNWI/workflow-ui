@@ -11,13 +11,13 @@ import {
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
-import type {Choice, Question} from "~/store/api/types/submissions";
+import type {Choice, ReferenceQuestion} from "~/store/api/types/submissions";
 
 interface ReferenceControlProps {
     instanceId: string;
     submissionId: string;
     value?: unknown;
-    question: Question;
+    question: ReferenceQuestion;
     choices?: Choice[];
     choicesLoading?: boolean;
     choicesError?: boolean;

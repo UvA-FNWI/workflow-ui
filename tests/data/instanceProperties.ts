@@ -1,3 +1,6 @@
+import type {InstanceProperties} from "../../src/store/api/types/instances";
+import type {QuestionBase} from "../../src/store/api/types/submissions";
+
 /** Property-only instance and admin data payload. */
 export const propertiesInstance = {
     id: "context-admin",
@@ -28,44 +31,55 @@ export const propertiesInstanceNonAdmin = {
     canUseAdminTools: false,
 };
 
-const question = (name: string, type: string, overrides: Record<string, unknown> = {}) => ({
+const question = (name: string): QuestionBase => ({
     name,
-    type,
     text: {en: name, nl: name},
     weight: null,
     percentage: null,
     isRequired: false,
     isArray: false,
     hideInResults: false,
-    allowsExternalUsers: false,
-    choices: [],
-    subProperties: null,
-    ...overrides,
 });
 
 export const instanceProperties = {
     properties: [
-        question("Name", "String"),
-        question("GradingBasis", "Choice", {
+        {...question("Name"), type: "String"},
+        {
+            ...question("GradingBasis"),
+            type: "Choice",
             text: {en: "Grading basis", nl: "Beoordelingsschaal"},
             choices: [
                 {name: "Decimal", text: {en: "Decimal", nl: "Decimaal"}},
                 {name: "PassFail", text: {en: "Pass/fail", nl: "Voldaan/niet voldaan"}},
             ],
-        }),
-        question("GradeGap", "Check", {text: {en: "Grade gap", nl: "Cijferkloof"}}),
-        question("Coordinator", "User", {
+        },
+        {...question("GradeGap"), type: "Check", text: {en: "Grade gap", nl: "Cijferkloof"}},
+        {
+            ...question("Coordinator"),
+            type: "User",
             text: {en: "Coordinator", nl: "Coördinator"},
             isArray: true,
-        }),
+            allowsExternalUsers: false,
+        },
         // File editing is not supported here.
-        question("StudyManual", "File", {text: {en: "Study manual", nl: "Studiehandleiding"}}),
+        {
+            ...question("StudyManual"),
+            type: "File",
+            text: {en: "Study manual", nl: "Studiehandleiding"},
+            allowedFileTypes: ["pdf"],
+            allowedFileSize: 10_000_000,
+        },
         // Nested properties are edited separately.
-        question("Assessment", "Object", {
+        {
+            ...question("Assessment"),
+            type: "Object",
             text: {en: "Assessment", nl: "Beoordeling"},
             workflowDefinition: "Assessment",
-            subProperties: [question("Consent", "String"), question("Grade", "Double")],
-        }),
+            subProperties: [
+                {...question("Consent"), type: "String"},
+                {...question("Grade"), type: "Double"},
+            ],
+        },
     ],
     values: {
         Name: "Quantum Computing 2026",
@@ -76,4 +90,4 @@ export const instanceProperties = {
         "Assessment.Consent": "Yes",
         "Assessment.Grade": 8.5,
     } as Record<string, unknown>,
-};
+} satisfies InstanceProperties;

@@ -72,36 +72,99 @@ export type Page = {
     isActive: boolean;
 };
 
-export type Question = {
+export type QuestionBase = {
     name: string;
-    type: DataType;
     text: LocalString;
-
     weight: number | null;
     percentage: number | null;
-
     isRequired: boolean;
     isArray: boolean;
     hideInResults: boolean;
-    allowsExternalUsers: boolean;
+    description?: LocalString | null;
+    shortText?: LocalString | null;
+    linkedTo?: string | null;
+};
 
-    choices: Choice[];
-    rubric?: RubricEntry[];
+export type StringQuestion = QuestionBase & {
+    type: "String";
+    layout?: TextLayoutOptions | null;
+    maxLength?: number | null;
+    minLength?: number | null;
+};
 
-    description?: LocalString;
-    shortText?: LocalString;
-    workflowDefinition?: string;
-    layout?: TextLayoutOptions | ChoiceLayoutOptions;
-    maxLength?: number;
-    minLength?: number;
-    sorting?: Sorting;
-    linkedTo?: string;
-    allowedFileTypes?: string[];
+export type DateQuestion = QuestionBase & {
+    type: "Date";
+    isDeadline: boolean;
+    /** Latest allowed calendar date (yyyy-MM-dd), supplied by the backend. */
+    maxDate?: string | null;
+};
+
+export type DateTimeQuestion = QuestionBase & {
+    type: "DateTime";
+};
+
+export type IntQuestion = QuestionBase & {
+    type: "Int";
+};
+
+export type DoubleQuestion = QuestionBase & {
+    type: "Double";
+};
+
+export type CheckQuestion = QuestionBase & {
+    type: "Check";
+};
+
+export type CurrencyQuestion = QuestionBase & {
+    type: "Currency";
+};
+
+export type FileQuestion = QuestionBase & {
+    type: "File";
+    allowedFileTypes: string[];
     /** Maximum file size in bytes. */
-    allowedFileSize?: number;
-    /** Properties of an embedded object. */
+    allowedFileSize: number;
+};
+
+export type UserQuestion = QuestionBase & {
+    type: "User";
+    allowsExternalUsers: boolean;
+};
+
+export type ChoiceQuestion = QuestionBase & {
+    type: "Choice";
+    choices: Choice[];
+    layout?: ChoiceLayoutOptions | null;
+    rubric?: RubricEntry[] | null;
+    sorting?: Sorting | null;
+};
+
+export type ReferenceQuestion = QuestionBase & {
+    type: "Reference";
+    workflowDefinition?: string | null;
+    layout?: ChoiceLayoutOptions | null;
+};
+
+export type ObjectQuestion = QuestionBase & {
+    type: "Object";
+    workflowDefinition?: string | null;
+    layout?: TableLayoutOptions | null;
     subProperties?: Question[] | null;
 };
+
+export type Question =
+    | StringQuestion
+    | DateQuestion
+    | DateTimeQuestion
+    | IntQuestion
+    | DoubleQuestion
+    | CheckQuestion
+    | CurrencyQuestion
+    | FileQuestion
+    | UserQuestion
+    | ChoiceQuestion
+    | ReferenceQuestion
+    | ObjectQuestion;
 
 export type PageElementKind = "Question" | "Text" | "Callout";
 
@@ -140,13 +203,17 @@ export type RubricEntry = {
 export type StringVariant = "Email" | "Phone";
 
 export type TextLayoutOptions = {
-    allowAttachments: boolean;
-    multiline: boolean;
-    variant?: StringVariant;
+    allowAttachments?: boolean;
+    multiline?: boolean;
+    variant?: StringVariant | null;
 };
 
 export type ChoiceLayoutOptions = {
-    type: ChoiceLayoutType;
+    type?: ChoiceLayoutType | null;
+};
+
+export type TableLayoutOptions = {
+    type?: "InlineEditing" | "Modal" | null;
 };
 
 export type Choice = {
