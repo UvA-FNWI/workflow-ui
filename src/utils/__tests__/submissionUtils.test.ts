@@ -7,22 +7,24 @@ import type {
     Question,
     QuestionBase,
     Submission,
+    WeightedQuestionBase,
 } from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs, isPageComplete} from "~/utils/submissionUtils.ts";
 
 const question = (
-    overrides: Partial<QuestionBase & {type: "Double" | "Check"}> = {},
-): Question => ({
-    name: "question",
-    type: "Double",
-    text: {en: "Question", nl: "Vraag"},
-    isRequired: false,
-    isArray: false,
-    hideInResults: false,
-    weight: null,
-    percentage: null,
-    ...overrides,
-});
+    overrides: Partial<WeightedQuestionBase & {type: "Double" | "Check"}> = {},
+): Question => {
+    const {type = "Double", weight = null, percentage = null, ...commonOverrides} = overrides;
+    const common: QuestionBase = {
+        name: "question",
+        text: {en: "Question", nl: "Vraag"},
+        isRequired: false,
+        isArray: false,
+        hideInResults: false,
+        ...commonOverrides,
+    };
+    return type === "Check" ? {...common, type} : {...common, type, weight, percentage};
+};
 
 const answer = (overrides: Partial<Answer> = {}): Answer => ({
     id: "answer",
@@ -57,6 +59,11 @@ const submission = (questions: Question[], answers: Answer[]): Submission => ({
 });
 
 describe("getVisibleQuestionAnswerPairs", () => {
+    it("returns no percentage for an unweighted question", () => {
+        const pairs = getVisibleQuestionAnswerPairs([question({type: "Check"})], [answer()]);
+
+        expect(pairs[0].percentage).toBeNull();
+    });
     it("uses the percentage supplied with the question", () => {
         const questions = [question({percentage: 40})];
 
@@ -136,8 +143,14 @@ describe("isPageComplete", () => {
     it("only requires weighted questions that are required in weighted-only mode", () => {
         const requiredWeighted = question({name: "required-weighted", isRequired: true, weight: 1});
         const optionalWeighted = question({name: "optional-weighted", weight: 1});
-        const currentPage = page([requiredWeighted, optionalWeighted]);
-        const currentSubmission = submission([requiredWeighted, optionalWeighted], []);
+        const requiredUnweighted = question({
+            name: "required-unweighted",
+            type: "Check",
+            isRequired: true,
+        });
+        const questions = [requiredWeighted, optionalWeighted, requiredUnweighted];
+        const currentPage = page(questions);
+        const currentSubmission = submission(questions, []);
 
         expect(isPageComplete(currentPage, currentSubmission, true)).toBe(false);
 

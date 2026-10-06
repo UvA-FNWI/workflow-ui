@@ -34,8 +34,6 @@ export const propertiesInstanceNonAdmin = {
 const question = (name: string): QuestionBase => ({
     name,
     text: {en: name, nl: name},
-    weight: null,
-    percentage: null,
     isRequired: false,
     isArray: false,
     hideInResults: false,
@@ -47,6 +45,8 @@ export const instanceProperties = {
         {
             ...question("GradingBasis"),
             type: "Choice",
+            weight: null,
+            percentage: null,
             text: {en: "Grading basis", nl: "Beoordelingsschaal"},
             choices: [
                 {name: "Decimal", text: {en: "Decimal", nl: "Decimaal"}},
@@ -77,7 +77,7 @@ export const instanceProperties = {
             workflowDefinition: "Assessment",
             subProperties: [
                 {...question("Consent"), type: "String"},
-                {...question("Grade"), type: "Double"},
+                {...question("Grade"), type: "Double", weight: null, percentage: null},
             ],
         },
     ],

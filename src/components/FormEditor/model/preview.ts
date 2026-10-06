@@ -74,8 +74,6 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
         name: question.name,
         text: question.text,
         description: question.description,
-        weight: null,
-        percentage: null,
         isRequired,
         isArray,
         hideInResults: raw.hideInResults === true,
@@ -95,6 +93,8 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
                 ...common,
                 type,
                 choices,
+                weight: null,
+                percentage: null,
                 rubric: Array.isArray(raw.rubric)
                     ? (raw.rubric as ChoiceQuestion["rubric"])
                     : undefined,
@@ -105,6 +105,9 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
             return {...common, type, allowsExternalUsers: raw.allowsExternalUsers === true};
         case "Date":
             return {...common, type, isDeadline: false};
+        case "Int":
+        case "Double":
+            return {...common, type, weight: null, percentage: null};
         default:
             return {...common, type};
     }

@@ -15,12 +15,13 @@ const primitiveTypes = [
     "[File]",
     "[File]!",
     "String",
+    "Double",
 ];
 const root: JsonSchema = {
     properties: {properties: {type: "array", items: {$ref: "#/definitions/PropertyDefinition"}}},
     definitions: {
         PropertyDefinition: {
-            anyOf: ["Date", "File", "String", "Choice", "Reference"].map((name) => ({
+            anyOf: ["Date", "File", "String", "Double", "Choice", "Reference"].map((name) => ({
                 $ref: `#/definitions/${name}`,
             })),
         },
@@ -44,6 +45,14 @@ const root: JsonSchema = {
                 name: {type: "string"},
                 type: {not: {enum: primitiveTypes}},
                 values: {type: "array"},
+                calculation: {type: "object"},
+            },
+        },
+        Double: {
+            properties: {
+                name: {type: "string"},
+                type: {enum: ["Double"]},
+                calculation: {type: "object"},
             },
         },
         Reference: {
@@ -69,6 +78,14 @@ async function suggestions(markedText: string, start = root.definitions!.Propert
 }
 
 describe("typed property schema completion", () => {
+    it("offers calculation only for types that support grading", async () => {
+        expect(await suggestions("name: Score\ntype: Double\n|")).toContain("calculation");
+        expect(await suggestions("name: Grade\ntype: Grade\n|")).toContain("calculation");
+        for (const type of ["Date", "File", "String"]) {
+            expect(await suggestions(`name: Value\ntype: ${type}\n|`)).not.toContain("calculation");
+        }
+    });
+
     it("narrows a question fragment using its quoted array/required type", async () => {
         expect(await suggestions("name: Due\ntype: '[Date]!'\nfi|")).toEqual(["name", "type"]);
         expect(await suggestions("name: Report\ntype: File\n|")).toContain("fileSettings");

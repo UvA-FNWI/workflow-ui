@@ -75,14 +75,17 @@ export type Page = {
 export type QuestionBase = {
     name: string;
     text: LocalString;
-    weight: number | null;
-    percentage: number | null;
     isRequired: boolean;
     isArray: boolean;
     hideInResults: boolean;
     description?: LocalString | null;
     shortText?: LocalString | null;
     linkedTo?: string | null;
+};
+
+export type WeightedQuestionBase = QuestionBase & {
+    weight: number | null;
+    percentage: number | null;
 };
 
 export type StringQuestion = QuestionBase & {
@@ -103,11 +106,11 @@ export type DateTimeQuestion = QuestionBase & {
     type: "DateTime";
 };
 
-export type IntQuestion = QuestionBase & {
+export type IntQuestion = WeightedQuestionBase & {
     type: "Int";
 };
 
-export type DoubleQuestion = QuestionBase & {
+export type DoubleQuestion = WeightedQuestionBase & {
     type: "Double";
 };
 
@@ -115,7 +118,7 @@ export type CheckQuestion = QuestionBase & {
     type: "Check";
 };
 
-export type CurrencyQuestion = QuestionBase & {
+export type CurrencyQuestion = WeightedQuestionBase & {
     type: "Currency";
 };
 
@@ -131,7 +134,7 @@ export type UserQuestion = QuestionBase & {
     allowsExternalUsers: boolean;
 };
 
-export type ChoiceQuestion = QuestionBase & {
+export type ChoiceQuestion = WeightedQuestionBase & {
     type: "Choice";
     choices: Choice[];
     layout?: ChoiceLayoutOptions | null;
@@ -151,6 +154,8 @@ export type ObjectQuestion = QuestionBase & {
     layout?: TableLayoutOptions | null;
     subProperties?: Question[] | null;
 };
+
+export type WeightedQuestion = IntQuestion | DoubleQuestion | CurrencyQuestion | ChoiceQuestion;
 
 export type Question =
     | StringQuestion

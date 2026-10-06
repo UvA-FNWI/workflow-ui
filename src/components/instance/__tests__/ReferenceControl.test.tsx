@@ -26,8 +26,6 @@ function referenceQuestion(isArray: boolean): ReferenceQuestion {
         name: "Department",
         type: "Reference",
         text: {en: "Department", nl: "Afdeling"},
-        weight: null,
-        percentage: null,
         isRequired: false,
         isArray,
         hideInResults: false,

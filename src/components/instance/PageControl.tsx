@@ -12,7 +12,7 @@ import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page, PageElement as PageElementType} from "~/store/api/types/submissions";
-import {isPageComplete} from "~/utils/submissionUtils.ts";
+import {isPageComplete, isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageControlProps = {
     instanceId: string;
@@ -131,7 +131,9 @@ export const PageControl = ({
     );
 
     const pageResult = data?.pageResults?.[0];
-    const weightedQuestions = questions.filter((question) => question.percentage != null);
+    const weightedQuestions = questions
+        .filter(isWeightedQuestion)
+        .filter((question) => question.percentage != null);
     const totalPercentage = Number(
         weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toFixed(2),
     );
