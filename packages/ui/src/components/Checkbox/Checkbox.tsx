@@ -16,7 +16,7 @@ import { Text } from '../Text/Text';
 
 const checkboxVariants = cva(
   // Base classes for the checkbox container
-  'ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-2 ui:select-none',
+  'ui:inline-flex ui:cursor-pointer ui:items-start ui:gap-2 ui:select-none',
   {
     variants: {
       isDisabled: {
@@ -37,7 +37,7 @@ const checkboxVariants = cva(
 
 const checkboxBoxVariants = cva(
   // Base checkbox box styles
-  'ui:relative ui:inline-flex ui:h-6 ui:w-6 ui:min-w-6 ui:shrink-0 ui:items-center ui:justify-center ui:rounded ui:border-1 ui:outline-6 ui:outline-transparent ui:transition-all ui:duration-200',
+  'ui:relative ui:mt-1 ui:inline-flex ui:h-6 ui:w-6 ui:min-w-6 ui:shrink-0 ui:items-center ui:justify-center ui:rounded ui:border-1 ui:outline-6 ui:outline-transparent ui:transition-all ui:duration-200',
   {
     variants: {
       isSelected: {
