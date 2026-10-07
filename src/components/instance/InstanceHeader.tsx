@@ -31,7 +31,7 @@ export function InstanceHeader({
     return (
         <PageHeader
             title={displayTitle}
-            backLabel={t("home")}
+            backLabel={homePath === "/" ? t("home") : t("admin_data.back_to_overview")}
             backTo={homePath}
             isLoading={isLoading}
             actions={

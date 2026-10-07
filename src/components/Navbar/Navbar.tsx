@@ -26,7 +26,6 @@ function Navbar() {
     const dispatch = useAppDispatch();
     const toast = useToast();
     const user = useAppSelector(selectCurrentUser);
-    const homePath = useAppSelector((state) => state.homeNavigation.homePath);
     // The Develop page and version switching are developer/admin functionality, locked behind
     // super-admin rights (see /Users/Me isSuperAdmin).
     const isSuperAdmin = user?.isSuperAdmin ?? false;
@@ -92,7 +91,7 @@ function Navbar() {
     return (
         <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-6 border-b border-grey-300 bg-white/90 px-6 py-4 text-grey-900 shadow-sm backdrop-blur dark:border-grey-800 dark:bg-grey-900/90 dark:text-grey-100">
             <div>
-                <VersionedLink to={homePath} className="no-underline">
+                <VersionedLink to="/" className="no-underline">
                     <Heading size="sm">Milestones (pilot)</Heading>
                 </VersionedLink>
                 {VITE_ENV !== "production" && (
