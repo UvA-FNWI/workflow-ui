@@ -19,6 +19,25 @@ pnpm --filter @uva-fnwi/datanose-ui storybook
 pnpm --filter @uva-fnwi/datanose-core test
 ```
 
+### Refresh after local workflow config changes
+
+To automatically refresh baseline pages after the API installs updated local workflow config, set
+`WorkflowSource:LocalPath` to your checkout path and `WorkflowSource:WatchLocalChanges` to `true`
+in the API's ignored `appsettings.local.json`. Then add this to the UI's ignored `.env.local`:
+
+```dotenv
+VITE_AUTO_REFRESH_CONFIG=true
+```
+
+Restart the API and the UI development server after changing these settings. Each signed-in browser
+connects to the authenticated `/Versions/Events` stream; successful baseline reloads invalidate all
+API cache tags and refetch active queries. React updates the displayed data without reloading the page,
+and the stream stays connected for subsequent saves. Invalid config keeps the last working page. Reconnecting checks the latest revision,
+and pages showing a named preview (`?version=...`) do not subscribe to baseline changes.
+
+Automatic config refresh is off by default. Remove the UI setting or set it to `false` to disable it.
+Mounted components retain their local state; changing a form's structure can still change its visible inputs.
+
 ### Shared React (catalog)
 
 `react`, `react-dom`, `@types/react`, and `@types/react-dom` are pinned in `pnpm-workspace.yaml` (`catalog:` + `overrides:`). Package.json files use `"react": "catalog:"`. Published peer ranges stay `^19.0.0`.

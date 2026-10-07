@@ -5,6 +5,7 @@ export const configApi = baseApi.injectEndpoints({
         // Every config file for the version in the Workflow-Version header, keyed by repo-relative path.
         getConfigFiles: builder.query<Record<string, string>, void>({
             query: () => "/Versions/files",
+            providesTags: ["Workflow"],
         }),
         // POST /Versions/{version} rebuilds the whole model from what it is given, so this always sends
         // the complete file set, not just the edited files.

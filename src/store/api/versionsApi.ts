@@ -5,6 +5,7 @@ export const versionsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getVersionDetails: builder.query<VersionInfo[], void>({
             query: () => "/Versions/Details",
+            providesTags: ["Workflow"],
         }),
         // Loads a branch (or tag/SHA) as a named preview version.
         loadBranch: builder.mutation<string, string>({
