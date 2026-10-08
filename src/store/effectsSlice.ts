@@ -3,7 +3,9 @@ import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 import type {EffectResult} from "./api/types/submissions";
 import type {RootState} from "./store";
 
-const initialState: EffectResult = {
+const initialState: EffectResult & {configStreamConnected: boolean | null} = {
+    // null: no subscription; false: connecting/retrying; true: connected.
+    configStreamConnected: null,
     redirectUrl: undefined,
     showConfetti: false,
     toast: undefined,
@@ -14,6 +16,9 @@ const effectsSlice = createSlice({
     name: "effects",
     initialState,
     reducers: {
+        setConfigStreamConnected: (state, action: PayloadAction<boolean | null>) => {
+            state.configStreamConnected = action.payload;
+        },
         applyEffectResult: (state, action: PayloadAction<EffectResult>) => {
             if (action.payload.redirectUrl !== undefined) {
                 state.redirectUrl = action.payload.redirectUrl;
@@ -48,9 +53,17 @@ const effectsSlice = createSlice({
     },
 });
 
-export const {applyEffectResult, clearRedirectUrl, clearToast, clearEffectError, setShowConfetti} =
-    effectsSlice.actions;
+export const {
+    applyEffectResult,
+    clearRedirectUrl,
+    clearToast,
+    clearEffectError,
+    setShowConfetti,
+    setConfigStreamConnected,
+} = effectsSlice.actions;
 
+export const selectConfigStreamConnected = (state: RootState) =>
+    state.effects.configStreamConnected;
 export const selectRedirectUrl = (state: RootState) => state.effects.redirectUrl;
 export const selectShowConfetti = (state: RootState) => state.effects.showConfetti;
 export const selectToast = (state: RootState) => state.effects.toast;

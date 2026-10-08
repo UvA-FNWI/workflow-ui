@@ -8,6 +8,7 @@ type ConfigSubscription = {
     signal: AbortSignal;
     revision: {current: string | null};
     onChange: () => void;
+    onConnectionChange: (connected: boolean) => void;
 };
 
 export function subscribeToConfigChanges({
@@ -16,10 +17,17 @@ export function subscribeToConfigChanges({
     signal,
     revision,
     onChange,
+    onConnectionChange,
 }: ConfigSubscription) {
     return fetchEventSource(`${apiUrl.replace(/\/$/, "")}/Versions/Events`, {
         signal,
         headers: {Authorization: `Bearer ${accessToken}`},
+        fetch(input, init) {
+            onConnectionChange(false);
+            // The stream library also aborts its request when the tab is hidden.
+            init?.signal?.addEventListener("abort", () => onConnectionChange(false), {once: true});
+            return window.fetch(input, init);
+        },
         async onopen(response) {
             // Disabled endpoint, expired token, or denied access: wait for a new token/session.
             if (response.status >= 400 && response.status < 500 && response.status !== 429) {
@@ -31,6 +39,7 @@ export function subscribeToConfigChanges({
             ) {
                 throw new Error("Config stream unavailable");
             }
+            onConnectionChange(true);
         },
         onmessage(message) {
             if (message.event !== "config-changed" || !message.data) return;
@@ -41,9 +50,11 @@ export function subscribeToConfigChanges({
             if (previous !== null && previous !== message.data) onChange();
         },
         onclose() {
+            onConnectionChange(false);
             throw new Error("Config stream disconnected");
         },
         onerror(error) {
+            onConnectionChange(false);
             if (error instanceof StopConfigStream) throw error;
             return 1000;
         },
