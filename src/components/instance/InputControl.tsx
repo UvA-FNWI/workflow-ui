@@ -21,7 +21,7 @@ import {PhoneInput} from "~/components/inputs/PhoneInput";
 import {ReferenceControl} from "~/components/instance/ReferenceControl.tsx";
 import {RubricSelect} from "~/components/Rubric/RubricSelect.tsx";
 import {UserPicker} from "~/components/UserPicker/UserPicker";
-import {useDebounce} from "~/hooks/useDebounce";
+import {useAnswerAutosave} from "~/hooks/useAnswerAutosave";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
@@ -74,13 +74,13 @@ export const InputControl = ({
 }: InputControlProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
-    const save = useCallback(
-        (value: unknown) => {
-            if (!onSave) return;
-            void onSave({questionName: question.name, value});
-        },
-        [question.name, onSave],
-    );
+    const {debouncedChange, immediateChange} = useAnswerAutosave({
+        instanceId,
+        submissionId,
+        questionName: question.name,
+        onChange,
+        onSave,
+    });
     const saveExternalUser = onSaveExternalUser ?? onSave;
     const handleCreateExternalUser = useCallback(
         async (newUser: CreateExternalUserInput) => {
@@ -103,16 +103,6 @@ export const InputControl = ({
         },
         [onChange, saveExternalUser, question.isArray, question.name, value],
     );
-    const debouncedOnChange = useDebounce(save, 500, true);
-    const debouncedChange = (value: unknown) => {
-        onChange?.(value);
-        debouncedOnChange(value);
-    };
-    const immediateChange = (value: unknown) => {
-        onChange?.(value);
-        save(value);
-    };
-
     if (question.type === "String") {
         if (question.isArray) {
             return (

@@ -25,7 +25,9 @@ export const submissionsApi = baseApi.injectEndpoints({
                 "Screen",
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => null);
+                if (!result) return;
+                const {data} = result;
                 dispatch(
                     instancesApi.util.updateQueryData(
                         "getInstance",
