@@ -331,6 +331,7 @@ export const InputControl = ({
         if (isChoiceType("Rubric")) {
             return (
                 <RubricSelect
+                    allowClear={!question.isRequired}
                     value={typeof value === "string" ? value : undefined}
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);

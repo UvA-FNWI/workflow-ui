@@ -108,7 +108,7 @@ export const PageElement = ({
                                         </div>
                                     )}
                                 </div>
-                                <div className={showCompact ? "w-24 shrink-0" : "w-full"}>
+                                <div className={showCompact ? "min-w-24 shrink-0" : "w-full"}>
                                     <InputControl
                                         instanceId={instanceId}
                                         submissionId={submissionId}
