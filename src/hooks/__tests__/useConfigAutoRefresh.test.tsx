@@ -9,6 +9,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {useConfigAutoRefresh} from "../useConfigAutoRefresh";
 import {baseApi} from "~/store/api/baseApi";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import {selectConfigStreamConnected} from "~/store/effectsSlice";
 import {store} from "~/store/store";
 import {subscribeToConfigChanges} from "~/utils/configEvents";
 
@@ -83,11 +84,13 @@ describe("config auto refresh hook", () => {
         environment.VITE_AUTO_REFRESH_CONFIG = "false";
         const disabled = renderHook(() => useConfigAutoRefresh("token"), {wrapper: router()});
         expect(subscribeToConfigChanges).not.toHaveBeenCalled();
+        expect(selectConfigStreamConnected(store.getState())).toBeNull();
         disabled.unmount();
 
         environment.VITE_AUTO_REFRESH_CONFIG = "true";
         renderHook(() => useConfigAutoRefresh(null), {wrapper: router()});
         expect(subscribeToConfigChanges).not.toHaveBeenCalled();
+        expect(selectConfigStreamConnected(store.getState())).toBeNull();
     });
 
     it("does not subscribe while viewing a named preview", () => {
@@ -95,6 +98,31 @@ describe("config auto refresh hook", () => {
             wrapper: router("/develop?version=preview"),
         });
         expect(subscribeToConfigChanges).not.toHaveBeenCalled();
+        expect(selectConfigStreamConnected(store.getState())).toBeNull();
+    });
+
+    it("shows the connecting state while retrying and clears it when the stream stops", async () => {
+        let stop!: (error: Error) => void;
+        vi.mocked(subscribeToConfigChanges).mockImplementation(
+            () =>
+                new Promise((_, reject) => {
+                    stop = reject;
+                }),
+        );
+        const debug = vi.spyOn(console, "debug").mockImplementation(() => {});
+        try {
+            renderHook(() => useConfigAutoRefresh("token"), {wrapper: router()});
+            expect(selectConfigStreamConnected(store.getState())).toBe(false);
+            const connection = vi.mocked(subscribeToConfigChanges).mock.calls[0][0];
+            act(() => connection.onConnectionChange(true));
+            expect(selectConfigStreamConnected(store.getState())).toBe(true);
+            act(() => connection.onConnectionChange(false));
+            expect(selectConfigStreamConnected(store.getState())).toBe(false);
+            await act(async () => stop(new Error("Config stream stopped")));
+            expect(selectConfigStreamConnected(store.getState())).toBeNull();
+        } finally {
+            debug.mockRestore();
+        }
     });
 
     it("reconnects with a refreshed token, retains the revision, and cleans up on logout", () => {
@@ -103,16 +131,26 @@ describe("config auto refresh hook", () => {
             wrapper: router(),
         });
         const first = vi.mocked(subscribeToConfigChanges).mock.calls[0][0];
+        expect(selectConfigStreamConnected(store.getState())).toBe(false);
         first.revision.current = "revision-1";
+        act(() => first.onConnectionChange(true));
+        expect(selectConfigStreamConnected(store.getState())).toBe(true);
 
         rerender({token: "new-token"});
         const next = vi.mocked(subscribeToConfigChanges).mock.calls[1][0];
         expect(first.signal.aborted).toBe(true);
         expect(next.accessToken).toBe("new-token");
         expect(next.revision.current).toBe("revision-1");
+        expect(selectConfigStreamConnected(store.getState())).toBe(false);
+        act(() => next.onConnectionChange(true));
+        act(() => first.onConnectionChange(false));
+        expect(selectConfigStreamConnected(store.getState())).toBe(true);
 
         rerender({token: null});
         expect(next.signal.aborted).toBe(true);
+        expect(selectConfigStreamConnected(store.getState())).toBeNull();
+        act(() => next.onConnectionChange(true));
+        expect(selectConfigStreamConnected(store.getState())).toBeNull();
         expect(subscribeToConfigChanges).toHaveBeenCalledTimes(2);
     });
 

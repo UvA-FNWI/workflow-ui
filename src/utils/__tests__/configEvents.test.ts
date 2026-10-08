@@ -12,20 +12,56 @@ beforeEach(() => {
 async function connect(revision = {current: null as string | null}) {
     const controller = new AbortController();
     const onChange = vi.fn();
+    const onConnectionChange = vi.fn();
     await subscribeToConfigChanges({
         apiUrl: "http://localhost:5124/",
         accessToken: "developer-token",
         signal: controller.signal,
         revision,
         onChange,
+        onConnectionChange,
     });
     const options = vi.mocked(fetchEventSource).mock.lastCall![1]!;
     const send = (data: string, event = "config-changed") =>
         options.onmessage!({data, event, id: ""} satisfies EventSourceMessage);
-    return {options, send, onChange, revision, controller};
+    return {options, send, onChange, onConnectionChange, revision, controller};
 }
 
 describe("config event stream", () => {
+    it("reports connections, errors, disconnects, and reconnections", async () => {
+        const {options, onConnectionChange} = await connect();
+        const response = () => new Response(null, {headers: {"content-type": "text/event-stream"}});
+        await options.onopen!(response());
+        expect(onConnectionChange).toHaveBeenLastCalledWith(true);
+
+        options.onerror!(new Error("Connection lost"));
+        expect(onConnectionChange).toHaveBeenLastCalledWith(false);
+
+        await options.onopen!(response());
+        expect(onConnectionChange).toHaveBeenLastCalledWith(true);
+        expect(() => options.onclose!()).toThrow("disconnected");
+        expect(onConnectionChange).toHaveBeenLastCalledWith(false);
+    });
+
+    it("reports when a request is aborted, including when the tab is hidden", async () => {
+        const {options, onConnectionChange} = await connect();
+        const request = new AbortController();
+        const fetch = vi.spyOn(window, "fetch").mockResolvedValue(new Response());
+        try {
+            await options.fetch!("http://localhost:5124/Versions/Events", {
+                signal: request.signal,
+            });
+            await options.onopen!(
+                new Response(null, {headers: {"content-type": "text/event-stream"}}),
+            );
+            expect(onConnectionChange).toHaveBeenLastCalledWith(true);
+            request.abort();
+            expect(onConnectionChange).toHaveBeenLastCalledWith(false);
+        } finally {
+            fetch.mockRestore();
+        }
+    });
+
     it("uses the bearer token and lets unmount abort the connection", async () => {
         const {options, controller} = await connect();
         expect(fetchEventSource).toHaveBeenCalledWith(
