@@ -334,6 +334,34 @@ it("does not show a submission date from history the viewer cannot access", () =
     expect(header).not.toHaveTextContent("status.submitted");
 });
 
+it("labels the parent pill when only a child row's deadline has passed", () => {
+    const child = makeStep({
+        id: "Report1",
+        title: {en: "Report 1", nl: "Rapport 1"},
+        deadline: {...deadline, isPassed: true},
+        headerStatus: {type: "Error", label: null},
+    });
+    const parent = makeStep({
+        id: "Reports",
+        title: {en: "Reports", nl: "Rapporten"},
+        deadline: null,
+        headerStatus: {type: "Error", label: null},
+        children: [child],
+        childrenLayout: "CollapsibleRows",
+    } as Partial<WorkflowStep>);
+    const instance = makeInstance(parent);
+    instance.currentStep = child.id;
+
+    render(<StepCard step={parent} instance={instance} />);
+
+    expect(screen.getByRole("button", {name: /^Reports/})).toHaveTextContent(
+        "status.deadline_passed",
+    );
+    expect(screen.getByRole("button", {name: /Report 1/})).toHaveTextContent(
+        "status.deadline_passed",
+    );
+});
+
 it.each([
     {hasSubmission: true, actions: [], message: "instance.unauthorized_submission"},
     {hasSubmission: false, actions: [], message: "instance.empty_step"},

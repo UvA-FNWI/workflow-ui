@@ -138,7 +138,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                 isContentless={isContentless}
                 submissions={submissions}
                 currentStep={instance.currentStep}
-                deadlinePassed={contentSteps.some((candidate) => candidate.deadline?.isPassed)}
+                deadlinePassed={fullHierarchy.some((candidate) => candidate.deadline?.isPassed)}
                 actions={undoControl}
             />
             {hasBodyContent && (
