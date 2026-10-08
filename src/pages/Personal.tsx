@@ -1,9 +1,9 @@
 import {useMemo} from "react";
 
 import {type ColumnDef} from "@tanstack/react-table";
-import {Button, Card, Container, Icon, Skeleton, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Card, Icon, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
-import {PageHeader} from "~/components/PageHeader";
+import {HomePage} from "~/components/HomePage";
 import {PersonalDisclosure} from "~/components/PersonalDisclosure";
 import {TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
@@ -20,20 +20,40 @@ import {getComparableTableCellValue} from "~/utils/tableCellValues";
 const noInstances: PersonalInstance[] = [];
 
 export default function Personal() {
+    const {t} = useTranslate("screens");
+    useDocumentTitle(t("title"));
+
+    return (
+        <HomePage title={t("title")}>
+            <PersonalContent />
+        </HomePage>
+    );
+}
+
+export function PersonalContent({workflowDefinition}: {workflowDefinition?: string}) {
     const {data, isLoading, isError} = useGetPersonalInstancesQuery();
     const instances = data?.instances ?? noInstances;
     const {i18n, l, t} = useTranslate("screens");
     const {t: workflowT} = useTranslate("workflow");
     const navigate = useVersionedNavigate();
-    useDocumentTitle(t("title"));
+    const workflowTitle = workflowDefinition
+        ? l(
+              instances.find((instance) => instance.workflowDefinition === workflowDefinition)
+                  ?.workflowDefinitionTitle,
+          )
+        : undefined;
+    const titleSuffix = workflowTitle ? ` (${workflowTitle})` : "";
 
     const {activeRoleGroups, completedRoleGroups} = useMemo(() => {
-        const {active, completed} = partitionPersonalInstancesByCompletion(instances);
+        const workflowInstances = workflowDefinition
+            ? instances.filter((instance) => instance.workflowDefinition === workflowDefinition)
+            : instances;
+        const {active, completed} = partitionPersonalInstancesByCompletion(workflowInstances);
         return {
             activeRoleGroups: groupPersonalInstancesByRole(active, data?.roles ?? []),
             completedRoleGroups: groupPersonalInstancesByRole(completed, data?.roles ?? []),
         };
-    }, [data?.roles, instances]);
+    }, [data?.roles, instances, workflowDefinition]);
     const hasRoleGroups = activeRoleGroups.length > 0 || completedRoleGroups.length > 0;
     const columns = useMemo<ColumnDef<PersonalInstance>[]>(
         () => [
@@ -139,35 +159,38 @@ export default function Personal() {
     );
 
     return (
-        <Container maxWidth={1280}>
-            <PageHeader title={t("title")} backLabel={workflowT("home")} />
-            <div className="flex flex-col gap-6">
-                {isLoading && <PersonalLoadingState />}
+        <div className="flex flex-col gap-6">
+            {isLoading && <PersonalLoadingState />}
 
-                {!isLoading && isError && (
-                    <Card>
-                        <Text className="text-red-700">{t("load_error")}</Text>
-                    </Card>
-                )}
+            {!isLoading && isError && (
+                <Card>
+                    <Text className="text-red-700">{t("load_error")}</Text>
+                </Card>
+            )}
 
-                {!isLoading && !isError && hasRoleGroups && (
-                    <>
-                        <PersonalDisclosure
-                            title={t("active")}
-                            roleGroups={activeRoleGroups}
-                            columns={columns}
-                            defaultExpanded={true}
-                        />
-                        <PersonalDisclosure
-                            title={t("completed")}
-                            roleGroups={completedRoleGroups}
-                            columns={columns}
-                            defaultExpanded={completedRoleGroups.length === 0}
-                        />
-                    </>
-                )}
-            </div>
-        </Container>
+            {!isLoading && !isError && !hasRoleGroups && (
+                <Card>
+                    <Text>{t("empty_title")}</Text>
+                </Card>
+            )}
+
+            {!isLoading && !isError && hasRoleGroups && (
+                <>
+                    <PersonalDisclosure
+                        title={`${t("active")}${titleSuffix}`}
+                        roleGroups={activeRoleGroups}
+                        columns={columns}
+                        defaultExpanded={true}
+                    />
+                    <PersonalDisclosure
+                        title={`${t("completed")}${titleSuffix}`}
+                        roleGroups={completedRoleGroups}
+                        columns={columns}
+                        defaultExpanded={completedRoleGroups.length === 0}
+                    />
+                </>
+            )}
+        </div>
     );
 }
 

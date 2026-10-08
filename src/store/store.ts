@@ -9,6 +9,7 @@ import {setAccessToken, setCurrentUser} from "./authSlice";
 import authReducer from "./authSlice";
 import effectsReducer from "./effectsSlice";
 import errorReducer from "./errorSlice";
+import homeNavigationReducer from "./homeNavigationSlice";
 import {impersonationPersistMiddleware} from "./impersonation";
 import openFormReducer from "./openFormSlice";
 
@@ -38,6 +39,7 @@ export const store = configureStore({
         effects: effectsReducer,
         apiError: errorReducer,
         openForm: openFormReducer,
+        homeNavigation: homeNavigationReducer,
         [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

@@ -1,15 +1,13 @@
-import {Fragment, useEffect} from "react";
+import {Fragment} from "react";
 
-import {Card, Container, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Card, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
+import {HomePage} from "~/components/HomePage";
 import {VersionedLink} from "~/components/VersionedLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
-import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
-import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
+import {PersonalContent} from "~/pages/Personal";
 import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
-
-const screenUrlFor = (def: WorkflowDefinition) => `/screens/${def.name}/${def.screens[0]}`;
 
 function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle: string}) {
     return (
@@ -40,58 +38,37 @@ function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle: 
 
 function Overview() {
     const {t, l} = useTranslate("workflow");
-    const navigate = useVersionedNavigate();
     useDocumentTitle("Overview");
 
     const {data: accessibleDefinitions} = useGetAccessibleWorkflowDefinitionsQuery();
 
-    const singleAccessible =
-        accessibleDefinitions?.length === 1 ? accessibleDefinitions[0] : undefined;
+    if (!accessibleDefinitions) return null;
 
-    useEffect(() => {
-        if (singleAccessible) {
-            navigate(screenUrlFor(singleAccessible), {replace: true});
-        }
-    }, [singleAccessible, navigate]);
-
-    if (!accessibleDefinitions) {
-        return null;
-    }
-
-    if (singleAccessible) {
-        // Redirect handled in useEffect.
-        return null;
-    }
-
-    if (accessibleDefinitions.length === 0) {
-        return (
-            <Container>
-                <p>{t("overview.no_access")}</p>
-            </Container>
-        );
-    }
+    const screens = accessibleDefinitions.flatMap((definition) =>
+        definition.screens.map((name) => ({definition, name})),
+    );
 
     return (
-        <Container>
-            <div className="flex flex-col gap-1">
-                <Heading as="h1" size="lg">
-                    {t("overview.choose_course_title")}
-                </Heading>
-                <Text className="text-grey-600">{t("overview.choose_course_subtitle")}</Text>
-            </div>
-            <Card padding="none" className="mt-6 overflow-hidden">
-                {accessibleDefinitions.map((def, index) => (
-                    <Fragment key={def.name}>
-                        {index > 0 && <Separator />}
-                        <CourseRow
-                            to={screenUrlFor(def)}
-                            title={l(def.title) || def.name}
-                            subtitle={l(def.titlePlural) || def.name}
-                        />
-                    </Fragment>
-                ))}
-            </Card>
-        </Container>
+        <HomePage title={t("overview.choose_course_title")} personalContent={<PersonalContent />}>
+            {screens.length === 0 ? (
+                <p>{t("overview.no_access")}</p>
+            ) : (
+                <Card padding="none" className="overflow-hidden">
+                    {screens.map(({definition: def, name}, index) => (
+                        <Fragment key={`${def.name}/${name}`}>
+                            {index > 0 && <Separator />}
+                            <CourseRow
+                                to={`/screens/${def.name}/${name}`}
+                                title={l(def.title) || def.name}
+                                subtitle={
+                                    def.screens.length > 1 ? name : l(def.titlePlural) || def.name
+                                }
+                            />
+                        </Fragment>
+                    ))}
+                </Card>
+            )}
+        </HomePage>
     );
 }
 

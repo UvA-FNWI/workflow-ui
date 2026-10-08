@@ -36,8 +36,9 @@ export function PersonalDisclosure({
                     <Text className="pt-4 italic">{t("empty_title")}</Text>
                 ) : (
                     <>
-                        <div className="mb-6 flex justify-end pt-4">
+                        <div className="flex justify-end pt-4">
                             <SearchInput
+                                size={"md"}
                                 value={search}
                                 onChange={setSearch}
                                 placeholder={t("search_placeholder")}

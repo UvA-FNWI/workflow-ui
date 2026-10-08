@@ -4,7 +4,6 @@ import {
     Button,
     Card,
     Container,
-    Heading,
     Tab,
     TabList,
     TabPanel,
@@ -12,7 +11,7 @@ import {
     Tabs,
 } from "@uva-fnwi/datanose-ui";
 
-import {BackLink} from "~/components/BackLink";
+import {PageHeader} from "~/components/PageHeader";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -25,18 +24,34 @@ import {useGetWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi
 function Develop() {
     const {t, l} = useTranslate(["workflow", "common"]);
     const {data: currentUser, isLoading: isUserLoading} = useGetCurrentUserQuery();
-    const {data: definitions} = useGetWorkflowDefinitionsQuery({includeAll: true});
+    const {data: definitions, isLoading: isDefinitionsLoading} = useGetWorkflowDefinitionsQuery({
+        includeAll: true,
+    });
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useVersionedNavigate();
 
     useDocumentTitle("Develop");
 
     // The Develop area is admin-only; wait for the user to load, then bounce non-admins.
-    if (isUserLoading) {
-        return null;
-    }
-    if (!currentUser?.isSuperAdmin) {
+    if (!isUserLoading && !currentUser?.isSuperAdmin) {
         return <Navigate to="/" replace />;
+    }
+
+    const header = (
+        <PageHeader
+            title={t("develop.title")}
+            backLabel={t("home")}
+            isLoading={isUserLoading || isDefinitionsLoading}
+            actions={
+                <Button intent="secondary" onClick={() => navigate("/develop/migrations")}>
+                    {t("migrations.title")}
+                </Button>
+            }
+        />
+    );
+
+    if (isUserLoading || isDefinitionsLoading) {
+        return <Container maxWidth={1280}>{header}</Container>;
     }
 
     if (!definitions) {
@@ -82,9 +97,6 @@ function Develop() {
         );
         definitionsContent = (
             <Card>
-                <Heading as="h1" className="mb-4">
-                    {t("develop.title")}
-                </Heading>
                 <Tabs activeIndex={activeIndex} onTabChange={onTabChange}>
                     <TabList>
                         {creatableDefinitions.map((definition) => (
@@ -105,12 +117,7 @@ function Develop() {
 
     return (
         <Container maxWidth={1280}>
-            <div className="mb-4 flex items-center justify-between gap-4">
-                <BackLink>{t("home")}</BackLink>
-                <Button intent="secondary" onClick={() => navigate("/develop/migrations")}>
-                    {t("migrations.title")}
-                </Button>
-            </div>
+            {header}
             <ConfigVersionCard />
             <FormEditorCard />
             {definitionsContent}

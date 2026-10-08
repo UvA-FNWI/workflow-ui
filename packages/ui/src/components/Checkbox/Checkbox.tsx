@@ -16,7 +16,7 @@ import { Text } from '../Text/Text';
 
 const checkboxVariants = cva(
   // Base classes for the checkbox container
-  'ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-2 ui:select-none',
+  'ui:relative ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-2 ui:select-none',
   {
     variants: {
       isDisabled: {

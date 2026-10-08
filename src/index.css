@@ -2,3 +2,9 @@
 @import "@uva-fnwi/datanose-ui/tokens";
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    html {
+        overflow: hidden;
+    }
+}
