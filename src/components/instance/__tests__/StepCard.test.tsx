@@ -334,6 +334,28 @@ it("does not show a submission date from history the viewer cannot access", () =
     expect(header).not.toHaveTextContent("status.submitted");
 });
 
+it("does not fade a completed child row without content", () => {
+    const done = makeStep({
+        id: "Report1",
+        title: {en: "Report 1", nl: "Rapport 1"},
+        dateCompleted: "2026-09-20T12:00:00Z",
+        expectsSubmission: false,
+    });
+    const current = makeStep({id: "Report2", title: {en: "Report 2", nl: "Rapport 2"}});
+    const parent = makeStep({
+        id: "Reports",
+        children: [done, current],
+        childrenLayout: "CollapsibleRows",
+    } as Partial<WorkflowStep>);
+    const instance = makeInstance(parent);
+    instance.currentStep = current.id;
+
+    render(<StepCard step={parent} instance={instance} />);
+
+    expect(screen.getByRole("button", {name: /Report 1/})).toBeDisabled();
+    expect(screen.getByRole("group", {name: "Report 1"})).toHaveClass("opacity-100!");
+});
+
 it("labels the parent pill when only a child row's deadline has passed", () => {
     const child = makeStep({
         id: "Report1",

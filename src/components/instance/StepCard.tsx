@@ -1,6 +1,6 @@
 import {type ReactNode, useRef, useState} from "react";
 
-import {Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
+import {cn, Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
 import {
@@ -123,13 +123,10 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
             isDisabled={isUnavailableFutureStep || !hasBodyContent}
             shadow={nested ? "none" : undefined}
             border={nested ? "none" : undefined}
-            className={
-                nested
-                    ? "rounded-none! border-b border-grey-300"
-                    : isContentless
-                      ? "cursor-default! opacity-100!"
-                      : undefined
-            }
+            className={cn(
+                nested && "rounded-none! border-b border-grey-300",
+                isContentless && "cursor-default! opacity-100!",
+            )}
         >
             <StepCardHeader
                 step={step}
