@@ -20,6 +20,7 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     versions: null,
     headerStatus: null,
     hierarchyMode: "Parallel",
+    childrenLayout: "Combined",
     resultsType: "Normal",
     expectsSubmission: false,
     hasSubmission: false,
