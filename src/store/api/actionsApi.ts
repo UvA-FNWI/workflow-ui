@@ -14,6 +14,7 @@ export const actionsApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "InstanceActions", id: instanceId},
+                {type: "Correspondence", id: instanceId},
                 "Screen",
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {

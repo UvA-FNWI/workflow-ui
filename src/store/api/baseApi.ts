@@ -71,6 +71,7 @@ export const API_TAG_TYPES = [
     "Workflow",
     "Instance",
     "InstanceActions",
+    "Correspondence",
     "Submission",
     "Assessments",
     "User",

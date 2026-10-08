@@ -54,7 +54,7 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                     const subject = info.getValue();
                     return (
                         <Link
-                            className="underline"
+                            className="block underline"
                             onClick={() => setSelectedMail(info.row.original)}
                         >
                             {subject || "—"}

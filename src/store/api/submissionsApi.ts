@@ -22,6 +22,7 @@ export const submissionsApi = baseApi.injectEndpoints({
                 {type: "Assessments", instanceId},
                 {type: "Assessments", instanceId, submissionId},
                 {type: "InstanceActions", id: instanceId},
+                {type: "Correspondence", id: instanceId},
                 "Screen",
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
