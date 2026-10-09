@@ -1,8 +1,9 @@
-import {useCallback, useEffect, useMemo} from "react";
+import {useCallback, useEffect, useMemo, useRef} from "react";
 
 import {useForm} from "react-hook-form";
 
 import {Heading, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {isEqual} from "lodash-es";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {PageElement} from "~/components/instance/PageElement.tsx";
@@ -46,16 +47,28 @@ export const PageControl = ({
     );
 
     const form = useForm({defaultValues: formValues});
+    const previousAnswers = useRef(answers);
 
-    // Sync form values from submission when questions become visible again.
-    // When a conditionally hidden question's Controller unmounts, react-hook-form unregisters
-    // the field and the value is lost. When the question reappears, restore from submission data.
+    // Restore newly visible fields and server changes to untouched values, but keep local
+    // edits that may be newer than the save response (including edits awaiting debounce).
     useEffect(() => {
-        const visibleAnswers = answers.filter((a) => a.isVisible);
-        visibleAnswers.forEach((answer) => {
-            form.setValue(answer.questionName, answer.value);
-        });
-    }, [answers, form]);
+        for (const answer of answers.filter((a) => a.isVisible)) {
+            const previous = previousAnswers.current.find(
+                (a) => a.questionName === answer.questionName,
+            );
+            const value = form.getValues(answer.questionName);
+            const isFile = page.elements.some(
+                ({question}) => question?.name === answer.questionName && question.type === "File",
+            );
+            if (
+                !isEqual(value, answer.value) &&
+                (isFile || !previous?.isVisible || isEqual(value, previous.value))
+            ) {
+                form.setValue(answer.questionName, answer.value);
+            }
+        }
+        previousAnswers.current = answers;
+    }, [answers, form, page]);
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
