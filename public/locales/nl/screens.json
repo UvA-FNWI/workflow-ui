@@ -2,7 +2,7 @@
   "active": "Lopend",
   "columns": {
     "course": "Vak",
-    "employees": "Medewerkers",
+    "staff": "Medewerkers",
     "progress": "Voortgang",
     "student_name": "Naam student",
     "title": "Titel"

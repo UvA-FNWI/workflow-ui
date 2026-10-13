@@ -33,9 +33,13 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                     accessorFn: (row) => {
                         const value = row.values[col.id];
                         if (col.columnType === "RelatedUsers") {
-                            return (value as ScreenRelatedUser[])
-                                .map((user) => user.displayName)
-                                .join(", ");
+                            return getComparableTableCellValue(
+                                (value as ScreenRelatedUser[])
+                                    .map((user) => user.displayName)
+                                    .join(", "),
+                                "String",
+                                i18n.language,
+                            );
                         }
                         return getComparableTableCellValue(
                             row.values[col.id],

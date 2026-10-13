@@ -2,7 +2,7 @@
   "active": "Active",
   "columns": {
     "course": "Course",
-    "employees": "Employees",
+    "staff": "Staff",
     "progress": "Progress",
     "student_name": "Student name",
     "title": "Title"
