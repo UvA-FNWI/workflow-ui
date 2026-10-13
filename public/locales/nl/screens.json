@@ -2,8 +2,8 @@
   "active": "Lopend",
   "columns": {
     "course": "Vak",
-    "staff": "Medewerkers",
     "progress": "Voortgang",
+    "staff": "Medewerkers",
     "student_name": "Naam student",
     "title": "Titel"
   },
@@ -31,6 +31,7 @@
   "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
   "open_instance": "Open {{title}}",
   "role_title": "Je bent {{role}} voor:",
+  "Roles": "Rollen",
   "search_placeholder": "Typ een zoekwoord",
   "title": "Scripties"
 }

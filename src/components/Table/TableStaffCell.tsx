@@ -22,7 +22,7 @@ export function TableStaffCell({users}: {users: ScreenRelatedUser[]}) {
 }
 
 function UserTooltip({user}: {user: ScreenRelatedUser}) {
-    const {l, t} = useTranslate();
+    const {l, t} = useTranslate("screens");
 
     const roleLabels = user.roles.map((role) => l(role)).join(", ");
 

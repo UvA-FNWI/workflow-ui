@@ -2,8 +2,8 @@
   "active": "Active",
   "columns": {
     "course": "Course",
-    "staff": "Staff",
     "progress": "Progress",
+    "staff": "Staff",
     "student_name": "Student name",
     "title": "Title"
   },
@@ -31,6 +31,7 @@
   "no_instances_found": "No theses found for '{{search}}'",
   "open_instance": "Open {{title}}",
   "role_title": "You are {{role}} for:",
+  "Roles": "Roles",
   "search_placeholder": "Type a search query",
   "title": "Theses"
 }
