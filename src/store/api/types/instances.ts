@@ -70,6 +70,7 @@ export type IconVariant = {
 };
 
 export type StepHierarchyMode = "Sequential" | "Parallel";
+export type StepChildrenLayout = "Combined" | "CollapsibleRows";
 
 export type UndoCandidate = {
     type: "FormSubmission" | "ExecuteAction";
@@ -100,6 +101,7 @@ export type WorkflowStep = {
     expectsSubmission: boolean;
     hasSubmission: boolean;
     hierarchyMode: StepHierarchyMode;
+    childrenLayout: StepChildrenLayout;
     undoCandidate?: UndoCandidate | null;
 };
 
