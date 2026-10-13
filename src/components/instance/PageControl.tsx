@@ -1,13 +1,11 @@
-import {useCallback, useEffect, useMemo, useRef} from "react";
-
-import {useForm} from "react-hook-form";
+import {useCallback, useMemo} from "react";
 
 import {Heading, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
-import {isEqual} from "lodash-es";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {PageElement} from "~/components/instance/PageElement.tsx";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
+import {usePageForm} from "~/hooks/usePageForm";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
@@ -42,33 +40,7 @@ export const PageControl = ({
         const a = answers.find((x) => x.questionName === q.name);
         return !a || a.isVisible;
     });
-    const formValues = Object.fromEntries(
-        answers.filter((a) => a.isVisible).map((a) => [a.questionName, a.value]),
-    );
-
-    const form = useForm({defaultValues: formValues});
-    const previousAnswers = useRef(answers);
-
-    // Restore newly visible fields and server changes to untouched values, but keep local
-    // edits that may be newer than the save response (including edits awaiting debounce).
-    useEffect(() => {
-        for (const answer of answers.filter((a) => a.isVisible)) {
-            const previous = previousAnswers.current.find(
-                (a) => a.questionName === answer.questionName,
-            );
-            const value = form.getValues(answer.questionName);
-            const isFile = page.elements.some(
-                ({question}) => question?.name === answer.questionName && question.type === "File",
-            );
-            if (
-                !isEqual(value, answer.value) &&
-                (isFile || !previous?.isVisible || isEqual(value, previous.value))
-            ) {
-                form.setValue(answer.questionName, answer.value);
-            }
-        }
-        previousAnswers.current = answers;
-    }, [answers, form, page]);
+    const form = usePageForm({answers, page});
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
