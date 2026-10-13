@@ -7,9 +7,11 @@ import {InstancePropertyRow} from "~/components/instance/InstancePropertyRow";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import {useAppSelector} from "~/store/store";
 
 /** Admin view for reading and editing instance properties. */
 function InstanceAdmin() {
+    const homePath = useAppSelector((state) => state.homeNavigation.homePath);
     const {id = ""} = useParams<{id: string}>();
     const {t} = useTranslate("workflow", {keyPrefix: "admin_data"});
 
@@ -58,7 +60,7 @@ function InstanceAdmin() {
         <Container maxWidth={1280}>
             <div className="mb-8 flex flex-col gap-2">
                 {instance && (
-                    <BackLink to={isPropertyOnly ? "/" : `/instance/${id}`}>
+                    <BackLink to={isPropertyOnly ? homePath : `/instance/${id}`}>
                         {t(isPropertyOnly ? "back_to_overview" : "back_to_instance")}
                     </BackLink>
                 )}
