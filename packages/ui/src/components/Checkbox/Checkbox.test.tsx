@@ -45,11 +45,7 @@ describe('Checkbox Component', () => {
     test('applies base CSS classes', () => {
       render(<Checkbox {...defaultProps} />);
       const label = screen.getByRole('checkbox').closest('label');
-      expect(label).toHaveClass(
-        'ui:inline-flex',
-        'ui:items-center',
-        'ui:gap-2'
-      );
+      expect(label).toHaveClass('ui:inline-flex', 'ui:items-start', 'ui:gap-2');
     });
   });
 
