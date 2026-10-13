@@ -43,14 +43,18 @@ export function MarkdownRenderer({children, className}: MarkdownRendererProps) {
                     </Text>
                 ),
                 ul: ({children: nodeChildren}) => (
-                    <ul className={cn("my-1 list-disc pl-5", className)}>{nodeChildren}</ul>
+                    <ul className={cn("my-1 list-disc space-y-2 pl-5", className)}>
+                        {nodeChildren}
+                    </ul>
                 ),
                 ol: ({children: nodeChildren}) => (
-                    <ol className={cn("my-1 list-decimal pl-5", className)}>{nodeChildren}</ol>
+                    <ol className={cn("my-1 list-decimal space-y-2 pl-5", className)}>
+                        {nodeChildren}
+                    </ol>
                 ),
                 li: ({children: nodeChildren}) => (
                     <li>
-                        <Text as="span" className={className}>
+                        <Text as="span" className={cn("block", className)}>
                             {nodeChildren}
                         </Text>
                     </li>

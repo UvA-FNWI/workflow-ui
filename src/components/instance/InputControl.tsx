@@ -354,7 +354,7 @@ export const InputControl = ({
             };
 
             return (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
                     {choices.map((choice) => (
                         <Checkbox
                             key={choice.name}
