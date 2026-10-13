@@ -4,9 +4,10 @@ import {type ColumnDef} from "@tanstack/react-table";
 import {Button, Icon} from "@uva-fnwi/datanose-ui";
 
 import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
+import {TableStaffCell} from "~/components/Table/TableStaffCell.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
-import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
+import type {ScreenColumn, ScreenRelatedUser, ScreenRow} from "~/store/api/types/screens";
 import {isProgressInformation} from "~/utils/progress";
 import {formatTableCellValue, getComparableTableCellValue} from "~/utils/tableCellValues";
 
@@ -26,16 +27,32 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                 .filter((col) => col.displayType !== "ExportOnly")
                 .map((col): ColumnDef<ScreenRow> => ({
                     id: String(col.id),
-                    ...(col.isCurrentStep && col.dataType === "Object" ? {size: 220} : {}),
-                    accessorFn: (row) =>
-                        getComparableTableCellValue(
+                    ...(col.columnType === "CurrentStep" && col.dataType === "Object"
+                        ? {size: 220}
+                        : {}),
+                    accessorFn: (row) => {
+                        const value = row.values[col.id];
+                        if (col.columnType === "RelatedUsers") {
+                            return (value as ScreenRelatedUser[])
+                                .map((user) => user.displayName)
+                                .join(", ");
+                        }
+                        return getComparableTableCellValue(
                             row.values[col.id],
                             col.dataType,
                             i18n.language,
-                        ),
+                        );
+                    },
                     header: () => l(col.title),
                     cell: (info) => {
                         const value = info.row.original.values[col.id];
+                        if (col.columnType === "RelatedUsers") {
+                            const users = value as ScreenRelatedUser[];
+                            if (!users.length) {
+                                return <TableTextCell>—</TableTextCell>;
+                            }
+                            return <TableStaffCell users={users} />;
+                        }
                         const formattedValue = formatTableCellValue(
                             value,
                             col.dataType,
@@ -43,7 +60,7 @@ export const ScreenTable = ({columns, rows, globalFilter = ""}: ScreenTableProps
                         );
 
                         // Custom formatting for the progress column
-                        if (col.isCurrentStep && col.dataType === "Object") {
+                        if (col.columnType === "CurrentStep" && col.dataType === "Object") {
                             if (isProgressInformation(value)) {
                                 return <TableProgressCell progress={value} />;
                             }
