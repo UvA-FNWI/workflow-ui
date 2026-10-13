@@ -25,7 +25,7 @@ export function HomeLayout() {
     const dispatch = useAppDispatch();
     const {homePath, coordinatorPath, userName} = useAppSelector((state) => state.homeNavigation);
     const {data: definitions, isError} = useGetAccessibleWorkflowDefinitionsQuery();
-    const {data: personal} = useGetPersonalInstancesQuery();
+    const {data: personal, isLoading: isPersonalLoading} = useGetPersonalInstancesQuery();
     const screens =
         definitions?.flatMap((definition) =>
             definition.screens.map((name) => `/screens/${definition.name}/${name}`),
@@ -65,7 +65,7 @@ export function HomeLayout() {
     }, [definitions, dispatch, homePath, pathname, redirect]);
 
     if (redirect) return <Navigate to={versionedPath(redirect)} replace />;
-    if (!definitions && !isError) {
+    if ((!definitions && !isError) || isPersonalLoading) {
         return (
             <Container maxWidth={1280}>
                 <PageHeader title={null} isLoading />

@@ -29,7 +29,7 @@ export function HomePage({
 }: HomePageProps) {
     const navigation = useOutletContext<HomeLayoutContext | undefined>();
     const {t} = useTranslate("workflow");
-    const showRoleTabs = navigation?.showRoleTabs; // && !navigation.showBackToChoices;
+    const showRoleTabs = navigation?.showRoleTabs;
 
     return (
         <Container maxWidth={maxWidth}>
