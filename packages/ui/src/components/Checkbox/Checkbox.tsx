@@ -16,7 +16,7 @@ import { Text } from '../Text/Text';
 
 const checkboxVariants = cva(
   // Base classes for the checkbox container
-  'ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-2 ui:select-none',
+  'ui:inline-flex ui:cursor-pointer ui:items-start ui:gap-2 ui:select-none',
   {
     variants: {
       isDisabled: {
@@ -167,7 +167,12 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         )}
       </span>
       {label && (
-        <Text intent={isDisabled ? 'secondary' : 'primary'}>{label}</Text>
+        <Text
+          intent={isDisabled ? 'secondary' : 'primary'}
+          className="ui:leading-6"
+        >
+          {label}
+        </Text>
       )}
     </label>
   );
