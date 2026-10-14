@@ -3,8 +3,7 @@
  * workflow-api/Schemas. They are fetched from the same raw GitHub URLs that workflow-dev points VS
  * Code at, so the browser editor and the extension offer the same keys.
  *
- * Pinned to main, because nothing serves these at runtime. Point BASE at the API instead once
- * workflow-api exposes them, so completion matches the version being edited.
+ * Defaults to main. Set VITE_WORKFLOW_SCHEMA_BASE_URL to use another API version's schemas.
  */
 import {bundle, getValueByPath, parsePointer} from "api-ref-bundler";
 
@@ -22,7 +21,9 @@ export type JsonSchema = {
     not?: JsonSchema;
 };
 
-const BASE = "https://raw.githubusercontent.com/UvA-FNWI/workflow-api/refs/heads/main/Schemas";
+const BASE =
+    import.meta.env.VITE_WORKFLOW_SCHEMA_BASE_URL ??
+    "https://raw.githubusercontent.com/UvA-FNWI/workflow-api/refs/heads/main/Schemas";
 
 export type SchemaName =
     "WorkflowDefinition" | "PropertyDefinition" | "Form" | "Step" | "Role" | "Screen" | "ValueSet";

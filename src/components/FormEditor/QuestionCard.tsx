@@ -36,7 +36,7 @@ type Props = {
     formPath: string;
     pageName: string;
     question: EditorQuestion;
-    apply: (action: () => string[]) => void;
+    apply: (action: () => string[] | Promise<string[]>) => void;
     dragHandle?: ReactNode;
 };
 

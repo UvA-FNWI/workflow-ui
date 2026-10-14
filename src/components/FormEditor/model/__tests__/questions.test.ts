@@ -1,23 +1,65 @@
-import {describe, expect, it} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {Document} from "yaml";
 
-import {changeQuestionKind} from "../questions";
 import type {QuestionKind} from "../types";
+
+const common = {name: {}, type: {}, text: {}, description: {}, condition: {}, linkedTo: {}};
+const propertySchema = {
+    anyOf: [
+        {properties: {...common, type: {enum: ["String", "String!"]}, layout: {}}},
+        {properties: {...common, type: {enum: ["Date", "Date!"]}}},
+        {properties: {...common, type: {enum: ["Int", "Int!"]}, calculation: {}}},
+        {
+            properties: {
+                ...common,
+                type: {enum: ["User", "User!", "[User]", "[User]!"]},
+                allowsExternalUsers: {},
+            },
+        },
+        {
+            properties: {
+                ...common,
+                type: {not: {enum: ["String", "Date", "Int", "User", "[User]"]}},
+                filter: {},
+                inheritedRoles: {},
+            },
+        },
+        {
+            properties: {
+                ...common,
+                type: {not: {enum: ["String", "Date", "Int", "User", "[User]"]}},
+                values: {},
+                layout: {},
+                calculation: {},
+                rubric: {},
+            },
+        },
+    ],
+};
 
 const ENTITY_PATH = "Definitions/Thesis/Entity.yaml";
 const FORM_PATH = "Definitions/Thesis/Forms/Proposal.yaml";
 
-function switchKind(property: Record<string, unknown>, kind: QuestionKind) {
+async function switchKind(property: Record<string, unknown>, kind: QuestionKind) {
+    const {changeQuestionKind} = await import("../questions");
     const doc = new Document({name: "Thesis", properties: [{name: "Value", ...property}]});
     const docs = new Map([[ENTITY_PATH, doc]]);
-    expect(changeQuestionKind(docs, FORM_PATH, "Value", kind)).toEqual([ENTITY_PATH]);
+    expect(await changeQuestionKind(docs, FORM_PATH, "Value", kind)).toEqual([ENTITY_PATH]);
     return doc.toJSON().properties[0];
 }
 
 describe("question type switching", () => {
-    it("removes user settings while keeping common fields and requiredness", () => {
+    beforeEach(() => {
+        vi.resetModules();
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(async () => new Response(JSON.stringify(propertySchema))),
+        );
+    });
+    afterEach(() => vi.unstubAllGlobals());
+    it("removes user settings while keeping common fields and requiredness", async () => {
         expect(
-            switchKind(
+            await switchKind(
                 {
                     type: "User!",
                     allowsExternalUsers: true,
@@ -38,9 +80,9 @@ describe("question type switching", () => {
         });
     });
 
-    it("removes upload settings when changing a file to a date", () => {
+    it("removes upload settings when changing a file to a date", async () => {
         expect(
-            switchKind(
+            await switchKind(
                 {
                     type: "File",
                     fileSettings: {allowedTypes: ["zip"], maximumSize: 1000},
@@ -52,16 +94,16 @@ describe("question type switching", () => {
         ).toEqual({name: "Value", type: "Date"});
     });
 
-    it("removes calculations when changing a number to text", () => {
-        expect(switchKind({type: "Double", calculation: {weight: 2}}, "TextField")).toEqual({
+    it("removes calculations when changing a number to text", async () => {
+        expect(await switchKind({type: "Double", calculation: {weight: 2}}, "TextField")).toEqual({
             name: "Value",
             type: "String",
         });
     });
 
-    it("keeps calculations but removes choice settings when changing a choice to a number", () => {
+    it("keeps calculations but removes choice settings when changing a choice to a number", async () => {
         expect(
-            switchKind(
+            await switchKind(
                 {
                     type: "Value",
                     values: [{name: "Pass"}],
@@ -74,30 +116,30 @@ describe("question type switching", () => {
         ).toEqual({name: "Value", type: "Int", calculation: {weight: 2}});
     });
 
-    it("keeps choices, rubric and calculations when changing between choice kinds", () => {
+    it("keeps choices, rubric and calculations when changing between choice kinds", async () => {
         const settings = {
             values: [{name: "Pass"}],
             rubric: [{name: "Grade", grades: ["Pass"]}],
             calculation: {weight: 2},
         };
-        expect(switchKind({type: "Value!", ...settings}, "MultipleChoice")).toEqual({
+        expect(await switchKind({type: "Value!", ...settings}, "MultipleChoice")).toEqual({
             name: "Value",
             type: "[Value]!",
             ...settings,
         });
     });
 
-    it("keeps external user settings when changing from one user to multiple users", () => {
-        expect(switchKind({type: "User", allowsExternalUsers: true}, "People")).toEqual({
+    it("keeps external user settings when changing from one user to multiple users", async () => {
+        expect(await switchKind({type: "User", allowsExternalUsers: true}, "People")).toEqual({
             name: "Value",
             type: "[User]",
             allowsExternalUsers: true,
         });
     });
 
-    it("removes reference-only settings when changing a reference to text", () => {
+    it("removes reference-only settings when changing a reference to text", async () => {
         expect(
-            switchKind(
+            await switchKind(
                 {
                     type: "Context",
                     inheritedRoles: ["Coordinator"],
@@ -107,5 +149,27 @@ describe("question type switching", () => {
                 "TextField",
             ),
         ).toEqual({name: "Value", type: "String"});
+    });
+
+    it("uses the choice branch when switching a reference to a choice", async () => {
+        const result = await switchKind({type: "Context", filter: "Active"}, "SingleChoice");
+        expect(result).not.toHaveProperty("filter");
+        expect(result).toHaveProperty("values");
+    });
+
+    it("leaves the question unchanged when its schema cannot be loaded", async () => {
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(async () => new Response(null, {status: 404})),
+        );
+        const {changeQuestionKind} = await import("../questions");
+        const doc = new Document({
+            properties: [{name: "Value", type: "User", allowsExternalUsers: true}],
+        });
+        const before = doc.toString();
+        await expect(
+            changeQuestionKind(new Map([[ENTITY_PATH, doc]]), FORM_PATH, "Value", "TextField"),
+        ).rejects.toThrow("schema");
+        expect(doc.toString()).toBe(before);
     });
 });
