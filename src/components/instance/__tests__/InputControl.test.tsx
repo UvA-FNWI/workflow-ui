@@ -38,13 +38,10 @@ const question: Question = {
     name: "PracticalSupervisor",
     type: "User",
     text: {en: "Practical supervisor", nl: "Praktijkbegeleider"},
-    weight: null,
-    percentage: null,
     isRequired: true,
     isArray: true,
     hideInResults: false,
     allowsExternalUsers: true,
-    choices: [],
 };
 
 const existingUser: UserSearchResult = {
@@ -68,13 +65,9 @@ describe("InputControl", () => {
             name: "Comments",
             type: "String",
             text: {en: "Comments", nl: "Opmerkingen"},
-            weight: null,
-            percentage: null,
             isRequired: false,
             isArray: false,
             hideInResults: false,
-            allowsExternalUsers: false,
-            choices: [],
         };
         const onSave = vi.fn().mockResolvedValue({});
         const {unmount} = render(<InputControl question={textQuestion} value="" onSave={onSave} />);
@@ -126,7 +119,6 @@ describe("InputControl", () => {
             isRequired: true,
             isArray: false,
             hideInResults: false,
-            allowsExternalUsers: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
             layout: {type: "ComboBox"},
         };
@@ -148,7 +140,6 @@ describe("InputControl", () => {
             isRequired: false,
             isArray: true,
             hideInResults: false,
-            allowsExternalUsers: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
             layout: {type: "ComboBox"},
         };

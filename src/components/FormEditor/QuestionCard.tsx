@@ -36,7 +36,7 @@ type Props = {
     formPath: string;
     pageName: string;
     question: EditorQuestion;
-    apply: (action: () => string[]) => void;
+    apply: (action: () => string[] | Promise<string[]>) => void;
     dragHandle?: ReactNode;
 };
 
@@ -305,10 +305,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                                 <NodeYamlEditor
                                     initialText={node ? nodeToYaml(node.node) : ""}
                                     isReadOnly={isInherited}
-                                    schema={{
-                                        name: "WorkflowDefinition",
-                                        pointer: "#/definitions/PropertyDefinition",
-                                    }}
+                                    schema={{name: "PropertyDefinition"}}
                                     onChange={(text) => {
                                         if (!node) {
                                             return null;

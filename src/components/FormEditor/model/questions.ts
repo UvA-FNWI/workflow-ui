@@ -26,6 +26,7 @@ import {
     newPropertyValue,
     parseTypeString,
 } from "~/components/FormEditor/model/questionTypes";
+import {flatten, loadSchema} from "~/components/FormEditor/model/schema";
 import type {
     ConfigDocs,
     EditorChoice,
@@ -357,16 +358,15 @@ export function addQuestion(
     return {name, touched: [targetPath, formPath]};
 }
 
-/**
- * Swap a question to another kind, keeping its name, text and description. Rewrites type, layout and
- * values, since those three are what a kind actually is.
- */
-export function changeQuestionKind(
+/** Swap kinds, preserving common fields and removing settings unsupported by the new kind. */
+export async function changeQuestionKind(
     docs: ConfigDocs,
     formPath: string,
     name: string,
     kind: QuestionKind,
-): string[] {
+): Promise<string[]> {
+    const schema = await loadSchema("PropertyDefinition");
+    if (!schema) throw new Error("Could not load the property schema");
     const found = requireProperty(docs, formPath, name);
     const doc = requireDoc(docs, found.path);
     const {isRequired} = parseTypeString(String(found.node.get("type") ?? ""));
@@ -376,8 +376,18 @@ export function changeQuestionKind(
         values?: unknown;
     };
     const {underlying, isArray} = parseTypeString(next.type);
+    // The generated fields distinguish choices from references with the same type constraint.
+    const properties = (schema.anyOf ?? schema.oneOf ?? [schema])
+        .map((branch) => flatten({anyOf: [branch]}, schema, 0, next).properties ?? {})
+        .find((fields) => Object.keys(next).every((key) => key in fields));
+    if (!properties) throw new Error("No property schema matches the new question type");
 
     found.node.set("type", buildTypeString(underlying, {isRequired, isArray}));
+    for (const {key} of [...found.node.items]) {
+        if (isScalar(key) && typeof key.value === "string" && !(key.value in properties)) {
+            found.node.delete(key.value);
+        }
+    }
     for (const key of ["layout", "values"] as const) {
         if (next[key] === undefined) {
             found.node.delete(key);

@@ -119,8 +119,8 @@ export const InputControl = ({
                 <TagInput
                     value={Array.isArray(value) ? value.map((item) => String(item)) : []}
                     onChange={(value) => debouncedChange(value)}
-                    maxLength={question.maxLength}
-                    minLength={question.minLength}
+                    maxLength={question.maxLength ?? undefined}
+                    minLength={question.minLength ?? undefined}
                     isValid={isValid}
                     errorMessage={errorMessage}
                 />
@@ -187,8 +187,8 @@ export const InputControl = ({
                 }}
                 onKeyDown={(e) => e.key === "Enter" && !isMultilineString && e.preventDefault()}
                 description={lengthValidationDescription}
-                maxLength={question.maxLength}
-                minLength={question.minLength}
+                maxLength={question.maxLength ?? undefined}
+                minLength={question.minLength ?? undefined}
                 isValid={isValid}
                 errorMessage={errorMessage}
             />
@@ -252,7 +252,7 @@ export const InputControl = ({
         const filteredChoices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
-        const choices = sortChoices(filteredChoices, question.sorting, i18n.language);
+        const choices = sortChoices(filteredChoices, question.sorting ?? undefined, i18n.language);
 
         if (isChoiceType("Dropdown")) {
             if (question.isArray) {

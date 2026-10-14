@@ -19,6 +19,15 @@ pnpm --filter @uva-fnwi/datanose-ui storybook
 pnpm --filter @uva-fnwi/datanose-core test
 ```
 
+YAML completion and question type switching load schemas from the configured API's
+`/Schemas` path using the existing authenticated API requests. This also works with
+the API URL configured at deployment time. No separate schema server is needed.
+After regenerating schemas, rebuild the API and reload the UI.
+
+To use an external schema source, set `VITE_WORKFLOW_SCHEMA_BASE_URL` in `.env.local`
+to its schema directory URL and restart the dev server. This override uses plain
+fetch without API credentials.
+
 ### Shared React (catalog)
 
 `react`, `react-dom`, `@types/react`, and `@types/react-dom` are pinned in `pnpm-workspace.yaml` (`catalog:` + `overrides:`). Package.json files use `"react": "catalog:"`. Published peer ranges stay `^19.0.0`.
