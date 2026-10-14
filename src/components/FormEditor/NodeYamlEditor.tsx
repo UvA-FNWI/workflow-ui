@@ -23,7 +23,7 @@ type Props = {
     isReadOnly?: boolean;
     /**
      * Which generated schema drives completion, and where in it this text starts. A whole file starts
-     * at the root; a single question is a "#/definitions/PropertyDefinition" fragment of one.
+     * at the root; a single question uses the PropertyDefinition schema.
      */
     schema?: {name: SchemaName; pointer?: string};
 };

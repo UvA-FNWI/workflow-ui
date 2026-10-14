@@ -6,6 +6,7 @@
  * Pinned to main, because nothing serves these at runtime. Point BASE at the API instead once
  * workflow-api exposes them, so completion matches the version being edited.
  */
+import {bundle, getValueByPath, parsePointer} from "api-ref-bundler";
 
 export type JsonSchema = {
     $ref?: string;
@@ -23,7 +24,8 @@ export type JsonSchema = {
 
 const BASE = "https://raw.githubusercontent.com/UvA-FNWI/workflow-api/refs/heads/main/Schemas";
 
-export type SchemaName = "WorkflowDefinition" | "Form" | "Step" | "Role" | "Screen" | "ValueSet";
+export type SchemaName =
+    "WorkflowDefinition" | "PropertyDefinition" | "Form" | "Step" | "Role" | "Screen" | "ValueSet";
 
 /** The same globs as the yaml.schemas block in workflow-dev/package.json. */
 export function schemaNameForPath(path: string): SchemaName | null {
@@ -43,23 +45,28 @@ const cache = new Map<string, Promise<JsonSchema | null>>();
 export function loadSchema(name: SchemaName): Promise<JsonSchema | null> {
     let pending = cache.get(name);
     if (!pending) {
-        pending = fetch(`${BASE}/${name}.json`)
-            .then((response) => (response.ok ? (response.json() as Promise<JsonSchema>) : null))
-            .catch(() => null);
+        pending = bundle(
+            `${name}.json`,
+            async (path) => {
+                const response = await fetch(new URL(path, `${BASE}/`).href);
+                if (!response.ok) throw new Error(`Could not load schema ${path}`);
+                return response.json();
+            },
+            {
+                hooks: {
+                    onError: (message) => {
+                        throw new Error(message);
+                    },
+                },
+            },
+        ).catch(() => null);
         cache.set(name, pending);
     }
     return pending;
 }
 
 export function resolvePointer(root: JsonSchema, pointer: string): JsonSchema {
-    return pointer
-        .replace(/^#\//, "")
-        .split("/")
-        .filter(Boolean)
-        .reduce<JsonSchema>(
-            (node, key) => (node as unknown as Record<string, JsonSchema>)?.[key] ?? {},
-            root,
-        );
+    return (getValueByPath(root, parsePointer(pointer)) as JsonSchema | undefined) ?? {};
 }
 
 const MAX_DEPTH = 8;
