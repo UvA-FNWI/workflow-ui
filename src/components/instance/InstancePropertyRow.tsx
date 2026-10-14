@@ -74,6 +74,13 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
         );
     }
 
+    const choices =
+        question.type === "Reference"
+            ? referenceChoices
+            : question.type === "Choice"
+              ? question.choices
+              : undefined;
+
     if (isEditing) {
         return (
             <div className={ROW_CLASSES}>
@@ -81,13 +88,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                 <InlineQuestionEdit
                     instanceId={instanceId}
                     question={question}
-                    choices={
-                        question.type === "Reference"
-                            ? referenceChoices
-                            : question.type === "Choice"
-                              ? question.choices
-                              : undefined
-                    }
+                    choices={choices}
                     choicesLoading={question.type === "Reference" ? isLoading : undefined}
                     choicesError={question.type === "Reference" ? isError : undefined}
                     value={value}
@@ -98,16 +99,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
         );
     }
 
-    const formatted = formatAnswer(
-        value,
-        question.type,
-        i18n.language,
-        question.type === "Reference"
-            ? referenceChoices
-            : question.type === "Choice"
-              ? question.choices
-              : undefined,
-    );
+    const formatted = formatAnswer(value, question.type, i18n.language, choices);
 
     return (
         <div className={ROW_CLASSES}>

@@ -97,9 +97,6 @@ export type StringQuestion = QuestionBase & {
 
 export type DateQuestion = QuestionBase & {
     type: "Date";
-    isDeadline: boolean;
-    /** Latest allowed calendar date (yyyy-MM-dd), supplied by the backend. */
-    maxDate?: string | null;
 };
 
 export type DateTimeQuestion = QuestionBase & {

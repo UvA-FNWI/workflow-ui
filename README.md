@@ -19,6 +19,10 @@ pnpm --filter @uva-fnwi/datanose-ui storybook
 pnpm --filter @uva-fnwi/datanose-core test
 ```
 
+YAML completion uses the API schemas on GitHub `main`. To match another API version,
+set `VITE_WORKFLOW_SCHEMA_BASE_URL` in `.env.local` to that version's schema directory URL
+and restart the dev server.
+
 ### Shared React (catalog)
 
 `react`, `react-dom`, `@types/react`, and `@types/react-dom` are pinned in `pnpm-workspace.yaml` (`catalog:` + `overrides:`). Package.json files use `"react": "catalog:"`. Published peer ranges stay `^19.0.0`.

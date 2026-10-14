@@ -59,6 +59,18 @@ describe("shared schema loading", () => {
         },
     );
 
+    it("loads the question schema directly", async () => {
+        const fetchSchema = vi.fn(async (url: string) => {
+            expect(url).toMatch(/\/PropertyDefinition\.json$/);
+            return new Response(JSON.stringify(property));
+        });
+        vi.stubGlobal("fetch", fetchSchema);
+        const {loadSchema, keyCompletions} = await import("../model/schema");
+        const root = (await loadSchema("PropertyDefinition"))!;
+        expect(keyCompletions(root, root, ["layout"]).map((key) => key.label)).toEqual(["variant"]);
+        expect(fetchSchema).toHaveBeenCalledTimes(1);
+    });
+
     it("resolves nested file paths and external pointer fragments", async () => {
         const documents: Record<string, unknown> = {
             "Step.json": {
@@ -82,16 +94,6 @@ describe("shared schema loading", () => {
             {label: "Email"},
             {label: "Phone"},
         ]);
-    });
-
-    it("loads a standalone property schema", async () => {
-        vi.stubGlobal(
-            "fetch",
-            vi.fn(async () => new Response(JSON.stringify(property))),
-        );
-        const {loadSchema, keyCompletions} = await import("../model/schema");
-        const root = (await loadSchema("PropertyDefinition"))!;
-        expect(keyCompletions(root, root, ["layout"]).map((key) => key.label)).toEqual(["variant"]);
     });
 
     it("disables completion when a referenced schema cannot be loaded", async () => {

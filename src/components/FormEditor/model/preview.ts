@@ -103,8 +103,6 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
             };
         case "User":
             return {...common, type, allowsExternalUsers: raw.allowsExternalUsers === true};
-        case "Date":
-            return {...common, type, isDeadline: false};
         case "Int":
         case "Double":
             return {...common, type, weight: null, percentage: null};

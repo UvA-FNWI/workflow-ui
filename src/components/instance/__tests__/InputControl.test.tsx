@@ -59,37 +59,6 @@ afterEach(() => {
 });
 
 describe("InputControl", () => {
-    it("limits the date picker to the maximum date supplied by the backend", async () => {
-        const onChange = vi.fn();
-        render(
-            <InputControl
-                question={{
-                    ...question,
-                    name: "Due",
-                    type: "Date",
-                    isArray: false,
-                    isDeadline: true,
-                    maxDate: "2027-02-08",
-                }}
-                value={new Date(2027, 1, 1)}
-                onChange={onChange}
-            />,
-        );
-
-        fireEvent.click(screen.getByRole("button"));
-        await screen.findByRole("grid");
-
-        const beyondLimit = screen.getByRole("button", {name: "Tuesday, 9 February 2027"});
-        expect(beyondLimit).toHaveClass("ui:cursor-not-allowed");
-        fireEvent.click(beyondLimit);
-        expect(onChange).not.toHaveBeenCalled();
-
-        const lastAllowedDay = screen.getByRole("button", {name: /^Monday, 8 February 2027/});
-        expect(lastAllowedDay).not.toHaveClass("ui:cursor-not-allowed");
-        fireEvent.click(lastAllowedDay);
-        await waitFor(() => expect(onChange).toHaveBeenCalledWith(new Date(2027, 1, 8)));
-    });
-
     it("saves the latest pending text value once when unmounted", () => {
         vi.useFakeTimers();
         const textQuestion: Question = {

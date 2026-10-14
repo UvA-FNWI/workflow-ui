@@ -357,10 +357,18 @@ export function addQuestion(
     return {name, touched: [targetPath, formPath]};
 }
 
-/**
- * Swap a question to another kind, keeping its name, text and description. Rewrites type, layout and
- * values, since those three are what a kind actually is.
- */
+const SETTINGS_KINDS: Record<string, readonly QuestionKind[]> = {
+    allowsExternalUsers: ["Person", "People"],
+    fileSettings: ["Document"],
+    allowedFileTypes: ["Document"],
+    allowedFileSize: ["Document"],
+    calculation: ["Number", "SingleChoice", "MultipleChoice"],
+    rubric: ["SingleChoice", "MultipleChoice"],
+    filter: [],
+    inheritedRoles: [],
+};
+
+/** Swap kinds, preserving common fields and removing settings unsupported by the new kind. */
 export function changeQuestionKind(
     docs: ConfigDocs,
     formPath: string,
@@ -378,6 +386,9 @@ export function changeQuestionKind(
     const {underlying, isArray} = parseTypeString(next.type);
 
     found.node.set("type", buildTypeString(underlying, {isRequired, isArray}));
+    for (const [key, kinds] of Object.entries(SETTINGS_KINDS)) {
+        if (!kinds.includes(kind)) found.node.delete(key);
+    }
     for (const key of ["layout", "values"] as const) {
         if (next[key] === undefined) {
             found.node.delete(key);
