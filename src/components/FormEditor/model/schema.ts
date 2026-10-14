@@ -1,11 +1,11 @@
 /**
- * JSON Schema plumbing for the yaml editors, using the schemas the C# model generates into
- * workflow-api/Schemas. They are fetched from the same raw GitHub URLs that workflow-dev points VS
- * Code at, so the browser editor and the extension offer the same keys.
- *
- * Defaults to main. Set VITE_WORKFLOW_SCHEMA_BASE_URL to use another API version's schemas.
+ * JSON Schema plumbing for the yaml editors, using schemas from the configured API.
+ * Set VITE_WORKFLOW_SCHEMA_BASE_URL to load schemas from an external source instead.
  */
 import {bundle, getValueByPath, parsePointer} from "api-ref-bundler";
+
+import {configApi} from "~/store/api/configApi";
+import {store} from "~/store/store";
 
 export type JsonSchema = {
     $ref?: string;
@@ -21,9 +21,7 @@ export type JsonSchema = {
     not?: JsonSchema;
 };
 
-const BASE =
-    import.meta.env.VITE_WORKFLOW_SCHEMA_BASE_URL ??
-    "https://raw.githubusercontent.com/UvA-FNWI/workflow-api/refs/heads/main/Schemas";
+const BASE = import.meta.env.VITE_WORKFLOW_SCHEMA_BASE_URL;
 
 export type SchemaName =
     "WorkflowDefinition" | "PropertyDefinition" | "Form" | "Step" | "Role" | "Screen" | "ValueSet";
@@ -49,6 +47,11 @@ export function loadSchema(name: SchemaName): Promise<JsonSchema | null> {
         pending = bundle(
             `${name}.json`,
             async (path) => {
+                if (!BASE) {
+                    return store
+                        .dispatch(configApi.endpoints.getSchema.initiate(path, {subscribe: false}))
+                        .unwrap();
+                }
                 const response = await fetch(new URL(path, `${BASE}/`).href);
                 if (!response.ok) throw new Error(`Could not load schema ${path}`);
                 return response.json();

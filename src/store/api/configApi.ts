@@ -1,7 +1,11 @@
 import {baseApi} from "./baseApi";
+import type {JsonSchema} from "~/components/FormEditor/model/schema";
 
 export const configApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
+        getSchema: builder.query<JsonSchema, string>({
+            query: (path) => `/Schemas/${path}`,
+        }),
         // Every config file for the version in the Workflow-Version header, keyed by repo-relative path.
         getConfigFiles: builder.query<Record<string, string>, void>({
             query: () => "/Versions/files",

@@ -19,13 +19,14 @@ pnpm --filter @uva-fnwi/datanose-ui storybook
 pnpm --filter @uva-fnwi/datanose-core test
 ```
 
-YAML completion uses the API schemas on GitHub `main`. To match another API version,
-set `VITE_WORKFLOW_SCHEMA_BASE_URL` in `.env.local` to that version's schema directory URL
-and restart the dev server.
+YAML completion and question type switching load schemas from the configured API's
+`/Schemas` path using the existing authenticated API requests. This also works with
+the API URL configured at deployment time. No separate schema server is needed.
+After regenerating schemas, rebuild the API and reload the UI.
 
-For local API development, use `VITE_WORKFLOW_SCHEMA_BASE_URL=https://localhost:7093/Schemas`.
-The API serves its generated schemas, so no separate schema server is needed. After
-regenerating schemas, rebuild the API and reload the UI.
+To use an external schema source, set `VITE_WORKFLOW_SCHEMA_BASE_URL` in `.env.local`
+to its schema directory URL and restart the dev server. This override uses plain
+fetch without API credentials.
 
 ### Shared React (catalog)
 

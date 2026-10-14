@@ -51,12 +51,16 @@ async function switchKind(property: Record<string, unknown>, kind: QuestionKind)
 describe("question type switching", () => {
     beforeEach(() => {
         vi.resetModules();
+        vi.stubEnv("VITE_WORKFLOW_SCHEMA_BASE_URL", "https://schemas.example.test/Schemas");
         vi.stubGlobal(
             "fetch",
             vi.fn(async () => new Response(JSON.stringify(propertySchema))),
         );
     });
-    afterEach(() => vi.unstubAllGlobals());
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        vi.unstubAllEnvs();
+    });
     it("removes user settings while keeping common fields and requiredness", async () => {
         expect(
             await switchKind(
