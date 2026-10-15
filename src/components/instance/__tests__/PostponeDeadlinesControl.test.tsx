@@ -85,7 +85,7 @@ afterEach(cleanup);
 beforeEach(async () => {
     vi.clearAllMocks();
     await translations.changeLanguage("en");
-    postpone.mockReturnValue({unwrap: () => Promise.resolve()});
+    postpone.mockReturnValue({unwrap: () => Promise.resolve({})});
 });
 
 function openModal(courseName = "bachelor's thesis") {
@@ -254,5 +254,19 @@ describe("Postpone deadlines", () => {
             }),
         );
         expect(toast.warning).toHaveBeenCalledWith("postpone.deadline_changed");
+    });
+
+    it.each([
+        {toast: {type: "Success", message: {en: "Done", nl: "Klaar"}}},
+        {error: {message: "Mail failed"}},
+    ])("leaves configured feedback to the effect handler", async (result) => {
+        postpone.mockReturnValue({unwrap: () => Promise.resolve(result)});
+        openModal();
+        await selectReason("AcademicProblems");
+        fireEvent.change(screen.getByLabelText("Submission"), {target: {value: "2026-10-03"}});
+        fireEvent.click(screen.getByRole("button", {name: "postpone.confirm"}));
+        await waitFor(() => expect(screen.queryByLabelText("Submission")).not.toBeInTheDocument());
+        expect(postpone).toHaveBeenCalled();
+        expect(toast.success).not.toHaveBeenCalled();
     });
 });
