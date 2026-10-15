@@ -22,24 +22,15 @@ export function TableStaffCell({users}: {users: ScreenRelatedUser[]}) {
 }
 
 function UserTooltip({user}: {user: ScreenRelatedUser}) {
-    const {l, t} = useTranslate("screens");
+    const {l} = useTranslate("screens");
 
     const roleLabels = user.roles.map((role) => l(role)).join(", ");
 
     return (
-        <div className="max-w-72 space-y-3 text-left">
-            <div className="space-y-1">
-                <div className="text-sm font-semibold">{user.displayName}</div>
-
-                {user.organisation && <div className="text-xs opacity-75">{user.organisation}</div>}
-            </div>
-
-            {user.roles.length > 0 && (
-                <div className="space-y-1">
-                    <div className="text-xs font-medium opacity-75">{t("Roles")}</div>
-                    <div className="text-xs">{roleLabels}</div>
-                </div>
-            )}
-        </div>
+        <span className="flex flex-row gap-1">
+            <span className="text-xs">{user.displayName}</span>
+            {user.organisation && <span className="text-xs">{user.organisation}</span>}
+            {user.roles.length > 0 && <span className="text-xs">{`(${roleLabels})`}</span>}
+        </span>
     );
 }
