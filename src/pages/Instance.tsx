@@ -10,7 +10,7 @@ import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
-import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
+import {getStringField} from "~/utils/fieldUtils";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
@@ -31,19 +31,12 @@ function Instance() {
     if (isPropertyOnly && instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}/admin`} replace />;
     }
-    const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
     const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];
 
     return (
         <Container maxWidth={1280}>
-            <InstanceHeader
-                courseName={courseName}
-                instanceId={id}
-                canUseAdminTools={instance?.canUseAdminTools ?? false}
-                postponableDeadlines={instance?.postponableDeadlines ?? []}
-                isLoading={isLoading}
-            />
+            <InstanceHeader instance={instance} isLoading={isLoading} />
             <Grid>
                 <GridItem span={{base: 12, md: 9}} className="flex flex-col gap-8">
                     <ProgressCard

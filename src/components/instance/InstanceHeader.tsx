@@ -5,30 +5,23 @@ import {PostponeDeadlinesControl} from "~/components/instance/PostponeDeadlinesC
 import {PageHeader} from "~/components/PageHeader";
 import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
-import {type LocalString, useTranslate} from "~/hooks/useTranslate";
-import type {PostponableDeadline} from "~/store/api/types/instances";
+import {useTranslate} from "~/hooks/useTranslate";
+import type {WorkflowInstance} from "~/store/api/types/instances";
+import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 interface InstanceHeaderProps {
-    courseName?: LocalString | string | null;
-    instanceId?: string;
-    canUseAdminTools?: boolean;
-    postponableDeadlines: PostponableDeadline[];
+    instance?: WorkflowInstance;
     isLoading: boolean;
 }
 
-export function InstanceHeader({
-    courseName,
-    instanceId,
-    canUseAdminTools = false,
-    postponableDeadlines,
-    isLoading,
-}: InstanceHeaderProps) {
+export function InstanceHeader({instance, isLoading}: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
     const {page} = useJobTranslations();
 
-    const displayTitle =
-        (typeof courseName === "string" ? courseName : l(courseName)) ||
-        t("instance.workflowInstance");
+    const courseName = getLocalStringField(instance?.fields, "Course.Name");
+    const studentName = getStringField(instance?.fields, "Student.DisplayName");
+    const localizedCourseName = typeof courseName === "string" ? courseName : l(courseName);
+    const displayTitle = localizedCourseName || t("instance.workflowInstance");
 
     return (
         <PageHeader
@@ -36,20 +29,22 @@ export function InstanceHeader({
             backLabel={t("home")}
             isLoading={isLoading}
             actions={
-                instanceId && (
+                instance && (
                     <div className="flex flex-wrap gap-2">
                         <PostponeDeadlinesControl
-                            instanceId={instanceId}
-                            deadlines={postponableDeadlines}
+                            instanceId={instance.id}
+                            deadlines={instance.postponableDeadlines ?? []}
+                            studentName={studentName || t("postpone.student")}
+                            courseName={localizedCourseName || t("postpone.thesis")}
                         />
-                        {canUseAdminTools && (
+                        {instance.canUseAdminTools && (
                             <>
-                                <VersionedLink to={`/instance/${instanceId}/admin`}>
+                                <VersionedLink to={`/instance/${instance.id}/admin`}>
                                     <Button intent="secondary" type="button">
                                         {t("admin_data.edit_data")}
                                     </Button>
                                 </VersionedLink>
-                                <VersionedLink to={`/instance/${instanceId}/jobs`}>
+                                <VersionedLink to={`/instance/${instance.id}/jobs`}>
                                     <Button intent="secondary" type="button">
                                         {page.viewJobs}
                                     </Button>
@@ -59,7 +54,7 @@ export function InstanceHeader({
                     </div>
                 )
             }
-            description={<HighlightedFields instanceId={instanceId} />}
+            description={<HighlightedFields instanceId={instance?.id} />}
         />
     );
 }
