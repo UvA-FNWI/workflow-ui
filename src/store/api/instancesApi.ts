@@ -2,6 +2,7 @@ import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
     ActiveStep,
+    DeadlinePostponement,
     InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
@@ -18,6 +19,26 @@ export const instancesApi = baseApi.injectEndpoints({
         getInstance: builder.query<WorkflowInstance, string>({
             query: (id: string) => `/WorkflowInstances/${id}`,
             providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
+        }),
+        postponeDeadlines: builder.mutation<
+            void,
+            {instanceId: string; changes: DeadlinePostponement[]; reason: string}
+        >({
+            query: ({instanceId, ...body}) => ({
+                url: `/WorkflowInstances/${instanceId}/PostponeDeadlines`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: (_result, error, {instanceId}) =>
+                error
+                    ? []
+                    : [
+                          {type: "Instance", id: instanceId},
+                          {type: "Submission", instanceId},
+                          {type: "Assessments", instanceId},
+                          {type: "Choices", id: instanceId},
+                          "Screen",
+                      ],
         }),
         getInstances: builder.query<InstanceSummary[], string>({
             query: (workflowDefinition: string) => ({

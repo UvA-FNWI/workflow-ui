@@ -41,6 +41,7 @@ function Instance() {
                 courseName={courseName}
                 instanceId={id}
                 canUseAdminTools={instance?.canUseAdminTools ?? false}
+                postponableDeadlines={instance?.postponableDeadlines ?? []}
                 isLoading={isLoading}
             />
             <Grid>

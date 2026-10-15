@@ -139,6 +139,19 @@
     "choose_course_title": "Kies je vak",
     "no_access": "Je hebt nog geen toegang tot vakken."
   },
+  "postpone": {
+    "confirm": "Uitstellen",
+    "current_date": "Huidige deadline: {{date}}",
+    "deadline_changed": "De beschikbare deadlines zijn gewijzigd. Controleer ze en probeer opnieuw.",
+    "description": "Vul een latere datum in voor elke deadline die je wilt uitstellen. Laat de andere datums leeg.",
+    "error": "De deadlines konden niet worden uitgesteld. Probeer het opnieuw.",
+    "invalid_date": "Een nieuwe deadline is ongeldig. Controleer of deze later is en aan de datumvoorwaarden voldoet.",
+    "later_date": "Kies een datum na de huidige deadline.",
+    "reason": "Reden",
+    "reason_description": "Leg uit waarom deze deadlines worden uitgesteld (verplicht, maximaal 1.000 tekens).",
+    "success": "De deadlines zijn uitgesteld.",
+    "title": "Deadlines uitstellen"
+  },
   "previous": "Vorige",
   "progress": {
     "amsterdam_time": "Amsterdamse tijd",

@@ -139,6 +139,19 @@
     "choose_course_title": "Choose your course",
     "no_access": "You don't have access to any courses yet."
   },
+  "postpone": {
+    "confirm": "Postpone",
+    "current_date": "Current deadline: {{date}}",
+    "deadline_changed": "The available deadlines have changed. Please review them and try again.",
+    "description": "Enter a later date for each deadline you want to postpone. Leave the other dates empty.",
+    "error": "The deadlines could not be postponed. Please try again.",
+    "invalid_date": "A new deadline is invalid. Check that it is later and meets the date requirements.",
+    "later_date": "Choose a date after the current deadline.",
+    "reason": "Reason",
+    "reason_description": "Explain why these deadlines are being postponed (required, up to 1,000 characters).",
+    "success": "The deadlines have been postponed.",
+    "title": "Postpone deadlines"
+  },
   "previous": "Previous",
   "progress": {
     "amsterdam_time": "Amsterdam time",
