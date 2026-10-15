@@ -59,19 +59,19 @@ vi.mock("~/components/Datepicker/Datepicker", () => ({
     DatePicker: ({
         label,
         value,
-        highlightedDate,
+        minValue,
         onChange,
     }: {
         label: string;
         value: Date | null;
-        highlightedDate?: Date;
+        minValue?: {toString(): string};
         onChange: (date: Date | null) => void;
     }) => (
         <label>
             {label}
             <input
                 type="date"
-                data-highlighted-date={highlightedDate && format(highlightedDate, "yyyy-MM-dd")}
+                min={minValue?.toString()}
                 value={value ? format(value, "yyyy-MM-dd") : ""}
                 onChange={(event) =>
                     onChange(event.target.value ? parseISO(event.target.value) : null)
@@ -161,14 +161,8 @@ describe("Postpone deadlines", () => {
         openModal();
         expect(screen.getByLabelText("Submission")).toHaveValue("");
         expect(screen.getByLabelText("Assessment")).toHaveValue("");
-        expect(screen.getByLabelText("Submission")).toHaveAttribute(
-            "data-highlighted-date",
-            "2026-10-01",
-        );
-        expect(screen.getByLabelText("Assessment")).toHaveAttribute(
-            "data-highlighted-date",
-            "2026-10-02",
-        );
+        expect(screen.getByLabelText("Submission")).toHaveAttribute("min", "2026-10-01");
+        expect(screen.getByLabelText("Assessment")).toHaveAttribute("min", "2026-10-02");
         const confirm = screen.getByRole("button", {name: "postpone.confirm"});
         expect(confirm).toBeDisabled();
         await selectReason("Other");

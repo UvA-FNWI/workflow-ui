@@ -4,6 +4,7 @@ import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 import {
     Button,
     Callout,
+    dateToDateValue,
     Modal,
     Select,
     SelectItem,
@@ -150,6 +151,9 @@ export function PostponeDeadlinesControl({instanceId, deadlines, studentName, co
                                             ),
                                         })}
                                         value={date}
+                                        minValue={
+                                            dateToDateValue(parseISO(deadline.date)) ?? undefined
+                                        }
                                         onChange={(date) =>
                                             setDates((previous) => ({
                                                 ...previous,
