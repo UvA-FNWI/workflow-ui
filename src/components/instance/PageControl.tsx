@@ -1,12 +1,11 @@
-import {useCallback, useEffect, useMemo} from "react";
-
-import {useForm} from "react-hook-form";
+import {useCallback, useMemo} from "react";
 
 import {Heading, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {PageElement} from "~/components/instance/PageElement.tsx";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
+import {usePageForm} from "~/hooks/usePageForm";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
@@ -41,21 +40,7 @@ export const PageControl = ({
         const a = answers.find((x) => x.questionName === q.name);
         return !a || a.isVisible;
     });
-    const formValues = Object.fromEntries(
-        answers.filter((a) => a.isVisible).map((a) => [a.questionName, a.value]),
-    );
-
-    const form = useForm({defaultValues: formValues});
-
-    // Sync form values from submission when questions become visible again.
-    // When a conditionally hidden question's Controller unmounts, react-hook-form unregisters
-    // the field and the value is lost. When the question reappears, restore from submission data.
-    useEffect(() => {
-        const visibleAnswers = answers.filter((a) => a.isVisible);
-        visibleAnswers.forEach((answer) => {
-            form.setValue(answer.questionName, answer.value);
-        });
-    }, [answers, form]);
+    const form = usePageForm({answers, page});
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
