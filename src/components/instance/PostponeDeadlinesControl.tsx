@@ -83,7 +83,7 @@ export function PostponeDeadlinesControl({instanceId, deadlines, studentName, co
     const confirm = async () => {
         if (!canConfirm || isLoading) return;
         try {
-            const result = await postpone({
+            await postpone({
                 instanceId,
                 reason: normalizedReason,
                 changes: selected.map((deadline) => ({
@@ -93,7 +93,6 @@ export function PostponeDeadlinesControl({instanceId, deadlines, studentName, co
                 })),
             }).unwrap();
             close();
-            if (!result.toast && !result.error) toast.success(t("postpone.success"));
         } catch (error) {
             const code = ((error as FetchBaseQueryError).data as {errorCode?: string})?.errorCode;
             if (code === "DeadlineChanged" || code === "InvalidDeadlineProperty") {

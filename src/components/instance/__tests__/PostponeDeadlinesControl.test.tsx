@@ -205,7 +205,7 @@ describe("Postpone deadlines", () => {
             target: {value: "  illness  "},
         });
         fireEvent.click(screen.getByRole("button", {name: "postpone.confirm"}));
-        await waitFor(() => expect(toast.success).toHaveBeenCalled());
+        await waitFor(() => expect(screen.queryByLabelText("Assessment")).not.toBeInTheDocument());
         expect(postpone).toHaveBeenCalledWith({
             instanceId: "instance",
             reason: "illness",
@@ -230,7 +230,9 @@ describe("Postpone deadlines", () => {
             await selectReason("HealthAndWellbeing");
             expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
             fireEvent.click(screen.getByRole("button", {name: "postpone.confirm"}));
-            await waitFor(() => expect(toast.success).toHaveBeenCalled());
+            await waitFor(() =>
+                expect(screen.queryByLabelText(submissionLabel)).not.toBeInTheDocument(),
+            );
             expect(postpone).toHaveBeenCalledWith({
                 instanceId: "instance",
                 reason: (language === "nl" ? nl : en).postpone.reasons.HealthAndWellbeing,
@@ -257,6 +259,7 @@ describe("Postpone deadlines", () => {
     });
 
     it.each([
+        {},
         {toast: {type: "Success", message: {en: "Done", nl: "Klaar"}}},
         {error: {message: "Mail failed"}},
     ])("leaves configured feedback to the effect handler", async (result) => {
