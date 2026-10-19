@@ -41,7 +41,7 @@ const radioGroupVariants = cva('ui:flex ui:gap-2', {
 
 // Radio item variants
 const radioItemVariants = cva(
-  'ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-2 ui:select-none',
+  'ui:relative ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-2 ui:select-none',
   {
     variants: {
       isDisabled: {

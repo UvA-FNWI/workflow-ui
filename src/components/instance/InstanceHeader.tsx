@@ -7,6 +7,7 @@ import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowInstance} from "~/store/api/types/instances";
+import {useAppSelector} from "~/store/store";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 interface InstanceHeaderProps {
@@ -17,6 +18,7 @@ interface InstanceHeaderProps {
 export function InstanceHeader({instance, isLoading}: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
     const {page} = useJobTranslations();
+    const homePath = useAppSelector((state) => state.homeNavigation.homePath);
 
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const studentName = getStringField(instance?.fields, "Student.DisplayName");
@@ -26,7 +28,8 @@ export function InstanceHeader({instance, isLoading}: InstanceHeaderProps) {
     return (
         <PageHeader
             title={displayTitle}
-            backLabel={t("home")}
+            backLabel={homePath === "/" ? t("home") : t("admin_data.back_to_overview")}
+            backTo={homePath}
             isLoading={isLoading}
             actions={
                 instance && (
