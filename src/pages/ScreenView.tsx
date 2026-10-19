@@ -4,8 +4,6 @@ import {useParams} from "react-router";
 
 import {
     Card,
-    Container,
-    Heading,
     Pill,
     Tab,
     TabList,
@@ -16,10 +14,12 @@ import {
     useTabsWithLocalStorage,
 } from "@uva-fnwi/datanose-ui";
 
+import {HomePage} from "~/components/HomePage";
 import {ScreenTable} from "~/components/ScreenTable";
 import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
+import {PersonalContent} from "~/pages/Personal";
 import {useGetScreenQuery} from "~/store/api/screensApi";
 
 function getScreenTabStorageKey(workflowDefinition = "", screenName = "") {
@@ -31,7 +31,7 @@ function getScreenTabStorageKey(workflowDefinition = "", screenName = "") {
 export const ScreenView = () => {
     const {l} = useTranslate("common");
     const {workflowDefinition, screenName} = useParams();
-    const {currentData: screen} = useGetScreenQuery(
+    const {currentData: screen, isFetching} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {skip: !workflowDefinition || !screenName},
     );
@@ -44,19 +44,20 @@ export const ScreenView = () => {
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
 
     if (!screen || !workflowDefinition) {
-        return null;
+        return isFetching ? (
+            <HomePage title={null} isLoading>
+                {null}
+            </HomePage>
+        ) : null;
     }
 
     return (
-        <Container maxWidth={1280}>
+        <HomePage
+            title={l(screen.workflowDefinition.title)}
+            coordinatorTabLabel={l(screen.workflowDefinition.title)}
+            personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
+        >
             <Card>
-                <div className="mb-4">
-                    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <Heading as="h1" className="min-w-0 wrap-break-word">
-                            {l(screen.workflowDefinition.title)}
-                        </Heading>
-                    </div>
-                </div>
                 {screen.groups ? (
                     <Tabs activeIndex={activeTab} onTabChange={setActiveTab}>
                         <TabList>
@@ -109,6 +110,6 @@ export const ScreenView = () => {
                     </div>
                 )}
             </Card>
-        </Container>
+        </HomePage>
     );
 };
