@@ -11,6 +11,8 @@ import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
+const latestSaveBySubmission = new Map<string, string>();
+
 export const answersApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
         getChoices: build.query<Choice[], GetChoicesParams>({
@@ -29,8 +31,18 @@ export const answersApi = baseApi.injectEndpoints({
                 method: "post",
                 body: params.answer,
             }),
-            async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+            async onQueryStarted(params, {dispatch, queryFulfilled, requestId}) {
+                // Each response contains the whole submission, so track saves across all questions.
+                const submissionKey = JSON.stringify([params.instanceId, params.submissionId]);
+                latestSaveBySubmission.set(submissionKey, requestId);
+
+                const result = await queryFulfilled.catch(() => undefined);
+                // An older response must not roll back a newer submission snapshot.
+                if (latestSaveBySubmission.get(submissionKey) !== requestId) return;
+                latestSaveBySubmission.delete(submissionKey);
+                if (!result) return;
+
+                const {data} = result;
                 dispatch(
                     submissionsApi.util.updateQueryData(
                         "getSubmission",

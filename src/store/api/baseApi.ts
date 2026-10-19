@@ -67,19 +67,21 @@ export const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOp
     return result;
 };
 
+export const API_TAG_TYPES = [
+    "Workflow",
+    "Instance",
+    "InstanceActions",
+    "Submission",
+    "Assessments",
+    "User",
+    "Organization",
+    "Choices",
+    "Screen",
+] as const;
+
 export const baseApi = createApi({
     reducerPath: "api",
     baseQuery: baseQueryWithErrorHandling,
-    tagTypes: [
-        "Workflow",
-        "Instance",
-        "InstanceActions",
-        "Submission",
-        "Assessments",
-        "User",
-        "Organization",
-        "Choices",
-        "Screen",
-    ],
+    tagTypes: API_TAG_TYPES,
     endpoints: () => ({}),
 });

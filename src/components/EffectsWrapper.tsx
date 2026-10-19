@@ -4,7 +4,9 @@ import {useNavigate} from "react-router";
 
 import {Confetti, useToast} from "@uva-fnwi/datanose-ui";
 
+import {useConfigAutoRefresh} from "~/hooks/useConfigAutoRefresh";
 import {useTranslate} from "~/hooks/useTranslate";
+import {selectAccessToken} from "~/store/authSlice";
 import {
     clearRedirectUrl,
     clearToast,
@@ -25,6 +27,8 @@ const toastTypeMap = {
 
 function EffectsWrapper() {
     const dispatch = useAppDispatch();
+    const accessToken = useAppSelector(selectAccessToken);
+    useConfigAutoRefresh(accessToken);
     const navigate = useNavigate();
     const redirectUrl = useAppSelector(selectRedirectUrl);
     const showConfetti = useAppSelector(selectShowConfetti);

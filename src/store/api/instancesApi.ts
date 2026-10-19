@@ -91,6 +91,7 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Impersonation/Roles`,
+            providesTags: (_result, _error, instanceId) => [{type: "Instance", id: instanceId}],
         }),
         getImpersonationActions: builder.query<ActiveStep[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/actions`,

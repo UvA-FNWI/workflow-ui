@@ -2,6 +2,7 @@ import {createBrowserRouter, type RouteObject} from "react-router";
 
 import App from "../App";
 import AuthGuard from "../components/AuthGuard";
+import {HomeLayout} from "../components/HomeLayout";
 import AuthCallback from "../pages/AuthCallback";
 import CanvasCallback from "../pages/CanvasCallback";
 import Overview from "../pages/Overview";
@@ -32,15 +33,14 @@ const routes: RouteObject[] = [
                 element: <App />,
                 children: [
                     {
-                        index: true,
-                        element: <Overview />,
-                    },
-                    {
-                        path: "/personal",
-                        element: <Personal />,
+                        element: <HomeLayout />,
+                        children: [
+                            {index: true, element: <Overview />},
+                            {path: "/personal", element: <Personal />},
+                            ...screenRoutes,
+                        ],
                     },
                     ...instanceRoutes,
-                    ...screenRoutes,
                     ...developRoutes,
                 ],
             },
