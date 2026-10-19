@@ -77,7 +77,7 @@ const MAX_DEPTH = 8;
 
 /**
  * Collapse one schema node into a single object with usable properties. NJsonSchema writes
- * nullability as oneOf [null, X] and polymorphic fields (layout) as oneOf of several refs, so
+ * nullability as oneOf [null, X] and polymorphic fields as oneOf of several refs, so
  * branches are selected by the mapping's type when known, or merged while the type is unset. Recursion is
  * capped because Condition refers back to itself through Logical.
  */
@@ -119,7 +119,7 @@ export function flatten(
             continue;
         }
         for (const [key, value] of Object.entries(resolved.properties ?? {})) {
-            // Branches can define the same key differently: layout.type is one enum for a choice and
+            // Branches can define the same key differently: layout is one enum for a choice and
             // another for a table. Keep both as a union so completion offers every legal value.
             const existing = merged.properties![key];
             merged.properties![key] = existing

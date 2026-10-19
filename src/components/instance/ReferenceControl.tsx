@@ -71,8 +71,7 @@ export const ReferenceControl = ({
         errorMessage: failed ? t("reference.load_error") : errorMessage,
     };
 
-    const layoutType =
-        question.layout && "type" in question.layout ? question.layout.type : undefined;
+    const layoutType = question.layout;
     const isRadioList = layoutType === "RadioList";
 
     const choiceLabel = (choice: Choice) => l(choice.text)?.trim() || choice.name;

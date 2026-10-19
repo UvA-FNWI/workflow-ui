@@ -90,7 +90,9 @@ export type WeightedQuestionBase = QuestionBase & {
 
 export type StringQuestion = QuestionBase & {
     type: "String";
-    layout?: TextLayoutOptions | null;
+    multiline?: boolean;
+    allowAttachments?: boolean;
+    variant?: StringVariant | null;
     maxLength?: number | null;
     minLength?: number | null;
 };
@@ -134,7 +136,7 @@ export type UserQuestion = QuestionBase & {
 export type ChoiceQuestion = WeightedQuestionBase & {
     type: "Choice";
     choices: Choice[];
-    layout?: ChoiceLayoutOptions | null;
+    layout?: ChoiceLayoutType | null;
     rubric?: RubricEntry[] | null;
     sorting?: Sorting | null;
 };
@@ -142,13 +144,13 @@ export type ChoiceQuestion = WeightedQuestionBase & {
 export type ReferenceQuestion = QuestionBase & {
     type: "Reference";
     workflowDefinition?: string | null;
-    layout?: ChoiceLayoutOptions | null;
+    layout?: ChoiceLayoutType | null;
 };
 
 export type ObjectQuestion = QuestionBase & {
     type: "Object";
     workflowDefinition?: string | null;
-    layout?: TableLayoutOptions | null;
+    layout?: TableLayout | null;
     subProperties?: Question[] | null;
 };
 
@@ -203,20 +205,7 @@ export type RubricEntry = {
 };
 
 export type StringVariant = "Email" | "Phone";
-
-export type TextLayoutOptions = {
-    allowAttachments?: boolean;
-    multiline?: boolean;
-    variant?: StringVariant | null;
-};
-
-export type ChoiceLayoutOptions = {
-    type?: ChoiceLayoutType | null;
-};
-
-export type TableLayoutOptions = {
-    type?: "InlineEditing" | "Modal" | null;
-};
+export type TableLayout = "InlineEditing" | "Modal";
 
 export type Choice = {
     name: string;

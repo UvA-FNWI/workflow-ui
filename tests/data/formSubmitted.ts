@@ -355,7 +355,6 @@ export const formSubmitted = {
                                         en: "Working title",
                                         nl: "Werktitel",
                                     },
-                                    layout: null,
                                 } satisfies Question,
                             },
                             {
@@ -375,10 +374,8 @@ export const formSubmitted = {
                                         en: "Subject",
                                         nl: "Onderwerp",
                                     },
-                                    layout: {
-                                        allowAttachments: false,
-                                        multiline: true,
-                                    },
+                                    allowAttachments: false,
+                                    multiline: true,
                                 } satisfies Question,
                             },
                             {

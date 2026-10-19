@@ -34,7 +34,6 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
     const [fileTypesDraft, setFileTypesDraft] = useState<string | null>(null);
     const patch = (key: keyof QuestionPatch, value: string | boolean) =>
         apply(() => updateQuestion(docs, formPath, question.name, {[key]: value} as QuestionPatch));
-    const layout = (question.raw.layout ?? {}) as {type?: string; multiline?: boolean};
     const isDecimal = parseTypeString(question.rawType).underlying === "Double";
 
     return (
@@ -64,7 +63,7 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                 {question.kind === "TextField" && (
                     <Checkbox
                         label={t("long_text")}
-                        isSelected={layout.multiline === true}
+                        isSelected={question.raw.multiline === true}
                         isDisabled={isDisabled}
                         onChange={(isSelected) => patch("isMultiline", isSelected)}
                     />
@@ -102,26 +101,24 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                         description={t("allowed_file_types_hint")}
                         value={
                             fileTypesDraft ??
-                            (Array.isArray(question.raw.allowedFileTypes)
-                                ? question.raw.allowedFileTypes.join(", ")
+                            (Array.isArray(question.raw.allowedTypes)
+                                ? question.raw.allowedTypes.join(", ")
                                 : "")
                         }
                         isDisabled={isDisabled}
                         onChange={setFileTypesDraft}
                         onBlur={() => {
-                            if (fileTypesDraft !== null) patch("allowedFileTypes", fileTypesDraft);
+                            if (fileTypesDraft !== null) patch("allowedTypes", fileTypesDraft);
                             setFileTypesDraft(null);
                         }}
                     />
                     <Input
                         label={t("allowed_file_size")}
                         value={
-                            question.raw.allowedFileSize == null
-                                ? ""
-                                : String(question.raw.allowedFileSize)
+                            question.raw.maximumSize == null ? "" : String(question.raw.maximumSize)
                         }
                         isDisabled={isDisabled}
-                        onChange={(value) => patch("allowedFileSize", value)}
+                        onChange={(value) => patch("maximumSize", value)}
                     />
                 </div>
             )}
@@ -184,7 +181,7 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                     label={t("choice_layout")}
                     description={t("choice_layout_hint")}
                     isDisabled={isDisabled}
-                    value={layout.type === "Dropdown" ? "Dropdown" : "RadioList"}
+                    value={question.raw.layout === "Dropdown" ? "Dropdown" : "RadioList"}
                     onChange={(next) =>
                         apply(() =>
                             updateQuestion(docs, formPath, question.name, {layoutType: next}),

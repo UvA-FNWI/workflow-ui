@@ -1,12 +1,6 @@
 import {parseTypeString} from "~/components/FormEditor/model/questionTypes";
 import type {ConfigDocs, EditorQuestion} from "~/components/FormEditor/model/types";
-import type {
-    Choice,
-    ChoiceQuestion,
-    Question,
-    QuestionBase,
-    StringQuestion,
-} from "~/store/api/types/submissions";
+import type {Choice, ChoiceQuestion, Question, QuestionBase} from "~/store/api/types/submissions";
 
 /**
  * Exactly the types InputControl branches on. Anything else - File, Currency, Table, Reference,
@@ -31,10 +25,8 @@ const asChoices = (values: unknown): Choice[] =>
         : [];
 
 /**
- * Half-typed yaml produces shapes the runtime never sees: "layout:" followed by a bare word makes
- * layout a string, and InputControl does `"type" in question.layout`, which throws on one. The preview
- * is the boundary between hand-edited text and components that assume well-formed data, so anything
- * of the wrong shape is dropped here rather than passed on.
+ * The preview accepts partially edited YAML. Drop fields of the wrong shape before passing them to
+ * runtime controls that expect well-formed data.
  */
 const asObject = (value: unknown): undefined | Record<string, unknown> =>
     typeof value === "object" && value !== null && !Array.isArray(value)
@@ -84,7 +76,10 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
             return {
                 ...common,
                 type,
-                layout: asObject(raw.layout) as StringQuestion["layout"],
+                multiline: raw.multiline === true,
+                allowAttachments: raw.allowAttachments === true,
+                variant:
+                    raw.variant === "Email" || raw.variant === "Phone" ? raw.variant : undefined,
                 maxLength: typeof raw.maxLength === "number" ? raw.maxLength : undefined,
                 minLength: typeof raw.minLength === "number" ? raw.minLength : undefined,
             };
@@ -98,7 +93,10 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
                 rubric: Array.isArray(raw.rubric)
                     ? (raw.rubric as ChoiceQuestion["rubric"])
                     : undefined,
-                layout: asObject(raw.layout) as ChoiceQuestion["layout"],
+                layout:
+                    typeof raw.layout === "string"
+                        ? (raw.layout as ChoiceQuestion["layout"])
+                        : undefined,
                 sorting: asObject(raw.sorting) as ChoiceQuestion["sorting"],
             };
         case "User":

@@ -6,7 +6,15 @@ import type {QuestionKind} from "../types";
 const common = {name: {}, type: {}, text: {}, description: {}, condition: {}, linkedTo: {}};
 const propertySchema = {
     anyOf: [
-        {properties: {...common, type: {enum: ["String", "String!"]}, layout: {}}},
+        {
+            properties: {
+                ...common,
+                type: {enum: ["String", "String!"]},
+                multiline: {},
+                allowAttachments: {},
+                variant: {},
+            },
+        },
         {properties: {...common, type: {enum: ["Date", "Date!"]}}},
         {properties: {...common, type: {enum: ["Int", "Int!"]}, calculation: {}}},
         {
@@ -84,14 +92,43 @@ describe("question type switching", () => {
         });
     });
 
+    it("clears a text variant when changing email to ordinary text", async () => {
+        expect(await switchKind({type: "String", variant: "Email"}, "TextField")).toEqual({
+            name: "Value",
+            type: "String",
+        });
+    });
+
+    it("sets the requested text variant without keeping multiline settings", async () => {
+        expect(
+            await switchKind({type: "String", multiline: true, allowAttachments: true}, "Phone"),
+        ).toEqual({
+            name: "Value",
+            type: "String",
+            variant: "Phone",
+        });
+    });
+
+    it("removes flattened text settings when changing text to a date", async () => {
+        expect(
+            await switchKind(
+                {type: "String", multiline: true, allowAttachments: true, variant: "Email"},
+                "Date",
+            ),
+        ).toEqual({
+            name: "Value",
+            type: "Date",
+        });
+    });
+
     it("removes upload settings when changing a file to a date", async () => {
         expect(
             await switchKind(
                 {
                     type: "File",
-                    fileSettings: {allowedTypes: ["zip"], maximumSize: 1000},
-                    allowedFileTypes: ["zip"],
-                    allowedFileSize: 1000,
+                    prefix: "archive_",
+                    allowedTypes: ["zip"],
+                    maximumSize: 1000,
                 },
                 "Date",
             ),
@@ -112,7 +149,7 @@ describe("question type switching", () => {
                     type: "Value",
                     values: [{name: "Pass"}],
                     rubric: [{name: "Grade", grades: ["Pass"]}],
-                    layout: {type: "Rubric"},
+                    layout: "Rubric",
                     calculation: {weight: 2},
                 },
                 "Number",
@@ -148,7 +185,7 @@ describe("question type switching", () => {
                     type: "Context",
                     inheritedRoles: ["Coordinator"],
                     filter: "Active",
-                    layout: {type: "RadioList"},
+                    layout: "RadioList",
                 },
                 "TextField",
             ),

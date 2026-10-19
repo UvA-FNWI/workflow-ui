@@ -23,7 +23,7 @@ export function buildTypeString(
 
 type RawProperty = {
     type?: string;
-    layout?: {multiline?: boolean; type?: string; variant?: string} | null;
+    variant?: unknown;
     values?: unknown;
 };
 
@@ -61,10 +61,10 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
         case "User":
             return "Person";
         case "String":
-            if (raw.layout?.variant === "Email") {
+            if (raw.variant === "Email") {
                 return "Email";
             }
-            if (raw.layout?.variant === "Phone") {
+            if (raw.variant === "Phone") {
                 return "Phone";
             }
             // Multiline is a checkbox on a text question rather than a kind of its own.
@@ -86,9 +86,9 @@ export function newPropertyValue(
         case "TextField":
             return {name, type: "String", text};
         case "Email":
-            return {name, type: "String", text, layout: {variant: "Email"}};
+            return {name, type: "String", text, variant: "Email"};
         case "Phone":
-            return {name, type: "String", text, layout: {variant: "Phone"}};
+            return {name, type: "String", text, variant: "Phone"};
         case "Number":
             return {name, type: "Int", text};
         case "YesNo":
@@ -105,7 +105,7 @@ export function newPropertyValue(
                 type: name,
                 text,
                 values: [{name: "Option1", text: {en: "Option 1", nl: "Optie 1"}}],
-                layout: {type: "RadioList"},
+                layout: "RadioList",
             };
         case "MultipleChoice":
             return {

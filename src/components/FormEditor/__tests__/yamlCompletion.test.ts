@@ -30,14 +30,18 @@ const root: JsonSchema = {
             properties: {
                 name: {type: "string"},
                 type: {enum: primitiveTypes.slice(4, 8)},
-                fileSettings: {type: "object"},
+                allowedTypes: {type: "array"},
+                maximumSize: {type: "integer"},
+                prefix: {type: "string"},
             },
         },
         String: {
             properties: {
                 name: {type: "string"},
                 type: {enum: ["String"]},
-                layout: {oneOf: [{type: "null"}, {$ref: "#/definitions/TextLayout"}]},
+                multiline: {type: "boolean"},
+                allowAttachments: {type: "boolean"},
+                variant: {enum: ["Email", "Phone"]},
             },
         },
         Choice: {
@@ -45,6 +49,7 @@ const root: JsonSchema = {
                 name: {type: "string"},
                 type: {not: {enum: primitiveTypes}},
                 values: {type: "array"},
+                layout: {enum: ["Dropdown", "RadioList", "Rubric", "ComboBox"]},
                 calculation: {type: "object"},
             },
         },
@@ -61,9 +66,6 @@ const root: JsonSchema = {
                 type: {not: {enum: primitiveTypes}},
                 filter: {type: "string"},
             },
-        },
-        TextLayout: {
-            properties: {multiline: {type: "boolean"}, variant: {enum: ["Email", "Phone"]}},
         },
     },
 };
@@ -88,7 +90,7 @@ describe("typed property schema completion", () => {
 
     it("narrows a question fragment using its quoted array/required type", async () => {
         expect(await suggestions("name: Due\ntype: '[Date]!'\nfi|")).toEqual(["name", "type"]);
-        expect(await suggestions("name: Report\ntype: File\n|")).toContain("fileSettings");
+        expect(await suggestions("name: Report\ntype: File\n|")).toContain("allowedTypes");
     });
 
     it("selects the property under the cursor in a file with multiple properties", async () => {
@@ -97,14 +99,23 @@ describe("typed property schema completion", () => {
         expect(await suggestions(text, root)).toEqual(["name", "type"]);
     });
 
-    it("narrows nested layout keys and values to the selected text property", async () => {
-        expect(await suggestions("name: Notes\ntype: String\nlayout:\n  |")).toEqual([
-            "multiline",
-            "variant",
-        ]);
-        expect(await suggestions("name: Notes\ntype: String\nlayout:\n  variant: |")).toEqual([
+    it("offers flattened text settings and their values only on text properties", async () => {
+        const options = await suggestions("name: Notes\ntype: String\n|");
+        expect(options).toEqual(["name", "type", "multiline", "allowAttachments", "variant"]);
+        expect(options).not.toContain("layout");
+        expect(await suggestions("name: Due\ntype: Date\n|")).not.toContain("multiline");
+        expect(await suggestions("name: Notes\ntype: String\nvariant: |")).toEqual([
             "Email",
             "Phone",
+        ]);
+    });
+
+    it("completes scalar choice layouts", async () => {
+        expect(await suggestions("name: Grade\ntype: Grade\nlayout: |")).toEqual([
+            "Dropdown",
+            "RadioList",
+            "Rubric",
+            "ComboBox",
         ]);
     });
 
@@ -112,7 +123,7 @@ describe("typed property schema completion", () => {
         const options = await suggestions("name: Country\ntype: Country\n|");
         expect(options).toContain("values");
         expect(options).toContain("filter");
-        expect(options).not.toContain("fileSettings");
+        expect(options).not.toContain("allowedTypes");
     });
 
     it("keeps every type suggestion when many variants share common fields", async () => {
@@ -137,6 +148,6 @@ describe("typed property schema completion", () => {
     });
 
     it("offers all alternatives before a type is entered", async () => {
-        expect(await suggestions("name: Value\n|")).toContain("fileSettings");
+        expect(await suggestions("name: Value\n|")).toContain("allowedTypes");
     });
 });

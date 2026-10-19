@@ -59,6 +59,46 @@ afterEach(() => {
 });
 
 describe("InputControl", () => {
+    it.each([
+        [undefined, "text"],
+        ["Email", "email"],
+        ["Phone", "tel"],
+    ] as const)("renders the text input for variant %s", (variant, inputType) => {
+        render(
+            <InputControl
+                question={{
+                    name: "Contact",
+                    type: "String",
+                    text: {en: "Contact", nl: "Contact"},
+                    isRequired: false,
+                    isArray: false,
+                    hideInResults: false,
+                    variant,
+                }}
+            />,
+        );
+
+        expect(screen.getByRole("textbox")).toHaveAttribute("type", inputType);
+    });
+
+    it("renders multiline text from the flattened setting", () => {
+        render(
+            <InputControl
+                question={{
+                    name: "Comments",
+                    type: "String",
+                    text: {en: "Comments", nl: "Opmerkingen"},
+                    isRequired: false,
+                    isArray: false,
+                    hideInResults: false,
+                    multiline: true,
+                }}
+            />,
+        );
+
+        expect(screen.getByRole("textbox").tagName).toBe("TEXTAREA");
+    });
+
     it("saves the latest pending text value once when unmounted", () => {
         vi.useFakeTimers();
         const textQuestion: Question = {
@@ -120,7 +160,7 @@ describe("InputControl", () => {
             isArray: false,
             hideInResults: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
-            layout: {type: "ComboBox"},
+            layout: "ComboBox",
         };
 
         render(<InputControl question={country} />);
@@ -141,7 +181,7 @@ describe("InputControl", () => {
             isArray: true,
             hideInResults: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
-            layout: {type: "ComboBox"},
+            layout: "ComboBox",
         };
 
         render(<InputControl question={country} value={["NL"]} onChange={onChange} />);

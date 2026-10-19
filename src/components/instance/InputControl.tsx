@@ -127,10 +127,7 @@ export const InputControl = ({
             );
         }
 
-        const variant =
-            question.layout != null && "variant" in question.layout
-                ? question.layout.variant
-                : undefined;
+        const variant = question.variant;
 
         if (variant === "Email") {
             return (
@@ -154,8 +151,7 @@ export const InputControl = ({
             );
         }
 
-        const isMultilineString =
-            question.layout != null && "multiline" in question.layout && question.layout.multiline;
+        const isMultilineString = question.multiline;
 
         const minRemaining = question.minLength
             ? question.minLength - (typeof value === "string" ? value.length : 0)
@@ -247,8 +243,7 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
-        const isChoiceType = (choiceType: ChoiceLayoutType) =>
-            question.layout && "type" in question.layout && question.layout.type === choiceType;
+        const isChoiceType = (choiceType: ChoiceLayoutType) => question.layout === choiceType;
         const filteredChoices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;

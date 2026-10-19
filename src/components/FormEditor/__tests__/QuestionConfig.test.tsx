@@ -48,11 +48,42 @@ pages:
 };
 
 describe("QuestionConfig", () => {
+    it("writes flat text settings without disturbing other property fields", () => {
+        const path = "Definitions/Thesis/Entity.yaml";
+        const docs = new Map([
+            [
+                path,
+                parseDocument("properties: [{name: Question, type: String, description: Notes}]"),
+            ],
+        ]) as ConfigDocs;
+
+        updateQuestion(docs, FORM_PATH, "Question", {isMultiline: true});
+        expect(docs.get(path)!.toJSON().properties[0]).toEqual({
+            name: "Question",
+            type: "String",
+            description: "Notes",
+            multiline: true,
+        });
+        updateQuestion(docs, FORM_PATH, "Question", {isMultiline: false});
+        expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("multiline");
+        expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("layout");
+    });
+
+    it("writes a scalar choice layout", () => {
+        const path = "Definitions/Thesis/Entity.yaml";
+        const docs = new Map([
+            [path, parseDocument("properties: [{name: Question, type: Grade, layout: RadioList}]")],
+        ]) as ConfigDocs;
+
+        updateQuestion(docs, FORM_PATH, "Question", {layoutType: "Dropdown"});
+        expect(docs.get(path)!.toJSON().properties[0].layout).toBe("Dropdown");
+    });
+
     it("keeps commas and spaces while typing file formats", () => {
         renderConfig(`properties:
   - name: Question
     type: File
-    allowedFileTypes: [pdf]
+    allowedTypes: [pdf]
 `);
         const input = screen.getByRole("textbox", {name: "allowed_file_types"});
         for (const value of ["pdf,", "pdf, ", "pdf, z", "pdf, zi", "pdf, zip"]) {
@@ -70,7 +101,7 @@ describe("QuestionConfig", () => {
     values:
       - name: One
         text: {nl: Een, en: One}
-    layout: {type: RadioList}
+    layout: RadioList
 `);
 
         expect(question.kind).toBe("SingleChoice");
@@ -95,8 +126,8 @@ describe("QuestionConfig", () => {
   - name: Question
     type: '[File]'
     text: {nl: Bijlagen, en: Attachments}
-    allowedFileTypes: ['*']
-    allowedFileSize: 1000
+    allowedTypes: ['*']
+    maximumSize: 1000
 `;
         const question = renderConfig(properties);
         expect(question.kind).toBe("Document");
@@ -107,11 +138,11 @@ describe("QuestionConfig", () => {
             [FORM_PATH, parseDocument("name: Proposal\npages: []")],
             ["Definitions/Thesis/Entity.yaml", parseDocument(`name: Thesis\n${properties}`)],
         ]) as ConfigDocs;
-        updateQuestion(docs, FORM_PATH, "Question", {isArray: false, allowedFileTypes: "pdf, zip"});
+        updateQuestion(docs, FORM_PATH, "Question", {isArray: false, allowedTypes: "pdf, zip"});
         const raw = docs.get("Definitions/Thesis/Entity.yaml")!.toJSON().properties[0];
         expect(raw.type).toBe("File");
-        expect(raw.allowedFileTypes).toEqual(["pdf", "zip"]);
-        expect(raw.allowedFileSize).toBe(1000);
+        expect(raw.allowedTypes).toEqual(["pdf", "zip"]);
+        expect(raw.maximumSize).toBe(1000);
 
         updateQuestion(docs, FORM_PATH, "Question", {isArray: true, isRequired: true});
         expect(docs.get("Definitions/Thesis/Entity.yaml")!.toJSON().properties[0].type).toBe(

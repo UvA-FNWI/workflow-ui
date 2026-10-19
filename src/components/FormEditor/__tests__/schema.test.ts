@@ -4,11 +4,11 @@ import type {SchemaName} from "../model/schema";
 
 const property = {
     properties: {
-        layout: {$ref: "#/definitions/Layout"},
+        results: {$ref: "#/definitions/ResultSettings"},
         condition: {$ref: "#/definitions/Condition"},
     },
     definitions: {
-        Layout: {properties: {variant: {enum: ["Email", "Phone"]}}},
+        ResultSettings: {properties: {type: {enum: ["Source", "Average"]}}},
         Condition: {
             properties: {and: {type: "array", items: {$ref: "#/definitions/Condition"}}},
         },
@@ -57,8 +57,8 @@ describe("shared schema loading", () => {
         const {loadSchema, keyCompletions} = await import("../model/schema");
         const root = (await loadSchema("Step"))!;
         expect(
-            keyCompletions(root, root, ["properties", "layout"]).map((key) => key.label),
-        ).toEqual(["variant"]);
+            keyCompletions(root, root, ["properties", "results"]).map((key) => key.label),
+        ).toEqual(["type"]);
         const schemas = requests.filter((request) => request.url.includes("/Schemas/"));
         expect(schemas.map((request) => request.url)).toEqual([
             "https://deployed-api.example.test/workflow/Schemas/Step.json",
@@ -83,7 +83,9 @@ describe("shared schema loading", () => {
                                           properties: {items: {$ref: "PropertyDefinition.json"}},
                                       },
                                       definitions: {
-                                          Layout: {properties: {localKey: {type: "string"}}},
+                                          ResultSettings: {
+                                              properties: {localKey: {type: "string"}},
+                                          },
                                       },
                                   },
                         ),
@@ -93,11 +95,11 @@ describe("shared schema loading", () => {
             const {loadSchema, keyCompletions, valueCompletions} = await import("../model/schema");
             const root = (await loadSchema(name))!;
             expect(
-                keyCompletions(root, root, ["properties", "layout"]).map((key) => key.label),
-            ).toEqual(["variant"]);
-            expect(valueCompletions(root, root, ["properties", "layout"], "variant")).toEqual([
-                {label: "Email"},
-                {label: "Phone"},
+                keyCompletions(root, root, ["properties", "results"]).map((key) => key.label),
+            ).toEqual(["type"]);
+            expect(valueCompletions(root, root, ["properties", "results"], "type")).toEqual([
+                {label: "Source"},
+                {label: "Average"},
             ]);
             expect(
                 keyCompletions(root, root, ["properties", "condition", "and", "and"]).map(
@@ -117,7 +119,7 @@ describe("shared schema loading", () => {
         vi.stubGlobal("fetch", fetchSchema);
         const {loadSchema, keyCompletions} = await import("../model/schema");
         const root = (await loadSchema("PropertyDefinition"))!;
-        expect(keyCompletions(root, root, ["layout"]).map((key) => key.label)).toEqual(["variant"]);
+        expect(keyCompletions(root, root, ["results"]).map((key) => key.label)).toEqual(["type"]);
         expect(fetchSchema).toHaveBeenCalledTimes(1);
         expect(fetchSchema).toHaveBeenCalledWith(
             "https://schemas.example.test/Schemas/PropertyDefinition.json",
@@ -127,12 +129,18 @@ describe("shared schema loading", () => {
     it("resolves nested file paths and external pointer fragments", async () => {
         const documents: Record<string, unknown> = {
             "Step.json": {
-                properties: {layout: {$ref: "types/PropertyDefinition.json#/properties/layout"}},
+                properties: {
+                    results: {$ref: "types/PropertyDefinition.json#/properties/results"},
+                },
             },
             "types/PropertyDefinition.json": {
-                properties: {layout: {$ref: "../Layout.json#/definitions/Layout"}},
+                properties: {
+                    results: {$ref: "../ResultSettings.json#/definitions/ResultSettings"},
+                },
             },
-            "Layout.json": {definitions: {Layout: property.definitions.Layout}},
+            "ResultSettings.json": {
+                definitions: {ResultSettings: property.definitions.ResultSettings},
+            },
         };
         vi.stubGlobal(
             "fetch",
@@ -143,9 +151,9 @@ describe("shared schema loading", () => {
         );
         const {loadSchema, valueCompletions} = await import("../model/schema");
         const root = (await loadSchema("Step"))!;
-        expect(valueCompletions(root, root, ["layout"], "variant")).toEqual([
-            {label: "Email"},
-            {label: "Phone"},
+        expect(valueCompletions(root, root, ["results"], "type")).toEqual([
+            {label: "Source"},
+            {label: "Average"},
         ]);
     });
 
