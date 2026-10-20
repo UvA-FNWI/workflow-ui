@@ -31,7 +31,6 @@
   "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
   "open_instance": "Open {{title}}",
   "role_title": "Je bent {{role}} voor:",
-  "Roles": "Rollen",
   "search_placeholder": "Typ een zoekwoord",
   "title": "Scripties"
 }
