@@ -16,6 +16,7 @@ import {
     selectUserImpersonation,
     setUserImpersonation,
 } from "~/store/authSlice";
+import {selectConfigStreamConnected} from "~/store/effectsSlice";
 import {triggerApiError} from "~/store/errorSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
@@ -26,6 +27,7 @@ function Navbar() {
     const dispatch = useAppDispatch();
     const toast = useToast();
     const user = useAppSelector(selectCurrentUser);
+    const configStreamConnected = useAppSelector(selectConfigStreamConnected);
     // The Develop page and version switching are developer/admin functionality, locked behind
     // super-admin rights (see /Users/Me isSuperAdmin).
     const isSuperAdmin = user?.isSuperAdmin ?? false;
@@ -104,14 +106,21 @@ function Navbar() {
                 )}
             </div>
             <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-                {isAuthenticated && (
-                    <VersionedLink to="/personal" className="text-sm font-medium underline">
-                        {t("personal_page")}
-                    </VersionedLink>
-                )}
                 {isSuperAdmin && (
                     <VersionedLink to="/develop">
-                        <Button intent="primary">{t("develop")}</Button>
+                        <Button
+                            intent="primary"
+                            leftIcon={
+                                configStreamConnected !== null && (
+                                    <span
+                                        aria-hidden="true"
+                                        className={`inline-block size-2.5 rounded-full ${configStreamConnected ? "bg-green-500" : "bg-red-500"}`}
+                                    />
+                                )
+                            }
+                        >
+                            {t("develop")}
+                        </Button>
                     </VersionedLink>
                 )}
                 {isAuthenticated && user && (

@@ -21,6 +21,7 @@ export const importApi = baseApi.injectEndpoints({
             query: ({workflowDefinition, screenName}) => ({
                 url: `/Import/${workflowDefinition}/${screenName}/Columns`,
             }),
+            providesTags: ["Screen"],
         }),
         preview: builder.mutation<ImportPreview, ImportFileRequest>({
             query: (importFileRequest) => ({
