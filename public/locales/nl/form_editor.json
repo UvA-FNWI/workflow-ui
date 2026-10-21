@@ -54,7 +54,6 @@
     "nl": "Nederlands"
   },
   "load_failed": "De workflowconfiguratie kon niet worden geladen.",
-  "long_text": "Lange tekst",
   "missing_hint": "Er bestaat geen property met de naam {{name}}. Verwijder deze vraag, of vraag een ontwikkelaar de property toe te voegen.",
   "more_options": "Toon meer opties",
   "multiple_files": "Meerdere bestanden toestaan",

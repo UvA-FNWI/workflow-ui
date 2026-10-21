@@ -54,7 +54,6 @@
     "nl": "Dutch"
   },
   "load_failed": "Could not load the workflow configuration.",
-  "long_text": "Long text",
   "missing_hint": "No property named {{name}} exists. Remove this question, or ask a developer to add the property.",
   "more_options": "Show more options",
   "multiple_files": "Allow multiple files",
