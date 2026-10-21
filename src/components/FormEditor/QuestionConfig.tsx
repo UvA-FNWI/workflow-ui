@@ -60,14 +60,6 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                     isDisabled={isDisabled}
                     onChange={(isSelected) => patch("isRequired", isSelected)}
                 />
-                {question.kind === "TextField" && (
-                    <Checkbox
-                        label={t("long_text")}
-                        isSelected={question.raw.multiline === true}
-                        isDisabled={isDisabled}
-                        onChange={(isSelected) => patch("isMultiline", isSelected)}
-                    />
-                )}
                 {question.kind === "Number" && (
                     <Checkbox
                         label={t("decimal")}
@@ -181,11 +173,9 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                     label={t("choice_layout")}
                     description={t("choice_layout_hint")}
                     isDisabled={isDisabled}
-                    value={question.raw.layout === "Dropdown" ? "Dropdown" : "RadioList"}
+                    value={question.raw.control === "Dropdown" ? "Dropdown" : "RadioList"}
                     onChange={(next) =>
-                        apply(() =>
-                            updateQuestion(docs, formPath, question.name, {layoutType: next}),
-                        )
+                        apply(() => updateQuestion(docs, formPath, question.name, {control: next}))
                     }
                 >
                     {CHOICE_LAYOUTS.map((type) => (

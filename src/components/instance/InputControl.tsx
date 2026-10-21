@@ -25,7 +25,7 @@ import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
-import type {Answer, Choice, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
+import type {Answer, Choice, ChoiceControl, Question} from "~/store/api/types/submissions";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
 import {sortChoices} from "~/utils/sortChoices";
 
@@ -127,9 +127,9 @@ export const InputControl = ({
             );
         }
 
-        const variant = question.variant;
+        const control = question.control;
 
-        if (variant === "Email") {
+        if (control === "Email") {
             return (
                 <EmailInput
                     value={(value as string) || ""}
@@ -140,7 +140,7 @@ export const InputControl = ({
             );
         }
 
-        if (variant === "Phone") {
+        if (control === "Phone") {
             return (
                 <PhoneInput
                     value={(value as string) || ""}
@@ -151,7 +151,7 @@ export const InputControl = ({
             );
         }
 
-        const isMultilineString = question.multiline;
+        const isMultilineString = question.control === "TextArea";
 
         const minRemaining = question.minLength
             ? question.minLength - (typeof value === "string" ? value.length : 0)
@@ -243,7 +243,7 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
-        const isChoiceType = (choiceType: ChoiceLayoutType) => question.layout === choiceType;
+        const isChoiceType = (choiceType: ChoiceControl) => question.control === choiceType;
         const filteredChoices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;

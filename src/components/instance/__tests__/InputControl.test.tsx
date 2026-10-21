@@ -63,7 +63,7 @@ describe("InputControl", () => {
         [undefined, "text"],
         ["Email", "email"],
         ["Phone", "tel"],
-    ] as const)("renders the text input for variant %s", (variant, inputType) => {
+    ] as const)("renders the text input for control %s", (control, inputType) => {
         render(
             <InputControl
                 question={{
@@ -73,7 +73,7 @@ describe("InputControl", () => {
                     isRequired: false,
                     isArray: false,
                     hideInResults: false,
-                    variant,
+                    control,
                 }}
             />,
         );
@@ -81,7 +81,7 @@ describe("InputControl", () => {
         expect(screen.getByRole("textbox")).toHaveAttribute("type", inputType);
     });
 
-    it("renders multiline text from the flattened setting", () => {
+    it("renders multiline text from the TextArea control", () => {
         render(
             <InputControl
                 question={{
@@ -91,7 +91,7 @@ describe("InputControl", () => {
                     isRequired: false,
                     isArray: false,
                     hideInResults: false,
-                    multiline: true,
+                    control: "TextArea",
                 }}
             />,
         );
@@ -160,7 +160,7 @@ describe("InputControl", () => {
             isArray: false,
             hideInResults: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
-            layout: "ComboBox",
+            control: "ComboBox",
         };
 
         render(<InputControl question={country} />);
@@ -181,7 +181,7 @@ describe("InputControl", () => {
             isArray: true,
             hideInResults: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
-            layout: "ComboBox",
+            control: "ComboBox",
         };
 
         render(<InputControl question={country} value={["NL"]} onChange={onChange} />);

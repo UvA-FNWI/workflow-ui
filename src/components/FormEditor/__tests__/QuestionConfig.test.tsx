@@ -57,26 +57,29 @@ describe("QuestionConfig", () => {
             ],
         ]) as ConfigDocs;
 
-        updateQuestion(docs, FORM_PATH, "Question", {isMultiline: true});
+        updateQuestion(docs, FORM_PATH, "Question", {control: "TextArea"});
         expect(docs.get(path)!.toJSON().properties[0]).toEqual({
             name: "Question",
             type: "String",
             description: "Notes",
-            multiline: true,
+            control: "TextArea",
         });
-        updateQuestion(docs, FORM_PATH, "Question", {isMultiline: false});
-        expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("multiline");
+        updateQuestion(docs, FORM_PATH, "Question", {control: null});
+        expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("control");
         expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("layout");
     });
 
     it("writes a scalar choice layout", () => {
         const path = "Definitions/Thesis/Entity.yaml";
         const docs = new Map([
-            [path, parseDocument("properties: [{name: Question, type: Grade, layout: RadioList}]")],
+            [
+                path,
+                parseDocument("properties: [{name: Question, type: Grade, control: RadioList}]"),
+            ],
         ]) as ConfigDocs;
 
-        updateQuestion(docs, FORM_PATH, "Question", {layoutType: "Dropdown"});
-        expect(docs.get(path)!.toJSON().properties[0].layout).toBe("Dropdown");
+        updateQuestion(docs, FORM_PATH, "Question", {control: "Dropdown"});
+        expect(docs.get(path)!.toJSON().properties[0].control).toBe("Dropdown");
     });
 
     it("keeps commas and spaces while typing file formats", () => {
@@ -101,7 +104,7 @@ describe("QuestionConfig", () => {
     values:
       - name: One
         text: {nl: Een, en: One}
-    layout: RadioList
+    control: RadioList
 `);
 
         expect(question.kind).toBe("SingleChoice");

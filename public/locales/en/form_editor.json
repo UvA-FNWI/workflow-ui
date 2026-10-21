@@ -41,6 +41,7 @@
     "Person": "Person",
     "Phone": "Phone number",
     "SingleChoice": "Single choice",
+    "TextArea": "Text area",
     "TextField": "Text field",
     "YesNo": "Yes / no"
   },

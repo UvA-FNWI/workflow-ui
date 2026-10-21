@@ -71,8 +71,8 @@ export const ReferenceControl = ({
         errorMessage: failed ? t("reference.load_error") : errorMessage,
     };
 
-    const layoutType = question.layout;
-    const isRadioList = layoutType === "RadioList";
+    const control = question.control;
+    const isRadioList = control === "RadioList";
 
     const choiceLabel = (choice: Choice) => l(choice.text)?.trim() || choice.name;
 
@@ -129,7 +129,7 @@ export const ReferenceControl = ({
         );
     }
 
-    if (question.isArray && layoutType !== "ComboBox") {
+    if (question.isArray && control !== "ComboBox") {
         const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
         return (
             <Select

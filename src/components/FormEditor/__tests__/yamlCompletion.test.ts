@@ -39,9 +39,7 @@ const root: JsonSchema = {
             properties: {
                 name: {type: "string"},
                 type: {enum: ["String"]},
-                multiline: {type: "boolean"},
-                allowAttachments: {type: "boolean"},
-                variant: {enum: ["Email", "Phone"]},
+                control: {enum: ["TextArea", "Email", "Phone"]},
             },
         },
         Choice: {
@@ -49,7 +47,7 @@ const root: JsonSchema = {
                 name: {type: "string"},
                 type: {not: {enum: primitiveTypes}},
                 values: {type: "array"},
-                layout: {enum: ["Dropdown", "RadioList", "Rubric", "ComboBox"]},
+                control: {enum: ["Dropdown", "RadioList", "Rubric", "ComboBox"]},
                 calculation: {type: "object"},
             },
         },
@@ -101,17 +99,18 @@ describe("typed property schema completion", () => {
 
     it("offers flattened text settings and their values only on text properties", async () => {
         const options = await suggestions("name: Notes\ntype: String\n|");
-        expect(options).toEqual(["name", "type", "multiline", "allowAttachments", "variant"]);
+        expect(options).toEqual(["name", "type", "control"]);
         expect(options).not.toContain("layout");
-        expect(await suggestions("name: Due\ntype: Date\n|")).not.toContain("multiline");
-        expect(await suggestions("name: Notes\ntype: String\nvariant: |")).toEqual([
+        expect(await suggestions("name: Due\ntype: Date\n|")).not.toContain("control");
+        expect(await suggestions("name: Notes\ntype: String\ncontrol: |")).toEqual([
+            "TextArea",
             "Email",
             "Phone",
         ]);
     });
 
     it("completes scalar choice layouts", async () => {
-        expect(await suggestions("name: Grade\ntype: Grade\nlayout: |")).toEqual([
+        expect(await suggestions("name: Grade\ntype: Grade\ncontrol: |")).toEqual([
             "Dropdown",
             "RadioList",
             "Rubric",
@@ -126,7 +125,7 @@ describe("typed property schema completion", () => {
         expect(options).not.toContain("allowedTypes");
     });
 
-    it("keeps every type suggestion when many variants share common fields", async () => {
+    it("keeps every type suggestion when many controls share common fields", async () => {
         const names = [
             "String",
             "Date",

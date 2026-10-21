@@ -10,9 +10,7 @@ const propertySchema = {
             properties: {
                 ...common,
                 type: {enum: ["String", "String!"]},
-                multiline: {},
-                allowAttachments: {},
-                variant: {},
+                control: {},
             },
         },
         {properties: {...common, type: {enum: ["Date", "Date!"]}}},
@@ -37,7 +35,7 @@ const propertySchema = {
                 ...common,
                 type: {not: {enum: ["String", "Date", "Int", "User", "[User]"]}},
                 values: {},
-                layout: {},
+                control: {},
                 calculation: {},
                 rubric: {},
             },
@@ -92,30 +90,31 @@ describe("question type switching", () => {
         });
     });
 
-    it("clears a text variant when changing email to ordinary text", async () => {
-        expect(await switchKind({type: "String", variant: "Email"}, "TextField")).toEqual({
+    it("clears a text control when changing email to ordinary text", async () => {
+        expect(await switchKind({type: "String", control: "Email"}, "TextField")).toEqual({
             name: "Value",
             type: "String",
         });
     });
 
-    it("sets the requested text variant without keeping multiline settings", async () => {
-        expect(
-            await switchKind({type: "String", multiline: true, allowAttachments: true}, "Phone"),
-        ).toEqual({
+    it("sets the requested text control when changing a text area to phone", async () => {
+        expect(await switchKind({type: "String", control: "TextArea"}, "Phone")).toEqual({
             name: "Value",
             type: "String",
-            variant: "Phone",
+            control: "Phone",
+        });
+    });
+
+    it("creates a text area control", async () => {
+        expect(await switchKind({type: "String", control: "Email"}, "TextArea")).toEqual({
+            name: "Value",
+            type: "String",
+            control: "TextArea",
         });
     });
 
     it("removes flattened text settings when changing text to a date", async () => {
-        expect(
-            await switchKind(
-                {type: "String", multiline: true, allowAttachments: true, variant: "Email"},
-                "Date",
-            ),
-        ).toEqual({
+        expect(await switchKind({type: "String", control: "Email"}, "Date")).toEqual({
             name: "Value",
             type: "Date",
         });
@@ -149,7 +148,7 @@ describe("question type switching", () => {
                     type: "Value",
                     values: [{name: "Pass"}],
                     rubric: [{name: "Grade", grades: ["Pass"]}],
-                    layout: "Rubric",
+                    control: "Rubric",
                     calculation: {weight: 2},
                 },
                 "Number",
@@ -185,7 +184,7 @@ describe("question type switching", () => {
                     type: "Context",
                     inheritedRoles: ["Coordinator"],
                     filter: "Active",
-                    layout: "RadioList",
+                    control: "RadioList",
                 },
                 "TextField",
             ),

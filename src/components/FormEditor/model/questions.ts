@@ -230,7 +230,7 @@ export function readQuestions(
 
             const raw = (found.node.toJSON() ?? {}) as Record<string, unknown> & {
                 type?: string;
-                variant?: unknown;
+                control?: unknown;
                 values?: unknown;
                 text?: unknown;
                 description?: unknown;
@@ -307,9 +307,7 @@ export type QuestionPatch = {
     isArray?: boolean;
     allowedTypes?: string;
     maximumSize?: string;
-    layoutType?: string;
-    /** Long text and short text are one kind, told apart by multiline. */
-    isMultiline?: boolean;
+    control?: string | null;
     /** Whole numbers and decimals are one kind, told apart by Int against Double. */
     isDecimal?: boolean;
     allowsExternalUsers?: boolean;
@@ -372,10 +370,7 @@ export async function changeQuestionKind(
     const {isRequired} = parseTypeString(String(found.node.get("type") ?? ""));
     const next = newPropertyValue(kind, name, EMPTY_TEXT) as {
         type: string;
-        layout?: unknown;
-        multiline?: unknown;
-        allowAttachments?: unknown;
-        variant?: unknown;
+        control?: unknown;
         values?: unknown;
     };
     const {underlying, isArray} = parseTypeString(next.type);
@@ -391,7 +386,7 @@ export async function changeQuestionKind(
             found.node.delete(key.value);
         }
     }
-    for (const key of ["layout", "multiline", "allowAttachments", "variant", "values"] as const) {
+    for (const key of ["control", "values"] as const) {
         if (next[key] === undefined) {
             found.node.delete(key);
         } else if (key === "values" && found.node.has("values")) {
@@ -732,13 +727,9 @@ export function updateQuestion(
         else found.node.delete("maximumSize");
         touched.add(found.path);
     }
-    if (patch.layoutType !== undefined) {
-        found.node.set("layout", patch.layoutType);
-        touched.add(found.path);
-    }
-    if (patch.isMultiline !== undefined) {
-        if (patch.isMultiline) found.node.set("multiline", true);
-        else found.node.delete("multiline");
+    if (patch.control !== undefined) {
+        if (patch.control === null) found.node.delete("control");
+        else found.node.set("control", patch.control);
         touched.add(found.path);
     }
     if (patch.isDecimal !== undefined) {

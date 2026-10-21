@@ -374,8 +374,7 @@ export const formSubmitted = {
                                         en: "Subject",
                                         nl: "Onderwerp",
                                     },
-                                    allowAttachments: false,
-                                    multiline: true,
+                                    control: "TextArea",
                                 } satisfies Question,
                             },
                             {

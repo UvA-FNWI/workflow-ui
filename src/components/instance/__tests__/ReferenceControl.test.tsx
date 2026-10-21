@@ -29,7 +29,7 @@ function referenceQuestion(isArray: boolean): ReferenceQuestion {
         isRequired: false,
         isArray,
         hideInResults: false,
-        layout: "RadioList",
+        control: "RadioList",
         workflowDefinition: "Department",
     };
 }
@@ -84,7 +84,7 @@ describe("ReferenceControl RadioList", () => {
 it("renders an array ComboBox with removable references", () => {
     const onChange = vi.fn();
     renderControl({
-        question: {...referenceQuestion(true), layout: "ComboBox"},
+        question: {...referenceQuestion(true), control: "ComboBox"},
         choices: [department],
         value: [department.name],
         onChange,

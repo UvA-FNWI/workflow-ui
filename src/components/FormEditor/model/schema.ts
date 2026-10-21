@@ -119,7 +119,7 @@ export function flatten(
             continue;
         }
         for (const [key, value] of Object.entries(resolved.properties ?? {})) {
-            // Branches can define the same key differently: layout is one enum for a choice and
+            // Branches can define the same key differently: control is one enum for a choice and
             // another for a table. Keep both as a union so completion offers every legal value.
             const existing = merged.properties![key];
             merged.properties![key] = existing

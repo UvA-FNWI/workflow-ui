@@ -76,10 +76,10 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
             return {
                 ...common,
                 type,
-                multiline: raw.multiline === true,
-                allowAttachments: raw.allowAttachments === true,
-                variant:
-                    raw.variant === "Email" || raw.variant === "Phone" ? raw.variant : undefined,
+                control:
+                    raw.control === "TextArea" || raw.control === "Email" || raw.control === "Phone"
+                        ? raw.control
+                        : undefined,
                 maxLength: typeof raw.maxLength === "number" ? raw.maxLength : undefined,
                 minLength: typeof raw.minLength === "number" ? raw.minLength : undefined,
             };
@@ -93,9 +93,9 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
                 rubric: Array.isArray(raw.rubric)
                     ? (raw.rubric as ChoiceQuestion["rubric"])
                     : undefined,
-                layout:
-                    typeof raw.layout === "string"
-                        ? (raw.layout as ChoiceQuestion["layout"])
+                control:
+                    typeof raw.control === "string"
+                        ? (raw.control as ChoiceQuestion["control"])
                         : undefined,
                 sorting: asObject(raw.sorting) as ChoiceQuestion["sorting"],
             };

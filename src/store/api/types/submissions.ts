@@ -90,9 +90,7 @@ export type WeightedQuestionBase = QuestionBase & {
 
 export type StringQuestion = QuestionBase & {
     type: "String";
-    multiline?: boolean;
-    allowAttachments?: boolean;
-    variant?: StringVariant | null;
+    control?: StringControl | null;
     maxLength?: number | null;
     minLength?: number | null;
 };
@@ -136,7 +134,7 @@ export type UserQuestion = QuestionBase & {
 export type ChoiceQuestion = WeightedQuestionBase & {
     type: "Choice";
     choices: Choice[];
-    layout?: ChoiceLayoutType | null;
+    control?: ChoiceControl | null;
     rubric?: RubricEntry[] | null;
     sorting?: Sorting | null;
 };
@@ -144,13 +142,13 @@ export type ChoiceQuestion = WeightedQuestionBase & {
 export type ReferenceQuestion = QuestionBase & {
     type: "Reference";
     workflowDefinition?: string | null;
-    layout?: ChoiceLayoutType | null;
+    control?: ChoiceControl | null;
 };
 
 export type ObjectQuestion = QuestionBase & {
     type: "Object";
     workflowDefinition?: string | null;
-    layout?: TableLayout | null;
+    control?: ObjectControl | null;
     subProperties?: Question[] | null;
 };
 
@@ -204,8 +202,8 @@ export type RubricEntry = {
     grades: RubricGrade[];
 };
 
-export type StringVariant = "Email" | "Phone";
-export type TableLayout = "InlineEditing" | "Modal";
+export type StringControl = "TextArea" | "Email" | "Phone";
+export type ObjectControl = "InlineEditing" | "Modal";
 
 export type Choice = {
     name: string;
@@ -239,5 +237,5 @@ export type DataType =
     | "Int"
     | "Check"
     | "Object";
-export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric" | "ComboBox";
+export type ChoiceControl = "Dropdown" | "RadioList" | "Rubric" | "ComboBox";
 export type FormLayout = "Normal" | "Compact" | "Modal";

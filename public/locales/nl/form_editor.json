@@ -41,6 +41,7 @@
     "Person": "Persoon",
     "Phone": "Telefoonnummer",
     "SingleChoice": "1 keuze",
+    "TextArea": "Tekstvak",
     "TextField": "Tekstveld",
     "YesNo": "Ja / nee"
   },
