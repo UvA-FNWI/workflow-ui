@@ -26,7 +26,7 @@ type Props = {
 
 const CHOICE_KINDS: QuestionKind[] = ["SingleChoice", "MultipleChoice"];
 const PERSON_KINDS: QuestionKind[] = ["Person", "People"];
-const CHOICE_LAYOUTS = ["RadioList", "Dropdown"] as const;
+const CHOICE_CONTROLS = ["RadioList", "Dropdown"] as const;
 
 export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Props) {
     const {t} = useTranslate("form_editor");
@@ -170,17 +170,17 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
 
             {question.kind === "SingleChoice" && (
                 <RadioGroup
-                    label={t("choice_layout")}
-                    description={t("choice_layout_hint")}
+                    label={t("choice_control")}
+                    description={t("choice_control_hint")}
                     isDisabled={isDisabled}
                     value={question.raw.control === "Dropdown" ? "Dropdown" : "RadioList"}
                     onChange={(next) =>
                         apply(() => updateQuestion(docs, formPath, question.name, {control: next}))
                     }
                 >
-                    {CHOICE_LAYOUTS.map((type) => (
+                    {CHOICE_CONTROLS.map((type) => (
                         <Radio key={type} value={type}>
-                            {t(`layout.${type}`)}
+                            {t(`control.${type}`)}
                         </Radio>
                     ))}
                 </RadioGroup>

@@ -69,7 +69,7 @@ describe("QuestionConfig", () => {
         expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("layout");
     });
 
-    it("writes a scalar choice layout", () => {
+    it("writes a scalar choice control", () => {
         const path = "Definitions/Thesis/Entity.yaml";
         const docs = new Map([
             [
@@ -96,7 +96,7 @@ describe("QuestionConfig", () => {
         fireEvent.blur(input);
     });
 
-    it("offers the layout advice only for a single choice question", () => {
+    it("offers the control advice only for a single choice question", () => {
         const question = renderConfig(`properties:
   - name: Question
     type: Question
@@ -108,8 +108,8 @@ describe("QuestionConfig", () => {
 `);
 
         expect(question.kind).toBe("SingleChoice");
-        expect(screen.getByText("choice_layout_hint")).toBeInTheDocument();
-        expect(screen.getByRole("radio", {name: "layout.RadioList"})).toBeChecked();
+        expect(screen.getByText("choice_control_hint")).toBeInTheDocument();
+        expect(screen.getByRole("radio", {name: "control.RadioList"})).toBeChecked();
     });
 
     it("leaves the type out of the body, since the pill in the header owns it", () => {
@@ -119,7 +119,7 @@ describe("QuestionConfig", () => {
     text: {nl: Vraag, en: Question}
 `);
 
-        expect(screen.queryByText("choice_layout_hint")).not.toBeInTheDocument();
+        expect(screen.queryByText("choice_control_hint")).not.toBeInTheDocument();
         expect(screen.queryByLabelText("type")).not.toBeInTheDocument();
         expect(screen.getByText("more_options")).toBeInTheDocument();
     });

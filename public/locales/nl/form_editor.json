@@ -10,10 +10,14 @@
   "card_title": "Formulier bewerken",
   "change_type": "Type wijzigen (nu: {{type}})",
   "changed_files": "Gewijzigde bestanden",
-  "choice_layout": "Toon als",
-  "choice_layout_hint": "Wij adviseren om bij meer dan 5 opties een dropdown te gebruiken. Zo blijft de pagina overzichtelijk.",
+  "choice_control": "Toon als",
+  "choice_control_hint": "Wij adviseren om bij meer dan 5 opties een dropdown te gebruiken. Zo blijft de pagina overzichtelijk.",
   "choice_text": "Keuzetekst",
   "choices": "Keuzes",
+  "control": {
+    "Dropdown": "Dropdown",
+    "RadioList": "Radioknoppen"
+  },
   "decimal": "Decimaal getal",
   "delete_everywhere_one": "Vraag verwijderen (op 1 pagina gebruikt)",
   "delete_everywhere_other": "Vraag verwijderen (op {{count}} pagina's gebruikt)",
@@ -48,10 +52,6 @@
   "language": {
     "en": "Engels",
     "nl": "Nederlands"
-  },
-  "layout": {
-    "Dropdown": "Dropdown",
-    "RadioList": "Radioknoppen"
   },
   "load_failed": "De workflowconfiguratie kon niet worden geladen.",
   "long_text": "Lange tekst",
