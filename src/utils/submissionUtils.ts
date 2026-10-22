@@ -1,5 +1,15 @@
 import type {LocalString} from "~/hooks/useTranslate.ts";
-import type {Answer, Page, Question, Submission} from "~/store/api/types/submissions.ts";
+import type {
+    Answer,
+    Page,
+    Question,
+    Submission,
+    WeightedQuestion,
+} from "~/store/api/types/submissions.ts";
+
+export function isWeightedQuestion(question: Question): question is WeightedQuestion {
+    return "weight" in question;
+}
 
 export type QuestionAnswerPair = {
     question: Question;
@@ -20,7 +30,7 @@ export function getVisibleQuestionAnswerPairs(
         .map((question) => ({
             question,
             answer: answers.find((a) => a.questionName === question.name) ?? null,
-            percentage: question.percentage,
+            percentage: isWeightedQuestion(question) ? question.percentage : null,
             submission,
             columnTitle,
         }))
@@ -35,7 +45,11 @@ export function isPageComplete(
     return page.elements
         .filter((element) => element.kind === "Question")
         .map((element) => element.question!)
-        .filter((q) => q.isRequired && (!weightedOnly || (q.weight && q.weight > 0)))
+        .filter(
+            (q) =>
+                q.isRequired &&
+                (!weightedOnly || (isWeightedQuestion(q) && q.weight != null && q.weight > 0)),
+        )
         .every((question) => {
             const answer = submission.answers.find((a) => a.questionName === question.name);
 

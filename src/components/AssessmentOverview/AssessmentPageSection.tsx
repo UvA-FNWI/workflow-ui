@@ -4,7 +4,7 @@ import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/Asse
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
 import type {Page, StepResultsType, Submission} from "~/store/api/types/submissions.ts";
-import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
+import {getVisibleQuestionAnswerPairs, isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 export type AssessmentPageSectionProps = {
     page: Page;
@@ -31,6 +31,7 @@ export const AssessmentPageSection = ({
     const questions = page.elements
         .filter((element) => element.kind === "Question")
         .map((element) => element.question!);
+    const weightedQuestions = questions.filter(isWeightedQuestion);
 
     const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
         getVisibleQuestionAnswerPairs(
@@ -57,8 +58,8 @@ export const AssessmentPageSection = ({
                         fontType="heading"
                     >
                         {l(page.title)}
-                        {questions.some((question) => question.percentage != null) &&
-                            ` (${questions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toLocaleString(i18n.language)}%)`}
+                        {weightedQuestions.some((question) => question.percentage != null) &&
+                            ` (${weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toLocaleString(i18n.language)}%)`}
                     </Heading>
                     {onEditPage && resultsType === "Normal" && page.isInCurrentForm && (
                         <Button

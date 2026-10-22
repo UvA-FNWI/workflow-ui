@@ -10,6 +10,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Answer, PageElement as PageElementType} from "~/store/api/types/submissions";
+import {isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageElementProps = {
     instanceId: string;
@@ -89,7 +90,8 @@ export const PageElement = ({
                                         {question.type !== "Check" && (
                                             <InputLabel key={question.name}>
                                                 {l(question.text)}
-                                                {question.percentage != null &&
+                                                {isWeightedQuestion(question) &&
+                                                    question.percentage != null &&
                                                     showPercentages &&
                                                     ` (${question.percentage.toLocaleString(i18n.language)}%)`}
                                             </InputLabel>

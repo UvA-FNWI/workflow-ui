@@ -52,7 +52,12 @@ export const AnswerCell = ({
     if (!pair) return <Text>-</Text>;
 
     const {answer} = pair;
-    const choices = pair.question.type === "Reference" ? referenceChoices : pair.question.choices;
+    const choices =
+        pair.question.type === "Reference"
+            ? referenceChoices
+            : pair.question.type === "Choice"
+              ? pair.question.choices
+              : undefined;
     const formattedValue =
         answer != null
             ? formatAnswer(answer.value, pair.question.type, i18n.language, choices)
