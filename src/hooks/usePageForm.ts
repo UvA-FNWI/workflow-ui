@@ -4,49 +4,52 @@ import {useForm} from "react-hook-form";
 
 import {isEqual} from "lodash-es";
 
-import type {Answer, Page} from "~/store/api/types/submissions";
-
-type UsePageFormOptions = {
-    answers: Answer[];
-    page: Page;
-};
+import type {Answer} from "~/store/api/types/submissions";
 
 // Sync server answers into the page form while preserving pending local edits.
-export const usePageForm = ({answers, page}: UsePageFormOptions) => {
-    const defaultValues = Object.fromEntries(
-        answers
-            .filter((answer) => answer.isVisible)
-            .map((answer) => [answer.questionName, answer.value]),
+export const usePageForm = (answers: Answer[]) => {
+    const form = useForm({
+        defaultValues: Object.fromEntries(
+            answers
+                .filter((answer) => answer.isVisible)
+                .map((answer) => [answer.questionName, answer.value]),
+        ),
+    });
+    const editedFields = useRef(new Set<string>());
+    const {subscribe} = form;
+
+    // Track user edits, including backspacing to a previously saved value.
+    // Programmatic updates (such as file uploads) do not mark fields as edited.
+    useEffect(
+        () =>
+            subscribe({
+                formState: {values: true},
+                callback: ({name, type}) => {
+                    if (name && type === "change") {
+                        editedFields.current.add(name);
+                    }
+                },
+            }),
+        [subscribe],
     );
-    const form = useForm({defaultValues});
-    // Compare local values with the last server snapshot to detect unsaved edits.
-    const previousAnswers = useRef(answers);
 
+    // Apply server answers without overwriting edits that are still awaiting a save response.
     useEffect(() => {
-        for (const answer of answers) {
-            if (!answer.isVisible) continue;
+        for (const {questionName, value, isVisible} of answers) {
+            const localValue = form.getValues(questionName);
+            // The date picker returns a Date; the server returns an ISO date string.
+            const serverValue =
+                localValue instanceof Date && typeof value === "string" ? new Date(value) : value;
+            const matchesServer = isEqual(localValue, serverValue);
 
-            const localValue = form.getValues(answer.questionName);
-            if (isEqual(localValue, answer.value)) continue;
-
-            const previousAnswer = previousAnswers.current.find(
-                (previous) => previous.questionName === answer.questionName,
-            );
-            const isNewlyVisible = !previousAnswer?.isVisible;
-            const hasLocalEdit = !isEqual(localValue, previousAnswer?.value);
-            const isFileQuestion = page.elements.some(
-                ({question}) => question?.name === answer.questionName && question.type === "File",
-            );
-
-            // Restore newly visible fields and completed file uploads. For other fields,
-            // preserve local edits that may be newer than the save response or awaiting debounce.
-            if (isFileQuestion || isNewlyVisible || !hasLocalEdit) {
-                form.setValue(answer.questionName, answer.value);
+            if (!isVisible || matchesServer) {
+                // Matching answers acknowledge edits; hidden fields sync when shown again.
+                editedFields.current.delete(questionName);
+            } else if (!editedFields.current.has(questionName)) {
+                form.setValue(questionName, value);
             }
         }
-        // Once the server acknowledges an edit, later server changes can sync again.
-        previousAnswers.current = answers;
-    }, [answers, form, page]);
+    }, [answers, form]);
 
     return form;
 };
