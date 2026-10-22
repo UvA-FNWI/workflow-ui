@@ -151,6 +151,7 @@ export const AssessmentQuestionAnswerList = ({
                                                             const pair = submission.find(
                                                                 (s) => s.question.name === lq.name,
                                                             );
+                                                            if (!pair?.answer) return null;
                                                             return (
                                                                 <AnswerCell
                                                                     key={submissionIndex}

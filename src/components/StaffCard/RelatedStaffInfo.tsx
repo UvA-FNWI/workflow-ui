@@ -27,8 +27,7 @@ export function RelatedStaffInfo({
     onAddUser,
 }: RelatedStaffInfoProps) {
     const {t, l} = useTranslate("workflow");
-    const {role, users, title, allowsExternalUsers, allowsAssignment, allowsMultipleUsers} =
-        relatedUserRoles;
+    const {role, users, title, allowsExternalUsers, allowsMultipleUsers} = relatedUserRoles;
     const [editingUser, setEditingUser] = useState<UserSearchResult | null>(null);
     const [removingUser, setRemovingUser] = useState<UserSearchResult | null>(null);
     const [updateUserEmail, {isLoading: isUpdatingEmail}] = useUpdateUserEmailMutation();
@@ -64,7 +63,7 @@ export function RelatedStaffInfo({
         setRemovingUser(null);
     };
 
-    if (canEdit && users.length === 0 && allowsAssignment) {
+    if (canEdit && users.length === 0) {
         return (
             <div className="flex min-w-0 flex-col items-start gap-2 pb-8">
                 <Text fontWeight="semibold">{l(title)}</Text>

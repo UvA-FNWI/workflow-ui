@@ -72,6 +72,12 @@ export const PageElement = ({
             )
                 return null;
             const question = element.question;
+            const isCompactDropdown =
+                showCompact &&
+                question.type === "Choice" &&
+                question.layout != null &&
+                "type" in question.layout &&
+                question.layout.type === "Dropdown";
             const errorMessage = answer?.validationError && l(answer.validationError);
             return (
                 <Controller
@@ -83,9 +89,10 @@ export const PageElement = ({
                             <div
                                 className={cn(
                                     showCompact && "flex flex-row items-start justify-between",
+                                    isCompactDropdown && "flex-col gap-2 sm:flex-row sm:gap-4",
                                 )}
                             >
-                                <div>
+                                <div className={isCompactDropdown ? "min-w-0" : undefined}>
                                     <div className="flex justify-between">
                                         {question.type !== "Check" && (
                                             <InputLabel key={question.name}>
@@ -110,7 +117,12 @@ export const PageElement = ({
                                         </div>
                                     )}
                                 </div>
-                                <div className={showCompact ? "w-24 shrink-0" : "w-full"}>
+                                <div
+                                    className={cn(
+                                        showCompact ? "w-24 shrink-0" : "w-full",
+                                        isCompactDropdown && "w-full max-w-full sm:w-40 lg:w-48",
+                                    )}
+                                >
                                     <InputControl
                                         instanceId={instanceId}
                                         submissionId={submissionId}
