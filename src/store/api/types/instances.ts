@@ -95,7 +95,8 @@ export type WorkflowStep = {
     dateCompleted: string | null;
     deadline: StepDeadline | null;
     children: WorkflowStep[] | null;
-    versions: WorkflowStepVersion[] | null;
+    versions: {current: WorkflowStepVersion | null; history: WorkflowStepVersion[]} | null;
+    submissions: Submission[];
     headerStatus: StepHeaderStatus | null;
     resultsType: StepResultsType;
     expectsSubmission: boolean;
@@ -107,8 +108,7 @@ export type WorkflowStep = {
 
 export type WorkflowStepVersion = {
     versionNumber: number;
-    eventIds: string[];
-    submittedAt: string;
+    completionTimestamp: string | null;
     submissions: Submission[];
 };
 

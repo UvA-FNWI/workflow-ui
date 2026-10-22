@@ -18,6 +18,7 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     deadline: null,
     children: null,
     versions: null,
+    submissions: [],
     headerStatus: null,
     hierarchyMode: "Parallel",
     childrenLayout: "Combined",
@@ -68,55 +69,60 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
 describe("hasVersionHistory", () => {
     it("returns true for one completed version with submissions", () => {
         const step = makeStep({
-            versions: [
-                {
-                    versionNumber: 1,
-                    eventIds: ["Proposal", "ProposalRevise"],
-                    submittedAt: "2026-01-01T00:00:00Z",
-                    submissions: [
-                        makeSubmission({id: "proposal"}),
-                        makeSubmission({id: "proposal-revise"}),
-                    ],
-                },
-            ],
+            versions: {
+                current: null,
+                history: [
+                    {
+                        versionNumber: 1,
+                        completionTimestamp: "2026-01-01T00:00:00Z",
+                        submissions: [
+                            makeSubmission({id: "proposal"}),
+                            makeSubmission({id: "proposal-revise"}),
+                        ],
+                    },
+                ],
+            },
         });
 
         expect(hasVersionHistory(step)).toBe(true);
     });
 
-    it("returns false when versions contain no visible submissions", () => {
+    it("keeps history when permissions hide all submissions", () => {
         const step = makeStep({
-            versions: [
-                {
-                    versionNumber: 1,
-                    eventIds: ["Proposal"],
-                    submittedAt: "2026-01-01T00:00:00Z",
-                    submissions: [],
-                },
-            ],
+            versions: {
+                current: null,
+                history: [
+                    {
+                        versionNumber: 1,
+                        completionTimestamp: "2026-01-01T00:00:00Z",
+                        submissions: [],
+                    },
+                ],
+            },
         });
 
-        expect(hasVersionHistory(step)).toBe(false);
+        expect(hasVersionHistory(step)).toBe(true);
     });
 });
 
 describe("resolveContentState", () => {
     it("returns 'empty' when multiple versions exist but no direct submissions", () => {
         const step = makeStep({
-            versions: [
-                {
-                    versionNumber: 1,
-                    eventIds: [],
-                    submittedAt: "2026-01-01",
-                    submissions: [makeSubmission()],
-                },
-                {
-                    versionNumber: 2,
-                    eventIds: [],
-                    submittedAt: "2026-01-02",
-                    submissions: [makeSubmission({id: "sub-2"})],
-                },
-            ],
+            versions: {
+                current: null,
+                history: [
+                    {
+                        versionNumber: 1,
+                        completionTimestamp: "2026-01-01",
+                        submissions: [makeSubmission()],
+                    },
+                    {
+                        versionNumber: 2,
+                        completionTimestamp: "2026-01-02",
+                        submissions: [makeSubmission({id: "sub-2"})],
+                    },
+                ],
+            },
         });
         const result = resolveContentState(step, []);
         // Version history is rendered separately, content falls through to empty

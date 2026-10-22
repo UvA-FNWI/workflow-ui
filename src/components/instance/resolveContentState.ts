@@ -25,24 +25,14 @@ export const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
     ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
 ];
 
-/** Indicates whether the step has any historical submissions to render as version cards. */
+/** Empty and permission-filtered attempts still have a place in history. */
 export function hasVersionHistory(step: WorkflowStep): boolean {
-    return step.versions?.some((version) => version.submissions.length > 0) ?? false;
-}
-
-export function getCurrentVersionNumber(step: WorkflowStep): number | undefined {
-    const versionsWithSubmissions = step.versions?.filter(
-        (version) => version.submissions.length > 0,
-    );
-
-    if (!versionsWithSubmissions?.length) return undefined;
-
-    return Math.max(...versionsWithSubmissions.map((version) => version.versionNumber)) + 1;
+    return (step.versions?.history.length ?? 0) > 0;
 }
 
 export function getPreviousFormVersion(step: WorkflowStep, form?: string): number | undefined {
     return getStepHierarchy(step)
-        .flatMap((candidate) => candidate.versions ?? [])
+        .flatMap((candidate) => candidate.versions?.history ?? [])
         .find((version) => version.submissions.some((submission) => submission.id === form))
         ?.versionNumber;
 }

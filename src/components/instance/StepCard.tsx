@@ -47,14 +47,17 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
 
     // Child rows own their content; combined cards include the whole hierarchy.
     const fullHierarchy = getStepHierarchy(step);
-    const contentStep = showChildRows ? getParentContent(step) : step;
+    const contentStep = step;
     const contentSteps = showChildRows ? [contentStep] : fullHierarchy;
     const allStepIds = new Set(fullHierarchy.map((candidate) => candidate.id));
     const contentStepIds = showChildRows ? new Set([step.id]) : allStepIds;
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => contentStepIds.has(actionStepId)),
     );
-    const submissions = instance.submissions.filter((s) => contentStepIds.has(s.form.step ?? ""));
+    const assignedSubmissions = step.versions?.current?.submissions ?? step.submissions;
+    const submissions = showChildRows
+        ? assignedSubmissions.filter((s) => s.form.step === step.id)
+        : assignedSubmissions;
 
     const deadlineMessages = contentSteps.filter(
         (candidate) =>
@@ -97,6 +100,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
     const hasStepContent =
         actions.length > 0 ||
         submissions.length > 0 ||
+        contentStep.versions?.current != null ||
         hasVersionHistory(contentStep) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
@@ -151,6 +155,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                     {hasStepContent && (!nested || isExpanded) && (
                         <StepCardBody
                             step={contentStep}
+                            showChildHistory={!showChildRows}
                             instance={instance}
                             actions={actions}
                             submissions={submissions}
@@ -191,21 +196,6 @@ function useStepActions(actions: Action[], submissions: Submission[]) {
     // A refresh can revoke an action while its form or modal is still open.
     const activeAction = actions.find((action) => action.id === selectedAction?.id) ?? null;
     return {activeAction, resolvedAction: activeAction ?? autoOpenAction, setActiveAction};
-}
-
-function getParentContent(step: WorkflowStep): WorkflowStep {
-    return {
-        ...step,
-        versions:
-            step.versions
-                ?.map((version) => ({
-                    ...version,
-                    submissions: version.submissions.filter(
-                        (submission) => submission.form.step === step.id,
-                    ),
-                }))
-                .filter((version) => version.submissions.length > 0) ?? null,
-    };
 }
 
 function latestDate(dates: (string | null | undefined)[]): string | null {
@@ -298,9 +288,9 @@ function getHeaderDate(
     const submissionDates = nested
         ? [
               ...submissions.map((submission) => submission.dateSubmitted),
-              ...(step.versions
-                  ?.filter((version) => version.submissions.length > 0)
-                  .map((version) => version.submittedAt) ?? []),
+              ...(step.versions?.history
+                  .filter((version) => version.submissions.length > 0)
+                  .map((version) => version.completionTimestamp) ?? []),
           ]
         : [step.dateCompleted, ...(step.children?.map((child) => child.dateCompleted) ?? [])];
     const submittedDate = latestDate(submissionDates);
