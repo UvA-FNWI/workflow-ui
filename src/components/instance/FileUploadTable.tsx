@@ -4,12 +4,12 @@ import {Button, FileUpload, Icon, Link, Text, useToast} from "@uva-fnwi/datanose
 
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {Answer, Question} from "~/store/api/types/submissions";
+import type {Answer, FileQuestion} from "~/store/api/types/submissions";
 import {downloadFile} from "~/utils/fileDownload";
 import {formatAllowedFileSize, formatAllowedFileTypes, toFileInputAccept} from "~/utils/fileTypes";
 
 interface FileUploadTableProps {
-    questions: Question[];
+    questions: FileQuestion[];
     values: Record<string, File | null>;
     answers?: Answer[];
     /**
@@ -39,19 +39,19 @@ export const FileUploadTable = ({
     const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
 
     const handleMultipleFiles = async (
-        question: Question,
+        question: FileQuestion,
         files: FileList,
         currentSize: number,
     ) => {
         const selected = Array.from(files);
         if (
             currentSize + selected.reduce((sum, file) => sum + file.size, 0) >
-            question.allowedFileSize!
+            question.allowedFileSize
         ) {
             setUploadErrors((prev) => ({
                 ...prev,
                 [question.name]: t("file_upload.error_max_file_size", {
-                    size: formatAllowedFileSize(question.allowedFileSize!),
+                    size: formatAllowedFileSize(question.allowedFileSize),
                 }),
             }));
             return;
@@ -141,12 +141,10 @@ export const FileUploadTable = ({
                             ? selectedFile?.name || (!isLoading ? storedFiles[0]?.name : undefined)
                             : undefined;
                         const allowedFileTypesText = formatAllowedFileTypes(
-                            question.allowedFileTypes!,
+                            question.allowedFileTypes,
                             i18n.language,
                         );
-                        const allowedFileSizeText = formatAllowedFileSize(
-                            question.allowedFileSize!,
-                        );
+                        const allowedFileSizeText = formatAllowedFileSize(question.allowedFileSize);
 
                         const statusIndicatorClass = hasValidFile
                             ? "bg-green-600"
@@ -262,7 +260,7 @@ export const FileUploadTable = ({
                                                     className="sr-only"
                                                     aria-label={`${l(question.text)}: ${t("file_upload.select_files")}`}
                                                     accept={toFileInputAccept(
-                                                        question.allowedFileTypes!,
+                                                        question.allowedFileTypes,
                                                     ).join(",")}
                                                     disabled={isLoading}
                                                     onChange={(event) => {
@@ -307,7 +305,7 @@ export const FileUploadTable = ({
                                                 }}
                                                 hasError={hasError}
                                                 accept={toFileInputAccept(
-                                                    question.allowedFileTypes!,
+                                                    question.allowedFileTypes,
                                                 )}
                                             />
                                         )}

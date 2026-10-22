@@ -5,6 +5,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 
 const KIND_ICONS: Record<QuestionKind, IconType> = {
     TextField: "text-line",
+    TextArea: "text-line",
     Email: "email-line",
     Phone: "phone-line",
     Number: "hashtag-line",
