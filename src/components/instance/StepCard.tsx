@@ -47,17 +47,15 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
 
     // Child rows own their content; combined cards include the whole hierarchy.
     const fullHierarchy = getStepHierarchy(step);
-    const contentStep = step;
-    const contentSteps = showChildRows ? [contentStep] : fullHierarchy;
+    const contentSteps = showChildRows ? [step] : fullHierarchy;
     const allStepIds = new Set(fullHierarchy.map((candidate) => candidate.id));
     const contentStepIds = showChildRows ? new Set([step.id]) : allStepIds;
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => contentStepIds.has(actionStepId)),
     );
-    const assignedSubmissions = step.versions?.current?.submissions ?? step.submissions;
     const submissions = showChildRows
-        ? assignedSubmissions.filter((s) => s.form.step === step.id)
-        : assignedSubmissions;
+        ? step.submissions.filter((s) => s.form.step === step.id)
+        : step.submissions;
 
     const deadlineMessages = contentSteps.filter(
         (candidate) =>
@@ -100,8 +98,8 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
     const hasStepContent =
         actions.length > 0 ||
         submissions.length > 0 ||
-        contentStep.versions?.current != null ||
-        hasVersionHistory(contentStep) ||
+        step.versions?.current != null ||
+        hasVersionHistory(step) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
     const hasBodyContent = deadlineMessages.length > 0 || hasStepContent || childRows.length > 0;
@@ -154,12 +152,12 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                     {/* Closed rows must not mount an automatically opened form. */}
                     {hasStepContent && (!nested || isExpanded) && (
                         <StepCardBody
-                            step={contentStep}
+                            step={step}
                             showChildHistory={!showChildRows}
                             instance={instance}
                             actions={actions}
                             submissions={submissions}
-                            contentState={resolveContentState(contentStep, submissions)}
+                            contentState={resolveContentState(step, submissions)}
                             modalState={resolveModalState(activeAction)}
                             activeAction={activeAction}
                             resolvedAction={resolvedAction}

@@ -50,7 +50,6 @@ export const StepCardBody = ({
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
     const formState = resolveFormState(resolvedAction);
-    const showVersionCards = hasVersionHistory(step);
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
@@ -66,15 +65,13 @@ export const StepCardBody = ({
                     <>
                         {contentState.regular.map((submission) => (
                             <div key={submission.id} className="flex flex-col gap-2">
-                                {contentState.regular.length > 0 && (
-                                    <Heading
-                                        as="h3"
-                                        size="xs"
-                                        className="py-4 pb-1 font-semibold text-red-brand"
-                                    >
-                                        {l(submission.form.title)?.toUpperCase()}
-                                    </Heading>
-                                )}
+                                <Heading
+                                    as="h3"
+                                    size="xs"
+                                    className="py-4 pb-1 font-semibold text-red-brand"
+                                >
+                                    {l(submission.form.title)?.toUpperCase()}
+                                </Heading>
                                 <FormSummary instanceId={instance.id} submission={submission} />
                             </div>
                         ))}
@@ -153,13 +150,11 @@ export const StepCardBody = ({
                 )}
 
                 {/* Version history: always at the bottom */}
-                {showVersionCards && (
-                    <VersionHistory
-                        versions={step.versions?.history ?? []}
-                        instanceId={instance.id}
-                        defaultExpandFirst={submissions.length === 0}
-                    />
-                )}
+                <VersionHistory
+                    versions={step.versions?.history ?? []}
+                    instanceId={instance.id}
+                    defaultExpandFirst={submissions.length === 0}
+                />
                 {showChildHistory &&
                     getStepHierarchy(step)
                         .slice(1)

@@ -57,62 +57,67 @@ it("renders backend current and history numbers even when attempts have no visib
     expect(screen.queryByText("Invalid Date")).not.toBeInTheDocument();
 });
 
-it("renders only the submissions assigned to the current attempt", () => {
-    const assigned = {
-        id: "Assigned",
-        dateSubmitted: "2026-01-01T00:00:00Z",
-        permissions: [],
-        answers: [{id: "a", questionName: "q", value: "answer", isVisible: true, files: []}],
-        form: {
-            name: "Assigned",
-            title: {en: "Assigned form", nl: ""},
-            layout: "Normal",
-            pages: [],
-            step: "Writing",
-        },
-    } as import("~/store/api/types/submissions.ts").Submission;
-    const step: WorkflowStep = {
-        id: "Writing",
-        title: {en: "Writing", nl: ""},
-        icon: null,
-        event: "",
-        dateCompleted: null,
-        deadline: null,
-        children: null,
-        headerStatus: null,
-        resultsType: "Normal",
-        expectsSubmission: false,
-        hasSubmission: true,
-        hierarchyMode: "Sequential",
-        childrenLayout: "Combined",
-        submissions: [assigned],
-        versions: {
-            current: {versionNumber: 2, completionTimestamp: null, submissions: [assigned]},
-            history: [],
-        },
-    };
-    const stale = {
-        ...assigned,
-        id: "Stale",
-        form: {...assigned.form, title: {en: "Stale form", nl: ""}},
-    };
-    const instance = {
-        id: "instance",
-        currentStep: "Writing",
-        steps: [step],
-        actions: [],
-        submissions: [stale],
-        permissions: [],
-    } as unknown as WorkflowInstance;
-    render(
-        <Provider store={store}>
-            <StepCard step={step} instance={instance} />
-        </Provider>,
-    );
-    expect(screen.getByText("ASSIGNED FORM")).toBeVisible();
-    expect(screen.queryByText("STALE FORM")).not.toBeInTheDocument();
-    expect(screen.getByText("Version 2")).toBeVisible();
-});
+it.each([true, false])(
+    "renders step-assigned submissions when attempt history is available: %s",
+    (hasAttempts) => {
+        const assigned = {
+            id: "Assigned",
+            dateSubmitted: "2026-01-01T00:00:00Z",
+            permissions: [],
+            answers: [{id: "a", questionName: "q", value: "answer", isVisible: true, files: []}],
+            form: {
+                name: "Assigned",
+                title: {en: "Assigned form", nl: ""},
+                layout: "Normal",
+                pages: [],
+                step: "Writing",
+            },
+        } as import("~/store/api/types/submissions.ts").Submission;
+        const step: WorkflowStep = {
+            id: "Writing",
+            title: {en: "Writing", nl: ""},
+            icon: null,
+            event: "",
+            dateCompleted: null,
+            deadline: null,
+            children: null,
+            headerStatus: null,
+            resultsType: "Normal",
+            expectsSubmission: false,
+            hasSubmission: true,
+            hierarchyMode: "Sequential",
+            childrenLayout: "Combined",
+            submissions: [assigned],
+            versions: hasAttempts
+                ? {
+                      current: {versionNumber: 2, completionTimestamp: null, submissions: []},
+                      history: [],
+                  }
+                : null,
+        };
+        const stale = {
+            ...assigned,
+            id: "Stale",
+            form: {...assigned.form, title: {en: "Stale form", nl: ""}},
+        };
+        const instance = {
+            id: "instance",
+            currentStep: "Writing",
+            steps: [step],
+            actions: [],
+            submissions: [stale],
+            permissions: [],
+        } as unknown as WorkflowInstance;
+        render(
+            <Provider store={store}>
+                <StepCard step={step} instance={instance} />
+            </Provider>,
+        );
+        expect(screen.getByText("ASSIGNED FORM")).toBeVisible();
+        expect(screen.queryByText("STALE FORM")).not.toBeInTheDocument();
+        if (hasAttempts) expect(screen.getByText("Version 2")).toBeVisible();
+    },
+);
 
 it.each(["Combined", "CollapsibleRows"] as const)(
     "keeps independent child attempts accessible in the %s layout",
