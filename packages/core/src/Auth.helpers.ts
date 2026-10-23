@@ -50,7 +50,6 @@ export const isEmbeddedInCanvas = () => {
     if (!isEmbedded()) return false;
 
     const canvasPatterns = [
-        /^canvas\.uva\.nl$/,
         /^uvadlo-.*\.instructure\.com$/,
         /^uvadlo-.*\.test\.instructure\.com$/,
         /^canvas\.instructure\.com$/,
