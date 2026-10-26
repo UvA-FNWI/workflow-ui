@@ -199,7 +199,6 @@ it.each([false, true])(
                                     text: {en: "Comments", nl: ""},
                                     isRequired: false,
                                     isArray: false,
-                                    weight: null,
                                     percentage: null,
                                     hideInResults: false,
                                     allowsExternalUsers: false,
