@@ -7,8 +7,6 @@ import {
     getStepHierarchy,
     hasVersionHistory,
     resolveContentState,
-    resolveFormState,
-    resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
 import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
 import {UndoControl} from "~/components/instance/UndoControl.tsx";
@@ -34,10 +32,9 @@ type Props = {
     step: WorkflowStep;
     instance: WorkflowInstance;
     nested?: boolean;
-    rootStep?: WorkflowStep;
 };
 
-export const StepCard = ({step, instance, nested = false, rootStep = step}: Props) => {
+export const StepCard = ({step, instance, nested = false}: Props) => {
     const {t, l} = useTranslate("workflow");
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -63,31 +60,14 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
             (candidate.deadline?.type === "Hard" && candidate.deadline.isPassed),
     );
 
-    // Availability includes child actions even when they render in separate rows.
     const isCurrentStep = allStepIds.has(instance.currentStep ?? "");
-    const currentStepIndex = instance.steps.findIndex((s) =>
-        [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
-    );
-    const isAfterCurrentStep = instance.steps.indexOf(rootStep) > currentStepIndex;
-
-    // An unfinished alongside obligation can move the current step backward. Steps that are
-    // already completed or still have available actions must remain usable regardless of order.
-    const hasAvailableAction = instance.actions.some((action) =>
-        action.steps.some((id) => allStepIds.has(id)),
-    );
-    const isUnavailableFutureStep =
-        !step.dateCompleted &&
-        deadlineMessages.length === 0 &&
-        !hasAvailableAction &&
-        !!instance.currentStep &&
-        !isCurrentStep &&
-        isAfterCurrentStep;
-
-    const {activeAction, resolvedAction, setActiveAction} = useStepActions(actions, submissions);
+    const {activeAction, setActiveAction} = useStepActions(actions);
+    const hasInlineForm =
+        activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
 
     const hasVisibleSubmission = submissions.length > 0 || contentSteps.some(hasVersionHistory);
     let emptyStateMessage: string | null = null;
-    if (!resolveFormState(resolvedAction)) {
+    if (!hasInlineForm) {
         if (!hasVisibleSubmission && contentSteps.some((candidate) => candidate.hasSubmission)) {
             emptyStateMessage = t("instance.unauthorized_submission");
         } else if (contentSteps.some((candidate) => candidate.expectsSubmission)) {
@@ -103,7 +83,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
     const hasBodyContent = deadlineMessages.length > 0 || hasStepContent || childRows.length > 0;
-    const isContentless = !isUnavailableFutureStep && !hasBodyContent;
+    const isContentless = step.isAvailable && !hasBodyContent;
     const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
 
     const undoControl = step.undoCandidate && (
@@ -122,7 +102,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
             role="group"
             aria-label={l(step.title)}
             tabIndex={-1}
-            isDisabled={isUnavailableFutureStep || !hasBodyContent}
+            isDisabled={!step.isAvailable || !hasBodyContent}
             shadow={nested ? "none" : undefined}
             border={nested ? "none" : undefined}
             className={cn(
@@ -140,7 +120,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                 deadlinePassed={fullHierarchy.some((candidate) => candidate.deadline?.isPassed)}
                 actions={undoControl}
             />
-            {hasBodyContent && (
+            {hasBodyContent && isExpanded && (
                 <Disclosure.Content padding={nested ? "none" : undefined}>
                     {deadlineMessages.map((candidate) => (
                         <div key={candidate.id} className="pt-4">
@@ -149,8 +129,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                             </MarkdownRenderer>
                         </div>
                     ))}
-                    {/* Closed rows must not mount an automatically opened form. */}
-                    {hasStepContent && (!nested || isExpanded) && (
+                    {hasStepContent && (
                         <StepCardBody
                             step={step}
                             showChildHistory={!showChildRows}
@@ -158,21 +137,13 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                             actions={actions}
                             submissions={submissions}
                             contentState={resolveContentState(step, submissions)}
-                            modalState={resolveModalState(activeAction)}
                             activeAction={activeAction}
-                            resolvedAction={resolvedAction}
                             emptyStateMessage={emptyStateMessage}
                             setActiveAction={setActiveAction}
                         />
                     )}
                     {childRows.map((child) => (
-                        <StepCard
-                            key={child.id}
-                            step={child}
-                            instance={instance}
-                            nested
-                            rootStep={rootStep}
-                        />
+                        <StepCard key={child.id} step={child} instance={instance} nested />
                     ))}
                 </Disclosure.Content>
             )}
@@ -180,20 +151,23 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
     );
 };
 
-function useStepActions(actions: Action[], submissions: Submission[]) {
+function useStepActions(actions: Action[]) {
     const [onlyAction] = actions;
-    const autoOpenAction =
+    const defaultAction =
         actions.length === 1 &&
-        onlyAction?.type === "SubmitForm" &&
-        onlyAction.autoOpenForm !== false &&
-        !submissions.some((s) => s.dateSubmitted && s.form.name === onlyAction.form)
+        onlyAction.type === "SubmitForm" &&
+        onlyAction.formLayout !== "Modal" &&
+        onlyAction.autoOpenForm !== false
             ? onlyAction
             : null;
-    const [selectedAction, setActiveAction] = useState<Action | null>(autoOpenAction);
-
-    // A refresh can revoke an action while its form or modal is still open.
-    const activeAction = actions.find((action) => action.id === selectedAction?.id) ?? null;
-    return {activeAction, resolvedAction: activeAction ?? autoOpenAction, setActiveAction};
+    const [selectedActionId, setSelectedActionId] = useState<string | null>(
+        defaultAction?.id ?? null,
+    );
+    const activeAction = actions.find((action) => action.id === selectedActionId) ?? defaultAction;
+    return {
+        activeAction,
+        setActiveAction: (action: Action | null) => setSelectedActionId(action?.id ?? null),
+    };
 }
 
 function latestDate(dates: (string | null | undefined)[]): string | null {

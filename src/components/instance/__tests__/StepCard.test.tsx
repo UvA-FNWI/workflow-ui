@@ -21,16 +21,16 @@ vi.mock("~/components/instance/StepCardBody.tsx", () => ({
     StepCardBody: ({
         step,
         actions,
-        resolvedAction,
+        activeAction,
         emptyStateMessage,
     }: {
         step: WorkflowStep;
         actions: Action[];
-        resolvedAction: Action | null;
+        activeAction: Action | null;
         emptyStateMessage: string | null;
     }) => (
         <div data-testid={`step-content-${step.id}`}>
-            <span data-testid="step-content">{resolvedAction?.form ?? "Submission content"}</span>
+            <span data-testid="step-content">{activeAction?.form ?? "Submission content"}</span>
             {emptyStateMessage && <span>{emptyStateMessage}</span>}
             <span data-testid={`actions-${step.id}`}>{actions.map((a) => a.id).join(",")}</span>
             <span data-testid={`version-count-${step.id}`}>
@@ -51,6 +51,7 @@ const deadline: StepDeadline = {
 
 const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     id: "Step",
+    isAvailable: true,
     title: {en: "Step", nl: "Stap"},
     icon: null,
     event: "Submit",
@@ -106,6 +107,23 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
     viewerRoles: [],
     infoCards: [],
 });
+
+it.each([false, true])(
+    "uses backend availability even when the step order disagrees: %s",
+    (isAvailable) => {
+        const step = makeStep({isAvailable});
+        const instance = makeInstance(step);
+        const current = makeStep({id: "Other"});
+        instance.steps = isAvailable ? [current, step] : [step, current];
+        instance.currentStep = current.id;
+
+        render(<StepCard step={step} instance={instance} />);
+
+        const header = screen.getByRole("button", {name: /^Step/});
+        if (isAvailable) expect(header).toBeEnabled();
+        else expect(header).toBeDisabled();
+    },
+);
 
 const expiredStatus = {
     type: "Error",

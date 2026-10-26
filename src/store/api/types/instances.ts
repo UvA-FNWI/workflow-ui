@@ -89,6 +89,7 @@ export type StepDeadline = {
 
 export type WorkflowStep = {
     id: string;
+    isAvailable: boolean;
     title: LocalString;
     icon: IconVariant | null;
     event: string;

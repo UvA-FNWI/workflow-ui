@@ -7,7 +7,6 @@ import type {
 } from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
 import type {Choice} from "./types/submissions";
-import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
@@ -50,20 +49,6 @@ export const answersApi = baseApi.injectEndpoints({
                         () => data.submission,
                     ),
                 );
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        (current) => {
-                            const idx = current.submissions.findIndex(
-                                (s) => s.id === params.submissionId,
-                            );
-                            if (idx !== -1) {
-                                current.submissions[idx] = data.submission;
-                            }
-                        },
-                    ),
-                );
             },
             invalidatesTags: (_result, _error, params) => [
                 {
@@ -71,7 +56,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "InstanceActions", id: params.instanceId},
+                {type: "Instance", id: params.instanceId},
                 {type: "Choices", id: params.instanceId},
                 "Screen",
             ],
@@ -122,18 +107,6 @@ export const answersApi = baseApi.injectEndpoints({
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
                 const {data} = await queryFulfilled;
                 dispatch(submissionsApi.util.updateQueryData("getSubmission", params, () => data));
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        (current) => {
-                            const index = current.submissions.findIndex(
-                                (submission) => submission.id === params.submissionId,
-                            );
-                            if (index !== -1) current.submissions[index] = data;
-                        },
-                    ),
-                );
             },
             invalidatesTags: (_result, _error, params) => [
                 {
@@ -141,7 +114,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "InstanceActions", id: params.instanceId},
+                {type: "Instance", id: params.instanceId},
                 "Screen",
             ],
         }),

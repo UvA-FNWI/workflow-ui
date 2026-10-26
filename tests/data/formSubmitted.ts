@@ -74,6 +74,7 @@ export const formSubmitted = {
     steps: [
         {
             id: "Subject",
+            isAvailable: true,
             title: {
                 en: "Subject",
                 nl: "Onderwerp",
@@ -84,6 +85,7 @@ export const formSubmitted = {
             children: [
                 {
                     id: "Start",
+                    isAvailable: true,
                     title: {
                         en: "Subject proposal",
                         nl: "Indienen voorstel",
@@ -100,6 +102,7 @@ export const formSubmitted = {
                 },
                 {
                     id: "SubjectFeedback",
+                    isAvailable: true,
                     title: {
                         en: "Assessment of proposal",
                         nl: "Beoordelen voorstel",
@@ -113,6 +116,7 @@ export const formSubmitted = {
         },
         {
             id: "Upload",
+            isAvailable: false,
             title: {
                 en: "Upload final version",
                 nl: "Upload final version",
@@ -124,6 +128,7 @@ export const formSubmitted = {
         },
         {
             id: "Assessment",
+            isAvailable: false,
             title: {
                 en: "Assessment",
                 nl: "Assessment",
@@ -134,6 +139,7 @@ export const formSubmitted = {
             children: [
                 {
                     id: "AssessmentReviewer",
+                    isAvailable: false,
                     title: {
                         en: "Assessment by reviewer",
                         nl: "Assessment by reviewer",
@@ -145,6 +151,7 @@ export const formSubmitted = {
                 },
                 {
                     id: "AssessmentSupervisor",
+                    isAvailable: false,
                     title: {
                         en: "Assessment by supervisor",
                         nl: "Assessment by supervisor",
@@ -158,6 +165,7 @@ export const formSubmitted = {
         },
         {
             id: "Publication",
+            isAvailable: false,
             title: {
                 en: "Publication",
                 nl: "Publication",

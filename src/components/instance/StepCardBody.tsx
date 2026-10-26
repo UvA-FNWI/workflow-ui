@@ -9,8 +9,6 @@ import {
     getPreviousFormVersion,
     getStepHierarchy,
     hasVersionHistory,
-    type ModalState,
-    resolveFormState,
 } from "~/components/instance/resolveContentState.ts";
 import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -26,9 +24,7 @@ type Props = {
     actions: Action[];
     submissions: Submission[];
     contentState: ContentState;
-    modalState: ModalState;
     activeAction: Action | null;
-    resolvedAction: Action | null;
     emptyStateMessage: string | null;
     setActiveAction: (action: Action | null) => void;
 };
@@ -40,16 +36,17 @@ export const StepCardBody = ({
     actions,
     submissions,
     contentState,
-    modalState,
     activeAction,
-    resolvedAction,
     emptyStateMessage,
     setActiveAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const [executeAction] = actionsEndpoints.executeAction.useMutation();
 
-    const formState = resolveFormState(resolvedAction);
+    const inlineForm =
+        activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal"
+            ? activeAction
+            : null;
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
@@ -90,7 +87,7 @@ export const StepCardBody = ({
     };
 
     // Action buttons show when form is NOT open and actions exist
-    const showActionButtons = !formState && actions.length > 0;
+    const showActionButtons = !inlineForm && actions.length > 0;
 
     return (
         <>
@@ -106,7 +103,7 @@ export const StepCardBody = ({
                 {renderBackgroundContent()}
 
                 {/* Form overlay: shown alongside submissions */}
-                {formState && (
+                {inlineForm && (
                     <div className="py-4">
                         {actions.length > 1 && activeAction != null && (
                             <div className="flex justify-between gap-2">
@@ -125,11 +122,11 @@ export const StepCardBody = ({
                             </div>
                         )}
                         <FormPage
-                            key={formState.action.form}
+                            key={inlineForm.form}
                             instanceId={instance.id}
-                            submissionId={formState.action.form ?? ""}
+                            submissionId={inlineForm.form ?? ""}
                             onClose={() => setActiveAction(null)}
-                            previousVersion={getPreviousFormVersion(step, formState.action.form)}
+                            previousVersion={getPreviousFormVersion(step, inlineForm.form)}
                         />
                     </div>
                 )}
@@ -182,7 +179,7 @@ export const StepCardBody = ({
 
             {/* Confirmation Modal */}
             <Modal
-                isOpen={modalState?.type === "confirmationModal"}
+                isOpen={activeAction?.type === "Execute"}
                 onOpenChange={() => setActiveAction(null)}
             >
                 <Modal.Header className="pb-0">
@@ -222,7 +219,7 @@ export const StepCardBody = ({
 
             {/* Form Modal */}
             <FormModal
-                isOpen={modalState?.type === "formModal"}
+                isOpen={activeAction?.type === "SubmitForm" && activeAction.formLayout === "Modal"}
                 onClose={() => setActiveAction(null)}
                 instanceId={instance.id}
                 submissionId={activeAction?.form ?? ""}

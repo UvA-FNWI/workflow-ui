@@ -104,4 +104,6 @@ const Notice = ({instanceId, submissionId, previousVersion}: NoticeProps) => {
 };
 
 export const PrefilledAnswersNotice = ({previousVersion, ...props}: Props) =>
-    previousVersion === undefined ? null : <Notice {...props} previousVersion={previousVersion} />;
+    previousVersion === undefined ? null : (
+        <Notice key={previousVersion} {...props} previousVersion={previousVersion} />
+    );
