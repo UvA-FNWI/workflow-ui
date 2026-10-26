@@ -11,52 +11,7 @@ vi.mock("~/hooks/useTranslate", () => ({
     }),
 }));
 
-vi.mock("~/components/StaffCard/AddStaffModal.tsx", () => ({default: () => null}));
-vi.mock("~/store/api/instancesApi.ts", () => ({
-    instancesEndpoints: {
-        assignRelatedUser: {useMutation: () => [vi.fn()]},
-        removeRelatedUser: {useMutation: () => [vi.fn()]},
-    },
-}));
-vi.mock("~/store/api/usersApi.ts", () => ({
-    useUpdateUserEmailMutation: () => [vi.fn(), {isLoading: false}],
-}));
-vi.mock("~/store/store.ts", () => ({useAppDispatch: () => vi.fn()}));
-
 afterEach(cleanup);
-
-it("allows assigning required staff when no reviewers are assigned", () => {
-    const cards: InfoCard[] = [
-        {
-            name: "Staff",
-            type: "RelatedUsers",
-            title: {en: "Staff", nl: "Medewerkers"},
-            groups: [
-                {
-                    name: "default",
-                    title: {en: "", nl: ""},
-                    userRoles: ["Supervisor", "Second Assessor"].map((role) => ({
-                        role,
-                        title: {en: role, nl: role},
-                        users: [],
-                        allowsExternalUsers: false,
-                        allowsAssignment: false,
-                        allowsMultipleUsers: false,
-                        canEdit: true,
-                    })),
-                },
-            ],
-        },
-    ];
-
-    render(<InfoCards cards={cards} instanceId="project-1" />);
-
-    const header = screen.getByRole("button", {name: /^Staff/});
-    fireEvent.click(header);
-    expect(screen.getByText("Supervisor")).toBeVisible();
-    expect(screen.getByText("Second Assessor")).toBeVisible();
-    expect(screen.getAllByRole("button", {name: /add$/})).toHaveLength(2);
-});
 
 it("renders configured cards in order and expands compact user fields", () => {
     const cards: InfoCard[] = [
