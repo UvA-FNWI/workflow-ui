@@ -53,7 +53,9 @@ export const AnswerChangesModal = ({isOpen, onClose, question, changes}: Props) 
                                             change.value,
                                             question.type,
                                             i18n.language,
-                                            question.choices,
+                                            question.type === "Choice"
+                                                ? question.choices
+                                                : undefined,
                                         ) || "-"}
                                     </Text>
                                     <Text

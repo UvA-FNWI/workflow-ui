@@ -1,13 +1,13 @@
 import {parseTypeString} from "~/components/FormEditor/model/questionTypes";
 import type {ConfigDocs, EditorQuestion} from "~/components/FormEditor/model/types";
-import type {Choice, DataType, Question} from "~/store/api/types/submissions";
+import type {Choice, ChoiceQuestion, Question, QuestionBase} from "~/store/api/types/submissions";
 
 /**
  * Exactly the types InputControl branches on. Anything else - File, Currency, Table, Reference,
  * Object, DateTime - falls through to its "Not supported type..." string, so the editor shows its own
  * "no preview" note instead of leaking that.
  */
-const SCALAR_TYPES: DataType[] = ["String", "Int", "Double", "Date", "Check", "User"];
+const SCALAR_TYPES = ["String", "Int", "Double", "Date", "Check", "User"] as const;
 
 const asChoices = (values: unknown): Choice[] =>
     Array.isArray(values)
@@ -25,10 +25,8 @@ const asChoices = (values: unknown): Choice[] =>
         : [];
 
 /**
- * Half-typed yaml produces shapes the runtime never sees: "layout:" followed by a bare word makes
- * layout a string, and InputControl does `"type" in question.layout`, which throws on one. The preview
- * is the boundary between hand-edited text and components that assume well-formed data, so anything
- * of the wrong shape is dropped here rather than passed on.
+ * The preview accepts partially edited YAML. Drop fields of the wrong shape before passing them to
+ * runtime controls that expect well-formed data.
  */
 const asObject = (value: unknown): undefined | Record<string, unknown> =>
     typeof value === "object" && value !== null && !Array.isArray(value)
@@ -59,27 +57,54 @@ export function toPreviewQuestion(docs: ConfigDocs, question: EditorQuestion): Q
     const inline = asChoices(raw.values);
     const choices = inline.length > 0 ? inline : valueSetChoices(docs, underlying);
     const scalar = SCALAR_TYPES.find((type) => type === underlying);
-    const type: DataType | null = choices.length > 0 ? "Choice" : (scalar ?? null);
+    const type = choices.length > 0 ? "Choice" : (scalar ?? null);
     if (type === null) {
         return null;
     }
 
-    return {
+    const common: QuestionBase = {
         name: question.name,
-        type,
         text: question.text,
         description: question.description,
-        weight: null,
-        percentage: null,
         isRequired,
         isArray,
         hideInResults: raw.hideInResults === true,
-        allowsExternalUsers: raw.allowsExternalUsers === true,
-        choices,
-        rubric: Array.isArray(raw.rubric) ? (raw.rubric as Question["rubric"]) : undefined,
-        layout: asObject(raw.layout) as Question["layout"],
-        maxLength: typeof raw.maxLength === "number" ? raw.maxLength : undefined,
-        minLength: typeof raw.minLength === "number" ? raw.minLength : undefined,
-        sorting: asObject(raw.sorting) as Question["sorting"],
     };
+
+    switch (type) {
+        case "String":
+            return {
+                ...common,
+                type,
+                control:
+                    raw.control === "TextArea" || raw.control === "Email" || raw.control === "Phone"
+                        ? raw.control
+                        : undefined,
+                maxLength: typeof raw.maxLength === "number" ? raw.maxLength : undefined,
+                minLength: typeof raw.minLength === "number" ? raw.minLength : undefined,
+            };
+        case "Choice":
+            return {
+                ...common,
+                type,
+                choices,
+                weight: null,
+                percentage: null,
+                rubric: Array.isArray(raw.rubric)
+                    ? (raw.rubric as ChoiceQuestion["rubric"])
+                    : undefined,
+                control:
+                    typeof raw.control === "string"
+                        ? (raw.control as ChoiceQuestion["control"])
+                        : undefined,
+                sorting: asObject(raw.sorting) as ChoiceQuestion["sorting"],
+            };
+        case "User":
+            return {...common, type, allowsExternalUsers: raw.allowsExternalUsers === true};
+        case "Int":
+        case "Double":
+            return {...common, type, weight: null, percentage: null};
+        default:
+            return {...common, type};
+    }
 }

@@ -9,6 +9,7 @@ export type ConfigDocs = Map<string, Document>;
  */
 export const QUESTION_KINDS = [
     "TextField",
+    "TextArea",
     "Email",
     "Phone",
     "Number",

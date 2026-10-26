@@ -26,7 +26,7 @@ type Props = {
 
 const CHOICE_KINDS: QuestionKind[] = ["SingleChoice", "MultipleChoice"];
 const PERSON_KINDS: QuestionKind[] = ["Person", "People"];
-const CHOICE_LAYOUTS = ["RadioList", "Dropdown"] as const;
+const CHOICE_CONTROLS = ["RadioList", "Dropdown"] as const;
 
 export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Props) {
     const {t} = useTranslate("form_editor");
@@ -34,7 +34,6 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
     const [fileTypesDraft, setFileTypesDraft] = useState<string | null>(null);
     const patch = (key: keyof QuestionPatch, value: string | boolean) =>
         apply(() => updateQuestion(docs, formPath, question.name, {[key]: value} as QuestionPatch));
-    const layout = (question.raw.layout ?? {}) as {type?: string; multiline?: boolean};
     const isDecimal = parseTypeString(question.rawType).underlying === "Double";
 
     return (
@@ -61,14 +60,6 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                     isDisabled={isDisabled}
                     onChange={(isSelected) => patch("isRequired", isSelected)}
                 />
-                {question.kind === "TextField" && (
-                    <Checkbox
-                        label={t("long_text")}
-                        isSelected={layout.multiline === true}
-                        isDisabled={isDisabled}
-                        onChange={(isSelected) => patch("isMultiline", isSelected)}
-                    />
-                )}
                 {question.kind === "Number" && (
                     <Checkbox
                         label={t("decimal")}
@@ -102,26 +93,24 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                         description={t("allowed_file_types_hint")}
                         value={
                             fileTypesDraft ??
-                            (Array.isArray(question.raw.allowedFileTypes)
-                                ? question.raw.allowedFileTypes.join(", ")
+                            (Array.isArray(question.raw.allowedTypes)
+                                ? question.raw.allowedTypes.join(", ")
                                 : "")
                         }
                         isDisabled={isDisabled}
                         onChange={setFileTypesDraft}
                         onBlur={() => {
-                            if (fileTypesDraft !== null) patch("allowedFileTypes", fileTypesDraft);
+                            if (fileTypesDraft !== null) patch("allowedTypes", fileTypesDraft);
                             setFileTypesDraft(null);
                         }}
                     />
                     <Input
                         label={t("allowed_file_size")}
                         value={
-                            question.raw.allowedFileSize == null
-                                ? ""
-                                : String(question.raw.allowedFileSize)
+                            question.raw.maximumSize == null ? "" : String(question.raw.maximumSize)
                         }
                         isDisabled={isDisabled}
-                        onChange={(value) => patch("allowedFileSize", value)}
+                        onChange={(value) => patch("maximumSize", value)}
                     />
                 </div>
             )}
@@ -181,19 +170,17 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
 
             {question.kind === "SingleChoice" && (
                 <RadioGroup
-                    label={t("choice_layout")}
-                    description={t("choice_layout_hint")}
+                    label={t("choice_control")}
+                    description={t("choice_control_hint")}
                     isDisabled={isDisabled}
-                    value={layout.type === "Dropdown" ? "Dropdown" : "RadioList"}
+                    value={question.raw.control === "Dropdown" ? "Dropdown" : "RadioList"}
                     onChange={(next) =>
-                        apply(() =>
-                            updateQuestion(docs, formPath, question.name, {layoutType: next}),
-                        )
+                        apply(() => updateQuestion(docs, formPath, question.name, {control: next}))
                     }
                 >
-                    {CHOICE_LAYOUTS.map((type) => (
+                    {CHOICE_CONTROLS.map((type) => (
                         <Radio key={type} value={type}>
-                            {t(`layout.${type}`)}
+                            {t(`control.${type}`)}
                         </Radio>
                     ))}
                 </RadioGroup>

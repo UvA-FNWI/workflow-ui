@@ -38,6 +38,7 @@
     "@uiw/react-codemirror": "^4.25.11",
     "@uva-fnwi/datanose-core": "workspace:*",
     "@uva-fnwi/datanose-ui": "workspace:*",
+    "api-ref-bundler": "^0.5.1",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
     "exceljs": "^4.4.0",

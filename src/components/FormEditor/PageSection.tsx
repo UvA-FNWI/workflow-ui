@@ -42,7 +42,7 @@ type Props = {
     formPath: string;
     pageName: string;
     pageTitle: LocalText | null;
-    apply: (action: () => string[]) => void;
+    apply: (action: () => string[] | Promise<string[]>) => void;
 };
 
 function SortableCard({

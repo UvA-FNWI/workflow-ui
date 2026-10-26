@@ -3,7 +3,7 @@ import {cleanup, fireEvent, render, screen, waitFor} from "@testing-library/reac
 import {afterEach, expect, it, vi} from "vitest";
 
 import {FileUploadTable} from "./FileUploadTable";
-import type {Answer, Question} from "~/store/api/types/submissions";
+import type {Answer, FileQuestion} from "~/store/api/types/submissions";
 
 const toast = vi.hoisted(() => ({success: vi.fn(), error: vi.fn()}));
 vi.mock("@uva-fnwi/datanose-ui", async (importOriginal) => ({
@@ -38,7 +38,7 @@ it.each([
                     isArray,
                     allowedFileTypes: ["*"],
                     allowedFileSize: 1000,
-                } as Question,
+                } as FileQuestion,
             ]}
             values={{Attachments: null}}
             answers={[
