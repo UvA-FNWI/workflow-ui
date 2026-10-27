@@ -25,7 +25,7 @@ import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
-import type {Answer, Choice, ChoiceLayoutType, Question} from "~/store/api/types/submissions";
+import type {Answer, Choice, ChoiceControl, Question} from "~/store/api/types/submissions";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
 import {sortChoices} from "~/utils/sortChoices";
 
@@ -119,20 +119,17 @@ export const InputControl = ({
                 <TagInput
                     value={Array.isArray(value) ? value.map((item) => String(item)) : []}
                     onChange={(value) => debouncedChange(value)}
-                    maxLength={question.maxLength}
-                    minLength={question.minLength}
+                    maxLength={question.maxLength ?? undefined}
+                    minLength={question.minLength ?? undefined}
                     isValid={isValid}
                     errorMessage={errorMessage}
                 />
             );
         }
 
-        const variant =
-            question.layout != null && "variant" in question.layout
-                ? question.layout.variant
-                : undefined;
+        const control = question.control;
 
-        if (variant === "Email") {
+        if (control === "Email") {
             return (
                 <EmailInput
                     value={(value as string) || ""}
@@ -143,7 +140,7 @@ export const InputControl = ({
             );
         }
 
-        if (variant === "Phone") {
+        if (control === "Phone") {
             return (
                 <PhoneInput
                     value={(value as string) || ""}
@@ -154,8 +151,7 @@ export const InputControl = ({
             );
         }
 
-        const isMultilineString =
-            question.layout != null && "multiline" in question.layout && question.layout.multiline;
+        const isMultilineString = question.control === "TextArea";
 
         const minRemaining = question.minLength
             ? question.minLength - (typeof value === "string" ? value.length : 0)
@@ -187,8 +183,8 @@ export const InputControl = ({
                 }}
                 onKeyDown={(e) => e.key === "Enter" && !isMultilineString && e.preventDefault()}
                 description={lengthValidationDescription}
-                maxLength={question.maxLength}
-                minLength={question.minLength}
+                maxLength={question.maxLength ?? undefined}
+                minLength={question.minLength ?? undefined}
                 isValid={isValid}
                 errorMessage={errorMessage}
             />
@@ -247,12 +243,11 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
-        const isChoiceType = (choiceType: ChoiceLayoutType) =>
-            question.layout && "type" in question.layout && question.layout.type === choiceType;
+        const isChoiceType = (choiceType: ChoiceControl) => question.control === choiceType;
         const filteredChoices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
-        const choices = sortChoices(filteredChoices, question.sorting, i18n.language);
+        const choices = sortChoices(filteredChoices, question.sorting ?? undefined, i18n.language);
 
         if (isChoiceType("Dropdown")) {
             if (question.isArray) {

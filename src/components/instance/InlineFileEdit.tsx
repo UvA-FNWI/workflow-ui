@@ -6,7 +6,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import {answersApi} from "~/store/api/answersApi.ts";
 import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
-import type {Answer, Question} from "~/store/api/types/submissions.ts";
+import type {Answer, FileQuestion} from "~/store/api/types/submissions.ts";
 import {downloadFile} from "~/utils/fileDownload.ts";
 import {
     formatAllowedFileSize,
@@ -15,7 +15,7 @@ import {
 } from "~/utils/fileTypes.ts";
 
 type Props = {
-    question: Question;
+    question: FileQuestion;
     answer: Answer | null;
     instanceId: string;
     submissionId: string;
@@ -47,9 +47,9 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
     const [isEditing, setIsEditing] = useState(false);
     const [isWaitingForRefetch, setIsWaitingForRefetch] = useState(false);
     const [isSizeError, setIsSizeError] = useState(false);
-    const allowedFileTypesText = formatAllowedFileTypes(question.allowedFileTypes!, i18n.language);
-    const fileInputAccept = toFileInputAccept(question.allowedFileTypes!);
-    const allowedFileSizeText = formatAllowedFileSize(question.allowedFileSize!);
+    const allowedFileTypesText = formatAllowedFileTypes(question.allowedFileTypes, i18n.language);
+    const fileInputAccept = toFileInputAccept(question.allowedFileTypes);
+    const allowedFileSizeText = formatAllowedFileSize(question.allowedFileSize);
 
     const hasFile = answer?.value != null && (answer.files?.length ?? 0) > 0;
 
@@ -159,7 +159,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                             selected.reduce(
                                 (sum, file) => sum + file.size,
                                 files.reduce((sum, file) => sum + file.length, 0),
-                            ) > question.allowedFileSize!
+                            ) > question.allowedFileSize
                         ) {
                             setIsSizeError(true);
                             return;

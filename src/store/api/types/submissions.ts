@@ -72,36 +72,101 @@ export type Page = {
     isActive: boolean;
 };
 
-export type Question = {
+export type QuestionBase = {
     name: string;
-    type: DataType;
     text: LocalString;
-
-    weight: number | null;
-    percentage: number | null;
-
     isRequired: boolean;
     isArray: boolean;
     hideInResults: boolean;
-    allowsExternalUsers: boolean;
+    description?: LocalString | null;
+    shortText?: LocalString | null;
+    linkedTo?: string | null;
+};
 
-    choices: Choice[];
-    rubric?: RubricEntry[];
+export type WeightedQuestionBase = QuestionBase & {
+    weight: number | null;
+    percentage: number | null;
+};
 
-    description?: LocalString;
-    shortText?: LocalString;
-    workflowDefinition?: string;
-    layout?: TextLayoutOptions | ChoiceLayoutOptions;
-    maxLength?: number;
-    minLength?: number;
-    sorting?: Sorting;
-    linkedTo?: string;
-    allowedFileTypes?: string[];
+export type StringQuestion = QuestionBase & {
+    type: "String";
+    control?: StringControl | null;
+    maxLength?: number | null;
+    minLength?: number | null;
+};
+
+export type DateQuestion = QuestionBase & {
+    type: "Date";
+};
+
+export type DateTimeQuestion = QuestionBase & {
+    type: "DateTime";
+};
+
+export type IntQuestion = WeightedQuestionBase & {
+    type: "Int";
+};
+
+export type DoubleQuestion = WeightedQuestionBase & {
+    type: "Double";
+};
+
+export type CheckQuestion = QuestionBase & {
+    type: "Check";
+};
+
+export type CurrencyQuestion = WeightedQuestionBase & {
+    type: "Currency";
+};
+
+export type FileQuestion = QuestionBase & {
+    type: "File";
+    allowedFileTypes: string[];
     /** Maximum file size in bytes. */
-    allowedFileSize?: number;
-    /** Properties of an embedded object. */
+    allowedFileSize: number;
+};
+
+export type UserQuestion = QuestionBase & {
+    type: "User";
+    allowsExternalUsers: boolean;
+};
+
+export type ChoiceQuestion = WeightedQuestionBase & {
+    type: "Choice";
+    choices: Choice[];
+    control?: ChoiceControl | null;
+    rubric?: RubricEntry[] | null;
+    sorting?: Sorting | null;
+};
+
+export type ReferenceQuestion = QuestionBase & {
+    type: "Reference";
+    workflowDefinition?: string | null;
+    control?: ChoiceControl | null;
+};
+
+export type ObjectQuestion = QuestionBase & {
+    type: "Object";
+    workflowDefinition?: string | null;
+    control?: ObjectControl | null;
     subProperties?: Question[] | null;
 };
+
+export type WeightedQuestion = IntQuestion | DoubleQuestion | CurrencyQuestion | ChoiceQuestion;
+
+export type Question =
+    | StringQuestion
+    | DateQuestion
+    | DateTimeQuestion
+    | IntQuestion
+    | DoubleQuestion
+    | CheckQuestion
+    | CurrencyQuestion
+    | FileQuestion
+    | UserQuestion
+    | ChoiceQuestion
+    | ReferenceQuestion
+    | ObjectQuestion;
 
 export type PageElementKind = "Question" | "Text" | "Callout";
 
@@ -137,17 +202,8 @@ export type RubricEntry = {
     grades: RubricGrade[];
 };
 
-export type StringVariant = "Email" | "Phone";
-
-export type TextLayoutOptions = {
-    allowAttachments: boolean;
-    multiline: boolean;
-    variant?: StringVariant;
-};
-
-export type ChoiceLayoutOptions = {
-    type: ChoiceLayoutType;
-};
+export type StringControl = "TextArea" | "Email" | "Phone";
+export type ObjectControl = "InlineEditing" | "Modal";
 
 export type Choice = {
     name: string;
@@ -181,5 +237,5 @@ export type DataType =
     | "Int"
     | "Check"
     | "Object";
-export type ChoiceLayoutType = "Dropdown" | "RadioList" | "Rubric" | "ComboBox";
+export type ChoiceControl = "Dropdown" | "RadioList" | "Rubric" | "ComboBox";
 export type FormLayout = "Normal" | "Compact" | "Modal";
