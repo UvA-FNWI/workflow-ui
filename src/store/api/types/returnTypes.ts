@@ -5,6 +5,7 @@ import type {ActionType, WorkflowInstance} from "~/store/api/types/instances.ts"
 export type SaveAnswerResult = {
     answers: Answer[];
     submission: Submission;
+    updatedInstance: WorkflowInstance | null;
 };
 
 export type ExecuteActionResult = {

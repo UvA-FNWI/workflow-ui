@@ -7,6 +7,7 @@ import type {
 } from "./types/params";
 import type {SaveAnswerResult} from "./types/returnTypes";
 import type {Choice} from "./types/submissions";
+import {instancesApi} from "~/store/api/instancesApi.ts";
 import {submissionsApi} from "~/store/api/submissionsApi.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
@@ -34,6 +35,18 @@ export const answersApi = baseApi.injectEndpoints({
                 // Each response contains the whole submission, so track saves across all questions.
                 const submissionKey = JSON.stringify([params.instanceId, params.submissionId]);
                 latestSaveBySubmission.set(submissionKey, requestId);
+                if (
+                    dispatch(baseApi.util.getRunningMutationsThunk()).some(
+                        ({arg}) =>
+                            arg.endpointName === "saveAnswer" &&
+                            (arg.originalArgs as SaveAnswerParams).instanceId === params.instanceId,
+                    )
+                ) {
+                    // Overlapping saves can return stale snapshots -> refresh after pending saves settle.
+                    dispatch(
+                        baseApi.util.invalidateTags([{type: "Instance", id: params.instanceId}]),
+                    );
+                }
 
                 const result = await queryFulfilled.catch(() => undefined);
                 // An older response must not roll back a newer submission snapshot.
@@ -41,22 +54,33 @@ export const answersApi = baseApi.injectEndpoints({
                 latestSaveBySubmission.delete(submissionKey);
                 if (!result) return;
 
-                const {data} = result;
+                const {submission, updatedInstance} = result.data;
+                if (updatedInstance)
+                    dispatch(
+                        instancesApi.util.updateQueryData(
+                            "getInstance",
+                            params.instanceId,
+                            () => updatedInstance,
+                        ),
+                    );
                 dispatch(
                     submissionsApi.util.updateQueryData(
                         "getSubmission",
                         {instanceId: params.instanceId, submissionId: params.submissionId},
-                        () => data.submission,
+                        () => submission,
                     ),
                 );
             },
-            invalidatesTags: (_result, _error, params) => [
+            invalidatesTags: (result, _error, params) => [
                 {
                     type: "Assessments",
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "Instance", id: params.instanceId},
+                {
+                    type: result?.updatedInstance ? "InstanceActions" : "Instance",
+                    id: params.instanceId,
+                },
                 {type: "Choices", id: params.instanceId},
                 "Screen",
             ],
