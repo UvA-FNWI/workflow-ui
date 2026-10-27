@@ -1,4 +1,5 @@
 {
+  "action_failed": "The action failed. Please try again.",
   "add": "Add",
   "admin": {
     "current_step_title": "Current step",
@@ -76,6 +77,8 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
+  "form": "Form",
+  "form_load_failed": "The form could not be loaded. Please try again.",
   "home": "Home",
   "instance": {
     "calculations": {
@@ -191,6 +194,7 @@
     "remove_staff_confirmation": "Are you sure you want to remove <strong>{{name}}</strong>?",
     "remove_staff_title": "Remove user"
   },
+  "retry": "Try again",
   "status": {
     "completed_on": "Completed on",
     "deadline_passed": "Deadline passed",

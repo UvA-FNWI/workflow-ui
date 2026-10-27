@@ -2,7 +2,6 @@ import {Heading} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOverview.tsx";
-import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
@@ -11,11 +10,10 @@ type Props = {
     instanceId: string;
     submission: Submission;
     onEditPage?: (pageName: string) => void;
-    onSubmit?: () => void;
     collapseAnswers?: boolean;
 };
 
-export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
+export const FormSummary = ({instanceId, submission, onEditPage}: Props) => {
     const {l} = useTranslate("workflow");
 
     // Only form-scoped Edit counts: the instance-level permission is form-less (property editing only)
@@ -28,24 +26,12 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
 
     if (hasResults) {
         return (
-            <>
-                <AssessmentOverview
-                    instanceId={instanceId}
-                    submissions={[submission]}
-                    onEditPage={onEditPage}
-                    combine={false}
-                />
-                {onSubmit && (
-                    <div className="mt-4">
-                        <FormSubmitButton
-                            instanceId={instanceId}
-                            submission={submission}
-                            onSubmit={onSubmit}
-                            disabled={false}
-                        />
-                    </div>
-                )}
-            </>
+            <AssessmentOverview
+                instanceId={instanceId}
+                submissions={[submission]}
+                onEditPage={onEditPage}
+                combine={false}
+            />
         );
     }
 
@@ -76,15 +62,6 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                     </div>
                 );
             })}
-            {onSubmit && (
-                <div className="mt-4">
-                    <FormSubmitButton
-                        instanceId={instanceId}
-                        submission={submission}
-                        onSubmit={onSubmit}
-                    />
-                </div>
-            )}
         </div>
     );
 };

@@ -1,4 +1,5 @@
 {
+  "action_failed": "De actie is mislukt. Probeer het opnieuw.",
   "add": "Toevoegen",
   "admin": {
     "current_step_title": "Huidige stap",
@@ -76,6 +77,8 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
+  "form": "Formulier",
+  "form_load_failed": "Het formulier kon niet worden geladen. Probeer het opnieuw.",
   "home": "Home",
   "instance": {
     "calculations": {
@@ -191,6 +194,7 @@
     "remove_staff_confirmation": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?",
     "remove_staff_title": "Gebruiker verwijderen"
   },
+  "retry": "Opnieuw proberen",
   "status": {
     "completed_on": "Voltooid op",
     "deadline_passed": "Deadline verstreken",
