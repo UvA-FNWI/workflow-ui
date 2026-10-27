@@ -25,7 +25,7 @@ import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {AnswerInput, FileParams} from "~/store/api/types/params";
 import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
-import type {Answer, Choice, ChoiceControl, Question} from "~/store/api/types/submissions";
+import type {Answer, Choice, Question} from "~/store/api/types/submissions";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users";
 import {sortChoices} from "~/utils/sortChoices";
 
@@ -243,13 +243,12 @@ export const InputControl = ({
     }
 
     if (question.type === "Choice") {
-        const isChoiceType = (choiceType: ChoiceControl) => question.control === choiceType;
         const filteredChoices = visibleChoices
             ? question.choices.filter((choice) => visibleChoices.includes(choice.name))
             : question.choices;
         const choices = sortChoices(filteredChoices, question.sorting ?? undefined, i18n.language);
 
-        if (isChoiceType("Dropdown")) {
+        if (question.control == "Dropdown") {
             if (question.isArray) {
                 const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
                 return (
@@ -294,7 +293,7 @@ export const InputControl = ({
             );
         }
 
-        if (isChoiceType("ComboBox")) {
+        if (question.control == "ComboBox") {
             const choiceText = (choice: Choice) => l(choice.text)?.trim() || choice.name;
             const comboBoxValue = question.isArray
                 ? Array.isArray(value)
@@ -323,7 +322,7 @@ export const InputControl = ({
             );
         }
 
-        if (isChoiceType("Rubric")) {
+        if (question.control == "Rubric") {
             return (
                 <RubricSelect
                     value={typeof value === "string" ? value : undefined}
