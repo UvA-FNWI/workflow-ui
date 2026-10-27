@@ -82,7 +82,8 @@ export const PageElement = ({
                         return (
                             <div
                                 className={cn(
-                                    showCompact && "flex flex-row items-start justify-between",
+                                    showCompact &&
+                                        "flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-4",
                                 )}
                             >
                                 <div>
@@ -110,7 +111,12 @@ export const PageElement = ({
                                         </div>
                                     )}
                                 </div>
-                                <div className={showCompact ? "w-24 shrink-0" : "w-full"}>
+                                <div
+                                    className={cn(
+                                        "w-full",
+                                        showCompact && "max-w-full shrink-0 sm:w-32",
+                                    )}
+                                >
                                     <InputControl
                                         instanceId={instanceId}
                                         submissionId={submissionId}
