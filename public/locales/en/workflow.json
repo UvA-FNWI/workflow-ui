@@ -163,6 +163,7 @@
     "message": "Adjustments are needed. We have copied over the details you entered earlier for you to adjust as needed.",
     "question": "Do you want to start over?"
   },
+  "retry": "Try again",
   "save": "Save",
   "screens": {
     "actions": "Actions"
@@ -194,7 +195,6 @@
     "remove_staff_confirmation": "Are you sure you want to remove <strong>{{name}}</strong>?",
     "remove_staff_title": "Remove user"
   },
-  "retry": "Try again",
   "status": {
     "completed_on": "Completed on",
     "deadline_passed": "Deadline passed",

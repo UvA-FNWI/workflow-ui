@@ -163,6 +163,7 @@
     "message": "Er zijn aanpassingen nodig. Daarom hebben we wat je eerder hebt ingevuld alvast overgenomen. Pas alleen aan wat nodig is; wat al goed was, hoef je niet aan te passen.",
     "question": "Wil je helemaal opnieuw beginnen?"
   },
+  "retry": "Opnieuw proberen",
   "save": "Opslaan",
   "screens": {
     "actions": "Acties"
@@ -194,7 +195,6 @@
     "remove_staff_confirmation": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?",
     "remove_staff_title": "Gebruiker verwijderen"
   },
-  "retry": "Opnieuw proberen",
   "status": {
     "completed_on": "Voltooid op",
     "deadline_passed": "Deadline verstreken",
