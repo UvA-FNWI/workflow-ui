@@ -28,12 +28,13 @@
   "confirm": "Confirm",
   "correspondence": {
     "content": "Content",
-    "date": "Date",
+    "date": "$TODO$",
     "empty": "No automated emails found",
     "recipients": "Recipient(s)",
     "subject": "Subject",
     "title": "Automated emails"
   },
+  "date": "Date",
   "develop": {
     "columns": {
       "created": "Created",
@@ -75,6 +76,12 @@
     "select_files": "Select files",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
+  },
+  "history": {
+    "by": "By",
+    "empty": "There is no history yet",
+    "status": "Status",
+    "title": "History"
   },
   "home": "Home",
   "instance": {

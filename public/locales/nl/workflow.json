@@ -28,12 +28,13 @@
   "confirm": "Bevestigen",
   "correspondence": {
     "content": "Inhoud",
-    "date": "Datum",
+    "date": "$TODO$",
     "empty": "Geen automatische mails gevonden",
     "recipients": "Ontvanger(s)",
     "subject": "Onderwerp",
     "title": "Automatische mails"
   },
+  "date": "Datum",
   "develop": {
     "columns": {
       "created": "Aangemaakt",
@@ -75,6 +76,12 @@
     "select_files": "Bestanden selecteren",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
+  },
+  "history": {
+    "by": "Door",
+    "empty": "Er is nog geen geschiedenis",
+    "status": "Status",
+    "title": "Geschiedenis"
   },
   "home": "Home",
   "instance": {

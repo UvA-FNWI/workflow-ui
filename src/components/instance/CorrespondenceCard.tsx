@@ -64,7 +64,7 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                 enableSorting: false,
             }),
             columnHelper.accessor("timestamp", {
-                header: t("correspondence.date"),
+                header: t("date"),
                 cell: (info) => {
                     const date = info.getValue();
                     return <Text>{date ? formatDateTimeShort(date, i18n.language) : "—"}</Text>;

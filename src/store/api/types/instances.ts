@@ -2,6 +2,7 @@ import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
+    AnswerChangeGroup,
     FormLayout,
     Question,
     RoleAction,
@@ -208,3 +209,19 @@ export type InfoCard =
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
     | (InfoCardBase & {type: "Text"; content?: LocalString | null})
     | (InfoCardBase & {type: "Progress"});
+
+export type InstanceHistoryType = "Event" | "Property" | "Undo";
+
+export type InstanceHistoryItem = {
+    id: string;
+    type: InstanceHistoryType;
+    title: LocalString;
+    timestamp: string;
+    user: UserSearchResult;
+    propertyHistory?: PropertyHistory;
+};
+
+export type PropertyHistory = {
+    question: Question;
+    answerChangeGroup: AnswerChangeGroup;
+};
