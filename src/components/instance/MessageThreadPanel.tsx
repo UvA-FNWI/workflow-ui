@@ -15,6 +15,7 @@ type Props = {
     showClosed?: boolean;
     onShowClosedChange?: (show: boolean) => void;
     composerFirst?: boolean;
+    /** Show the composer that starts a new thread (e.g. instance card + control). */
     showNewComposer?: boolean;
     showMailCallout?: boolean;
     autoFocusComposer?: boolean;
@@ -29,7 +30,7 @@ export function MessageThreadPanel({
     showClosed: showClosedProp,
     onShowClosedChange,
     composerFirst = false,
-    showNewComposer,
+    showNewComposer = false,
     showMailCallout = false,
     autoFocusComposer = false,
     onDismissComposer,
@@ -37,6 +38,7 @@ export function MessageThreadPanel({
     const {t, i18n} = useTranslate("workflow");
     const [body, setBody] = useState("");
     const [replyToId, setReplyToId] = useState<string | null>(null);
+    const [startNewThread, setStartNewThread] = useState(false);
     const [internalShowClosed, setInternalShowClosed] = useState(false);
     const [addMessage, {isLoading}] = messagesEndpoints.addMessage.useMutation();
 
@@ -61,12 +63,14 @@ export function MessageThreadPanel({
             .then(() => {
                 setBody("");
                 setReplyToId(null);
+                setStartNewThread(false);
                 if (kind === "Message" && !target) onDismissComposer?.();
             });
     };
 
     const startReply = (threadId: string) => {
         setReplyToId(threadId);
+        setStartNewThread(false);
         setBody("");
     };
 
@@ -75,22 +79,45 @@ export function MessageThreadPanel({
         setBody("");
     };
 
-    const newComposer =
-        canAdd && replyToId == null && (showNewComposer ?? true) ? (
+    const dismissNewThreadComposer = () => {
+        setBody("");
+        setStartNewThread(false);
+        onDismissComposer?.();
+    };
+
+    const newThreadComposerVisible =
+        canAdd &&
+        replyToId == null &&
+        (openThreads.length === 0 ? showNewComposer : showNewComposer || startNewThread);
+
+    const newComposer = newThreadComposerVisible ? (
+        <div className="flex flex-col gap-2">
+            {openThreads.length > 0 && (
+                <Text as="span" size="sm" fontWeight="semibold">
+                    {t("instance.messages.new_thread_heading")}
+                </Text>
+            )}
             <Composer
                 body={body}
                 onChange={setBody}
                 onSubmit={() => submit("Message")}
-                onCancel={onDismissComposer}
+                onCancel={
+                    onDismissComposer != null
+                        ? dismissNewThreadComposer
+                        : startNewThread
+                          ? () => setStartNewThread(false)
+                          : undefined
+                }
                 submitLabel={t("save")}
-                cancelLabel={onDismissComposer ? t("cancel") : undefined}
+                cancelLabel={onDismissComposer != null || startNewThread ? t("cancel") : undefined}
                 ariaLabel={t("instance.messages.placeholder")}
                 placeholder={t("instance.messages.placeholder")}
                 isLoading={isLoading}
                 showMailCallout={showMailCallout}
                 autoFocus={autoFocusComposer}
             />
-        ) : null;
+        </div>
+    ) : null;
 
     const threadList = (
         <>
@@ -99,6 +126,28 @@ export function MessageThreadPanel({
                     {t("instance.messages.empty")}
                 </Text>
             )}
+            {canAdd && openThreads.length > 1 && replyToId == null && !newThreadComposerVisible && (
+                <Text as="span" size="sm" className="text-grey-600">
+                    {t("instance.messages.reply_hint")}
+                </Text>
+            )}
+            {canAdd &&
+                openThreads.length > 0 &&
+                !newThreadComposerVisible &&
+                !showNewComposer &&
+                !composerFirst && (
+                    <Button
+                        intent="secondary"
+                        size="small"
+                        onClick={() => {
+                            setStartNewThread(true);
+                            setReplyToId(null);
+                            setBody("");
+                        }}
+                    >
+                        {t("instance.messages.new")}
+                    </Button>
+                )}
             {visibleThreads.map((thread, index) => (
                 <div key={thread.id} className="flex flex-col gap-2">
                     {index > 0 && <Separator />}
@@ -122,26 +171,6 @@ export function MessageThreadPanel({
                             </div>
                         </div>
                     ))}
-                    {canAdd && !thread.isClosed && replyToId !== thread.id && (
-                        <div className="flex flex-wrap items-center gap-2">
-                            <Button
-                                intent="primary"
-                                variant="destructive"
-                                size="small"
-                                onClick={() => startReply(thread.id)}
-                            >
-                                {t("instance.messages.reply")}
-                            </Button>
-                            <Button
-                                intent="secondary"
-                                size="small"
-                                disabled={isLoading}
-                                onClick={() => submit("Close", thread.id)}
-                            >
-                                {t("instance.messages.close")}
-                            </Button>
-                        </div>
-                    )}
                     {canAdd && !thread.isClosed && replyToId === thread.id && (
                         <Composer
                             body={body}
@@ -155,6 +184,28 @@ export function MessageThreadPanel({
                             isLoading={isLoading}
                             autoFocus
                         />
+                    )}
+                    {canAdd && !thread.isClosed && (
+                        <div className="flex flex-wrap items-center gap-2">
+                            {replyToId !== thread.id && (
+                                <Button
+                                    intent="primary"
+                                    variant="destructive"
+                                    size="small"
+                                    onClick={() => startReply(thread.id)}
+                                >
+                                    {t("instance.messages.reply")}
+                                </Button>
+                            )}
+                            <Button
+                                intent="secondary"
+                                size="small"
+                                disabled={isLoading}
+                                onClick={() => submit("Close", thread.id)}
+                            >
+                                {t("instance.messages.close")}
+                            </Button>
+                        </div>
                     )}
                 </div>
             ))}
