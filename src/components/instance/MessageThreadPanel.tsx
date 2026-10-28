@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Button, Callout, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
+import {Button, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
@@ -17,7 +17,6 @@ type Props = {
     composerFirst?: boolean;
     /** Show the composer that starts a new thread (e.g. instance card + control). */
     showNewComposer?: boolean;
-    showMailCallout?: boolean;
     autoFocusComposer?: boolean;
     onDismissComposer?: () => void;
 };
@@ -31,7 +30,6 @@ export function MessageThreadPanel({
     onShowClosedChange,
     composerFirst = false,
     showNewComposer = false,
-    showMailCallout = false,
     autoFocusComposer = false,
     onDismissComposer,
 }: Props) {
@@ -113,7 +111,6 @@ export function MessageThreadPanel({
                 ariaLabel={t("instance.messages.placeholder")}
                 placeholder={t("instance.messages.placeholder")}
                 isLoading={isLoading}
-                showMailCallout={showMailCallout}
                 autoFocus={autoFocusComposer}
             />
         </div>
@@ -247,7 +244,6 @@ type ComposerProps = {
     placeholder?: string;
     isLoading: boolean;
     autoFocus?: boolean;
-    showMailCallout?: boolean;
 };
 
 function Composer({
@@ -261,9 +257,7 @@ function Composer({
     placeholder,
     isLoading,
     autoFocus,
-    showMailCallout,
 }: ComposerProps) {
-    const {t} = useTranslate("workflow");
     return (
         <div className="flex flex-col gap-2">
             <TextArea
@@ -274,9 +268,6 @@ function Composer({
                 autoFocus={autoFocus}
                 placeholder={placeholder}
             />
-            {showMailCallout && (
-                <Callout type="info">{t("instance.messages.mail_callout")}</Callout>
-            )}
             <div className="flex flex-wrap items-center gap-2">
                 <Button
                     intent="primary"

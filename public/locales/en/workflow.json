@@ -122,7 +122,6 @@
       "heading": "{{title}} - {{audience}}",
       "hide_closed": "Hide closed threads",
       "info": "Comments are only visible to staff involved in this record.",
-      "mail_callout": "Staff involved in this record may receive notifications about comments in a later release.",
       "new": "New thread",
       "new_thread_heading": "Start a new thread",
       "placeholder": "Type a comment",
