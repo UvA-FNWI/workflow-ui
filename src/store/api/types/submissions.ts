@@ -59,6 +59,12 @@ export type Form = {
     layout: FormLayout;
     pages: Page[];
     step?: string;
+    confirmation?: FormConfirmation;
+};
+
+export type FormConfirmation = {
+    title: LocalString;
+    text: LocalString;
 };
 
 export type Page = {
