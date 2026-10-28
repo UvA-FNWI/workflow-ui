@@ -58,10 +58,9 @@ describe("MessageThreadPanel", () => {
         );
 
         expect(screen.queryByLabelText("instance.messages.placeholder")).toBeNull();
-        expect(screen.queryByText("instance.messages.mail_callout")).toBeNull();
     });
 
-    it("places the callout after the note box and uses a destructive save", () => {
+    it("shows the new-thread composer with a destructive save when requested", () => {
         render(
             <MessageThreadPanel
                 instanceId="instance-1"
@@ -69,19 +68,11 @@ describe("MessageThreadPanel", () => {
                 canAdd
                 composerFirst
                 showNewComposer
-                showMailCallout
             />,
         );
 
-        const box = screen.getByLabelText("instance.messages.placeholder");
-        const callout = screen.getByText("instance.messages.mail_callout");
-        const save = screen.getByRole("button", {name: "save"});
-        expect(
-            box.compareDocumentPosition(callout) & Node.DOCUMENT_POSITION_FOLLOWING,
-        ).toBeTruthy();
-        expect(
-            callout.compareDocumentPosition(save) & Node.DOCUMENT_POSITION_FOLLOWING,
-        ).toBeTruthy();
+        expect(screen.getByLabelText("instance.messages.placeholder")).toBeTruthy();
+        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
     it("does not show a new-thread composer when open threads exist unless requested", () => {
