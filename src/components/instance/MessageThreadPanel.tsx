@@ -12,7 +12,6 @@ type Props = {
     threads: MessageThread[];
     questionName?: string | null;
     canAdd: boolean;
-    showClosed?: boolean;
     composerFirst?: boolean;
     /** Show the composer that starts a new conversation (e.g. instance card + control). */
     showNewComposer?: boolean;
@@ -25,7 +24,6 @@ export function MessageThreadPanel({
     threads,
     questionName = null,
     canAdd,
-    showClosed: showClosedProp,
     composerFirst = false,
     showNewComposer = false,
     autoFocusComposer = false,
@@ -38,11 +36,8 @@ export function MessageThreadPanel({
     const [expandedOverrides, setExpandedOverrides] = useState<Record<string, boolean>>({});
     const [addMessage, {isLoading}] = messagesEndpoints.addMessage.useMutation();
 
-    const showClosed = showClosedProp ?? false;
-
     const openThreads = threads.filter((thread) => !thread.isClosed);
     const closedThreads = threads.filter((thread) => thread.isClosed);
-    const visibleClosed = showClosed ? closedThreads : [];
 
     const isExpanded = useCallback(
         (thread: MessageThread) => {
@@ -190,7 +185,7 @@ export function MessageThreadPanel({
                     replyComposer={replyComposer}
                 />
             ))}
-            {visibleClosed.map((thread) => (
+            {closedThreads.map((thread) => (
                 <ConversationThread
                     key={thread.id}
                     thread={thread}

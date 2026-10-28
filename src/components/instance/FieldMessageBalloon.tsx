@@ -2,7 +2,6 @@ import {useState} from "react";
 
 import {Button, Icon, Modal, Text} from "@uva-fnwi/datanose-ui";
 
-import {ClosedCommentsToggle} from "./ClosedCommentsToggle";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -25,7 +24,6 @@ export function FieldMessageBalloon({
 }: Props) {
     const {t} = useTranslate("workflow");
     const [open, setOpen] = useState(false);
-    const [showClosed, setShowClosed] = useState(false);
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
         instanceId,
         {skip: !allowMessages},
@@ -38,7 +36,6 @@ export function FieldMessageBalloon({
     if (!shouldShowMessageUi(canAdd, fieldThreads.length)) return null;
 
     const openCount = fieldThreads.filter((thread) => !thread.isClosed).length;
-    const closedCount = fieldThreads.length - openCount;
     const hasAnyComments = fieldThreads.length > 0;
     const iconColor = hasAnyComments ? ("danger" as const) : ("current" as const);
 
@@ -73,28 +70,19 @@ export function FieldMessageBalloon({
             <Modal
                 isOpen={open}
                 onOpenChange={(next) => {
-                    if (!next) {
-                        setOpen(false);
-                        setShowClosed(false);
-                    }
+                    if (!next) setOpen(false);
                 }}
-                size="sm"
+                size="md"
             >
-                <Modal.Header>
+                <Modal.Header className="ui:gap-3 [&_h2]:truncate [&>div:first-child]:min-w-0 [&>div:first-child]:flex-1">
                     {t("instance.messages.field_modal_title", {field: fieldLabel})}
                 </Modal.Header>
                 <Modal.Body className="flex flex-col gap-4">
-                    <ClosedCommentsToggle
-                        closedCount={closedCount}
-                        showClosed={showClosed}
-                        onChange={setShowClosed}
-                    />
                     <MessageThreadPanel
                         instanceId={instanceId}
                         threads={fieldThreads}
                         questionName={questionName}
                         canAdd={canAdd}
-                        showClosed={showClosed}
                         showNewComposer={canAdd && openCount === 0}
                     />
                 </Modal.Body>
