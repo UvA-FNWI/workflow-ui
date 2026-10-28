@@ -1,7 +1,8 @@
 import {useState} from "react";
 
-import {Button, Checkbox, Disclosure, Heading, Icon} from "@uva-fnwi/datanose-ui";
+import {Button, Disclosure, Heading, Icon, Text} from "@uva-fnwi/datanose-ui";
 
+import {ClosedCommentsToggle} from "./ClosedCommentsToggle";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -31,12 +32,19 @@ export function CommentsCard({instance}: Props) {
     if (!shouldShowMessageUi(canAdd, instanceThreads.length)) return null;
 
     const closedCount = instanceThreads.filter((thread) => thread.isClosed).length;
+    const openCount = instanceThreads.length - closedCount;
     const title = t("instance.messages.heading", {
         title: t("instance.messages.title"),
         audience: t("instance.messages.audience"),
     });
+    const threadSummary =
+        openCount > 0
+            ? t("instance.messages.summary_open", {count: openCount})
+            : closedCount > 0
+              ? t("instance.messages.summary_closed", {count: closedCount})
+              : null;
 
-    const startNote = () => {
+    const startComment = () => {
         if (composing) {
             setComposing(false);
             return;
@@ -55,7 +63,22 @@ export function CommentsCard({instance}: Props) {
         >
             <div className="flex flex-row items-center justify-between">
                 <Disclosure.Header>
-                    <Heading className="font-semibold">{title}</Heading>
+                    <Heading className="font-semibold">
+                        {title}
+                        {threadSummary && (
+                            <>
+                                {" · "}
+                                <Text
+                                    as="span"
+                                    display="inline"
+                                    intent={openCount > 0 ? "error" : "secondary"}
+                                    fontWeight="semibold"
+                                >
+                                    {threadSummary}
+                                </Text>
+                            </>
+                        )}
+                    </Heading>
                 </Disclosure.Header>
                 {canAdd && (
                     <div className="pr-6">
@@ -67,7 +90,7 @@ export function CommentsCard({instance}: Props) {
                             className="flex items-center justify-center leading-0"
                             aria-label={t("instance.messages.add")}
                             aria-pressed={composing}
-                            onClick={startNote}
+                            onClick={startComment}
                         >
                             <Icon name="plus-solid" color="current" />
                         </Button>
@@ -77,10 +100,9 @@ export function CommentsCard({instance}: Props) {
             <Disclosure.Content>
                 <div className="flex flex-col gap-3 pt-2">
                     {closedCount > 0 && (
-                        <Checkbox
-                            className="shrink-0"
-                            label={t("instance.messages.closed_count", {count: closedCount})}
-                            isSelected={showClosed}
+                        <ClosedCommentsToggle
+                            closedCount={closedCount}
+                            showClosed={showClosed}
                             onChange={setShowClosed}
                         />
                     )}
