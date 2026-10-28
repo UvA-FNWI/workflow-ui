@@ -81,6 +81,7 @@ export type QuestionBase = {
     description?: LocalString | null;
     shortText?: LocalString | null;
     linkedTo?: string | null;
+    allowMessages?: boolean;
 };
 
 export type WeightedQuestionBase = QuestionBase & {
@@ -223,7 +224,8 @@ export type RoleAction =
     | "CreateRelatedInstance"
     | "Undo"
     | "ViewCorrespondence"
-    | "ViewHistory";
+    | "ViewHistory"
+    | "AddInstanceMessage";
 export type DataType =
     | "File"
     | "Date"
