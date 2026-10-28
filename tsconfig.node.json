@@ -6,6 +6,11 @@
     "module": "ESNext",
     "types": ["node"],
     "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "baseUrl": "src",
+    "paths": {
+      "~/*": ["./*"]
+    },
 
     /* Bundler mode */
     "moduleResolution": "bundler",
