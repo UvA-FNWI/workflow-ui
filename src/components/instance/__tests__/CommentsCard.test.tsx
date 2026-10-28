@@ -10,8 +10,12 @@ const {getMessages} = vi.hoisted(() => ({
 
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
-        t: (key: string, values?: {title?: string; audience?: string}) =>
-            key === "instance.messages.heading" ? `${values?.title} - ${values?.audience}` : key,
+        t: (key: string, values?: {title?: string; audience?: string; count?: number}) =>
+            key === "instance.messages.heading"
+                ? `${values?.title} - ${values?.audience}`
+                : key === "instance.messages.summary_open"
+                  ? `${values?.count} open`
+                  : key,
     }),
 }));
 
@@ -27,8 +31,8 @@ vi.mock("~/store/api/messagesApi", () => ({
 }));
 
 vi.mock("../MessageThreadPanel", () => ({
-    MessageThreadPanel: ({showNewComposer}: {showNewComposer?: boolean}) => (
-        <div data-testid="message-thread">{showNewComposer ? "composer" : "notes"}</div>
+    MessageThreadPanel: ({focusNewConversation}: {focusNewConversation?: boolean}) => (
+        <div data-testid="message-thread">{focusNewConversation ? "focused" : "default"}</div>
     ),
 }));
 
@@ -41,7 +45,7 @@ const instance = {
 } as WorkflowInstance;
 
 describe("CommentsCard", () => {
-    it("titles the card without a count and keeps add for opening the composer", () => {
+    it("titles the card and shows open conversations in a pill", () => {
         getMessages.mockReturnValue({
             data: [
                 {
@@ -61,12 +65,11 @@ describe("CommentsCard", () => {
                 name: /instance\.messages\.title/,
             }),
         ).toBeTruthy();
-        expect(screen.queryByLabelText("instance.messages.info")).toBeNull();
+        expect(screen.getByText("1 open")).toBeTruthy();
         expect(screen.getByLabelText("instance.messages.add")).toBeTruthy();
-        expect(screen.getByTestId("message-thread")).toHaveTextContent("notes");
     });
 
-    it("toggles the type box from the add control", () => {
+    it("focuses the new conversation field from the add control", () => {
         getMessages.mockReturnValue({
             data: [
                 {
@@ -80,14 +83,8 @@ describe("CommentsCard", () => {
         });
 
         render(<CommentsCard instance={instance} />);
-        const add = screen.getByLabelText("instance.messages.add");
 
-        fireEvent.click(add);
-        expect(screen.getByTestId("message-thread")).toHaveTextContent("composer");
-        expect(add).toHaveAttribute("aria-pressed", "true");
-
-        fireEvent.click(add);
-        expect(screen.getByTestId("message-thread")).toHaveTextContent("notes");
-        expect(add).toHaveAttribute("aria-pressed", "false");
+        fireEvent.click(screen.getByLabelText("instance.messages.add"));
+        expect(screen.getByTestId("message-thread")).toHaveTextContent("focused");
     });
 });
