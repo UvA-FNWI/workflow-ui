@@ -2,7 +2,13 @@ import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, expect, it, vi} from "vitest";
 
 import {PageControl} from "../PageControl";
-import type {Answer, Page, Question, Submission} from "~/store/api/types/submissions";
+import type {
+    Answer,
+    Page,
+    Question,
+    StringQuestion,
+    Submission,
+} from "~/store/api/types/submissions";
 
 const state = vi.hoisted(() => ({submission: undefined as Submission | undefined}));
 
@@ -35,7 +41,7 @@ vi.mock("~/components/instance/InputControl", () => ({
         onChange: (value: string) => void;
         question: Question;
     }) => {
-        const Field = question.layout && "multiline" in question.layout ? "textarea" : "input";
+        const Field = (question as StringQuestion).control == "TextArea" ? "textarea" : "input";
         return (
             <Field
                 aria-label={question.name}
