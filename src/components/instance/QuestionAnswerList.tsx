@@ -4,6 +4,7 @@ import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {AnswerChangesModal} from "~/components/instance/AnswerChangesModal.tsx";
+import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
@@ -13,6 +14,8 @@ type Props = {
     instanceId: string;
     submissionId?: string;
     canEdit?: boolean;
+    showMessages?: boolean;
+    canAddMessages?: boolean;
 };
 
 export const QuestionAnswerList = ({
@@ -20,6 +23,8 @@ export const QuestionAnswerList = ({
     instanceId,
     submissionId,
     canEdit = false,
+    showMessages = true,
+    canAddMessages = false,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
     const [historyPair, setHistoryPair] = useState<QuestionAnswerPair | null>(null);
@@ -44,6 +49,15 @@ export const QuestionAnswerList = ({
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                                 {":"}
                             </Text>
+                            {showMessages && (
+                                <FieldMessageBalloon
+                                    instanceId={instanceId}
+                                    questionName={question.name}
+                                    fieldLabel={l(question.text) ?? question.name}
+                                    allowMessages={question.allowMessages}
+                                    canAdd={canAddMessages}
+                                />
+                            )}
                             {latestEdit && (
                                 <Button
                                     intent="ghost"

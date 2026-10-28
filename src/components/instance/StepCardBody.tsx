@@ -49,6 +49,7 @@ export const StepCardBody = ({
 
     const formState = resolveFormState(resolvedAction);
     const showVersionCards = hasVersionHistory(step);
+    const canAddMessages = instance.permissions.includes("AddInstanceMessage");
 
     const renderBackgroundContent = () => {
         switch (contentState.type) {
@@ -85,7 +86,11 @@ export const StepCardBody = ({
                                         {l(submission.form.title)?.toUpperCase()}
                                     </Heading>
                                 )}
-                                <FormSummary instanceId={instance.id} submission={submission} />
+                                <FormSummary
+                                    instanceId={instance.id}
+                                    submission={submission}
+                                    canAddMessages={canAddMessages}
+                                />
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
@@ -146,6 +151,7 @@ export const StepCardBody = ({
                             key={formState.action.form}
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
+                            canAddMessages={canAddMessages}
                             onClose={() => setActiveAction(null)}
                             previousVersion={getPreviousFormVersion(step, formState.action.form)}
                         />
