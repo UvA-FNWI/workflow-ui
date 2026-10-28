@@ -53,6 +53,7 @@ export const StepCardBody = ({
     const formState = resolveFormState(resolvedAction);
     const openFormId = formState?.action.form;
     const showVersionCards = hasVersionHistory(step);
+    const canAddMessages = instance.permissions.includes("AddInstanceMessage");
 
     // Modal forms must not replace the step form registered for the admin helper.
     useEffect(() => {
@@ -98,7 +99,11 @@ export const StepCardBody = ({
                                         {l(submission.form.title)?.toUpperCase()}
                                     </Heading>
                                 )}
-                                <FormSummary instanceId={instance.id} submission={submission} />
+                                <FormSummary
+                                    instanceId={instance.id}
+                                    submission={submission}
+                                    canAddMessages={canAddMessages}
+                                />
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
@@ -159,6 +164,7 @@ export const StepCardBody = ({
                             key={formState.action.form}
                             instanceId={instance.id}
                             submissionId={formState.action.form ?? ""}
+                            canAddMessages={canAddMessages}
                             onClose={() => setActiveAction(null)}
                             previousVersion={getPreviousFormVersion(step, formState.action.form)}
                         />
