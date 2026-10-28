@@ -3,9 +3,11 @@ export type MessageUser = {
     displayName: string;
 };
 
-export type MessageItemKind = "Message" | "Close";
+export type MessageItemKind = "Message" | "Close" | "Reopen";
 
 export type MessageItem = {
+    id: string;
+    parentItemId: string | null;
     dateTime: string;
     user: MessageUser;
     body: string | null;
@@ -22,6 +24,7 @@ export type MessageThread = {
 export type AddMessageBody = {
     questionName?: string | null;
     replyToId?: string | null;
+    parentItemId?: string | null;
     kind?: MessageItemKind;
     body?: string | null;
 };
