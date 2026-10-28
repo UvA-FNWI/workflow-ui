@@ -5,8 +5,12 @@ import {MessageThreadPanel} from "../MessageThreadPanel";
 import type {MessageThread} from "~/store/api/types/messages";
 
 vi.mock("~/hooks/useTranslate", () => ({
-    useTranslate: () => ({
-        t: (key: string) => key,
+    useTranslate: (_ns?: string, options?: {keyPrefix?: string}) => ({
+        t: (key: string, translateOptions?: {defaultValue?: string}) => {
+            if (translateOptions?.defaultValue) return translateOptions.defaultValue;
+            const prefix = options?.keyPrefix ? `${options.keyPrefix}.` : "";
+            return `${prefix}${key}`;
+        },
         i18n: {language: "en"},
     }),
 }));
@@ -59,20 +63,16 @@ describe("MessageThreadPanel", () => {
     it("shows a compact new-conversation field without actions until it is focused", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(
-            screen.getByLabelText("instance.messages.new_conversation_placeholder"),
-        ).toBeTruthy();
+        expect(screen.getByLabelText("Start a new conversation")).toBeTruthy();
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();
     });
 
     it("shows a compact new-conversation field when there are no threads", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[]} canAdd />);
 
-        expect(
-            screen.getByLabelText("instance.messages.new_conversation_placeholder"),
-        ).toBeTruthy();
+        expect(screen.getByLabelText("Start a new conversation")).toBeTruthy();
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();
-        fireEvent.focus(screen.getByLabelText("instance.messages.new_conversation_placeholder"));
+        fireEvent.focus(screen.getByLabelText("Start a new conversation"));
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
@@ -80,7 +80,7 @@ describe("MessageThreadPanel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();
-        fireEvent.focus(screen.getByLabelText("instance.messages.new_conversation_placeholder"));
+        fireEvent.focus(screen.getByLabelText("Start a new conversation"));
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
@@ -98,7 +98,7 @@ describe("MessageThreadPanel", () => {
     it("can dismiss the new conversation field with cancel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        fireEvent.focus(screen.getByLabelText("instance.messages.new_conversation_placeholder"));
+        fireEvent.focus(screen.getByLabelText("Start a new conversation"));
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
         fireEvent.click(screen.getByRole("button", {name: "cancel"}));
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();

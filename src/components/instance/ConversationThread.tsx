@@ -31,7 +31,8 @@ function ReplyButton({label, onClick}: {label: string; onClick: () => void}) {
             intent="primary"
             variant="destructive"
             size="small"
-            className="w-fit"
+            width="none"
+            className="self-start"
             leftIcon={<Icon name="bubble-message-line" size="xs" color="current" decorative />}
             onClick={onClick}
         >
@@ -133,17 +134,15 @@ export function ConversationThread({
     isLoading,
     replyComposer,
 }: Props) {
-    const {t, i18n} = useTranslate("workflow");
+    const {t: m, i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const items = messageItems(thread);
     const root = items[0];
 
     if (!root) return null;
 
     const replyTree = buildReplyTree(thread.items);
-    const toggleLabel = expanded
-        ? t("instance.messages.collapse_conversation")
-        : t("instance.messages.expand_conversation");
-    const closedLabel = t("instance.messages.closed");
+    const toggleLabel = expanded ? m("collapse_conversation") : m("expand_conversation");
+    const closedLabel = m("closed");
 
     const toggle = () => onExpandedChange(!expanded);
 
@@ -187,11 +186,8 @@ export function ConversationThread({
                     {root.body && <MessageBody body={root.body} className="mt-0" />}
 
                     {canAdd && !thread.isClosed && (
-                        <div className="flex flex-col gap-2">
-                            <ReplyButton
-                                label={t("instance.messages.reply")}
-                                onClick={() => onStartReply(root.id)}
-                            />
+                        <div className="flex flex-col items-start gap-2">
+                            <ReplyButton label={m("reply")} onClick={() => onStartReply(root.id)} />
                             {replyParentItemId === root.id && replyComposer}
                         </div>
                     )}
@@ -200,7 +196,7 @@ export function ConversationThread({
                         <div
                             className="flex flex-col gap-6 border-l border-grey-300 pl-4 dark:border-grey-600"
                             role="list"
-                            aria-label={t("instance.messages.replies_heading")}
+                            aria-label={m("replies_heading")}
                         >
                             {replyTree.map((node) => (
                                 <ReplyBranch
@@ -222,19 +218,21 @@ export function ConversationThread({
                                 <Button
                                     intent="secondary"
                                     size="small"
+                                    width="none"
                                     disabled={isLoading}
                                     onClick={onReopenConversation}
                                 >
-                                    {t("instance.messages.reopen_conversation")}
+                                    {m("reopen_conversation")}
                                 </Button>
                             ) : (
                                 <Button
                                     intent="secondary"
                                     size="small"
+                                    width="none"
                                     disabled={isLoading}
                                     onClick={onCloseConversation}
                                 >
-                                    {t("instance.messages.close_conversation")}
+                                    {m("close_conversation")}
                                 </Button>
                             )}
                         </div>
@@ -262,7 +260,7 @@ function ReplyBranch({
     onStartReply,
     replyComposer,
 }: ReplyBranchProps) {
-    const {t, i18n} = useTranslate("workflow");
+    const {t: m, i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const isReplyingHere = replyParentItemId === node.id;
     const atMaxDepth = visualDepth >= MAX_REPLY_VISUAL_DEPTH;
 
@@ -276,11 +274,8 @@ function ReplyBranch({
             />
             {node.body && <MessageBody body={node.body} className="mt-1" />}
             {canAdd && (
-                <div className="flex flex-col gap-2">
-                    <ReplyButton
-                        label={t("instance.messages.reply")}
-                        onClick={() => onStartReply(node.id)}
-                    />
+                <div className="flex flex-col items-start gap-2">
+                    <ReplyButton label={m("reply")} onClick={() => onStartReply(node.id)} />
                     {isReplyingHere && replyComposer}
                 </div>
             )}
