@@ -3,6 +3,7 @@ import {Navigate, useParams} from "react-router";
 import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
 import {AdminCard} from "~/components/instance/AdminCard";
+import {CommentsCard} from "~/components/instance/CommentsCard";
 import {ContentCard} from "~/components/instance/ContentCard";
 import {CorrespondenceCard} from "~/components/instance/CorrespondenceCard.tsx";
 import {InfoCards} from "~/components/instance/InfoCard.tsx";
@@ -57,6 +58,9 @@ function Instance() {
                     )}
                 </GridItem>
                 <GridItem span={{base: 12, md: 3}} className="flex flex-col gap-6">
+                    {instance?.workflowDefinition.messagesEnabled && instance && (
+                        <CommentsCard instance={instance} />
+                    )}
                     <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
                     {instance?.canImpersonate && <AdminCard />}
                     {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}

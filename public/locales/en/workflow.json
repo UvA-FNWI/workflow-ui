@@ -108,6 +108,27 @@
       "title": "Summary",
       "view_changes": "View changes"
     },
+    "messages": {
+      "add": "Add a note",
+      "audience": "involved staff only",
+      "body": "Comment",
+      "close": "Close",
+      "closed": "Closed",
+      "closed_count_one": "Show {{count}} closed comment",
+      "closed_count_other": "Show {{count}} closed comments",
+      "empty": "No notes yet.",
+      "field_label": "Comments on this field",
+      "heading": "{{title}} - {{audience}}",
+      "hide_closed": "Hide closed comments",
+      "info": "Notes are only visible to staff involved in this record.",
+      "new": "New comment",
+      "placeholder": "Type a note",
+      "reply": "Reply",
+      "reply_placeholder": "Write a reply",
+      "show_closed_one": "Show {{count}} closed comment",
+      "show_closed_other": "Show {{count}} closed comments",
+      "title": "Notes"
+    },
     "unauthorized_submission": "You are not authorized to see this submission",
     "workflowInstance": "Workflow Instance"
   },

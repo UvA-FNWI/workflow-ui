@@ -108,6 +108,27 @@
       "title": "Samenvatting",
       "view_changes": "Wijzigingen bekijken"
     },
+    "messages": {
+      "add": "Notitie toevoegen",
+      "audience": "alleen voor betrokken medewerkers",
+      "body": "Opmerking",
+      "close": "Sluiten",
+      "closed": "Gesloten",
+      "closed_count_one": "Toon {{count}} gesloten opmerking",
+      "closed_count_other": "Toon {{count}} gesloten opmerkingen",
+      "empty": "Nog geen notities.",
+      "field_label": "Opmerkingen bij dit veld",
+      "heading": "{{title}} - {{audience}}",
+      "hide_closed": "Gesloten opmerkingen verbergen",
+      "info": "Notities zijn alleen zichtbaar voor medewerkers die bij dit dossier betrokken zijn.",
+      "new": "Nieuwe opmerking",
+      "placeholder": "Typ een notitie",
+      "reply": "Reageren",
+      "reply_placeholder": "Schrijf een reactie",
+      "show_closed_one": "Toon {{count}} gesloten opmerking",
+      "show_closed_other": "Toon {{count}} gesloten opmerkingen",
+      "title": "Notities"
+    },
     "unauthorized_submission": "Je hebt geen rechten om dit in te zien",
     "workflowInstance": "Workflow"
   },
