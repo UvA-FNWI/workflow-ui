@@ -55,6 +55,9 @@ function Instance() {
                         stopMessage={instance?.stopMessage}
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
+                    {instance?.workflowDefinition.messagesEnabled && instance && (
+                        <CommentsCard instance={instance} />
+                    )}
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
                         <CorrespondenceCard instanceId={id} />
                     )}
@@ -63,9 +66,6 @@ function Instance() {
                     )}
                 </GridItem>
                 <GridItem span={{base: 12, md: 3}} className="flex flex-col gap-6">
-                    {instance?.workflowDefinition.messagesEnabled && instance && (
-                        <CommentsCard instance={instance} />
-                    )}
                     <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
                     {(instance?.canUseAdminTools || instance?.canImpersonate) && (
                         <AdminCard
