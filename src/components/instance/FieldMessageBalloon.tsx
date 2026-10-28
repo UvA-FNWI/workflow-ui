@@ -1,7 +1,8 @@
-import {useRef} from "react";
+import {useState} from "react";
 
-import {Button, Icon, Popover, usePopoverState} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Modal, Text} from "@uva-fnwi/datanose-ui";
 
+import {ClosedCommentsToggle} from "./ClosedCommentsToggle";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -10,14 +11,21 @@ import {messagesEndpoints} from "~/store/api/messagesApi";
 type Props = {
     instanceId: string;
     questionName: string;
+    fieldLabel: string;
     allowMessages?: boolean;
     canAdd: boolean;
 };
 
-export function FieldMessageBalloon({instanceId, questionName, allowMessages, canAdd}: Props) {
+export function FieldMessageBalloon({
+    instanceId,
+    questionName,
+    fieldLabel,
+    allowMessages,
+    canAdd,
+}: Props) {
     const {t} = useTranslate("workflow");
-    const triggerRef = useRef<HTMLButtonElement>(null);
-    const popover = usePopoverState();
+    const [open, setOpen] = useState(false);
+    const [showClosed, setShowClosed] = useState(false);
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
         instanceId,
         {skip: !allowMessages},
@@ -30,45 +38,73 @@ export function FieldMessageBalloon({instanceId, questionName, allowMessages, ca
     if (!shouldShowMessageUi(canAdd, fieldThreads.length)) return null;
 
     const openCount = fieldThreads.filter((thread) => !thread.isClosed).length;
-    const label =
+    const closedCount = fieldThreads.length - openCount;
+    const hasAnyComments = fieldThreads.length > 0;
+    const iconColor = hasAnyComments ? ("danger" as const) : ("current" as const);
+
+    const ariaLabel =
         openCount > 0
             ? `${t("instance.messages.field_label")} (${openCount})`
             : t("instance.messages.field_label");
 
+    const triggerClassName =
+        "ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800";
+
     return (
-        <span className="ml-1 inline-flex shrink-0 items-center">
-            <Button
-                ref={triggerRef}
-                intent="ghost"
-                size="small"
-                shape="circular"
-                className="ui:ml-0 ui:border-0 ui:px-1"
-                aria-label={label}
-                aria-expanded={popover.isOpen}
-                onClick={() => (popover.isOpen ? popover.close() : popover.open())}
-            >
-                <Icon name="bubble-message-line" size="xs" color="current" />
-            </Button>
-            {openCount > 0 && (
-                <span className="text-xs text-grey-600" aria-hidden>
-                    {openCount}
-                </span>
-            )}
-            {popover.isOpen && (
-                <Popover
-                    state={popover}
-                    triggerRef={triggerRef}
-                    placement="bottom end"
-                    className="max-h-96 w-80 overflow-y-auto border border-grey-400 bg-white p-3 shadow-md outline-none dark:bg-grey-800"
+        <>
+            <span className="inline-flex shrink-0 items-center">
+                <Button
+                    intent="ghost"
+                    size="small"
+                    shape="circular"
+                    className={triggerClassName}
+                    aria-label={ariaLabel}
+                    aria-expanded={open}
+                    onClick={() => setOpen(true)}
                 >
+                    <Icon name="bubble-message-line" size="xs" color={iconColor} />
+                </Button>
+                {openCount > 0 && (
+                    <Text as="span" size="xs" intent="error" display="inline" aria-hidden>
+                        {openCount}
+                    </Text>
+                )}
+            </span>
+            <Modal
+                isOpen={open}
+                onOpenChange={(next) => {
+                    if (!next) {
+                        setOpen(false);
+                        setShowClosed(false);
+                    }
+                }}
+                size="sm"
+            >
+                <Modal.Header>
+                    {t("instance.messages.field_modal_title", {field: fieldLabel})}
+                </Modal.Header>
+                <Modal.Body className="flex flex-col gap-4">
+                    <ClosedCommentsToggle
+                        closedCount={closedCount}
+                        showClosed={showClosed}
+                        onChange={setShowClosed}
+                    />
                     <MessageThreadPanel
                         instanceId={instanceId}
                         threads={fieldThreads}
                         questionName={questionName}
                         canAdd={canAdd}
+                        showClosed={showClosed}
+                        onShowClosedChange={setShowClosed}
+                        showNewComposer={canAdd && openCount === 0}
                     />
-                </Popover>
-            )}
-        </span>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button size="large" intent="secondary" onClick={() => setOpen(false)}>
+                        {t("cancel")}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 }

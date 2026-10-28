@@ -38,18 +38,41 @@ export const QuestionAnswerList = ({
 
                 return (
                     <div key={question.name} className="grid grid-cols-2 gap-4">
-                        <Text
-                            as="span"
-                            fontWeight="semibold"
-                            className="min-w-0 wrap-break-word"
-                            color="text-grey-900"
-                        >
-                            {l(question.text)}
-                            {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                            {":"}
-                        </Text>
+                        <div className="flex min-w-0 items-start">
+                            <Text
+                                as="span"
+                                fontWeight="semibold"
+                                className="min-w-0 wrap-break-word"
+                                color="text-grey-900"
+                            >
+                                {l(question.text)}
+                                {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
+                                {":"}
+                            </Text>
+                            {showMessages && (
+                                <FieldMessageBalloon
+                                    instanceId={instanceId}
+                                    questionName={question.name}
+                                    fieldLabel={l(question.text) ?? question.name}
+                                    allowMessages={question.allowMessages}
+                                    canAdd={canAddMessages}
+                                />
+                            )}
+                            {latestEdit && (
+                                <Button
+                                    intent="ghost"
+                                    size="small"
+                                    shape="circular"
+                                    className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                    onClick={() => setHistoryPair(pair)}
+                                    aria-label={t("instance.summary.view_changes")}
+                                >
+                                    <Icon name="clock-back-line" size="xs" color="danger" />
+                                </Button>
+                            )}
+                        </div>
 
-                        <div className="flex min-w-0 flex-wrap items-center gap-1">
+                        <div className="flex min-w-0 flex-wrap items-baseline gap-1">
                             <AnswerCell
                                 pair={pair}
                                 canEdit={canEdit}
@@ -57,44 +80,24 @@ export const QuestionAnswerList = ({
                                 instanceId={instanceId}
                                 noAnswerText={t("version_card.no_answer")}
                             />
-                            {showMessages && (
-                                <FieldMessageBalloon
-                                    instanceId={instanceId}
-                                    questionName={question.name}
-                                    allowMessages={question.allowMessages}
-                                    canAdd={canAddMessages}
-                                />
-                            )}
                             {latestEdit && (
-                                <span className="inline-flex items-center">
-                                    <Button
-                                        intent="ghost"
-                                        size="small"
-                                        shape="circular"
-                                        className="ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                        onClick={() => setHistoryPair(pair)}
-                                        aria-label={t("instance.summary.view_changes")}
-                                    >
-                                        <Icon name="clock-back-line" size="xs" color="danger" />
-                                    </Button>
-                                    <button
-                                        type="button"
-                                        className="cursor-pointer"
-                                        onClick={() => setHistoryPair(pair)}
-                                        aria-label={t("instance.summary.view_changes")}
-                                    >
-                                        <Text intent="secondary" display="inline">
-                                            (
-                                            {t("instance.summary.changed_on_inline", {
-                                                date: formatDateShort(
-                                                    latestEdit.changedAt,
-                                                    i18n.language,
-                                                ),
-                                            })}
-                                            )
-                                        </Text>
-                                    </button>
-                                </span>
+                                <button
+                                    type="button"
+                                    className="cursor-pointer"
+                                    onClick={() => setHistoryPair(pair)}
+                                    aria-label={t("instance.summary.view_changes")}
+                                >
+                                    <Text intent="secondary" display="inline">
+                                        (
+                                        {t("instance.summary.changed_on_inline", {
+                                            date: formatDateShort(
+                                                latestEdit.changedAt,
+                                                i18n.language,
+                                            ),
+                                        })}
+                                        )
+                                    </Text>
+                                </button>
                             )}
                         </div>
                     </div>
