@@ -1,6 +1,4 @@
 import {
-    Grid,
-    GridItem,
     Item,
     ListBoxWrapper,
     type ListState,
@@ -59,6 +57,7 @@ export function RubricPopover({
             className="my-1 max-h-[80vh] max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-grey-500 bg-grey-200 shadow-md outline-none sm:max-w-200 dark:bg-grey-800"
         >
             <ListBoxWrapper<GradeItem>
+                className="grid grid-cols-[fit-content(min(12rem,40vw))_minmax(0,1fr)] gap-x-2 pr-4"
                 items={allGrades.map((g, i) => ({key: i, grade: l(g.text) ?? g.name}))}
                 selectedKeys={selectedKeys}
                 onSelectionChange={handleSelectionChange}
@@ -71,53 +70,51 @@ export function RubricPopover({
                 )}
             >
                 {(listState: ListState<GradeItem>) => (
-                    <Grid rowGap="none">
+                    <>
                         {rubrics.map((rubricEntry, index) => {
                             const offset = rubrics
                                 .slice(0, index)
                                 .reduce((sum, r) => sum + r.grades.length, 0);
 
                             return (
-                                <GridItem key={index} span={12} className="h-full">
-                                    <div className="flex h-full items-stretch gap-x-2 pr-4">
-                                        <div className="flex h-full max-w-20 min-w-15 flex-col justify-between">
-                                            {rubricEntry.grades.map((_, i) => {
-                                                const globalIndex = offset + i;
+                                <div key={index} className="col-span-2 grid grid-cols-subgrid">
+                                    <div className="flex min-w-15 flex-col justify-between wrap-anywhere">
+                                        {rubricEntry.grades.map((_, i) => {
+                                            const globalIndex = offset + i;
 
-                                                const item = listState.collection.getItem(
-                                                    globalIndex.toString(),
-                                                );
+                                            const item = listState.collection.getItem(
+                                                globalIndex.toString(),
+                                            );
 
-                                                if (!item) return null;
+                                            if (!item) return null;
 
-                                                const isLastItem =
-                                                    index === rubrics.length - 1 &&
-                                                    i === rubricEntry.grades.length - 1;
+                                            const isLastItem =
+                                                index === rubrics.length - 1 &&
+                                                i === rubricEntry.grades.length - 1;
 
-                                                return (
-                                                    <GradeListBoxItem
-                                                        key={globalIndex}
-                                                        item={item}
-                                                        state={listState}
-                                                        isLastItem={isLastItem}
-                                                    />
-                                                );
-                                            })}
-                                        </div>
-                                        <div
-                                            className={`flex-1 border-grey-800 dark:border-grey-200 ${index === rubrics.length - 1 ? "border-b-0" : "border-b"}`}
-                                        >
-                                            <div className="px-2 py-2">
-                                                <MarkdownRenderer>
-                                                    {l(rubricEntry.description)}
-                                                </MarkdownRenderer>
-                                            </div>
+                                            return (
+                                                <GradeListBoxItem
+                                                    key={globalIndex}
+                                                    item={item}
+                                                    state={listState}
+                                                    isLastItem={isLastItem}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                    <div
+                                        className={`min-w-0 border-grey-800 dark:border-grey-200 ${index === rubrics.length - 1 ? "border-b-0" : "border-b"}`}
+                                    >
+                                        <div className="px-2 py-2">
+                                            <MarkdownRenderer>
+                                                {l(rubricEntry.description)}
+                                            </MarkdownRenderer>
                                         </div>
                                     </div>
-                                </GridItem>
+                                </div>
                             );
                         })}
-                    </Grid>
+                    </>
                 )}
             </ListBoxWrapper>
         </Popover>
