@@ -77,6 +77,7 @@ export const API_TAG_TYPES = [
     "Organization",
     "Choices",
     "Screen",
+    "Messages",
 ] as const;
 
 export const baseApi = createApi({
