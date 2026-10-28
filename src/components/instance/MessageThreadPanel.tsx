@@ -1,11 +1,11 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
-import {Button, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
+import {Button, Text, TextArea} from "@uva-fnwi/datanose-ui";
 
+import {ConversationThread} from "./ConversationThread";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
 import type {MessageThread} from "~/store/api/types/messages";
-import {formatDate} from "~/utils/formatDate";
 
 type Props = {
     instanceId: string;
@@ -13,9 +13,8 @@ type Props = {
     questionName?: string | null;
     canAdd: boolean;
     showClosed?: boolean;
-    onShowClosedChange?: (show: boolean) => void;
     composerFirst?: boolean;
-    /** Show the composer that starts a new thread (e.g. instance card + control). */
+    /** Show the composer that starts a new conversation (e.g. instance card + control). */
     showNewComposer?: boolean;
     autoFocusComposer?: boolean;
     onDismissComposer?: () => void;
@@ -27,25 +26,38 @@ export function MessageThreadPanel({
     questionName = null,
     canAdd,
     showClosed: showClosedProp,
-    onShowClosedChange,
     composerFirst = false,
     showNewComposer = false,
     autoFocusComposer = false,
     onDismissComposer,
 }: Props) {
-    const {t, i18n} = useTranslate("workflow");
+    const {t} = useTranslate("workflow");
     const [body, setBody] = useState("");
     const [replyToId, setReplyToId] = useState<string | null>(null);
     const [startNewThread, setStartNewThread] = useState(false);
-    const [internalShowClosed, setInternalShowClosed] = useState(false);
+    const [expandedOverrides, setExpandedOverrides] = useState<Record<string, boolean>>({});
     const [addMessage, {isLoading}] = messagesEndpoints.addMessage.useMutation();
 
-    const showClosed = onShowClosedChange ? (showClosedProp ?? false) : internalShowClosed;
-    const setShowClosed = onShowClosedChange ?? setInternalShowClosed;
+    const showClosed = showClosedProp ?? false;
 
     const openThreads = threads.filter((thread) => !thread.isClosed);
     const closedThreads = threads.filter((thread) => thread.isClosed);
-    const visibleThreads = showClosed ? [...openThreads, ...closedThreads] : openThreads;
+    const visibleClosed = showClosed ? closedThreads : [];
+
+    const isExpanded = useCallback(
+        (thread: MessageThread) => {
+            if (thread.id in expandedOverrides) return expandedOverrides[thread.id]!;
+            return !thread.isClosed;
+        },
+        [expandedOverrides],
+    );
+
+    const toggleExpanded = (threadId: string, thread: MessageThread) => {
+        setExpandedOverrides((prev) => ({
+            ...prev,
+            [threadId]: !(threadId in prev ? prev[threadId] : !thread.isClosed),
+        }));
+    };
 
     const submit = (kind: "Message" | "Close", threadId?: string) => {
         const target = threadId ?? replyToId;
@@ -62,6 +74,9 @@ export function MessageThreadPanel({
                 setBody("");
                 setReplyToId(null);
                 setStartNewThread(false);
+                if (kind === "Close" && target) {
+                    setExpandedOverrides((prev) => ({...prev, [target]: false}));
+                }
                 if (kind === "Message" && !target) onDismissComposer?.();
             });
     };
@@ -70,6 +85,7 @@ export function MessageThreadPanel({
         setReplyToId(threadId);
         setStartNewThread(false);
         setBody("");
+        setExpandedOverrides((prev) => ({...prev, [threadId]: true}));
     };
 
     const cancelReply = () => {
@@ -92,7 +108,7 @@ export function MessageThreadPanel({
         <div className="flex flex-col gap-2">
             {openThreads.length > 0 && (
                 <Text as="span" size="sm" fontWeight="semibold">
-                    {t("instance.messages.new_thread_heading")}
+                    {t("instance.messages.new_conversation_heading")}
                 </Text>
             )}
             <Composer
@@ -116,8 +132,23 @@ export function MessageThreadPanel({
         </div>
     ) : null;
 
+    const replyComposer = (
+        <Composer
+            body={body}
+            onChange={setBody}
+            onSubmit={() => submit("Message")}
+            onCancel={cancelReply}
+            submitLabel={t("save")}
+            cancelLabel={t("cancel")}
+            ariaLabel={t("instance.messages.reply_placeholder")}
+            placeholder={t("instance.messages.reply_placeholder")}
+            isLoading={isLoading}
+            autoFocus
+        />
+    );
+
     const threadList = (
-        <>
+        <div className="flex flex-col gap-3">
             {openThreads.length === 0 && closedThreads.length === 0 && (
                 <Text as="span" size="sm" className="text-grey-600">
                     {t("instance.messages.empty")}
@@ -145,75 +176,35 @@ export function MessageThreadPanel({
                         {t("instance.messages.new")}
                     </Button>
                 )}
-            {visibleThreads.map((thread, index) => (
-                <div key={thread.id} className="flex flex-col gap-2">
-                    {index > 0 && <Separator />}
-                    {thread.items.map((item, itemIndex) => (
-                        <div key={`${thread.id}-${itemIndex}`} className="flex flex-col gap-1">
-                            {item.body && (
-                                <Text as="span" size="sm">
-                                    {item.body}
-                                </Text>
-                            )}
-                            <div className="flex flex-wrap items-baseline gap-x-2">
-                                <Text as="span" size="sm" fontWeight="semibold">
-                                    {item.user.displayName}
-                                </Text>
-                                <Text as="span" size="sm" className="text-grey-600">
-                                    {formatDate(item.dateTime, i18n.language)}
-                                    {item.kind === "Close"
-                                        ? ` · ${t("instance.messages.closed")}`
-                                        : ""}
-                                </Text>
-                            </div>
-                        </div>
-                    ))}
-                    {canAdd && !thread.isClosed && replyToId === thread.id && (
-                        <Composer
-                            body={body}
-                            onChange={setBody}
-                            onSubmit={() => submit("Message")}
-                            onCancel={cancelReply}
-                            submitLabel={t("save")}
-                            cancelLabel={t("cancel")}
-                            ariaLabel={t("instance.messages.reply_placeholder")}
-                            placeholder={t("instance.messages.reply_placeholder")}
-                            isLoading={isLoading}
-                            autoFocus
-                        />
-                    )}
-                    {canAdd && !thread.isClosed && (
-                        <div className="flex flex-wrap items-center gap-2">
-                            {replyToId !== thread.id && (
-                                <Button
-                                    intent="primary"
-                                    variant="destructive"
-                                    size="small"
-                                    onClick={() => startReply(thread.id)}
-                                >
-                                    {t("instance.messages.reply")}
-                                </Button>
-                            )}
-                            <Button
-                                intent="secondary"
-                                size="small"
-                                disabled={isLoading}
-                                onClick={() => submit("Close", thread.id)}
-                            >
-                                {t("instance.messages.close")}
-                            </Button>
-                        </div>
-                    )}
-                </div>
+            {openThreads.map((thread) => (
+                <ConversationThread
+                    key={thread.id}
+                    thread={thread}
+                    expanded={isExpanded(thread)}
+                    onToggleExpanded={() => toggleExpanded(thread.id, thread)}
+                    canAdd={canAdd}
+                    isReplying={replyToId === thread.id}
+                    onStartReply={() => startReply(thread.id)}
+                    onCloseConversation={() => submit("Close", thread.id)}
+                    isLoading={isLoading}
+                    replyComposer={replyComposer}
+                />
             ))}
-            {closedThreads.length > 0 && onShowClosedChange == null && (
-                <Button intent="secondary" size="small" onClick={() => setShowClosed(!showClosed)}>
-                    {showClosed
-                        ? t("instance.messages.hide_closed")
-                        : t("instance.messages.show_closed", {count: closedThreads.length})}
-                </Button>
-            )}
-        </>
+            {visibleClosed.map((thread) => (
+                <ConversationThread
+                    key={thread.id}
+                    thread={thread}
+                    expanded={isExpanded(thread)}
+                    onToggleExpanded={() => toggleExpanded(thread.id, thread)}
+                    canAdd={canAdd}
+                    isReplying={replyToId === thread.id}
+                    onStartReply={() => startReply(thread.id)}
+                    onCloseConversation={() => submit("Close", thread.id)}
+                    isLoading={isLoading}
+                    replyComposer={replyComposer}
+                />
+            ))}
+        </div>
     );
 
     return (

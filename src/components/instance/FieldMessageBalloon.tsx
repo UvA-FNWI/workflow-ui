@@ -95,15 +95,9 @@ export function FieldMessageBalloon({
                         questionName={questionName}
                         canAdd={canAdd}
                         showClosed={showClosed}
-                        onShowClosedChange={setShowClosed}
                         showNewComposer={canAdd && openCount === 0}
                     />
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button size="large" intent="secondary" onClick={() => setOpen(false)}>
-                        {t("cancel")}
-                    </Button>
-                </Modal.Footer>
             </Modal>
         </>
     );

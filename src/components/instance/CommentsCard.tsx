@@ -111,7 +111,6 @@ export function CommentsCard({instance}: Props) {
                         threads={instanceThreads}
                         canAdd={canAdd}
                         showClosed={showClosed}
-                        onShowClosedChange={setShowClosed}
                         composerFirst
                         showNewComposer={composing}
                         autoFocusComposer={composing}
