@@ -129,18 +129,9 @@ describe("MessageThreadPanel", () => {
             ],
         };
 
-        render(
-            <MessageThreadPanel
-                instanceId="instance-1"
-                threads={[closed]}
-                canAdd={false}
-                showClosed
-            />,
-        );
+        render(<MessageThreadPanel instanceId="instance-1" threads={[closed]} canAdd={false} />);
 
         expect(screen.queryByText("Will do.")).toBeNull();
-        expect(
-            screen.getByRole("button", {name: "instance.messages.expand_conversation"}),
-        ).toBeTruthy();
+        expect(screen.getByText(/Ada Lovelace.*instance\.messages\.closed/)).toBeTruthy();
     });
 });

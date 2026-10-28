@@ -2,7 +2,6 @@ import {useState} from "react";
 
 import {Button, Disclosure, Heading, Icon, Text} from "@uva-fnwi/datanose-ui";
 
-import {ClosedCommentsToggle} from "./ClosedCommentsToggle";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -20,7 +19,6 @@ export function CommentsCard({instance}: Props) {
         instance.id,
         {skip: !enabled},
     );
-    const [showClosed, setShowClosed] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [composing, setComposing] = useState(false);
 
@@ -99,18 +97,10 @@ export function CommentsCard({instance}: Props) {
             </div>
             <Disclosure.Content>
                 <div className="flex flex-col gap-3 pt-2">
-                    {closedCount > 0 && (
-                        <ClosedCommentsToggle
-                            closedCount={closedCount}
-                            showClosed={showClosed}
-                            onChange={setShowClosed}
-                        />
-                    )}
                     <MessageThreadPanel
                         instanceId={instance.id}
                         threads={instanceThreads}
                         canAdd={canAdd}
-                        showClosed={showClosed}
                         composerFirst
                         showNewComposer={composing}
                         autoFocusComposer={composing}
