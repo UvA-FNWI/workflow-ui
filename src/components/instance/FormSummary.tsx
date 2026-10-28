@@ -13,9 +13,16 @@ type Props = {
     onEditPage?: (pageName: string) => void;
     onSubmit?: () => void;
     collapseAnswers?: boolean;
+    canAddMessages?: boolean;
 };
 
-export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Props) => {
+export const FormSummary = ({
+    instanceId,
+    submission,
+    onEditPage,
+    onSubmit,
+    canAddMessages = false,
+}: Props) => {
     const {l} = useTranslate("workflow");
 
     // Only form-scoped Edit counts: the instance-level permission is form-less (property editing only)
@@ -72,6 +79,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
                             instanceId={instanceId}
                             submissionId={submission.id}
                             canEdit={canEdit}
+                            canAddMessages={canAddMessages}
                         />
                     </div>
                 );

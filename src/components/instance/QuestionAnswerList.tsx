@@ -4,6 +4,7 @@ import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {AnswerChangesModal} from "~/components/instance/AnswerChangesModal.tsx";
+import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
@@ -13,6 +14,8 @@ type Props = {
     instanceId: string;
     submissionId?: string;
     canEdit?: boolean;
+    showMessages?: boolean;
+    canAddMessages?: boolean;
 };
 
 export const QuestionAnswerList = ({
@@ -20,6 +23,8 @@ export const QuestionAnswerList = ({
     instanceId,
     submissionId,
     canEdit = false,
+    showMessages = true,
+    canAddMessages = false,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
     const [historyPair, setHistoryPair] = useState<QuestionAnswerPair | null>(null);
@@ -33,32 +38,18 @@ export const QuestionAnswerList = ({
 
                 return (
                     <div key={question.name} className="grid grid-cols-2 gap-4">
-                        <div className="flex min-w-0 items-start">
-                            <Text
-                                as="span"
-                                fontWeight="semibold"
-                                className="min-w-0 wrap-break-word"
-                                color="text-grey-900"
-                            >
-                                {l(question.text)}
-                                {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                                {":"}
-                            </Text>
-                            {latestEdit && (
-                                <Button
-                                    intent="ghost"
-                                    size="small"
-                                    shape="circular"
-                                    className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
-                                    onClick={() => setHistoryPair(pair)}
-                                    aria-label={t("instance.summary.view_changes")}
-                                >
-                                    <Icon name="clock-back-line" size="xs" color="danger" />
-                                </Button>
-                            )}
-                        </div>
+                        <Text
+                            as="span"
+                            fontWeight="semibold"
+                            className="min-w-0 wrap-break-word"
+                            color="text-grey-900"
+                        >
+                            {l(question.text)}
+                            {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
+                            {":"}
+                        </Text>
 
-                        <div className="flex min-w-0 flex-wrap items-baseline gap-1">
+                        <div className="flex min-w-0 flex-wrap items-center gap-1">
                             <AnswerCell
                                 pair={pair}
                                 canEdit={canEdit}
@@ -66,24 +57,44 @@ export const QuestionAnswerList = ({
                                 instanceId={instanceId}
                                 noAnswerText={t("version_card.no_answer")}
                             />
+                            {showMessages && (
+                                <FieldMessageBalloon
+                                    instanceId={instanceId}
+                                    questionName={question.name}
+                                    allowMessages={question.allowMessages}
+                                    canAdd={canAddMessages}
+                                />
+                            )}
                             {latestEdit && (
-                                <button
-                                    type="button"
-                                    className="cursor-pointer"
-                                    onClick={() => setHistoryPair(pair)}
-                                    aria-label={t("instance.summary.view_changes")}
-                                >
-                                    <Text intent="secondary" display="inline">
-                                        (
-                                        {t("instance.summary.changed_on_inline", {
-                                            date: formatDateShort(
-                                                latestEdit.changedAt,
-                                                i18n.language,
-                                            ),
-                                        })}
-                                        )
-                                    </Text>
-                                </button>
+                                <span className="inline-flex items-center">
+                                    <Button
+                                        intent="ghost"
+                                        size="small"
+                                        shape="circular"
+                                        className="ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                                        onClick={() => setHistoryPair(pair)}
+                                        aria-label={t("instance.summary.view_changes")}
+                                    >
+                                        <Icon name="clock-back-line" size="xs" color="danger" />
+                                    </Button>
+                                    <button
+                                        type="button"
+                                        className="cursor-pointer"
+                                        onClick={() => setHistoryPair(pair)}
+                                        aria-label={t("instance.summary.view_changes")}
+                                    >
+                                        <Text intent="secondary" display="inline">
+                                            (
+                                            {t("instance.summary.changed_on_inline", {
+                                                date: formatDateShort(
+                                                    latestEdit.changedAt,
+                                                    i18n.language,
+                                                ),
+                                            })}
+                                            )
+                                        </Text>
+                                    </button>
+                                </span>
                             )}
                         </div>
                     </div>

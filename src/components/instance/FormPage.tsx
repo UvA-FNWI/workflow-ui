@@ -27,9 +27,16 @@ type Props = {
     submissionId: string;
     onClose: () => void;
     previousVersion?: number;
+    canAddMessages?: boolean;
 };
 
-export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: Props) => {
+export const FormPage = ({
+    instanceId,
+    submissionId,
+    onClose,
+    previousVersion,
+    canAddMessages = false,
+}: Props) => {
     const {t, l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
@@ -151,6 +158,7 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
                                     <FormSummary
                                         submission={submission}
                                         instanceId={instanceId}
+                                        canAddMessages={canAddMessages}
                                         onSubmit={onClose}
                                         onEditPage={onEditPage}
                                     />
