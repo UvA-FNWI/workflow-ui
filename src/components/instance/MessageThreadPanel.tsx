@@ -39,6 +39,11 @@ export function MessageThreadPanel({
     onFocusNewConversationHandled,
 }: Props) {
     const {t} = useTranslate("workflow");
+    const {t: m} = useTranslate("workflow", {keyPrefix: "instance.messages"});
+    const newConversationPlaceholder = m("new_conversation_placeholder", {
+        defaultValue: "Start a new conversation",
+    });
+    const replyPlaceholder = m("reply_placeholder", {defaultValue: "Write a reply"});
     const [body, setBody] = useState("");
     const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
     const [newConversationExpanded, setNewConversationExpanded] = useState(false);
@@ -131,7 +136,7 @@ export function MessageThreadPanel({
         <div className="flex flex-col gap-2 pb-1">
             <TextArea
                 id={newConversationFieldId}
-                aria-label={t("instance.messages.new_conversation_placeholder")}
+                aria-label={newConversationPlaceholder}
                 rows={showNewConversationActions ? 3 : 1}
                 className={showNewConversationActions ? undefined : "min-h-10! resize-none"}
                 value={body}
@@ -140,7 +145,7 @@ export function MessageThreadPanel({
                 onKeyDown={(event) =>
                     handleMessageSubmitShortcut(event, () => submit("Message"), canSubmitNewMessage)
                 }
-                placeholder={t("instance.messages.new_conversation_placeholder")}
+                placeholder={newConversationPlaceholder}
             />
             {showNewConversationActions && (
                 <div className="flex flex-wrap items-center gap-2">
@@ -148,6 +153,7 @@ export function MessageThreadPanel({
                         intent="primary"
                         variant="destructive"
                         size="small"
+                        width="none"
                         disabled={isLoading || !body.trim()}
                         onClick={() => submit("Message")}
                     >
@@ -169,8 +175,8 @@ export function MessageThreadPanel({
             onCancel={cancelReply}
             submitLabel={t("save")}
             cancelLabel={t("cancel")}
-            ariaLabel={t("instance.messages.reply_placeholder")}
-            placeholder={t("instance.messages.reply_placeholder")}
+            ariaLabel={replyPlaceholder}
+            placeholder={replyPlaceholder}
             isLoading={isLoading}
             autoFocus
         />
@@ -199,7 +205,7 @@ export function MessageThreadPanel({
             {newConversationStarter}
             {openThreads.length === 0 && closedThreads.length === 0 && !canAdd && (
                 <Text as="span" className="text-grey-600">
-                    {t("instance.messages.empty")}
+                    {m("empty")}
                 </Text>
             )}
             {canAdd &&
@@ -207,7 +213,7 @@ export function MessageThreadPanel({
                 replyTarget == null &&
                 !showNewConversationActions && (
                     <Text as="span" className="text-grey-600">
-                        {t("instance.messages.reply_hint")}
+                        {m("reply_hint")}
                     </Text>
                 )}
             <div className="flex flex-col">
