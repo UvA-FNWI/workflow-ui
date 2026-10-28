@@ -1,4 +1,4 @@
-import {cleanup, render, screen} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import {MessageThreadPanel} from "../MessageThreadPanel";
@@ -27,12 +27,16 @@ const thread: MessageThread = {
     isClosed: false,
     items: [
         {
+            id: "item-root",
+            parentItemId: null,
             dateTime: "2026-09-17T10:00:00Z",
             user: {id: "u1", displayName: "Ada Lovelace"},
             body: "Please check the transfer rows.",
             kind: "Message",
         },
         {
+            id: "item-reply",
+            parentItemId: "item-root",
             dateTime: "2026-09-17T11:00:00Z",
             user: {id: "u2", displayName: "Grace Hopper"},
             body: "Will do.",
@@ -52,66 +56,52 @@ describe("MessageThreadPanel", () => {
         ).toBeTruthy();
     });
 
-    it("hides the composer until it is requested", () => {
-        render(
-            <MessageThreadPanel
-                instanceId="instance-1"
-                threads={[]}
-                canAdd
-                composerFirst
-                showNewComposer={false}
-            />,
-        );
+    it("shows a compact new-conversation field without actions until it is focused", () => {
+        render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(screen.queryByLabelText("instance.messages.placeholder")).toBeNull();
+        expect(
+            screen.getByLabelText("instance.messages.new_conversation_placeholder"),
+        ).toBeTruthy();
+        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
     });
 
-    it("shows the new-conversation composer with a destructive save when requested", () => {
-        render(
-            <MessageThreadPanel
-                instanceId="instance-1"
-                threads={[]}
-                canAdd
-                composerFirst
-                showNewComposer
-            />,
-        );
+    it("shows a compact new-conversation field when there are no threads", () => {
+        render(<MessageThreadPanel instanceId="instance-1" threads={[]} canAdd />);
 
-        expect(screen.getByLabelText("instance.messages.placeholder")).toBeTruthy();
+        expect(
+            screen.getByLabelText("instance.messages.new_conversation_placeholder"),
+        ).toBeTruthy();
+        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
+        fireEvent.focus(screen.getByLabelText("instance.messages.new_conversation_placeholder"));
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
-    it("does not show a new-conversation composer when open conversations exist unless requested", () => {
+    it("does not show save on the new conversation until it is expanded", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(screen.queryByLabelText("instance.messages.placeholder")).toBeNull();
-        expect(screen.getByRole("button", {name: "instance.messages.reply"})).toBeTruthy();
+        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
+        fireEvent.focus(screen.getByLabelText("instance.messages.new_conversation_placeholder"));
+        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
     it("uses buttons for reply and close conversation", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(screen.getByRole("button", {name: "instance.messages.reply"})).toBeTruthy();
+        expect(
+            screen.getAllByRole("button", {name: "instance.messages.reply"}).length,
+        ).toBeGreaterThan(0);
         expect(
             screen.getByRole("button", {name: "instance.messages.close_conversation"}),
         ).toBeTruthy();
     });
 
-    it("can dismiss the type box with cancel", () => {
-        const onDismissComposer = vi.fn();
-        render(
-            <MessageThreadPanel
-                instanceId="instance-1"
-                threads={[]}
-                canAdd
-                composerFirst
-                showNewComposer
-                onDismissComposer={onDismissComposer}
-            />,
-        );
+    it("can dismiss the new conversation field with cancel", () => {
+        render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        screen.getByRole("button", {name: "cancel"}).click();
-        expect(onDismissComposer).toHaveBeenCalledOnce();
+        fireEvent.focus(screen.getByLabelText("instance.messages.new_conversation_placeholder"));
+        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
+        fireEvent.click(screen.getByRole("button", {name: "cancel"}));
+        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
     });
 
     it("starts with closed conversations collapsed", () => {
@@ -120,11 +110,14 @@ describe("MessageThreadPanel", () => {
             id: "closed-1",
             isClosed: true,
             items: [
-                ...thread.items,
+                thread.items[0],
                 {
                     dateTime: "2026-09-18T10:00:00Z",
                     user: {id: "u1", displayName: "Ada Lovelace"},
                     kind: "Close",
+                    id: "close-1",
+                    parentItemId: null,
+                    body: null,
                 },
             ],
         };
@@ -133,5 +126,37 @@ describe("MessageThreadPanel", () => {
 
         expect(screen.queryByText("Will do.")).toBeNull();
         expect(screen.getByText(/Ada Lovelace.*instance\.messages\.closed/)).toBeTruthy();
+    });
+
+    it("shows reopen only on an expanded closed conversation", () => {
+        const closed: MessageThread = {
+            ...thread,
+            id: "closed-1",
+            isClosed: true,
+            items: [
+                thread.items[0],
+                {
+                    dateTime: "2026-09-18T10:00:00Z",
+                    user: {id: "u1", displayName: "Ada Lovelace"},
+                    kind: "Close",
+                    id: "close-1",
+                    parentItemId: null,
+                    body: null,
+                },
+            ],
+        };
+
+        render(<MessageThreadPanel instanceId="instance-1" threads={[closed]} canAdd />);
+
+        expect(
+            screen.queryByRole("button", {name: "instance.messages.reopen_conversation"}),
+        ).toBeNull();
+
+        fireEvent.click(
+            screen.getByRole("button", {name: "instance.messages.expand_conversation"}),
+        );
+        expect(
+            screen.getByRole("button", {name: "instance.messages.reopen_conversation"}),
+        ).toBeTruthy();
     });
 });

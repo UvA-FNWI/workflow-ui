@@ -83,7 +83,6 @@ export function FieldMessageBalloon({
                         threads={fieldThreads}
                         questionName={questionName}
                         canAdd={canAdd}
-                        showNewComposer={canAdd && openCount === 0}
                     />
                 </Modal.Body>
             </Modal>

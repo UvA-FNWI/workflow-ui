@@ -1,22 +1,30 @@
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useId, useState} from "react";
 
-import {Button, Text, TextArea} from "@uva-fnwi/datanose-ui";
+import {Button, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {ConversationThread} from "./ConversationThread";
+import {handleMessageSubmitShortcut} from "./messageComposerShortcuts";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
-import type {MessageThread} from "~/store/api/types/messages";
+import type {MessageItemKind, MessageThread} from "~/store/api/types/messages";
+
+type ReplyTarget = {
+    threadId: string;
+    parentItemId: string;
+};
 
 type Props = {
     instanceId: string;
     threads: MessageThread[];
     questionName?: string | null;
     canAdd: boolean;
+    /** @deprecated Use focusNewConversation — kept for tests/mocks */
     composerFirst?: boolean;
-    /** Show the composer that starts a new conversation (e.g. instance card + control). */
     showNewComposer?: boolean;
     autoFocusComposer?: boolean;
     onDismissComposer?: () => void;
+    focusNewConversation?: boolean;
+    onFocusNewConversationHandled?: () => void;
 };
 
 export function MessageThreadPanel({
@@ -24,20 +32,23 @@ export function MessageThreadPanel({
     threads,
     questionName = null,
     canAdd,
-    composerFirst = false,
     showNewComposer = false,
     autoFocusComposer = false,
     onDismissComposer,
+    focusNewConversation = false,
+    onFocusNewConversationHandled,
 }: Props) {
     const {t} = useTranslate("workflow");
     const [body, setBody] = useState("");
-    const [replyToId, setReplyToId] = useState<string | null>(null);
-    const [startNewThread, setStartNewThread] = useState(false);
+    const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
+    const [newConversationExpanded, setNewConversationExpanded] = useState(false);
     const [expandedOverrides, setExpandedOverrides] = useState<Record<string, boolean>>({});
     const [addMessage, {isLoading}] = messagesEndpoints.addMessage.useMutation();
+    const newConversationFieldId = useId();
 
     const openThreads = threads.filter((thread) => !thread.isClosed);
     const closedThreads = threads.filter((thread) => thread.isClosed);
+    const orderedThreads = [...openThreads, ...closedThreads];
 
     const isExpanded = useCallback(
         (thread: MessageThread) => {
@@ -47,83 +58,106 @@ export function MessageThreadPanel({
         [expandedOverrides],
     );
 
-    const toggleExpanded = (threadId: string, thread: MessageThread) => {
-        setExpandedOverrides((prev) => ({
-            ...prev,
-            [threadId]: !(threadId in prev ? prev[threadId] : !thread.isClosed),
-        }));
+    const setThreadExpanded = (threadId: string, open: boolean) => {
+        setExpandedOverrides((prev) => ({...prev, [threadId]: open}));
     };
 
-    const submit = (kind: "Message" | "Close", threadId?: string) => {
-        const target = threadId ?? replyToId;
+    useEffect(() => {
+        if (!focusNewConversation) return;
+        const frame = requestAnimationFrame(() => {
+            document.getElementById(newConversationFieldId)?.focus();
+            onFocusNewConversationHandled?.();
+        });
+        return () => cancelAnimationFrame(frame);
+    }, [focusNewConversation, newConversationFieldId, onFocusNewConversationHandled]);
+
+    const submit = (kind: MessageItemKind, threadId?: string) => {
+        const targetThreadId = threadId ?? replyTarget?.threadId;
         if (kind === "Message" && !body.trim()) return;
+
         void addMessage({
             instanceId,
-            questionName: target ? undefined : questionName,
-            replyToId: target,
+            questionName: targetThreadId ? undefined : questionName,
+            replyToId: targetThreadId,
+            parentItemId: kind === "Message" ? replyTarget?.parentItemId : undefined,
             kind,
             body: kind === "Message" ? body.trim() : undefined,
         })
             .unwrap()
             .then(() => {
                 setBody("");
-                setReplyToId(null);
-                setStartNewThread(false);
-                if (kind === "Close" && target) {
-                    setExpandedOverrides((prev) => ({...prev, [target]: false}));
+                setReplyTarget(null);
+                setNewConversationExpanded(false);
+                if ((kind === "Close" || kind === "Reopen") && targetThreadId) {
+                    setExpandedOverrides((prev) => ({
+                        ...prev,
+                        [targetThreadId]: kind === "Reopen",
+                    }));
                 }
-                if (kind === "Message" && !target) onDismissComposer?.();
+                if (kind === "Message" && !targetThreadId) {
+                    onDismissComposer?.();
+                }
             });
     };
 
-    const startReply = (threadId: string) => {
-        setReplyToId(threadId);
-        setStartNewThread(false);
+    const startReply = (threadId: string, parentItemId: string) => {
+        setReplyTarget({threadId, parentItemId});
         setBody("");
+        setNewConversationExpanded(false);
         setExpandedOverrides((prev) => ({...prev, [threadId]: true}));
     };
 
     const cancelReply = () => {
-        setReplyToId(null);
+        setReplyTarget(null);
         setBody("");
     };
 
-    const dismissNewThreadComposer = () => {
+    const cancelNewConversation = () => {
         setBody("");
-        setStartNewThread(false);
+        setNewConversationExpanded(false);
         onDismissComposer?.();
     };
 
-    const newThreadComposerVisible =
-        canAdd &&
-        replyToId == null &&
-        (openThreads.length === 0 ? showNewComposer : showNewComposer || startNewThread);
+    const showNewConversationActions =
+        newConversationExpanded ||
+        body.trim().length > 0 ||
+        focusNewConversation ||
+        showNewComposer ||
+        autoFocusComposer;
+    const showNewConversationStarter = canAdd && replyTarget == null;
+    const canSubmitNewMessage = !isLoading && body.trim().length > 0;
 
-    const newComposer = newThreadComposerVisible ? (
-        <div className="flex flex-col gap-2">
-            {openThreads.length > 0 && (
-                <Text as="span" size="sm" fontWeight="semibold">
-                    {t("instance.messages.new_conversation_heading")}
-                </Text>
-            )}
-            <Composer
-                body={body}
+    const newConversationStarter = showNewConversationStarter ? (
+        <div className="flex flex-col gap-2 pb-1">
+            <TextArea
+                id={newConversationFieldId}
+                aria-label={t("instance.messages.new_conversation_placeholder")}
+                rows={showNewConversationActions ? 3 : 1}
+                className={showNewConversationActions ? undefined : "min-h-10! resize-none"}
+                value={body}
                 onChange={setBody}
-                onSubmit={() => submit("Message")}
-                onCancel={
-                    onDismissComposer != null
-                        ? dismissNewThreadComposer
-                        : startNewThread
-                          ? () => setStartNewThread(false)
-                          : undefined
+                onFocus={() => setNewConversationExpanded(true)}
+                onKeyDown={(event) =>
+                    handleMessageSubmitShortcut(event, () => submit("Message"), canSubmitNewMessage)
                 }
-                submitLabel={t("save")}
-                cancelLabel={onDismissComposer != null || startNewThread ? t("cancel") : undefined}
-                ariaLabel={t("instance.messages.placeholder")}
-                placeholder={t("instance.messages.placeholder")}
-                isLoading={isLoading}
-                autoFocus={autoFocusComposer}
+                placeholder={t("instance.messages.new_conversation_placeholder")}
             />
+            {showNewConversationActions && (
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                        intent="primary"
+                        variant="destructive"
+                        size="small"
+                        disabled={isLoading || !body.trim()}
+                        onClick={() => submit("Message")}
+                    >
+                        {t("save")}
+                    </Button>
+                    <Button intent="ghost" size="small" onClick={cancelNewConversation}>
+                        {t("cancel")}
+                    </Button>
+                </div>
+            )}
         </div>
     ) : null;
 
@@ -142,79 +176,51 @@ export function MessageThreadPanel({
         />
     );
 
-    const threadList = (
-        <div className="flex flex-col gap-3">
-            {openThreads.length === 0 && closedThreads.length === 0 && (
-                <Text as="span" size="sm" className="text-grey-600">
-                    {t("instance.messages.empty")}
-                </Text>
-            )}
-            {canAdd && openThreads.length > 1 && replyToId == null && !newThreadComposerVisible && (
-                <Text as="span" size="sm" className="text-grey-600">
-                    {t("instance.messages.reply_hint")}
-                </Text>
-            )}
-            {canAdd &&
-                openThreads.length > 0 &&
-                !newThreadComposerVisible &&
-                !showNewComposer &&
-                !composerFirst && (
-                    <Button
-                        intent="secondary"
-                        size="small"
-                        onClick={() => {
-                            setStartNewThread(true);
-                            setReplyToId(null);
-                            setBody("");
-                        }}
-                    >
-                        {t("instance.messages.new")}
-                    </Button>
-                )}
-            {openThreads.map((thread) => (
-                <ConversationThread
-                    key={thread.id}
-                    thread={thread}
-                    expanded={isExpanded(thread)}
-                    onToggleExpanded={() => toggleExpanded(thread.id, thread)}
-                    canAdd={canAdd}
-                    isReplying={replyToId === thread.id}
-                    onStartReply={() => startReply(thread.id)}
-                    onCloseConversation={() => submit("Close", thread.id)}
-                    isLoading={isLoading}
-                    replyComposer={replyComposer}
-                />
-            ))}
-            {closedThreads.map((thread) => (
-                <ConversationThread
-                    key={thread.id}
-                    thread={thread}
-                    expanded={isExpanded(thread)}
-                    onToggleExpanded={() => toggleExpanded(thread.id, thread)}
-                    canAdd={canAdd}
-                    isReplying={replyToId === thread.id}
-                    onStartReply={() => startReply(thread.id)}
-                    onCloseConversation={() => submit("Close", thread.id)}
-                    isLoading={isLoading}
-                    replyComposer={replyComposer}
-                />
-            ))}
-        </div>
+    const renderThread = (thread: MessageThread) => (
+        <ConversationThread
+            key={thread.id}
+            thread={thread}
+            expanded={isExpanded(thread)}
+            onExpandedChange={(open) => setThreadExpanded(thread.id, open)}
+            canAdd={canAdd}
+            replyParentItemId={
+                replyTarget?.threadId === thread.id ? replyTarget.parentItemId : null
+            }
+            onStartReply={(parentItemId) => startReply(thread.id, parentItemId)}
+            onCloseConversation={() => submit("Close", thread.id)}
+            onReopenConversation={() => submit("Reopen", thread.id)}
+            isLoading={isLoading}
+            replyComposer={replyComposer}
+        />
     );
 
     return (
         <div className="flex flex-col gap-3">
-            {composerFirst ? (
-                <>
-                    {newComposer}
-                    {threadList}
-                </>
-            ) : (
-                <>
-                    {threadList}
-                    {newComposer}
-                </>
+            {newConversationStarter}
+            {openThreads.length === 0 && closedThreads.length === 0 && !canAdd && (
+                <Text as="span" className="text-grey-600">
+                    {t("instance.messages.empty")}
+                </Text>
             )}
+            {canAdd &&
+                openThreads.length > 1 &&
+                replyTarget == null &&
+                !showNewConversationActions && (
+                    <Text as="span" className="text-grey-600">
+                        {t("instance.messages.reply_hint")}
+                    </Text>
+                )}
+            <div className="flex flex-col">
+                {orderedThreads.map((thread, index) => (
+                    <div key={thread.id}>
+                        {index > 0 && <Separator />}
+                        {renderThread(thread)}
+                        {index === orderedThreads.length - 1 && orderedThreads.length > 0 && (
+                            <Separator />
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
@@ -244,6 +250,8 @@ function Composer({
     isLoading,
     autoFocus,
 }: ComposerProps) {
+    const canSubmit = !isLoading && body.trim().length > 0;
+
     return (
         <div className="flex flex-col gap-2">
             <TextArea
@@ -253,13 +261,14 @@ function Composer({
                 onChange={onChange}
                 autoFocus={autoFocus}
                 placeholder={placeholder}
+                onKeyDown={(event) => handleMessageSubmitShortcut(event, onSubmit, canSubmit)}
             />
             <div className="flex flex-wrap items-center gap-2">
                 <Button
                     intent="primary"
                     variant="destructive"
                     size="small"
-                    disabled={isLoading || !body.trim()}
+                    disabled={!canSubmit}
                     onClick={onSubmit}
                 >
                     {submitLabel}

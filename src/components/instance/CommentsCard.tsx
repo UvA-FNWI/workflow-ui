@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Button, Disclosure, Heading, Icon, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Disclosure, Heading, Icon, Pill} from "@uva-fnwi/datanose-ui";
 
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
@@ -20,7 +20,7 @@ export function CommentsCard({instance}: Props) {
         {skip: !enabled},
     );
     const [expanded, setExpanded] = useState(false);
-    const [composing, setComposing] = useState(false);
+    const [focusNewConversation, setFocusNewConversation] = useState(false);
 
     if (!enabled) return null;
 
@@ -42,41 +42,22 @@ export function CommentsCard({instance}: Props) {
               ? t("instance.messages.summary_closed", {count: closedCount})
               : null;
 
-    const startComment = () => {
-        if (composing) {
-            setComposing(false);
-            return;
-        }
-        setExpanded(true);
-        setComposing(true);
-    };
-
     return (
         <Disclosure
             isExpanded={expanded}
             onExpandedChange={(open) => {
                 setExpanded(open);
-                if (!open) setComposing(false);
+                if (!open) setFocusNewConversation(false);
             }}
         >
             <div className="flex flex-row items-center justify-between">
                 <Disclosure.Header>
-                    <Heading className="font-semibold">
-                        {title}
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                        <Heading className="font-semibold">{title}</Heading>
                         {threadSummary && (
-                            <>
-                                {" · "}
-                                <Text
-                                    as="span"
-                                    display="inline"
-                                    intent={openCount > 0 ? "error" : "secondary"}
-                                    fontWeight="semibold"
-                                >
-                                    {threadSummary}
-                                </Text>
-                            </>
+                            <Pill variant={openCount > 0 ? "red" : "grey"}>{threadSummary}</Pill>
                         )}
-                    </Heading>
+                    </div>
                 </Disclosure.Header>
                 {canAdd && (
                     <div className="pr-6">
@@ -87,8 +68,10 @@ export function CommentsCard({instance}: Props) {
                             width="none"
                             className="flex items-center justify-center leading-0"
                             aria-label={t("instance.messages.add")}
-                            aria-pressed={composing}
-                            onClick={startComment}
+                            onClick={() => {
+                                setExpanded(true);
+                                setFocusNewConversation(true);
+                            }}
                         >
                             <Icon name="plus-solid" color="current" />
                         </Button>
@@ -101,10 +84,8 @@ export function CommentsCard({instance}: Props) {
                         instanceId={instance.id}
                         threads={instanceThreads}
                         canAdd={canAdd}
-                        composerFirst
-                        showNewComposer={composing}
-                        autoFocusComposer={composing}
-                        onDismissComposer={() => setComposing(false)}
+                        focusNewConversation={focusNewConversation}
+                        onFocusNewConversationHandled={() => setFocusNewConversation(false)}
                     />
                 </div>
             </Disclosure.Content>
