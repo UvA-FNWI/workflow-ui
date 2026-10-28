@@ -10,6 +10,7 @@ describe("fileTypes", () => {
 
     it("adds dots only for the browser accept attribute", () => {
         expect(toFileInputAccept(["pdf", "zip"])).toEqual([".pdf", ".zip"]);
+        expect(toFileInputAccept(["*"])).toEqual([]);
     });
 
     it("formats configured file sizes", () => {

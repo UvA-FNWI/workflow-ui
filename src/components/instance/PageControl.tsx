@@ -1,18 +1,17 @@
-import {useCallback, useEffect, useMemo} from "react";
-
-import {useForm} from "react-hook-form";
+import {useCallback, useMemo} from "react";
 
 import {Heading, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
 import {PageElement} from "~/components/instance/PageElement.tsx";
 import {useFileQuestions} from "~/hooks/useFileQuestions";
+import {usePageForm} from "~/hooks/usePageForm";
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page, PageElement as PageElementType} from "~/store/api/types/submissions";
-import {isPageComplete} from "~/utils/submissionUtils.ts";
+import {isPageComplete, isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageControlProps = {
     instanceId: string;
@@ -41,39 +40,30 @@ export const PageControl = ({
         const a = answers.find((x) => x.questionName === q.name);
         return !a || a.isVisible;
     });
-    const formValues = Object.fromEntries(
-        answers.filter((a) => a.isVisible).map((a) => [a.questionName, a.value]),
-    );
-
-    const form = useForm({defaultValues: formValues});
-
-    // Sync form values from submission when questions become visible again.
-    // When a conditionally hidden question's Controller unmounts, react-hook-form unregisters
-    // the field and the value is lost. When the question reappears, restore from submission data.
-    useEffect(() => {
-        const visibleAnswers = answers.filter((a) => a.isVisible);
-        visibleAnswers.forEach((answer) => {
-            form.setValue(answer.questionName, answer.value);
-        });
-    }, [answers, form]);
+    const form = usePageForm({answers, page});
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
+    const [deleteFile] = answersApi.endpoints.deleteFile.useMutation();
 
     const removeFileAnswer = useCallback(
-        async (questionName: string) => {
+        async (questionName: string, artifactId?: string) => {
             try {
-                await saveAnswer({
-                    instanceId,
-                    submissionId,
-                    answer: {questionName, value: null},
-                }).unwrap();
+                if (artifactId) {
+                    await deleteFile({instanceId, submissionId, questionName, artifactId}).unwrap();
+                } else {
+                    await saveAnswer({
+                        instanceId,
+                        submissionId,
+                        answer: {questionName, value: null},
+                    }).unwrap();
+                }
             } catch (error) {
                 console.error("Failed to remove file answer:", error);
                 throw error;
             }
         },
-        [instanceId, submissionId, saveAnswer],
+        [instanceId, submissionId, saveAnswer, deleteFile],
     );
 
     const saveFileAnswer = useCallback(
@@ -126,7 +116,9 @@ export const PageControl = ({
     );
 
     const pageResult = data?.pageResults?.[0];
-    const weightedQuestions = questions.filter((question) => question.percentage != null);
+    const weightedQuestions = questions
+        .filter(isWeightedQuestion)
+        .filter((question) => question.percentage != null);
     const totalPercentage = Number(
         weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toFixed(2),
     );

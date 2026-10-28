@@ -22,7 +22,7 @@ export const FormSummary = ({instanceId, submission, onEditPage, onSubmit}: Prop
     // and the backend rejects answer edits based on it. See Action.MatchesForm.
     const canEdit = submission.permissions.includes("Edit") && submission.dateSubmitted != null;
 
-    const pages = submission.form.pages.filter((p) => p.isInCurrentForm);
+    const pages = submission.form.pages.filter((p) => p.isInCurrentForm && p.isActive);
 
     const hasResults = pages.some((p) => p.hasResults);
 

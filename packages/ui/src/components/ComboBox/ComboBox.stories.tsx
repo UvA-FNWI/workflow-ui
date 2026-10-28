@@ -13,7 +13,7 @@ const meta: Meta<typeof ComboBox> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ComboBox>;
+type Story = StoryObj<ComboBoxProps<object, 'single'>>;
 
 const BasicComboBox = (args: ComboBoxProps<object>) => (
   <div className="max-w-sm">
@@ -67,6 +67,26 @@ const ControlledComboBox = () => {
 
 export const Controlled: Story = {
   render: ControlledComboBox,
+};
+
+const MultipleComboBox = () => (
+  <div className="max-w-sm">
+    <ComboBox<object, 'multiple'>
+      label="Statuses"
+      selectionMode="multiple"
+      defaultValue={['draft', 'review']}
+      placeholder="Search statuses"
+    >
+      <ComboBoxItem key="draft">Draft</ComboBoxItem>
+      <ComboBoxItem key="review">In review</ComboBoxItem>
+      <ComboBoxItem key="approved">Approved</ComboBoxItem>
+      <ComboBoxItem key="published">Published</ComboBoxItem>
+    </ComboBox>
+  </div>
+);
+
+export const Multiple: Story = {
+  render: MultipleComboBox,
 };
 
 export const WithDescriptionAndError: Story = {

@@ -1,11 +1,11 @@
 import type {ComponentProps} from "react";
 
 import "@testing-library/jest-dom/vitest";
-import {cleanup, render, screen} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import {ReferenceControl} from "../ReferenceControl";
-import type {Question} from "~/store/api/types/submissions";
+import type {ReferenceQuestion} from "~/store/api/types/submissions";
 
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
@@ -21,19 +21,15 @@ vi.mock("~/store/api/answersApi", () => ({
 }));
 
 const department = {name: "dept-1", text: {en: "ICTS", nl: "ICTS"}};
-function referenceQuestion(isArray: boolean): Question {
+function referenceQuestion(isArray: boolean): ReferenceQuestion {
     return {
         name: "Department",
         type: "Reference",
         text: {en: "Department", nl: "Afdeling"},
-        weight: null,
-        percentage: null,
         isRequired: false,
         isArray,
         hideInResults: false,
-        allowsExternalUsers: false,
-        choices: [],
-        layout: {type: "RadioList"},
+        control: "RadioList",
         workflowDefinition: "Department",
     };
 }
@@ -83,4 +79,18 @@ describe("ReferenceControl RadioList", () => {
         expect(screen.getByText("reference.loading")).toBeInTheDocument();
         expect(screen.queryByRole("radio")).not.toBeInTheDocument();
     });
+});
+
+it("renders an array ComboBox with removable references", () => {
+    const onChange = vi.fn();
+    renderControl({
+        question: {...referenceQuestion(true), control: "ComboBox"},
+        choices: [department],
+        value: [department.name],
+        onChange,
+    });
+
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", {name: "Remove ICTS"}));
+    expect(onChange).toHaveBeenCalledWith([]);
 });

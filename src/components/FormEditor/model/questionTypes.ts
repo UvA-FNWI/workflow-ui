@@ -23,7 +23,7 @@ export function buildTypeString(
 
 type RawProperty = {
     type?: string;
-    layout?: {multiline?: boolean; type?: string; variant?: string} | null;
+    control?: unknown;
     values?: unknown;
 };
 
@@ -44,7 +44,7 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
     }
     // User is the one non-choice type the runtime renders as an array, via UserPicker's multiple mode.
     if (isArray) {
-        return underlying === "User" ? "People" : "Unknown";
+        return underlying === "User" ? "People" : underlying === "File" ? "Document" : "Unknown";
     }
 
     switch (underlying) {
@@ -61,13 +61,15 @@ export function kindOf(raw: RawProperty): QuestionKind | "Unknown" {
         case "User":
             return "Person";
         case "String":
-            if (raw.layout?.variant === "Email") {
+            if (raw.control === "Email") {
                 return "Email";
             }
-            if (raw.layout?.variant === "Phone") {
+            if (raw.control === "Phone") {
                 return "Phone";
             }
-            // Multiline is a checkbox on a text question rather than a kind of its own.
+            if (raw.control === "TextArea") {
+                return "TextArea";
+            }
             return "TextField";
         default:
             return "Unknown";
@@ -85,10 +87,12 @@ export function newPropertyValue(
             return {name, type: "File", text};
         case "TextField":
             return {name, type: "String", text};
+        case "TextArea":
+            return {name, type: "String", text, control: "TextArea"};
         case "Email":
-            return {name, type: "String", text, layout: {variant: "Email"}};
+            return {name, type: "String", text, control: "Email"};
         case "Phone":
-            return {name, type: "String", text, layout: {variant: "Phone"}};
+            return {name, type: "String", text, control: "Phone"};
         case "Number":
             return {name, type: "Int", text};
         case "YesNo":
@@ -105,7 +109,7 @@ export function newPropertyValue(
                 type: name,
                 text,
                 values: [{name: "Option1", text: {en: "Option 1", nl: "Optie 1"}}],
-                layout: {type: "RadioList"},
+                control: "RadioList",
             };
         case "MultipleChoice":
             return {

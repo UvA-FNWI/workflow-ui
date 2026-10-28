@@ -63,6 +63,24 @@ export const DisabledChecked: StoryObj<typeof Checkbox> = {
   },
 };
 
+export const MultilineLabel: StoryObj<typeof Checkbox> = {
+  render: InteractiveCheckbox,
+  decorators: [
+    Story => (
+      <div className="ui:w-80">
+        <Story />
+      </div>
+    ),
+  ],
+  args: {
+    label:
+      'Checkbox - with a long label that wraps onto multiple lines, so the checkbox aligns to the top of the text',
+    isSelected: false,
+    isDisabled: false,
+    isValid: true,
+  },
+};
+
 export const Invalid: StoryObj<typeof Checkbox> = {
   render: InteractiveCheckbox,
   args: {

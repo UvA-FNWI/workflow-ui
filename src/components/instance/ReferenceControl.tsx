@@ -11,13 +11,13 @@ import {
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
-import type {Choice, Question} from "~/store/api/types/submissions";
+import type {Choice, ReferenceQuestion} from "~/store/api/types/submissions";
 
 interface ReferenceControlProps {
     instanceId: string;
     submissionId: string;
     value?: unknown;
-    question: Question;
+    question: ReferenceQuestion;
     choices?: Choice[];
     choicesLoading?: boolean;
     choicesError?: boolean;
@@ -71,9 +71,8 @@ export const ReferenceControl = ({
         errorMessage: failed ? t("reference.load_error") : errorMessage,
     };
 
-    const layoutType =
-        question.layout && "type" in question.layout ? question.layout.type : undefined;
-    const isRadioList = layoutType === "RadioList";
+    const control = question.control;
+    const isRadioList = control === "RadioList";
 
     const choiceLabel = (choice: Choice) => l(choice.text)?.trim() || choice.name;
 
@@ -130,7 +129,7 @@ export const ReferenceControl = ({
         );
     }
 
-    if (question.isArray) {
+    if (question.isArray && control !== "ComboBox") {
         const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
         return (
             <Select
@@ -156,10 +155,26 @@ export const ReferenceControl = ({
     }
 
     return (
-        <ComboBox
-            value={typeof value === "string" ? value : null}
+        <ComboBox<object, "single" | "multiple">
+            selectionMode={question.isArray ? "multiple" : "single"}
+            aria-label={l(question.text)?.trim() || question.name}
+            value={
+                question.isArray
+                    ? Array.isArray(value)
+                        ? value.map((v) => String(v))
+                        : []
+                    : typeof value === "string"
+                      ? value
+                      : null
+            }
             onChange={(selectedValue) => {
-                onChange(selectedValue != null ? String(selectedValue) : null);
+                onChange(
+                    Array.isArray(selectedValue)
+                        ? selectedValue.map((v) => String(v))
+                        : selectedValue != null
+                          ? String(selectedValue)
+                          : null,
+                );
             }}
             noResults={t("reference.no_results")}
             {...selectState}

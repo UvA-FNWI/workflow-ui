@@ -26,6 +26,7 @@ import {
     newPropertyValue,
     parseTypeString,
 } from "~/components/FormEditor/model/questionTypes";
+import {flatten, loadSchema} from "~/components/FormEditor/model/schema";
 import type {
     ConfigDocs,
     EditorChoice,
@@ -229,7 +230,7 @@ export function readQuestions(
 
             const raw = (found.node.toJSON() ?? {}) as Record<string, unknown> & {
                 type?: string;
-                layout?: {multiline?: boolean; type?: string} | null;
+                control?: unknown;
                 values?: unknown;
                 text?: unknown;
                 description?: unknown;
@@ -303,9 +304,10 @@ export type QuestionPatch = {
     descriptionNl?: string;
     descriptionEn?: string;
     isRequired?: boolean;
-    layoutType?: string;
-    /** Long text and short text are one kind, told apart by layout.multiline. */
-    isMultiline?: boolean;
+    isArray?: boolean;
+    allowedTypes?: string;
+    maximumSize?: string;
+    control?: string | null;
     /** Whole numbers and decimals are one kind, told apart by Int against Double. */
     isDecimal?: boolean;
     allowsExternalUsers?: boolean;
@@ -354,28 +356,37 @@ export function addQuestion(
     return {name, touched: [targetPath, formPath]};
 }
 
-/**
- * Swap a question to another kind, keeping its name, text and description. Rewrites type, layout and
- * values, since those three are what a kind actually is.
- */
-export function changeQuestionKind(
+/** Swap kinds, preserving common fields and removing settings unsupported by the new kind. */
+export async function changeQuestionKind(
     docs: ConfigDocs,
     formPath: string,
     name: string,
     kind: QuestionKind,
-): string[] {
+): Promise<string[]> {
+    const schema = await loadSchema("PropertyDefinition");
+    if (!schema) throw new Error("Could not load the property schema");
     const found = requireProperty(docs, formPath, name);
     const doc = requireDoc(docs, found.path);
     const {isRequired} = parseTypeString(String(found.node.get("type") ?? ""));
     const next = newPropertyValue(kind, name, EMPTY_TEXT) as {
         type: string;
-        layout?: unknown;
+        control?: unknown;
         values?: unknown;
     };
     const {underlying, isArray} = parseTypeString(next.type);
+    // The generated fields distinguish choices from references with the same type constraint.
+    const properties = (schema.anyOf ?? schema.oneOf ?? [schema])
+        .map((branch) => flatten({anyOf: [branch]}, schema, 0, next).properties ?? {})
+        .find((fields) => Object.keys(next).every((key) => key in fields));
+    if (!properties) throw new Error("No property schema matches the new question type");
 
     found.node.set("type", buildTypeString(underlying, {isRequired, isArray}));
-    for (const key of ["layout", "values"] as const) {
+    for (const {key} of [...found.node.items]) {
+        if (isScalar(key) && typeof key.value === "string" && !(key.value in properties)) {
+            found.node.delete(key.value);
+        }
+    }
+    for (const key of ["control", "values"] as const) {
         if (next[key] === undefined) {
             found.node.delete(key);
         } else if (key === "values" && found.node.has("values")) {
@@ -578,28 +589,6 @@ function setLocalized(node: YAMLMap, key: string, language: "en" | "nl", value: 
     });
 }
 
-/**
- * Write one layout key, or drop it when the value is undefined. An emptied layout goes with it: a
- * bare `layout: {}` left behind is noise in a file people also read by hand.
- */
-function setLayoutKey(node: YAMLMap, doc: Document, key: string, value: unknown): void {
-    const layout = node.get("layout");
-    if (value === undefined) {
-        if (isMap(layout)) {
-            layout.delete(key);
-            if (layout.items.length === 0) {
-                node.delete("layout");
-            }
-        }
-        return;
-    }
-    if (isMap(layout)) {
-        layout.set(key, value);
-    } else {
-        node.set("layout", doc.createNode({[key]: value}));
-    }
-}
-
 function valuesSeq(node: YAMLMap, doc: Document): YAMLSeq {
     const existing = node.get("values");
     if (isSeq(existing)) {
@@ -710,26 +699,37 @@ export function updateQuestion(
         setLocalized(found.node, "description", "en", patch.descriptionEn);
         touched.add(found.path);
     }
-    if (patch.isRequired !== undefined) {
-        const type = String(found.node.get("type") ?? "String");
-        const {underlying, isArray} = parseTypeString(type);
+    if (patch.isRequired !== undefined || patch.isArray !== undefined) {
+        const type = parseTypeString(
+            String(found.node.get("type") ?? (patch.isRequired !== undefined ? "String" : "File")),
+        );
         found.node.set(
             "type",
-            buildTypeString(underlying, {isRequired: patch.isRequired, isArray}),
+            buildTypeString(type.underlying, {
+                isRequired: patch.isRequired ?? type.isRequired,
+                isArray: patch.isArray ?? type.isArray,
+            }),
         );
         touched.add(found.path);
     }
-    if (patch.layoutType !== undefined) {
-        setLayoutKey(found.node, requireDoc(docs, found.path), "type", patch.layoutType);
+    if (patch.allowedTypes !== undefined) {
+        const types = patch.allowedTypes
+            .split(",")
+            .map((type) => type.trim())
+            .filter(Boolean);
+        if (types.length) found.node.set("allowedTypes", types);
+        else found.node.delete("allowedTypes");
         touched.add(found.path);
     }
-    if (patch.isMultiline !== undefined) {
-        setLayoutKey(
-            found.node,
-            requireDoc(docs, found.path),
-            "multiline",
-            patch.isMultiline ? true : undefined,
-        );
+    if (patch.maximumSize !== undefined) {
+        const size = Number(patch.maximumSize);
+        if (Number.isInteger(size) && size > 0) found.node.set("maximumSize", size);
+        else found.node.delete("maximumSize");
+        touched.add(found.path);
+    }
+    if (patch.control !== undefined) {
+        if (patch.control === null) found.node.delete("control");
+        else found.node.set("control", patch.control);
         touched.add(found.path);
     }
     if (patch.isDecimal !== undefined) {

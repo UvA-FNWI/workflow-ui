@@ -66,8 +66,32 @@ export const instancesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["Instance", "Screen"],
         }),
+        undo: builder.mutation<
+            WorkflowInstance,
+            {instanceId: string; operationId: string; reason: string}
+        >({
+            query: ({instanceId, operationId, reason}) => ({
+                url: `/WorkflowInstances/${instanceId}/Undo`,
+                method: "POST",
+                body: {operationId, reason},
+            }),
+            invalidatesTags: (_result, error, {instanceId}) =>
+                error
+                    ? []
+                    : [
+                          {type: "Instance", id: instanceId},
+                          {type: "Assessments", instanceId},
+                          {type: "Choices", id: instanceId},
+                          {type: "Submission", instanceId},
+                      ],
+            async onQueryStarted({instanceId}, {dispatch, queryFulfilled}) {
+                const {data} = await queryFulfilled;
+                dispatch(instancesApi.util.updateQueryData("getInstance", instanceId, () => data));
+            },
+        }),
         getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Impersonation/Roles`,
+            providesTags: (_result, _error, instanceId) => [{type: "Instance", id: instanceId}],
         }),
         getImpersonationActions: builder.query<ActiveStep[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/actions`,

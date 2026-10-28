@@ -166,7 +166,7 @@ export const FileUpload = ({
 
   const showUploadButton =
     (!selectedFile && !fileName) || error || hasError || isLoading;
-  const fileNameToShow = selectedFile ? selectedFile.name : fileName;
+  const fileNameToShow = fileName ?? selectedFile?.name;
 
   return (
     <div className={cn(fileUploadClassGenerator(), className)}>

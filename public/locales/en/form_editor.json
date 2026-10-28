@@ -2,15 +2,22 @@
   "add_choice": "Add choice",
   "add_page": "Add",
   "add_question": "Add a question",
+  "allowed_file_size": "Maximum total size (bytes)",
+  "allowed_file_types": "File formats",
+  "allowed_file_types_hint": "Comma-separated extensions, or * for any format. Blank allows PDF.",
   "allows_external_users": "Allow external users (outside the UvA)",
   "back": "Back to develop",
   "card_title": "Form editor",
   "change_type": "Change type (now: {{type}})",
   "changed_files": "Changed files",
-  "choice_layout": "Shown as",
-  "choice_layout_hint": "We recommend a dropdown above five options, so the page stays readable.",
+  "choice_control": "Shown as",
+  "choice_control_hint": "We recommend a dropdown above five options, so the page stays readable.",
   "choice_text": "Choice text",
   "choices": "Choices",
+  "control": {
+    "Dropdown": "Dropdown",
+    "RadioList": "Radio buttons"
+  },
   "decimal": "Decimal number",
   "delete_everywhere_one": "Delete question (used on 1 page)",
   "delete_everywhere_other": "Delete question (used on {{count}} pages)",
@@ -38,6 +45,7 @@
     "Person": "Person",
     "Phone": "Phone number",
     "SingleChoice": "Single choice",
+    "TextArea": "Text area",
     "TextField": "Text field",
     "YesNo": "Yes / no"
   },
@@ -45,14 +53,10 @@
     "en": "English",
     "nl": "Dutch"
   },
-  "layout": {
-    "Dropdown": "Dropdown",
-    "RadioList": "Radio buttons"
-  },
   "load_failed": "Could not load the workflow configuration.",
-  "long_text": "Long text",
   "missing_hint": "No property named {{name}} exists. Remove this question, or ask a developer to add the property.",
   "more_options": "Show more options",
+  "multiple_files": "Allow multiple files",
   "mutation_failed": "Could not apply this change.",
   "new_choice": "New choice",
   "new_page": "New tab",

@@ -2,10 +2,18 @@ export const formatAllowedFileTypes = (allowedFileTypes: string[], language: str
     new Intl.ListFormat(language === "nl" ? "nl" : "en-GB", {
         style: "long",
         type: "disjunction",
-    }).format(allowedFileTypes.map((fileType) => fileType.toUpperCase()));
+    }).format(
+        allowedFileTypes.map((fileType) =>
+            fileType === "*"
+                ? language === "nl"
+                    ? "elk formaat"
+                    : "any format"
+                : fileType.toUpperCase(),
+        ),
+    );
 
 export const toFileInputAccept = (allowedFileTypes: string[]): string[] =>
-    allowedFileTypes.map((fileType) => `.${fileType}`);
+    allowedFileTypes.includes("*") ? [] : allowedFileTypes.map((fileType) => `.${fileType}`);
 
 export const formatAllowedFileSize = (bytes: number): string => {
     if (bytes < 1000) return `${bytes}B`;

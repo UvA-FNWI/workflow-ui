@@ -1,4 +1,4 @@
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import {Button, Icon, Modal} from "@uva-fnwi/datanose-ui";
 
@@ -33,7 +33,15 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 }) => {
     const {t} = useTranslate("workflow");
     const confirmButtonRef = useRef<HTMLButtonElement>(null);
+    const shouldFocusConfirm = useRef(false);
     const [selectedUsers, setSelectedUsers] = useState<UserSearchResult[]>(initialSelection);
+
+    useEffect(() => {
+        if (shouldFocusConfirm.current) {
+            confirmButtonRef.current?.focus();
+            shouldFocusConfirm.current = false;
+        }
+    }, [selectedUsers]);
 
     const handleConfirm = useCallback(() => {
         onConfirm(selectedUsers);
@@ -55,7 +63,10 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
             <Modal.Body>
                 <UserPickerInput
                     initialSelection={initialSelection}
-                    onSelectionChange={setSelectedUsers}
+                    onSelectionChange={(users) => {
+                        shouldFocusConfirm.current = selectionMode === "single" && users.length > 0;
+                        setSelectedUsers(users);
+                    }}
                     searchPlaceholder={searchPlaceholder}
                     showSearchHint={true}
                     selectionMode={selectionMode}
@@ -84,12 +95,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                         {t("user_picker.not_in_list")}
                     </Button>
                 )}
-                <Button
-                    intent="secondary"
-                    variant="destructive"
-                    onClick={handleCancel}
-                    className="ml-auto"
-                >
+                <Button intent="secondary" variant="destructive" onClick={handleCancel}>
                     {t("cancel")}
                 </Button>
             </Modal.Footer>

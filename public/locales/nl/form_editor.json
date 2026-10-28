@@ -2,15 +2,22 @@
   "add_choice": "Keuzeoptie toevoegen",
   "add_page": "Voeg toe",
   "add_question": "Voeg onderdeel toe",
+  "allowed_file_size": "Maximale totale grootte (bytes)",
+  "allowed_file_types": "Bestandsformaten",
+  "allowed_file_types_hint": "Extensies gescheiden door komma's, of * voor elk formaat. Leeg staat PDF toe.",
   "allows_external_users": "Sta externe gebruikers toe (buiten de UvA)",
   "back": "Terug naar develop",
   "card_title": "Formulier bewerken",
   "change_type": "Type wijzigen (nu: {{type}})",
   "changed_files": "Gewijzigde bestanden",
-  "choice_layout": "Toon als",
-  "choice_layout_hint": "Wij adviseren om bij meer dan 5 opties een dropdown te gebruiken. Zo blijft de pagina overzichtelijk.",
+  "choice_control": "Toon als",
+  "choice_control_hint": "Wij adviseren om bij meer dan 5 opties een dropdown te gebruiken. Zo blijft de pagina overzichtelijk.",
   "choice_text": "Keuzetekst",
   "choices": "Keuzes",
+  "control": {
+    "Dropdown": "Dropdown",
+    "RadioList": "Radioknoppen"
+  },
   "decimal": "Decimaal getal",
   "delete_everywhere_one": "Vraag verwijderen (op 1 pagina gebruikt)",
   "delete_everywhere_other": "Vraag verwijderen (op {{count}} pagina's gebruikt)",
@@ -38,6 +45,7 @@
     "Person": "Persoon",
     "Phone": "Telefoonnummer",
     "SingleChoice": "1 keuze",
+    "TextArea": "Tekstvak",
     "TextField": "Tekstveld",
     "YesNo": "Ja / nee"
   },
@@ -45,14 +53,10 @@
     "en": "Engels",
     "nl": "Nederlands"
   },
-  "layout": {
-    "Dropdown": "Dropdown",
-    "RadioList": "Radioknoppen"
-  },
   "load_failed": "De workflowconfiguratie kon niet worden geladen.",
-  "long_text": "Lange tekst",
   "missing_hint": "Er bestaat geen property met de naam {{name}}. Verwijder deze vraag, of vraag een ontwikkelaar de property toe te voegen.",
   "more_options": "Toon meer opties",
+  "multiple_files": "Meerdere bestanden toestaan",
   "mutation_failed": "Deze wijziging kon niet worden toegepast.",
   "new_choice": "Nieuwe keuze",
   "new_page": "Nieuw tabblad",

@@ -117,6 +117,48 @@ describe('ComboBox', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('shows a keyboard-focused option after typing', async () => {
+    renderComboBox();
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'a' } });
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+    const draft = await screen.findByRole('option', { name: 'Draft' });
+    expect(draft).toHaveClass('ui:ring-2');
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(screen.getByRole('option', { name: 'Approved' })).toHaveClass(
+      'ui:ring-2'
+    );
+  });
+
+  it('renders removable multiple values before the search input', () => {
+    const onChange = vi.fn();
+    render(
+      <ComboBox<object, 'multiple'>
+        label="Status"
+        selectionMode="multiple"
+        value={['draft', 'review']}
+        onChange={onChange}
+      >
+        <ComboBoxItem key="draft">Draft</ComboBoxItem>
+        <ComboBoxItem key="review">In review</ComboBoxItem>
+        <ComboBoxItem key="approved">Approved</ComboBoxItem>
+      </ComboBox>
+    );
+
+    const input = screen.getByRole('combobox');
+    const remove = screen.getByRole('button', { name: 'Remove Draft' });
+    expect(
+      remove.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+
+    fireEvent.click(remove);
+    expect(onChange).toHaveBeenCalledWith(['review']);
+  });
+
   it('shows noResults when the filter matches nothing', async () => {
     renderComboBox({ noResults: 'No results' });
     const input = screen.getByRole('combobox');

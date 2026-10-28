@@ -104,15 +104,15 @@ describe("UserPicker", () => {
         expect(screen.getByText("Ada Lovelace | ada@example.com")).toBeInTheDocument();
         expect(screen.getByText("Grace Hopper | grace@example.org")).toBeInTheDocument();
 
-        const input = screen.getByRole("combobox", {name: "user_picker.search_placeholder"});
-        expect(input).toHaveAttribute("readonly");
-        expect(input).not.toHaveAttribute("placeholder");
+        const trigger = screen.getByRole("textbox", {name: "user_picker.search_placeholder"});
+        expect(trigger).toHaveAttribute("readonly");
         expect(screen.getByRole("img", {name: "search-line"})).toBeInTheDocument();
 
         fireEvent.click(
             screen.getByRole("button", {name: "Remove Ada Lovelace | ada@example.com"}),
         );
         expect(onChange).toHaveBeenCalledWith([externalUser]);
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
     it("allows removing the last selected user", () => {
@@ -127,10 +127,8 @@ describe("UserPicker", () => {
 
     it("opens a clean single-user picker from anywhere in the field", () => {
         renderMultiplePicker([internalUser, externalUser]);
-        const input = screen.getByRole("combobox", {name: "user_picker.search_placeholder"});
-
-        fireEvent.keyDown(input, {key: "A"});
-        expect(input).toHaveValue("");
+        const trigger = screen.getByRole("textbox", {name: "user_picker.search_placeholder"});
+        expect(trigger).toHaveAttribute("readonly");
 
         fireEvent.click(screen.getByText("Ada Lovelace | ada@example.com"));
 
@@ -142,7 +140,7 @@ describe("UserPicker", () => {
     it("appends the picked user to the existing tags", () => {
         const {onChange} = renderMultiplePicker([internalUser]);
 
-        fireEvent.click(screen.getByRole("combobox", {name: "user_picker.search_placeholder"}));
+        fireEvent.click(screen.getByRole("textbox", {name: "user_picker.search_placeholder"}));
         fireEvent.click(screen.getByRole("button", {name: "Choose Katherine"}));
 
         expect(onChange).toHaveBeenCalledWith([
@@ -154,7 +152,7 @@ describe("UserPicker", () => {
     it("opens the clean add picker with Enter", () => {
         renderMultiplePicker([internalUser]);
 
-        fireEvent.keyDown(screen.getByRole("combobox", {name: "user_picker.search_placeholder"}), {
+        fireEvent.keyDown(screen.getByRole("textbox", {name: "user_picker.search_placeholder"}), {
             key: "Enter",
         });
 
@@ -164,7 +162,7 @@ describe("UserPicker", () => {
     it("uses the clean add picker for an existing external-user tag", () => {
         renderMultiplePicker(externalUser);
 
-        fireEvent.click(screen.getByRole("combobox", {name: "user_picker.search_placeholder"}));
+        fireEvent.click(screen.getByRole("textbox", {name: "user_picker.search_placeholder"}));
 
         const dialog = screen.getByText("User picker");
         expect(dialog).toHaveAttribute("data-selection-mode", "single");

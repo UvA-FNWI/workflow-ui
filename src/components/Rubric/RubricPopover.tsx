@@ -63,6 +63,7 @@ export function RubricPopover({
                 selectedKeys={selectedKeys}
                 onSelectionChange={handleSelectionChange}
                 selectionMode="single"
+                autoFocus="first"
                 itemRenderer={(item) => (
                     <Item key={item.key} textValue={item.grade}>
                         {item.grade}
