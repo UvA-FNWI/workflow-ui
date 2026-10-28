@@ -140,6 +140,35 @@
     "no_access": "You don't have access to any courses yet.",
     "personal_view": "My overview"
   },
+  "postpone": {
+    "confirm": "Postpone",
+    "current_date": "Current deadline: {{date}}",
+    "deadline_changed": "The available deadlines have changed. Please review them and try again.",
+    "description": "You are about to grant **{{student}}** an extension for the **{{course}}**.",
+    "error": "The deadlines could not be postponed. Please try again.",
+    "examination_board_body": "Email the examination board and enter the revised date yourself.",
+    "examination_board_title": "Does the examination board need to grant the extension?",
+    "explanation": "Explanation",
+    "invalid_date": "A new deadline is invalid. Check that it is later and meets the date requirements.",
+    "later_date": "Choose a date after the current deadline.",
+    "reason": "What is the reason for this extension?",
+    "reason_description": "Explain why these deadlines are being postponed (required, up to 1,000 characters).",
+    "reasons": {
+      "AcademicProblems": "Subject-related or academic problems",
+      "ChangedDirection": "Change in direction or expectations",
+      "ExaminationBoardDecision": "Examination board decision",
+      "ExternalFactors": "External factors",
+      "HealthAndWellbeing": "Student health and wellbeing",
+      "LeavingStudies": "Leaving the study programme",
+      "OrganizationalFactors": "Organizational or practical factors",
+      "Other": "Other, please specify:",
+      "PersonalCircumstances": "Personal circumstances",
+      "SupervisionAndCollaboration": "Supervision and collaboration"
+    },
+    "student": "the student",
+    "thesis": "thesis",
+    "title": "Postpone deadlines"
+  },
   "previous": "Previous",
   "progress": {
     "amsterdam_time": "Amsterdam time",
