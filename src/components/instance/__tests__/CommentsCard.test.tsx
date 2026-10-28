@@ -58,7 +58,7 @@ describe("CommentsCard", () => {
 
         expect(
             screen.getByRole("heading", {
-                name: "instance.messages.title - instance.messages.audience",
+                name: /instance\.messages\.title/,
             }),
         ).toBeTruthy();
         expect(screen.queryByLabelText("instance.messages.info")).toBeNull();

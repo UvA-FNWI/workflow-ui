@@ -84,6 +84,13 @@ describe("MessageThreadPanel", () => {
         ).toBeTruthy();
     });
 
+    it("does not show a new-thread composer when open threads exist unless requested", () => {
+        render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
+
+        expect(screen.queryByLabelText("instance.messages.placeholder")).toBeNull();
+        expect(screen.getByRole("button", {name: "instance.messages.reply"})).toBeTruthy();
+    });
+
     it("uses buttons for reply and close", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
