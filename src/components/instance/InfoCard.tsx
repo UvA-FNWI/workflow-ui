@@ -124,6 +124,7 @@ function LinksCard({card}: {card: Extract<InfoCardData, {type: "Links"}>}) {
     return (
         <Card className="flex flex-col gap-4">
             <Heading as="h3" size="sm">
+                {items.length > 3 && ` [${items.length}x] `}
                 {l(card.title)}
             </Heading>
             {links.map((link) => (
