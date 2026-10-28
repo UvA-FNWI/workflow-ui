@@ -270,7 +270,7 @@ it.each([true, false])(
         );
         expect(screen.getByText("ASSIGNED FORM")).toBeVisible();
         expect(screen.queryByText("STALE FORM")).not.toBeInTheDocument();
-        if (hasAttempts) expect(screen.getByText("Version 2")).toBeVisible();
+        expect(screen.queryByText("Version 2")).not.toBeInTheDocument();
     },
 );
 
@@ -322,7 +322,7 @@ it.each(["Combined", "CollapsibleRows"] as const)(
                 <StepCard step={step} instance={instance} />
             </Provider>,
         );
-        expect(screen.getByText("Version 1")).toBeVisible();
+        expect(screen.queryByText("Version 1")).not.toBeInTheDocument();
         expect(screen.getByText("Writing")).toBeVisible();
         expect(screen.getByText("Version 4")).toBeVisible();
         expect(screen.getByText("Version 5")).toBeVisible();

@@ -92,7 +92,7 @@ export const StepCardBody = ({
     return (
         <>
             <div className="flex flex-col gap-4">
-                {step.versions?.current && (
+                {step.versions?.current && hasVersionHistory(step) && (
                     <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
                         {t("version_card.version_nr", {
                             versionNumber: step.versions.current.versionNumber,
