@@ -1,61 +1,43 @@
 import {describe, expect, it, vi} from "vitest";
 
-import {handleMessageSubmitShortcut, isMessageSubmitShortcut} from "../messageComposerShortcuts";
+import {
+    handleMessageSubmitShortcut,
+    isMessageSubmitShortcut,
+    type MessageSubmitShortcutEvent,
+} from "../messageComposerShortcuts";
+
+function shortcutEvent(
+    overrides: Partial<MessageSubmitShortcutEvent> & Pick<MessageSubmitShortcutEvent, "key">,
+): MessageSubmitShortcutEvent {
+    return {
+        metaKey: false,
+        ctrlKey: false,
+        altKey: false,
+        preventDefault: vi.fn(),
+        ...overrides,
+    };
+}
 
 describe("messageComposerShortcuts", () => {
     it("recognizes meta+enter and ctrl+enter", () => {
-        expect(
-            isMessageSubmitShortcut({
-                key: "Enter",
-                metaKey: true,
-                ctrlKey: false,
-                altKey: false,
-            } as KeyboardEvent),
-        ).toBe(true);
-        expect(
-            isMessageSubmitShortcut({
-                key: "Enter",
-                metaKey: false,
-                ctrlKey: true,
-                altKey: false,
-            } as KeyboardEvent),
-        ).toBe(true);
-        expect(
-            isMessageSubmitShortcut({
-                key: "Enter",
-                metaKey: false,
-                ctrlKey: false,
-                altKey: false,
-            } as KeyboardEvent),
-        ).toBe(false);
+        expect(isMessageSubmitShortcut(shortcutEvent({key: "Enter", metaKey: true}))).toBe(true);
+        expect(isMessageSubmitShortcut(shortcutEvent({key: "Enter", ctrlKey: true}))).toBe(true);
+        expect(isMessageSubmitShortcut(shortcutEvent({key: "Enter"}))).toBe(false);
     });
 
     it("submits when allowed and prevents default", () => {
         const onSubmit = vi.fn();
-        const preventDefault = vi.fn();
-        const event = {
-            key: "Enter",
-            metaKey: true,
-            ctrlKey: false,
-            altKey: false,
-            preventDefault,
-        } as unknown as KeyboardEvent;
+        const event = shortcutEvent({key: "Enter", metaKey: true});
 
         handleMessageSubmitShortcut(event, onSubmit, true);
 
-        expect(preventDefault).toHaveBeenCalledOnce();
+        expect(event.preventDefault).toHaveBeenCalledOnce();
         expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     it("does not submit when the field is empty", () => {
         const onSubmit = vi.fn();
-        const event = {
-            key: "Enter",
-            metaKey: true,
-            ctrlKey: false,
-            altKey: false,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
+        const event = shortcutEvent({key: "Enter", metaKey: true});
 
         handleMessageSubmitShortcut(event, onSubmit, false);
 
