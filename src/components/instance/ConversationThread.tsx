@@ -63,8 +63,7 @@ function MessageMeta({
                 {displayName}
             </Text>
             {showDate && (
-                <Text
-                    as="time"
+                <time
                     dateTime={dateTime}
                     title={formattedDate}
                     className={
@@ -74,7 +73,7 @@ function MessageMeta({
                     }
                 >
                     {formattedDate}
-                </Text>
+                </time>
             )}
             {suffix && (
                 <Text as="span" className="text-grey-600">
