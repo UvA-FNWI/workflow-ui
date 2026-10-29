@@ -2,6 +2,7 @@ import {useState} from "react";
 
 import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
+import {VersionedLink} from "../VersionedLink";
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
@@ -101,6 +102,11 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
 
     const formatted = formatAnswer(value, question.type, i18n.language, choices);
 
+    const referenceIds: string[] =
+        question.type === "Reference" && value != null
+            ? (Array.isArray(value) ? value : [value]).map(String)
+            : [];
+
     return (
         <div className={ROW_CLASSES}>
             <div className="min-w-0">
@@ -112,16 +118,41 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                     </Text>
                 )}
             </div>
-            <div className="min-w-0">
-                <Text as="span" display="inline" className="wrap-break-word whitespace-pre-wrap">
-                    {formatted || "-"}
-                </Text>
+            <div className="flex min-w-0 flex-row gap-1">
+                {referenceIds.length > 0 ? (
+                    <div className="flex min-w-0 flex-col gap-1">
+                        {referenceIds.map((id) => (
+                            <VersionedLink
+                                key={id}
+                                className="block min-w-0 underline hover:text-grey-800"
+                                to={`/instance/${id}`}
+                            >
+                                <Text
+                                    as="span"
+                                    display="inline"
+                                    className="wrap-break-word whitespace-pre-wrap"
+                                    color="inherit"
+                                >
+                                    {formatAnswer(id, question.type, i18n.language, choices) || "-"}
+                                </Text>
+                            </VersionedLink>
+                        ))}
+                    </div>
+                ) : (
+                    <Text
+                        as="span"
+                        display="inline"
+                        className="wrap-break-word whitespace-pre-wrap"
+                    >
+                        {formatted || "-"}
+                    </Text>
+                )}
                 {EDITABLE_TYPES.includes(question.type) && (
                     <Button
                         intent="ghost"
                         size="small"
                         shape="circular"
-                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                        className="ui:ml-1 ui:shrink-0 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                         onClick={() => setIsEditing(true)}
                         aria-label={t("admin_data.edit_property", {property: label})}
                     >

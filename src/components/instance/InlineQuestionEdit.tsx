@@ -51,7 +51,7 @@ export const InlineQuestionEdit = ({
     };
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
             <InputControl
                 instanceId={instanceId}
                 submissionId={submissionId ?? ""}
