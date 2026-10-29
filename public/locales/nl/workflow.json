@@ -81,7 +81,8 @@
     "by": "Door",
     "empty": "Er is nog geen geschiedenis",
     "status": "Status",
-    "title": "Geschiedenis"
+    "title": "Geschiedenis",
+    "undo_reason_empty": "Er is geen reden voor ongedaan maken opgegeven"
   },
   "home": "Home",
   "instance": {
@@ -108,6 +109,7 @@
       "hide_answers": "Verberg onderdelen en toelichting",
       "hide_linked": "Verberg toelichtingen",
       "replace_file": "Bestand vervangen",
+      "reversed_on_by": "Teruggedraaid op {{date}} door {{name}}",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",

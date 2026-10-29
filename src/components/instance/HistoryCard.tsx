@@ -1,15 +1,25 @@
 import {useMemo, useState} from "react";
 
 import {createColumnHelper} from "@tanstack/react-table";
-import {Disclosure, Heading, Link, Separator, Skeleton, Text, Tooltip} from "@uva-fnwi/datanose-ui";
+import {
+    Button,
+    Disclosure,
+    Heading,
+    Link,
+    Modal,
+    Separator,
+    Skeleton,
+    Text,
+    Tooltip,
+} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
 import {AnswerChangesModal} from "~/components/instance/AnswerChangesModal.tsx";
 import {DataTable} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
-import type {InstanceHistoryItem, PropertyHistory} from "~/store/api/types/instances.ts";
-import {formatDateTimeShort} from "~/utils/formatDate.ts";
+import type {InstanceHistoryItem} from "~/store/api/types/instances.ts";
+import {formatDateShort, formatDateTimeShort} from "~/utils/formatDate.ts";
 
 const columnHelper = createColumnHelper<InstanceHistoryItem>();
 
@@ -20,7 +30,7 @@ interface HistoryCardProps {
 export function HistoryCard({instanceId}: HistoryCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const {t, l} = useTranslate("workflow");
-    const [propertyHistory, setPropertyHistory] = useState<PropertyHistory | null>(null);
+    const [selectedItem, setSelectedItem] = useState<InstanceHistoryItem | null>(null);
 
     const {data, isFetching, error} = instancesEndpoints.getHistory.useQuery(instanceId ?? "", {
         skip: !instanceId || !isExpanded,
@@ -28,26 +38,22 @@ export function HistoryCard({instanceId}: HistoryCardProps) {
 
     if (error) throw error;
 
+    const isClickable = (item: InstanceHistoryItem) =>
+        item.type === "Property" || item.type === "Undo";
+
     const columns = useMemo(
         () => [
             columnHelper.accessor("title", {
                 header: t("history.status"),
                 cell: (info) => {
-                    const status = info.getValue();
-                    const type = info.row.original.type;
-                    if (type === "Property") {
-                        return (
-                            <Link
-                                className="underline"
-                                onClick={() =>
-                                    setPropertyHistory(info.row.original.propertyHistory ?? null)
-                                }
-                            >
-                                {l(status) || "—"}
-                            </Link>
-                        );
-                    }
-                    return <Text>{l(status) || "—"} </Text>;
+                    const item = info.row.original;
+                    return isClickable(item) ? (
+                        <Link className="underline" onClick={() => setSelectedItem(item)}>
+                            {l(info.getValue()) || "—"}
+                        </Link>
+                    ) : (
+                        <Text>{l(info.getValue()) || "—"}</Text>
+                    );
                 },
                 enableSorting: false,
             }),
@@ -111,14 +117,57 @@ export function HistoryCard({instanceId}: HistoryCardProps) {
                     </div>
                 </Disclosure.Content>
             </Disclosure>
-            {propertyHistory?.answerChangeGroup && (
+            {selectedItem?.propertyHistory && (
                 <AnswerChangesModal
                     isOpen
-                    onClose={() => setPropertyHistory(null)}
-                    question={propertyHistory.question}
-                    changes={[propertyHistory.answerChangeGroup]}
+                    onClose={() => setSelectedItem(null)}
+                    question={selectedItem?.propertyHistory.question}
+                    changes={[selectedItem?.propertyHistory.answerChangeGroup]}
                 />
+            )}
+            {selectedItem?.undoHistory && (
+                <UndoReasonModal isOpen onClose={() => setSelectedItem(null)} item={selectedItem} />
             )}
         </>
     );
 }
+
+type UndoReasonModalProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    item: InstanceHistoryItem;
+};
+
+const UndoReasonModal = ({isOpen, onClose, item}: UndoReasonModalProps) => {
+    const {t, l} = useTranslate("workflow");
+
+    const date = formatDateShort(item.timestamp, i18n.language);
+    const text = t("instance.summary.reversed_on_by", {
+        date,
+        name: item.user.displayName,
+    });
+
+    return (
+        <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()} size="sm">
+            <Modal.Header>{l(item.title)}</Modal.Header>
+            <Modal.Body className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                    <Text display="block" fontWeight="semibold">
+                        {t("undo.reason")}
+                    </Text>
+                    <Text display="block" className="wrap-break-word whitespace-pre-wrap">
+                        {item.undoHistory?.reason ?? t("history.undo_reason_empty")}
+                    </Text>
+                    <Text display="block" intent="secondary" title={date}>
+                        {text}
+                    </Text>
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button size="large" intent="secondary" onClick={onClose}>
+                    {t("cancel")}
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+};

@@ -219,9 +219,14 @@ export type InstanceHistoryItem = {
     timestamp: string;
     user: UserSearchResult;
     propertyHistory?: PropertyHistory;
+    undoHistory?: UndoHistory;
 };
 
 export type PropertyHistory = {
     question: Question;
     answerChangeGroup: AnswerChangeGroup;
+};
+
+export type UndoHistory = {
+    reason?: string;
 };
