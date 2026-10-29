@@ -86,25 +86,30 @@ export const StepCardBody = ({
         }
     };
 
+    const versionHeading =
+        step.versions?.current && hasVersionHistory(step) ? (
+            <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
+                {t("version_card.version_nr", {versionNumber: step.versions.current.versionNumber})}
+            </Heading>
+        ) : null;
+
     // Action buttons show when form is NOT open and actions exist
     const showActionButtons = !inlineForm && actions.length > 0;
 
     return (
         <>
             <div className="flex flex-col gap-4">
-                {step.versions?.current && hasVersionHistory(step) && (
-                    <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
-                        {t("version_card.version_nr", {
-                            versionNumber: step.versions.current.versionNumber,
-                        })}
-                    </Heading>
-                )}
+                {!inlineForm &&
+                    (submissions.length === 0 ||
+                        (step.versions?.current?.submissions.length ?? 0) > 0) &&
+                    versionHeading}
                 {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
 
                 {/* Form overlay: shown alongside submissions */}
                 {inlineForm && (
                     <div className="py-4">
+                        {versionHeading}
                         {actions.length > 1 && activeAction != null && (
                             <div className="flex justify-between gap-2">
                                 <Text className="uppercase" intent="error" size="xl">

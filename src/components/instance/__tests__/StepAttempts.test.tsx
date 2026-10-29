@@ -328,3 +328,131 @@ it.each(["Combined", "CollapsibleRows"] as const)(
         expect(screen.getByText("Version 5")).toBeVisible();
     },
 );
+
+it.each([false, true])(
+    "shows all API-visible summary submissions above the version history after resubmission: %s",
+    (resubmitted) => {
+        const makeSubmission = (id: string, value: string): Submission => ({
+            id,
+            dateSubmitted: "2026-10-01T10:00:00Z",
+            permissions: [],
+            answers: [
+                {id: `${id}-answer`, questionName: "Feedback", value, isVisible: true, files: []},
+            ],
+            form: {
+                name: id,
+                title: {en: id, nl: ""},
+                layout: "Normal",
+                step: "Writing",
+                pages: [
+                    {
+                        index: 0,
+                        name: "Main",
+                        title: {en: "Main", nl: ""},
+                        layout: "Normal",
+                        hasResults: false,
+                        isActive: true,
+                        isInCurrentForm: true,
+                        elements: [
+                            {
+                                kind: "Question",
+                                question: {
+                                    name: "Feedback",
+                                    text: {en: "Feedback", nl: ""},
+                                    type: "String",
+                                    isRequired: false,
+                                    isArray: false,
+                                    hideInResults: false,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+        });
+        const reviews = [
+            makeSubmission("Supervisor review", "Changes required"),
+            makeSubmission("Reviewer review", "Approved by reviewer"),
+        ];
+        const proposal = makeSubmission("Proposal", "Revised proposal");
+        const visible = resubmitted ? [proposal] : reviews;
+        const step: WorkflowStep = {
+            id: "Writing",
+            title: {en: "Writing", nl: ""},
+            isAvailable: true,
+            children: null,
+            icon: null,
+            event: "",
+            dateCompleted: null,
+            deadline: null,
+            headerStatus: null,
+            resultsType: "Normal",
+            expectsSubmission: !resubmitted,
+            hasSubmission: visible.length > 0,
+            hierarchyMode: "Sequential",
+            childrenLayout: "Combined",
+            submissions: visible,
+            versions: {
+                current: {
+                    versionNumber: 2,
+                    completionTimestamp: null,
+                    submissions: resubmitted ? [proposal] : [],
+                },
+                history: [{versionNumber: 1, completionTimestamp: null, submissions: reviews}],
+            },
+        };
+        const instance = {
+            id: "instance",
+            currentStep: "Writing",
+            steps: [step],
+            submissions: [],
+            actions: resubmitted
+                ? []
+                : [
+                      {
+                          id: "Revise",
+                          type: "SubmitForm",
+                          form: "Proposal",
+                          formLayout: "Modal",
+                          steps: ["Writing"],
+                          title: {en: "Revise proposal", nl: ""},
+                          intent: "Primary",
+                      },
+                  ],
+        } as unknown as WorkflowInstance;
+
+        render(
+            <Provider store={store}>
+                <ToastProvider>
+                    <StepCard step={step} instance={instance} />
+                </ToastProvider>
+            </Provider>,
+        );
+
+        for (const submission of visible) {
+            expect(
+                screen.getByRole("heading", {name: submission.form.title.en.toUpperCase()}),
+            ).toBeVisible();
+            expect(screen.getAllByText(String(submission.answers[0].value))[0]).toBeVisible();
+        }
+        expect(screen.queryByText("0", {exact: true})).not.toBeInTheDocument();
+        const history = screen.getByRole("button", {name: /Version 1/});
+        expect(history).toHaveAttribute("aria-expanded", "false");
+        if (resubmitted) {
+            expect(
+                screen.queryByRole("heading", {name: "SUPERVISOR REVIEW"}),
+            ).not.toBeInTheDocument();
+            fireEvent.click(history);
+            expect(screen.getByText("Changes required")).toBeVisible();
+        } else {
+            const revise = screen.getByRole("button", {name: "Revise proposal"});
+            expect(
+                screen.getAllByText("Changes required")[0].compareDocumentPosition(revise) &
+                    Node.DOCUMENT_POSITION_FOLLOWING,
+            ).toBeTruthy();
+            expect(
+                revise.compareDocumentPosition(history) & Node.DOCUMENT_POSITION_FOLLOWING,
+            ).toBeTruthy();
+        }
+    },
+);
