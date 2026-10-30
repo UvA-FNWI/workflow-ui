@@ -1,5 +1,27 @@
 {
   "active": "Active",
+  "bulk": {
+    "cancel": "Cancel",
+    "checking": "Checking available actions…",
+    "close": "Close",
+    "completed_with_errors": "Bulk action has completed with errors. The action was successful for {{successful}} out of {{total}} rows. Please contact an administrator.",
+    "confirm": "Confirm",
+    "confirm_all_one": "You have selected 1 row. The action {{action}} will be applied to this row. Are you sure you want to proceed?",
+    "confirm_all_other": "You have selected {{selected}} rows. The action {{action}} will be applied to all of these rows. Are you sure you want to proceed?",
+    "confirm_none_one": "The action “{{action}}” is currently unavailable for the selected row. No changes will be made.",
+    "confirm_none_other": "The action “{{action}}” is currently unavailable for all {{count}} selected rows. No changes will be made.",
+    "confirm_some_one": "You have selected {{selected}} rows. The action {{action}} will be applied to {{eligible}} of these rows. For the remaining row, the action is not currently possible. Are you sure you want to proceed?",
+    "confirm_some_other": "You have selected {{selected}} rows. The action {{action}} will be applied to {{eligible}} of these rows. For the remaining {{count}} rows, the action is not currently possible. Are you sure you want to proceed?",
+    "eligible": "Will be applied",
+    "executing": "Applying action…",
+    "preview_failed": "The available actions could not be checked. Close this window and try again.",
+    "select_all": "Select all rows",
+    "select_row": "Select row {{number}}",
+    "success_one": "The action was executed successfully for 1 row.",
+    "success_other": "The action was executed successfully for all {{count}} rows.",
+    "unavailable": "Currently unavailable",
+    "unknown_result": "The result could not be confirmed. Some actions may have completed. Check the table before starting another bulk action. Please contact an administrator."
+  },
   "columns": {
     "course": "Course",
     "employees": "Employees",

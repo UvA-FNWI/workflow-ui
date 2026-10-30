@@ -10,6 +10,7 @@ import {
     getSortedRowModel,
     type OnChangeFn,
     type Row,
+    type RowSelectionState,
     type SortingState,
     type TableOptions,
     useReactTable,
@@ -31,6 +32,8 @@ type DataTableProps<TData> = {
     onSortingChange?: (sorting: SortingState) => void;
     emptyNode?: ReactNode;
     textSize?: "sm" | "base" | "lg";
+    rowSelection?: RowSelectionState;
+    onRowSelectionChange?: OnChangeFn<RowSelectionState>;
 };
 
 export function DataTable<TData>({
@@ -44,6 +47,8 @@ export function DataTable<TData>({
     onSortingChange,
     emptyNode,
     textSize = "sm",
+    rowSelection = {},
+    onRowSelectionChange,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
@@ -68,7 +73,9 @@ export function DataTable<TData>({
         state: {
             sorting,
             globalFilter,
+            rowSelection,
         },
+        onRowSelectionChange,
         onSortingChange: handleSortingChange,
         filterFns: {
             fuzzy: defaultGlobalFilter,

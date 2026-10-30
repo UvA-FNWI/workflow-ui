@@ -1,5 +1,27 @@
 {
   "active": "Lopend",
+  "bulk": {
+    "cancel": "Annuleren",
+    "checking": "Beschikbare acties controleren…",
+    "close": "Sluiten",
+    "completed_with_errors": "Bulkactie is uitgevoerd met fouten. De actie is gelukt voor {{successful}} van de {{total}} rijen. Neem contact op met een beheerder.",
+    "confirm": "Bevestigen",
+    "confirm_all_one": "Je hebt 1 rij geselecteerd. De actie {{action}} wordt uitgevoerd op deze rij. Weet je zeker dat je wilt doorgaan?",
+    "confirm_all_other": "Je hebt {{selected}} rijen geselecteerd. De actie {{action}} wordt uitgevoerd op al deze rijen. Weet je zeker dat je wilt doorgaan?",
+    "confirm_none_one": "De actie ‘{{action}}’ is momenteel niet mogelijk voor de geselecteerde rij. Er worden geen wijzigingen aangebracht.",
+    "confirm_none_other": "De actie ‘{{action}}’ is momenteel niet mogelijk voor alle {{count}} geselecteerde rijen. Er worden geen wijzigingen aangebracht.",
+    "confirm_some_one": "Je hebt {{selected}} rijen geselecteerd. De actie {{action}} wordt uitgevoerd op {{eligible}} van deze rijen. Voor de overige rij is de actie momenteel niet mogelijk. Weet je zeker dat je wilt doorgaan?",
+    "confirm_some_other": "Je hebt {{selected}} rijen geselecteerd. De actie {{action}} wordt uitgevoerd op {{eligible}} van deze rijen. Voor de overige {{count}} rijen is de actie momenteel niet mogelijk. Weet je zeker dat je wilt doorgaan?",
+    "eligible": "Wordt uitgevoerd",
+    "executing": "Actie uitvoeren…",
+    "preview_failed": "De beschikbare acties konden niet worden gecontroleerd. Sluit dit venster en probeer het opnieuw.",
+    "select_all": "Alle rijen selecteren",
+    "select_row": "Rij {{number}} selecteren",
+    "success_one": "De actie is succesvol uitgevoerd voor 1 rij.",
+    "success_other": "De actie is succesvol uitgevoerd voor alle {{count}} rijen.",
+    "unavailable": "Momenteel niet mogelijk",
+    "unknown_result": "Het resultaat kon niet worden bevestigd. Sommige acties zijn mogelijk uitgevoerd. Controleer de tabel voordat je een nieuwe bulkactie start. Neem contact op met een beheerder."
+  },
   "columns": {
     "course": "Vak",
     "employees": "Medewerkers",

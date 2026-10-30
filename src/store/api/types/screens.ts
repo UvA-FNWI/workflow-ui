@@ -1,3 +1,5 @@
+import type {IconType} from "@uva-fnwi/datanose-ui";
+
 import type {DataType} from "./submissions";
 import type {LocalString} from "~/hooks/useTranslate";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions.ts";
@@ -16,6 +18,24 @@ export type ScreenData = {
     rows: ScreenRow[];
     // Present when the screen defines a grouping configuration; rows are then empty.
     groups?: ScreenGroup[];
+    bulkActions?: BulkAction[];
+};
+
+export type BulkAction = {
+    action: string;
+    label: LocalString;
+    icon: {type: IconType};
+};
+
+export type BulkActionParams = {
+    workflowDefinition: string;
+    screenName: string;
+    actionName: string;
+    instanceIds: string[];
+};
+
+export type BulkActionResult = {
+    rows: {instanceId: string; status: "Eligible" | "Unavailable" | "Succeeded" | "Failed"}[];
 };
 
 export type ScreenColumn = {
