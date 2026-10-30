@@ -1,4 +1,4 @@
-import type {Action, WorkflowStep} from "~/store/api/types/instances.ts";
+import type {WorkflowStep} from "~/store/api/types/instances.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
 /**
@@ -7,17 +7,6 @@ import type {Submission} from "~/store/api/types/submissions.ts";
 export type ContentState =
     {type: "submissions"; regular: Submission[]; assessments: Submission[]} | {type: "empty"};
 
-/**
- * Form overlay state — shown alongside the background content (not exclusive).
- */
-export type FormState = {type: "inPage"; action: Action} | null;
-
-/**
- * Modal overlay state — dialog shown on top of everything.
- */
-export type ModalState =
-    {type: "formModal"; action: Action} | {type: "confirmationModal"; action: Action} | null;
-
 const hasResults = (submission: Submission) => submission.form.pages.some((p) => p.hasResults);
 
 export const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
@@ -25,24 +14,14 @@ export const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
     ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
 ];
 
-/** Indicates whether the step has any historical submissions to render as version cards. */
+/** Empty and permission-filtered attempts still have a place in history. */
 export function hasVersionHistory(step: WorkflowStep): boolean {
-    return step.versions?.some((version) => version.submissions.length > 0) ?? false;
-}
-
-export function getCurrentVersionNumber(step: WorkflowStep): number | undefined {
-    const versionsWithSubmissions = step.versions?.filter(
-        (version) => version.submissions.length > 0,
-    );
-
-    if (!versionsWithSubmissions?.length) return undefined;
-
-    return Math.max(...versionsWithSubmissions.map((version) => version.versionNumber)) + 1;
+    return (step.versions?.history.length ?? 0) > 0;
 }
 
 export function getPreviousFormVersion(step: WorkflowStep, form?: string): number | undefined {
     return getStepHierarchy(step)
-        .flatMap((candidate) => candidate.versions ?? [])
+        .flatMap((candidate) => candidate.versions?.history ?? [])
         .find((version) => version.submissions.some((submission) => submission.id === form))
         ?.versionNumber;
 }
@@ -62,31 +41,4 @@ export function resolveContentState(step: WorkflowStep, submissions: Submission[
     }
 
     return {type: "empty"};
-}
-
-/**
- * Resolves the form overlay state (shown alongside background content).
- */
-export function resolveFormState(resolvedAction: Action | null): FormState {
-    if (resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal") {
-        return {type: "inPage", action: resolvedAction};
-    }
-    return null;
-}
-
-/**
- * Resolves the modal state (overlay, independent from body content).
- */
-export function resolveModalState(activeAction: Action | null): ModalState {
-    if (!activeAction) return null;
-
-    if (activeAction.type === "SubmitForm" && activeAction.formLayout === "Modal") {
-        return {type: "formModal", action: activeAction};
-    }
-
-    if (activeAction.type === "Execute") {
-        return {type: "confirmationModal", action: activeAction};
-    }
-
-    return null;
 }

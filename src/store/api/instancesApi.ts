@@ -28,7 +28,10 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getInstanceProperties: builder.query<InstanceProperties, string>({
             query: (id: string) => `/WorkflowInstances/${id}/Properties`,
-            providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
+            providesTags: (_result, _error, id: string) => [
+                {type: "Instance", id},
+                {type: "InstanceActions", id},
+            ],
         }),
         getPropertyChoices: builder.query<Choice[], {instanceId: string; path: string}>({
             query: ({instanceId, path}) =>
@@ -91,7 +94,10 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getImpersonationRoles: builder.query<Role[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Impersonation/Roles`,
-            providesTags: (_result, _error, instanceId) => [{type: "Instance", id: instanceId}],
+            providesTags: (_result, _error, instanceId) => [
+                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+            ],
         }),
         getImpersonationActions: builder.query<ActiveStep[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/impersonation/actions`,

@@ -1,16 +1,16 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    getPreviousFormVersion,
     hasVersionHistory,
     resolveContentState,
-    resolveFormState,
-    resolveModalState,
 } from "../resolveContentState.ts";
-import type {Action, WorkflowStep} from "~/store/api/types/instances.ts";
+import type {WorkflowStep} from "~/store/api/types/instances.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 
 const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     id: "step-1",
+    isAvailable: true,
     title: {en: "Step 1", nl: "Stap 1"},
     icon: null,
     event: "event-1",
@@ -18,24 +18,13 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     deadline: null,
     children: null,
     versions: null,
+    submissions: [],
     headerStatus: null,
     hierarchyMode: "Parallel",
     childrenLayout: "Combined",
     resultsType: "Normal",
     expectsSubmission: false,
     hasSubmission: false,
-    ...overrides,
-});
-
-const makeAction = (overrides: Partial<Action> = {}): Action => ({
-    name: "action-1",
-    id: "action-1",
-    type: "SubmitForm",
-    form: "submission-template-1",
-    title: {en: "Submit", nl: "Indienen"},
-    steps: ["step-1"],
-    intent: "Primary",
-    formLayout: "Normal",
     ...overrides,
 });
 
@@ -68,55 +57,82 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
 describe("hasVersionHistory", () => {
     it("returns true for one completed version with submissions", () => {
         const step = makeStep({
-            versions: [
-                {
-                    versionNumber: 1,
-                    eventIds: ["Proposal", "ProposalRevise"],
-                    submittedAt: "2026-01-01T00:00:00Z",
-                    submissions: [
-                        makeSubmission({id: "proposal"}),
-                        makeSubmission({id: "proposal-revise"}),
-                    ],
-                },
-            ],
+            versions: {
+                current: null,
+                history: [
+                    {
+                        versionNumber: 1,
+                        completionTimestamp: "2026-01-01T00:00:00Z",
+                        submissions: [
+                            makeSubmission({id: "proposal"}),
+                            makeSubmission({id: "proposal-revise"}),
+                        ],
+                    },
+                ],
+            },
         });
 
         expect(hasVersionHistory(step)).toBe(true);
     });
 
-    it("returns false when versions contain no visible submissions", () => {
+    it("keeps history when permissions hide all submissions", () => {
         const step = makeStep({
-            versions: [
-                {
-                    versionNumber: 1,
-                    eventIds: ["Proposal"],
-                    submittedAt: "2026-01-01T00:00:00Z",
-                    submissions: [],
-                },
-            ],
+            versions: {
+                current: null,
+                history: [
+                    {
+                        versionNumber: 1,
+                        completionTimestamp: "2026-01-01T00:00:00Z",
+                        submissions: [],
+                    },
+                ],
+            },
         });
 
-        expect(hasVersionHistory(step)).toBe(false);
+        expect(hasVersionHistory(step)).toBe(true);
     });
 });
+
+it.each([true, false])(
+    "finds a previous form in child history only when its submission is visible: %s",
+    (visible) => {
+        const submission = makeSubmission({id: "Draft"});
+        const child = makeStep({
+            versions: {
+                current: {versionNumber: 4, completionTimestamp: null, submissions: [submission]},
+                history: [
+                    {
+                        versionNumber: 3,
+                        completionTimestamp: null,
+                        submissions: visible ? [submission] : [],
+                    },
+                ],
+            },
+        });
+        const step = makeStep({children: [child]});
+
+        expect(getPreviousFormVersion(step, "Draft")).toBe(visible ? 3 : undefined);
+    },
+);
 
 describe("resolveContentState", () => {
     it("returns 'empty' when multiple versions exist but no direct submissions", () => {
         const step = makeStep({
-            versions: [
-                {
-                    versionNumber: 1,
-                    eventIds: [],
-                    submittedAt: "2026-01-01",
-                    submissions: [makeSubmission()],
-                },
-                {
-                    versionNumber: 2,
-                    eventIds: [],
-                    submittedAt: "2026-01-02",
-                    submissions: [makeSubmission({id: "sub-2"})],
-                },
-            ],
+            versions: {
+                current: null,
+                history: [
+                    {
+                        versionNumber: 1,
+                        completionTimestamp: "2026-01-01",
+                        submissions: [makeSubmission()],
+                    },
+                    {
+                        versionNumber: 2,
+                        completionTimestamp: "2026-01-02",
+                        submissions: [makeSubmission({id: "sub-2"})],
+                    },
+                ],
+            },
         });
         const result = resolveContentState(step, []);
         // Version history is rendered separately, content falls through to empty
@@ -179,52 +195,5 @@ describe("resolveContentState", () => {
             regular: [withAnswers],
             assessments: [],
         });
-    });
-});
-
-describe("resolveFormState", () => {
-    it("returns null when no resolved action", () => {
-        expect(resolveFormState(null)).toBeNull();
-    });
-
-    it("returns 'inPage' for SubmitForm with non-Modal layout", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Normal"});
-        expect(resolveFormState(action)).toEqual({type: "inPage", action});
-    });
-
-    it("returns 'inPage' for SubmitForm with Compact layout", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Compact"});
-        expect(resolveFormState(action)).toEqual({type: "inPage", action});
-    });
-
-    it("returns null for SubmitForm with Modal layout (handled by modal state)", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Modal"});
-        expect(resolveFormState(action)).toBeNull();
-    });
-
-    it("returns null for Execute action", () => {
-        const action = makeAction({type: "Execute"});
-        expect(resolveFormState(action)).toBeNull();
-    });
-});
-
-describe("resolveModalState", () => {
-    it("returns null when no active action", () => {
-        expect(resolveModalState(null)).toBeNull();
-    });
-
-    it("returns 'formModal' for SubmitForm with Modal layout", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Modal"});
-        expect(resolveModalState(action)).toEqual({type: "formModal", action});
-    });
-
-    it("returns 'confirmationModal' for Execute action", () => {
-        const action = makeAction({type: "Execute", name: "approve"});
-        expect(resolveModalState(action)).toEqual({type: "confirmationModal", action});
-    });
-
-    it("returns null for SubmitForm with non-Modal layout (handled as in-page)", () => {
-        const action = makeAction({type: "SubmitForm", formLayout: "Normal"});
-        expect(resolveModalState(action)).toBeNull();
     });
 });

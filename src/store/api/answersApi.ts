@@ -35,6 +35,18 @@ export const answersApi = baseApi.injectEndpoints({
                 // Each response contains the whole submission, so track saves across all questions.
                 const submissionKey = JSON.stringify([params.instanceId, params.submissionId]);
                 latestSaveBySubmission.set(submissionKey, requestId);
+                if (
+                    dispatch(baseApi.util.getRunningMutationsThunk()).some(
+                        ({arg}) =>
+                            arg.endpointName === "saveAnswer" &&
+                            (arg.originalArgs as SaveAnswerParams).instanceId === params.instanceId,
+                    )
+                ) {
+                    // Overlapping saves can return stale snapshots -> refresh after pending saves settle.
+                    dispatch(
+                        baseApi.util.invalidateTags([{type: "Instance", id: params.instanceId}]),
+                    );
+                }
 
                 const result = await queryFulfilled.catch(() => undefined);
                 // An older response must not roll back a newer submission snapshot.
@@ -42,36 +54,33 @@ export const answersApi = baseApi.injectEndpoints({
                 latestSaveBySubmission.delete(submissionKey);
                 if (!result) return;
 
-                const {data} = result;
+                const {submission, updatedInstance} = result.data;
+                if (updatedInstance)
+                    dispatch(
+                        instancesApi.util.updateQueryData(
+                            "getInstance",
+                            params.instanceId,
+                            () => updatedInstance,
+                        ),
+                    );
                 dispatch(
                     submissionsApi.util.updateQueryData(
                         "getSubmission",
                         {instanceId: params.instanceId, submissionId: params.submissionId},
-                        () => data.submission,
-                    ),
-                );
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        (current) => {
-                            const idx = current.submissions.findIndex(
-                                (s) => s.id === params.submissionId,
-                            );
-                            if (idx !== -1) {
-                                current.submissions[idx] = data.submission;
-                            }
-                        },
+                        () => submission,
                     ),
                 );
             },
-            invalidatesTags: (_result, _error, params) => [
+            invalidatesTags: (result, _error, params) => [
                 {
                     type: "Assessments",
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "InstanceActions", id: params.instanceId},
+                {
+                    type: result?.updatedInstance ? "InstanceActions" : "Instance",
+                    id: params.instanceId,
+                },
                 {type: "Choices", id: params.instanceId},
                 "Screen",
             ],
@@ -122,18 +131,6 @@ export const answersApi = baseApi.injectEndpoints({
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
                 const {data} = await queryFulfilled;
                 dispatch(submissionsApi.util.updateQueryData("getSubmission", params, () => data));
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        (current) => {
-                            const index = current.submissions.findIndex(
-                                (submission) => submission.id === params.submissionId,
-                            );
-                            if (index !== -1) current.submissions[index] = data;
-                        },
-                    ),
-                );
             },
             invalidatesTags: (_result, _error, params) => [
                 {
@@ -141,7 +138,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "InstanceActions", id: params.instanceId},
+                {type: "Instance", id: params.instanceId},
                 "Screen",
             ],
         }),

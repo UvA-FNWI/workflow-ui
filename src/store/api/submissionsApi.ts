@@ -53,7 +53,7 @@ export const submissionsApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Assessments", instanceId, submissionId},
-                {type: "InstanceActions", id: instanceId},
+                {type: "Instance", id: instanceId},
                 "Screen",
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
@@ -63,20 +63,6 @@ export const submissionsApi = baseApi.injectEndpoints({
                         "getSubmission",
                         {instanceId: params.instanceId, submissionId: params.submissionId},
                         () => data,
-                    ),
-                );
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        (current) => {
-                            const idx = current.submissions.findIndex(
-                                (s) => s.id === params.submissionId,
-                            );
-                            if (idx !== -1) {
-                                current.submissions[idx] = data;
-                            }
-                        },
                     ),
                 );
             },

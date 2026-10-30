@@ -27,10 +27,12 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                     <Heading as="h3" fontType="heading" size={"sm"} className="font-semibold">
                         {t("version_card.version_nr", {versionNumber: version.versionNumber})}
                     </Heading>
-                    <Text as="span">
-                        <Text fontWeight="semibold">{t("status.submitted")}:</Text>{" "}
-                        {formatDateShort(version.submittedAt, i18n.language)}
-                    </Text>
+                    {version.completionTimestamp && (
+                        <Text as="span">
+                            <Text fontWeight="semibold">{t("status.completed_on")}:</Text>{" "}
+                            {formatDateShort(version.completionTimestamp, i18n.language)}
+                        </Text>
+                    )}
                 </div>
             </Disclosure.Header>
             <Disclosure.Content padding="none">
