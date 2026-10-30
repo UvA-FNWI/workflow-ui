@@ -7,7 +7,7 @@ import {ScreenView} from "../ScreenView";
 import type {ScreenRow} from "~/store/api/types/screens";
 
 vi.mock("~/hooks/useTranslate", () => ({
-    useTranslate: () => ({l: (value: {en: string}) => value.en}),
+    useTranslate: () => ({l: (value: {en: string}) => value.en, i18n: {language: "en"}}),
 }));
 
 vi.mock("~/store/api/screensApi", () => ({
