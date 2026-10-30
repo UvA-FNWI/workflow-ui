@@ -452,6 +452,7 @@ export const formSubmitted = {
         isPropertyOnly: false,
     },
     currentStep: "SubjectFeedback",
+    pinnedActions: [],
     actions: [
         {
             type: "SubmitForm",

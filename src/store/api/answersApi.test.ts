@@ -4,6 +4,7 @@ import {Provider} from "react-redux";
 
 import {configureStore, type Middleware} from "@reduxjs/toolkit";
 import {act, fireEvent, render, screen} from "@testing-library/react";
+import {ToastProvider} from "@uva-fnwi/datanose-ui";
 import {afterEach, expect, it, vi} from "vitest";
 
 import {answersApi} from "./answersApi";
@@ -441,7 +442,9 @@ it.each([false, true])(
         const form = render(
             createElement(Provider, {
                 store,
-                children: createElement(FormPage, {...params, onClose: () => {}}),
+                children: createElement(ToastProvider, {
+                    children: createElement(FormPage, {...params, onClose: () => {}}),
+                }),
             }),
         );
         const save = debounced
