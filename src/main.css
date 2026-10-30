@@ -1,0 +1,4 @@
+@import "@uva-fnwi/datanose-ui/fonts";
+/* Keep UI defaults before app utilities in both development and production. */
+@import "@uva-fnwi/datanose-ui/styles";
+@import "./index.css";
