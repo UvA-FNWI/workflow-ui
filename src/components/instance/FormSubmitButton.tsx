@@ -1,5 +1,5 @@
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
-import {Button} from "@uva-fnwi/datanose-ui";
+import {Button, useToast} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
@@ -24,6 +24,7 @@ export const FormSubmitButton = ({
     text,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
+    const toast = useToast();
 
     const [submitSubmission, {isLoading}] = submissionsEndpoints.submitSubmission.useMutation();
 
@@ -45,6 +46,10 @@ export const FormSubmitButton = ({
                     // TODO: validation (DN-3424)
                     const question = errorResult.validationErrors[0];
                     alert(`Not valid! ${question.questionName}: ${l(question.validationMessage)}`);
+                    return;
+                }
+                if (res.error) {
+                    toast.error(t("action_failed"));
                     return;
                 }
                 onSubmit();
