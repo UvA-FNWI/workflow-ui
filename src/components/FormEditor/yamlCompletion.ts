@@ -1,4 +1,5 @@
 import type {CompletionContext, CompletionResult, CompletionSource} from "@codemirror/autocomplete";
+import {isMap, isNode, isSeq, parseDocument} from "yaml";
 
 import {
     type JsonSchema,
@@ -98,6 +99,28 @@ export function cursorContext(text: string, pos: number): CursorContext | null {
     return null;
 }
 
+/** Read the type of the mapping or sequence item enclosing the cursor, even in incomplete YAML. */
+function valuesAt(text: string, pos: number): (path: string[]) => unknown {
+    const document = parseDocument(text);
+    return (path) => {
+        let node: unknown = document.contents;
+        for (const key of [...path, null]) {
+            if (isSeq(node)) {
+                node = node.items.findLast(
+                    (item) => isNode(item) && item.range && item.range[0] <= pos,
+                );
+            }
+            if (key === null) {
+                return isMap(node) ? {type: node.get("type")} : undefined;
+            }
+            if (!isMap(node)) {
+                return undefined;
+            }
+            node = node.get(key, true);
+        }
+    };
+}
+
 /**
  * Schema-driven completion. The target is read lazily so the editor can mount before the schema
  * finishes downloading; until then this simply offers nothing.
@@ -108,19 +131,21 @@ export function schemaCompletion(getTarget: () => SchemaTarget | null): Completi
         if (!target) {
             return null;
         }
-        const cursor = cursorContext(context.state.doc.toString(), context.pos);
+        const text = context.state.doc.toString();
+        const cursor = cursorContext(text, context.pos);
         if (!cursor || (!context.explicit && cursor.token === "")) {
             return null;
         }
 
+        const valueAt = valuesAt(text, context.pos);
         const options =
             cursor.key === null
-                ? keyCompletions(target.root, target.start, cursor.path).map((option) => ({
+                ? keyCompletions(target.root, target.start, cursor.path, valueAt).map((option) => ({
                       ...option,
                       type: "property",
                       apply: `${option.label}: `,
                   }))
-                : valueCompletions(target.root, target.start, cursor.path, cursor.key).map(
+                : valueCompletions(target.root, target.start, cursor.path, cursor.key, valueAt).map(
                       (option) => ({...option, type: "enum"}),
                   );
 

@@ -219,6 +219,7 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
 
     const formatDeadline = (deadline: string) =>
         new Date(deadline).toLocaleDateString(i18n.language, {
+            timeZone: "Europe/Amsterdam",
             day: "numeric",
             month: "long",
             year: "numeric",

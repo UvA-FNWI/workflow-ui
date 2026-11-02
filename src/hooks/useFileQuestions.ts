@@ -2,7 +2,7 @@ import {useMemo} from "react";
 
 import {type Control, type FieldValues, useWatch} from "react-hook-form";
 
-import type {Question} from "~/store/api/types/submissions";
+import type {FileQuestion, Question} from "~/store/api/types/submissions";
 
 interface UseFileQuestionsOptions {
     questions: Question[];
@@ -10,7 +10,7 @@ interface UseFileQuestionsOptions {
 }
 
 interface UseFileQuestionsReturn {
-    fileQuestions: Question[];
+    fileQuestions: FileQuestion[];
     regularQuestions: Question[];
     fileValuesMap: Record<string, File | null>;
 }

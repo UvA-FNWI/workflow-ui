@@ -1,70 +1,65 @@
-import {Button, Modal} from "@uva-fnwi/datanose-ui";
+import {Button, LoadingSpinner, Modal, Text} from "@uva-fnwi/datanose-ui";
 
-import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
-import {PageControl} from "~/components/instance/PageControl.tsx";
-import {PrefilledAnswersNotice} from "~/components/instance/PrefilledAnswersNotice.tsx";
+import {FormPage} from "~/components/instance/FormPage.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
-import {isPageComplete} from "~/utils/submissionUtils.ts";
 
 type FormModalProps = {
-    isOpen: boolean;
     onClose: () => void;
     instanceId: string;
     submissionId: string;
     previousVersion?: number;
 };
 
-export const FormModal = ({
-    isOpen,
-    onClose,
-    instanceId,
-    submissionId,
-    previousVersion,
-}: FormModalProps) => {
+export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: FormModalProps) => {
     const {t, l} = useTranslate("workflow");
 
-    const {data: submission} = submissionsEndpoints.getSubmission.useQuery(
-        {
-            instanceId,
-            submissionId,
-        },
-        {skip: !isOpen},
-    );
-
-    if (!submission) return isOpen ? <div>Loading...</div> : null;
+    const {
+        data: submission,
+        isError,
+        refetch,
+    } = submissionsEndpoints.getSubmission.useQuery({
+        instanceId,
+        submissionId,
+    });
+    const title = submission ? l(submission.form.title) : t("form");
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose}>
-            <Modal.Header className="pb-0">{l(submission?.form.title)}</Modal.Header>
-            <Modal.Body className="mt-2">
-                <PrefilledAnswersNotice
-                    instanceId={instanceId}
-                    submissionId={submissionId}
-                    previousVersion={previousVersion}
-                />
-                {submission && (
-                    <PageControl
-                        showTitle={false}
-                        instanceId={instanceId}
-                        submissionId={submissionId}
-                        page={submission.form.pages[0]}
-                    />
-                )}
-            </Modal.Body>
-            <Modal.Footer>
-                <FormSubmitButton
-                    instanceId={instanceId}
-                    submission={submission}
-                    disabled={!isPageComplete(submission.form.pages[0], submission)}
-                    onSubmit={onClose}
-                    size="large"
-                    text={t("confirm")}
-                />
-                <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
-                    {t("cancel")}
-                </Button>
-            </Modal.Footer>
-        </Modal>
+        <FormPage
+            instanceId={instanceId}
+            submissionId={submissionId}
+            previousVersion={previousVersion}
+            onClose={onClose}
+            renderLayout={(content, actions) => (
+                <Modal isOpen onOpenChange={onClose} size="lg" aria-label={title}>
+                    <Modal.Header className="pb-0">{title}</Modal.Header>
+                    <Modal.Body className="mt-2">
+                        {isError ? (
+                            <Text role="alert" intent="error">
+                                {t("form_load_failed")}
+                            </Text>
+                        ) : submission ? (
+                            content
+                        ) : (
+                            <LoadingSpinner />
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer className="flex-wrap gap-y-3">
+                        <Button intent="secondary" onClick={onClose}>
+                            {t("cancel")}
+                        </Button>
+                        <div className="ml-auto flex flex-wrap justify-end gap-3">
+                            {isError ? (
+                                <Button intent="primary" onClick={() => void refetch()}>
+                                    {t("retry")}
+                                </Button>
+                            ) : (
+                                actions
+                            )}
+                        </div>
+                    </Modal.Footer>
+                </Modal>
+            )}
+        />
     );
 };

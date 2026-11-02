@@ -19,6 +19,15 @@ pnpm --filter @uva-fnwi/datanose-ui storybook
 pnpm --filter @uva-fnwi/datanose-core test
 ```
 
+YAML completion and question type switching load schemas from the configured API's
+`/Schemas` path using the existing authenticated API requests. This also works with
+the API URL configured at deployment time. No separate schema server is needed.
+After regenerating schemas, rebuild the API and reload the UI.
+
+To use an external schema source, set `VITE_WORKFLOW_SCHEMA_BASE_URL` in `.env.local`
+to its schema directory URL and restart the dev server. This override uses plain
+fetch without API credentials.
+
 ### Refresh after local workflow config changes
 
 To automatically refresh baseline pages after the API installs updated local workflow config, set

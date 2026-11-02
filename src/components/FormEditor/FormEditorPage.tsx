@@ -83,10 +83,10 @@ export function FormEditorPage() {
     const previewVersion = `edit-${definition.split("/").at(-1)}-${form}`;
 
     /** Every mutation goes through here: run it, record the touched files, surface any failure. */
-    const apply = (action: () => string[]) => {
+    const apply = async (action: () => string[] | Promise<string[]>) => {
         try {
             setFailure(null);
-            markDirty(action());
+            markDirty(await action());
         } catch (mutationError) {
             setFailure(
                 mutationError instanceof Error ? mutationError.message : t("mutation_failed"),

@@ -38,13 +38,10 @@ const question: Question = {
     name: "PracticalSupervisor",
     type: "User",
     text: {en: "Practical supervisor", nl: "Praktijkbegeleider"},
-    weight: null,
-    percentage: null,
     isRequired: true,
     isArray: true,
     hideInResults: false,
     allowsExternalUsers: true,
-    choices: [],
 };
 
 const existingUser: UserSearchResult = {
@@ -62,19 +59,55 @@ afterEach(() => {
 });
 
 describe("InputControl", () => {
+    it.each([
+        [undefined, "text"],
+        ["Email", "email"],
+        ["Phone", "tel"],
+    ] as const)("renders the text input for control %s", (control, inputType) => {
+        render(
+            <InputControl
+                question={{
+                    name: "Contact",
+                    type: "String",
+                    text: {en: "Contact", nl: "Contact"},
+                    isRequired: false,
+                    isArray: false,
+                    hideInResults: false,
+                    control,
+                }}
+            />,
+        );
+
+        expect(screen.getByRole("textbox")).toHaveAttribute("type", inputType);
+    });
+
+    it("renders multiline text from the TextArea control", () => {
+        render(
+            <InputControl
+                question={{
+                    name: "Comments",
+                    type: "String",
+                    text: {en: "Comments", nl: "Opmerkingen"},
+                    isRequired: false,
+                    isArray: false,
+                    hideInResults: false,
+                    control: "TextArea",
+                }}
+            />,
+        );
+
+        expect(screen.getByRole("textbox").tagName).toBe("TEXTAREA");
+    });
+
     it("saves the latest pending text value once when unmounted", () => {
         vi.useFakeTimers();
         const textQuestion: Question = {
             name: "Comments",
             type: "String",
             text: {en: "Comments", nl: "Opmerkingen"},
-            weight: null,
-            percentage: null,
             isRequired: false,
             isArray: false,
             hideInResults: false,
-            allowsExternalUsers: false,
-            choices: [],
         };
         const onSave = vi.fn().mockResolvedValue({});
         const {unmount} = render(<InputControl question={textQuestion} value="" onSave={onSave} />);
@@ -126,9 +159,8 @@ describe("InputControl", () => {
             isRequired: true,
             isArray: false,
             hideInResults: false,
-            allowsExternalUsers: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
-            layout: {type: "ComboBox"},
+            control: "ComboBox",
         };
 
         render(<InputControl question={country} />);
@@ -148,9 +180,8 @@ describe("InputControl", () => {
             isRequired: false,
             isArray: true,
             hideInResults: false,
-            allowsExternalUsers: false,
             choices: [{name: "NL", text: {en: "Netherlands", nl: "Nederland"}}],
-            layout: {type: "ComboBox"},
+            control: "ComboBox",
         };
 
         render(<InputControl question={country} value={["NL"]} onChange={onChange} />);
