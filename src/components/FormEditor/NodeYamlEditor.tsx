@@ -6,7 +6,6 @@ import CodeMirror from "@uiw/react-codemirror";
 import {Callout} from "@uva-fnwi/datanose-ui";
 
 import {
-    flatten,
     type JsonSchema,
     loadSchema,
     resolvePointer,
@@ -24,7 +23,7 @@ type Props = {
     isReadOnly?: boolean;
     /**
      * Which generated schema drives completion, and where in it this text starts. A whole file starts
-     * at the root; a single question is a "#/definitions/PropertyDefinition" fragment of one.
+     * at the root; a single question uses PropertyDefinition.
      */
     schema?: {name: SchemaName; pointer?: string};
 };
@@ -49,7 +48,7 @@ function useSchemaTarget(schema: Props["schema"]): SchemaTarget | null {
         if (!root) {
             return null;
         }
-        return {root, start: pointer ? flatten(resolvePointer(root, pointer), root) : root};
+        return {root, start: pointer ? resolvePointer(root, pointer) : root};
     }, [root, pointer]);
 }
 

@@ -10,6 +10,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import type {AnswerInput} from "~/store/api/types/params";
 import type {Answer, PageElement as PageElementType} from "~/store/api/types/submissions";
+import {isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageElementProps = {
     instanceId: string;
@@ -81,7 +82,8 @@ export const PageElement = ({
                         return (
                             <div
                                 className={cn(
-                                    showCompact && "flex flex-row items-start justify-between",
+                                    showCompact &&
+                                        "flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-4",
                                 )}
                             >
                                 <div>
@@ -89,7 +91,8 @@ export const PageElement = ({
                                         {question.type !== "Check" && (
                                             <InputLabel key={question.name}>
                                                 {l(question.text)}
-                                                {question.percentage != null &&
+                                                {isWeightedQuestion(question) &&
+                                                    question.percentage != null &&
                                                     showPercentages &&
                                                     ` (${question.percentage.toLocaleString(i18n.language)}%)`}
                                             </InputLabel>
@@ -108,7 +111,12 @@ export const PageElement = ({
                                         </div>
                                     )}
                                 </div>
-                                <div className={showCompact ? "w-24 shrink-0" : "w-full"}>
+                                <div
+                                    className={cn(
+                                        "w-full",
+                                        showCompact && "max-w-full shrink-0 sm:w-32",
+                                    )}
+                                >
                                     <InputControl
                                         instanceId={instanceId}
                                         submissionId={submissionId}

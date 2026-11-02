@@ -3,7 +3,7 @@ import {cleanup, fireEvent, render, screen, waitFor} from "@testing-library/reac
 import {afterEach, beforeEach, expect, it, vi} from "vitest";
 
 import {InlineFileEdit} from "./InlineFileEdit";
-import type {Answer, Question} from "~/store/api/types/submissions";
+import type {Answer, FileQuestion} from "~/store/api/types/submissions";
 
 const api = vi.hoisted(() => ({save: vi.fn(), remove: vi.fn(), fetching: false}));
 vi.mock("~/hooks/useTranslate.ts", () => ({
@@ -57,7 +57,7 @@ const editor = () => (
                 isArray: true,
                 allowedFileTypes: ["*"],
                 allowedFileSize: 1000,
-            } as Question
+            } as FileQuestion
         }
         answer={
             {

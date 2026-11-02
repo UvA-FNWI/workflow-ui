@@ -10,7 +10,7 @@ import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
-import {getStringField} from "~/utils/fieldUtils";
+import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
@@ -31,12 +31,19 @@ function Instance() {
     if (isPropertyOnly && instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}/admin`} replace />;
     }
+
+    const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
     const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];
 
     return (
         <Container maxWidth={1280}>
-            <InstanceHeader instance={instance} isLoading={isLoading} />
+            <InstanceHeader
+                courseName={courseName}
+                instanceId={id}
+                pinnedActions={instance?.pinnedActions ?? []}
+                isLoading={isLoading}
+            />
             <Grid>
                 <GridItem span={{base: 12, md: 9}} className="flex flex-col gap-8">
                     <ProgressCard
@@ -52,8 +59,12 @@ function Instance() {
                 </GridItem>
                 <GridItem span={{base: 12, md: 3}} className="flex flex-col gap-6">
                     <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
-                    {instance?.canImpersonate && <AdminCard />}
-                    {/* TODO: When we have more admin functionality, we can differentiate more between impersonate and canUseAdminTools*/}
+                    {(instance?.canUseAdminTools || instance?.canImpersonate) && (
+                        <AdminCard
+                            canUseAdminTools={instance.canUseAdminTools}
+                            canImpersonate={instance.canImpersonate}
+                        />
+                    )}
                 </GridItem>
             </Grid>
         </Container>

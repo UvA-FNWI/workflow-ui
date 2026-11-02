@@ -10,7 +10,6 @@ import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {jobsEndpoints} from "~/store/api/jobsApi";
-import {getStringField} from "~/utils/fieldUtils";
 
 function InstanceJobs() {
     const {id} = useParams<{id: string}>();
@@ -34,8 +33,7 @@ function InstanceJobs() {
         skip: !id,
     });
 
-    const studentName = getStringField(instance?.fields, "Student.DisplayName");
-    const displayTitle = studentName || t("instance.workflowInstance");
+    const displayTitle = instance?.title || t("instance.workflowInstance");
 
     useDocumentTitle(`${displayTitle} | ${page.title}`);
 

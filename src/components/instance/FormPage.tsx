@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {type ReactNode, useState} from "react";
 
 import {
     Button,
@@ -18,8 +18,6 @@ import {PrefilledAnswersNotice} from "~/components/instance/PrefilledAnswersNoti
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page} from "~/store/api/types/submissions";
-import {setOpenForm} from "~/store/openFormSlice.ts";
-import {useAppDispatch} from "~/store/store.ts";
 import {isPageComplete as isPageCompleteUtil} from "~/utils/submissionUtils.ts";
 
 type Props = {
@@ -27,59 +25,79 @@ type Props = {
     submissionId: string;
     onClose: () => void;
     previousVersion?: number;
+    renderLayout?: (content: ReactNode, actions: ReactNode) => ReactNode;
 };
 
-export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: Props) => {
+export const FormPage = ({
+    instanceId,
+    submissionId,
+    onClose,
+    previousVersion,
+    renderLayout,
+}: Props) => {
     const {t, l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
         instanceId,
         submissionId,
     });
-    const [activeTabIndex, setActiveTabIndex] = useState(0);
-    const dispatch = useAppDispatch();
+    const [selectedTabIndex, setActiveTabIndex] = useState(0);
 
-    useEffect(() => {
-        dispatch(setOpenForm({formId: submissionId, instanceId}));
-        return () => {
-            dispatch(setOpenForm({formId: null, instanceId}));
-        };
-    }, [submissionId, instanceId, dispatch]);
+    if (!submission) return renderLayout ? renderLayout(null, null) : <div>Loading...</div>;
 
-    if (!submission) return <div>Loading...</div>;
-
-    const showTabView = submission.form.pages.length > 1; // only show tabs and summary when there is more than one page
-
-    const totalTabs = submission.form.pages.length + 1; // +1 for summary tab
+    const pages = submission.form.pages.filter((page) => page.isInCurrentForm);
+    const showTabView = pages.length > 1; // only show tabs and summary when there is more than one page
 
     const isPageComplete = (page: Page): boolean => isPageCompleteUtil(page, submission);
 
-    const areAllPagesComplete = submission.form.pages.every((page) => isPageComplete(page));
+    const areAllPagesComplete = pages.filter((page) => page.isActive).every(isPageComplete);
+    const firstActivePage = pages.findIndex((page) => page.isActive);
+    const activeTabIndex =
+        pages[selectedTabIndex]?.isActive ||
+        (selectedTabIndex === pages.length && areAllPagesComplete)
+            ? selectedTabIndex
+            : firstActivePage === -1
+              ? pages.length
+              : firstActivePage;
 
-    const pages = submission.form.pages.filter((p) => p.isInCurrentForm);
-
-    // For some assessment forms not all tabs are enabled
-    const goToNextEnabledTab = (current: number, direction: 1 | -1) => {
-        const isEnabled = (i: number) =>
-            i < pages.length
-                ? pages[i].isInCurrentForm && pages[i].isActive
-                : i === pages.length && areAllPagesComplete;
-
-        const nextIndex =
-            Array.from({length: totalTabs}, (_, i) => i)
-                .filter((i) => (direction === 1 ? i > current : i < current))
-                .sort((a, b) => direction * (a - b))
-                .find((i) => isEnabled(i)) ?? current;
-
-        setActiveTabIndex(nextIndex);
-    };
+    const enabledTabs = pages.flatMap((page, index) => (page.isActive ? [index] : []));
+    if (areAllPagesComplete) enabledTabs.push(pages.length);
+    const currentIndex = enabledTabs.indexOf(activeTabIndex);
+    const previousTabIndex = enabledTabs[currentIndex - 1];
+    const nextTabIndex = enabledTabs[currentIndex + 1];
 
     const onEditPage = (pageName: string) => {
         const tabIndex = pages.findIndex((p) => p.name === pageName);
         if (tabIndex !== -1) setActiveTabIndex(tabIndex);
     };
 
-    return (
-        <div>
+    const actions = (
+        <>
+            {showTabView && previousTabIndex !== undefined && (
+                <Button intent="secondary" onClick={() => setActiveTabIndex(previousTabIndex)}>
+                    {t("previous")}
+                </Button>
+            )}
+            {showTabView && activeTabIndex !== pages.length ? (
+                <Button
+                    intent="primary"
+                    disabled={nextTabIndex === undefined || !isPageComplete(pages[activeTabIndex])}
+                    onClick={() => setActiveTabIndex(nextTabIndex ?? activeTabIndex)}
+                >
+                    {t("next")}
+                </Button>
+            ) : (
+                <FormSubmitButton
+                    instanceId={instanceId}
+                    submission={submission}
+                    disabled={!areAllPagesComplete}
+                    onSubmit={onClose}
+                />
+            )}
+        </>
+    );
+
+    const content = (
+        <>
             <PrefilledAnswersNotice
                 instanceId={instanceId}
                 submissionId={submissionId}
@@ -90,7 +108,7 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
                     <TabList>
                         {[
                             ...pages.map((page, index) => (
-                                <Tab key={index} disabled={!page.isActive || !page.isInCurrentForm}>
+                                <Tab key={index} disabled={!page.isActive}>
                                     <span className={!page.isActive ? "line-through" : ""}>
                                         {l(page.title)}
                                     </span>
@@ -120,28 +138,6 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
                                             page={page}
                                         />
                                     </div>
-                                    <div className="mt-4 flex justify-start gap-3">
-                                        <Button
-                                            intent="secondary"
-                                            variant="destructive"
-                                            onClick={() => goToNextEnabledTab(activeTabIndex, -1)}
-                                            disabled={activeTabIndex === 0}
-                                        >
-                                            {t("previous")}
-                                        </Button>
-                                        <Button
-                                            intent="secondary"
-                                            variant="destructive"
-                                            disabled={
-                                                index === submission.form.pages.length - 1
-                                                    ? !areAllPagesComplete
-                                                    : !isPageComplete(page)
-                                            }
-                                            onClick={() => goToNextEnabledTab(activeTabIndex, 1)}
-                                        >
-                                            {t("next")}
-                                        </Button>
-                                    </div>
                                 </TabPanel>
                             )),
                             <TabPanel key="summary">
@@ -151,7 +147,6 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
                                     <FormSummary
                                         submission={submission}
                                         instanceId={instanceId}
-                                        onSubmit={onClose}
                                         onEditPage={onEditPage}
                                     />
                                 </div>
@@ -160,23 +155,24 @@ export const FormPage = ({instanceId, submissionId, onClose, previousVersion}: P
                     </TabPanels>
                 </Tabs>
             ) : (
-                <>
+                pages[0]?.isActive && (
                     <PageControl
                         instanceId={instanceId}
                         submissionId={submissionId}
-                        page={submission.form.pages[0]}
+                        page={pages[0]}
                         showTitle={false}
                     />
-                    <div className="mt-4">
-                        <FormSubmitButton
-                            instanceId={instanceId}
-                            submission={submission}
-                            disabled={!isPageComplete(submission.form.pages[0])}
-                            onSubmit={onClose}
-                        />
-                    </div>
-                </>
+                )
             )}
+        </>
+    );
+
+    return renderLayout ? (
+        renderLayout(content, actions)
+    ) : (
+        <div>
+            {content}
+            <div className="mt-4 flex justify-end gap-3">{actions}</div>
         </div>
     );
 };

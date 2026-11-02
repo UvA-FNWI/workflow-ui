@@ -36,7 +36,7 @@ type Props = {
     formPath: string;
     pageName: string;
     question: EditorQuestion;
-    apply: (action: () => string[]) => void;
+    apply: (action: () => string[] | Promise<string[]>) => void;
     dragHandle?: ReactNode;
 };
 
@@ -92,7 +92,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
     const usages = isMissing ? [] : countFieldUsages(docs, formPath, question.name);
 
     /**
-     * Rewriting type, layout and values under a condition or validation is how one silently breaks,
+     * Rewriting type, control and values under a condition or validation is how one silently breaks,
      * so the pill only changes the kind for questions the visual editor owns outright.
      */
     const canChangeKind = forcedReason === null && !isInherited;
@@ -305,10 +305,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
                                 <NodeYamlEditor
                                     initialText={node ? nodeToYaml(node.node) : ""}
                                     isReadOnly={isInherited}
-                                    schema={{
-                                        name: "WorkflowDefinition",
-                                        pointer: "#/definitions/PropertyDefinition",
-                                    }}
+                                    schema={{name: "PropertyDefinition"}}
                                     onChange={(text) => {
                                         if (!node) {
                                             return null;

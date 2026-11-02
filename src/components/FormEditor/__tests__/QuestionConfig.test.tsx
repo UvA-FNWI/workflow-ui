@@ -48,11 +48,45 @@ pages:
 };
 
 describe("QuestionConfig", () => {
+    it("writes flat text settings without disturbing other property fields", () => {
+        const path = "Definitions/Thesis/Entity.yaml";
+        const docs = new Map([
+            [
+                path,
+                parseDocument("properties: [{name: Question, type: String, description: Notes}]"),
+            ],
+        ]) as ConfigDocs;
+
+        updateQuestion(docs, FORM_PATH, "Question", {control: "TextArea"});
+        expect(docs.get(path)!.toJSON().properties[0]).toEqual({
+            name: "Question",
+            type: "String",
+            description: "Notes",
+            control: "TextArea",
+        });
+        updateQuestion(docs, FORM_PATH, "Question", {control: null});
+        expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("control");
+        expect(docs.get(path)!.toJSON().properties[0]).not.toHaveProperty("layout");
+    });
+
+    it("writes a scalar choice control", () => {
+        const path = "Definitions/Thesis/Entity.yaml";
+        const docs = new Map([
+            [
+                path,
+                parseDocument("properties: [{name: Question, type: Grade, control: RadioList}]"),
+            ],
+        ]) as ConfigDocs;
+
+        updateQuestion(docs, FORM_PATH, "Question", {control: "Dropdown"});
+        expect(docs.get(path)!.toJSON().properties[0].control).toBe("Dropdown");
+    });
+
     it("keeps commas and spaces while typing file formats", () => {
         renderConfig(`properties:
   - name: Question
     type: File
-    allowedFileTypes: [pdf]
+    allowedTypes: [pdf]
 `);
         const input = screen.getByRole("textbox", {name: "allowed_file_types"});
         for (const value of ["pdf,", "pdf, ", "pdf, z", "pdf, zi", "pdf, zip"]) {
@@ -62,7 +96,7 @@ describe("QuestionConfig", () => {
         fireEvent.blur(input);
     });
 
-    it("offers the layout advice only for a single choice question", () => {
+    it("offers the control advice only for a single choice question", () => {
         const question = renderConfig(`properties:
   - name: Question
     type: Question
@@ -70,12 +104,12 @@ describe("QuestionConfig", () => {
     values:
       - name: One
         text: {nl: Een, en: One}
-    layout: {type: RadioList}
+    control: RadioList
 `);
 
         expect(question.kind).toBe("SingleChoice");
-        expect(screen.getByText("choice_layout_hint")).toBeInTheDocument();
-        expect(screen.getByRole("radio", {name: "layout.RadioList"})).toBeChecked();
+        expect(screen.getByText("choice_control_hint")).toBeInTheDocument();
+        expect(screen.getByRole("radio", {name: "control.RadioList"})).toBeChecked();
     });
 
     it("leaves the type out of the body, since the pill in the header owns it", () => {
@@ -85,7 +119,7 @@ describe("QuestionConfig", () => {
     text: {nl: Vraag, en: Question}
 `);
 
-        expect(screen.queryByText("choice_layout_hint")).not.toBeInTheDocument();
+        expect(screen.queryByText("choice_control_hint")).not.toBeInTheDocument();
         expect(screen.queryByLabelText("type")).not.toBeInTheDocument();
         expect(screen.getByText("more_options")).toBeInTheDocument();
     });
@@ -95,8 +129,8 @@ describe("QuestionConfig", () => {
   - name: Question
     type: '[File]'
     text: {nl: Bijlagen, en: Attachments}
-    allowedFileTypes: ['*']
-    allowedFileSize: 1000
+    allowedTypes: ['*']
+    maximumSize: 1000
 `;
         const question = renderConfig(properties);
         expect(question.kind).toBe("Document");
@@ -107,11 +141,11 @@ describe("QuestionConfig", () => {
             [FORM_PATH, parseDocument("name: Proposal\npages: []")],
             ["Definitions/Thesis/Entity.yaml", parseDocument(`name: Thesis\n${properties}`)],
         ]) as ConfigDocs;
-        updateQuestion(docs, FORM_PATH, "Question", {isArray: false, allowedFileTypes: "pdf, zip"});
+        updateQuestion(docs, FORM_PATH, "Question", {isArray: false, allowedTypes: "pdf, zip"});
         const raw = docs.get("Definitions/Thesis/Entity.yaml")!.toJSON().properties[0];
         expect(raw.type).toBe("File");
-        expect(raw.allowedFileTypes).toEqual(["pdf", "zip"]);
-        expect(raw.allowedFileSize).toBe(1000);
+        expect(raw.allowedTypes).toEqual(["pdf", "zip"]);
+        expect(raw.maximumSize).toBe(1000);
 
         updateQuestion(docs, FORM_PATH, "Question", {isArray: true, isRequired: true});
         expect(docs.get("Definitions/Thesis/Entity.yaml")!.toJSON().properties[0].type).toBe(
