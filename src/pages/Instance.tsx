@@ -31,6 +31,7 @@ function Instance() {
     if (isPropertyOnly && instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}/admin`} replace />;
     }
+
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
     const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];

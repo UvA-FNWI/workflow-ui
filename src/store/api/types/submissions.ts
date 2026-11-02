@@ -222,6 +222,7 @@ export type RoleAction =
     | "Execute"
     | "CreateRelatedInstance"
     | "Undo"
+    | "PostponeDeadlines"
     | "ViewCorrespondence";
 export type DataType =
     | "File"

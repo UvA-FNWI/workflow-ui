@@ -1,6 +1,7 @@
 import {Button, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import {FormModal} from "~/components/instance/FormModal.tsx";
+import {PostponeDeadlinesModal} from "~/components/instance/PostponeDeadlinesModal";
 import {useTranslate} from "~/hooks/useTranslate";
 import {actionsEndpoints} from "~/store/api/actionsApi.ts";
 import type {Action} from "~/store/api/types/instances";
@@ -16,6 +17,10 @@ type Props = {
 export function ActionModal({instanceId, action, onClose, previousVersion}: Props) {
     const {t, l} = useTranslate("workflow");
     const [executeAction, {isLoading, isError}] = actionsEndpoints.executeAction.useMutation();
+
+    if (action.type === "PostponeDeadlines") {
+        return <PostponeDeadlinesModal instanceId={instanceId} onClose={onClose} />;
+    }
 
     if (action.type === "SubmitForm") {
         return (

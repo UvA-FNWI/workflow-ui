@@ -28,9 +28,8 @@ export function InstanceHeader({
     const activeAction = pinnedActions.find((action) => action.id === activeActionId) ?? null;
     const homePath = useAppSelector((state) => state.homeNavigation.homePath);
 
-    const displayTitle =
-        (typeof courseName === "string" ? courseName : l(courseName)) ||
-        t("instance.workflowInstance");
+    const localizedCourseName = typeof courseName === "string" ? courseName : l(courseName);
+    const displayTitle = localizedCourseName || t("instance.workflowInstance");
 
     return (
         <>

@@ -105,6 +105,7 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
     canImpersonate: false,
     viewerRoles: [],
     infoCards: [],
+    postponableDeadlines: [],
 });
 
 const expiredStatus = {

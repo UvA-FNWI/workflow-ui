@@ -2,6 +2,7 @@ import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
     ActiveStep,
+    DeadlinePostponement,
     InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
@@ -11,13 +12,42 @@ import type {
 } from "./types/instances";
 import type {Correspondence} from "~/store/api/types/correspondence.ts";
 import type {AssignRelatedUserParams, RemoveRelatedUserParams} from "~/store/api/types/params.ts";
-import type {Choice} from "~/store/api/types/submissions.ts";
+import type {Choice, EffectResult} from "~/store/api/types/submissions.ts";
+import {applyEffectResult} from "~/store/effectsSlice";
 
 export const instancesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getInstance: builder.query<WorkflowInstance, string>({
             query: (id: string) => `/WorkflowInstances/${id}`,
             providesTags: (_result, _error, id: string) => [{type: "Instance", id}],
+        }),
+        postponeDeadlines: builder.mutation<
+            EffectResult,
+            {instanceId: string; changes: DeadlinePostponement[]; reason: string}
+        >({
+            query: ({instanceId, ...body}) => ({
+                url: `/WorkflowInstances/${instanceId}/PostponeDeadlines`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: (_result, error, {instanceId}) =>
+                error
+                    ? []
+                    : [
+                          {type: "Instance", id: instanceId},
+                          {type: "Submission", instanceId},
+                          {type: "Assessments", instanceId},
+                          {type: "Choices", id: instanceId},
+                          "Screen",
+                      ],
+            async onQueryStarted(_params, {dispatch, queryFulfilled}) {
+                try {
+                    const {data} = await queryFulfilled;
+                    dispatch(applyEffectResult(data));
+                } catch {
+                    // The modal handles postponement errors.
+                }
+            },
         }),
         getInstances: builder.query<InstanceSummary[], string>({
             query: (workflowDefinition: string) => ({

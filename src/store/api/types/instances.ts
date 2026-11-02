@@ -35,6 +35,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     infoCards: InfoCard[];
+    postponableDeadlines: PostponableDeadline[];
 };
 
 /**
@@ -52,6 +53,18 @@ export type InstanceSummary = {
 export type InstanceProperties = {
     properties: Question[];
     values: Record<string, unknown>;
+};
+
+export type PostponableDeadline = {
+    property: string;
+    title: LocalString;
+    date: string;
+};
+
+export type DeadlinePostponement = {
+    property: string;
+    currentDate: string;
+    date: string;
 };
 
 export type RecalculateCurrentStepsResult = {
@@ -126,7 +139,7 @@ export type Action = {
     autoOpenForm?: boolean;
 };
 
-export type ActionType = "SubmitForm" | "Execute";
+export type ActionType = "SubmitForm" | "Execute" | "PostponeDeadlines";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 
 export type Role = {
