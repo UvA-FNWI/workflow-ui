@@ -8,7 +8,7 @@ export function TableStaffCell({users}: {users: ScreenRelatedUser[]}) {
         <div className="flex flex-col">
             {users.map((user) => (
                 <Tooltip
-                    key={user.displayName}
+                    key={user.userName}
                     triggerClassName="self-start max-w-full"
                     content={<UserTooltip user={user} />}
                 >

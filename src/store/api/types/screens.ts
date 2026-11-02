@@ -38,6 +38,7 @@ export type ScreenRow = {
 };
 
 export type ScreenRelatedUser = {
+    userName: string;
     displayName: string;
     roles: LocalString[];
     organisation?: string;
