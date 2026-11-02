@@ -15,7 +15,6 @@ type Props = {
     onSubmit: () => void;
     disabled?: boolean;
     size?: "small" | "medium" | "large";
-    text?: string;
 };
 
 export const FormSubmitButton = ({
@@ -24,13 +23,14 @@ export const FormSubmitButton = ({
     onSubmit,
     disabled,
     size = "medium",
-    text,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const toast = useToast();
 
     const [submitSubmission, {isLoading}] = submissionsEndpoints.submitSubmission.useMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const hasConfirmationModal = !!submission.form.confirmation;
 
     const handleSubmit = async () => {
         const res = await submitSubmission({
@@ -52,7 +52,7 @@ export const FormSubmitButton = ({
     };
 
     const handleClick = () => {
-        if (submission.form.confirmation) {
+        if (hasConfirmationModal) {
             setIsModalOpen(true);
         } else {
             void handleSubmit();
@@ -69,16 +69,16 @@ export const FormSubmitButton = ({
                 isLoading={isLoading}
                 onClick={handleClick}
             >
-                {text ?? t("submit")}
+                {hasConfirmationModal ? t("review_and_submit") : t("submit")}
             </Button>
 
-            {submission.form.confirmation && (
+            {hasConfirmationModal && (
                 <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen}>
-                    <Modal.Header>{l(submission.form.confirmation.title)}</Modal.Header>
+                    <Modal.Header>{l(submission.form.confirmation!.title)}</Modal.Header>
                     <Modal.Body>
                         <div className="flex flex-col gap-2">
                             <MarkdownRenderer>
-                                {l(submission.form.confirmation.text)}
+                                {l(submission.form.confirmation!.text)}
                             </MarkdownRenderer>
                         </div>
                     </Modal.Body>
