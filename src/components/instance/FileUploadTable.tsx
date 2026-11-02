@@ -228,7 +228,7 @@ export const FileUploadTable = ({
                                                             <Icon
                                                                 name="trash-line"
                                                                 size="sm"
-                                                                color="current"
+                                                                color="danger"
                                                             />
                                                         </Button>
                                                     </div>

@@ -77,7 +77,7 @@ export const AnswerCell = ({
         }
     };
 
-    if (isEditing) {
+    if (isEditing && pair.question.type !== "File") {
         return (
             <InlineQuestionEdit
                 instanceId={instanceId}
@@ -106,34 +106,53 @@ export const AnswerCell = ({
         );
     }
 
-    if (pair.question.type === "File" && answer != null) {
+    if (pair.question.type === "File") {
+        const canEditFile = canEdit || pair.submission?.permissions.includes("Edit");
+        const editButton = canEditFile && (
+            <Button
+                intent="ghost"
+                size="small"
+                shape="circular"
+                className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                onClick={() => setIsEditing(true)}
+                aria-label={t("instance.summary.edit_answer")}
+            >
+                <Icon name="edit-line" size="xs" color="danger" />
+            </Button>
+        );
+
         return (
             <div className="min-w-0">
-                {canEdit || pair.submission?.permissions.includes("Edit") ? (
+                {canEditFile && (!pair.question.isArray || isEditing) ? (
                     <InlineFileEdit
                         question={pair.question}
                         answer={answer}
                         instanceId={instanceId}
                         submissionId={pair.submission?.id ?? submissionId ?? ""}
                     />
-                ) : answer.files?.length ? (
+                ) : answer?.files?.length ? (
                     <div className="flex flex-col gap-1">
-                        {answer.files.map((file) => (
-                            <Link
-                                key={file.id}
-                                intent="primary"
-                                underline
-                                className="block truncate"
-                                onClick={() => downloadFile(file)}
-                            >
-                                {file.name}
-                            </Link>
+                        {answer.files.map((file, index) => (
+                            <div key={file.id} className="flex min-w-0 items-center">
+                                <Link
+                                    intent="primary"
+                                    underline
+                                    className="block min-w-0 truncate"
+                                    onClick={() => downloadFile(file)}
+                                >
+                                    {file.name}
+                                </Link>
+                                {index === answer.files.length - 1 && editButton}
+                            </div>
                         ))}
                     </div>
                 ) : (
-                    <Text className="min-w-0 wrap-break-word whitespace-pre-wrap">
-                        {formattedValue ? formattedValue : "-"}
-                    </Text>
+                    <div className="flex min-w-0 items-center">
+                        <Text className="min-w-0 wrap-break-word whitespace-pre-wrap">
+                            {canEditFile ? "-" : formattedValue || "-"}
+                        </Text>
+                        {editButton}
+                    </div>
                 )}
             </div>
         );

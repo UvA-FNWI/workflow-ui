@@ -14,6 +14,8 @@ import {
     Text,
 } from "@uva-fnwi/datanose-ui";
 
+import {VersionedLink} from "~/components/VersionedLink.tsx";
+import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
@@ -21,7 +23,55 @@ import type {Role} from "~/store/api/types/instances.ts";
 import {clearRoleImpersonation, selectRoleImpersonationForInstance} from "~/store/authSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
-export function AdminCard() {
+export function AdminCard({
+    canUseAdminTools,
+    canImpersonate,
+}: {
+    canUseAdminTools: boolean;
+    canImpersonate: boolean;
+}) {
+    const {id} = useParams<{id: string}>();
+    const {t} = useTranslate("workflow");
+    const {page} = useJobTranslations();
+    return (
+        <Card>
+            <div className="flex flex-col gap-4">
+                <Heading as="h3" size="sm">
+                    {t("admin.title")}
+                </Heading>
+                {canUseAdminTools && id && (
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <VersionedLink className="block min-w-0" to={`/instance/${id}/admin`}>
+                            <Button
+                                intent="secondary"
+                                size="medium"
+                                width="full"
+                                type="button"
+                                leftIcon={<Icon name="edit-line" size="sm" color="current" />}
+                            >
+                                {t("admin_data.edit_data")}
+                            </Button>
+                        </VersionedLink>
+                        <VersionedLink className="block min-w-0" to={`/instance/${id}/jobs`}>
+                            <Button
+                                intent="secondary"
+                                size="medium"
+                                width="full"
+                                type="button"
+                                leftIcon={<Icon name="file-chart-line" size="sm" color="current" />}
+                            >
+                                {page.viewJobs}
+                            </Button>
+                        </VersionedLink>
+                    </div>
+                )}
+                {canImpersonate && <ImpersonationControls />}
+            </div>
+        </Card>
+    );
+}
+
+function ImpersonationControls() {
     const {id} = useParams<{id: string}>();
     const {t, l} = useTranslate("workflow");
     const impersonate = useAppSelector((state) => selectRoleImpersonationForInstance(state, id));
@@ -46,146 +96,127 @@ export function AdminCard() {
     const stepsWithActions = activeSteps?.filter((step) => step.roles.length > 0) ?? [];
 
     if (isLoading || isLoadingActions) {
-        return (
-            <Card>
-                <div className="flex flex-col gap-4">
-                    <Skeleton className="h-10 w-full" />
-                </div>
-            </Card>
-        );
+        return <Skeleton className="h-10 w-full" />;
     }
 
     return (
-        <Card>
-            <div className="flex flex-col gap-4">
-                <Heading as="h3" size="sm">
-                    {t("admin.title")}
-                </Heading>
-                <Heading as="h4" size="xs">
-                    {t("admin.impersonate_role_title")}
-                </Heading>
-                <Select
-                    placeholder={t("admin.impersonate_role_placeholder")}
-                    value={selectedRole?.name}
-                    onChange={(value) =>
-                        setSelectedRole(
-                            impersonationRoles?.find((role) => role.name === value) ?? null,
-                        )
+        <div className="flex flex-col gap-4">
+            <Heading as="h4" size="xs">
+                {t("admin.impersonate_role_title")}
+            </Heading>
+            <Select
+                placeholder={t("admin.impersonate_role_placeholder")}
+                value={selectedRole?.name}
+                onChange={(value) =>
+                    setSelectedRole(impersonationRoles?.find((role) => role.name === value) ?? null)
+                }
+            >
+                {impersonationRoles?.map((role) => (
+                    <SelectItem key={role.name} title={l(role.title)}>
+                        {l(role.title)}
+                    </SelectItem>
+                )) ?? []}
+            </Select>
+            <div className="flex w-full flex-row flex-wrap gap-2">
+                <Button
+                    onClick={() =>
+                        impersonateRole({
+                            instanceId: id ?? "",
+                            roleName: selectedRole?.name ?? "",
+                        })
                     }
+                    disabled={
+                        !selectedRole || isLoading || selectedRole?.name === impersonate?.role?.name
+                    }
+                    intent="primary"
+                    leftIcon={<Icon name="user-line" size="sm" color="current" />}
+                    className="min-w-24 flex-1"
                 >
-                    {impersonationRoles?.map((role) => (
-                        <SelectItem key={role.name} title={l(role.title)}>
-                            {l(role.title)}
-                        </SelectItem>
-                    )) ?? []}
-                </Select>
-                <div className="flex w-full flex-row flex-wrap gap-2">
-                    <Button
-                        onClick={() =>
-                            impersonateRole({
-                                instanceId: id ?? "",
-                                roleName: selectedRole?.name ?? "",
-                            })
-                        }
-                        disabled={
-                            !selectedRole ||
-                            isLoading ||
-                            selectedRole?.name === impersonate?.role?.name
-                        }
-                        intent="primary"
-                        leftIcon={<Icon name="user-line" size="sm" color="current" />}
-                        className="min-w-24 flex-1"
-                    >
-                        {t("admin.impersonate_role_button")}
-                    </Button>
-                    {impersonate !== null && (
-                        <Button
-                            intent="secondary"
-                            variant="destructive"
-                            onClick={() => {
-                                dispatch(clearRoleImpersonation());
-                                window.location.reload();
-                            }}
-                            leftIcon={<Icon name="cross-small-line" size="sm" color="current" />}
-                            className="min-w-24 flex-1"
-                        >
-                            {t("admin.stop_impersonating_button")}
-                        </Button>
-                    )}
-                </div>
-                {!!instanceId && !!openFormId && (
+                    {t("admin.impersonate_role_button")}
+                </Button>
+                {impersonate !== null && (
                     <Button
                         intent="secondary"
-                        variant="default"
-                        onClick={() => generateDummyData({instanceId, submissionId: openFormId})}
-                        leftIcon={<Icon name="sparkles-line" size="sm" color="current" />}
+                        variant="destructive"
+                        onClick={() => {
+                            dispatch(clearRoleImpersonation());
+                            window.location.reload();
+                        }}
+                        leftIcon={<Icon name="cross-small-line" size="sm" color="current" />}
+                        className="min-w-24 flex-1"
                     >
-                        {t("admin.fill_dummy_data_button")}
+                        {t("admin.stop_impersonating_button")}
                     </Button>
                 )}
-                <Separator />
-                <div className="flex flex-col gap-3">
-                    <Heading as="h4" size="xs">
-                        {t("admin.current_step_title")}
-                    </Heading>
-                    {currentStep ? (
-                        <StepName title={l(currentStep.title)} name={currentStep.name} />
-                    ) : (
-                        <Text size="sm" intent="secondary">
-                            {t("admin.no_current_step")}
-                        </Text>
-                    )}
-                    <Heading as="h4" size="xs">
-                        {t("admin.who_can_act_title")}
-                    </Heading>
-                    {stepsWithActions.length === 0 ? (
-                        <Text size="sm" intent="secondary">
-                            {t("admin.no_actions")}
-                        </Text>
-                    ) : (
-                        stepsWithActions.map((step) => (
-                            <div key={step.name} className="flex flex-col gap-1">
-                                <StepName title={l(step.title)} name={step.name} />
-                                <ul className="flex flex-col gap-1 pl-2">
-                                    {step.roles.map((role) => {
-                                        // Different action definitions can produce the same label.
-                                        const labels = new Set(
-                                            role.actions.map((a) =>
-                                                a.label
-                                                    ? l(a.label)
-                                                    : a.target
-                                                      ? `${a.type} ${a.target}`
-                                                      : a.type,
-                                            ),
-                                        );
-                                        return (
-                                            <li key={role.name}>
-                                                <Text
-                                                    as="span"
-                                                    size="sm"
-                                                    className="min-w-18 flex-1"
-                                                >
-                                                    {l(role.title)}
-                                                </Text>
-                                                <Text
-                                                    as="span"
-                                                    size="sm"
-                                                    intent="secondary"
-                                                    className="min-w-18 flex-1"
-                                                >
-                                                    {" · "}
-                                                    {[...labels].join(" · ")}
-                                                </Text>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
-                        ))
-                    )}
-                </div>
             </div>
-        </Card>
+            {!!instanceId && !!openFormId && (
+                <Button
+                    intent="secondary"
+                    variant="default"
+                    onClick={() => generateDummyData({instanceId, submissionId: openFormId})}
+                    leftIcon={<Icon name="sparkles-line" size="sm" color="current" />}
+                >
+                    {t("admin.fill_dummy_data_button")}
+                </Button>
+            )}
+            <Separator />
+            <div className="flex flex-col gap-3">
+                <Heading as="h4" size="xs">
+                    {t("admin.current_step_title")}
+                </Heading>
+                {currentStep ? (
+                    <StepName title={l(currentStep.title)} name={currentStep.name} />
+                ) : (
+                    <Text size="sm" intent="secondary">
+                        {t("admin.no_current_step")}
+                    </Text>
+                )}
+                <Heading as="h4" size="xs">
+                    {t("admin.who_can_act_title")}
+                </Heading>
+                {stepsWithActions.length === 0 ? (
+                    <Text size="sm" intent="secondary">
+                        {t("admin.no_actions")}
+                    </Text>
+                ) : (
+                    stepsWithActions.map((step) => (
+                        <div key={step.name} className="flex flex-col gap-1">
+                            <StepName title={l(step.title)} name={step.name} />
+                            <ul className="flex flex-col gap-1 pl-2">
+                                {step.roles.map((role) => {
+                                    // Different action definitions can produce the same label.
+                                    const labels = new Set(
+                                        role.actions.map((a) =>
+                                            a.label
+                                                ? l(a.label)
+                                                : a.target
+                                                  ? `${a.type} ${a.target}`
+                                                  : a.type,
+                                        ),
+                                    );
+                                    return (
+                                        <li key={role.name}>
+                                            <Text as="span" size="sm" className="min-w-18 flex-1">
+                                                {l(role.title)}
+                                            </Text>
+                                            <Text
+                                                as="span"
+                                                size="sm"
+                                                intent="secondary"
+                                                className="min-w-18 flex-1"
+                                            >
+                                                {" · "}
+                                                {[...labels].join(" · ")}
+                                            </Text>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
     );
 }
 

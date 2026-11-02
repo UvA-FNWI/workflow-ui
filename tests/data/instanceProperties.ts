@@ -17,6 +17,7 @@ export const propertiesInstance = {
     steps: [],
     submissions: [],
     actions: [],
+    pinnedActions: [],
     permissions: ["View", "Edit", "ViewAdminTools"],
     canUseAdminTools: true,
     canImpersonate: false,
