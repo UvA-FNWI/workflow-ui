@@ -15,7 +15,7 @@ import {PageControl} from "./PageControl";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {PrefilledAnswersNotice} from "~/components/instance/PrefilledAnswersNotice.tsx";
-import {useTranslate} from "~/hooks/useTranslate";
+import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
 import type {Page} from "~/store/api/types/submissions";
 import {isPageComplete as isPageCompleteUtil} from "~/utils/submissionUtils.ts";
@@ -26,6 +26,7 @@ type Props = {
     onClose: () => void;
     previousVersion?: number;
     renderLayout?: (content: ReactNode, actions: ReactNode) => ReactNode;
+    actionLabel?: LocalString;
 };
 
 export const FormPage = ({
@@ -34,6 +35,7 @@ export const FormPage = ({
     onClose,
     previousVersion,
     renderLayout,
+    actionLabel,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
@@ -91,6 +93,7 @@ export const FormPage = ({
                     submission={submission}
                     disabled={!areAllPagesComplete}
                     onSubmit={onClose}
+                    text={actionLabel ? l(actionLabel) : undefined}
                 />
             )}
         </>
@@ -172,7 +175,7 @@ export const FormPage = ({
     ) : (
         <div>
             {content}
-            <div className="mt-4 flex justify-end gap-3">{actions}</div>
+            <div className="mt-4 flex justify-start gap-3">{actions}</div>
         </div>
     );
 };

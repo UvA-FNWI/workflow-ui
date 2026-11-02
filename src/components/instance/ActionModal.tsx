@@ -24,6 +24,7 @@ export function ActionModal({instanceId, action, onClose, previousVersion}: Prop
                 instanceId={instanceId}
                 submissionId={action.form ?? ""}
                 previousVersion={previousVersion}
+                actionLabel={action.label}
             />
         );
     }
