@@ -218,8 +218,8 @@ describe("resolveModalState", () => {
         expect(resolveModalState(action)).toEqual({type: "formModal", action});
     });
 
-    it("returns 'confirmationModal' for Execute action", () => {
-        const action = makeAction({type: "Execute", name: "approve"});
+    it.each(["Execute", "PostponeDeadlines"] as const)("opens a modal for %s actions", (type) => {
+        const action = makeAction({type, name: "approve"});
         expect(resolveModalState(action)).toEqual({type: "confirmationModal", action});
     });
 

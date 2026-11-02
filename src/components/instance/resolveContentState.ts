@@ -84,7 +84,7 @@ export function resolveModalState(activeAction: Action | null): ModalState {
         return {type: "formModal", action: activeAction};
     }
 
-    if (activeAction.type === "Execute") {
+    if (activeAction.type === "Execute" || activeAction.type === "PostponeDeadlines") {
         return {type: "confirmationModal", action: activeAction};
     }
 

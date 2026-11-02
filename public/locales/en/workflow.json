@@ -154,6 +154,7 @@
     "explanation": "Explanation",
     "invalid_date": "A new deadline is invalid. Check that it is later and meets the date requirements.",
     "later_date": "Choose a date after the current deadline.",
+    "no_deadlines": "There are no deadlines available to postpone.",
     "reason": "What is the reason for this extension?",
     "reason_description": "Explain why these deadlines are being postponed (required, up to 1,000 characters).",
     "reasons": {

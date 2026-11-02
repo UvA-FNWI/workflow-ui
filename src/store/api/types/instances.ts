@@ -139,7 +139,7 @@ export type Action = {
     autoOpenForm?: boolean;
 };
 
-export type ActionType = "SubmitForm" | "Execute";
+export type ActionType = "SubmitForm" | "Execute" | "PostponeDeadlines";
 export type ActionIntent = "Primary" | "Secondary" | "Destructive";
 
 export type Role = {

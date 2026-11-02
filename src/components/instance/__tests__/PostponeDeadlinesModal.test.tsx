@@ -1,3 +1,5 @@
+import {MemoryRouter} from "react-router";
+
 import {cleanup, fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {format, parseISO} from "date-fns";
 import {createInstance} from "i18next";
@@ -5,7 +7,8 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import en from "../../../../public/locales/en/workflow.json";
 import nl from "../../../../public/locales/nl/workflow.json";
-import {PostponeDeadlinesControl} from "../PostponeDeadlinesControl";
+import {InstanceHeader} from "../InstanceHeader";
+import type {Action} from "~/store/api/types/instances";
 
 const translations = createInstance();
 await translations.init({
@@ -15,8 +18,10 @@ await translations.init({
     interpolation: {escapeValue: false},
 });
 
-const {postpone, dispatch, toast, deadlines} = vi.hoisted(() => ({
+const {postpone, executeAction, dispatch, toast, deadlines, context} = vi.hoisted(() => ({
     postpone: vi.fn(),
+    executeAction: vi.fn(),
+    context: {courseName: "", hasDeadlines: true},
     dispatch: vi.fn(),
     toast: {success: vi.fn(), warning: vi.fn(), error: vi.fn()},
     deadlines: [
@@ -37,19 +42,35 @@ vi.mock("~/hooks/useTranslate", () => ({
             key.startsWith("postpone.examination_board_")
                 ? translations.t(key, options)
                 : key,
-        l: (value: {en: string; nl: string}) => value[translations.language as "en" | "nl"],
+        l: (value?: {en: string; nl: string}) => value?.[translations.language as "en" | "nl"],
         i18n: translations,
     }),
 }));
 vi.mock("~/store/api/instancesApi", () => ({
     instancesEndpoints: {
+        getInstance: {
+            useQuery: () => ({
+                data: {
+                    postponableDeadlines: context.hasDeadlines ? deadlines : [],
+                    fields: [
+                        {key: "Student.DisplayName", value: "Alex Student"},
+                        {key: "Course.Name", value: context.courseName},
+                    ],
+                },
+            }),
+        },
         postponeDeadlines: {useMutation: () => [postpone, {isLoading: false}]},
     },
     instancesApi: {
         util: {invalidateTags: (tags: unknown) => ({type: "invalidate", payload: tags})},
     },
 }));
-vi.mock("~/store/store", () => ({useAppDispatch: () => dispatch}));
+vi.mock("~/store/store", () => ({useAppDispatch: () => dispatch, useAppSelector: () => "/"}));
+vi.mock("~/store/api/actionsApi", () => ({
+    actionsEndpoints: {executeAction: {useMutation: () => [executeAction, {}]}},
+}));
+vi.mock("~/components/instance/FormModal.tsx", () => ({FormModal: () => null}));
+vi.mock("~/components/instance/HighlightedFields.tsx", () => ({HighlightedFields: () => null}));
 vi.mock("@uva-fnwi/datanose-ui", async () => ({
     ...(await vi.importActual("@uva-fnwi/datanose-ui")),
     useToast: () => toast,
@@ -84,20 +105,36 @@ vi.mock("~/components/Datepicker/Datepicker", () => ({
 afterEach(cleanup);
 beforeEach(async () => {
     vi.clearAllMocks();
+    context.hasDeadlines = true;
     await translations.changeLanguage("en");
     postpone.mockReturnValue({unwrap: () => Promise.resolve({})});
 });
 
+const pinnedAction: Action = {
+    id: "PostponeDeadlines_PostponeDeadlines",
+    name: "PostponeDeadlines",
+    type: "PostponeDeadlines",
+    title: {en: "Postpone deadlines", nl: "Deadlines uitstellen"},
+    steps: [],
+    intent: "Destructive",
+    formLayout: "Modal",
+};
+
 function openModal(courseName = "bachelor's thesis") {
+    context.courseName = courseName;
     render(
-        <PostponeDeadlinesControl
-            instanceId="instance"
-            deadlines={deadlines}
-            studentName="Alex Student"
-            courseName={courseName}
-        />,
+        <MemoryRouter>
+            <InstanceHeader
+                instanceId="instance"
+                pinnedActions={[pinnedAction]}
+                isLoading={false}
+            />
+        </MemoryRouter>,
     );
-    fireEvent.click(screen.getByRole("button", {name: "postpone.title"}));
+    const trigger = screen.getByRole("button", {name: translations.t("workflow:postpone.title")});
+    trigger.focus();
+    fireEvent.click(trigger);
+    expect(screen.getByRole("dialog", {name: "postpone.title"})).toBeInTheDocument();
 }
 
 async function selectReason(name: keyof typeof en.postpone.reasons) {
@@ -108,6 +145,18 @@ async function selectReason(name: keyof typeof en.postpone.reasons) {
 }
 
 describe("Postpone deadlines", () => {
+    it("opens the configured action when no deadlines are available", () => {
+        context.hasDeadlines = false;
+        openModal();
+        expect(screen.getByText("postpone.no_deadlines")).toBeInTheDocument();
+        expect(screen.queryByLabelText("Submission")).not.toBeInTheDocument();
+        expect(screen.queryByRole("button", {name: /postpone.reason/})).not.toBeInTheDocument();
+        expect(screen.getByRole("button", {name: "postpone.confirm"})).toBeDisabled();
+        fireEvent.click(screen.getByRole("button", {name: "cancel"}));
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+        expect(postpone).not.toHaveBeenCalled();
+    });
+
     it.each([
         [
             "en",
@@ -193,7 +242,14 @@ describe("Postpone deadlines", () => {
         });
         fireEvent.click(screen.getByRole("button", {name: "cancel"}));
         expect(postpone).not.toHaveBeenCalled();
-        fireEvent.click(screen.getByRole("button", {name: "postpone.title"}));
+        await waitFor(() =>
+            expect(
+                screen.getByRole("button", {name: translations.t("workflow:postpone.title")}),
+            ).toHaveFocus(),
+        );
+        fireEvent.click(
+            screen.getByRole("button", {name: translations.t("workflow:postpone.title")}),
+        );
         expect(screen.getByLabelText("Submission")).toHaveValue("");
         expect(screen.getByLabelText("Assessment")).toHaveValue("");
         expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
@@ -206,6 +262,7 @@ describe("Postpone deadlines", () => {
         });
         fireEvent.click(screen.getByRole("button", {name: "postpone.confirm"}));
         await waitFor(() => expect(screen.queryByLabelText("Assessment")).not.toBeInTheDocument());
+        expect(executeAction).not.toHaveBeenCalled();
         expect(postpone).toHaveBeenCalledWith({
             instanceId: "instance",
             reason: "illness",

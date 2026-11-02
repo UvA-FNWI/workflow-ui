@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {useState} from "react";
 
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 import {
@@ -18,24 +18,26 @@ import {DatePicker} from "~/components/Datepicker/Datepicker";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesApi, instancesEndpoints} from "~/store/api/instancesApi";
-import type {PostponableDeadline} from "~/store/api/types/instances";
 import {useAppDispatch} from "~/store/store";
+import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 type Props = {
     instanceId: string;
-    deadlines: PostponableDeadline[];
-    studentName: string;
-    courseName: string;
+    onClose: () => void;
 };
 
 const escapeMarkdown = (value: string) => value.replace(/[\\`*_[\]<>&]/g, "\\$&");
 
-export function PostponeDeadlinesControl({instanceId, deadlines, studentName, courseName}: Props) {
+export function PostponeDeadlinesModal({instanceId, onClose}: Props) {
     const {t, l, i18n} = useTranslate("workflow");
     const toast = useToast();
     const dispatch = useAppDispatch();
-    const triggerRef = useRef<HTMLButtonElement>(null);
-    const [isOpen, setIsOpen] = useState(false);
+    const {data: instance} = instancesEndpoints.getInstance.useQuery(instanceId);
+    const deadlines = instance?.postponableDeadlines ?? [];
+    const studentName =
+        getStringField(instance?.fields, "Student.DisplayName") || t("postpone.student");
+    const course = getLocalStringField(instance?.fields, "Course.Name");
+    const courseName = (typeof course === "string" ? course : l(course)) || t("postpone.thesis");
     const [dates, setDates] = useState<Record<string, Date | null>>({});
     const [reasonType, setReasonType] = useState<string | null>(null);
     const [reason, setReason] = useState("");
@@ -72,14 +74,6 @@ export function PostponeDeadlinesControl({instanceId, deadlines, studentName, co
         normalizedReason.length > 0 &&
         normalizedReason.length <= 1000;
 
-    const close = () => {
-        setIsOpen(false);
-        setDates({});
-        setReasonType(null);
-        setReason("");
-        window.setTimeout(() => triggerRef.current?.focus());
-    };
-
     const confirm = async () => {
         if (!canConfirm || isLoading) return;
         try {
@@ -92,12 +86,12 @@ export function PostponeDeadlinesControl({instanceId, deadlines, studentName, co
                     date: format(dates[deadline.property]!, "yyyy-MM-dd"),
                 })),
             }).unwrap();
-            close();
+            onClose();
         } catch (error) {
             const code = ((error as FetchBaseQueryError).data as {errorCode?: string})?.errorCode;
             if (code === "DeadlineChanged" || code === "InvalidDeadlineProperty") {
                 dispatch(instancesApi.util.invalidateTags([{type: "Instance", id: instanceId}]));
-                close();
+                onClose();
                 toast.warning(t("postpone.deadline_changed"));
             } else {
                 toast.error(
@@ -107,40 +101,32 @@ export function PostponeDeadlinesControl({instanceId, deadlines, studentName, co
         }
     };
 
-    if (deadlines.length === 0) return null;
-
     return (
-        <>
-            <Button
-                ref={triggerRef}
-                intent="secondary"
-                variant="destructive"
-                onClick={() => setIsOpen(true)}
-            >
-                {t("postpone.title")}
-            </Button>
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={(open) => !open && !isLoading && close()}
-                aria-label={t("postpone.title")}
-            >
-                <Modal.Header>{t("postpone.title")}</Modal.Header>
-                <Modal.Body>
-                    <MarkdownRenderer className="mb-4">
-                        {t("postpone.description", {
-                            student: escapeMarkdown(studentName),
-                            course: escapeMarkdown(courseName),
-                        })}
-                    </MarkdownRenderer>
-                    <Separator className="mb-4" />
-                    <div className="flex flex-col gap-4">
-                        {deadlines.map((deadline) => {
-                            const date = dates[deadline.property] ?? null;
-                            const invalid =
-                                date != null &&
-                                (!isValid(date) || format(date, "yyyy-MM-dd") <= deadline.date);
-                            return (
-                                <>
+        <Modal
+            isOpen
+            onOpenChange={(open) => !open && !isLoading && onClose()}
+            aria-label={t("postpone.title")}
+        >
+            <Modal.Header>{t("postpone.title")}</Modal.Header>
+            <Modal.Body>
+                {deadlines.length === 0 ? (
+                    <Callout type="info">{t("postpone.no_deadlines")}</Callout>
+                ) : (
+                    <>
+                        <MarkdownRenderer className="mb-4">
+                            {t("postpone.description", {
+                                student: escapeMarkdown(studentName),
+                                course: escapeMarkdown(courseName),
+                            })}
+                        </MarkdownRenderer>
+                        <Separator className="mb-4" />
+                        <div className="flex flex-col gap-4">
+                            {deadlines.map((deadline) => {
+                                const date = dates[deadline.property] ?? null;
+                                const invalid =
+                                    date != null &&
+                                    (!isValid(date) || format(date, "yyyy-MM-dd") <= deadline.date);
+                                return (
                                     <DatePicker
                                         key={deadline.property}
                                         label={l(deadline.title) || deadline.property}
@@ -163,56 +149,56 @@ export function PostponeDeadlinesControl({instanceId, deadlines, studentName, co
                                         isValid={!invalid}
                                         errorMessage={t("postpone.later_date")}
                                     />
-                                </>
-                            );
-                        })}
-                        <Separator className="mt-2" />
-                        <Callout type="info" header={t("postpone.examination_board_title")}>
-                            {t("postpone.examination_board_body")}
-                        </Callout>
-                        <Select
-                            name="PostponementReason"
-                            label={t("postpone.reason")}
-                            placeholder={t("select")}
-                            isRequired
-                            value={reasonType}
-                            onChange={(value) => {
-                                setReasonType(value != null ? String(value) : null);
-                                setReason("");
-                            }}
-                            isDisabled={isLoading}
-                        >
-                            {reasons.map((reason) => (
-                                <SelectItem key={reason.name}>{reason.text}</SelectItem>
-                            ))}
-                        </Select>
-                        {reasonType === "Other" && (
-                            <TextArea
-                                label={t("postpone.explanation")}
-                                required
-                                description={t("postpone.reason_description")}
-                                value={reason}
-                                maxLength={1000}
-                                onChange={setReason}
+                                );
+                            })}
+                            <Separator className="mt-2" />
+                            <Callout type="info" header={t("postpone.examination_board_title")}>
+                                {t("postpone.examination_board_body")}
+                            </Callout>
+                            <Select
+                                name="PostponementReason"
+                                label={t("postpone.reason")}
+                                placeholder={t("select")}
+                                isRequired
+                                value={reasonType}
+                                onChange={(value) => {
+                                    setReasonType(value != null ? String(value) : null);
+                                    setReason("");
+                                }}
                                 isDisabled={isLoading}
-                            />
-                        )}
-                    </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        intent="primary"
-                        isLoading={isLoading}
-                        disabled={!canConfirm || isLoading}
-                        onClick={() => void confirm()}
-                    >
-                        {t("postpone.confirm")}
-                    </Button>
-                    <Button intent="secondary" disabled={isLoading} onClick={close}>
-                        {t("cancel")}
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
+                            >
+                                {reasons.map((reason) => (
+                                    <SelectItem key={reason.name}>{reason.text}</SelectItem>
+                                ))}
+                            </Select>
+                            {reasonType === "Other" && (
+                                <TextArea
+                                    label={t("postpone.explanation")}
+                                    required
+                                    description={t("postpone.reason_description")}
+                                    value={reason}
+                                    maxLength={1000}
+                                    onChange={setReason}
+                                    isDisabled={isLoading}
+                                />
+                            )}
+                        </div>
+                    </>
+                )}
+            </Modal.Body>
+            <Modal.Footer>
+                <Button
+                    intent="primary"
+                    isLoading={isLoading}
+                    disabled={!canConfirm || isLoading}
+                    onClick={() => void confirm()}
+                >
+                    {t("postpone.confirm")}
+                </Button>
+                <Button intent="secondary" disabled={isLoading} onClick={onClose}>
+                    {t("cancel")}
+                </Button>
+            </Modal.Footer>
+        </Modal>
     );
 }

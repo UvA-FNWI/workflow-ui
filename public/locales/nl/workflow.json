@@ -154,6 +154,7 @@
     "explanation": "Toelichting",
     "invalid_date": "Een nieuwe deadline is ongeldig. Controleer of deze later is en aan de datumvoorwaarden voldoet.",
     "later_date": "Kies een datum na de huidige deadline.",
+    "no_deadlines": "Er zijn geen deadlines die je kunt uitstellen.",
     "reason": "Wat is de reden voor dit uitstel?",
     "reason_description": "Leg uit waarom deze deadlines worden uitgesteld (verplicht, maximaal 1.000 tekens).",
     "reasons": {

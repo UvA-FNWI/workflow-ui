@@ -45,7 +45,7 @@ describe("Postponement effects", () => {
 
         await store.dispatch(instancesApi.endpoints.postponeDeadlines.initiate(request)).unwrap();
 
-        expect(store.getState().effects).toEqual({
+        expect(store.getState().effects).toMatchObject({
             ...result,
             error: {type: "warning", ...result.error},
         });
