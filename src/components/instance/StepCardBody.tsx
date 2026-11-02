@@ -161,7 +161,6 @@ export const StepCardBody = ({
                             submissionId={formState.action.form ?? ""}
                             onClose={() => setActiveAction(null)}
                             previousVersion={getPreviousFormVersion(step, formState.action.form)}
-                            actionLabel={activeAction?.label}
                         />
                     </div>
                 )}

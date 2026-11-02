@@ -124,7 +124,6 @@ export type Action = {
     intent: ActionIntent;
     formLayout: FormLayout;
     autoOpenForm?: boolean;
-    label?: LocalString;
 };
 
 export type ActionType = "SubmitForm" | "Execute";

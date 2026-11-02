@@ -1,7 +1,7 @@
 import {Button, LoadingSpinner, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import {FormPage} from "~/components/instance/FormPage.tsx";
-import {type LocalString, useTranslate} from "~/hooks/useTranslate.ts";
+import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
 
 type FormModalProps = {
@@ -9,16 +9,9 @@ type FormModalProps = {
     instanceId: string;
     submissionId: string;
     previousVersion?: number;
-    actionLabel?: LocalString;
 };
 
-export const FormModal = ({
-    onClose,
-    instanceId,
-    submissionId,
-    previousVersion,
-    actionLabel,
-}: FormModalProps) => {
+export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: FormModalProps) => {
     const {t, l} = useTranslate("workflow");
 
     const {
@@ -37,7 +30,6 @@ export const FormModal = ({
             submissionId={submissionId}
             previousVersion={previousVersion}
             onClose={onClose}
-            actionLabel={actionLabel}
             renderLayout={(content, actions) => (
                 <Modal isOpen onOpenChange={onClose} size="lg" aria-label={title}>
                     <Modal.Header className="pb-0">{title}</Modal.Header>
