@@ -99,6 +99,7 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
     steps: [step],
     submissions: [],
     actions,
+    pinnedActions: [],
     permissions: [],
     canUseAdminTools: false,
     canImpersonate: false,

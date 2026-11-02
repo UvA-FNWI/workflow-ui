@@ -127,7 +127,7 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                                 }, t("file_upload.error_remove_failed"))
                             }
                         >
-                            <Icon name="trash-line" size="sm" color="current" />
+                            <Icon name="trash-line" size="sm" color="danger" />
                         </Button>
                     </div>
                 ))}

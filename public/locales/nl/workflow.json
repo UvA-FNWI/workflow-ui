@@ -1,4 +1,5 @@
 {
+  "action_failed": "De actie is mislukt. Probeer het opnieuw.",
   "add": "Toevoegen",
   "admin": {
     "current_step_title": "Huidige stap",
@@ -76,6 +77,8 @@
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
+  "form": "Formulier",
+  "form_load_failed": "Het formulier kon niet worden geladen. Probeer het opnieuw.",
   "home": "Home",
   "instance": {
     "calculations": {
@@ -160,6 +163,7 @@
     "message": "Er zijn aanpassingen nodig. Daarom hebben we wat je eerder hebt ingevuld alvast overgenomen. Pas alleen aan wat nodig is; wat al goed was, hoef je niet aan te passen.",
     "question": "Wil je helemaal opnieuw beginnen?"
   },
+  "retry": "Opnieuw proberen",
   "save": "Opslaan",
   "screens": {
     "actions": "Acties"
