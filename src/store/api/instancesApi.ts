@@ -2,13 +2,13 @@ import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
     ActiveStep,
+    InstanceHistoryItem,
     InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
     Role,
     RoleImpersonationResult,
     WorkflowInstance,
-    WorkflowInstanceHistory,
 } from "./types/instances";
 import type {Correspondence} from "~/store/api/types/correspondence.ts";
 import type {AssignRelatedUserParams, RemoveRelatedUserParams} from "~/store/api/types/params.ts";
@@ -145,7 +145,7 @@ export const instancesApi = baseApi.injectEndpoints({
         getCorrespondence: builder.query<Correspondence[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Correspondence`,
         }),
-        getHistory: builder.query<WorkflowInstanceHistory[], string>({
+        getHistory: builder.query<InstanceHistoryItem[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/History`,
         }),
     }),
