@@ -52,7 +52,7 @@ export function HistoryCard({instanceId}: HistoryCardProps) {
                             {l(info.getValue()) || "—"}
                         </Link>
                     ) : (
-                        <Text>{l(info.getValue()) || "—"}</Text>
+                        <Text className="wrap-anywhere">{l(info.getValue()) || "—"}</Text>
                     );
                 },
                 enableSorting: false,
