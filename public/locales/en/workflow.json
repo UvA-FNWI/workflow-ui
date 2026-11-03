@@ -29,7 +29,6 @@
   "confirm": "Confirm",
   "correspondence": {
     "content": "Content",
-    "date": "$TODO$",
     "empty": "No automated emails found",
     "recipients": "Recipient(s)",
     "subject": "Subject",
