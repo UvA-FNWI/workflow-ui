@@ -1,4 +1,5 @@
 {
+  "action_failed": "The action failed. Please try again.",
   "add": "Add",
   "admin": {
     "current_step_title": "Current step",
@@ -77,6 +78,8 @@
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
+  "form": "Form",
+  "form_load_failed": "The form could not be loaded. Please try again.",
   "history": {
     "by": "By",
     "empty": "There is no history yet",
@@ -84,6 +87,7 @@
     "title": "History",
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
+
   "home": "Home",
   "instance": {
     "calculations": {
@@ -169,6 +173,7 @@
     "message": "Adjustments are needed. We have copied over the details you entered earlier for you to adjust as needed.",
     "question": "Do you want to start over?"
   },
+  "retry": "Try again",
   "save": "Save",
   "screens": {
     "actions": "Actions"

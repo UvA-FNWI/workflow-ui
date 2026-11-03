@@ -30,6 +30,7 @@ export type WorkflowInstance = {
     steps: WorkflowStep[];
     submissions: Submission[];
     actions: Action[];
+    pinnedActions: Action[];
     permissions: RoleAction[];
     canUseAdminTools: boolean;
     canImpersonate: boolean;

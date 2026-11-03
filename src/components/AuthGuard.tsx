@@ -2,15 +2,14 @@ import {useEffect} from "react";
 
 import {Outlet} from "react-router";
 
-import {getCanvasTokenFromLocalStorage, isEmbeddedInCanvas, useAuth} from "@uva-fnwi/datanose-core";
+import {isEmbeddedInCanvas, useAuth} from "@uva-fnwi/datanose-core";
 
 import {useAuthenticatedUser} from "../hooks/useAuthenticatedUser";
 
 export default function AuthGuard() {
     const {isAuthenticated, isLoading} = useAuthenticatedUser();
     const {providerType, surfStartLogin, isLoggingOut, isLoading: isAuthInitializing} = useAuth();
-    const isCanvasContext =
-        providerType === "canvas" || !!getCanvasTokenFromLocalStorage() || isEmbeddedInCanvas();
+    const isCanvasContext = providerType === "canvas" || isEmbeddedInCanvas();
 
     useEffect(() => {
         if (isCanvasContext) {
