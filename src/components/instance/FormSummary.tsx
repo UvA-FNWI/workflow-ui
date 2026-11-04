@@ -39,9 +39,9 @@ export const FormSummary = ({
                 submissions={[submission]}
                 onEditPage={onEditPage}
                 combine={false}
-                    canAddMessages={canAddMessages}
-                    canViewMessages={canViewMessages}
-                    messagePropertyName={submission.form.propertyName}
+                canAddMessages={canAddMessages}
+                canViewMessages={canViewMessages}
+                messagePropertyName={submission.form.propertyName}
             />
         );
     }
