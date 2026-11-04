@@ -77,6 +77,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                                                 questionAnswerPairs={questionAnswerPairs}
                                                 instanceId={instanceId}
                                                 submissionId={submission.id}
+                                                showMessages={false}
                                             />
                                         </div>
                                     );

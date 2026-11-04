@@ -4,6 +4,8 @@ import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {AnswerChangesModal} from "~/components/instance/AnswerChangesModal.tsx";
+import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
+import {fieldMessageQuestionName} from "~/components/instance/messageVisibility.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
@@ -13,6 +15,10 @@ type Props = {
     instanceId: string;
     submissionId?: string;
     canEdit?: boolean;
+    showMessages?: boolean;
+    canAddMessages?: boolean;
+    canViewMessages?: boolean;
+    messagePropertyName?: string | null;
 };
 
 export const QuestionAnswerList = ({
@@ -20,6 +26,10 @@ export const QuestionAnswerList = ({
     instanceId,
     submissionId,
     canEdit = false,
+    showMessages = true,
+    canAddMessages = false,
+    canViewMessages = false,
+    messagePropertyName,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
     const [historyPair, setHistoryPair] = useState<QuestionAnswerPair | null>(null);
@@ -44,6 +54,19 @@ export const QuestionAnswerList = ({
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                                 {":"}
                             </Text>
+                            {showMessages && (
+                                <FieldMessageBalloon
+                                    instanceId={instanceId}
+                                    questionName={fieldMessageQuestionName(
+                                        messagePropertyName,
+                                        question.name,
+                                    )}
+                                    fieldLabel={l(question.text) ?? question.name}
+                                    allowMessages={question.allowMessages}
+                                    canAdd={canAddMessages}
+                                    canView={canViewMessages}
+                                />
+                            )}
                             {latestEdit && (
                                 <Button
                                     intent="ghost"
