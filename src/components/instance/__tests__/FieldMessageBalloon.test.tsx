@@ -36,6 +36,7 @@ describe("FieldMessageBalloon", () => {
                 fieldLabel="Working title"
                 allowMessages={false}
                 canAdd
+                canView
             />,
         );
         expect(container).toBeEmptyDOMElement();
@@ -50,6 +51,7 @@ describe("FieldMessageBalloon", () => {
                 fieldLabel="Working title"
                 allowMessages
                 canAdd
+                canView
             />,
         );
         expect(screen.getByLabelText("instance.messages.field_label")).toBeTruthy();

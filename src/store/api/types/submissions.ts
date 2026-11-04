@@ -59,6 +59,8 @@ export type Form = {
     layout: FormLayout;
     pages: Page[];
     step?: string;
+    /** Set when this form edits an embedded object, e.g. AssessmentSupervisor. */
+    propertyName?: string | null;
 };
 
 export type Page = {
@@ -225,7 +227,8 @@ export type RoleAction =
     | "Undo"
     | "ViewCorrespondence"
     | "ViewHistory"
-    | "AddInstanceMessage";
+    | "AddMessages"
+    | "ViewMessages";
 export type DataType =
     | "File"
     | "Date"

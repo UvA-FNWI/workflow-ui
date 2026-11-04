@@ -27,6 +27,7 @@ type Props = {
     previousVersion?: number;
     renderLayout?: (content: ReactNode, actions: ReactNode) => ReactNode;
     canAddMessages?: boolean;
+    canViewMessages?: boolean;
 };
 
 export const FormPage = ({
@@ -36,6 +37,7 @@ export const FormPage = ({
     previousVersion,
     renderLayout,
     canAddMessages = false,
+    canViewMessages = false,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
@@ -150,6 +152,7 @@ export const FormPage = ({
                                         submission={submission}
                                         instanceId={instanceId}
                                         canAddMessages={canAddMessages}
+                                        canViewMessages={canViewMessages}
                                         onSubmit={onClose}
                                         onEditPage={onEditPage}
                                     />

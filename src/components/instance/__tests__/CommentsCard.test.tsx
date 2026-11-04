@@ -40,7 +40,7 @@ afterEach(cleanup);
 
 const instance = {
     id: "instance-1",
-    permissions: ["AddInstanceMessage"],
+    permissions: ["AddMessages", "ViewMessages"],
     workflowDefinition: {messagesEnabled: true},
 } as WorkflowInstance;
 

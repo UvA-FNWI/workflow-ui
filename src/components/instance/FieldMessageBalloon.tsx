@@ -13,6 +13,7 @@ type Props = {
     fieldLabel: string;
     allowMessages?: boolean;
     canAdd: boolean;
+    canView: boolean;
 };
 
 export function FieldMessageBalloon({
@@ -21,15 +22,16 @@ export function FieldMessageBalloon({
     fieldLabel,
     allowMessages,
     canAdd,
+    canView,
 }: Props) {
     const {t} = useTranslate("workflow");
     const [open, setOpen] = useState(false);
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
         instanceId,
-        {skip: !allowMessages},
+        {skip: !allowMessages || !canView},
     );
 
-    if (!allowMessages) return null;
+    if (!allowMessages || !canView) return null;
 
     const fieldThreads = threads.filter((thread) => thread.questionName === questionName);
     if (!canAdd && !messagesLoaded) return null;

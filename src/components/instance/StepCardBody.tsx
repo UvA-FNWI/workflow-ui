@@ -52,7 +52,8 @@ export const StepCardBody = ({
             ? activeAction
             : null;
     const openFormId = inlineForm?.form;
-    const canAddMessages = instance.permissions.includes("AddInstanceMessage");
+    const canAddMessages = instance.permissions.includes("AddMessages");
+    const canViewMessages = instance.permissions.includes("ViewMessages");
 
     // Modal forms must not replace the step form registered for the admin helper.
     useEffect(() => {
@@ -88,6 +89,7 @@ export const StepCardBody = ({
                                     instanceId={instance.id}
                                     submission={submission}
                                     canAddMessages={canAddMessages}
+                                    canViewMessages={canViewMessages}
                                 />
                             </div>
                         ))}
@@ -149,6 +151,7 @@ export const StepCardBody = ({
                             instanceId={instance.id}
                             submissionId={inlineForm.form ?? ""}
                             canAddMessages={canAddMessages}
+                            canViewMessages={canViewMessages}
                             onClose={() => setActiveAction(null)}
                             previousVersion={getPreviousFormVersion(step, inlineForm.form)}
                         />
