@@ -187,8 +187,14 @@ export function ConversationThread({
 
                     {canAdd && !thread.isClosed && (
                         <div className="flex flex-col items-start gap-2">
-                            <ReplyButton label={m("reply")} onClick={() => onStartReply(root.id)} />
-                            {replyParentItemId === root.id && replyComposer}
+                            {replyParentItemId === root.id ? (
+                                replyComposer
+                            ) : (
+                                <ReplyButton
+                                    label={m("reply")}
+                                    onClick={() => onStartReply(root.id)}
+                                />
+                            )}
                         </div>
                     )}
 
@@ -275,8 +281,11 @@ function ReplyBranch({
             {node.body && <MessageBody body={node.body} className="mt-1" />}
             {canAdd && (
                 <div className="flex flex-col items-start gap-2">
-                    <ReplyButton label={m("reply")} onClick={() => onStartReply(node.id)} />
-                    {isReplyingHere && replyComposer}
+                    {isReplyingHere ? (
+                        replyComposer
+                    ) : (
+                        <ReplyButton label={m("reply")} onClick={() => onStartReply(node.id)} />
+                    )}
                 </div>
             )}
             {node.children.length > 0 && (

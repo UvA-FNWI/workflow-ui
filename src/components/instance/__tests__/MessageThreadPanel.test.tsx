@@ -84,6 +84,32 @@ describe("MessageThreadPanel", () => {
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
+    it("replaces the reply button with the composer", () => {
+        render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
+
+        const replyButtons = screen.getAllByRole("button", {name: "instance.messages.reply"});
+        fireEvent.click(replyButtons[0]!);
+
+        expect(screen.getAllByRole("button", {name: "instance.messages.reply"})).toHaveLength(
+            replyButtons.length - 1,
+        );
+        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
+        expect(screen.getByRole("button", {name: "cancel"})).toBeTruthy();
+    });
+
+    it("keeps the reply text when another reply is opened", () => {
+        render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
+
+        fireEvent.click(screen.getAllByRole("button", {name: "instance.messages.reply"})[0]!);
+        fireEvent.change(screen.getByLabelText("Write a reply"), {target: {value: "Keep this"}});
+        fireEvent.click(screen.getByRole("button", {name: "instance.messages.reply"}));
+
+        expect(screen.getByLabelText("Write a reply")).toHaveValue("");
+
+        fireEvent.click(screen.getAllByRole("button", {name: "instance.messages.reply"})[0]!);
+        expect(screen.getByLabelText("Write a reply")).toHaveValue("Keep this");
+    });
+
     it("uses buttons for reply and close conversation", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
