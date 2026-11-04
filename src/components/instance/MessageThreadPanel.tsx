@@ -13,6 +13,8 @@ type ReplyTarget = {
     parentItemId: string;
 };
 
+const newConversationDraftKey = "new";
+
 type Props = {
     instanceId: string;
     threads: MessageThread[];
@@ -45,6 +47,7 @@ export function MessageThreadPanel({
     });
     const replyPlaceholder = m("reply_placeholder", {defaultValue: "Write a reply"});
     const [body, setBody] = useState("");
+    const [drafts, setDrafts] = useState<Record<string, string>>({});
     const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
     const [newConversationExpanded, setNewConversationExpanded] = useState(false);
     const [expandedOverrides, setExpandedOverrides] = useState<Record<string, boolean>>({});
@@ -76,6 +79,18 @@ export function MessageThreadPanel({
         return () => cancelAnimationFrame(frame);
     }, [focusNewConversation, newConversationFieldId, onFocusNewConversationHandled]);
 
+    const draftKeyFor = (target: ReplyTarget | null) =>
+        target?.parentItemId ?? newConversationDraftKey;
+
+    const storeDraft = (key: string, text: string) => {
+        setDrafts((current) => {
+            const next = {...current};
+            if (text.trim()) next[key] = text;
+            else delete next[key];
+            return next;
+        });
+    };
+
     const submit = (kind: MessageItemKind, threadId?: string) => {
         const targetThreadId = threadId ?? replyTarget?.threadId;
         if (kind === "Message" && !body.trim()) return;
@@ -90,6 +105,7 @@ export function MessageThreadPanel({
         })
             .unwrap()
             .then(() => {
+                if (kind === "Message") storeDraft(draftKeyFor(replyTarget), "");
                 setBody("");
                 setReplyTarget(null);
                 setNewConversationExpanded(false);
@@ -106,18 +122,21 @@ export function MessageThreadPanel({
     };
 
     const startReply = (threadId: string, parentItemId: string) => {
+        storeDraft(draftKeyFor(replyTarget), body);
         setReplyTarget({threadId, parentItemId});
-        setBody("");
+        setBody(drafts[parentItemId] ?? "");
         setNewConversationExpanded(false);
         setExpandedOverrides((prev) => ({...prev, [threadId]: true}));
     };
 
     const cancelReply = () => {
+        if (replyTarget) storeDraft(replyTarget.parentItemId, "");
         setReplyTarget(null);
-        setBody("");
+        setBody(drafts[newConversationDraftKey] ?? "");
     };
 
     const cancelNewConversation = () => {
+        storeDraft(newConversationDraftKey, "");
         setBody("");
         setNewConversationExpanded(false);
         onDismissComposer?.();
