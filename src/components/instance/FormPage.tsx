@@ -153,7 +153,6 @@ export const FormPage = ({
                                         instanceId={instanceId}
                                         canAddMessages={canAddMessages}
                                         canViewMessages={canViewMessages}
-                                        onSubmit={onClose}
                                         onEditPage={onEditPage}
                                     />
                                 </div>
