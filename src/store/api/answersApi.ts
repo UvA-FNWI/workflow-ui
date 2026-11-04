@@ -65,7 +65,7 @@ export const answersApi = baseApi.injectEndpoints({
                     ),
                 );
             },
-            invalidatesTags: (_result, _error, params) => [
+            invalidatesTags: (result, _error, params) => [
                 {
                     type: "Assessments",
                     instanceId: params.instanceId,
@@ -73,7 +73,7 @@ export const answersApi = baseApi.injectEndpoints({
                 },
                 {type: "InstanceActions", id: params.instanceId},
                 {type: "Choices", id: params.instanceId},
-                "Screen",
+                ...(result?.submission.dateSubmitted ? (["Instance", "Screen"] as const) : []),
             ],
         }),
         saveFile: build.mutation<{success: boolean}, SaveFileParams>({
@@ -92,7 +92,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "Instance", id: params.instanceId},
+                "Instance",
                 "Screen",
             ],
         }),
@@ -110,7 +110,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "Instance", id: params.instanceId},
+                "Instance",
                 "Screen",
             ],
         }),
@@ -120,7 +120,9 @@ export const answersApi = baseApi.injectEndpoints({
                 method: "delete",
             }),
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => undefined);
+                if (!result) return;
+                const {data} = result;
                 dispatch(submissionsApi.util.updateQueryData("getSubmission", params, () => data));
                 dispatch(
                     instancesApi.util.updateQueryData(
@@ -142,6 +144,7 @@ export const answersApi = baseApi.injectEndpoints({
                     submissionId: params.submissionId,
                 },
                 {type: "InstanceActions", id: params.instanceId},
+                "Instance",
                 "Screen",
             ],
         }),

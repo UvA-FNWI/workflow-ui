@@ -112,7 +112,11 @@
       "view_changes": "Wijzigingen bekijken"
     },
     "unauthorized_submission": "Je hebt geen rechten om dit in te zien",
-    "workflowInstance": "Workflow"
+    "workflowInstance": "Workflow",
+    "shared_step": "Gedeelde stap",
+    "shared_loading": "Gedeeld werk laden…",
+    "shared_restricted": "Je hebt geen toestemming om dit gedeelde werk te bekijken.",
+    "shared_unavailable": "Gedeeld werk is niet beschikbaar. Controleer de gekoppelde instantie."
   },
   "make_a_choice": "Maak een keuze",
   "migrations": {
