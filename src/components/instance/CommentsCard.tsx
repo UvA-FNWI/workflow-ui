@@ -15,17 +15,18 @@ type Props = {
 export function CommentsCard({instance}: Props) {
     const {t} = useTranslate("workflow");
     const enabled = instance.workflowDefinition.messagesEnabled === true;
+    const canView = instance.permissions.includes("ViewMessages");
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
         instance.id,
-        {skip: !enabled},
+        {skip: !enabled || !canView},
     );
     const [expanded, setExpanded] = useState(false);
     const [focusNewConversation, setFocusNewConversation] = useState(false);
 
-    if (!enabled) return null;
+    if (!enabled || !canView) return null;
 
     const instanceThreads = threads.filter((thread) => thread.questionName == null);
-    const canAdd = instance.permissions.includes("AddInstanceMessage");
+    const canAdd = instance.permissions.includes("AddMessages");
     if (!canAdd && !messagesLoaded) return null;
     if (!shouldShowMessageUi(canAdd, instanceThreads.length)) return null;
 

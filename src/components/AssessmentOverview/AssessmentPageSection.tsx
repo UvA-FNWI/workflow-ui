@@ -15,6 +15,9 @@ export type AssessmentPageSectionProps = {
     onEditPage?: (pageName: string) => void;
     resultsType?: StepResultsType;
     isLastPage?: boolean;
+    canAddMessages?: boolean;
+    canViewMessages?: boolean;
+    messagePropertyName?: string | null;
 };
 export const AssessmentPageSection = ({
     page,
@@ -25,6 +28,9 @@ export const AssessmentPageSection = ({
     resultsType,
     isLastPage = false,
     colsClass = "grid-cols-1",
+    canAddMessages = false,
+    canViewMessages = false,
+    messagePropertyName,
 }: AssessmentPageSectionProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -103,6 +109,9 @@ export const AssessmentPageSection = ({
                     instanceId={instanceId}
                     colsClass={colsClass}
                     collapseAnswers={true}
+                    canAddMessages={canAddMessages}
+                    canViewMessages={canViewMessages}
+                    messagePropertyName={messagePropertyName}
                 />
             )}
             <Separator weight={isLastPage ? "bold" : "normal"} />

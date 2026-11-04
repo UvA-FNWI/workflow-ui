@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {shouldShowMessageUi} from "../messageVisibility.ts";
+import {fieldMessageQuestionName, shouldShowMessageUi} from "../messageVisibility.ts";
 
 describe("shouldShowMessageUi", () => {
     it("shows an empty balloon when the user can add comments", () => {
@@ -13,5 +13,20 @@ describe("shouldShowMessageUi", () => {
 
     it("shows the balloon for a reader when the line has open or closed threads", () => {
         expect(shouldShowMessageUi(false, 1)).toBe(true);
+    });
+});
+
+describe("fieldMessageQuestionName", () => {
+    it("keeps a top-level question name", () => {
+        expect(fieldMessageQuestionName(null, "Title")).toBe("Title");
+    });
+
+    it("prefixes an embedded form question with the form property", () => {
+        expect(fieldMessageQuestionName("AssessmentSupervisor", "Consent")).toBe(
+            "AssessmentSupervisor.Consent",
+        );
+        expect(fieldMessageQuestionName("AssessmentReviewer", "Consent")).toBe(
+            "AssessmentReviewer.Consent",
+        );
     });
 });

@@ -16,6 +16,9 @@ type Props = {
     step?: WorkflowStep;
     combine: boolean;
     emptyMessage?: string | null;
+    canAddMessages?: boolean;
+    canViewMessages?: boolean;
+    messagePropertyName?: string | null;
 };
 
 export const AssessmentOverview = ({
@@ -25,6 +28,9 @@ export const AssessmentOverview = ({
     step,
     combine,
     emptyMessage,
+    canAddMessages = false,
+    canViewMessages = false,
+    messagePropertyName,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -121,6 +127,9 @@ export const AssessmentOverview = ({
                         resultsType={step?.resultsType ?? "Normal"}
                         instanceId={instanceId}
                         colsClass={colsClass}
+                        canAddMessages={canAddMessages}
+                        canViewMessages={canViewMessages}
+                        messagePropertyName={messagePropertyName}
                     />
                 ))}
 
