@@ -89,18 +89,23 @@ export const PageElement = ({
                                 <div>
                                     <div className="flex justify-between">
                                         {question.type !== "Check" && (
-                                            <InputLabel key={question.name}>
-                                                {l(question.text)}
-                                                {isWeightedQuestion(question) &&
-                                                    question.percentage != null &&
-                                                    showPercentages &&
-                                                    ` (${question.percentage.toLocaleString(i18n.language)}%)`}
-                                            </InputLabel>
-                                        )}
-                                        {!question.isRequired && (
-                                            <Text className="text-grey-900 italic" size="sm">
-                                                {t("optional")}
-                                            </Text>
+                                            <>
+                                                <InputLabel key={question.name}>
+                                                    {l(question.text)}
+                                                    {isWeightedQuestion(question) &&
+                                                        question.percentage != null &&
+                                                        showPercentages &&
+                                                        ` (${question.percentage.toLocaleString(i18n.language)}%)`}
+                                                </InputLabel>
+                                                {!question.isRequired && (
+                                                    <Text
+                                                        className="text-grey-900 italic"
+                                                        size="sm"
+                                                    >
+                                                        {t("optional")}
+                                                    </Text>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                     {question.description && (
