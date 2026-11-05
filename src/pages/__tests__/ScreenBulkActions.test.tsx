@@ -7,7 +7,9 @@ import {act, cleanup, fireEvent, render, screen, waitFor, within} from "@testing
 import {createInstance} from "i18next";
 import {afterEach, beforeEach, expect, it, vi} from "vitest";
 
+import enCommon from "../../../public/locales/en/common.json";
 import enScreens from "../../../public/locales/en/screens.json";
+import nlCommon from "../../../public/locales/nl/common.json";
 import nlScreens from "../../../public/locales/nl/screens.json";
 import {ScreenView} from "../ScreenView";
 import {baseApi} from "~/store/api/baseApi";
@@ -124,8 +126,8 @@ async function openScreen(language = "en") {
         lng: language,
         fallbackLng: "en",
         resources: {
-            en: {screens: enScreens},
-            nl: {screens: nlScreens},
+            en: {screens: enScreens, common: enCommon},
+            nl: {screens: nlScreens, common: nlCommon},
         },
     });
     const router = createMemoryRouter(

@@ -34,6 +34,7 @@ type DataTableProps<TData> = {
     textSize?: "sm" | "base" | "lg";
     rowSelection?: RowSelectionState;
     onRowSelectionChange?: OnChangeFn<RowSelectionState>;
+    stickyFirstColumn?: boolean;
 };
 
 export function DataTable<TData>({
@@ -49,6 +50,7 @@ export function DataTable<TData>({
     textSize = "sm",
     rowSelection = {},
     onRowSelectionChange,
+    stickyFirstColumn = false,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
@@ -112,6 +114,10 @@ export function DataTable<TData>({
                                     key={header.id}
                                     style={{width: isFixed ? header.getSize() : undefined}}
                                     className={`px-4 py-3 text-left font-body font-semibold whitespace-nowrap text-black dark:text-white ${
+                                        stickyFirstColumn && header.index === 0
+                                            ? "sticky left-0 z-20 bg-white dark:bg-grey-800"
+                                            : ""
+                                    } ${
                                         header.column.getCanSort()
                                             ? "cursor-pointer select-none"
                                             : ""
@@ -140,10 +146,17 @@ export function DataTable<TData>({
                     {rows.map((row) => (
                         <tr
                             key={row.id}
-                            className={`hover:bg-grey-50 border-b border-grey-300 dark:border-grey-600 dark:hover:bg-grey-800`}
+                            className={`group border-b border-grey-300 hover:bg-grey-100 dark:border-grey-600 dark:hover:bg-grey-800`}
                         >
-                            {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className="px-4 py-2 align-baseline">
+                            {row.getVisibleCells().map((cell, index) => (
+                                <td
+                                    key={cell.id}
+                                    className={`px-4 py-2 align-baseline ${
+                                        stickyFirstColumn && index === 0
+                                            ? "sticky left-0 z-10 bg-white group-hover:bg-grey-100 dark:bg-grey-800 dark:group-hover:bg-grey-800"
+                                            : ""
+                                    }`}
+                                >
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}

@@ -129,6 +129,7 @@ export const ScreenTable = ({
             getRowId={(row) => row.id}
             rowSelection={rowSelection}
             onRowSelectionChange={onRowSelectionChange}
+            stickyFirstColumn={Boolean(onRowSelectionChange)}
         />
     );
 };

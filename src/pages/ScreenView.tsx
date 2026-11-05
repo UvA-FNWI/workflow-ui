@@ -78,7 +78,7 @@ const ScreenContent = () => {
         setRowSelection({});
     };
 
-    if (!screen || !workflowDefinition) {
+    if (!screen || !workflowDefinition || !screenName) {
         return isFetching ? (
             <HomePage title={null} isLoading>
                 {null}
@@ -155,7 +155,7 @@ const ScreenContent = () => {
                     </div>
                 )}
             </Card>
-            {bulkSelection && screenName && (
+            {bulkSelection && (
                 <BulkActionModal
                     workflowDefinition={workflowDefinition}
                     screenName={screenName}

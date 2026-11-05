@@ -1,11 +1,8 @@
 {
   "active": "Lopend",
   "bulk": {
-    "cancel": "Annuleren",
     "checking": "Beschikbare acties controleren…",
-    "close": "Sluiten",
     "completed_with_errors": "Bulkactie is uitgevoerd met fouten. De actie is gelukt voor {{successful}} van de {{total}} rijen. Neem contact op met een beheerder.",
-    "confirm": "Bevestigen",
     "confirm_all_one": "Je hebt 1 rij geselecteerd. De actie {{action}} wordt uitgevoerd op deze rij. Weet je zeker dat je wilt doorgaan?",
     "confirm_all_other": "Je hebt {{selected}} rijen geselecteerd. De actie {{action}} wordt uitgevoerd op al deze rijen. Weet je zeker dat je wilt doorgaan?",
     "confirm_none_one": "De actie ‘{{action}}’ is momenteel niet mogelijk voor de geselecteerde rij. Er worden geen wijzigingen aangebracht.",

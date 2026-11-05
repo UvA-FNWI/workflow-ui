@@ -1,11 +1,8 @@
 {
   "active": "Active",
   "bulk": {
-    "cancel": "Cancel",
     "checking": "Checking available actions…",
-    "close": "Close",
     "completed_with_errors": "Bulk action has completed with errors. The action was successful for {{successful}} out of {{total}} rows. Please contact an administrator.",
-    "confirm": "Confirm",
     "confirm_all_one": "You have selected 1 row. The action {{action}} will be applied to this row. Are you sure you want to proceed?",
     "confirm_all_other": "You have selected {{selected}} rows. The action {{action}} will be applied to all of these rows. Are you sure you want to proceed?",
     "confirm_none_one": "The action “{{action}}” is currently unavailable for the selected row. No changes will be made.",
