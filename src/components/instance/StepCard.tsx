@@ -157,7 +157,7 @@ const OwnedStepCard = ({
                 submissions={submissions}
                 currentStep={instance.currentStep}
                 deadlinePassed={fullHierarchy.some((candidate) => candidate.deadline?.isPassed)}
-                actions={
+                leading={
                     <>
                         {sharedParticipants && (
                             <SharedStepIndicator participants={sharedParticipants} />
@@ -284,7 +284,7 @@ function StepCardHeader({
     submissions,
     currentStep,
     deadlinePassed,
-    actions,
+    leading,
 }: {
     step: WorkflowStep;
     nested: boolean;
@@ -293,7 +293,7 @@ function StepCardHeader({
     submissions: Submission[];
     currentStep: WorkflowInstance["currentStep"];
     deadlinePassed: boolean;
-    actions?: ReactNode;
+    leading?: ReactNode;
 }) {
     const {t, l} = useTranslate("workflow");
 
@@ -304,7 +304,7 @@ function StepCardHeader({
             nested={nested}
             showChevron={hasBodyContent}
             className={isContentless ? "cursor-default!" : undefined}
-            actions={actions}
+            leading={leading}
         >
             <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">

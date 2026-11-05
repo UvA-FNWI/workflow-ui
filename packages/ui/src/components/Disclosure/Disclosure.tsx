@@ -172,7 +172,7 @@ BaseDisclosure.displayName = 'Disclosure';
 const DisclosureHeader = (
   props: HTMLAttributes<HTMLButtonElement> & {
     children: ReactNode;
-    actions?: ReactNode;
+    leading?: ReactNode;
     showChevron?: boolean;
     nested?: boolean;
     ref?: React.Ref<HTMLButtonElement>;
@@ -180,7 +180,7 @@ const DisclosureHeader = (
 ) => {
   const {
     children,
-    actions,
+    leading,
     className,
     showChevron = true,
     nested = false,
@@ -207,6 +207,7 @@ const DisclosureHeader = (
       )}
     >
       <div className="ui:flex ui:w-full ui:items-center ui:gap-2">
+        {leading}
         <button
           // useDisclosure's buttonProps also carry React Aria press props
           // (onPress/onPressStart/isDisabled) meant for useButton, not a native
@@ -236,7 +237,6 @@ const DisclosureHeader = (
             />
           )}
         </button>
-        {actions}
       </div>
     </div>
   );
