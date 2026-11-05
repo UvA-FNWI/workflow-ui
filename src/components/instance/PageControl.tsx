@@ -40,7 +40,7 @@ export const PageControl = ({
         const a = answers.find((x) => x.questionName === q.name);
         return !a || a.isVisible;
     });
-    const form = usePageForm({answers, page});
+    const form = usePageForm(answers);
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();

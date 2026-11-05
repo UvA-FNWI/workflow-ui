@@ -2,7 +2,13 @@ import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, expect, it, vi} from "vitest";
 
 import {PageControl} from "../PageControl";
-import type {Answer, Page, Question, Submission} from "~/store/api/types/submissions";
+import type {
+    Answer,
+    Page,
+    Question,
+    StringQuestion,
+    Submission,
+} from "~/store/api/types/submissions";
 
 const state = vi.hoisted(() => ({submission: undefined as Submission | undefined}));
 
@@ -34,13 +40,16 @@ vi.mock("~/components/instance/InputControl", () => ({
         value: string;
         onChange: (value: string) => void;
         question: Question;
-    }) => (
-        <input
-            aria-label={question.name}
-            value={value ?? ""}
-            onChange={(event) => onChange(event.target.value)}
-        />
-    ),
+    }) => {
+        const Field = (question as StringQuestion).control == "TextArea" ? "textarea" : "input";
+        return (
+            <Field
+                aria-label={question.name}
+                value={value ?? ""}
+                onChange={(event) => onChange(event.target.value)}
+            />
+        );
+    },
 }));
 vi.mock("../FileUploadTable", () => ({FileUploadTable: () => null}));
 
@@ -74,6 +83,44 @@ const control = () => <PageControl instanceId="instance" submissionId="submissio
 
 afterEach(cleanup);
 
+it.each([false, true])(
+    "preserves the caret when backspacing to the previous server value (multiline: %s)",
+    (multiline) => {
+        const textPage: Page = {
+            ...page,
+            elements: page.elements.map((element) => ({
+                ...element,
+                question: {
+                    ...element.question!,
+                    layout: multiline ? {multiline: true, allowAttachments: false} : undefined,
+                },
+            })),
+        };
+        const renderControl = () => (
+            <PageControl instanceId="instance" submissionId="submission" page={textPage} />
+        );
+        updateAnswers("hello world", "original");
+        const {rerender} = render(renderControl());
+        const input = screen.getByLabelText("First") as HTMLInputElement | HTMLTextAreaElement;
+        input.focus();
+
+        fireEvent.change(input, {
+            target: {value: "helloX world", selectionStart: 6, selectionEnd: 6},
+        });
+        // Delete the insertion while its save is still in flight.
+        fireEvent.change(input, {
+            target: {value: "hello world", selectionStart: 5, selectionEnd: 5},
+        });
+        updateAnswers("helloX world", "original");
+        rerender(renderControl());
+
+        expect(input).toHaveValue("hello world");
+        expect(input).toHaveFocus();
+        expect(input.selectionStart).toBe(5);
+        expect(input.selectionEnd).toBe(5);
+    },
+);
+
 it("keeps newer edits to both fields when a delayed save updates the submission", () => {
     updateAnswers("saved", "original");
     const {rerender} = render(control());
@@ -85,6 +132,27 @@ it("keeps newer edits to both fields when a delayed save updates the submission"
 
     expect(screen.getByLabelText("First")).toHaveValue("newer draft");
     expect(screen.getByLabelText("Second")).toHaveValue("pending draft");
+});
+
+it("preserves edits and the caret after moving focus to another question", () => {
+    updateAnswers("first", "second");
+    const {rerender} = render(control());
+    const first = screen.getByLabelText("First");
+    const second = screen.getByLabelText("Second") as HTMLInputElement;
+
+    first.focus();
+    fireEvent.change(first, {target: {value: "first draft"}});
+    second.focus();
+    fireEvent.change(second, {target: {value: "secXond"}});
+    fireEvent.change(second, {target: {value: "second", selectionStart: 3, selectionEnd: 3}});
+
+    updateAnswers("first draft", "secXond");
+    rerender(control());
+
+    expect(first).toHaveValue("first draft");
+    expect(second).toHaveValue("second");
+    expect(second).toHaveFocus();
+    expect(second.selectionStart).toBe(3);
 });
 
 it("applies server changes to untouched fields and clears acknowledged answers", () => {
@@ -110,6 +178,7 @@ it("loads answers that arrive after mounting and restores newly visible question
     rerender(control());
     expect(screen.getByLabelText("First")).toHaveValue("loaded");
 
+    fireEvent.change(screen.getByLabelText("Second"), {target: {value: "unsaved draft"}});
     updateAnswers("loaded", "original", false);
     rerender(control());
     expect(screen.queryByLabelText("Second")).not.toBeInTheDocument();
