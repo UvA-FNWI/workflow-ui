@@ -2,6 +2,7 @@ import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
     ActiveStep,
+    InstanceHistoryItem,
     InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
@@ -143,6 +144,9 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getCorrespondence: builder.query<Correspondence[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Correspondence`,
+        }),
+        getHistory: builder.query<InstanceHistoryItem[], string>({
+            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/History`,
         }),
     }),
 });
