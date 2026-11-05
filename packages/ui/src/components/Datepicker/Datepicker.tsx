@@ -18,7 +18,7 @@ import { Popover } from '../Popover/Popover';
 import { Calendar } from './Calendar';
 import { CalendarButton } from './CalendarButton';
 import { DateField } from './DateField';
-import { dateToDateValue, dateValueToDate } from './utils';
+import { DateGranularity, dateToDateValue, dateValueToDate } from './utils';
 
 // Public API that accepts Date objects
 export interface DatePickerProps extends Omit<
@@ -34,6 +34,7 @@ export interface DatePickerProps extends Omit<
   value?: Date | DateValue | null;
   defaultValue?: Date | DateValue | null;
   onChange?: (date: Date | null) => void;
+  granularity?: DateGranularity;
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
@@ -47,19 +48,20 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   value,
   defaultValue,
   onChange,
+  granularity = 'day',
   ...props
 }) => {
   // Convert Date to DateValue if needed
   const internalValue = useMemo(() => {
     if (value === undefined) return undefined;
     if (value === null) return null;
-    return value instanceof Date ? dateToDateValue(value) : value;
+    return value instanceof Date ? dateToDateValue(value, granularity) : value;
   }, [value]);
 
   const internalDefaultValue = useMemo(() => {
     if (!defaultValue) return undefined;
     return defaultValue instanceof Date
-      ? dateToDateValue(defaultValue)
+      ? dateToDateValue(defaultValue, granularity)
       : defaultValue;
   }, [defaultValue]);
 
@@ -83,6 +85,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         value={internalValue}
         defaultValue={internalDefaultValue}
         onChange={handleChange}
+        granularity={granularity}
         {...props}
       />
     </I18nProvider>
@@ -105,11 +108,13 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
   isValid = true,
   isDisabled = false,
   className,
+  granularity,
   ...props
 }) => {
   const state = useDatePickerState({
     ...props,
     isDisabled,
+    granularity,
   });
   const ref = useRef<HTMLButtonElement>(null);
   const {
@@ -121,7 +126,7 @@ const DatePickerInner: React.FC<DatePickerInnerProps> = ({
     calendarProps,
     descriptionProps,
     errorMessageProps,
-  } = useDatePicker({ ...props, label, isDisabled }, state, ref);
+  } = useDatePicker({ ...props, label, isDisabled, granularity }, state, ref);
 
   const inputClasses = inputVariants({
     isDisabled,

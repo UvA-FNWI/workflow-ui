@@ -27,3 +27,14 @@ export const DateRangePicker = (props: Omit<DateRangePickerProps, "locale">) => 
 
     return <UIDateRangePicker {...props} locale={locale} />;
 };
+
+/**
+ * Locale-aware DateRangePicker with time wrapper that automatically syncs with i18n language
+ */
+export const DateTimePicker = (props: Omit<DatePickerProps, "locale">) => {
+    const {i18n} = useTranslation();
+
+    const locale = i18n.language === "nl" ? "nl-NL" : "en-GB";
+
+    return <UIDatePicker {...props} locale={locale} granularity="minute" />;
+};
