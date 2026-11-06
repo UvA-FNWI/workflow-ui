@@ -21,20 +21,20 @@ vi.mock("~/components/instance/StepCardBody.tsx", () => ({
     StepCardBody: ({
         step,
         actions,
-        resolvedAction,
+        activeAction,
         emptyStateMessage,
     }: {
         step: WorkflowStep;
         actions: Action[];
-        resolvedAction: Action | null;
+        activeAction: Action | null;
         emptyStateMessage: string | null;
     }) => (
         <div data-testid={`step-content-${step.id}`}>
-            <span data-testid="step-content">{resolvedAction?.form ?? "Submission content"}</span>
+            <span data-testid="step-content">{activeAction?.form ?? "Submission content"}</span>
             {emptyStateMessage && <span>{emptyStateMessage}</span>}
             <span data-testid={`actions-${step.id}`}>{actions.map((a) => a.id).join(",")}</span>
             <span data-testid={`version-count-${step.id}`}>
-                {step.versions?.flatMap((version) => version.submissions).length ?? 0}
+                {step.versions?.history.flatMap((version) => version.submissions).length ?? 0}
             </span>
         </div>
     ),
@@ -51,6 +51,7 @@ const deadline: StepDeadline = {
 
 const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     id: "Step",
+    isAvailable: true,
     title: {en: "Step", nl: "Stap"},
     icon: null,
     event: "Submit",
@@ -58,6 +59,7 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     deadline,
     children: null,
     versions: null,
+    submissions: [],
     headerStatus: null,
     resultsType: "Normal",
     expectsSubmission: true,
@@ -106,6 +108,23 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
     viewerRoles: [],
     infoCards: [],
 });
+
+it.each([false, true])(
+    "uses backend availability even when the step order disagrees: %s",
+    (isAvailable) => {
+        const step = makeStep({isAvailable});
+        const instance = makeInstance(step);
+        const current = makeStep({id: "Other"});
+        instance.steps = isAvailable ? [current, step] : [step, current];
+        instance.currentStep = current.id;
+
+        render(<StepCard step={step} instance={instance} />);
+
+        const header = screen.getByRole("button", {name: /^Step/});
+        if (isAvailable) expect(header).toBeEnabled();
+        else expect(header).toBeDisabled();
+    },
+);
 
 const expiredStatus = {
     type: "Error",
@@ -235,7 +254,7 @@ it("renders configured children as independently expandable rows with their own 
     expect(screen.getByTestId("actions-Report2")).toHaveTextContent("second,shared");
 });
 
-it("keeps parent content above children without repeating child history", () => {
+it("keeps the parent attempt history above child rows", () => {
     const child = makeStep({
         id: "Report1",
         title: {en: "Report 1", nl: "Rapport 1"},
@@ -260,27 +279,30 @@ it("keeps parent content above children without repeating child history", () => 
         title: {en: "Reports", nl: "Rapporten"},
         children: [child],
         childrenLayout: "CollapsibleRows",
-        versions: [
-            {
-                versionNumber: 1,
-                eventIds: [],
-                submittedAt: "2026-09-20T12:00:00Z",
-                submissions: [childSubmission],
-            },
-        ],
+        versions: {
+            current: null,
+            history: [
+                {
+                    versionNumber: 1,
+                    completionTimestamp: "2026-09-20T12:00:00Z",
+                    submissions: [childSubmission],
+                },
+            ],
+        },
     } as Partial<WorkflowStep>);
     const instance = makeInstance(parent, [
         {...action, id: "parent", form: "ParentForm", steps: [parent.id]},
     ]);
     instance.currentStep = child.id;
     instance.submissions = [childSubmission];
+    child.submissions = [childSubmission];
 
     render(<StepCard step={parent} instance={instance} />);
 
     expect(
         within(screen.getByTestId("step-content-Reports")).getByText("ParentForm"),
     ).toBeVisible();
-    expect(screen.getByTestId("version-count-Reports")).toHaveTextContent("0");
+    expect(screen.getByTestId("version-count-Reports")).toHaveTextContent("1");
     expect(screen.getByRole("button", {name: /Report 1/})).toHaveTextContent("Awaiting review");
     expect(screen.getByRole("button", {name: /Report 1/})).toHaveTextContent("20/09/2026");
 });
@@ -311,14 +333,16 @@ it("does not show a submission date from history the viewer cannot access", () =
     const child = makeStep({
         id: "Report1",
         title: {en: "Report 1", nl: "Rapport 1"},
-        versions: [
-            {
-                versionNumber: 1,
-                eventIds: [],
-                submittedAt: "2026-09-20T12:00:00Z",
-                submissions: [],
-            },
-        ],
+        versions: {
+            current: null,
+            history: [
+                {
+                    versionNumber: 1,
+                    completionTimestamp: "2026-09-20T12:00:00Z",
+                    submissions: [],
+                },
+            ],
+        },
     });
     const parent = makeStep({
         id: "Reports",

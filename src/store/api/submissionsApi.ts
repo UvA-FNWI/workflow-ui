@@ -71,20 +71,6 @@ export const submissionsApi = baseApi.injectEndpoints({
                         () => data,
                     ),
                 );
-                dispatch(
-                    instancesApi.util.updateQueryData(
-                        "getInstance",
-                        params.instanceId,
-                        (current) => {
-                            const idx = current.submissions.findIndex(
-                                (s) => s.id === params.submissionId,
-                            );
-                            if (idx !== -1) {
-                                current.submissions[idx] = data;
-                            }
-                        },
-                    ),
-                );
             },
         }),
     }),
