@@ -6,7 +6,6 @@ import {RouterProvider} from "react-router";
 
 import {type AuthEventCallbacks, AuthProvider} from "@uva-fnwi/datanose-core";
 import {ToastProvider} from "@uva-fnwi/datanose-ui";
-import "@uva-fnwi/datanose-ui/styles";
 
 import SessionExpiredModal from "./components/SessionExpiredModal";
 import {
@@ -15,7 +14,6 @@ import {
     VITE_AUTH_LOGOUT_URL,
 } from "./helpers/Environment";
 import "./i18n";
-import "./index.css";
 import router from "./router/routes.tsx";
 import {clearCurrentUser, openSessionExpiredModal, setAccessToken} from "./store/authSlice";
 import {store} from "./store/store";
