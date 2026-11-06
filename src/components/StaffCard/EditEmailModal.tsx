@@ -22,7 +22,7 @@ export function EditEmailModal({
     user,
     isSaving = false,
 }: EditEmailModalProps) {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
     const [newEmail, setNewEmail] = useState(user.email);
 
     const {
@@ -112,7 +112,7 @@ export function EditEmailModal({
                     {t("save")}
                 </Button>
                 <Button intent="secondary" variant="destructive" onClick={() => setIsOpen(false)}>
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>

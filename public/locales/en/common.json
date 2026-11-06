@@ -1,5 +1,8 @@
 {
+  "cancel": "Cancel",
+  "close": "Close",
   "config_version": "Version",
+  "confirm": "Confirm",
   "develop": "Develop",
   "errors": {
     "clipboard_copy_failed": "Could not copy to clipboard.",

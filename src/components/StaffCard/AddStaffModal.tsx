@@ -47,7 +47,7 @@ export default function AddStaffModal({
     disableRoleSelection,
     relatedUserGroups,
 }: AddStaffModalProps) {
-    const {l, t} = useTranslate("workflow");
+    const {l, t} = useTranslate(["workflow", "common"]);
     const [selectedRole, setSelectedRole] = useState<Role | null>(initialRole ?? null);
     const [selectedUsers, setSelectedUsers] = useState<UserSearchResult[]>([]);
     const [externalUser, setExternalUser] = useState<CreateExternalUserInput | null>(null);
@@ -174,7 +174,7 @@ export default function AddStaffModal({
                             disabled={!isComplete}
                             isLoading={isSaving}
                         >
-                            {t("confirm")}
+                            {t("common:confirm")}
                         </Button>
                         {allowsExternalUsers && (
                             <Button
@@ -193,7 +193,7 @@ export default function AddStaffModal({
                             onClick={handleClose}
                             className="ml-auto"
                         >
-                            {t("cancel")}
+                            {t("common:cancel")}
                         </Button>
                     </div>
                 </Modal.Footer>
