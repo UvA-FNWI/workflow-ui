@@ -90,6 +90,10 @@
     },
     "deadline_passed": "De deadline is verstreken. Je kunt dit formulier niet meer indienen.",
     "empty_step": "Er is nog niets ingeleverd.",
+    "shared_loading": "Gedeeld werk laden…",
+    "shared_restricted": "Je hebt geen toestemming om dit gedeelde werk te bekijken.",
+    "shared_step": "Gedeelde stap",
+    "shared_unavailable": "Gedeeld werk is niet beschikbaar. Controleer de gekoppelde instantie.",
     "summary": {
       "change_version": "Versie {{version}}",
       "change_version_in_progress": "Versie {{version}} (in behandeling)",

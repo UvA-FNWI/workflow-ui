@@ -82,7 +82,7 @@ export const answersApi = baseApi.injectEndpoints({
                     id: params.instanceId,
                 },
                 {type: "Choices", id: params.instanceId},
-                "Screen",
+                ...(result?.submission.dateSubmitted ? (["Instance", "Screen"] as const) : []),
             ],
         }),
         saveFile: build.mutation<{success: boolean}, SaveFileParams>({
@@ -101,7 +101,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "Instance", id: params.instanceId},
+                "Instance",
                 "Screen",
             ],
         }),
@@ -119,7 +119,7 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "Instance", id: params.instanceId},
+                "Instance",
                 "Screen",
             ],
         }),
@@ -129,7 +129,9 @@ export const answersApi = baseApi.injectEndpoints({
                 method: "delete",
             }),
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => undefined);
+                if (!result) return;
+                const {data} = result;
                 dispatch(submissionsApi.util.updateQueryData("getSubmission", params, () => data));
             },
             invalidatesTags: (_result, _error, params) => [
@@ -138,7 +140,8 @@ export const answersApi = baseApi.injectEndpoints({
                     instanceId: params.instanceId,
                     submissionId: params.submissionId,
                 },
-                {type: "Instance", id: params.instanceId},
+                {type: "InstanceActions", id: params.instanceId},
+                "Instance",
                 "Screen",
             ],
         }),

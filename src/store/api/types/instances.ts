@@ -106,6 +106,12 @@ export type WorkflowStep = {
     hierarchyMode: StepHierarchyMode;
     childrenLayout: StepChildrenLayout;
     undoCandidate?: UndoCandidate | null;
+    importStatus?: "Available" | "Unavailable" | "Restricted" | null;
+    importedFrom?: {
+        instanceId: string;
+        stepId: string;
+        participants: {displayName: string}[];
+    } | null;
 };
 
 export type WorkflowStepVersion = {

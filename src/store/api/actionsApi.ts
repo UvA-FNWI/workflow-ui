@@ -14,10 +14,13 @@ export const actionsApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, {instanceId}) => [
                 {type: "InstanceActions", id: instanceId},
+                "Instance",
                 "Screen",
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => undefined);
+                if (!result) return;
+                const {data} = result;
                 dispatch(
                     instancesApi.util.updateQueryData(
                         "getInstance",

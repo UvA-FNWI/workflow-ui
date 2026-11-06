@@ -154,7 +154,7 @@ it.each([false, true])(
 );
 
 it.each(["draft", "submitted", "missing instance", "clear", "dummy"] as const)(
-    "updates step submissions after %s, without refetching after answer saves",
+    "updates step submissions after %s, without refetching after draft answer saves",
     async (operation) => {
         const store = configureStore({
             reducer: {[baseApi.reducerPath]: baseApi.reducer},
@@ -267,7 +267,7 @@ it.each(["draft", "submitted", "missing instance", "clear", "dummy"] as const)(
             request.mock.calls.filter(
                 ([input]) => input === `/WorkflowInstances/${params.instanceId}`,
             ),
-        ).toHaveLength(operation === "draft" || operation === "submitted" ? 1 : 2);
+        ).toHaveLength(operation === "draft" ? 1 : 2);
         properties.unsubscribe();
         roles.unsubscribe();
         instance.unsubscribe();
