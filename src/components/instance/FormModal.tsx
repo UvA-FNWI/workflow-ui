@@ -48,7 +48,7 @@ export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: 
                         <Button intent="secondary" onClick={onClose}>
                             {t("cancel")}
                         </Button>
-                        <div className="ml-auto flex flex-wrap justify-end gap-3">
+                        <div className="flex flex-wrap justify-end gap-3">
                             {isError ? (
                                 <Button intent="primary" onClick={() => void refetch()}>
                                     {t("retry")}

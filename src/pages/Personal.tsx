@@ -6,6 +6,7 @@ import {Button, Card, Icon, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 import {HomePage} from "~/components/HomePage";
 import {PersonalDisclosure} from "~/components/PersonalDisclosure";
 import {TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
+import {TableStaffCell} from "~/components/Table/TableStaffCell.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -99,24 +100,21 @@ export function PersonalContent({workflowDefinition}: {workflowDefinition?: stri
                 enableSorting: true,
             },
             {
-                id: "employees",
+                id: "staff",
                 size: 200,
                 accessorFn: (instance) =>
                     getComparableTableCellValue(
-                        instance.employees.join(", "),
+                        instance.staff.map((user) => user.displayName).join(", "),
                         "String",
                         i18n.language,
                     ),
-                header: () => t("columns.employees"),
-                cell: ({row}) => (
-                    <div>
-                        {row.original.employees.length
-                            ? row.original.employees.map((employee) => (
-                                  <div key={employee}>{employee}</div>
-                              ))
-                            : "—"}
-                    </div>
-                ),
+                header: () => t("columns.staff"),
+                cell: ({row}) =>
+                    row.original.staff.length ? (
+                        <TableStaffCell users={row.original.staff} />
+                    ) : (
+                        <TableTextCell>—</TableTextCell>
+                    ),
                 enableSorting: true,
             },
             {
