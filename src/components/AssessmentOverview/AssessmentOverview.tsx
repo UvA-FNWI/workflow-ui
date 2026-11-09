@@ -93,6 +93,8 @@ export const AssessmentOverview = ({
         return emptyState;
     }
 
+    const warnings = assessmentResults.parts.flatMap((p) => p.warnings);
+
     return (
         <div>
             <div className="overflow-x-auto py-4">
@@ -147,12 +149,8 @@ export const AssessmentOverview = ({
             </div>
 
             {/* discrepancy warning kept outside both divs above so text can wrap instead of having a scrollbar */}
-            {assessmentResults.parts[0].showDiscrepancyWarning &&
-                assessmentSubmissions.length > 1 && (
-                    <Callout type="warning">
-                        {t("instance.calculations.discrepancy_warning")}
-                    </Callout>
-                )}
+            {assessmentSubmissions.length > 1 &&
+                warnings.map((w) => <Callout type="warning">{l(w.label)}</Callout>)}
         </div>
     );
 };
