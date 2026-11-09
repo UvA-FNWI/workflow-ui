@@ -19,7 +19,7 @@ export function RemoveStaffMemberModal({
     onConfirm,
     user,
 }: RemoveStaffMemberModalProps) {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -34,7 +34,7 @@ export function RemoveStaffMemberModal({
             </Modal.Body>
             <Modal.Footer>
                 <Button size="large" intent="primary" variant="destructive" onClick={onConfirm}>
-                    {t("confirm")}
+                    {t("common:confirm")}
                 </Button>
                 <Button
                     size="large"
@@ -42,7 +42,7 @@ export function RemoveStaffMemberModal({
                     variant="destructive"
                     onClick={() => setIsOpen(false)}
                 >
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>

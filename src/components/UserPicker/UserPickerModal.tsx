@@ -31,7 +31,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     minSearchLength,
     allowsExternalUsers,
 }) => {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
     const confirmButtonRef = useRef<HTMLButtonElement>(null);
     const shouldFocusConfirm = useRef(false);
     const [selectedUsers, setSelectedUsers] = useState<UserSearchResult[]>(initialSelection);
@@ -84,7 +84,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     disabled={!hasSelection}
                     ref={confirmButtonRef}
                 >
-                    {t("confirm")}
+                    {t("common:confirm")}
                 </Button>
                 {allowsExternalUsers && (
                     <Button
@@ -96,7 +96,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     </Button>
                 )}
                 <Button intent="secondary" variant="destructive" onClick={handleCancel}>
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>
