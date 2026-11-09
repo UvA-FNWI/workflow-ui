@@ -20,7 +20,7 @@ const isStaleCandidate = (error: unknown) =>
         ?.errorCode === "UndoCandidateChanged";
 
 export function UndoControl({candidate, instanceId, returnFocusRef}: Props) {
-    const {t, l, i18n} = useTranslate("workflow");
+    const {t, l, i18n} = useTranslate(["workflow", "common"]);
     const dispatch = useAppDispatch();
     const toast = useToast();
     const [isOpen, setIsOpen] = useState(false);
@@ -119,7 +119,7 @@ export function UndoControl({candidate, instanceId, returnFocusRef}: Props) {
                         {t("undo.confirm")}
                     </Button>
                     <Button intent="secondary" variant="destructive" size="large" onClick={close}>
-                        {t("cancel")}
+                        {t("common:cancel")}
                     </Button>
                 </Modal.Footer>
             </Modal>

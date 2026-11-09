@@ -6,6 +6,7 @@ import {ImportModal} from "~/components/Import/ImportModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate.ts";
 import {useCreateInstanceMutation} from "~/store/api/instancesApi.ts";
+import type {BulkAction} from "~/store/api/types/screens";
 
 type ScreenTableToolbarProps = {
     search: string;
@@ -13,6 +14,9 @@ type ScreenTableToolbarProps = {
     canEdit: boolean;
     canCreate: boolean;
     workflowDefinition: string;
+    bulkActions?: BulkAction[];
+    selectedCount?: number;
+    onBulkAction?: (action: BulkAction) => void;
 };
 
 export const ScreenTableToolbar = ({
@@ -21,8 +25,11 @@ export const ScreenTableToolbar = ({
     canEdit,
     canCreate,
     workflowDefinition,
+    bulkActions = [],
+    selectedCount = 0,
+    onBulkAction,
 }: ScreenTableToolbarProps) => {
-    const {t} = useTranslate("screens");
+    const {t, l} = useTranslate("screens");
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const navigate = useVersionedNavigate();
 
@@ -37,7 +44,21 @@ export const ScreenTableToolbar = ({
 
     return (
         <>
-            <div className="flex w-full">
+            <div className="flex w-full flex-wrap items-center gap-4">
+                {bulkActions.map((action) => (
+                    <Button
+                        key={action.action}
+                        intent="secondary"
+                        variant="destructive"
+                        leftIcon={
+                            <Icon name={action.icon.type} size="sm" color="current" decorative />
+                        }
+                        disabled={selectedCount === 0}
+                        onClick={() => onBulkAction?.(action)}
+                    >
+                        {l(action.label)}
+                    </Button>
+                ))}
                 {canEdit && (
                     <Button
                         intent="secondary"
@@ -61,6 +82,7 @@ export const ScreenTableToolbar = ({
                         </Button>
                     )}
                     <SearchInput
+                        aria-label={t("search_placeholder")}
                         value={search}
                         onChange={setSearch}
                         placeholder={t("search_placeholder")}

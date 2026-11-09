@@ -12,7 +12,7 @@ type FormModalProps = {
 };
 
 export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: FormModalProps) => {
-    const {t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate(["workflow", "common"]);
 
     const {
         data: submission,
@@ -46,7 +46,7 @@ export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: 
                     </Modal.Body>
                     <Modal.Footer className="flex-wrap gap-y-3">
                         <Button intent="secondary" onClick={onClose}>
-                            {t("cancel")}
+                            {t("common:cancel")}
                         </Button>
                         <div className="ml-auto flex flex-wrap justify-end gap-3">
                             {isError ? (

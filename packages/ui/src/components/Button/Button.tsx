@@ -187,11 +187,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           )}
         >
           <div className="ui:flex ui:min-w-0 ui:items-center ui:gap-1">
-            {leftIcon && <span className="ui:mr-1">{leftIcon}</span>}
+            {leftIcon && (
+              <span className="ui:mr-1 ui:flex ui:items-center">
+                {leftIcon}
+              </span>
+            )}
             <span className="ui:min-w-0 ui:truncate">{children}</span>
           </div>
 
-          {rightIcon && <span>{rightIcon}</span>}
+          {rightIcon && (
+            <span className="ui:flex ui:items-center">{rightIcon}</span>
+          )}
         </div>
 
         {/* Spinner */}
