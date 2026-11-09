@@ -90,7 +90,7 @@ export const FormSubmitButton = ({
                             isLoading={isLoading}
                             onClick={handleSubmit}
                         >
-                            {t("confirm")}
+                            {t("confirm", {ns: "common"})}
                         </Button>
                         <Button
                             intent="secondary"
@@ -98,7 +98,7 @@ export const FormSubmitButton = ({
                             size="large"
                             onClick={() => setIsModalOpen(false)}
                         >
-                            {t("cancel")}
+                            {t("cancel", {ns: "common"})}
                         </Button>
                     </Modal.Footer>
                 </Modal>
