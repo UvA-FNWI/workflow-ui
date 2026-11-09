@@ -166,7 +166,7 @@ it("opens execution confirmation only after selection and closes it on cancel", 
     expect(screen.queryByText("are_you_sure")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", {name: "Approve"}));
     expect(screen.getByText("are_you_sure")).toBeVisible();
-    fireEvent.click(screen.getByRole("button", {name: "cancel"}));
+    fireEvent.click(screen.getByRole("button", {name: "common:cancel"}));
     expect(screen.queryByText("are_you_sure")).not.toBeInTheDocument();
 });
 

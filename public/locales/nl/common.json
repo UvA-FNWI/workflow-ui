@@ -1,5 +1,8 @@
 {
+  "cancel": "Annuleren",
+  "close": "Sluiten",
   "config_version": "Versie",
+  "confirm": "Bevestigen",
   "develop": "Ontwikkelen",
   "errors": {
     "clipboard_copy_failed": "Kopiëren naar klembord mislukt.",
