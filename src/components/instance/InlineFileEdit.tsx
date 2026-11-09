@@ -22,7 +22,7 @@ type Props = {
 };
 
 export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Props) => {
-    const {t, i18n} = useTranslate("workflow");
+    const {t, i18n} = useTranslate(["workflow", "common"]);
     const [saveFile, {isLoading: isUploading, isError: isUploadError}] =
         answersApi.endpoints.saveFile.useMutation();
     const [saveAnswer, {isLoading: isDeleting, isError: isDeleteError}] =
@@ -309,10 +309,10 @@ export const InlineFileEdit = ({question, answer, instanceId, submissionId}: Pro
                         onClick={handleDelete}
                         isLoading={isDeleting}
                     >
-                        {t("confirm")}
+                        {t("common:confirm")}
                     </Button>
                     <Button intent="secondary" onClick={() => setIsConfirmDeleteOpen(false)}>
-                        {t("cancel")}
+                        {t("common:cancel")}
                     </Button>
                 </Modal.Footer>
             </Modal>
