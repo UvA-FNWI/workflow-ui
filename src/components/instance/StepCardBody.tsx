@@ -19,6 +19,7 @@ import type {Submission} from "~/store/api/types/submissions.ts";
 import {setOpenForm} from "~/store/openFormSlice.ts";
 import {useAppDispatch} from "~/store/store.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
+import {hasSubmissionContent} from "~/utils/submissionUtils.ts";
 
 type Props = {
     step: WorkflowStep;
@@ -113,7 +114,7 @@ export const StepCardBody = ({
         <>
             <div className="flex flex-col gap-4">
                 {!inlineForm &&
-                    (step.versions?.current?.submissions.length ?? 0) > 0 &&
+                    step.versions?.current?.submissions.some(hasSubmissionContent) &&
                     versionHeading}
                 {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
@@ -167,14 +168,14 @@ export const StepCardBody = ({
                 <VersionHistory
                     versions={step.versions?.history ?? []}
                     instanceId={instance.id}
-                    defaultExpandFirst={submissions.length === 0}
+                    defaultExpandFirst={!submissions.some(hasSubmissionContent)}
                 />
                 {showChildHistory &&
                     getStepHierarchy(step)
                         .slice(1)
                         .filter(
                             (child) =>
-                                (child.versions?.current?.submissions.length ?? 0) > 0 ||
+                                child.versions?.current?.submissions.some(hasSubmissionContent) ||
                                 hasVersionHistory(child),
                         )
                         .map((child) => (

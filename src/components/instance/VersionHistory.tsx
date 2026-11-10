@@ -2,6 +2,7 @@ import {Separator} from "@uva-fnwi/datanose-ui";
 
 import {VersionCard} from "~/components/instance/VersionCard.tsx";
 import type {WorkflowStepVersion} from "~/store/api/types/instances.ts";
+import {hasSubmissionContent} from "~/utils/submissionUtils.ts";
 
 type Props = {
     versions: WorkflowStepVersion[];
@@ -10,7 +11,9 @@ type Props = {
 };
 
 export const VersionHistory = ({versions, instanceId, defaultExpandFirst}: Props) => {
-    const visibleVersions = versions.filter((version) => version.submissions.length > 0);
+    const visibleVersions = versions.filter((version) =>
+        version.submissions.some(hasSubmissionContent),
+    );
     if (visibleVersions.length === 0) return null;
 
     return (

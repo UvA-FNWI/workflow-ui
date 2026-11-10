@@ -1,5 +1,6 @@
 import type {WorkflowStep} from "~/store/api/types/instances.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
+import {hasSubmissionContent} from "~/utils/submissionUtils.ts";
 
 /**
  * Background content state — what fills the card body regardless of any open form.
@@ -14,9 +15,12 @@ export const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
     ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
 ];
 
-/** Only attempts with submissions visible to the viewer have displayable history. */
+/** Only attempts with visible question-and-answer rows have displayable history. */
 export function hasVersionHistory(step: WorkflowStep): boolean {
-    return step.versions?.history.some((version) => version.submissions.length > 0) ?? false;
+    return (
+        step.versions?.history.some((version) => version.submissions.some(hasSubmissionContent)) ??
+        false
+    );
 }
 
 export function getPreviousFormVersion(step: WorkflowStep, form?: string): number | undefined {
