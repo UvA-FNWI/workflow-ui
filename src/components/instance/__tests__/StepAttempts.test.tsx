@@ -24,6 +24,20 @@ afterEach(() => {
     store.dispatch(submissionsApi.util.resetApiState());
 });
 
+const approvalSubmission: Submission = {
+    id: "Approve",
+    dateSubmitted: "2026-01-01T00:00:00Z",
+    permissions: [],
+    answers: [],
+    form: {
+        name: "Approve",
+        title: {en: "Approve", nl: ""},
+        layout: "Normal",
+        pages: [],
+        step: "Writing",
+    },
+};
+
 it.each(["Normal", "Compact", "Modal"] as const)(
     "opens %s forms from allowed actions and uses visible attempt history for the prefill notice",
     async (formLayout) => {
@@ -170,7 +184,72 @@ it("opens execution confirmation only after selection and closes it on cancel", 
     expect(screen.queryByText("are_you_sure")).not.toBeInTheDocument();
 });
 
-it("renders backend current and history numbers even when attempts have no visible submissions", () => {
+it.each([false, true])(
+    "keeps the current version heading when older submissions are hidden, active form: %s",
+    async (activeForm) => {
+        const submission: Submission = {
+            ...approvalSubmission,
+            answers: [
+                {id: "answer", questionName: "Title", value: "Visible", isVisible: true, files: []},
+            ],
+        };
+        await act(async () => {
+            await store.dispatch(
+                submissionsApi.util.upsertQueryData(
+                    "getSubmission",
+                    {instanceId: "instance", submissionId: "Approve"},
+                    submission,
+                ),
+            );
+        });
+        const step = {
+            id: "Writing",
+            title: {en: "Writing", nl: ""},
+            isAvailable: true,
+            children: null,
+            submissions: activeForm ? [] : [submission],
+            versions: {
+                current: {
+                    versionNumber: 2,
+                    completionTimestamp: null,
+                    submissions: activeForm ? [] : [submission],
+                },
+                history: [{versionNumber: 1, completionTimestamp: null, submissions: []}],
+            },
+            resultsType: "Normal",
+            expectsSubmission: true,
+        } as unknown as WorkflowStep;
+        const instance = {
+            id: "instance",
+            currentStep: "Writing",
+            steps: [step],
+            actions: activeForm
+                ? [
+                      {
+                          id: "SubmitApprove",
+                          type: "SubmitForm",
+                          form: "Approve",
+                          formLayout: "Normal",
+                          title: {en: "Approve", nl: ""},
+                          steps: ["Writing"],
+                          intent: "Primary",
+                      },
+                  ]
+                : [],
+        } as unknown as WorkflowInstance;
+        render(
+            <Provider store={store}>
+                <ToastProvider>
+                    <StepCard step={step} instance={instance} />
+                </ToastProvider>
+            </Provider>,
+        );
+        expect(screen.getByText("Version 2")).toBeVisible();
+        expect(screen.queryByText("Version 1")).not.toBeInTheDocument();
+    },
+);
+
+it("hides empty attempts while keeping backend version numbers and expanding the first visible history", () => {
     const step: WorkflowStep = {
         id: "Writing",
         isAvailable: true,
@@ -189,7 +268,10 @@ it("renders backend current and history numbers even when attempts have no visib
         submissions: [],
         versions: {
             current: {versionNumber: 7, completionTimestamp: null, submissions: []},
-            history: [{versionNumber: 3, completionTimestamp: null, submissions: []}],
+            history: [
+                {versionNumber: 6, completionTimestamp: null, submissions: []},
+                {versionNumber: 3, completionTimestamp: null, submissions: [approvalSubmission]},
+            ],
         },
     };
     const instance = {
@@ -205,8 +287,14 @@ it("renders backend current and history numbers even when attempts have no visib
             <StepCard step={step} instance={instance} />
         </Provider>,
     );
-    expect(screen.getByText("Version 7")).toBeVisible();
+    expect(screen.queryByText("Version 7")).not.toBeInTheDocument();
+    expect(screen.queryByText("Version 6")).not.toBeInTheDocument();
     expect(screen.getByText("Version 3")).toBeVisible();
+    expect(screen.getByRole("button", {name: /Version 3/})).toHaveAttribute(
+        "aria-expanded",
+        "true",
+    );
+    expect(screen.getByText("APPROVE")).toBeVisible();
     expect(screen.queryByText("Version 4")).not.toBeInTheDocument();
     expect(screen.queryByText("Invalid Date")).not.toBeInTheDocument();
 });
@@ -274,9 +362,15 @@ it.each([true, false])(
     },
 );
 
-it.each(["Combined", "CollapsibleRows"] as const)(
-    "keeps independent child attempts accessible in the %s layout",
-    (childrenLayout) => {
+it.each([
+    ["Combined", true],
+    ["Combined", false],
+    ["CollapsibleRows", true],
+    ["CollapsibleRows", false],
+] as const)(
+    "shows independent child attempts in the %s layout only with visible submissions: %s",
+    (childrenLayout, hasSubmissions) => {
+        const submissions = hasSubmissions ? [approvalSubmission] : [];
         const child: WorkflowStep = {
             id: "Writing",
             isAvailable: true,
@@ -294,8 +388,10 @@ it.each(["Combined", "CollapsibleRows"] as const)(
             childrenLayout: "Combined",
             submissions: [],
             versions: {
-                current: {versionNumber: 5, completionTimestamp: null, submissions: []},
-                history: [{versionNumber: 4, completionTimestamp: null, submissions: []}],
+                current: {versionNumber: 5, completionTimestamp: null, submissions},
+                history: hasSubmissions
+                    ? [{versionNumber: 4, completionTimestamp: null, submissions}]
+                    : [],
             },
         };
         const step: WorkflowStep = {
@@ -323,9 +419,17 @@ it.each(["Combined", "CollapsibleRows"] as const)(
             </Provider>,
         );
         expect(screen.queryByText("Version 1")).not.toBeInTheDocument();
-        expect(screen.getByText("Writing")).toBeVisible();
-        expect(screen.getByText("Version 4")).toBeVisible();
-        expect(screen.getByText("Version 5")).toBeVisible();
+        if (hasSubmissions) {
+            expect(screen.getByText("Writing")).toBeVisible();
+            expect(screen.getByText("Version 4")).toBeVisible();
+            expect(screen.getByText("Version 5")).toBeVisible();
+        } else {
+            expect(screen.queryByText("Version 4")).not.toBeInTheDocument();
+            expect(screen.queryByText("Version 5")).not.toBeInTheDocument();
+            if (childrenLayout === "Combined") {
+                expect(screen.queryByText("Writing")).not.toBeInTheDocument();
+            }
+        }
     },
 );
 

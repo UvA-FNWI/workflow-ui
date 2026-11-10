@@ -75,7 +75,7 @@ describe("hasVersionHistory", () => {
         expect(hasVersionHistory(step)).toBe(true);
     });
 
-    it("keeps history when permissions hide all submissions", () => {
+    it("hides history when permissions hide all submissions", () => {
         const step = makeStep({
             versions: {
                 current: null,
@@ -89,7 +89,7 @@ describe("hasVersionHistory", () => {
             },
         });
 
-        expect(hasVersionHistory(step)).toBe(true);
+        expect(hasVersionHistory(step)).toBe(false);
     });
 });
 

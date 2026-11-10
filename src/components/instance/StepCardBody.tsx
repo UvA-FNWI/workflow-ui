@@ -100,7 +100,7 @@ export const StepCardBody = ({
     };
 
     const versionHeading =
-        step.versions?.current && hasVersionHistory(step) ? (
+        step.versions?.current && step.versions.history.length > 0 ? (
             <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
                 {t("version_card.version_nr", {versionNumber: step.versions.current.versionNumber})}
             </Heading>
@@ -113,8 +113,7 @@ export const StepCardBody = ({
         <>
             <div className="flex flex-col gap-4">
                 {!inlineForm &&
-                    (submissions.length === 0 ||
-                        (step.versions?.current?.submissions.length ?? 0) > 0) &&
+                    (step.versions?.current?.submissions.length ?? 0) > 0 &&
                     versionHeading}
                 {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
@@ -174,7 +173,9 @@ export const StepCardBody = ({
                     getStepHierarchy(step)
                         .slice(1)
                         .filter(
-                            (child) => child.versions?.current != null || hasVersionHistory(child),
+                            (child) =>
+                                (child.versions?.current?.submissions.length ?? 0) > 0 ||
+                                hasVersionHistory(child),
                         )
                         .map((child) => (
                             <section key={child.id} className="pt-4">

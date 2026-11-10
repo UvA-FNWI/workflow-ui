@@ -10,11 +10,12 @@ type Props = {
 };
 
 export const VersionHistory = ({versions, instanceId, defaultExpandFirst}: Props) => {
-    if (versions.length === 0) return null;
+    const visibleVersions = versions.filter((version) => version.submissions.length > 0);
+    if (visibleVersions.length === 0) return null;
 
     return (
         <div className="flex flex-col">
-            {versions.map((v, index, arr) => (
+            {visibleVersions.map((v, index, arr) => (
                 <div key={v.versionNumber}>
                     {index > 0 && <Separator />}
                     <VersionCard

@@ -14,9 +14,9 @@ export const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
     ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
 ];
 
-/** Empty and permission-filtered attempts still have a place in history. */
+/** Only attempts with submissions visible to the viewer have displayable history. */
 export function hasVersionHistory(step: WorkflowStep): boolean {
-    return (step.versions?.history.length ?? 0) > 0;
+    return step.versions?.history.some((version) => version.submissions.length > 0) ?? false;
 }
 
 export function getPreviousFormVersion(step: WorkflowStep, form?: string): number | undefined {
