@@ -48,7 +48,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
     initialUser,
     emailErrorMessages,
 }) => {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
     const prevIsOpen = useRef(false);
     const [selectedOrganization, setSelectedOrganization] = useState<Selection>(
         initialUser?.organization ? new Set([initialUser.organization.id]) : new Set(),
@@ -275,7 +275,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                         isSaving
                     }
                 >
-                    {t("confirm")}
+                    {t("common:confirm")}
                 </Button>
                 <Button
                     size="large"
@@ -291,7 +291,7 @@ export const AddExternalUserModal: React.FC<AddExternalUserModalProps> = ({
                     variant="destructive"
                     onClick={() => onOpenChange(false)}
                 >
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>

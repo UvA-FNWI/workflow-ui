@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function ActionModal({instanceId, action, onClose, previousVersion}: Props) {
-    const {t, l} = useTranslate("workflow");
+    const {t, l} = useTranslate(["workflow", "common"]);
     const [executeAction, {isLoading, isError}] = actionsEndpoints.executeAction.useMutation();
 
     if (action.type === "SubmitForm") {
@@ -58,10 +58,10 @@ export function ActionModal({instanceId, action, onClose, previousVersion}: Prop
                         if (!result.error) onClose();
                     }}
                 >
-                    {t("confirm")}
+                    {t("common:confirm")}
                 </Button>
                 <Button intent="secondary" onClick={onClose}>
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>
