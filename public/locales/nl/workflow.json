@@ -47,6 +47,7 @@
     "recalculate_current_steps": "Stappen herberekenen",
     "recalculate_current_steps_error": "Kon de huidige stappen niet herberekenen",
     "recalculate_current_steps_success": "{{total}} instanties gecontroleerd: {{updated}} bijgewerkt en {{unchanged}} ongewijzigd",
+    "select_definition": "Kies een definitie",
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
