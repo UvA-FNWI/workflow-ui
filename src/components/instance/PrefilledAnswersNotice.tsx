@@ -30,7 +30,7 @@ const saveClearedVersion = (key: string, version: string) => {
 };
 
 const Notice = ({instanceId, submissionId, previousVersion}: NoticeProps) => {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
     const toast = useToast();
     const [clearAnswers] = answersApi.endpoints.clearAnswers.useMutation();
     const storageKey = `prefilled-answers-cleared:${instanceId}:${submissionId}`;
@@ -95,7 +95,7 @@ const Notice = ({instanceId, submissionId, previousVersion}: NoticeProps) => {
                         disabled={isClearing}
                         onClick={() => setIsConfirming(false)}
                     >
-                        {t("cancel")}
+                        {t("common:cancel")}
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -104,4 +104,6 @@ const Notice = ({instanceId, submissionId, previousVersion}: NoticeProps) => {
 };
 
 export const PrefilledAnswersNotice = ({previousVersion, ...props}: Props) =>
-    previousVersion === undefined ? null : <Notice {...props} previousVersion={previousVersion} />;
+    previousVersion === undefined ? null : (
+        <Notice key={previousVersion} {...props} previousVersion={previousVersion} />
+    );

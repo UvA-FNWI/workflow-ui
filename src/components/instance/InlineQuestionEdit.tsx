@@ -36,7 +36,7 @@ export const InlineQuestionEdit = ({
     onSaveExternalUser,
     onClose,
 }: Props) => {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
     const [localValue, setLocalValue] = useState<unknown>(value ?? null);
     const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
 
@@ -79,7 +79,7 @@ export const InlineQuestionEdit = ({
                     {t("save")}
                 </Button>
                 <Button variant="destructive" intent="secondary" onClick={onClose}>
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </div>
         </div>

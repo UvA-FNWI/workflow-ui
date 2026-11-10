@@ -8,11 +8,9 @@ import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {
     type ContentState,
-    getCurrentVersionNumber,
     getPreviousFormVersion,
+    getStepHierarchy,
     hasVersionHistory,
-    type ModalState,
-    resolveFormState,
 } from "~/components/instance/resolveContentState.ts";
 import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -24,35 +22,35 @@ import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
 
 type Props = {
     step: WorkflowStep;
+    showChildHistory?: boolean;
     instance: WorkflowInstance;
     actions: Action[];
     submissions: Submission[];
     contentState: ContentState;
-    modalState: ModalState;
     activeAction: Action | null;
-    resolvedAction: Action | null;
     emptyStateMessage: string | null;
     setActiveAction: (action: Action | null) => void;
 };
 
 export const StepCardBody = ({
     step,
+    showChildHistory = true,
     instance,
     actions,
     submissions,
     contentState,
-    modalState,
     activeAction,
-    resolvedAction,
     emptyStateMessage,
     setActiveAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const dispatch = useAppDispatch();
 
-    const formState = resolveFormState(resolvedAction);
-    const openFormId = formState?.action.form;
-    const showVersionCards = hasVersionHistory(step);
+    const inlineForm =
+        activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal"
+            ? activeAction
+            : null;
+    const openFormId = inlineForm?.form;
 
     // Modal forms must not replace the step form registered for the admin helper.
     useEffect(() => {
@@ -75,29 +73,15 @@ export const StepCardBody = ({
             case "submissions":
                 return (
                     <>
-                        {showVersionCards && !formState && (
-                            <Heading
-                                fontType="heading"
-                                size="sm"
-                                as="h3"
-                                className="pt-4 font-semibold"
-                            >
-                                {t("version_card.version_nr", {
-                                    versionNumber: getCurrentVersionNumber(step),
-                                })}
-                            </Heading>
-                        )}
                         {contentState.regular.map((submission) => (
                             <div key={submission.id} className="flex flex-col gap-2">
-                                {contentState.regular.length > 0 && (
-                                    <Heading
-                                        as="h3"
-                                        size="xs"
-                                        className="py-4 pb-1 font-semibold text-red-brand"
-                                    >
-                                        {l(submission.form.title)?.toUpperCase()}
-                                    </Heading>
-                                )}
+                                <Heading
+                                    as="h3"
+                                    size="xs"
+                                    className="py-4 pb-1 font-semibold text-red-brand"
+                                >
+                                    {l(submission.form.title)?.toUpperCase()}
+                                </Heading>
                                 <FormSummary instanceId={instance.id} submission={submission} />
                             </div>
                         ))}
@@ -115,30 +99,30 @@ export const StepCardBody = ({
         }
     };
 
+    const versionHeading =
+        step.versions?.current && hasVersionHistory(step) ? (
+            <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
+                {t("version_card.version_nr", {versionNumber: step.versions.current.versionNumber})}
+            </Heading>
+        ) : null;
+
     // Action buttons show when form is NOT open and actions exist
-    const showActionButtons = !formState && actions.length > 0;
+    const showActionButtons = !inlineForm && actions.length > 0;
 
     return (
         <>
             <div className="flex flex-col gap-4">
+                {!inlineForm &&
+                    (submissions.length === 0 ||
+                        (step.versions?.current?.submissions.length ?? 0) > 0) &&
+                    versionHeading}
                 {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
 
                 {/* Form overlay: shown alongside submissions */}
-                {formState && (
+                {inlineForm && (
                     <div className="py-4">
-                        {showVersionCards && (
-                            <Heading
-                                fontType="heading"
-                                size="sm"
-                                as="h3"
-                                className="py-4 font-semibold"
-                            >
-                                {t("version_card.version_nr", {
-                                    versionNumber: getCurrentVersionNumber(step),
-                                })}
-                            </Heading>
-                        )}
+                        {versionHeading}
                         {actions.length > 1 && activeAction != null && (
                             <div className="flex justify-between gap-2">
                                 <Text className="uppercase" intent="error" size="xl">
@@ -156,11 +140,11 @@ export const StepCardBody = ({
                             </div>
                         )}
                         <FormPage
-                            key={formState.action.form}
+                            key={inlineForm.form}
                             instanceId={instance.id}
-                            submissionId={formState.action.form ?? ""}
+                            submissionId={inlineForm.form ?? ""}
                             onClose={() => setActiveAction(null)}
-                            previousVersion={getPreviousFormVersion(step, formState.action.form)}
+                            previousVersion={getPreviousFormVersion(step, inlineForm.form)}
                         />
                     </div>
                 )}
@@ -181,22 +165,43 @@ export const StepCardBody = ({
                 )}
 
                 {/* Version history: always at the bottom */}
-                {showVersionCards && (
-                    <VersionHistory
-                        versions={step.versions ?? []}
-                        instanceId={instance.id}
-                        defaultExpandFirst={submissions.length === 0}
-                    />
-                )}
+                <VersionHistory
+                    versions={step.versions?.history ?? []}
+                    instanceId={instance.id}
+                    defaultExpandFirst={submissions.length === 0}
+                />
+                {showChildHistory &&
+                    getStepHierarchy(step)
+                        .slice(1)
+                        .filter(
+                            (child) => child.versions?.current != null || hasVersionHistory(child),
+                        )
+                        .map((child) => (
+                            <section key={child.id} className="pt-4">
+                                <Heading as="h3" size="sm">
+                                    {l(child.title)}
+                                </Heading>
+                                <VersionHistory
+                                    versions={[
+                                        ...(child.versions?.current
+                                            ? [child.versions.current]
+                                            : []),
+                                        ...(child.versions?.history ?? []),
+                                    ]}
+                                    instanceId={instance.id}
+                                    defaultExpandFirst={false}
+                                />
+                            </section>
+                        ))}
             </div>
 
-            {modalState && (
+            {activeAction && !inlineForm && (
                 <ActionModal
-                    key={modalState.action.id}
-                    action={modalState.action}
+                    key={activeAction.id}
+                    action={activeAction}
                     onClose={() => setActiveAction(null)}
                     instanceId={instance.id}
-                    previousVersion={getPreviousFormVersion(step, modalState.action.form)}
+                    previousVersion={getPreviousFormVersion(step, activeAction.form)}
                 />
             )}
         </>
