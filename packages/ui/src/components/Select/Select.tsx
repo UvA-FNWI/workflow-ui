@@ -162,6 +162,11 @@ interface SelectInputProps<
   placeholder?: string;
   isDisabled?: boolean;
   isValid?: boolean;
+  /**
+   * Multiple selection only: render this text instead of tags for the
+   * selected items, e.g. "3 selected". Screen readers still get the names.
+   */
+  selectedSummary?: (selectedItems: Node<T>[]) => string;
 }
 export const SelectInput = <
   T extends object,
@@ -175,6 +180,7 @@ export const SelectInput = <
   placeholder,
   isDisabled,
   isValid,
+  selectedSummary,
 }: SelectInputProps<T, M>) => {
   const { focusProps, isFocusVisible } = useFocusRing();
   const { buttonProps } = useButton(triggerProps, triggerRef);
@@ -208,7 +214,7 @@ export const SelectInput = <
           <span {...valueProps} className="ui:sr-only">
             {state.selectedItems.length > 0
               ? state.selectedItems.map(item => item.textValue).join(', ')
-              : placeholder}
+              : (selectedSummary?.(state.selectedItems) ?? placeholder)}
           </span>
           <Icon
             name="chevron-down-small-line"
@@ -221,7 +227,14 @@ export const SelectInput = <
             )}
           />
         </button>
-        {state.selectedItems.length > 0 ? (
+        {selectedSummary ? (
+          <span
+            aria-hidden="true"
+            className="ui:pointer-events-none ui:relative ui:z-10 ui:min-w-0 ui:flex-1 ui:truncate ui:pr-8"
+          >
+            {selectedSummary(state.selectedItems)}
+          </span>
+        ) : state.selectedItems.length > 0 ? (
           <SelectedTags
             items={state.selectedItems}
             isDisabled={isDisabled}
@@ -236,7 +249,7 @@ export const SelectInput = <
             }}
           />
         ) : (
-          <span className="ui:pointer-events-none ui:relative ui:z-10 ui:min-w-0 ui:flex-1 ui:truncate ui:pr-8 ui:text-grey-600 ui:dark:text-grey-400">
+          <span className="ui:pointer-events-none ui:relative ui:z-10 ui:min-w-0 ui:flex-1 ui:truncate ui:pr-8 ui:text-grey-700 ui:dark:text-grey-400">
             {placeholder}
           </span>
         )}
@@ -260,7 +273,7 @@ export const SelectInput = <
         className={cn(
           'ui:flex-1 ui:truncate ui:text-left',
           state.selectedItems.length === 0 &&
-            'ui:text-grey-600 ui:dark:text-grey-400'
+            'ui:text-grey-700 ui:dark:text-grey-400'
         )}
       >
         {/* TODO: Support JSX items better */}
@@ -301,6 +314,11 @@ export interface SelectProps<
   isValid?: boolean;
   /** Select options */
   children: AriaSelectProps<T, M>['children'];
+  /**
+   * Multiple selection only: show this text instead of tags for the selected
+   * items, e.g. "None selected" / "3 selected".
+   */
+  selectedSummary?: (selectedItems: Node<T>[]) => string;
 }
 
 export function Select<
@@ -315,6 +333,7 @@ export function Select<
     isValid = true,
     isDisabled = false,
     placeholder,
+    selectedSummary,
     ...restProps
   } = props;
 
@@ -367,6 +386,7 @@ export function Select<
         placeholder={placeholder}
         isDisabled={isDisabled}
         isValid={!invalid}
+        selectedSummary={selectedSummary}
       />
 
       {state.isOpen && (
@@ -385,7 +405,7 @@ export function Select<
       {description && (
         <div
           {...descriptionProps}
-          className="ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400"
+          className="ui:mt-1 ui:text-sm ui:text-grey-700 ui:dark:text-grey-400"
         >
           {description}
         </div>

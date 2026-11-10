@@ -7,6 +7,23 @@ import './preview.css';
 
 const preview: Preview = {
   parameters: {
+    // Accessibility panel (axe): check against WCAG 2.2 A + AA
+    a11y: {
+      options: {
+        runOnly: {
+          type: 'tag',
+          values: [
+            'wcag2a',
+            'wcag2aa',
+            'wcag21a',
+            'wcag21aa',
+            'wcag22a',
+            'wcag22aa',
+          ],
+        },
+      },
+      test: 'todo',
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

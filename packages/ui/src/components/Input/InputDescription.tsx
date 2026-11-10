@@ -12,7 +12,7 @@ export const InputDescription: React.FC<InputDescriptionProps> = ({
   <div
     {...rest}
     className={cn(
-      'ui:mt-1 ui:text-sm ui:text-grey-600 ui:dark:text-grey-400',
+      'ui:mt-1 ui:text-sm ui:text-grey-700 ui:dark:text-grey-400',
       className
     )}
   >
