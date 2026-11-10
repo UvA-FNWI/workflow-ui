@@ -2,7 +2,15 @@ import {type Key} from "react";
 
 import {Navigate, useSearchParams} from "react-router";
 
-import {Button, Card, ComboBox, ComboBoxItem, Container, InputLabel} from "@uva-fnwi/datanose-ui";
+import {
+    Button,
+    Card,
+    ComboBox,
+    ComboBoxItem,
+    Container,
+    InputLabel,
+    Text,
+} from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
@@ -85,9 +93,7 @@ function Develop() {
             <FormEditorCard />
             <Card>
                 {creatableDefinitions.length === 0 ? (
-                    <p className="text-sm text-grey-700 dark:text-grey-300">
-                        {t("develop.no_definitions")}
-                    </p>
+                    <Text className="italic">{t("develop.no_definitions")}</Text>
                 ) : (
                     <div className="flex flex-col gap-4 pt-4 pb-6">
                         <div>
@@ -108,8 +114,10 @@ function Develop() {
                                 ))}
                             </ComboBox>
                         </div>
-                        {selectedDefinition && (
+                        {selectedDefinition ? (
                             <WorkflowInstancesPanel definition={selectedDefinition} />
+                        ) : (
+                            <Text className="italic">{t("develop.no_definition_selected")}</Text>
                         )}
                     </div>
                 )}

@@ -42,6 +42,7 @@
     "load_error": "Kon instanties niet laden",
     "loading": "Laden…",
     "new": "Nieuw {{name}}",
+    "no_definition_selected": "Selecteer een definitie om instanties van dat type te tonen.",
     "no_definitions": "Geen projecttypes beschikbaar",
     "no_instances": "Nog geen instanties",
     "recalculate_current_steps": "Stappen herberekenen",

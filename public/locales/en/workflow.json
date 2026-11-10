@@ -42,6 +42,7 @@
     "load_error": "Could not load instances",
     "loading": "Loading…",
     "new": "New {{name}}",
+    "no_definition_selected": "Select a definition to show instances of that type.",
     "no_definitions": "No project types available",
     "no_instances": "No instances yet",
     "recalculate_current_steps": "Recalculate steps",
