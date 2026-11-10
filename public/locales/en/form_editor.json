@@ -30,6 +30,7 @@
   "edit_visually": "Edit visually",
   "editing_file": "Editing this question in {{file}}",
   "form_not_found": "Form not found: {{path}}",
+  "hide_forms": "Hide forms",
   "inherited_hint": "Defined in {{file}}. Editing it there would change every workflow that inherits it.",
   "inherited_short": "Inherited",
   "internal_name": "Internal name",
@@ -76,6 +77,7 @@
   "remove_from_page": "Remove from this page",
   "rename_page": "Edit the tab title",
   "required": "Required",
+  "show_forms": "Show forms",
   "title": "Form editor",
   "yaml_only": {
     "advanced": "The visual editor does not support {{keys}}, so this question stays in YAML.",
