@@ -7,7 +7,7 @@ import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {DataType, Question} from "~/store/api/types/submissions.ts";
-import {formatAnswer} from "~/utils/formatAnswer.ts";
+import {formatAnswer, hasReferenceId} from "~/utils/formatAnswer.ts";
 
 type Props = {
     instanceId: string;
@@ -103,7 +103,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
     const formatted = formatAnswer(value, question.type, i18n.language, choices);
 
     const referenceIds: string[] =
-        question.type === "Reference" && value != null
+        question.type === "Reference" && hasReferenceId(value)
             ? (Array.isArray(value) ? value : [value]).map(String)
             : [];
 
@@ -142,7 +142,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                     <Text
                         as="span"
                         display="inline"
-                        className="wrap-break-word whitespace-pre-wrap"
+                        className="min-w-0 wrap-break-word whitespace-pre-wrap"
                     >
                         {formatted || "-"}
                     </Text>
