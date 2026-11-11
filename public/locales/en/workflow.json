@@ -42,11 +42,13 @@
     "load_error": "Could not load instances",
     "loading": "Loading…",
     "new": "New {{name}}",
+    "no_definition_selected": "Select a definition to show instances of that type.",
     "no_definitions": "No project types available",
     "no_instances": "No instances yet",
     "recalculate_current_steps": "Recalculate steps",
     "recalculate_current_steps_error": "Could not recalculate the current steps",
     "recalculate_current_steps_success": "Checked {{total}} instances: {{updated}} updated and {{unchanged}} unchanged",
+    "select_definition": "Select a definition",
     "title": "Develop"
   },
   "email": "Email address",
@@ -82,7 +84,6 @@
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
       "calculated_grade": "Calculated grade: ",
-      "discrepancy_warning": "There is a large discrepancy between the supervisors' assessments. Please discuss the grades before submitting and consult the coordinator if needed.",
       "final_grade": "Final grade",
       "grading_incomplete": "Grading not yet complete"
     },
