@@ -150,9 +150,17 @@ export const instancesApi = baseApi.injectEndpoints({
         }),
         getCorrespondence: builder.query<Correspondence[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Correspondence`,
+            providesTags: (_result, _error, instanceId: string) => [
+                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+            ],
         }),
         getHistory: builder.query<InstanceHistoryItem[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/History`,
+            providesTags: (_result, _error, instanceId: string) => [
+                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+            ],
         }),
     }),
 });

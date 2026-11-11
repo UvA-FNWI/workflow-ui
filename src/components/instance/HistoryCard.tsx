@@ -112,6 +112,7 @@ export function HistoryCard({instanceId}: HistoryCardProps) {
                                 getRowId={(row) => row.id}
                                 emptyNode={<Text className="italic">{t("history.empty")}</Text>}
                                 textSize="base"
+                                initialSorting={[{id: "timestamp", desc: true}]}
                             />
                         )}
                     </div>
@@ -165,7 +166,7 @@ const UndoReasonModal = ({isOpen, onClose, item}: UndoReasonModalProps) => {
             </Modal.Body>
             <Modal.Footer>
                 <Button size="large" intent="secondary" onClick={onClose}>
-                    {t("cancel")}
+                    {t("cancel", {ns: "common"})}
                 </Button>
             </Modal.Footer>
         </Modal>
