@@ -5,14 +5,22 @@ export type PersonalRoleGroup = {
     instances: PersonalInstance[];
 };
 
-export function partitionPersonalInstancesByCompletion(instances: PersonalInstance[]): {
-    active: PersonalInstance[];
-    completed: PersonalInstance[];
-} {
-    return {
-        active: instances.filter((instance) => instance.currentStep !== null),
-        completed: instances.filter((instance) => instance.currentStep === null),
-    };
+export function partitionPersonalInstancesByStatus(instances: PersonalInstance[]) {
+    const active: PersonalInstance[] = [];
+    const completed: PersonalInstance[] = [];
+    const stopped: PersonalInstance[] = [];
+
+    for (const instance of instances) {
+        if (instance.workflowStopped) {
+            stopped.push(instance);
+        } else if (instance.currentStep === null) {
+            completed.push(instance);
+        } else {
+            active.push(instance);
+        }
+    }
+
+    return {active, completed, stopped};
 }
 
 export function groupPersonalInstancesByRole(

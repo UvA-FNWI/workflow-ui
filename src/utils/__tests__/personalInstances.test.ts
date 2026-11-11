@@ -3,7 +3,7 @@ import {describe, expect, it} from "vitest";
 import type {PersonalInstance, PersonalRole} from "~/store/api/types/personal";
 import {
     groupPersonalInstancesByRole,
-    partitionPersonalInstancesByCompletion,
+    partitionPersonalInstancesByStatus,
 } from "~/utils/personalInstances";
 
 const instance = (
@@ -71,15 +71,19 @@ describe("groupPersonalInstancesByRole", () => {
             {role: studentRole, instances: [student]},
         ]);
     });
+});
 
-    it("partitions active and completed instances by the presence of a current step", () => {
-        const studentRole = role("Student", "Student", "Student");
-        const active = instance("active", [studentRole.name]);
-        const completed = instance("completed", [studentRole.name], "Project", null);
+it("partitions stopped instances before checking the current step", () => {
+    const active = {...instance("active", ["Student"]), workflowStopped: false};
+    const completed = instance("completed", ["Student"], "Project", null);
+    const stopped = {...instance("stopped", ["Student"]), workflowStopped: true};
+    const stoppedWithoutStep = {...stopped, id: "stopped-without-step", currentStep: null};
 
-        expect(partitionPersonalInstancesByCompletion([active, completed])).toEqual({
-            active: [active],
-            completed: [completed],
-        });
+    expect(
+        partitionPersonalInstancesByStatus([active, stopped, completed, stoppedWithoutStep]),
+    ).toEqual({
+        active: [active],
+        completed: [completed],
+        stopped: [stopped, stoppedWithoutStep],
     });
 });
