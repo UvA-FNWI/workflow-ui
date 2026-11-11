@@ -1,14 +1,15 @@
+import {type Key} from "react";
+
 import {Navigate, useSearchParams} from "react-router";
 
 import {
     Button,
     Card,
+    ComboBox,
+    ComboBoxItem,
     Container,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
+    InputLabel,
+    Text,
 } from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
@@ -60,67 +61,67 @@ function Develop() {
 
     // Only show types the user can actually create here — the page is for creating/iterating on
     // instances, so non-creatable types (e.g. Context) would just be empty, unactionable tabs.
-    const creatableDefinitions = definitions.filter((definition) => definition.canCreateInstance);
+    const creatableDefinitions = definitions
+        .filter((definition) => definition.canCreateInstance)
+        .sort((a, b) => (l(a.title) ?? "").localeCompare(l(b.title) ?? ""));
 
-    const onTabChange = (index: number) => {
+    const selectedDefinitionId = searchParams.get("definition");
+    const selectedDefinition = creatableDefinitions.find(
+        (definition) => definition.name === selectedDefinitionId,
+    );
+
+    const onDefinitionChange = (key: Key | null) => {
         // Preserve every existing param (notably ?version=) and only update ?tab=.
         setSearchParams(
             (prev) => {
                 const next = new URLSearchParams(prev);
-                next.set("tab", creatableDefinitions[index].name);
+                if (key === null) {
+                    next.delete("definition");
+                } else {
+                    next.set("definition", String(key));
+                }
                 return next;
             },
             {replace: true},
         );
     };
 
-    let definitionsContent;
-    if (creatableDefinitions.length === 0) {
-        definitionsContent = (
-            <Card>
-                <p className="text-sm text-grey-700 dark:text-grey-300">
-                    {t("develop.no_definitions")}
-                </p>
-            </Card>
-        );
-    } else if (creatableDefinitions.length === 1) {
-        definitionsContent = (
-            <Card>
-                <WorkflowInstancesPanel definition={creatableDefinitions[0]} />
-            </Card>
-        );
-    } else {
-        const activeName = searchParams.get("tab");
-        const activeIndex = Math.max(
-            0,
-            creatableDefinitions.findIndex((d) => d.name === activeName),
-        );
-        definitionsContent = (
-            <Card>
-                <Tabs activeIndex={activeIndex} onTabChange={onTabChange}>
-                    <TabList>
-                        {creatableDefinitions.map((definition) => (
-                            <Tab key={definition.name}>{l(definition.titlePlural)}</Tab>
-                        ))}
-                    </TabList>
-                    <TabPanels>
-                        {creatableDefinitions.map((definition) => (
-                            <TabPanel key={definition.name}>
-                                <WorkflowInstancesPanel definition={definition} />
-                            </TabPanel>
-                        ))}
-                    </TabPanels>
-                </Tabs>
-            </Card>
-        );
-    }
-
     return (
         <Container maxWidth={1280}>
             {header}
             <ConfigVersionCard />
             <FormEditorCard />
-            {definitionsContent}
+            <Card>
+                {creatableDefinitions.length === 0 ? (
+                    <Text className="italic">{t("develop.no_definitions")}</Text>
+                ) : (
+                    <div className="flex flex-col gap-4 pt-4 pb-6">
+                        <div>
+                            <InputLabel>{t("develop.select_definition")}</InputLabel>
+                            <ComboBox
+                                value={selectedDefinition ? selectedDefinitionId : null}
+                                onChange={onDefinitionChange}
+                                placeholder={t("select")}
+                                noResults={t("search_and_select.no_results")}
+                            >
+                                {creatableDefinitions.map((definition) => (
+                                    <ComboBoxItem
+                                        key={definition.name}
+                                        textValue={`${l(definition.title)} (${l(definition.titlePlural)})`}
+                                    >
+                                        {`${l(definition.title)} (${l(definition.titlePlural)})`}
+                                    </ComboBoxItem>
+                                ))}
+                            </ComboBox>
+                        </div>
+                        {selectedDefinition ? (
+                            <WorkflowInstancesPanel definition={selectedDefinition} />
+                        ) : (
+                            <Text className="italic">{t("develop.no_definition_selected")}</Text>
+                        )}
+                    </div>
+                )}
+            </Card>
         </Container>
     );
 }

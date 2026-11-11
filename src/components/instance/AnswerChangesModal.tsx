@@ -13,7 +13,7 @@ type Props = {
 };
 
 export const AnswerChangesModal = ({isOpen, onClose, question, changes}: Props) => {
-    const {t, i18n} = useTranslate("workflow");
+    const {t, i18n} = useTranslate(["workflow", "common"]);
 
     return (
         <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()} size="sm">
@@ -73,7 +73,7 @@ export const AnswerChangesModal = ({isOpen, onClose, question, changes}: Props) 
             </Modal.Body>
             <Modal.Footer>
                 <Button size="large" intent="secondary" onClick={onClose}>
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>

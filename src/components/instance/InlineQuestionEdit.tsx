@@ -36,7 +36,7 @@ export const InlineQuestionEdit = ({
     onSaveExternalUser,
     onClose,
 }: Props) => {
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
     const [localValue, setLocalValue] = useState<unknown>(value ?? null);
     const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
 
@@ -51,7 +51,7 @@ export const InlineQuestionEdit = ({
     };
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
             <InputControl
                 instanceId={instanceId}
                 submissionId={submissionId ?? ""}
@@ -79,7 +79,7 @@ export const InlineQuestionEdit = ({
                     {t("save")}
                 </Button>
                 <Button variant="destructive" intent="secondary" onClick={onClose}>
-                    {t("cancel")}
+                    {t("common:cancel")}
                 </Button>
             </div>
         </div>

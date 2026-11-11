@@ -30,6 +30,7 @@
   "edit_visually": "Visueel bewerken",
   "editing_file": "Deze vraag wordt bewerkt in {{file}}",
   "form_not_found": "Formulier niet gevonden: {{path}}",
+  "hide_forms": "Verberg formulieren",
   "inherited_hint": "Gedefinieerd in {{file}}. Daar bewerken verandert elke workflow die dit overerft.",
   "inherited_short": "Overgeërfd",
   "internal_name": "Interne naam",
@@ -76,6 +77,7 @@
   "remove_from_page": "Van deze pagina verwijderen",
   "rename_page": "Titel van het tabblad bewerken",
   "required": "Verplicht",
+  "show_forms": "Toon formulieren",
   "title": "Formulier bewerken",
   "yaml_only": {
     "advanced": "De visuele editor ondersteunt {{keys}} niet, dus deze vraag blijft in YAML.",

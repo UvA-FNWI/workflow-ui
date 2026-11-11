@@ -84,7 +84,7 @@ export function WorkflowInstancesPanel({definition}: WorkflowInstancesPanelProps
         <div className="flex flex-col gap-4">
             <div className="my-4 flex items-center justify-between">
                 <Heading as="h2" size="md" className="mb-0">
-                    {l(definition.titlePlural)}
+                    {`${l(definition.title)} (${l(definition.titlePlural)})`}
                 </Heading>
                 <div className="flex flex-wrap items-center justify-end gap-2">
                     <Button

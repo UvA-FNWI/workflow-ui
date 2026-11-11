@@ -18,7 +18,7 @@ type JobModalProps = {
 
 export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) => {
     const {modal, i18n} = useJobTranslations();
-    const {t} = useTranslate("workflow");
+    const {t} = useTranslate(["workflow", "common"]);
     const [isRunConfirmOpen, setIsRunConfirmOpen] = useState(false);
 
     const {
@@ -75,7 +75,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
                         size="large"
                         onClick={() => onClose(false)}
                     >
-                        {t("cancel")}
+                        {t("common:cancel")}
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -87,14 +87,14 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button intent="primary" onClick={handleRun} disabled={isRunning}>
-                        {t("confirm")}
+                        {t("common:confirm")}
                     </Button>
                     <Button
                         intent="secondary"
                         variant="destructive"
                         onClick={() => setIsRunConfirmOpen(false)}
                     >
-                        {t("cancel")}
+                        {t("common:cancel")}
                     </Button>
                 </Modal.Footer>
             </Modal>
