@@ -1,13 +1,15 @@
 import {Fragment} from "react";
 
+import {useOutletContext} from "react-router";
+
 import {Card, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
+import type {HomeLayoutContext} from "~/components/HomeLayout";
 import {HomePage} from "~/components/HomePage";
 import {VersionedLink} from "~/components/VersionedLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
-import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 
 function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle: string}) {
     return (
@@ -40,11 +42,11 @@ function Overview() {
     const {t, l} = useTranslate("workflow");
     useDocumentTitle("Overview");
 
-    const {data: accessibleDefinitions} = useGetAccessibleWorkflowDefinitionsQuery();
+    const {definitions} = useOutletContext<HomeLayoutContext>();
 
-    if (!accessibleDefinitions) return null;
+    if (!definitions) return null;
 
-    const screens = accessibleDefinitions.flatMap((definition) =>
+    const screens = definitions.flatMap((definition) =>
         definition.screens.map((name) => ({definition, name})),
     );
 

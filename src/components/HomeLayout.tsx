@@ -2,16 +2,19 @@ import {useEffect} from "react";
 
 import {Navigate, Outlet, useLocation} from "react-router";
 
-import {Container, useTabsWithLocalStorage} from "@uva-fnwi/datanose-ui";
+import {Container, Text, useTabsWithLocalStorage} from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
+import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
+import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 import {rememberHomePath} from "~/store/homeNavigationSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
 export type HomeLayoutContext = {
+    definitions: WorkflowDefinition[] | undefined;
     showRoleTabs: boolean;
     activeTab: number;
     onTabChange: (index: number) => void;
@@ -19,6 +22,7 @@ export type HomeLayoutContext = {
 };
 
 export function HomeLayout() {
+    const {t} = useTranslate("workflow");
     const {pathname, search} = useLocation();
     const navigate = useVersionedNavigate();
     const dispatch = useAppDispatch();
@@ -64,6 +68,16 @@ export function HomeLayout() {
     }, [definitions, dispatch, homePath, pathname, redirect]);
 
     if (redirect) return <Navigate to={{pathname: redirect, search}} replace />;
+    if (pathname === "/" && isError && !definitions) {
+        return (
+            <Container maxWidth={1280}>
+                <PageHeader title={t("home")} />
+                <Text role="alert" intent="error">
+                    {t("overview.load_error")}
+                </Text>
+            </Container>
+        );
+    }
     if ((!definitions && !isError) || isPersonalLoading) {
         return (
             <Container maxWidth={1280}>
@@ -76,6 +90,7 @@ export function HomeLayout() {
         <Outlet
             context={
                 {
+                    definitions,
                     showRoleTabs: hasCoordinatorView && hasPersonalView,
                     activeTab: isPersonal ? 1 : activeIndex,
                     onTabChange: (index) => {
