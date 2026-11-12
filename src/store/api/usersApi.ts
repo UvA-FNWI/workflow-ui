@@ -1,6 +1,7 @@
 import {baseApi} from "./baseApi";
 import type {
     CurrentUserResponse,
+    PeopleSearchResults,
     UpdateUserEmailRequest,
     UserImpersonationStarted,
     UserSearchResult,
@@ -23,6 +24,10 @@ export const usersApi = baseApi.injectEndpoints({
                 url: "/Users/Find",
                 params: {query, includeExternalUsers},
             }),
+        }),
+        searchPeople: builder.query<PeopleSearchResults, string>({
+            query: (query) => ({url: "/Users/Search", params: {query}}),
+            providesTags: ["User", "Instance"],
         }),
         verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({
             query: (body) => ({
@@ -57,6 +62,7 @@ export const {
     useGetCurrentUserQuery,
     useFindUsersQuery,
     useLazyFindUsersQuery,
+    useSearchPeopleQuery,
     useVerifyEmailMutation,
     useStartImpersonationMutation,
     useUpdateUserEmailMutation,

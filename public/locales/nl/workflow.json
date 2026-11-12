@@ -142,6 +142,17 @@
     "no_access": "Je hebt nog geen toegang tot vakken.",
     "personal_view": "Mijn overzicht"
   },
+  "people_search": {
+    "empty": "Geen personen gevonden.",
+    "error": "Zoeken is mislukt. Probeer het opnieuw.",
+    "label": "Personen zoeken",
+    "loading": "Zoeken…",
+    "placeholder": "Zoek op naam, e-mailadres of gebruikersnaam",
+    "query_length": "Voer 2 tot 200 tekens in.",
+    "refine": "Er zijn meer resultaten. Verfijn je zoekopdracht om ze te vinden.",
+    "results_one": "{{count}} resultaat voor ‘{{query}}’",
+    "results_other": "{{count}} resultaten voor ‘{{query}}’"
+  },
   "previous": "Vorige",
   "progress": {
     "amsterdam_time": "Amsterdamse tijd",

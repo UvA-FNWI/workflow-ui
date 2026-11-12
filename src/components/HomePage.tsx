@@ -5,6 +5,7 @@ import {useOutletContext} from "react-router";
 import {Container, Tab, TabList, TabPanel, TabPanels, Tabs} from "@uva-fnwi/datanose-ui";
 
 import type {HomeLayoutContext} from "~/components/HomeLayout";
+import {HomePeopleSearch} from "~/components/HomePeopleSearch";
 import {PageHeader} from "~/components/PageHeader";
 import {useTranslate} from "~/hooks/useTranslate";
 
@@ -30,6 +31,20 @@ export function HomePage({
     const navigation = useOutletContext<HomeLayoutContext | undefined>();
     const {t} = useTranslate("workflow");
     const showRoleTabs = navigation?.showRoleTabs;
+    const content = showRoleTabs ? (
+        <Tabs activeIndex={navigation.activeTab} onTabChange={navigation.onTabChange}>
+            <TabList className="mb-6">
+                <Tab>{coordinatorTabLabel ?? t("overview.coordinator_view")}</Tab>
+                <Tab>{t("overview.personal_view")}</Tab>
+            </TabList>
+            <TabPanels>
+                <TabPanel>{children}</TabPanel>
+                <TabPanel>{personalContent ?? children}</TabPanel>
+            </TabPanels>
+        </Tabs>
+    ) : (
+        children
+    );
 
     return (
         <Container maxWidth={maxWidth}>
@@ -41,19 +56,10 @@ export function HomePage({
                 className={showRoleTabs ? "mb-2" : undefined}
                 isLoading={isLoading}
             />
-            {isLoading ? null : showRoleTabs ? (
-                <Tabs activeIndex={navigation.activeTab} onTabChange={navigation.onTabChange}>
-                    <TabList className="mb-6">
-                        <Tab>{coordinatorTabLabel ?? t("overview.coordinator_view")}</Tab>
-                        <Tab>{t("overview.personal_view")}</Tab>
-                    </TabList>
-                    <TabPanels>
-                        <TabPanel>{children}</TabPanel>
-                        <TabPanel>{personalContent ?? children}</TabPanel>
-                    </TabPanels>
-                </Tabs>
+            {isLoading ? null : navigation ? (
+                <HomePeopleSearch>{content}</HomePeopleSearch>
             ) : (
-                children
+                content
             )}
         </Container>
     );

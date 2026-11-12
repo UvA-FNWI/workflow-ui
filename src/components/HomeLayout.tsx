@@ -5,7 +5,7 @@ import {Navigate, Outlet, useLocation} from "react-router";
 import {Container, useTabsWithLocalStorage} from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
-import {useVersionedNavigate, useVersionedPath} from "~/hooks/useVersionedNavigate";
+import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
 import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 import {rememberHomePath} from "~/store/homeNavigationSlice";
@@ -19,8 +19,7 @@ export type HomeLayoutContext = {
 };
 
 export function HomeLayout() {
-    const {pathname} = useLocation();
-    const versionedPath = useVersionedPath();
+    const {pathname, search} = useLocation();
     const navigate = useVersionedNavigate();
     const dispatch = useAppDispatch();
     const {homePath, coordinatorPath, userName} = useAppSelector((state) => state.homeNavigation);
@@ -64,7 +63,7 @@ export function HomeLayout() {
         }
     }, [definitions, dispatch, homePath, pathname, redirect]);
 
-    if (redirect) return <Navigate to={versionedPath(redirect)} replace />;
+    if (redirect) return <Navigate to={{pathname: redirect, search}} replace />;
     if ((!definitions && !isError) || isPersonalLoading) {
         return (
             <Container maxWidth={1280}>

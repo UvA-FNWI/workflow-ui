@@ -7,6 +7,7 @@ import AuthCallback from "../pages/AuthCallback";
 import CanvasCallback from "../pages/CanvasCallback";
 import Overview from "../pages/Overview";
 import Personal from "../pages/Personal";
+import PersonOverview from "../pages/PersonOverview";
 import VersionNotFound from "../pages/VersionNotFound";
 import {developRoutes} from "./developRoutes";
 import {instanceRoutes} from "./instanceRoutes";
@@ -40,6 +41,7 @@ const routes: RouteObject[] = [
                             ...screenRoutes,
                         ],
                     },
+                    {path: "/personal/:personId", element: <PersonOverview />},
                     ...instanceRoutes,
                     ...developRoutes,
                 ],

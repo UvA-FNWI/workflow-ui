@@ -15,7 +15,20 @@ export interface UserSearchResult {
 
 export interface CurrentUserResponse extends UserSearchResult {
     isSuperAdmin: boolean;
+    canSearchPeople: boolean;
 }
+
+export type MilestonesPerson = {
+    id: string;
+    displayName: string;
+    email: string | null;
+    userName: string | null;
+};
+
+export type PeopleSearchResults = {
+    people: MilestonesPerson[];
+    hasMore: boolean;
+};
 
 /** Signed token and expiry returned when starting impersonation. */
 export interface UserImpersonationStarted {

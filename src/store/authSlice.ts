@@ -10,6 +10,7 @@ export type CurrentUser = {
     displayName: string;
     email: string;
     isSuperAdmin: boolean;
+    canSearchPeople: boolean;
 };
 
 export type AuthState = {

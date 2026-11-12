@@ -49,6 +49,14 @@
   "load_error": "Je scripties konden niet worden geladen. Probeer het opnieuw.",
   "no_instances_found": "Geen scripties gevonden voor '{{search}}'",
   "open_instance": "Open {{title}}",
+  "person": {
+    "back_to_home": "Terug naar de startpagina",
+    "back_to_search": "Terug naar zoekresultaten",
+    "empty": "Geen gekoppelde instanties gevonden.",
+    "load_error": "Het overzicht van deze persoon kon niet worden geladen.",
+    "no_instances_found": "Geen gekoppelde instanties gevonden voor '{{search}}'",
+    "title": "Persoonlijk overzicht"
+  },
   "role_title": "Je bent {{role}} voor:",
   "search_placeholder": "Typ een zoekwoord",
   "title": "Scripties"

@@ -49,6 +49,14 @@
   "load_error": "Your theses could not be loaded. Please try again.",
   "no_instances_found": "No theses found for '{{search}}'",
   "open_instance": "Open {{title}}",
+  "person": {
+    "back_to_home": "Back to home",
+    "back_to_search": "Back to search results",
+    "empty": "No linked instances found.",
+    "load_error": "This person's overview could not be loaded.",
+    "no_instances_found": "No linked instances found for '{{search}}'",
+    "title": "Personal overview"
+  },
   "role_title": "You are {{role}} for:",
   "search_placeholder": "Type a search query",
   "title": "Theses"

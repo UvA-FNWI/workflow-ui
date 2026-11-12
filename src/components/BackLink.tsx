@@ -1,12 +1,14 @@
 import {type ReactNode} from "react";
 
+import type {To} from "react-router";
+
 import {Icon} from "@uva-fnwi/datanose-ui";
 
 import {VersionedLink} from "~/components/VersionedLink";
 
 interface BackLinkProps {
     /** Destination route. Defaults to the root route. */
-    to?: string;
+    to?: To;
     /** Link text. */
     children: ReactNode;
     /** Extra classes appended to the link. */
@@ -25,7 +27,7 @@ export function BackLink({to = "/", children, className}: BackLinkProps) {
                 className ? ` ${className}` : ""
             }`}
         >
-            <Icon name="arrow-left-line" size="xs" className="mr-1" color="current" />
+            <Icon name="arrow-left-line" size="xs" className="mr-1" color="current" decorative />
             {children}
         </VersionedLink>
     );
