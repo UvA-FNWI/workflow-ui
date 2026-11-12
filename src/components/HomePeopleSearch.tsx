@@ -3,9 +3,10 @@ import {type ReactNode, useEffect, useState} from "react";
 import {useLocation, useSearchParams} from "react-router";
 
 import {skipToken} from "@reduxjs/toolkit/query";
-import {Card, Heading, Icon, SearchInput, Text} from "@uva-fnwi/datanose-ui";
+import {Heading, Icon, SearchInput, Text} from "@uva-fnwi/datanose-ui";
 
-import {VersionedLink} from "~/components/VersionedLink";
+import {HomeList} from "~/components/HomeList";
+import {HomeListLink} from "~/components/HomeListLink";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useSearchPeopleQuery} from "~/store/api/usersApi";
@@ -60,10 +61,7 @@ export function HomePeopleSearch({children}: {children: ReactNode}) {
             )}
             <div hidden={Boolean(searchQuery)}>{children}</div>
             {showResults && (
-                <section
-                    className="flex max-w-3xl flex-col gap-3"
-                    aria-label={t("people_search.label")}
-                >
+                <section className="flex flex-col gap-3" aria-label={t("people_search.label")}>
                     {isFetching ? (
                         <Text role="status">{t("people_search.loading")}</Text>
                     ) : isError ? (
@@ -76,51 +74,24 @@ export function HomePeopleSearch({children}: {children: ReactNode}) {
                                     query: searchQuery,
                                 })}
                             </Heading>
-                            <ul className="flex flex-col gap-2">
+                            <HomeList>
                                 {currentData.people.map((person) => (
                                     <li key={person.id}>
-                                        <Card padding="none">
-                                            <VersionedLink
-                                                to={`/personal/${encodeURIComponent(person.id)}`}
-                                                state={{from: {pathname, search}}}
-                                                className="hover:bg-grey-50 flex items-center gap-4 px-4 py-3 text-grey-900 focus-visible:outline focus-visible:-outline-offset-2 dark:text-grey-100 dark:hover:bg-grey-700"
-                                            >
-                                                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-900">
-                                                    <Icon
-                                                        name="user-line"
-                                                        color="current"
-                                                        decorative
-                                                    />
-                                                </span>
-                                                <span className="flex min-w-0 flex-1 flex-col">
-                                                    <Text
-                                                        as="span"
-                                                        fontWeight="semibold"
-                                                        className="break-words"
-                                                    >
-                                                        {person.displayName}
-                                                    </Text>
-                                                    <Text
-                                                        as="span"
-                                                        size="sm"
-                                                        className="break-words text-grey-700 dark:text-grey-300"
-                                                    >
-                                                        {[person.email, person.userName]
-                                                            .filter(Boolean)
-                                                            .join(" · ")}
-                                                    </Text>
-                                                </span>
-                                                <Icon
-                                                    name="visible-line"
-                                                    color="current"
-                                                    className="shrink-0"
-                                                    decorative
-                                                />
-                                            </VersionedLink>
-                                        </Card>
+                                        <HomeListLink
+                                            to={`/personal/${encodeURIComponent(person.id)}`}
+                                            state={{from: {pathname, search}}}
+                                            title={person.displayName}
+                                            subtitle={[person.email, person.userName]
+                                                .filter(Boolean)
+                                                .join(" · ")}
+                                            icon={
+                                                <Icon name="user-line" color="current" decorative />
+                                            }
+                                            iconClassName="bg-green-100 text-green-900"
+                                        />
                                     </li>
                                 ))}
-                            </ul>
+                            </HomeList>
                             {currentData.hasMore && (
                                 <Text role="status">{t("people_search.refine")}</Text>
                             )}

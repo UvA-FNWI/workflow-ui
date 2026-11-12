@@ -8,7 +8,7 @@ import {afterEach, expect, it, vi} from "vitest";
 
 import screens from "../../../public/locales/en/screens.json";
 import workflow from "../../../public/locales/en/workflow.json";
-import {HomePeopleSearch} from "../HomePeopleSearch";
+import {HomePage} from "../HomePage";
 import PersonOverview from "~/pages/PersonOverview";
 
 const {search, getPerson, getCurrentUser} = vi.hoisted(() => ({
@@ -60,12 +60,20 @@ async function renderHome(path: string, canSearchPeople = true) {
     const router = createMemoryRouter(
         [
             {
-                path: "/screens/project/overview",
+                path: "/",
                 element: (
-                    <HomePeopleSearch>
-                        <p>Project overview</p>
-                    </HomePeopleSearch>
+                    <HomePage title="Choose your course" showPeopleSearch>
+                        <p>Workflow choices</p>
+                    </HomePage>
                 ),
+            },
+            {
+                path: "/screens/project/overview",
+                element: <HomePage title="Project screen">Screen content</HomePage>,
+            },
+            {
+                path: "/personal",
+                element: <HomePage title="My overview">Personal content</HomePage>,
             },
             {path: "/personal/:personId", element: <PersonOverview />},
         ],
@@ -87,16 +95,16 @@ afterEach(() => {
 
 it("waits until typing pauses before searching or warning about query length", async () => {
     vi.useFakeTimers();
-    await renderHome("/screens/project/overview");
+    await renderHome("/");
     const input = screen.getByRole("textbox", {name: "Search for people"});
 
     fireEvent.change(input, {target: {value: "a"}});
     act(() => vi.advanceTimersByTime(499));
     expect(screen.queryByText(workflow.people_search.query_length)).not.toBeInTheDocument();
-    expect(screen.getByText("Project overview")).toBeVisible();
+    expect(screen.getByText("Workflow choices")).toBeVisible();
     act(() => vi.advanceTimersByTime(1));
     expect(screen.getByText(workflow.people_search.query_length)).toBeVisible();
-    expect(screen.getByText("Project overview")).not.toBeVisible();
+    expect(screen.getByText("Workflow choices")).not.toBeVisible();
 
     fireEvent.change(input, {target: {value: "ad"}});
     act(() => vi.advanceTimersByTime(400));
@@ -111,24 +119,24 @@ it("waits until typing pauses before searching or warning about query length", a
 
     expect(search).toHaveBeenLastCalledWith("ada");
     expect(screen.queryByText(workflow.people_search.query_length)).not.toBeInTheDocument();
-    expect(screen.getByText("Project overview")).not.toBeVisible();
+    expect(screen.getByText("Workflow choices")).not.toBeVisible();
 
     fireEvent.change(input, {target: {value: "ada@example.com"}});
     expect(screen.getByRole("heading", {name: "1 result for “ada”"})).toBeVisible();
 
     fireEvent.change(input, {target: {value: ""}});
-    expect(screen.getByText("Project overview")).toBeVisible();
+    expect(screen.getByText("Workflow choices")).toBeVisible();
 });
 
 it("searches from home and restores the query after opening a person", async () => {
-    const router = await renderHome("/screens/project/overview?version=pilot");
+    const router = await renderHome("/?version=pilot");
     const input = screen.getByRole("textbox", {name: "Search for people"});
     fireEvent.change(input, {target: {value: "ada@example.com"}});
 
     const result = await screen.findByRole("link", {name: /Ada Example/});
     expect(search).toHaveBeenLastCalledWith("ada@example.com");
     expect(screen.getByRole("heading", {name: "1 result for “ada@example.com”"})).toBeVisible();
-    expect(screen.getByText("Project overview")).not.toBeVisible();
+    expect(screen.getByText("Workflow choices")).not.toBeVisible();
     fireEvent.click(result);
 
     expect(await screen.findByRole("heading", {name: "Ada Example"})).toBeVisible();
@@ -144,13 +152,24 @@ it("searches from home and restores the query after opening a person", async () 
     expect(restoredInput).toHaveValue("ada@example.com");
     expect(screen.getByRole("link", {name: /Ada Example/})).toBeVisible();
     fireEvent.change(restoredInput, {target: {value: ""}});
-    expect(await screen.findByText("Project overview")).toBeVisible();
+    expect(await screen.findByText("Workflow choices")).toBeVisible();
 });
 
 it("does not run a search from the URL without search permission", async () => {
-    await renderHome("/screens/project/overview?people=ada", false);
+    await renderHome("/?people=ada", false);
 
-    expect(screen.getByText("Project overview")).toBeVisible();
+    expect(screen.getByText("Workflow choices")).toBeVisible();
     expect(screen.queryByRole("textbox", {name: "Search for people"})).not.toBeInTheDocument();
     expect(search.mock.calls).toEqual([[skipToken]]);
+});
+
+it.each([
+    ["/screens/project/overview", "Screen content"],
+    ["/personal", "Personal content"],
+])("keeps people search off %s", async (path, content) => {
+    await renderHome(`${path}?people=ada`);
+
+    expect(screen.getByText(content)).toBeVisible();
+    expect(screen.queryByRole("textbox", {name: "Search for people"})).not.toBeInTheDocument();
+    expect(search).not.toHaveBeenCalled();
 });

@@ -14,6 +14,7 @@ type HomePageProps = {
     description?: ReactNode;
     coordinatorTabLabel?: ReactNode;
     personalContent?: ReactNode;
+    showPeopleSearch?: boolean;
     maxWidth?: number;
     isLoading?: boolean;
     children: ReactNode;
@@ -24,6 +25,7 @@ export function HomePage({
     description,
     coordinatorTabLabel,
     personalContent,
+    showPeopleSearch = false,
     maxWidth = 1280,
     isLoading = false,
     children,
@@ -56,7 +58,7 @@ export function HomePage({
                 className={showRoleTabs ? "mb-2" : undefined}
                 isLoading={isLoading}
             />
-            {isLoading ? null : navigation ? (
+            {isLoading ? null : showPeopleSearch ? (
                 <HomePeopleSearch>{content}</HomePeopleSearch>
             ) : (
                 content
