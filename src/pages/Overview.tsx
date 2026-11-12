@@ -4,14 +4,14 @@ import {Icon} from "@uva-fnwi/datanose-ui";
 
 import type {HomeLayoutContext} from "~/components/HomeLayout";
 import {HomeList} from "~/components/HomeList";
-import {HomeListLink} from "~/components/HomeListLink";
 import {HomePage} from "~/components/HomePage";
+import {WorkflowScreenLink} from "~/components/WorkflowScreenLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
 
 function Overview() {
-    const {t, l} = useTranslate("workflow");
+    const {t} = useTranslate("workflow");
     useDocumentTitle("Overview");
 
     const {definitions} = useOutletContext<HomeLayoutContext>();
@@ -26,25 +26,31 @@ function Overview() {
         <HomePage
             title={t("overview.choose_course_title")}
             personalContent={<PersonalContent />}
-            showPeopleSearch
+            searchScreens={screens}
         >
             {screens.length === 0 ? (
                 <p>{t("overview.no_access")}</p>
             ) : (
                 <HomeList>
-                    {screens.map(({definition: def, name}) => (
-                        <li key={`${def.name}/${name}`}>
-                            <HomeListLink
-                                to={`/screens/${def.name}/${name}`}
-                                title={l(def.title) || def.name}
-                                subtitle={
-                                    def.screens.length > 1 ? name : l(def.titlePlural) || def.name
-                                }
-                                icon={<Icon name="graduate-cap-solid" decorative />}
-                                iconClassName="bg-grey-100 text-grey-700"
-                            />
-                        </li>
-                    ))}
+                    {screens.map(({definition, name}) => {
+                        const workflowTypes = [definition.name, definition.inheritsFrom];
+                        let icon;
+                        if (workflowTypes.includes("Thesis-Base")) {
+                            icon = <Icon name="graduate-cap-solid" label={t("overview.thesis")} />;
+                        } else if (workflowTypes.includes("Internship-Base")) {
+                            icon = <Icon name="suitcase-solid" label={t("overview.internship")} />;
+                        }
+
+                        return (
+                            <li key={`${definition.name}/${name}`}>
+                                <WorkflowScreenLink
+                                    definition={definition}
+                                    name={name}
+                                    icon={icon}
+                                />
+                            </li>
+                        );
+                    })}
                 </HomeList>
             )}
         </HomePage>

@@ -5,8 +5,9 @@ import {useOutletContext} from "react-router";
 import {Container, Tab, TabList, TabPanel, TabPanels, Tabs} from "@uva-fnwi/datanose-ui";
 
 import type {HomeLayoutContext} from "~/components/HomeLayout";
-import {HomePeopleSearch} from "~/components/HomePeopleSearch";
+import {HomeSearch} from "~/components/HomeSearch";
 import {PageHeader} from "~/components/PageHeader";
+import type {WorkflowScreen} from "~/components/WorkflowScreenLink";
 import {useTranslate} from "~/hooks/useTranslate";
 
 type HomePageProps = {
@@ -14,7 +15,7 @@ type HomePageProps = {
     description?: ReactNode;
     coordinatorTabLabel?: ReactNode;
     personalContent?: ReactNode;
-    showPeopleSearch?: boolean;
+    searchScreens?: WorkflowScreen[];
     maxWidth?: number;
     isLoading?: boolean;
     children: ReactNode;
@@ -25,7 +26,7 @@ export function HomePage({
     description,
     coordinatorTabLabel,
     personalContent,
-    showPeopleSearch = false,
+    searchScreens,
     maxWidth = 1280,
     isLoading = false,
     children,
@@ -48,20 +49,28 @@ export function HomePage({
         children
     );
 
+    const renderHeader = (searching = false) => (
+        <PageHeader
+            title={searching ? t("home_search.title") : title}
+            description={description}
+            backLabel={navigation?.showBackToChoices ? t("home") : undefined}
+            backTo="/"
+            className={showRoleTabs ? "mb-2" : undefined}
+            isLoading={isLoading}
+        />
+    );
+
     return (
         <Container maxWidth={maxWidth}>
-            <PageHeader
-                title={title}
-                description={description}
-                backLabel={navigation?.showBackToChoices ? t("home") : undefined}
-                backTo="/"
-                className={showRoleTabs ? "mb-2" : undefined}
-                isLoading={isLoading}
-            />
-            {isLoading ? null : showPeopleSearch ? (
-                <HomePeopleSearch>{content}</HomePeopleSearch>
+            {!isLoading && searchScreens ? (
+                <HomeSearch workflowScreens={searchScreens} renderHeader={renderHeader}>
+                    {content}
+                </HomeSearch>
             ) : (
-                content
+                <>
+                    {renderHeader()}
+                    {!isLoading && content}
+                </>
             )}
         </Container>
     );

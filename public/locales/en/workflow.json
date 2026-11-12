@@ -80,6 +80,20 @@
   "form": "Form",
   "form_load_failed": "The form could not be loaded. Please try again.",
   "home": "Home",
+  "home_search": {
+    "empty": "No people or workflows found.",
+    "error": "People search failed. Please try again.",
+    "label": "Search people and workflows",
+    "loading": "Searching…",
+    "people": "People",
+    "placeholder": "Search by project, person or studentnumber",
+    "query_length": "Enter between 2 and 200 characters.",
+    "refine": "More people matched. Refine your search to find them.",
+    "results_one": "{{count}} result for “{{query}}”",
+    "results_other": "{{count}} results for “{{query}}”",
+    "title": "Search",
+    "workflows": "Workflows"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
@@ -139,20 +153,11 @@
   "overview": {
     "choose_course_title": "Choose your course",
     "coordinator_view": "All courses",
+    "internship": "Internship",
     "load_error": "Could not load the home page. Please try again later.",
     "no_access": "You don't have access to any courses yet.",
-    "personal_view": "My overview"
-  },
-  "people_search": {
-    "empty": "No people found.",
-    "error": "The search failed. Please try again.",
-    "label": "Search for people",
-    "loading": "Searching…",
-    "placeholder": "Search by name, email address or username",
-    "query_length": "Enter between 2 and 200 characters.",
-    "refine": "More people matched. Refine your search to find them.",
-    "results_one": "{{count}} result for “{{query}}”",
-    "results_other": "{{count}} results for “{{query}}”"
+    "personal_view": "My overview",
+    "thesis": "Thesis"
   },
   "previous": "Previous",
   "progress": {

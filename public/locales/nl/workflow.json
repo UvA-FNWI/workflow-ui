@@ -80,6 +80,20 @@
   "form": "Formulier",
   "form_load_failed": "Het formulier kon niet worden geladen. Probeer het opnieuw.",
   "home": "Home",
+  "home_search": {
+    "empty": "Geen personen of workflows gevonden.",
+    "error": "Zoeken naar personen is mislukt. Probeer het opnieuw.",
+    "label": "Zoek personen en workflows",
+    "loading": "Zoeken…",
+    "people": "Personen",
+    "placeholder": "Zoek op project, persoon of studentnummer",
+    "query_length": "Voer 2 tot 200 tekens in.",
+    "refine": "Er zijn meer resultaten. Verfijn je zoekopdracht om ze te vinden.",
+    "results_one": "{{count}} resultaat voor ‘{{query}}’",
+    "results_other": "{{count}} resultaten voor ‘{{query}}’",
+    "title": "Zoeken",
+    "workflows": "Workflows"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
@@ -139,20 +153,11 @@
   "overview": {
     "choose_course_title": "Kies je vak",
     "coordinator_view": "Alle vakken",
+    "internship": "Stage",
     "load_error": "De startpagina kon niet worden geladen. Probeer het later opnieuw.",
     "no_access": "Je hebt nog geen toegang tot vakken.",
-    "personal_view": "Mijn overzicht"
-  },
-  "people_search": {
-    "empty": "Geen personen gevonden.",
-    "error": "Zoeken is mislukt. Probeer het opnieuw.",
-    "label": "Personen zoeken",
-    "loading": "Zoeken…",
-    "placeholder": "Zoek op naam, e-mailadres of gebruikersnaam",
-    "query_length": "Voer 2 tot 200 tekens in.",
-    "refine": "Er zijn meer resultaten. Verfijn je zoekopdracht om ze te vinden.",
-    "results_one": "{{count}} resultaat voor ‘{{query}}’",
-    "results_other": "{{count}} resultaten voor ‘{{query}}’"
+    "personal_view": "Mijn overzicht",
+    "thesis": "Scriptie"
   },
   "previous": "Vorige",
   "progress": {
