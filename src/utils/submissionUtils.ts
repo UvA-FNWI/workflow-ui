@@ -37,6 +37,20 @@ export function getVisibleQuestionAnswerPairs(
         .filter((pair) => pair.answer?.isVisible !== false);
 }
 
+export function hasSubmissionContent(submission: Submission): boolean {
+    return submission.form.pages.some(
+        (page) =>
+            page.isInCurrentForm &&
+            page.isActive &&
+            getVisibleQuestionAnswerPairs(
+                page.elements
+                    .filter((element) => element.kind === "Question")
+                    .map((element) => element.question!),
+                submission.answers,
+            ).length > 0,
+    );
+}
+
 export function isPageComplete(
     page: Page,
     submission: Submission,
