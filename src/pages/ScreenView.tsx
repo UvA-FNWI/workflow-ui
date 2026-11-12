@@ -18,7 +18,12 @@ import {
 import {HomePage} from "~/components/HomePage";
 import {ScreenTable} from "~/components/ScreenTable";
 import {BulkActionModal} from "~/components/ScreenTable/BulkActionModal";
-import {filterScreenRows} from "~/components/ScreenTable/filterScreenRows";
+import {
+    applyColumnFilters,
+    type ColumnFilterValues,
+    filterScreenRows,
+    getPickFilters,
+} from "~/components/ScreenTable/filterScreenRows";
 import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -55,13 +60,21 @@ const ScreenContent = () => {
         storageKey: getScreenTabStorageKey(workflowDefinition, screenName),
     });
 
+    const [columnFilters, setColumnFilters] = useState<ColumnFilterValues>({});
+
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
 
     const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
     const bulkActions = screen?.bulkActions ?? [];
+    const filters = getPickFilters(screen?.columns ?? [], rows, i18n.language);
+
+    const changeFilter = (name: string, values: string[]) => {
+        setColumnFilters((prev) => ({...prev, [name]: values}));
+        setRowSelection({});
+    };
     const selectedRows = filterScreenRows(
         screen?.columns ?? [],
-        rows,
+        applyColumnFilters(screen?.columns ?? [], rows, columnFilters, i18n.language),
         search,
         i18n.language,
     ).filter((row) => rowSelection[row.id]);
@@ -69,6 +82,9 @@ const ScreenContent = () => {
         bulkActions,
         selectedCount: selectedRows.length,
         onBulkAction: (action: BulkAction) => setBulkSelection({action, rows: selectedRows}),
+        filters,
+        filterValues: columnFilters,
+        onFilterChange: changeFilter,
     };
     const selectionProps = bulkActions.length
         ? {rowSelection, onRowSelectionChange: setRowSelection}
@@ -130,6 +146,7 @@ const ScreenContent = () => {
                                         columns={screen.columns}
                                         rows={group.rows}
                                         globalFilter={search}
+                                        columnFilters={columnFilters}
                                         {...selectionProps}
                                     />
                                 </TabPanel>
@@ -150,6 +167,7 @@ const ScreenContent = () => {
                             columns={screen.columns}
                             rows={screen.rows}
                             globalFilter={search}
+                            columnFilters={columnFilters}
                             {...selectionProps}
                         />
                     </div>

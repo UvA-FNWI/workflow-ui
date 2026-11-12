@@ -3,7 +3,7 @@ import {useMemo} from "react";
 import {type ColumnDef, type OnChangeFn, type RowSelectionState} from "@tanstack/react-table";
 import {Button, Checkbox, Icon} from "@uva-fnwi/datanose-ui";
 
-import {filterScreenRows} from "./filterScreenRows";
+import {applyColumnFilters, type ColumnFilterValues, filterScreenRows} from "./filterScreenRows";
 import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -15,6 +15,7 @@ type ScreenTableProps = {
     columns: ScreenColumn[];
     rows: ScreenRow[];
     globalFilter?: string;
+    columnFilters?: ColumnFilterValues;
     rowSelection?: RowSelectionState;
     onRowSelectionChange?: OnChangeFn<RowSelectionState>;
     showInstanceLink?: boolean;
@@ -24,6 +25,7 @@ export const ScreenTable = ({
     columns,
     rows,
     globalFilter = "",
+    columnFilters = {},
     rowSelection,
     onRowSelectionChange,
     showInstanceLink = true,
@@ -32,8 +34,14 @@ export const ScreenTable = ({
     const {t: screenT} = useTranslate("screens");
     const navigate = useVersionedNavigate();
     const filteredRows = useMemo(
-        () => filterScreenRows(columns, rows, globalFilter, i18n.language),
-        [columns, rows, globalFilter, i18n.language],
+        () =>
+            filterScreenRows(
+                columns,
+                applyColumnFilters(columns, rows, columnFilters, i18n.language),
+                globalFilter,
+                i18n.language,
+            ),
+        [columns, rows, globalFilter, i18n.language, columnFilters],
     );
 
     const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(() => {

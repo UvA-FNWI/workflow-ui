@@ -3,6 +3,7 @@ import {useState} from "react";
 import {Button, Icon, SearchInput} from "@uva-fnwi/datanose-ui";
 
 import {ImportModal} from "~/components/Import/ImportModal.tsx";
+import type {ColumnFilterValues, Filter} from "~/components/ScreenTable/filterScreenRows.ts";
 import {ScreenTableFilters} from "~/components/ScreenTable/ScreenTableFilters.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate.ts";
@@ -18,6 +19,9 @@ type ScreenTableToolbarProps = {
     bulkActions?: BulkAction[];
     selectedCount?: number;
     onBulkAction?: (action: BulkAction) => void;
+    filters?: Filter[];
+    filterValues?: ColumnFilterValues;
+    onFilterChange?: (name: string, value: string[]) => void;
 };
 
 export const ScreenTableToolbar = ({
@@ -29,6 +33,9 @@ export const ScreenTableToolbar = ({
     bulkActions = [],
     selectedCount = 0,
     onBulkAction,
+    filters = [],
+    filterValues = {},
+    onFilterChange = () => {},
 }: ScreenTableToolbarProps) => {
     const {t, l} = useTranslate("screens");
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -115,8 +122,9 @@ export const ScreenTableToolbar = ({
                 </div>
                 {isFilterOpen && (
                     <ScreenTableFilters
-                        filters={[]}
-                        onFilterChange={() => console.log("filter change")}
+                        filters={filters}
+                        values={filterValues}
+                        onFilterChange={onFilterChange}
                     />
                 )}
             </div>
