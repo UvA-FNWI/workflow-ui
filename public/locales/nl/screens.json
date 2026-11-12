@@ -29,6 +29,11 @@
   "completed": "Afgerond",
   "create_new": "Nieuw",
   "empty_title": "Geen scripties gevonden",
+  "filters": {
+    "choose": "Maak een keuze",
+    "hide_filters": "Verberg filters",
+    "show_filters": "Toon filters"
+  },
   "import": {
     "column_selection": "Kies de kolommen die je wilt importeren:",
     "description_select": "Geef aan welk bestand en welke data je wilt importeren.",

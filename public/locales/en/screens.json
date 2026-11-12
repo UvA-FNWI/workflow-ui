@@ -29,6 +29,11 @@
   "completed": "Completed",
   "create_new": "New",
   "empty_title": "No theses found",
+  "filters": {
+    "choose": "Make a choice",
+    "hide_filters": "Hide filters",
+    "show_filters": "Show filters"
+  },
   "import": {
     "column_selection": "Choose the columns you want to import:",
     "description_select": "Indicate which file and data you want to import.",
