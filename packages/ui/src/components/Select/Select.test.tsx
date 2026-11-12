@@ -149,4 +149,42 @@ describe('Select', () => {
     expect(screen.getByText('Pick one status.')).toBeInTheDocument();
     expect(screen.getByText('Status is required')).toBeInTheDocument();
   });
+  describe('accessibility', () => {
+    it('includes the visible label in the trigger name', () => {
+      renderSelect({ placeholder: 'None selected' });
+      const trigger = screen.getByRole('button', { name: /Status/ });
+      expect(trigger).toHaveAccessibleName(/None selected/);
+    });
+
+    it('exposes the expanded state on the trigger', async () => {
+      renderSelect();
+      const trigger = screen.getByRole('button', { name: /Status/ });
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      fireEvent.click(trigger);
+      await waitFor(() =>
+        expect(trigger).toHaveAttribute('aria-expanded', 'true')
+      );
+    });
+
+    it('shows a summary instead of tags when selectedSummary is given', () => {
+      render(
+        <Select<object, 'multiple'>
+          label="Status"
+          selectionMode="multiple"
+          value={['draft', 'approved']}
+          selectedSummary={items => `${items.length} selected`}
+        >
+          <Item key="draft">Draft</Item>
+          <Item key="review">In review</Item>
+          <Item key="approved">Approved</Item>
+        </Select>
+      );
+
+      expect(screen.getByText('2 selected')).toBeInTheDocument();
+      // Screen readers still get the selected names
+      expect(
+        screen.getByRole('button', { name: /Status/ })
+      ).toHaveAccessibleName(/Draft, Approved/);
+    });
+  });
 });

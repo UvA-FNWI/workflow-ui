@@ -40,6 +40,10 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   className,
   size,
   align,
+  type = 'text',
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
   ...rest
 }) => {
   const state = useSearchFieldState({
@@ -60,6 +64,9 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         label,
         description,
         errorMessage,
+        'aria-label': ariaLabel,
+        'aria-labelledby': ariaLabelledBy,
+        'aria-describedby': ariaDescribedBy,
         isDisabled: isDisabled ?? false,
         validationState: isValid ? 'valid' : 'invalid',
       },
@@ -89,12 +96,12 @@ export const SearchInput: React.FC<SearchInputProps> = ({
           {...mergeProps(inputProps, focusProps, hoverProps, rest)}
           ref={ref}
           className={cn(inputClasses, className, 'ui:pr-12')}
-          type="text"
+          type={type}
         />
         <div className="ui:pointer-events-none ui:absolute ui:top-0 ui:right-0 ui:flex ui:h-full ui:items-center">
           <div className="ui:h-1/2 ui:w-px ui:bg-grey-600" />
           <div className="ui:px-2">
-            <Icon name="search-line" size="md" color="primary" />
+            <Icon name="search-line" size="md" color="primary" decorative />
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ import { useToggleState } from 'react-stately';
 import { cva, VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
+import { devWarning } from '../../utils/devWarning';
 import { Text } from '../Text/Text';
 
 const checkboxVariants = cva(
@@ -91,43 +92,76 @@ const checkboxBoxVariants = cva(
   }
 );
 
+type CheckboxAriaProps = {
+  /** Accessible name when there is no visible label */
+  'aria-label'?: string;
+  /** Id(s) of element(s) that label the checkbox */
+  'aria-labelledby'?: string;
+  /** Id(s) of element(s) that describe the checkbox */
+  'aria-describedby'?: string;
+};
+
 type CheckboxProps = {
-  label: string;
+  /**
+   * Visible label. Optional when `aria-label` or `aria-labelledby` is given,
+   * e.g. for row-selection checkboxes in a table.
+   */
+  label?: string;
   isSelected: boolean;
+  /** Mixed state, e.g. for a "select all" checkbox when some rows are selected */
   isIndeterminate?: boolean;
   isDisabled?: boolean;
   isValid?: boolean;
   onChange?: (value: boolean) => void;
-} & Omit<React.ComponentPropsWithoutRef<'label'>, 'onChange'> &
+  /** Id for the native input, so an external `<label htmlFor>` can be used */
+  id?: string;
+} & CheckboxAriaProps &
+  Omit<
+    React.ComponentPropsWithoutRef<'label'>,
+    'onChange' | 'id' | keyof CheckboxAriaProps
+  > &
   VariantProps<typeof checkboxVariants>;
 
 export const Checkbox: React.FC<CheckboxProps> = ({
   label,
   isSelected,
-  isIndeterminate = false,
+  isIndeterminate,
   isDisabled,
   isValid,
   onChange,
   className,
+  id,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
   ...rest
 }) => {
-  const handleClick = () => {
+  if (!label && !ariaLabel && !ariaLabelledBy && !id) {
+    devWarning(
+      'Checkbox needs a label, aria-label, aria-labelledby or an id referenced by an external <label>.'
+    );
+  }
+
+  const handleChange = () => {
     if (!isDisabled && onChange) {
       onChange(!isSelected);
     }
   };
   const state = useToggleState({
     isSelected,
-    onChange: handleClick,
+    onChange: handleChange,
     isDisabled,
   });
   const ref = useRef<HTMLInputElement>(null);
   const { inputProps, labelProps } = useCheckbox(
     {
       children: label,
-      'aria-label': rest['aria-label'],
+      id,
       isIndeterminate,
       isDisabled,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
     },
     state,
     ref
@@ -139,6 +173,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     isDisabled,
     isFocusVisible,
   });
+
+  const showFilled = state.isSelected || !!isIndeterminate;
 
   return (
     <label
@@ -152,29 +188,36 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       </VisuallyHidden>
       <span
         {...hoverProps}
+        aria-hidden="true"
         className={cn(
           checkboxBoxVariants({
-            isSelected: state.isSelected || isIndeterminate,
+            isSelected: showFilled,
             isDisabled,
             isValid,
             isHovered,
           })
         )}
-        onClick={() => state.toggle()}
       >
-        {(state.isSelected || isIndeterminate) && (
+        {isIndeterminate ? (
           <svg
             className="ui:h-6 ui:w-6 ui:text-white"
             fill="currentColor"
             viewBox="0 0 16 16"
             aria-hidden="true"
           >
-            {isIndeterminate ? (
-              <path d="M3 7h10v2H3z" />
-            ) : (
-              <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
-            )}
+            <rect x="3.5" y="7.25" width="9" height="1.5" rx="0.75" />
           </svg>
+        ) : (
+          state.isSelected && (
+            <svg
+              className="ui:h-6 ui:w-6 ui:text-white"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+            >
+              <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+            </svg>
+          )
         )}
       </span>
       {label && (

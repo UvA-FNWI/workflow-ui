@@ -155,7 +155,7 @@ const ComboBoxListBox = <
       )}
       {state.collection.size === 0 && (
         <li
-          className="ui:text-md ui:px-3 ui:py-2 ui:text-grey-600 ui:dark:text-grey-400"
+          className="ui:text-md ui:px-3 ui:py-2 ui:text-grey-700 ui:dark:text-grey-400"
           role="presentation"
         >
           {noResults}
