@@ -51,6 +51,8 @@ export const ScreenTableToolbar = ({
         }
     };
 
+    const hasActiveFilters = Object.values(filterValues).flat().length > 0;
+
     return (
         <>
             <div>
@@ -113,7 +115,16 @@ export const ScreenTableToolbar = ({
                         <Button
                             intent="ghost"
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
-                            leftIcon={<Icon name="filter-funnel-line" color="current" />}
+                            leftIcon={
+                                <Icon
+                                    name={
+                                        hasActiveFilters
+                                            ? "filter-funnel-solid"
+                                            : "filter-funnel-line"
+                                    }
+                                    color="current"
+                                />
+                            }
                             className="shrink-0 underline"
                         >
                             {isFilterOpen ? t("filters.hide_filters") : t("filters.show_filters")}

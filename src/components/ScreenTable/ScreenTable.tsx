@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 
 import {type ColumnDef, type OnChangeFn, type RowSelectionState} from "@tanstack/react-table";
-import {Button, Checkbox, Icon} from "@uva-fnwi/datanose-ui";
+import {Button, Checkbox, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {applyColumnFilters, type ColumnFilterValues, filterScreenRows} from "./filterScreenRows";
 import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
@@ -138,6 +138,11 @@ export const ScreenTable = ({
             rowSelection={rowSelection}
             onRowSelectionChange={onRowSelectionChange}
             stickyFirstColumn={Boolean(onRowSelectionChange)}
+            emptyNode={
+                <div className="pt-4">
+                    <Text className="italic">{screenT("empty_title")}</Text>
+                </div>
+            }
         />
     );
 };

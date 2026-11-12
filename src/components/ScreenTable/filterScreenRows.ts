@@ -12,6 +12,13 @@ export type Filter = {
     options: string[];
 };
 
+const stripBrackets = (value: string): string => value.replace(/\s*\([^)]*\)/g, "").trim();
+
+const getFilterValue = (row: ScreenRow, col: ScreenColumn, language: string): string => {
+    const value = String(formatTableCellValue(row.values[col.id], col.dataType, language) ?? "");
+    return col.isCurrentStep ? stripBrackets(value) : value;
+};
+
 export const getPickFilters = (
     columns: ScreenColumn[],
     rows: ScreenRow[],
@@ -22,9 +29,7 @@ export const getPickFilters = (
         .map((col) => {
             const options = new Set<string>();
             rows.forEach((row) => {
-                const value = String(
-                    formatTableCellValue(row.values[col.id], col.dataType, language) ?? "",
-                );
+                const value = getFilterValue(row, col, language);
                 if (value) options.add(value);
             });
 
@@ -47,12 +52,7 @@ export const applyColumnFilters = (
     if (!active.length) return rows;
 
     return rows.filter((row) =>
-        active.every((col) => {
-            const value = String(
-                formatTableCellValue(row.values[col.id], col.dataType, language) ?? "",
-            );
-            return filters[String(col.id)].includes(value);
-        }),
+        active.every((col) => filters[String(col.id)].includes(getFilterValue(row, col, language))),
     );
 };
 
