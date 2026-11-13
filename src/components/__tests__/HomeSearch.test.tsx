@@ -175,9 +175,11 @@ it("searches from home and restores the query after opening a person", async () 
 
     const restoredInput = await screen.findByRole("textbox", {name: workflow.home_search.label});
     expect(restoredInput).toHaveValue("ada@example.com");
+    expect(router.state.location.search).toBe("?version=pilot&search=ada%40example.com");
     expect(screen.getByRole("link", {name: /Ada Example/})).toBeVisible();
     fireEvent.change(restoredInput, {target: {value: ""}});
     expect(await screen.findByText("Workflow choices")).toBeVisible();
+    expect(router.state.location.search).toBe("?version=pilot");
 });
 
 it.each([
@@ -202,7 +204,7 @@ it.each([
 ])(
     "opens a matching workflow screen for $query and preserves its version",
     async ({query, count, path, name}) => {
-        const router = await renderHome(`/?people=${query}&version=pilot`);
+        const router = await renderHome(`/?search=${query}&version=pilot`);
 
         const lists = screen.getAllByRole("list");
         expect(lists).toHaveLength(query === "ada" ? 2 : 1);
@@ -221,7 +223,7 @@ it.each([
 );
 
 it("does not run a search from the URL without search permission", async () => {
-    await renderHome("/?people=ada", false);
+    await renderHome("/?search=ada", false);
 
     expect(screen.getByText("Workflow choices")).toBeVisible();
     expect(
@@ -234,7 +236,7 @@ it.each([
     ["/screens/project/overview", "Screen content"],
     ["/personal", "Personal content"],
 ])("keeps search off %s", async (path, content) => {
-    await renderHome(`${path}?people=ada`);
+    await renderHome(`${path}?search=ada`);
 
     expect(screen.getByText(content)).toBeVisible();
     expect(

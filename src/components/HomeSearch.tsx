@@ -34,7 +34,7 @@ export function HomeSearch({
     const {pathname, search} = useLocation();
     const [params, setParams] = useSearchParams();
     const canSearchPeople = useAppSelector(selectCurrentUser)?.canSearchPeople;
-    const value = params.get("people") ?? "";
+    const value = params.get("search") ?? "";
     const query = value.trim();
     const [debouncedQuery, setDebouncedQuery] = useState(query);
     const debounceQuery = useDebounce(() => setDebouncedQuery(query), 500);
@@ -81,8 +81,8 @@ export function HomeSearch({
                     maxLength={maxQueryLength}
                     onChange={(nextValue) => {
                         const next = new URLSearchParams(params);
-                        if (nextValue) next.set("people", nextValue);
-                        else next.delete("people");
+                        if (nextValue) next.set("search", nextValue);
+                        else next.delete("search");
                         if (!nextValue.trim()) setDebouncedQuery("");
                         setParams(next, {replace: true, preventScrollReset: true});
                     }}
