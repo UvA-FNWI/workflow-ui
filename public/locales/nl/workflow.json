@@ -177,6 +177,7 @@
   },
   "search_and_select": {
     "add_new": "Voeg toe",
+    "directory_unavailable": "De directory is niet beschikbaar. Probeer het opnieuw.",
     "no_results": "Geen resultaten gevonden",
     "search_hint": "Typ om te zoeken",
     "search_placeholder": "Zoeken..."
@@ -228,6 +229,7 @@
     "title": "Actie ongedaan maken"
   },
   "user_picker": {
+    "directory_unavailable": "De gebruikersdirectory is niet beschikbaar. Probeer het opnieuw.",
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",
     "search_hint_one": "Zoek een medewerker",

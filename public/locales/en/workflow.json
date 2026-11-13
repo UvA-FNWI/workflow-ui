@@ -178,6 +178,7 @@
   },
   "search_and_select": {
     "add_new": "Add",
+    "directory_unavailable": "The directory is unavailable. Try again.",
     "no_results": "No results found",
     "search_hint": "Type to search",
     "search_placeholder": "Search..."
@@ -229,6 +230,7 @@
     "title": "Undo operation"
   },
   "user_picker": {
+    "directory_unavailable": "The user directory is unavailable. Try again.",
     "no_results": "No users found",
     "not_in_list": "Not in list",
     "search_hint_one": "Search for a user",
