@@ -27,12 +27,12 @@
   "change_selection": "Wijzig keuze",
   "correspondence": {
     "content": "Inhoud",
-    "date": "Datum",
     "empty": "Geen automatische mails gevonden",
     "recipients": "Ontvanger(s)",
     "subject": "Onderwerp",
     "title": "Automatische mails"
   },
+  "date": "Datum",
   "develop": {
     "columns": {
       "created": "Aangemaakt",
@@ -79,6 +79,13 @@
   },
   "form": "Formulier",
   "form_load_failed": "Het formulier kon niet worden geladen. Probeer het opnieuw.",
+  "history": {
+    "by": "Door",
+    "empty": "Er is nog geen geschiedenis",
+    "status": "Status",
+    "title": "Geschiedenis",
+    "undo_reason_empty": "Er is geen reden voor ongedaan maken opgegeven"
+  },
   "home": "Home",
   "instance": {
     "calculations": {
@@ -103,6 +110,7 @@
       "hide_answers": "Verberg onderdelen en toelichting",
       "hide_linked": "Verberg toelichtingen",
       "replace_file": "Bestand vervangen",
+      "reversed_on_by": "Teruggedraaid op {{date}} door {{name}}",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",

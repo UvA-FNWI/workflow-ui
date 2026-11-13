@@ -5,6 +5,7 @@ import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 import {AdminCard} from "~/components/instance/AdminCard";
 import {ContentCard} from "~/components/instance/ContentCard";
 import {CorrespondenceCard} from "~/components/instance/CorrespondenceCard.tsx";
+import {HistoryCard} from "~/components/instance/HistoryCard.tsx";
 import {InfoCards} from "~/components/instance/InfoCard.tsx";
 import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
@@ -54,6 +55,9 @@ function Instance() {
                     <ContentCard instance={instance} isLoading={isLoading} />
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
                         <CorrespondenceCard instanceId={id} />
+                    )}
+                    {instance?.permissions.includes("ViewHistory") && id && (
+                        <HistoryCard instanceId={id} />
                     )}
                 </GridItem>
                 <GridItem span={{base: 12, md: 3}} className="flex flex-col gap-6">

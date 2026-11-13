@@ -27,12 +27,12 @@
   "change_selection": "Change selection",
   "correspondence": {
     "content": "Content",
-    "date": "Date",
     "empty": "No automated emails found",
     "recipients": "Recipient(s)",
     "subject": "Subject",
     "title": "Automated emails"
   },
+  "date": "Date",
   "develop": {
     "columns": {
       "created": "Created",
@@ -79,6 +79,14 @@
   },
   "form": "Form",
   "form_load_failed": "The form could not be loaded. Please try again.",
+  "history": {
+    "by": "By",
+    "empty": "There is no history yet",
+    "status": "Status",
+    "title": "History",
+    "undo_reason_empty": "There is no reason provided for this undo action"
+  },
+
   "home": "Home",
   "instance": {
     "calculations": {
@@ -103,6 +111,7 @@
       "hide_answers": "Hide parts and explanations",
       "hide_linked": "Hide explanations",
       "replace_file": "Replace file",
+      "reversed_on_by": "Reversed on {{date}} by {{name}}",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
