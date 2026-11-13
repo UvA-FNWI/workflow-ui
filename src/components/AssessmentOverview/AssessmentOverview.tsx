@@ -93,59 +93,64 @@ export const AssessmentOverview = ({
         return emptyState;
     }
 
+    const warnings = assessmentResults.parts.flatMap((p) => p.warnings);
+
     return (
-        <div className="overflow-x-auto py-4">
-            <div className="mt-4 flex w-full min-w-max flex-col gap-6">
-                {/* Assessment columns header */}
-                {assessmentSubmissions.length > 1 && (
-                    <div className={`grid gap-4 ${colsClass}`}>
-                        <div className="col-span-2 w-48 sm:w-80"></div>
-                        {assessmentSubmissions.map((assessmentPart) => (
-                            <div key={assessmentPart.id} className="w-24 sm:w-32">
-                                <Text fontWeight="normal" size="lg" intent="error">
-                                    {l(assessmentPart.title)?.toUpperCase()}{" "}
-                                    {assessmentPart.percentage && `(${assessmentPart.percentage}%)`}
-                                </Text>
-                            </div>
-                        ))}
-                    </div>
-                )}
-                {/* Assessment page sections */}
-                {form?.pages.map((page) => (
-                    <AssessmentPageSection
-                        key={page.name}
-                        page={page}
-                        assessmentSubmissions={assessmentSubmissions}
-                        submissions={submissions}
-                        onEditPage={onEditPage}
-                        resultsType={step?.resultsType ?? "Normal"}
-                        instanceId={instanceId}
-                        colsClass={colsClass}
-                    />
-                ))}
-
-                {/* Final grade */}
-                {hasWeightedAverage && (
-                    <div className={`grid gap-4 ${colsClass}`}>
-                        <Text fontWeight="semibold" size="xl" className="col-span-2 w-48 sm:w-80">
-                            {t("instance.calculations.final_grade").toUpperCase()}
-                        </Text>
-                        {assessmentSubmissions.map((sourceResult) => (
-                            <Text key={sourceResult.id} fontWeight="semibold" size="xl">
-                                {sourceResult.weightedAverage?.toLocaleString(i18n.language)}
-                            </Text>
-                        ))}
-                    </div>
-                )}
-
-                {/* Discrepancy warning */}
-                {assessmentResults.parts[0].showDiscrepancyWarning &&
-                    assessmentSubmissions.length > 1 && (
-                        <Callout type="warning">
-                            {t("instance.calculations.discrepancy_warning")}
-                        </Callout>
+        <div>
+            <div className="overflow-x-auto py-4">
+                <div className="mt-4 flex w-full min-w-max flex-col gap-6">
+                    {/* Assessment columns header */}
+                    {assessmentSubmissions.length > 1 && (
+                        <div className={`grid gap-4 ${colsClass}`}>
+                            <div className="col-span-2 w-48 sm:w-80"></div>
+                            {assessmentSubmissions.map((assessmentPart) => (
+                                <div key={assessmentPart.id} className="w-24 sm:w-32">
+                                    <Text fontWeight="normal" size="lg" intent="error">
+                                        {l(assessmentPart.title)?.toUpperCase()}{" "}
+                                        {assessmentPart.percentage &&
+                                            `(${assessmentPart.percentage}%)`}
+                                    </Text>
+                                </div>
+                            ))}
+                        </div>
                     )}
+                    {/* Assessment page sections */}
+                    {form?.pages.map((page) => (
+                        <AssessmentPageSection
+                            key={page.name}
+                            page={page}
+                            assessmentSubmissions={assessmentSubmissions}
+                            submissions={submissions}
+                            onEditPage={onEditPage}
+                            resultsType={step?.resultsType ?? "Normal"}
+                            instanceId={instanceId}
+                            colsClass={colsClass}
+                        />
+                    ))}
+
+                    {/* Final grade */}
+                    {hasWeightedAverage && (
+                        <div className={`grid gap-4 ${colsClass}`}>
+                            <Text
+                                fontWeight="semibold"
+                                size="xl"
+                                className="col-span-2 w-48 sm:w-80"
+                            >
+                                {t("instance.calculations.final_grade").toUpperCase()}
+                            </Text>
+                            {assessmentSubmissions.map((sourceResult) => (
+                                <Text key={sourceResult.id} fontWeight="semibold" size="xl">
+                                    {sourceResult.weightedAverage?.toLocaleString(i18n.language)}
+                                </Text>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {/* discrepancy warning kept outside both divs above so text can wrap instead of having a scrollbar */}
+            {assessmentSubmissions.length > 1 &&
+                warnings.map((w) => <Callout type="warning">{l(w.label)}</Callout>)}
         </div>
     );
 };

@@ -24,6 +24,69 @@ afterEach(() => {
     store.dispatch(submissionsApi.util.resetApiState());
 });
 
+const feedbackSubmission: Submission = {
+    id: "Feedback",
+    dateSubmitted: "2026-01-01T00:00:00Z",
+    permissions: [],
+    answers: [
+        {
+            id: "feedback",
+            questionName: "Feedback",
+            value: "Changes required",
+            isVisible: true,
+            files: [],
+        },
+    ],
+    form: {
+        name: "Feedback",
+        title: {en: "Feedback", nl: ""},
+        layout: "Normal",
+        step: "Writing",
+        pages: [
+            {
+                index: 0,
+                name: "Feedback",
+                title: {en: "", nl: ""},
+                layout: "Normal",
+                hasResults: false,
+                isInCurrentForm: true,
+                isActive: true,
+                elements: [
+                    {
+                        kind: "Question",
+                        question: {
+                            name: "Feedback",
+                            text: {en: "Feedback", nl: ""},
+                            type: "String",
+                            isRequired: false,
+                            isArray: false,
+                            hideInResults: false,
+                        },
+                    },
+                ],
+            },
+        ],
+    },
+};
+
+const approvalSubmission: Submission = {
+    ...feedbackSubmission,
+    id: "Approve",
+    answers: [],
+    form: {
+        ...feedbackSubmission.form,
+        name: "Approve",
+        title: {en: "Approve", nl: ""},
+        layout: "Modal",
+        pages: [
+            {
+                ...feedbackSubmission.form.pages[0],
+                elements: [{kind: "Text", text: {en: "Are you sure?", nl: ""}}],
+            },
+        ],
+    },
+};
+
 it.each(["Normal", "Compact", "Modal"] as const)(
     "opens %s forms from allowed actions and uses visible attempt history for the prefill notice",
     async (formLayout) => {
@@ -130,6 +193,11 @@ it.each(["Normal", "Compact", "Modal"] as const)(
         }
         rerender(renderCard({...instance, actions: []}));
         expect(screen.queryByText("repeated_form.message")).not.toBeInTheDocument();
+        if (formLayout !== "Modal") {
+            step.versions!.history[0].submissions = [];
+            rerender(renderCard(instance));
+            expect(screen.getByText("Version 2")).toBeVisible();
+        }
     },
 );
 
@@ -166,11 +234,11 @@ it("opens execution confirmation only after selection and closes it on cancel", 
     expect(screen.queryByText("are_you_sure")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", {name: "Approve"}));
     expect(screen.getByText("are_you_sure")).toBeVisible();
-    fireEvent.click(screen.getByRole("button", {name: "cancel"}));
+    fireEvent.click(screen.getByRole("button", {name: "common:cancel"}));
     expect(screen.queryByText("are_you_sure")).not.toBeInTheDocument();
 });
 
-it("renders backend current and history numbers even when attempts have no visible submissions", () => {
+it("hides empty attempts while keeping backend version numbers and expanding the first visible history", () => {
     const step: WorkflowStep = {
         id: "Writing",
         isAvailable: true,
@@ -186,10 +254,21 @@ it("renders backend current and history numbers even when attempts have no visib
         hasSubmission: false,
         hierarchyMode: "Sequential",
         childrenLayout: "Combined",
-        submissions: [],
+        submissions: [approvalSubmission],
         versions: {
-            current: {versionNumber: 7, completionTimestamp: null, submissions: []},
-            history: [{versionNumber: 3, completionTimestamp: null, submissions: []}],
+            current: {
+                versionNumber: 7,
+                completionTimestamp: null,
+                submissions: [approvalSubmission],
+            },
+            history: [
+                {versionNumber: 6, completionTimestamp: null, submissions: [approvalSubmission]},
+                {
+                    versionNumber: 3,
+                    completionTimestamp: null,
+                    submissions: [feedbackSubmission, approvalSubmission],
+                },
+            ],
         },
     };
     const instance = {
@@ -202,11 +281,20 @@ it("renders backend current and history numbers even when attempts have no visib
     } as unknown as WorkflowInstance;
     render(
         <Provider store={store}>
-            <StepCard step={step} instance={instance} />
+            <ToastProvider>
+                <StepCard step={step} instance={instance} />
+            </ToastProvider>
         </Provider>,
     );
-    expect(screen.getByText("Version 7")).toBeVisible();
+    expect(screen.queryByText("Version 7")).not.toBeInTheDocument();
+    expect(screen.queryByText("Version 6")).not.toBeInTheDocument();
     expect(screen.getByText("Version 3")).toBeVisible();
+    expect(screen.getByRole("button", {name: /Version 3/})).toHaveAttribute(
+        "aria-expanded",
+        "true",
+    );
+    expect(screen.queryByText("APPROVE")).not.toBeInTheDocument();
+    expect(screen.getByText("Changes required")).toBeVisible();
     expect(screen.queryByText("Version 4")).not.toBeInTheDocument();
     expect(screen.queryByText("Invalid Date")).not.toBeInTheDocument();
 });
@@ -275,8 +363,9 @@ it.each([true, false])(
 );
 
 it.each(["Combined", "CollapsibleRows"] as const)(
-    "keeps independent child attempts accessible in the %s layout",
+    "hides approval-only child versions in the %s layout",
     (childrenLayout) => {
+        const submissions = [approvalSubmission];
         const child: WorkflowStep = {
             id: "Writing",
             isAvailable: true,
@@ -294,8 +383,8 @@ it.each(["Combined", "CollapsibleRows"] as const)(
             childrenLayout: "Combined",
             submissions: [],
             versions: {
-                current: {versionNumber: 5, completionTimestamp: null, submissions: []},
-                history: [{versionNumber: 4, completionTimestamp: null, submissions: []}],
+                current: {versionNumber: 5, completionTimestamp: null, submissions},
+                history: [],
             },
         };
         const step: WorkflowStep = {
@@ -323,9 +412,10 @@ it.each(["Combined", "CollapsibleRows"] as const)(
             </Provider>,
         );
         expect(screen.queryByText("Version 1")).not.toBeInTheDocument();
-        expect(screen.getByText("Writing")).toBeVisible();
-        expect(screen.getByText("Version 4")).toBeVisible();
-        expect(screen.getByText("Version 5")).toBeVisible();
+        expect(screen.queryByText("Version 5")).not.toBeInTheDocument();
+        if (childrenLayout === "Combined") {
+            expect(screen.queryByText("Writing")).not.toBeInTheDocument();
+        }
     },
 );
 

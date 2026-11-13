@@ -30,7 +30,7 @@ type ImportStep = (typeof ImportStep)[keyof typeof ImportStep];
 
 export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
-    const {t: tw} = useTranslate("workflow");
+    const {t: tc} = useTranslate("common");
     const prevIsOpen = useRef(false);
     const errorHandled = useRef(false);
     const [activeStep, setActiveStep] = useState<ImportStep>(ImportStep.UploadFile);
@@ -234,10 +234,10 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                     size="large"
                     isLoading={isLoading}
                 >
-                    {tw("confirm")}
+                    {tc("confirm")}
                 </Button>
                 <Button intent="secondary" variant="destructive" size="large" onClick={onClose}>
-                    {tw("cancel")}
+                    {tc("cancel")}
                 </Button>
             </Modal.Footer>
         </Modal>

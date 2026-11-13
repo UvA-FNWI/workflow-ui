@@ -24,17 +24,15 @@
     "title": "Gegevens"
   },
   "are_you_sure": "Weet je het zeker?",
-  "cancel": "Annuleren",
   "change_selection": "Wijzig keuze",
-  "confirm": "Bevestigen",
   "correspondence": {
     "content": "Inhoud",
-    "date": "Datum",
     "empty": "Geen automatische mails gevonden",
     "recipients": "Ontvanger(s)",
     "subject": "Onderwerp",
     "title": "Automatische mails"
   },
+  "date": "Datum",
   "develop": {
     "columns": {
       "created": "Aangemaakt",
@@ -44,11 +42,13 @@
     "load_error": "Kon instanties niet laden",
     "loading": "Laden…",
     "new": "Nieuw {{name}}",
+    "no_definition_selected": "Selecteer een definitie om instanties van dat type te tonen.",
     "no_definitions": "Geen projecttypes beschikbaar",
     "no_instances": "Nog geen instanties",
     "recalculate_current_steps": "Stappen herberekenen",
     "recalculate_current_steps_error": "Kon de huidige stappen niet herberekenen",
     "recalculate_current_steps_success": "{{total}} instanties gecontroleerd: {{updated}} bijgewerkt en {{unchanged}} ongewijzigd",
+    "select_definition": "Kies een definitie",
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
@@ -79,12 +79,18 @@
   },
   "form": "Formulier",
   "form_load_failed": "Het formulier kon niet worden geladen. Probeer het opnieuw.",
+  "history": {
+    "by": "Door",
+    "empty": "Er is nog geen geschiedenis",
+    "status": "Status",
+    "title": "Geschiedenis",
+    "undo_reason_empty": "Er is geen reden voor ongedaan maken opgegeven"
+  },
   "home": "Home",
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
       "calculated_grade": "Berekend cijfer: ",
-      "discrepancy_warning": "Er is een groot verschil tussen de cijfers van de verschillende beoordelaars. Bespreek de cijfers voordat je indient en raadpleeg de coördinator indien nodig.",
       "final_grade": "Eindcijfer",
       "grading_incomplete": "Beoordeling nog niet volledig"
     },
@@ -104,6 +110,7 @@
       "hide_answers": "Verberg onderdelen en toelichting",
       "hide_linked": "Verberg toelichtingen",
       "replace_file": "Bestand vervangen",
+      "reversed_on_by": "Teruggedraaid op {{date}} door {{name}}",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
