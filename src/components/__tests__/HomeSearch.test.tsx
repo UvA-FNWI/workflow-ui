@@ -163,9 +163,14 @@ it("waits until typing pauses before searching or warning about query length", a
     fireEvent.change(input, {target: {value: "ada@example.com"}});
     expect(screen.getByRole("heading", {name: "3 results for “ada”"})).toBeVisible();
 
-    fireEvent.change(input, {target: {value: ""}});
+    fireEvent.change(input, {target: {value: " "}});
     expect(coordinatorTab).toBeVisible();
     expect(screen.getByRole("heading", {level: 1, name: "Choose your course"})).toBeVisible();
+
+    fireEvent.change(input, {target: {value: " ada@example.com "}});
+    expect(coordinatorTab).toBeVisible();
+    act(() => vi.advanceTimersByTime(500));
+    expect(search).toHaveBeenLastCalledWith("ada@example.com");
 });
 
 it("searches from home and restores the query after opening a person", async () => {

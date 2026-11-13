@@ -26,21 +26,30 @@ function Overview() {
     const {definitions} = useOutletContext<HomeLayoutContext>();
     const [params, setParams] = useSearchParams();
     const canSearchPeople = useAppSelector(selectCurrentUser)?.canSearchPeople;
-    const value = params.get("search") ?? "";
-    const query = value.trim();
-    const [debouncedQuery, setDebouncedQuery] = useState(query);
-    const debounceQuery = useDebounce(() => setDebouncedQuery(query), 500);
-    useEffect(() => debounceQuery(), [debounceQuery, query]);
+    const input = params.get("search") ?? "";
+    const trimmedInput = input.trim();
+    const [query, setQuery] = useState(trimmedInput);
+    const updateQuery = useDebounce(() => setQuery(trimmedInput), 500);
+    useEffect(() => updateQuery(), [trimmedInput, updateQuery]);
+
+    const searching = Boolean(canSearchPeople && trimmedInput && query);
+    const showResults =
+        searching && query.length >= minQueryLength && query.length <= maxQueryLength;
 
     if (!definitions) return null;
 
     const screens = definitions.flatMap((definition) =>
         definition.screens.map((name) => ({definition, name})),
     );
-    const searchQuery = canSearchPeople && query ? debouncedQuery : "";
-    const searching = Boolean(searchQuery);
-    const showResults =
-        searchQuery.length >= minQueryLength && searchQuery.length <= maxQueryLength;
+
+    function handleSearchChange(value: string) {
+        if (!value.trim()) setQuery("");
+
+        const nextParams = new URLSearchParams(params);
+        if (value) nextParams.set("search", value);
+        else nextParams.delete("search");
+        setParams(nextParams, {replace: true, preventScrollReset: true});
+    }
 
     return (
         <HomePage title={t(searching ? "home_search.title" : "overview.choose_course_title")}>
@@ -49,15 +58,9 @@ function Overview() {
                     <SearchInput
                         aria-label={t("home_search.label")}
                         placeholder={t("home_search.placeholder")}
-                        value={value}
+                        value={input}
                         maxLength={maxQueryLength}
-                        onChange={(nextValue) => {
-                            const next = new URLSearchParams(params);
-                            if (nextValue) next.set("search", nextValue);
-                            else next.delete("search");
-                            if (!nextValue.trim()) setDebouncedQuery("");
-                            setParams(next, {replace: true, preventScrollReset: true});
-                        }}
+                        onChange={handleSearchChange}
                     />
                 </div>
             )}
@@ -79,7 +82,7 @@ function Overview() {
                     )}
                 </HomeRoleTabs>
             </div>
-            {showResults && <HomeSearchResults query={searchQuery} workflowScreens={screens} />}
+            {showResults && <HomeSearchResults query={query} workflowScreens={screens} />}
         </HomePage>
     );
 }

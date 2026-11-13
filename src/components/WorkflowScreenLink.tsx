@@ -19,7 +19,7 @@ export function WorkflowScreenLink({definition, name}: WorkflowScreen) {
             subtitle={
                 definition.screens.length > 1 ? name : l(definition.titlePlural) || definition.name
             }
-            icon={<Icon name="folder-line" decorative />}
+            icon={<Icon name="graduate-cap-solid" decorative />}
             iconClassName="bg-grey-100 text-grey-700"
         />
     );
