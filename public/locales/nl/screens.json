@@ -51,5 +51,6 @@
   "open_instance": "Open {{title}}",
   "role_title": "Je bent {{role}} voor:",
   "search_placeholder": "Typ een zoekwoord",
+  "stopped": "Gestopt",
   "title": "Scripties"
 }

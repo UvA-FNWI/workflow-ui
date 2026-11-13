@@ -1,9 +1,10 @@
 import {useState} from "react";
 
-import {Link, Navigate, useParams} from "react-router";
+import {Navigate, useParams} from "react-router";
 
-import {Card, Container, Heading, Icon, SearchInput, Skeleton} from "@uva-fnwi/datanose-ui";
+import {Card, Container, Heading, SearchInput, Skeleton} from "@uva-fnwi/datanose-ui";
 
+import {BackLink} from "~/components/BackLink";
 import {JobsTable} from "~/components/JobsTable";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
@@ -52,10 +53,7 @@ function InstanceJobs() {
     return (
         <Container maxWidth={1280}>
             <div className="mb-8 flex flex-col gap-2">
-                <Link to={`/instance/${id}`} className="text-sm text-red-brand hover:opacity-80">
-                    <Icon name="arrow-left-line" size="xs" className="mr-1" color="current" />
-                    {page.backToInstance}
-                </Link>
+                <BackLink to={`/instance/${id}`}>{page.backToInstance}</BackLink>
                 <Heading as="h1" size="lg">
                     {displayTitle} | {page.title}
                 </Heading>
