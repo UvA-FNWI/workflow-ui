@@ -21,6 +21,7 @@ const maxQueryLength = 200;
 
 function Overview() {
     const {t} = useTranslate("workflow");
+    const {t: personalT} = useTranslate("screens");
     useDocumentTitle("Overview");
 
     const {definitions} = useOutletContext<HomeLayoutContext>();
@@ -41,6 +42,8 @@ function Overview() {
     const screens = definitions.flatMap((definition) =>
         definition.screens.map((name) => ({definition, name})),
     );
+    const hasWorkflowScreens = screens.length > 0;
+    const title = hasWorkflowScreens ? t("overview.choose_course_title") : personalT("title");
 
     function handleSearchChange(value: string) {
         if (!value.trim()) setQuery("");
@@ -52,7 +55,7 @@ function Overview() {
     }
 
     return (
-        <HomePage title={t(searching ? "home_search.title" : "overview.choose_course_title")}>
+        <HomePage title={searching ? t("home_search.title") : title}>
             {canSearchPeople && (
                 <div role="search" className="mb-6 max-w-sm">
                     <SearchInput
@@ -68,10 +71,8 @@ function Overview() {
                 <Text role="status">{t("home_search.query_length")}</Text>
             )}
             <div hidden={searching}>
-                <HomeRoleTabs personalContent={<PersonalContent />}>
-                    {screens.length === 0 ? (
-                        <p>{t("overview.no_access")}</p>
-                    ) : (
+                {hasWorkflowScreens ? (
+                    <HomeRoleTabs personalContent={<PersonalContent />}>
                         <HomeList>
                             {screens.map(({definition, name}) => (
                                 <li key={`${definition.name}/${name}`}>
@@ -79,8 +80,10 @@ function Overview() {
                                 </li>
                             ))}
                         </HomeList>
-                    )}
-                </HomeRoleTabs>
+                    </HomeRoleTabs>
+                ) : (
+                    <PersonalContent />
+                )}
             </div>
             {showResults && <HomeSearchResults query={query} workflowScreens={screens} />}
         </HomePage>

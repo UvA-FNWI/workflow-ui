@@ -1,10 +1,10 @@
 import {baseApi} from "./baseApi";
 import type {
     CurrentUserResponse,
-    PeopleSearchResults,
     UpdateUserEmailRequest,
     UserImpersonationStarted,
     UserSearchResult,
+    UserSearchResults,
     VerifyEmailRequest,
     VerifyEmailResponse,
 } from "./types/users";
@@ -25,7 +25,7 @@ export const usersApi = baseApi.injectEndpoints({
                 params: {query, includeExternalUsers},
             }),
         }),
-        searchPeople: builder.query<PeopleSearchResults, string>({
+        searchUsers: builder.query<UserSearchResults, string>({
             query: (query) => ({url: "/Users/Search", params: {query}}),
             providesTags: ["User", "Instance"],
         }),
@@ -62,7 +62,7 @@ export const {
     useGetCurrentUserQuery,
     useFindUsersQuery,
     useLazyFindUsersQuery,
-    useSearchPeopleQuery,
+    useSearchUsersQuery,
     useVerifyEmailMutation,
     useStartImpersonationMutation,
     useUpdateUserEmailMutation,

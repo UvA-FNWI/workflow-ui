@@ -19,7 +19,7 @@ const {search, getPerson, getCurrentUser} = vi.hoisted(() => ({
     getCurrentUser: vi.fn(),
 }));
 
-vi.mock("~/store/api/usersApi", () => ({useSearchPeopleQuery: search}));
+vi.mock("~/store/api/usersApi", () => ({useSearchUsersQuery: search}));
 vi.mock("~/store/api/personalApi", () => ({
     useGetPersonalInstancesQuery: () => ({}),
     useGetPersonInstancesQuery: getPerson,

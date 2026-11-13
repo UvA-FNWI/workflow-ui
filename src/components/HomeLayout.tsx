@@ -5,6 +5,7 @@ import {Navigate, Outlet, useLocation} from "react-router";
 import {Container, Text, useTabsWithLocalStorage} from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
+import {useAuthenticatedUser} from "~/hooks/useAuthenticatedUser";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
@@ -27,6 +28,7 @@ export function HomeLayout() {
     const navigate = useVersionedNavigate();
     const dispatch = useAppDispatch();
     const {homePath, coordinatorPath, userName} = useAppSelector((state) => state.homeNavigation);
+    const {currentUser, isLoading: isCurrentUserLoading} = useAuthenticatedUser();
     const {data: definitions, isError} = useGetAccessibleWorkflowDefinitionsQuery();
     const {data: personal, isLoading: isPersonalLoading} = useGetPersonalInstancesQuery();
     const screens =
@@ -36,7 +38,10 @@ export function HomeLayout() {
     const hasMultipleWorkflows = (definitions?.length ?? 0) > 1;
     const hasCoordinatorView = screens.length > 0;
     const hasPersonalView = (personal?.roles.length ?? 0) > 0;
+    const isHome = pathname === "/";
     const isPersonal = pathname === "/personal";
+    const canSearchPeople = currentUser?.canSearchPeople ?? false;
+    const isSearchAccessLoading = isHome && !currentUser && isCurrentUserLoading;
     const coordinatorHome = hasMultipleWorkflows ? "/" : (screens[0] ?? "/personal");
     const coordinatorTarget = screens.includes(coordinatorPath) ? coordinatorPath : coordinatorHome;
     const {activeIndex, onTabChange} = useTabsWithLocalStorage({
@@ -53,7 +58,7 @@ export function HomeLayout() {
     });
 
     let redirect: string | undefined;
-    if (definitions && pathname === "/") {
+    if (definitions && isHome && !canSearchPeople && !isSearchAccessLoading) {
         if (!hasCoordinatorView) {
             redirect = "/personal";
         } else if (!hasMultipleWorkflows) {
@@ -62,13 +67,13 @@ export function HomeLayout() {
     }
 
     useEffect(() => {
-        if (definitions && !redirect && homePath !== pathname) {
+        if (definitions && !redirect && !isSearchAccessLoading && homePath !== pathname) {
             dispatch(rememberHomePath(pathname));
         }
-    }, [definitions, dispatch, homePath, pathname, redirect]);
+    }, [definitions, dispatch, homePath, isSearchAccessLoading, pathname, redirect]);
 
     if (redirect) return <Navigate to={{pathname: redirect, search}} replace />;
-    if (pathname === "/" && isError && !definitions) {
+    if (isHome && isError && !definitions) {
         return (
             <Container maxWidth={1280}>
                 <PageHeader title={t("home")} />
@@ -78,7 +83,7 @@ export function HomeLayout() {
             </Container>
         );
     }
-    if ((!definitions && !isError) || isPersonalLoading) {
+    if ((!definitions && !isError) || isPersonalLoading || isSearchAccessLoading) {
         return (
             <Container maxWidth={1280}>
                 <PageHeader title={null} isLoading />
@@ -99,7 +104,8 @@ export function HomeLayout() {
                             navigate(coordinatorTarget);
                         }
                     },
-                    showBackToChoices: !isPersonal && pathname !== "/" && hasMultipleWorkflows,
+                    showBackToChoices:
+                        !isHome && (canSearchPeople || (!isPersonal && hasMultipleWorkflows)),
                 } satisfies HomeLayoutContext
             }
         />

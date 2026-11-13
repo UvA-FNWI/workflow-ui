@@ -25,7 +25,7 @@ export type MilestonesPerson = {
     userName: string | null;
 };
 
-export type PeopleSearchResults = {
+export type UserSearchResults = {
     people: MilestonesPerson[];
     hasMore: boolean;
 };

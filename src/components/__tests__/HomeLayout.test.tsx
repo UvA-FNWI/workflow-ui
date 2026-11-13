@@ -22,6 +22,10 @@ vi.mock("~/store/api/personalApi", () => ({
     useGetPersonalInstancesQuery: getPersonal,
 }));
 
+vi.mock("~/hooks/useAuthenticatedUser", () => ({
+    useAuthenticatedUser: () => ({currentUser: null, isLoading: false}),
+}));
+
 vi.mock("~/store/store", () => ({
     useAppDispatch: () => dispatch,
     useAppSelector: (select: (state: {homeNavigation: typeof homeNavigation}) => unknown) =>

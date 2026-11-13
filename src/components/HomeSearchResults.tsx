@@ -1,12 +1,11 @@
 import {useLocation} from "react-router";
 
-import {Heading, Icon, Text} from "@uva-fnwi/datanose-ui";
+import {Card, Heading, Icon, Text} from "@uva-fnwi/datanose-ui";
 
-import {HomeList} from "~/components/HomeList";
 import {HomeListLink} from "~/components/HomeListLink";
 import {type WorkflowScreen, WorkflowScreenLink} from "~/components/WorkflowScreenLink";
 import {useTranslate} from "~/hooks/useTranslate";
-import {useSearchPeopleQuery} from "~/store/api/usersApi";
+import {useSearchUsersQuery} from "~/store/api/usersApi";
 
 export function HomeSearchResults({
     query,
@@ -17,7 +16,7 @@ export function HomeSearchResults({
 }) {
     const {t} = useTranslate("workflow");
     const {pathname, search} = useLocation();
-    const {currentData, isFetching, isError} = useSearchPeopleQuery(query);
+    const {currentData, isFetching, isError} = useSearchUsersQuery(query);
 
     const term = query.toLowerCase();
     const workflows = workflowScreens.filter(({definition, name}) =>
@@ -44,34 +43,45 @@ export function HomeSearchResults({
                         })}
                     </Heading>
                     {workflows.length > 0 && (
-                        <HomeList label={t("home_search.workflows")}>
+                        <ul aria-label={t("home_search.workflows")} className="flex flex-col gap-2">
                             {workflows.map(({definition, name}) => (
                                 <li key={`${definition.name}/${name}`}>
-                                    <WorkflowScreenLink definition={definition} name={name} />
+                                    <Card padding="none">
+                                        <WorkflowScreenLink definition={definition} name={name} />
+                                    </Card>
                                 </li>
                             ))}
-                        </HomeList>
+                        </ul>
                     )}
                     {people.length > 0 && (
                         <div className="flex flex-col gap-2">
-                            <HomeList label={t("home_search.people")}>
+                            <ul
+                                aria-label={t("home_search.people")}
+                                className="flex flex-col gap-2"
+                            >
                                 {people.map((person) => (
                                     <li key={person.id}>
-                                        <HomeListLink
-                                            to={`/personal/${encodeURIComponent(person.id)}`}
-                                            state={{from: {pathname, search}}}
-                                            title={person.displayName}
-                                            subtitle={[person.email, person.userName]
-                                                .filter(Boolean)
-                                                .join(" · ")}
-                                            icon={
-                                                <Icon name="user-line" color="current" decorative />
-                                            }
-                                            iconClassName="bg-green-100 text-black"
-                                        />
+                                        <Card padding="none">
+                                            <HomeListLink
+                                                to={`/personal/${encodeURIComponent(person.id)}`}
+                                                state={{from: {pathname, search}}}
+                                                title={person.displayName}
+                                                subtitle={[person.email, person.userName]
+                                                    .filter(Boolean)
+                                                    .join(" · ")}
+                                                icon={
+                                                    <Icon
+                                                        name="user-line"
+                                                        color="current"
+                                                        decorative
+                                                    />
+                                                }
+                                                iconClassName="bg-green-100 text-black"
+                                            />
+                                        </Card>
                                     </li>
                                 ))}
-                            </HomeList>
+                            </ul>
                             {currentData?.hasMore && (
                                 <Text role="status">{t("home_search.refine")}</Text>
                             )}
