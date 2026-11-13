@@ -1,13 +1,13 @@
 import {describe, expect, it} from "vitest";
 
 import {canRemoveRelatedUser} from "./canRemoveRelatedUser.ts";
+import type {RelatedUserRoles} from "~/store/api/types/instances.ts";
 
-const user = {
+const user: RelatedUserRoles["users"][number] = {
     id: "1",
     userName: "ada",
     displayName: "Ada",
     email: "ada@example.com",
-    picture: null,
     isExternal: false,
     isPending: false,
     isEmailEditable: false,
