@@ -3,6 +3,7 @@ import {useState} from "react";
 import {Button, Icon, Link, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {UserAvatar} from "~/components/instance/UserAvatar.tsx";
+import {canRemoveRelatedUser} from "~/components/StaffCard/canRemoveRelatedUser.ts";
 import {EditEmailModal} from "~/components/StaffCard/EditEmailModal.tsx";
 import {RemoveStaffMemberModal} from "~/components/StaffCard/RemoveStaffMemberModal.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -84,7 +85,11 @@ export function RelatedStaffInfo({
         return;
     }
 
-    const canBeRemoved = canEdit && relatedUserRoles.allowsMultipleUsers && users.length > 1;
+    const canBeRemoved = canRemoveRelatedUser({
+        canEdit,
+        allowsAssignment,
+        users,
+    });
 
     return (
         <>
