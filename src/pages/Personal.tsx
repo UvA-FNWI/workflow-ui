@@ -3,7 +3,7 @@ import {useMemo} from "react";
 import {type ColumnDef} from "@tanstack/react-table";
 import {Button, Card, Icon, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 
-import {HomePage} from "~/components/HomePage";
+import {HomePage, HomeRoleTabs} from "~/components/HomePage";
 import {PersonalDisclosure} from "~/components/PersonalDisclosure";
 import {TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
@@ -25,7 +25,9 @@ export default function Personal() {
 
     return (
         <HomePage title={t("title")}>
-            <PersonalContent />
+            <HomeRoleTabs>
+                <PersonalContent />
+            </HomeRoleTabs>
         </HomePage>
     );
 }

@@ -1,5 +1,3 @@
-import type {ReactNode} from "react";
-
 import {Icon} from "@uva-fnwi/datanose-ui";
 
 import {HomeListLink} from "~/components/HomeListLink";
@@ -11,11 +9,7 @@ export type WorkflowScreen = {
     name: string;
 };
 
-export function WorkflowScreenLink({
-    definition,
-    name,
-    icon = <Icon name="graduate-cap-solid" decorative />,
-}: WorkflowScreen & {icon?: ReactNode}) {
+export function WorkflowScreenLink({definition, name}: WorkflowScreen) {
     const {l} = useTranslate("workflow");
 
     return (
@@ -25,7 +19,7 @@ export function WorkflowScreenLink({
             subtitle={
                 definition.screens.length > 1 ? name : l(definition.titlePlural) || definition.name
             }
-            icon={icon}
+            icon={<Icon name="folder-line" decorative />}
             iconClassName="bg-grey-100 text-grey-700"
         />
     );

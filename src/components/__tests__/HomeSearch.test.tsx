@@ -1,14 +1,16 @@
 import {I18nextProvider} from "react-i18next";
-import {createMemoryRouter, RouterProvider} from "react-router";
+import {createMemoryRouter, Outlet, RouterProvider} from "react-router";
 
-import {skipToken} from "@reduxjs/toolkit/query";
 import {act, cleanup, fireEvent, render, screen, within} from "@testing-library/react";
 import {createInstance} from "i18next";
 import {afterEach, expect, it, vi} from "vitest";
 
 import screens from "../../../public/locales/en/screens.json";
 import workflow from "../../../public/locales/en/workflow.json";
+import type {HomeLayoutContext} from "../HomeLayout";
 import {HomePage} from "../HomePage";
+import Overview from "~/pages/Overview";
+import Personal from "~/pages/Personal";
 import PersonOverview from "~/pages/PersonOverview";
 
 const {search, getPerson, getCurrentUser} = vi.hoisted(() => ({
@@ -18,7 +20,10 @@ const {search, getPerson, getCurrentUser} = vi.hoisted(() => ({
 }));
 
 vi.mock("~/store/api/usersApi", () => ({useSearchPeopleQuery: search}));
-vi.mock("~/store/api/personalApi", () => ({useGetPersonInstancesQuery: getPerson}));
+vi.mock("~/store/api/personalApi", () => ({
+    useGetPersonalInstancesQuery: () => ({}),
+    useGetPersonInstancesQuery: getPerson,
+}));
 vi.mock("~/store/store", () => ({useAppSelector: getCurrentUser}));
 
 const person = {
@@ -28,7 +33,7 @@ const person = {
     userName: "ada",
 };
 
-const workflowScreens = [
+const definitions = [
     {
         name: "project",
         title: {en: "Ada Research Project", nl: "Onderzoeksproject"},
@@ -41,20 +46,25 @@ const workflowScreens = [
         titlePlural: {en: "Bachelor theses", nl: "Bachelorscripties"},
         screens: ["overview"],
     },
-].flatMap((definition) => definition.screens.map((name) => ({definition, name})));
+].map((definition) => ({
+    ...definition,
+    index: null,
+    isAlwaysVisible: false,
+    inheritsFrom: null,
+    isEmbedded: false,
+    canCreateInstance: false,
+    isPropertyOnly: false,
+    properties: [],
+}));
 
-async function renderHome(path: string, canSearchPeople = true) {
+async function renderHome(path: string, {canSearchPeople = true, showRoleTabs = false} = {}) {
     getCurrentUser.mockReturnValue({canSearchPeople});
-    search.mockImplementation((query) =>
-        query === skipToken
-            ? {}
-            : {
-                  currentData: {
-                      people: query === "ada" || query === person.email ? [person] : [],
-                      hasMore: false,
-                  },
-              },
-    );
+    search.mockImplementation((query) => ({
+        currentData: {
+            people: query === "ada" || query === person.email ? [person] : [],
+            hasMore: false,
+        },
+    }));
     getPerson.mockReturnValue({
         currentData: {
             person,
@@ -79,15 +89,19 @@ async function renderHome(path: string, canSearchPeople = true) {
 
     const i18n = createInstance();
     await i18n.init({lng: "en", resources: {en: {screens, workflow}}});
+    const navigation: HomeLayoutContext = {
+        definitions,
+        showRoleTabs,
+        activeTab: 0,
+        onTabChange: () => {},
+        showBackToChoices: false,
+    };
     const router = createMemoryRouter(
         [
             {
                 path: "/",
-                element: (
-                    <HomePage title="Choose your course" searchScreens={workflowScreens}>
-                        <p>Workflow choices</p>
-                    </HomePage>
-                ),
+                element: <Outlet context={navigation} />,
+                children: [{index: true, element: <Overview />}],
             },
             {
                 path: "/screens/:definition/:screen",
@@ -95,7 +109,7 @@ async function renderHome(path: string, canSearchPeople = true) {
             },
             {
                 path: "/personal",
-                element: <HomePage title="My overview">Personal content</HomePage>,
+                element: <Personal />,
             },
             {path: "/personal/:personId", element: <PersonOverview />},
         ],
@@ -117,17 +131,18 @@ afterEach(() => {
 
 it("waits until typing pauses before searching or warning about query length", async () => {
     vi.useFakeTimers();
-    await renderHome("/");
+    await renderHome("/", {showRoleTabs: true});
     const input = screen.getByRole("textbox", {name: workflow.home_search.label});
+    const coordinatorTab = screen.getByRole("tab", {name: workflow.overview.coordinator_view});
 
     fireEvent.change(input, {target: {value: "a"}});
     act(() => vi.advanceTimersByTime(499));
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
-    expect(screen.getByText("Workflow choices")).toBeVisible();
+    expect(coordinatorTab).toBeVisible();
     expect(screen.getByRole("heading", {level: 1, name: "Choose your course"})).toBeVisible();
     act(() => vi.advanceTimersByTime(1));
     expect(screen.getByText(workflow.home_search.query_length)).toBeVisible();
-    expect(screen.getByText("Workflow choices")).not.toBeVisible();
+    expect(coordinatorTab).not.toBeVisible();
     expect(screen.getByRole("heading", {level: 1, name: workflow.home_search.title})).toBeVisible();
 
     fireEvent.change(input, {target: {value: "ad"}});
@@ -135,7 +150,7 @@ it("waits until typing pauses before searching or warning about query length", a
     fireEvent.change(input, {target: {value: "ada"}});
     act(() => vi.advanceTimersByTime(499));
 
-    expect(search.mock.calls.every(([query]) => query === skipToken)).toBe(true);
+    expect(search).not.toHaveBeenCalled();
     expect(screen.queryByText("Searching…")).not.toBeInTheDocument();
     expect(screen.getByText(workflow.home_search.query_length)).toBeVisible();
 
@@ -143,13 +158,13 @@ it("waits until typing pauses before searching or warning about query length", a
 
     expect(search).toHaveBeenLastCalledWith("ada");
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
-    expect(screen.getByText("Workflow choices")).not.toBeVisible();
+    expect(coordinatorTab).not.toBeVisible();
 
     fireEvent.change(input, {target: {value: "ada@example.com"}});
     expect(screen.getByRole("heading", {name: "3 results for “ada”"})).toBeVisible();
 
     fireEvent.change(input, {target: {value: ""}});
-    expect(screen.getByText("Workflow choices")).toBeVisible();
+    expect(coordinatorTab).toBeVisible();
     expect(screen.getByRole("heading", {level: 1, name: "Choose your course"})).toBeVisible();
 });
 
@@ -161,7 +176,7 @@ it("searches from home and restores the query after opening a person", async () 
     const result = await screen.findByRole("link", {name: /Ada Example/});
     expect(search).toHaveBeenLastCalledWith("ada@example.com");
     expect(screen.getByRole("heading", {name: "1 result for “ada@example.com”"})).toBeVisible();
-    expect(screen.getByText("Workflow choices")).not.toBeVisible();
+    expect(screen.getByText("Bachelor Thesis")).not.toBeVisible();
     fireEvent.click(result);
 
     expect(await screen.findByRole("heading", {name: "Ada Example"})).toBeVisible();
@@ -178,7 +193,7 @@ it("searches from home and restores the query after opening a person", async () 
     expect(router.state.location.search).toBe("?version=pilot&search=ada%40example.com");
     expect(screen.getByRole("link", {name: /Ada Example/})).toBeVisible();
     fireEvent.change(restoredInput, {target: {value: ""}});
-    expect(await screen.findByText("Workflow choices")).toBeVisible();
+    expect(screen.getByText("Bachelor Thesis")).toBeVisible();
     expect(router.state.location.search).toBe("?version=pilot");
 });
 
@@ -223,18 +238,18 @@ it.each([
 );
 
 it("does not run a search from the URL without search permission", async () => {
-    await renderHome("/?search=ada", false);
+    await renderHome("/?search=ada", {canSearchPeople: false});
 
-    expect(screen.getByText("Workflow choices")).toBeVisible();
+    expect(screen.getByText("Bachelor Thesis")).toBeVisible();
     expect(
         screen.queryByRole("textbox", {name: workflow.home_search.label}),
     ).not.toBeInTheDocument();
-    expect(search.mock.calls).toEqual([[skipToken]]);
+    expect(search).not.toHaveBeenCalled();
 });
 
 it.each([
     ["/screens/project/overview", "Screen content"],
-    ["/personal", "Personal content"],
+    ["/personal", screens.title],
 ])("keeps search off %s", async (path, content) => {
     await renderHome(`${path}?search=ada`);
 

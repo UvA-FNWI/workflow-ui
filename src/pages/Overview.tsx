@@ -1,58 +1,85 @@
-import {useOutletContext} from "react-router";
+import {useEffect, useState} from "react";
 
-import {Icon} from "@uva-fnwi/datanose-ui";
+import {useOutletContext, useSearchParams} from "react-router";
+
+import {SearchInput, Text} from "@uva-fnwi/datanose-ui";
 
 import type {HomeLayoutContext} from "~/components/HomeLayout";
 import {HomeList} from "~/components/HomeList";
-import {HomePage} from "~/components/HomePage";
+import {HomePage, HomeRoleTabs} from "~/components/HomePage";
+import {HomeSearchResults} from "~/components/HomeSearchResults";
 import {WorkflowScreenLink} from "~/components/WorkflowScreenLink";
+import {useDebounce} from "~/hooks/useDebounce";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
+import {selectCurrentUser} from "~/store/authSlice";
+import {useAppSelector} from "~/store/store";
+
+const minQueryLength = 2;
+const maxQueryLength = 200;
 
 function Overview() {
     const {t} = useTranslate("workflow");
     useDocumentTitle("Overview");
 
     const {definitions} = useOutletContext<HomeLayoutContext>();
+    const [params, setParams] = useSearchParams();
+    const canSearchPeople = useAppSelector(selectCurrentUser)?.canSearchPeople;
+    const value = params.get("search") ?? "";
+    const query = value.trim();
+    const [debouncedQuery, setDebouncedQuery] = useState(query);
+    const debounceQuery = useDebounce(() => setDebouncedQuery(query), 500);
+    useEffect(() => debounceQuery(), [debounceQuery, query]);
 
     if (!definitions) return null;
 
     const screens = definitions.flatMap((definition) =>
         definition.screens.map((name) => ({definition, name})),
     );
+    const searchQuery = canSearchPeople && query ? debouncedQuery : "";
+    const searching = Boolean(searchQuery);
+    const showResults =
+        searchQuery.length >= minQueryLength && searchQuery.length <= maxQueryLength;
 
     return (
-        <HomePage
-            title={t("overview.choose_course_title")}
-            personalContent={<PersonalContent />}
-            searchScreens={screens}
-        >
-            {screens.length === 0 ? (
-                <p>{t("overview.no_access")}</p>
-            ) : (
-                <HomeList>
-                    {screens.map(({definition, name}) => {
-                        const workflowTypes = [definition.name, definition.inheritsFrom];
-                        let icon;
-                        if (workflowTypes.includes("Thesis-Base")) {
-                            icon = <Icon name="graduate-cap-solid" label={t("overview.thesis")} />;
-                        } else if (workflowTypes.includes("Internship-Base")) {
-                            icon = <Icon name="suitcase-solid" label={t("overview.internship")} />;
-                        }
-
-                        return (
-                            <li key={`${definition.name}/${name}`}>
-                                <WorkflowScreenLink
-                                    definition={definition}
-                                    name={name}
-                                    icon={icon}
-                                />
-                            </li>
-                        );
-                    })}
-                </HomeList>
+        <HomePage title={t(searching ? "home_search.title" : "overview.choose_course_title")}>
+            {canSearchPeople && (
+                <div role="search" className="mb-6 max-w-sm">
+                    <SearchInput
+                        aria-label={t("home_search.label")}
+                        placeholder={t("home_search.placeholder")}
+                        value={value}
+                        maxLength={maxQueryLength}
+                        onChange={(nextValue) => {
+                            const next = new URLSearchParams(params);
+                            if (nextValue) next.set("search", nextValue);
+                            else next.delete("search");
+                            if (!nextValue.trim()) setDebouncedQuery("");
+                            setParams(next, {replace: true, preventScrollReset: true});
+                        }}
+                    />
+                </div>
             )}
+            {searching && !showResults && (
+                <Text role="status">{t("home_search.query_length")}</Text>
+            )}
+            <div hidden={searching}>
+                <HomeRoleTabs personalContent={<PersonalContent />}>
+                    {screens.length === 0 ? (
+                        <p>{t("overview.no_access")}</p>
+                    ) : (
+                        <HomeList>
+                            {screens.map(({definition, name}) => (
+                                <li key={`${definition.name}/${name}`}>
+                                    <WorkflowScreenLink definition={definition} name={name} />
+                                </li>
+                            ))}
+                        </HomeList>
+                    )}
+                </HomeRoleTabs>
+            </div>
+            {showResults && <HomeSearchResults query={searchQuery} workflowScreens={screens} />}
         </HomePage>
     );
 }

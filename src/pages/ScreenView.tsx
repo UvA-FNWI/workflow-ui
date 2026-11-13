@@ -15,7 +15,7 @@ import {
     useTabsWithLocalStorage,
 } from "@uva-fnwi/datanose-ui";
 
-import {HomePage} from "~/components/HomePage";
+import {HomePage, HomeRoleTabs} from "~/components/HomePage";
 import {ScreenTable} from "~/components/ScreenTable";
 import {BulkActionModal} from "~/components/ScreenTable/BulkActionModal";
 import {filterScreenRows} from "~/components/ScreenTable/filterScreenRows";
@@ -86,86 +86,84 @@ const ScreenContent = () => {
         ) : null;
     }
 
+    const toolbar = (
+        <ScreenTableToolbar
+            search={search}
+            setSearch={changeSearch}
+            canEdit={screen.isBulkEditEnabled}
+            canCreate={screen.workflowDefinition.canCreateInstance}
+            workflowDefinition={workflowDefinition}
+            {...toolbarBulkProps}
+        />
+    );
+    const title = l(screen.workflowDefinition.title);
     return (
-        <HomePage
-            title={l(screen.workflowDefinition.title)}
-            coordinatorTabLabel={l(screen.workflowDefinition.title)}
-            personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
-        >
-            <Card>
-                {screen.groups ? (
-                    <Tabs
-                        activeIndex={activeTab}
-                        onTabChange={(index) => {
-                            setActiveTab(index);
-                            setRowSelection({});
-                        }}
-                    >
-                        <TabList>
-                            {screen.groups.map((group, index) => (
-                                <Tab key={group.name}>
-                                    <div className="flex w-full justify-between gap-2">
-                                        <span>{l(group.title)}</span>
-                                        <Pill variant={activeTab === index ? "darkRed" : "grey"}>
-                                            {group.rows.length}
-                                        </Pill>
-                                    </div>
-                                </Tab>
-                            ))}
-                        </TabList>
-                        <TabToolbar className="py-4">
-                            <ScreenTableToolbar
-                                search={search}
-                                setSearch={changeSearch}
-                                canEdit={screen.isBulkEditEnabled}
-                                canCreate={screen.workflowDefinition.canCreateInstance}
-                                workflowDefinition={workflowDefinition}
-                                {...toolbarBulkProps}
+        <HomePage title={title}>
+            <HomeRoleTabs
+                coordinatorTabLabel={title}
+                personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
+            >
+                <Card>
+                    {screen.groups ? (
+                        <Tabs
+                            activeIndex={activeTab}
+                            onTabChange={(index) => {
+                                setActiveTab(index);
+                                setRowSelection({});
+                            }}
+                        >
+                            <TabList>
+                                {screen.groups.map((group, index) => (
+                                    <Tab key={group.name}>
+                                        <div className="flex w-full justify-between gap-2">
+                                            <span>{l(group.title)}</span>
+                                            <Pill
+                                                variant={activeTab === index ? "darkRed" : "grey"}
+                                            >
+                                                {group.rows.length}
+                                            </Pill>
+                                        </div>
+                                    </Tab>
+                                ))}
+                            </TabList>
+                            <TabToolbar className="py-4">{toolbar}</TabToolbar>
+                            <TabPanels>
+                                {screen.groups.map((group) => (
+                                    <TabPanel key={group.name}>
+                                        <ScreenTable
+                                            columns={screen.columns}
+                                            rows={group.rows}
+                                            globalFilter={search}
+                                            {...selectionProps}
+                                        />
+                                    </TabPanel>
+                                ))}
+                            </TabPanels>
+                        </Tabs>
+                    ) : (
+                        <div className="flex flex-col gap-4">
+                            {toolbar}
+                            <ScreenTable
+                                columns={screen.columns}
+                                rows={screen.rows}
+                                globalFilter={search}
+                                {...selectionProps}
                             />
-                        </TabToolbar>
-                        <TabPanels>
-                            {screen.groups.map((group) => (
-                                <TabPanel key={group.name}>
-                                    <ScreenTable
-                                        columns={screen.columns}
-                                        rows={group.rows}
-                                        globalFilter={search}
-                                        {...selectionProps}
-                                    />
-                                </TabPanel>
-                            ))}
-                        </TabPanels>
-                    </Tabs>
-                ) : (
-                    <div className="flex flex-col gap-4">
-                        <ScreenTableToolbar
-                            search={search}
-                            setSearch={changeSearch}
-                            canEdit={screen.isBulkEditEnabled}
-                            canCreate={screen.workflowDefinition.canCreateInstance}
-                            workflowDefinition={workflowDefinition}
-                            {...toolbarBulkProps}
-                        />
-                        <ScreenTable
-                            columns={screen.columns}
-                            rows={screen.rows}
-                            globalFilter={search}
-                            {...selectionProps}
-                        />
-                    </div>
+                        </div>
+                    )}
+                </Card>
+                {bulkSelection && (
+                    <BulkActionModal
+                        workflowDefinition={workflowDefinition}
+                        screenName={screenName}
+                        action={bulkSelection.action}
+                        columns={screen.columns}
+                        rows={bulkSelection.rows}
+                        onClose={() => setBulkSelection(null)}
+                        onComplete={() => setRowSelection({})}
+                    />
                 )}
-            </Card>
-            {bulkSelection && (
-                <BulkActionModal
-                    workflowDefinition={workflowDefinition}
-                    screenName={screenName}
-                    action={bulkSelection.action}
-                    columns={screen.columns}
-                    rows={bulkSelection.rows}
-                    onClose={() => setBulkSelection(null)}
-                    onComplete={() => setRowSelection({})}
-                />
-            )}
+            </HomeRoleTabs>
         </HomePage>
     );
 };
