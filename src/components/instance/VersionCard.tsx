@@ -4,7 +4,7 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {WorkflowStepVersion} from "~/store/api/types/instances";
 import {formatDateShort} from "~/utils/formatDate.ts";
-import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
+import {getVisibleQuestionAnswerPairs, hasSubmissionContent} from "~/utils/submissionUtils.ts";
 
 type Props = {
     version: WorkflowStepVersion;
@@ -38,7 +38,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
             <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
                 <div className="flex flex-col gap-6">
-                    {version.submissions.map((submission) => {
+                    {version.submissions.filter(hasSubmissionContent).map((submission) => {
                         const pages = submission.form.pages.filter(
                             (p) => p.isInCurrentForm && p.isActive,
                         );
