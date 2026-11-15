@@ -97,6 +97,10 @@
     },
     "deadline_passed": "The deadline has passed. You can no longer submit this form.",
     "empty_step": "Nothing has been submitted yet.",
+    "shared_loading": "Loading shared work…",
+    "shared_restricted": "You do not have permission to view this shared work.",
+    "shared_step": "Shared step",
+    "shared_unavailable": "Shared work is not available. Check the linked instance.",
     "summary": {
       "change_version": "Version {{version}}",
       "change_version_in_progress": "Version {{version}} (in progress)",
