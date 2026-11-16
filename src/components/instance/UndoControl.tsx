@@ -1,7 +1,7 @@
 import {type RefObject, useState} from "react";
 
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
-import {Button, Modal, TextArea, useToast} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Modal, TextArea, Tooltip, useToast} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesApi, instancesEndpoints} from "~/store/api/instancesApi";
@@ -69,15 +69,17 @@ export function UndoControl({candidate, instanceId, returnFocusRef}: Props) {
 
     return (
         <>
-            <Button
-                intent="ghost"
-                variant="destructive"
-                size="small"
-                aria-label={t("undo.open", {step: owningStepTitle})}
-                onClick={() => setIsOpen(true)}
-            >
-                {t("undo.confirm")}
-            </Button>
+            <Tooltip content={t("undo.open", {step: owningStepTitle})}>
+                <Button
+                    intent="ghost"
+                    variant="default"
+                    size="square"
+                    aria-label={t("undo.open", {step: owningStepTitle})}
+                    onClick={() => setIsOpen(true)}
+                >
+                    <Icon name="rotate-left-line" size="sm" color="current" />
+                </Button>
+            </Tooltip>
             <Modal
                 isOpen={isOpen}
                 onOpenChange={(open) => !open && close()}
