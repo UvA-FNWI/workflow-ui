@@ -35,6 +35,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     infoCards: InfoCard[];
+    stopMessage: LocalString | null;
 };
 
 /**
