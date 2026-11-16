@@ -32,7 +32,8 @@
   "filters": {
     "choose": "Maak een keuze",
     "hide_filters": "Verberg filters",
-    "show_filters": "Toon filters"
+    "show_filters": "Toon filters",
+    "title": "Filters"
   },
   "import": {
     "column_selection": "Kies de kolommen die je wilt importeren:",

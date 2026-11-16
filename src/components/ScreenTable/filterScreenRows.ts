@@ -12,11 +12,16 @@ export type Filter = {
     options: string[];
 };
 
-const stripBrackets = (value: string): string => value.replace(/\s*\([^)]*\)/g, "").trim();
+// strip DD/MM dates, optionally wrapped in brackets: "03/09", "(18/12)"
+export const stripDates = (value: string): string =>
+    value
+        .replace(/\s*(?:\(\s*\d{1,2}\/\d{1,2}\s*\)|\b\d{1,2}\/\d{1,2}\b)/g, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
 
 const getFilterValue = (row: ScreenRow, col: ScreenColumn, language: string): string => {
     const value = String(formatTableCellValue(row.values[col.id], col.dataType, language) ?? "");
-    return col.isCurrentStep ? stripBrackets(value) : value;
+    return col.isCurrentStep ? stripDates(value) : value;
 };
 
 export const getPickFilters = (
@@ -40,37 +45,33 @@ export const getPickFilters = (
             };
         });
 
-export const applyColumnFilters = (
-    columns: ScreenColumn[],
-    rows: ScreenRow[],
-    filters: ColumnFilterValues,
-    language: string,
-): ScreenRow[] => {
-    const active = columns.filter(
-        (col) => col.filterType === "Pick" && filters[String(col.id)]?.length,
-    );
-    if (!active.length) return rows;
-
-    return rows.filter((row) =>
-        active.every((col) => filters[String(col.id)].includes(getFilterValue(row, col, language))),
-    );
-};
-
 export function filterScreenRows(
     columns: ScreenColumn[],
     rows: ScreenRow[],
     search: string,
+    filters: ColumnFilterValues,
     language: string,
 ) {
-    if (!search) return rows;
+    const activeFilterColumns = columns.filter(
+        (col) => col.filterType === "Pick" && filters[String(col.id)]?.length,
+    );
     const searchableColumns = columns.filter((column) => column.displayType !== "ExportOnly");
-    return rows.filter((row) =>
-        searchableColumns.some(
+
+    if (!activeFilterColumns.length && !search) return rows;
+
+    return rows.filter((row) => {
+        const passesFilters = activeFilterColumns.every((col) =>
+            filters[String(col.id)].includes(getFilterValue(row, col, language)),
+        );
+        if (!passesFilters) return false;
+        if (!search) return true;
+
+        return searchableColumns.some(
             (column) =>
                 rankItem(
                     getComparableTableCellValue(row.values[column.id], column.dataType, language),
                     search,
                 ).passed,
-        ),
-    );
+        );
+    });
 }

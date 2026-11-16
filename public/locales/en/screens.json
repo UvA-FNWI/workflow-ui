@@ -32,7 +32,8 @@
   "filters": {
     "choose": "Make a choice",
     "hide_filters": "Hide filters",
-    "show_filters": "Show filters"
+    "show_filters": "Show filters",
+    "title": "Filters"
   },
   "import": {
     "column_selection": "Choose the columns you want to import:",

@@ -12,11 +12,12 @@ type ScreenTableFiltersProps = {
 };
 
 export const ScreenTableFilters = ({filters, values, onFilterChange}: ScreenTableFiltersProps) => {
+    const {t} = useTranslate("screens");
     if (!filters.length) return null;
     return (
         <div className="mt-4 flex flex-col gap-2 bg-grey-200 px-4 pt-4 pb-8">
             <Text fontWeight="semibold" size="sm">
-                Filters
+                {t("filters.title")}
             </Text>
             <div className="flex flex-col gap-6 md:flex-row md:items-center">
                 {filters.map((filter) => (
@@ -42,7 +43,7 @@ const ScreenTableFilter = ({filter, selected, onFilterChange}: ScreenTableFilter
     const {t, l} = useTranslate("screens");
 
     return (
-        <div key={filter.name} className="flex min-w-0 flex-1 items-center gap-6">
+        <div className="flex min-w-0 flex-1 items-center gap-6">
             <Text size="sm" className="shrink-0">
                 {l(filter.title)}
             </Text>
