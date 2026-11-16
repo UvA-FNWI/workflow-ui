@@ -1,8 +1,19 @@
-import {type ReactNode, useRef, useState} from "react";
+import {type ReactNode, useId, useRef, useState} from "react";
 
-import {cn, Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
+import {
+    Button,
+    cn,
+    Disclosure,
+    Heading,
+    Icon,
+    Pill,
+    type PillVariantProps,
+    Text,
+    Tooltip,
+} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
+import {ImportedStepCard} from "~/components/instance/ImportedStepCard";
 import {
     getStepHierarchy,
     hasVersionHistory,
@@ -32,9 +43,13 @@ type Props = {
     step: WorkflowStep;
     instance: WorkflowInstance;
     nested?: boolean;
+    sharedParticipants?: {displayName: string}[];
 };
 
-export const StepCard = ({step, instance, nested = false}: Props) => {
+export const StepCard = (props: Props) =>
+    props.step.importStatus ? <ImportedStepCard step={props.step} /> : <OwnedStepCard {...props} />;
+
+const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Props) => {
     const {t, l} = useTranslate("workflow");
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -118,7 +133,14 @@ export const StepCard = ({step, instance, nested = false}: Props) => {
                 submissions={submissions}
                 currentStep={instance.currentStep}
                 deadlinePassed={fullHierarchy.some((candidate) => candidate.deadline?.isPassed)}
-                actions={undoControl}
+                leading={
+                    <>
+                        {sharedParticipants && (
+                            <SharedStepIndicator participants={sharedParticipants} />
+                        )}
+                        {undoControl}
+                    </>
+                }
             />
             {hasBodyContent && isExpanded && (
                 <Disclosure.Content padding={nested ? "none" : undefined}>
@@ -150,6 +172,38 @@ export const StepCard = ({step, instance, nested = false}: Props) => {
         </Disclosure>
     );
 };
+
+function SharedStepIndicator({participants}: {participants: {displayName: string}[]}) {
+    const {t} = useTranslate("workflow");
+    const [isOpen, setIsOpen] = useState(false);
+    const descriptionId = useId();
+    return (
+        <Tooltip
+            isOpen={isOpen}
+            onOpenChange={setIsOpen}
+            content={
+                <div id={descriptionId}>
+                    {participants.map((participant, index) => (
+                        <div key={index}>{participant.displayName}</div>
+                    ))}
+                </div>
+            }
+        >
+            <Button
+                intent="ghost"
+                variant="default"
+                size="small"
+                type="button"
+                aria-label={t("instance.shared_step")}
+                aria-describedby={isOpen ? descriptionId : undefined}
+                onFocus={() => setIsOpen(true)}
+                onBlur={() => setIsOpen(false)}
+            >
+                <Icon name="users-line" color="current" />
+            </Button>
+        </Tooltip>
+    );
+}
 
 function useStepActions(actions: Action[]) {
     const [onlyAction] = actions;
@@ -186,7 +240,7 @@ function StepCardHeader({
     submissions,
     currentStep,
     deadlinePassed,
-    actions,
+    leading,
 }: {
     step: WorkflowStep;
     nested: boolean;
@@ -195,7 +249,7 @@ function StepCardHeader({
     submissions: Submission[];
     currentStep: WorkflowInstance["currentStep"];
     deadlinePassed: boolean;
-    actions?: ReactNode;
+    leading?: ReactNode;
 }) {
     const {t, l} = useTranslate("workflow");
 
@@ -206,7 +260,7 @@ function StepCardHeader({
             nested={nested}
             showChevron={hasBodyContent}
             className={isContentless ? "cursor-default!" : undefined}
-            actions={actions}
+            leading={leading}
         >
             <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">

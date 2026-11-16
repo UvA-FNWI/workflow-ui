@@ -2,6 +2,7 @@ import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
+    AnswerChangeGroup,
     FormLayout,
     Question,
     RoleAction,
@@ -107,6 +108,12 @@ export type WorkflowStep = {
     hierarchyMode: StepHierarchyMode;
     childrenLayout: StepChildrenLayout;
     undoCandidate?: UndoCandidate | null;
+    importStatus?: "Available" | "Unavailable" | "Restricted" | null;
+    importedFrom?: {
+        instanceId: string;
+        stepId: string;
+        participants: {displayName: string}[];
+    } | null;
 };
 
 export type WorkflowStepVersion = {
@@ -211,3 +218,24 @@ export type InfoCard =
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
     | (InfoCardBase & {type: "Text"; content?: LocalString | null})
     | (InfoCardBase & {type: "Progress"});
+
+export type InstanceHistoryType = "Event" | "Property" | "Undo";
+
+export type InstanceHistoryItem = {
+    id: string;
+    type: InstanceHistoryType;
+    title: LocalString;
+    timestamp: string;
+    user: UserSearchResult;
+    propertyHistory?: PropertyHistory;
+    undoHistory?: UndoHistory;
+};
+
+export type PropertyHistory = {
+    question: Question;
+    answerChangeGroup: AnswerChangeGroup;
+};
+
+export type UndoHistory = {
+    reason?: string;
+};

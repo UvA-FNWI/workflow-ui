@@ -22,10 +22,13 @@ export const submissionsApi = baseApi.injectEndpoints({
                 {type: "Assessments", instanceId},
                 {type: "Assessments", instanceId, submissionId},
                 {type: "InstanceActions", id: instanceId},
+                "Instance",
                 "Screen",
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => undefined);
+                if (!result) return;
+                const {data} = result;
                 dispatch(
                     instancesApi.util.updateQueryData(
                         "getInstance",
@@ -53,11 +56,14 @@ export const submissionsApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, {instanceId, submissionId}) => [
                 {type: "Assessments", instanceId, submissionId},
-                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+                "Instance",
                 "Screen",
             ],
             async onQueryStarted(params, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => undefined);
+                if (!result) return;
+                const {data} = result;
                 dispatch(
                     submissionsApi.util.updateQueryData(
                         "getSubmission",

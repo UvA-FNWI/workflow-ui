@@ -27,12 +27,12 @@
   "change_selection": "Change selection",
   "correspondence": {
     "content": "Content",
-    "date": "Date",
     "empty": "No automated emails found",
     "recipients": "Recipient(s)",
     "subject": "Subject",
     "title": "Automated emails"
   },
+  "date": "Date",
   "develop": {
     "columns": {
       "created": "Created",
@@ -79,6 +79,14 @@
   },
   "form": "Form",
   "form_load_failed": "The form could not be loaded. Please try again.",
+  "history": {
+    "by": "By",
+    "empty": "There is no history yet",
+    "status": "Status",
+    "title": "History",
+    "undo_reason_empty": "There is no reason provided for this undo action"
+  },
+
   "home": "Home",
   "instance": {
     "calculations": {
@@ -89,6 +97,10 @@
     },
     "deadline_passed": "The deadline has passed. You can no longer submit this form.",
     "empty_step": "Nothing has been submitted yet.",
+    "shared_loading": "Loading shared work…",
+    "shared_restricted": "You do not have permission to view this shared work.",
+    "shared_step": "Shared step",
+    "shared_unavailable": "Shared work is not available. Check the linked instance.",
     "summary": {
       "change_version": "Version {{version}}",
       "change_version_in_progress": "Version {{version}} (in progress)",
@@ -103,6 +115,7 @@
       "hide_answers": "Hide parts and explanations",
       "hide_linked": "Hide explanations",
       "replace_file": "Replace file",
+      "reversed_on_by": "Reversed on {{date}} by {{name}}",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
