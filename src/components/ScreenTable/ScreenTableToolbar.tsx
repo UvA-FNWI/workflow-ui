@@ -55,7 +55,7 @@ export const ScreenTableToolbar = ({
 
     return (
         <>
-            <div>
+            <div className="my-4">
                 <div className="flex w-full flex-wrap items-center gap-4">
                     {bulkActions.map((action) => (
                         <Button

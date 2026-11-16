@@ -11,7 +11,6 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
-    TabToolbar,
     useTabsWithLocalStorage,
 } from "@uva-fnwi/datanose-ui";
 
@@ -68,9 +67,8 @@ const ScreenContent = () => {
     const bulkActions = screen?.bulkActions ?? [];
     const filters = getPickFilters(screen?.columns ?? [], rows, i18n.language);
 
-    const changeFilter = (name: string, values: string[]) => {
+    const handleFilterChange = (name: string, values: string[]) => {
         setColumnFilters((prev) => ({...prev, [name]: values}));
-        setRowSelection({});
     };
     const selectedRows = filterScreenRows(
         screen?.columns ?? [],
@@ -84,15 +82,11 @@ const ScreenContent = () => {
         onBulkAction: (action: BulkAction) => setBulkSelection({action, rows: selectedRows}),
         filters,
         filterValues: columnFilters,
-        onFilterChange: changeFilter,
+        onFilterChange: handleFilterChange,
     };
     const selectionProps = bulkActions.length
         ? {rowSelection, onRowSelectionChange: setRowSelection}
         : {};
-    const changeSearch = (value: string) => {
-        setSearch(value);
-        setRowSelection({});
-    };
 
     if (!screen || !workflowDefinition || !screenName) {
         return isFetching ? (
@@ -109,15 +103,17 @@ const ScreenContent = () => {
             personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
         >
             <Card>
+                <ScreenTableToolbar
+                    search={search}
+                    setSearch={setSearch}
+                    canEdit={screen.isBulkEditEnabled}
+                    canCreate={screen.workflowDefinition.canCreateInstance}
+                    workflowDefinition={workflowDefinition}
+                    {...toolbarBulkProps}
+                />
                 {screen.groups ? (
-                    <Tabs
-                        activeIndex={activeTab}
-                        onTabChange={(index) => {
-                            setActiveTab(index);
-                            setRowSelection({});
-                        }}
-                    >
-                        <TabList>
+                    <Tabs activeIndex={activeTab} onTabChange={(index) => setActiveTab(index)}>
+                        <TabList className="my-4">
                             {screen.groups.map((group, index) => (
                                 <Tab key={group.name}>
                                     <div className="flex w-full justify-between gap-2">
@@ -129,16 +125,6 @@ const ScreenContent = () => {
                                 </Tab>
                             ))}
                         </TabList>
-                        <TabToolbar className="py-4">
-                            <ScreenTableToolbar
-                                search={search}
-                                setSearch={changeSearch}
-                                canEdit={screen.isBulkEditEnabled}
-                                canCreate={screen.workflowDefinition.canCreateInstance}
-                                workflowDefinition={workflowDefinition}
-                                {...toolbarBulkProps}
-                            />
-                        </TabToolbar>
                         <TabPanels>
                             {screen.groups.map((group) => (
                                 <TabPanel key={group.name}>
@@ -155,14 +141,6 @@ const ScreenContent = () => {
                     </Tabs>
                 ) : (
                     <div className="flex flex-col gap-4">
-                        <ScreenTableToolbar
-                            search={search}
-                            setSearch={changeSearch}
-                            canEdit={screen.isBulkEditEnabled}
-                            canCreate={screen.workflowDefinition.canCreateInstance}
-                            workflowDefinition={workflowDefinition}
-                            {...toolbarBulkProps}
-                        />
                         <ScreenTable
                             columns={screen.columns}
                             rows={screen.rows}
