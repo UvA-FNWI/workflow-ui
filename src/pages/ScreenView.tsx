@@ -18,8 +18,8 @@ import {HomePage} from "~/components/HomePage";
 import {ScreenTable} from "~/components/ScreenTable";
 import {BulkActionModal} from "~/components/ScreenTable/BulkActionModal";
 import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
+import {useScreenFilters} from "~/components/ScreenTable/useScreenFilters.ts";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
-import {useScreenFilters} from "~/hooks/useScreenFilters.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
 import {useGetScreenQuery} from "~/store/api/screensApi";
@@ -58,15 +58,13 @@ const ScreenContent = () => {
         setSearch,
         columnFilters,
         setColumnFilter,
-        pickFilters,
+        pickTypeFilters,
         isFiltering,
-        filteredRows,
         filteredGroupRows,
     } = useScreenFilters({
         columns,
         rows: screen?.rows,
         groups: screen?.groups,
-        activeTab,
     });
 
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
@@ -85,7 +83,7 @@ const ScreenContent = () => {
     } satisfies Partial<ComponentProps<typeof ScreenTableToolbar>>;
 
     const filterProps = {
-        filters: pickFilters,
+        filters: pickTypeFilters,
         filterValues: columnFilters,
         onFilterChange: setColumnFilter,
     } satisfies Partial<ComponentProps<typeof ScreenTableToolbar>>;
@@ -127,7 +125,7 @@ const ScreenContent = () => {
                                         <span>{l(group.title)}</span>
                                         <Pill variant={activeTab === index ? "darkRed" : "grey"}>
                                             {isFiltering
-                                                ? `${filteredGroupRows[index]?.length ?? 0}/${group.rows.length}`
+                                                ? `${filteredGroupRows[index].length}/${group.rows.length}`
                                                 : group.rows.length}
                                         </Pill>
                                     </div>
@@ -139,7 +137,7 @@ const ScreenContent = () => {
                                 <TabPanel key={group.name}>
                                     <ScreenTable
                                         columns={screen.columns}
-                                        rows={filteredGroupRows[index] ?? []}
+                                        rows={filteredGroupRows[index]}
                                         {...selectionProps}
                                     />
                                 </TabPanel>
@@ -147,13 +145,11 @@ const ScreenContent = () => {
                         </TabPanels>
                     </Tabs>
                 ) : (
-                    <div className="flex flex-col gap-4">
-                        <ScreenTable
-                            columns={screen.columns}
-                            rows={filteredRows}
-                            {...selectionProps}
-                        />
-                    </div>
+                    <ScreenTable
+                        columns={screen.columns}
+                        rows={filteredGroupRows[0]}
+                        {...selectionProps}
+                    />
                 )}
             </Card>
             {bulkSelection && (

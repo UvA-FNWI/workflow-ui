@@ -112,23 +112,27 @@ export const ScreenTableToolbar = ({
                                 className="w-full"
                             />
                         </div>
-                        <Button
-                            intent="ghost"
-                            onClick={() => setIsFilterOpen(!isFilterOpen)}
-                            leftIcon={
-                                <Icon
-                                    name={
-                                        hasActiveFilters
-                                            ? "filter-funnel-solid"
-                                            : "filter-funnel-line"
-                                    }
-                                    color="current"
-                                />
-                            }
-                            className="shrink-0 underline"
-                        >
-                            {isFilterOpen ? t("filters.hide_filters") : t("filters.show_filters")}
-                        </Button>
+                        {filters?.length > 0 && (
+                            <Button
+                                intent="ghost"
+                                onClick={() => setIsFilterOpen((prev) => !prev)}
+                                leftIcon={
+                                    <Icon
+                                        name={
+                                            hasActiveFilters
+                                                ? "filter-funnel-solid"
+                                                : "filter-funnel-line"
+                                        }
+                                        color="current"
+                                    />
+                                }
+                                className="shrink-0 underline"
+                            >
+                                {isFilterOpen
+                                    ? t("filters.hide_filters")
+                                    : t("filters.show_filters")}
+                            </Button>
+                        )}
                     </div>
                 </div>
                 {isFilterOpen && (

@@ -1,7 +1,7 @@
 import {rankItem} from "@tanstack/match-sorter-utils";
 
 import type {LocalString} from "~/hooks/useTranslate.ts";
-import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
+import type {FilterType, ScreenColumn, ScreenRow} from "~/store/api/types/screens";
 import {formatTableCellValue, getComparableTableCellValue} from "~/utils/tableCellValues";
 
 export type ColumnFilterValues = Record<string, string[]>;
@@ -24,13 +24,14 @@ const getFilterValue = (row: ScreenRow, col: ScreenColumn, language: string): st
     return col.isCurrentStep ? stripDates(value) : value;
 };
 
-export const getPickFilters = (
+export const getFiltersByType = (
     columns: ScreenColumn[],
     rows: ScreenRow[],
     language: string,
+    filterType: FilterType,
 ): Filter[] =>
     columns
-        .filter((col) => col.filterType === "Pick")
+        .filter((col) => col.filterType === filterType)
         .map((col) => {
             const options = new Set<string>();
             rows.forEach((row) => {
@@ -57,20 +58,21 @@ export function filterScreenRows(
     );
     const searchableColumns = columns.filter((column) => column.displayType !== "ExportOnly");
 
-    if (!activeFilterColumns.length && !search) return rows;
+    const searchTerm = search.trim().toLowerCase();
+    if (!activeFilterColumns.length && !searchTerm) return rows;
 
     return rows.filter((row) => {
         const passesFilters = activeFilterColumns.every((col) =>
             filters[String(col.id)].includes(getFilterValue(row, col, language)),
         );
         if (!passesFilters) return false;
-        if (!search) return true;
+        if (!searchTerm) return true;
 
         return searchableColumns.some(
             (column) =>
                 rankItem(
                     getComparableTableCellValue(row.values[column.id], column.dataType, language),
-                    search,
+                    searchTerm,
                 ).passed,
         );
     });
