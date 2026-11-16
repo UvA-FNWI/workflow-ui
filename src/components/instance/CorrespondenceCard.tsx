@@ -64,7 +64,7 @@ export function CorrespondenceCard({instanceId}: CorrespondenceCardProps) {
                 enableSorting: false,
             }),
             columnHelper.accessor("timestamp", {
-                header: t("correspondence.date"),
+                header: t("date"),
                 cell: (info) => {
                     const date = info.getValue();
                     return <Text>{date ? formatDateTimeShort(date, i18n.language) : "—"}</Text>;
@@ -160,7 +160,7 @@ function CorrespondenceModal({selectedMail, setSelectedMail}: CorrespondenceModa
             <Modal.Body>
                 <div className="flex flex-col gap-4 py-4">
                     <div className="grid w-fit grid-cols-2 gap-4">
-                        <Text className="font-semibold">{`${t("correspondence.date")}:`}</Text>
+                        <Text className="font-semibold">{`${t("date")}:`}</Text>
                         <Text>{formatDateTimeShort(selectedMail.timestamp, i18n.language)}</Text>
                         <Text className="font-semibold">
                             {`${t("correspondence.recipients")}`}:

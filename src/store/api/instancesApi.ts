@@ -2,6 +2,7 @@ import {setRoleImpersonation} from "../authSlice";
 import {baseApi} from "./baseApi";
 import type {
     ActiveStep,
+    InstanceHistoryItem,
     InstanceProperties,
     InstanceSummary,
     RecalculateCurrentStepsResult,
@@ -49,7 +50,7 @@ export const instancesApi = baseApi.injectEndpoints({
             }),
             // Property changes can affect steps and the title.
             invalidatesTags: (_result, _error, {instanceId}) => [
-                {type: "Instance", id: instanceId},
+                "Instance",
                 {type: "Choices", id: instanceId},
                 "Screen",
             ],
@@ -82,13 +83,16 @@ export const instancesApi = baseApi.injectEndpoints({
                 error
                     ? []
                     : [
-                          {type: "Instance", id: instanceId},
+                          "Instance",
+                          "Screen",
                           {type: "Assessments", instanceId},
                           {type: "Choices", id: instanceId},
                           {type: "Submission", instanceId},
                       ],
             async onQueryStarted({instanceId}, {dispatch, queryFulfilled}) {
-                const {data} = await queryFulfilled;
+                const result = await queryFulfilled.catch(() => undefined);
+                if (!result) return;
+                const {data} = result;
                 dispatch(instancesApi.util.updateQueryData("getInstance", instanceId, () => data));
             },
         }),
@@ -132,23 +136,28 @@ export const instancesApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: {user, externalUser},
             }),
-            invalidatesTags: (_result, _error, {instanceId}) => [
-                {type: "Instance", id: instanceId},
-                "Screen",
-            ],
+            invalidatesTags: ["Instance", "Screen"],
         }),
         removeRelatedUser: builder.mutation<void, RemoveRelatedUserParams>({
             query: ({instanceId, property, userId}: RemoveRelatedUserParams) => ({
                 url: `/WorkflowInstances/${instanceId}/RelatedUsers/${property}/${userId}`,
                 method: "DELETE",
             }),
-            invalidatesTags: (_result, _error, {instanceId}) => [
-                {type: "Instance", id: instanceId},
-                "Screen",
-            ],
+            invalidatesTags: ["Instance", "Screen"],
         }),
         getCorrespondence: builder.query<Correspondence[], string>({
             query: (instanceId: string) => `/WorkflowInstances/${instanceId}/Correspondence`,
+            providesTags: (_result, _error, instanceId: string) => [
+                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+            ],
+        }),
+        getHistory: builder.query<InstanceHistoryItem[], string>({
+            query: (instanceId: string) => `/WorkflowInstances/${instanceId}/History`,
+            providesTags: (_result, _error, instanceId: string) => [
+                {type: "Instance", id: instanceId},
+                {type: "InstanceActions", id: instanceId},
+            ],
         }),
     }),
 });
