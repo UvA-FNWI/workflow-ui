@@ -215,6 +215,7 @@ export type Choice = {
 export type PageLayout = "Normal" | "Condensed";
 export type StepResultsType = "Normal" | "AssessmentPartOverview" | "AssessmentFinalOverview";
 export type RoleAction =
+    | "Preview"
     | "ViewAdminTools"
     | "View"
     | "Edit"

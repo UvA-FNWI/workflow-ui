@@ -10,6 +10,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
+import type {AnswerInput} from "~/store/api/types/params";
 import type {Page, PageElement as PageElementType} from "~/store/api/types/submissions";
 import {isPageComplete, isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
@@ -45,6 +46,10 @@ export const PageControl = ({
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
     const [deleteFile] = answersApi.endpoints.deleteFile.useMutation();
+    const save = useCallback(
+        (answer: AnswerInput) => saveAnswer({instanceId, submissionId, answer}).unwrap(),
+        [instanceId, submissionId, saveAnswer],
+    );
 
     const removeFileAnswer = useCallback(
         async (questionName: string, artifactId?: string) => {
@@ -178,6 +183,7 @@ export const PageControl = ({
                                         }
                                         answer={answer}
                                         formControl={form.control}
+                                        onSave={save}
                                         showPercentages={weightedQuestions.length > 1}
                                     />
                                 );

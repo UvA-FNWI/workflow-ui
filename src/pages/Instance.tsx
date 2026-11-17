@@ -11,10 +11,19 @@ import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import {useAppSelector} from "~/store/store";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
+    const viewer = useAppSelector((state) =>
+        [
+            state.auth.currentUser?.userName,
+            state.auth.userImpersonation?.targetUserName,
+            state.auth.roleImpersonation?.instanceId,
+            state.auth.roleImpersonation?.role.name,
+        ].join("/"),
+    );
 
     const {data: instance, isLoading} = instancesEndpoints.getInstance.useQuery(id ?? "", {
         skip: !id,
@@ -39,9 +48,11 @@ function Instance() {
     return (
         <Container maxWidth={1280}>
             <InstanceHeader
+                key={`${id}/${viewer}/${instance?.viewerRoles.join(",")}`}
                 courseName={courseName}
                 instanceId={id}
                 pinnedActions={instance?.pinnedActions ?? []}
+                previewableForms={instance?.previewableForms ?? []}
                 isLoading={isLoading}
             />
             <Grid>
