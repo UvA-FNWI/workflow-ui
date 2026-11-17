@@ -125,9 +125,7 @@ export function BulkActionModal({
                 <p>{confirmation}</p>
                 {hiddenSelectedCount > 0 && (
                     <Callout type="warning">
-                        {hiddenSelectedCount == 1
-                            ? t("bulk.warning_hidden_selected_one", {count: hiddenSelectedCount})
-                            : t("bulk.warning_hidden_selected_other", {count: hiddenSelectedCount})}
+                        {t("bulk.warning_hidden_selected", {count: hiddenSelectedCount})}
                     </Callout>
                 )}
                 {eligibleRows.length > 0 && (
