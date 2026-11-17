@@ -37,7 +37,7 @@ export const ScreenView = () => {
 };
 
 const ScreenContent = () => {
-    const {l} = useTranslate("common");
+    const {l} = useTranslate("screens");
     const {workflowDefinition, screenName} = useParams();
     const {currentData: screen, isFetching} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
@@ -76,6 +76,12 @@ const ScreenContent = () => {
             : (screen?.rows ?? []);
         return allRows.filter((row) => rowSelection[row.id]);
     }, [screen, rowSelection]);
+
+    const hiddenSelectedCount = useMemo(() => {
+        const visibleIds = new Set(filteredGroupRows.flat().map((row) => row.id));
+        return selectedRows.filter((row) => !visibleIds.has(row.id)).length;
+    }, [filteredGroupRows, selectedRows]);
+
     const toolbarBulkProps = {
         bulkActions,
         selectedCount: selectedRows.length,
@@ -161,6 +167,7 @@ const ScreenContent = () => {
                     rows={bulkSelection.rows}
                     onClose={() => setBulkSelection(null)}
                     onComplete={() => setRowSelection({})}
+                    hiddenSelectedCount={hiddenSelectedCount}
                 />
             )}
         </HomePage>
