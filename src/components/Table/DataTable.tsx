@@ -30,6 +30,7 @@ type DataTableProps<TData> = {
     filterFns?: FilterFns;
     initialSorting?: SortingState;
     onSortingChange?: (sorting: SortingState) => void;
+    placeLast?: (row: TData) => boolean;
     emptyNode?: ReactNode;
     textSize?: "sm" | "base" | "lg";
     rowSelection?: RowSelectionState;
@@ -46,6 +47,7 @@ export function DataTable<TData>({
     filterFns,
     initialSorting = [],
     onSortingChange,
+    placeLast,
     emptyNode,
     textSize = "sm",
     rowSelection = {},
@@ -91,7 +93,13 @@ export function DataTable<TData>({
     });
     const leafColumns = table.getVisibleLeafColumns();
     const isFixed = leafColumns.some((column) => column.columnDef.size !== undefined);
-    const rows = table.getRowModel().rows;
+    const visibleRows = table.getRowModel().rows;
+    const rows = placeLast
+        ? [
+              ...visibleRows.filter((row) => !placeLast(row.original)),
+              ...visibleRows.filter((row) => placeLast(row.original)),
+          ]
+        : visibleRows;
 
     if (rows.length === 0 && emptyNode !== undefined) {
         return emptyNode;

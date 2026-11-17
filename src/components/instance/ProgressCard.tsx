@@ -10,6 +10,7 @@ interface ProgressCardProps {
     steps: WorkflowStep[];
     currentStep: string;
     stopMessage?: LocalString | null;
+    stopEvent?: string | null;
 }
 
 export function ProgressCard({
@@ -18,6 +19,7 @@ export function ProgressCard({
     steps,
     currentStep,
     stopMessage,
+    stopEvent,
 }: ProgressCardProps) {
     const {l} = useTranslate("workflow");
 
@@ -44,7 +46,9 @@ export function ProgressCard({
                     <Heading as="h2" className="font-semibold">
                         {l(card.title)}
                     </Heading>
-                    {message && <Pill variant="red">{message}</Pill>}
+                    {message && (
+                        <Pill variant={stopEvent === "Pause" ? "grey" : "red"}>{message}</Pill>
+                    )}
                 </div>
                 <Separator className="mt-2" />
                 <WorkflowProgressBar steps={steps} currentStep={currentStep} />

@@ -9,7 +9,7 @@ import {TableStaffCell} from "~/components/Table/TableStaffCell.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import type {ScreenColumn, ScreenRelatedUser, ScreenRow} from "~/store/api/types/screens";
-import {isProgressInformation} from "~/utils/progress";
+import {isProgressInformation, isStopped} from "~/utils/progress";
 import {formatTableCellValue, getComparableTableCellValue} from "~/utils/tableCellValues";
 
 type ScreenTableProps = {
@@ -20,6 +20,14 @@ type ScreenTableProps = {
     onRowSelectionChange?: OnChangeFn<RowSelectionState>;
     showInstanceLink?: boolean;
 };
+
+function isStoppedRow(row: ScreenRow, progressColumnId: number | undefined): boolean {
+    const progress = progressColumnId === undefined ? undefined : row.values[progressColumnId];
+    return isStopped(
+        row.workflowStopped,
+        isProgressInformation(progress) ? progress.stopEvent : null,
+    );
+}
 
 export const ScreenTable = ({
     columns,
@@ -32,6 +40,7 @@ export const ScreenTable = ({
     const {i18n, l, t} = useTranslate("workflow");
     const {t: screenT} = useTranslate("screens");
     const navigate = useVersionedNavigate();
+    const progressColumnId = columns.find((column) => column.columnType === "CurrentStep")?.id;
     const filteredRows = useMemo(
         () => filterScreenRows(columns, rows, globalFilter, i18n.language),
         [columns, rows, globalFilter, i18n.language],
@@ -64,33 +73,49 @@ export const ScreenTable = ({
                 },
                 header: () => l(col.title),
                 cell: (info) => {
-                    const value = info.row.original.values[col.id];
+                    const row = info.row.original;
+                    const value = row.values[col.id];
+                    const strikeThrough =
+                        isStoppedRow(row, progressColumnId) &&
+                        col.property !== "Student.DisplayName" &&
+                        col.columnType !== "CurrentStep";
+                    const textClassName = strikeThrough ? "line-through" : undefined;
                     if (col.columnType === "RelatedUsers") {
                         const users = value as ScreenRelatedUser[];
                         if (!users.length) {
-                            return <TableTextCell>—</TableTextCell>;
+                            return <TableTextCell className={textClassName}>—</TableTextCell>;
                         }
-                        return <TableStaffCell users={users} />;
+                        return <TableStaffCell users={users} textClassName={textClassName} />;
                     }
                     const formattedValue = formatTableCellValue(value, col.dataType, i18n.language);
 
                     // Custom formatting for the progress column
                     if (col.columnType === "CurrentStep" && col.dataType === "Object") {
                         if (isProgressInformation(value)) {
-                            return <TableProgressCell progress={value} />;
+                            return (
+                                <TableProgressCell
+                                    progress={value}
+                                    workflowStopped={row.workflowStopped}
+                                />
+                            );
                         }
                     }
 
                     if (col.link) {
-                        const rowId = info.row.original.id;
                         return (
-                            <TableLinkCell to={`/instance/${rowId}`}>
-                                {formattedValue}
+                            <TableLinkCell to={`/instance/${row.id}`}>
+                                {strikeThrough ? (
+                                    <span className="line-through">{formattedValue}</span>
+                                ) : (
+                                    formattedValue
+                                )}
                             </TableLinkCell>
                         );
                     }
 
-                    return <TableTextCell>{formattedValue}</TableTextCell>;
+                    return (
+                        <TableTextCell className={textClassName}>{formattedValue}</TableTextCell>
+                    );
                 },
                 enableSorting: true,
             }));
@@ -145,13 +170,24 @@ export const ScreenTable = ({
         }
 
         return tableColumns;
-    }, [columns, i18n.language, l, t, navigate, screenT, onRowSelectionChange, showInstanceLink]);
+    }, [
+        columns,
+        i18n.language,
+        l,
+        t,
+        navigate,
+        screenT,
+        onRowSelectionChange,
+        progressColumnId,
+        showInstanceLink,
+    ]);
 
     return (
         <DataTable
             data={filteredRows}
             columns={tableColumns}
             getRowId={(row) => row.id}
+            placeLast={(row) => isStoppedRow(row, progressColumnId)}
             rowSelection={rowSelection}
             onRowSelectionChange={onRowSelectionChange}
             stickyFirstColumn={Boolean(onRowSelectionChange)}

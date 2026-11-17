@@ -55,6 +55,7 @@ export type ScreenColumn = {
 export type ScreenRow = {
     id: string;
     values: Record<number, unknown>;
+    workflowStopped?: boolean;
 };
 
 export type ScreenRelatedUser = {

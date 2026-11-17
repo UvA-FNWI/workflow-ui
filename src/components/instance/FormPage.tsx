@@ -25,7 +25,12 @@ type Props = {
     submissionId: string;
     onClose: () => void;
     previousVersion?: number;
-    renderLayout?: (content: ReactNode, actions: ReactNode) => ReactNode;
+    submitText?: string;
+    renderLayout?: (
+        content: ReactNode,
+        navigation: ReactNode,
+        submitButton: ReactNode,
+    ) => ReactNode;
 };
 
 export const FormPage = ({
@@ -33,6 +38,7 @@ export const FormPage = ({
     submissionId,
     onClose,
     previousVersion,
+    submitText,
     renderLayout,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
@@ -42,7 +48,7 @@ export const FormPage = ({
     });
     const [selectedTabIndex, setActiveTabIndex] = useState(0);
 
-    if (!submission) return renderLayout ? renderLayout(null, null) : <div>Loading...</div>;
+    if (!submission) return renderLayout ? renderLayout(null, null, null) : <div>Loading...</div>;
 
     const pages = submission.form.pages.filter((page) => page.isInCurrentForm);
     const showTabView = pages.length > 1; // only show tabs and summary when there is more than one page
@@ -70,14 +76,15 @@ export const FormPage = ({
         if (tabIndex !== -1) setActiveTabIndex(tabIndex);
     };
 
-    const actions = (
+    const showNext = showTabView && activeTabIndex !== pages.length;
+    const navigation = (
         <>
             {showTabView && previousTabIndex !== undefined && (
                 <Button intent="secondary" onClick={() => setActiveTabIndex(previousTabIndex)}>
                     {t("previous")}
                 </Button>
             )}
-            {showTabView && activeTabIndex !== pages.length ? (
+            {showNext && (
                 <Button
                     intent="primary"
                     disabled={nextTabIndex === undefined || !isPageComplete(pages[activeTabIndex])}
@@ -85,15 +92,17 @@ export const FormPage = ({
                 >
                     {t("next")}
                 </Button>
-            ) : (
-                <FormSubmitButton
-                    instanceId={instanceId}
-                    submission={submission}
-                    disabled={!areAllPagesComplete}
-                    onSubmit={onClose}
-                />
             )}
         </>
+    );
+    const submitButton = !showNext && (
+        <FormSubmitButton
+            instanceId={instanceId}
+            submission={submission}
+            disabled={!areAllPagesComplete}
+            onSubmit={onClose}
+            text={submitText}
+        />
     );
 
     const content = (
@@ -168,11 +177,14 @@ export const FormPage = ({
     );
 
     return renderLayout ? (
-        renderLayout(content, actions)
+        renderLayout(content, navigation, submitButton)
     ) : (
         <div>
             {content}
-            <div className="mt-4 flex justify-start gap-3">{actions}</div>
+            <div className="mt-4 flex justify-start gap-3">
+                {navigation}
+                {submitButton}
+            </div>
         </div>
     );
 };

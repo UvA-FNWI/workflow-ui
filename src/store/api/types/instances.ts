@@ -37,6 +37,7 @@ export type WorkflowInstance = {
     viewerRoles: string[];
     infoCards: InfoCard[];
     stopMessage: LocalString | null;
+    stopEvent?: string | null;
 };
 
 /**

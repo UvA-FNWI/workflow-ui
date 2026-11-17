@@ -1,9 +1,15 @@
-import {Text, Tooltip} from "@uva-fnwi/datanose-ui";
+import {cn, Text, Tooltip} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {ScreenRelatedUser} from "~/store/api/types/screens.ts";
 
-export function TableStaffCell({users}: {users: ScreenRelatedUser[]}) {
+export function TableStaffCell({
+    users,
+    textClassName,
+}: {
+    users: ScreenRelatedUser[];
+    textClassName?: string;
+}) {
     return (
         <div className="flex flex-col">
             {users.map((user) => (
@@ -12,7 +18,11 @@ export function TableStaffCell({users}: {users: ScreenRelatedUser[]}) {
                     triggerClassName="self-start max-w-full"
                     content={<UserTooltip user={user} />}
                 >
-                    <Text display="block" size="sm" className="max-w-80 truncate">
+                    <Text
+                        display="block"
+                        size="sm"
+                        className={cn("max-w-80 truncate", textClassName)}
+                    >
                         {user.displayName}
                     </Text>
                 </Tooltip>

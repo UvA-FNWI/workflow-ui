@@ -1,6 +1,6 @@
 import {Provider} from "react-redux";
 
-import {act, cleanup, fireEvent, render, screen} from "@testing-library/react";
+import {act, cleanup, fireEvent, render, screen, within} from "@testing-library/react";
 import {ToastProvider} from "@uva-fnwi/datanose-ui";
 import {afterEach, expect, it, vi} from "vitest";
 
@@ -176,6 +176,13 @@ it.each(["Normal", "Compact", "Modal"] as const)(
         if (formLayout === "Modal") {
             expect(screen.queryByText("repeated_form.message")).not.toBeInTheDocument();
             fireEvent.click(screen.getByRole("button", {name: "Submit draft"}));
+            const footer = screen.getByRole("dialog").querySelector("footer")!;
+            expect(footer).toHaveClass("ui:justify-start");
+            expect(
+                within(footer)
+                    .getAllByRole("button")
+                    .map((button) => button.textContent),
+            ).toEqual(["common:confirm", "common:cancel"]);
         }
         expect(await screen.findByText("repeated_form.message")).toBeVisible();
         rerender(

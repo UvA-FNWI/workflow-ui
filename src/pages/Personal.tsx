@@ -16,9 +16,16 @@ import {
     groupPersonalInstancesByRole,
     partitionPersonalInstancesByStatus,
 } from "~/utils/personalInstances";
+import {isStopped} from "~/utils/progress";
 import {getComparableTableCellValue} from "~/utils/tableCellValues";
 
 const noInstances: PersonalInstance[] = [];
+
+function stoppedTextClassName(instance: PersonalInstance) {
+    return isStopped(instance.workflowStopped, instance.progress.stopEvent)
+        ? "line-through"
+        : undefined;
+}
 
 export default function Personal() {
     const {t} = useTranslate("screens");
@@ -68,20 +75,17 @@ export function PersonalInstancesContent({
         : undefined;
     const titleSuffix = workflowTitle ? ` (${workflowTitle})` : "";
 
-    const {activeRoleGroups, completedRoleGroups, stoppedRoleGroups} = useMemo(() => {
+    const {activeRoleGroups, completedRoleGroups} = useMemo(() => {
         const workflowInstances = workflowDefinition
             ? instances.filter((instance) => instance.workflowDefinition === workflowDefinition)
             : instances;
-        const {active, completed, stopped} = partitionPersonalInstancesByStatus(workflowInstances);
+        const {active, completed} = partitionPersonalInstancesByStatus(workflowInstances);
         return {
             activeRoleGroups: groupPersonalInstancesByRole(active, data?.roles ?? []),
             completedRoleGroups: groupPersonalInstancesByRole(completed, data?.roles ?? []),
-            stoppedRoleGroups: groupPersonalInstancesByRole(stopped, data?.roles ?? []),
         };
     }, [data?.roles, instances, workflowDefinition]);
-    const hasActive = activeRoleGroups.length > 0;
-    const hasStopped = stoppedRoleGroups.length > 0;
-    const hasRoleGroups = hasActive || completedRoleGroups.length > 0 || hasStopped;
+    const hasRoleGroups = activeRoleGroups.length > 0 || completedRoleGroups.length > 0;
     const columns = useMemo<ColumnDef<PersonalInstance>[]>(
         () => [
             {
@@ -108,7 +112,7 @@ export function PersonalInstancesContent({
                     ),
                 header: () => t("columns.title"),
                 cell: ({row}) => (
-                    <TableTextCell>
+                    <TableTextCell className={stoppedTextClassName(row.original)}>
                         {row.original.title ||
                             l(row.original.workflowDefinitionTitle) ||
                             row.original.id}
@@ -122,7 +126,11 @@ export function PersonalInstancesContent({
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.course, "String", i18n.language),
                 header: () => t("columns.course"),
-                cell: ({row}) => <TableTextCell>{row.original.course || "—"}</TableTextCell>,
+                cell: ({row}) => (
+                    <TableTextCell className={stoppedTextClassName(row.original)}>
+                        {row.original.course || "—"}
+                    </TableTextCell>
+                ),
                 enableSorting: true,
             },
             {
@@ -137,9 +145,14 @@ export function PersonalInstancesContent({
                 header: () => t("columns.staff"),
                 cell: ({row}) =>
                     row.original.staff.length ? (
-                        <TableStaffCell users={row.original.staff} />
+                        <TableStaffCell
+                            users={row.original.staff}
+                            textClassName={stoppedTextClassName(row.original)}
+                        />
                     ) : (
-                        <TableTextCell>—</TableTextCell>
+                        <TableTextCell className={stoppedTextClassName(row.original)}>
+                            —
+                        </TableTextCell>
                     ),
                 enableSorting: true,
             },
@@ -149,7 +162,12 @@ export function PersonalInstancesContent({
                 accessorFn: (instance) =>
                     getComparableTableCellValue(instance.progress, "Object", i18n.language),
                 header: () => t("columns.progress"),
-                cell: ({row}) => <TableProgressCell progress={row.original.progress} />,
+                cell: ({row}) => (
+                    <TableProgressCell
+                        progress={row.original.progress}
+                        workflowStopped={row.original.workflowStopped}
+                    />
+                ),
                 enableSorting: true,
             },
             {
@@ -206,24 +224,16 @@ export function PersonalInstancesContent({
                         title={`${t("active")}${titleSuffix}`}
                         roleGroups={activeRoleGroups}
                         columns={columns}
-                        defaultExpanded={hasActive || !hasStopped}
+                        defaultExpanded
                         personOverview={personOverview}
                     />
                     <PersonalDisclosure
                         title={`${t("completed")}${titleSuffix}`}
                         roleGroups={completedRoleGroups}
                         columns={columns}
-                        defaultExpanded={completedRoleGroups.length === 0 && !hasStopped}
+                        defaultExpanded={completedRoleGroups.length === 0}
                         personOverview={personOverview}
                     />
-                    {hasStopped && (
-                        <PersonalDisclosure
-                            title={`${t("stopped")}${titleSuffix}`}
-                            roleGroups={stoppedRoleGroups}
-                            columns={columns}
-                            defaultExpanded={!hasActive}
-                        />
-                    )}
                 </>
             )}
         </div>

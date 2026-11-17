@@ -3,10 +3,15 @@ import type {ProgressInformation} from "~/store/api/types/progress";
 
 type TableProgressCellProps = {
     progress: ProgressInformation;
+    workflowStopped?: boolean;
 };
 
-export function TableProgressCell({progress}: TableProgressCellProps) {
+export function TableProgressCell({progress, workflowStopped}: TableProgressCellProps) {
     const {l} = useTranslate("workflow");
+
+    if (workflowStopped) {
+        return <span className="font-bold">{l(progress.text)}</span>;
+    }
 
     return (
         <div className="flex items-baseline gap-2">

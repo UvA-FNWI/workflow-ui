@@ -30,7 +30,8 @@ export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: 
             submissionId={submissionId}
             previousVersion={previousVersion}
             onClose={onClose}
-            renderLayout={(content, actions) => (
+            submitText={t("common:confirm")}
+            renderLayout={(content, navigation, submitButton) => (
                 <Modal isOpen onOpenChange={onClose} size="lg" aria-label={title}>
                     <Modal.Header className="pb-0">{title}</Modal.Header>
                     <Modal.Body className="mt-2">
@@ -45,18 +46,19 @@ export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: 
                         )}
                     </Modal.Body>
                     <Modal.Footer className="flex-wrap gap-y-3">
+                        {isError ? (
+                            <Button intent="primary" onClick={() => void refetch()}>
+                                {t("retry")}
+                            </Button>
+                        ) : (
+                            <>
+                                {submitButton}
+                                {navigation}
+                            </>
+                        )}
                         <Button intent="secondary" onClick={onClose}>
                             {t("common:cancel")}
                         </Button>
-                        <div className="flex flex-wrap justify-end gap-3">
-                            {isError ? (
-                                <Button intent="primary" onClick={() => void refetch()}>
-                                    {t("retry")}
-                                </Button>
-                            ) : (
-                                actions
-                            )}
-                        </div>
                     </Modal.Footer>
                 </Modal>
             )}
