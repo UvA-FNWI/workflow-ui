@@ -70,8 +70,8 @@ export const ScreenTableToolbar = ({
                     </Button>
                 )}
 
-                <div className="ml-auto flex items-center gap-4">
-                    {canCreate && (
+                {canCreate && (
+                    <div className="lg:ml-auto">
                         <Button
                             intent="secondary"
                             variant="destructive"
@@ -80,13 +80,18 @@ export const ScreenTableToolbar = ({
                         >
                             {t("create_new")}
                         </Button>
-                    )}
+                    </div>
+                )}
+                <div
+                    className={`order-first w-full lg:order-0 lg:w-auto ${canCreate ? "" : "lg:ml-auto"}`}
+                >
                     <SearchInput
                         aria-label={t("search_placeholder")}
                         value={search}
                         onChange={setSearch}
                         placeholder={t("search_placeholder")}
                         size="md"
+                        className="w-full"
                     />
                 </div>
             </div>

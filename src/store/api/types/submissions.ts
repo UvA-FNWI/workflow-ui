@@ -228,7 +228,8 @@ export type RoleAction =
     | "Execute"
     | "CreateRelatedInstance"
     | "Undo"
-    | "ViewCorrespondence";
+    | "ViewCorrespondence"
+    | "ViewHistory";
 export type DataType =
     | "File"
     | "Date"

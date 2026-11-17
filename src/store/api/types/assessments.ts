@@ -19,8 +19,12 @@ export type AssessmentPart = {
     sourceResults: SourceResult[];
     combined: SourceResult | null;
     percentage: number;
-    showDiscrepancyWarning: boolean;
+    warnings: AssessmentWarning;
     form: Form;
+};
+
+export type AssessmentWarning = {
+    label: LocalString;
 };
 
 export type SourceResult = {

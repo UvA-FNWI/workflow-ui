@@ -19,6 +19,7 @@ import type {Submission} from "~/store/api/types/submissions.ts";
 import {setOpenForm} from "~/store/openFormSlice.ts";
 import {useAppDispatch} from "~/store/store.ts";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps.ts";
+import {hasSubmissionContent} from "~/utils/submissionUtils.ts";
 
 type Props = {
     step: WorkflowStep;
@@ -100,7 +101,7 @@ export const StepCardBody = ({
     };
 
     const versionHeading =
-        step.versions?.current && hasVersionHistory(step) ? (
+        step.versions?.current && step.versions.history.length > 0 ? (
             <Heading fontType="heading" size="sm" as="h3" className="pt-4 font-semibold">
                 {t("version_card.version_nr", {versionNumber: step.versions.current.versionNumber})}
             </Heading>
@@ -113,8 +114,7 @@ export const StepCardBody = ({
         <>
             <div className="flex flex-col gap-4">
                 {!inlineForm &&
-                    (submissions.length === 0 ||
-                        (step.versions?.current?.submissions.length ?? 0) > 0) &&
+                    step.versions?.current?.submissions.some(hasSubmissionContent) &&
                     versionHeading}
                 {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
@@ -168,13 +168,15 @@ export const StepCardBody = ({
                 <VersionHistory
                     versions={step.versions?.history ?? []}
                     instanceId={instance.id}
-                    defaultExpandFirst={submissions.length === 0}
+                    defaultExpandFirst={!submissions.some(hasSubmissionContent)}
                 />
                 {showChildHistory &&
                     getStepHierarchy(step)
                         .slice(1)
                         .filter(
-                            (child) => child.versions?.current != null || hasVersionHistory(child),
+                            (child) =>
+                                child.versions?.current?.submissions.some(hasSubmissionContent) ||
+                                hasVersionHistory(child),
                         )
                         .map((child) => (
                             <section key={child.id} className="pt-4">

@@ -27,12 +27,12 @@
   "change_selection": "Change selection",
   "correspondence": {
     "content": "Content",
-    "date": "Date",
     "empty": "No automated emails found",
     "recipients": "Recipient(s)",
     "subject": "Subject",
     "title": "Automated emails"
   },
+  "date": "Date",
   "develop": {
     "columns": {
       "created": "Created",
@@ -42,11 +42,13 @@
     "load_error": "Could not load instances",
     "loading": "Loading…",
     "new": "New {{name}}",
+    "no_definition_selected": "Select a definition to show instances of that type.",
     "no_definitions": "No project types available",
     "no_instances": "No instances yet",
     "recalculate_current_steps": "Recalculate steps",
     "recalculate_current_steps_error": "Could not recalculate the current steps",
     "recalculate_current_steps_success": "Checked {{total}} instances: {{updated}} updated and {{unchanged}} unchanged",
+    "select_definition": "Select a definition",
     "title": "Develop"
   },
   "email": "Email address",
@@ -77,17 +79,28 @@
   },
   "form": "Form",
   "form_load_failed": "The form could not be loaded. Please try again.",
+  "history": {
+    "by": "By",
+    "empty": "There is no history yet",
+    "status": "Status",
+    "title": "History",
+    "undo_reason_empty": "There is no reason provided for this undo action"
+  },
+
   "home": "Home",
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
       "calculated_grade": "Calculated grade: ",
-      "discrepancy_warning": "There is a large discrepancy between the supervisors' assessments. Please discuss the grades before submitting and consult the coordinator if needed.",
       "final_grade": "Final grade",
       "grading_incomplete": "Grading not yet complete"
     },
     "deadline_passed": "The deadline has passed. You can no longer submit this form.",
     "empty_step": "Nothing has been submitted yet.",
+    "shared_loading": "Loading shared work…",
+    "shared_restricted": "You do not have permission to view this shared work.",
+    "shared_step": "Shared step",
+    "shared_unavailable": "Shared work is not available. Check the linked instance.",
     "summary": {
       "change_version": "Version {{version}}",
       "change_version_in_progress": "Version {{version}} (in progress)",
@@ -102,6 +115,7 @@
       "hide_answers": "Hide parts and explanations",
       "hide_linked": "Hide explanations",
       "replace_file": "Replace file",
+      "reversed_on_by": "Reversed on {{date}} by {{name}}",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
