@@ -1,6 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {ProgressInformation} from "~/store/api/types/progress";
-import type {MilestonesPerson} from "~/store/api/types/users";
 
 export type PersonalRole = {
     name: string;
@@ -11,8 +10,6 @@ export type PersonalInstances = {
     roles: PersonalRole[];
     instances: PersonalInstance[];
 };
-
-export type PersonInstances = PersonalInstances & {person: MilestonesPerson};
 
 export type PersonalInstance = {
     id: string;

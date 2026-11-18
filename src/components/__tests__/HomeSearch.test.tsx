@@ -13,18 +13,16 @@ import Overview from "~/pages/Overview";
 import Personal from "~/pages/Personal";
 import PersonOverview from "~/pages/PersonOverview";
 
-const {search, getPerson, getCurrentUser} = vi.hoisted(() => ({
+const {search, getPerson} = vi.hoisted(() => ({
     search: vi.fn(),
     getPerson: vi.fn(),
-    getCurrentUser: vi.fn(),
 }));
 
-vi.mock("~/store/api/usersApi", () => ({useSearchUsersQuery: search}));
-vi.mock("~/store/api/personalApi", () => ({
-    useGetPersonalInstancesQuery: () => ({}),
+vi.mock("~/store/api/usersApi", () => ({
+    useSearchUsersQuery: search,
     useGetPersonInstancesQuery: getPerson,
 }));
-vi.mock("~/store/store", () => ({useAppSelector: getCurrentUser}));
+vi.mock("~/store/api/personalApi", () => ({useGetPersonalInstancesQuery: () => ({})}));
 
 const person = {
     id: "person-1",
@@ -33,7 +31,7 @@ const person = {
     userName: "ada",
 };
 
-const definitions = [
+const availableDefinitions = [
     {
         name: "project",
         title: {en: "Ada Research Project", nl: "Onderzoeksproject"},
@@ -57,8 +55,10 @@ const definitions = [
     properties: [],
 }));
 
-async function renderHome(path: string, {canSearchPeople = true, showRoleTabs = false} = {}) {
-    getCurrentUser.mockReturnValue({canSearchPeople});
+async function renderHome(
+    path: string,
+    {definitions = availableDefinitions, showRoleTabs = false} = {},
+) {
     search.mockImplementation((query) => ({
         currentData: {
             people: query === "ada" || query === person.email ? [person] : [],
@@ -242,10 +242,9 @@ it.each([
     },
 );
 
-it("does not run a search from the URL without search permission", async () => {
-    await renderHome("/?search=ada", {canSearchPeople: false});
+it("does not run a search from the URL without a coordinator screen", async () => {
+    await renderHome("/?search=ada", {definitions: []});
 
-    expect(screen.getByText("Bachelor Thesis")).toBeVisible();
     expect(
         screen.queryByRole("textbox", {name: workflow.home_search.label}),
     ).not.toBeInTheDocument();

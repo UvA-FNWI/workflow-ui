@@ -31,7 +31,6 @@ app.get("/Users/Me", (_, res) => {
         isExternal: false,
         isPending: false,
         isSuperAdmin: false,
-        canSearchPeople: false,
     });
 });
 

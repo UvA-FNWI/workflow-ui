@@ -2,7 +2,7 @@ import {I18nextProvider} from "react-i18next";
 import {Provider} from "react-redux";
 import {createMemoryRouter, RouterProvider} from "react-router";
 
-import {cleanup, fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {createInstance} from "i18next";
 import {afterEach, expect, it, vi} from "vitest";
 
@@ -13,7 +13,6 @@ import {HomePage} from "../HomePage";
 import Overview from "~/pages/Overview";
 import Personal from "~/pages/Personal";
 import {baseApi} from "~/store/api/baseApi";
-import {workflowDefinitionsApi} from "~/store/api/workflowDefinitionsApi";
 import {clearCurrentUser, setAccessToken} from "~/store/authSlice";
 import {store} from "~/store/store";
 
@@ -27,8 +26,7 @@ afterEach(() => {
     vi.unstubAllGlobals();
 });
 
-it.each([0, 1])("keeps people search on home with %i accessible workflows", async (count) => {
-    const access = Promise.withResolvers<Response>();
+it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
     const project = {
         name: "project",
         title: {en: "Project"},
@@ -39,7 +37,7 @@ it.each([0, 1])("keeps people search on home with %i accessible workflows", asyn
     const fetch = vi.fn(async (request: Request) => {
         switch (new URL(request.url).pathname) {
             case "/Users/Me":
-                return access.promise;
+                return Response.json({userName: "admin"});
             case "/WorkflowDefinitions/Accessible":
                 return Response.json(count ? [project] : []);
             case "/Personal/Instances":
@@ -80,29 +78,26 @@ it.each([0, 1])("keeps people search on home with %i accessible workflows", asyn
         </Provider>,
     );
 
-    await waitFor(() =>
+    if (count === 0) {
+        expect(await screen.findByText(screens.empty_title)).toBeVisible();
+        expect(router.state.location.pathname).toBe("/personal");
+        expect(screen.queryByRole("search")).not.toBeInTheDocument();
         expect(
-            workflowDefinitionsApi.endpoints.getAccessibleWorkflowDefinitions.select()(
-                store.getState(),
-            ).isSuccess,
-        ).toBe(true),
-    );
-    expect(router.state.location.pathname).toBe("/");
+            fetch.mock.calls.some(([request]) => new URL(request.url).pathname === "/Users/Search"),
+        ).toBe(false);
+        return;
+    }
 
-    access.resolve(Response.json({userName: "admin", canSearchPeople: true}));
     expect(await screen.findByRole("link", {name: person.displayName})).toBeVisible();
+    expect(router.state.location.pathname).toBe("/");
     expect(router.state.location.search).toBe("?search=ada&version=2026");
 
     fireEvent.change(screen.getByRole("textbox", {name: workflow.home_search.label}), {
         target: {value: ""},
     });
-    if (count === 0) {
-        expect(screen.getByText(screens.empty_title)).toBeVisible();
-    } else {
-        fireEvent.click(screen.getByRole("link", {name: /^Project/}));
-        const homeLink = await screen.findByRole("link", {name: workflow.home});
-        expect(homeLink).toHaveAttribute("href", "/?version=2026");
-    }
+    fireEvent.click(screen.getByRole("link", {name: /^Project/}));
+    const homeLink = await screen.findByRole("link", {name: workflow.home});
+    expect(homeLink).toHaveAttribute("href", "/?version=2026");
 });
 
 it("shows a home error after one Accessible request when the API is down", async () => {

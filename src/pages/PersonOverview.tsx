@@ -7,7 +7,7 @@ import {PageHeader} from "~/components/PageHeader";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalInstancesContent} from "~/pages/Personal";
-import {useGetPersonInstancesQuery} from "~/store/api/personalApi";
+import {useGetPersonInstancesQuery} from "~/store/api/usersApi";
 
 export default function PersonOverview() {
     const {personId} = useParams();

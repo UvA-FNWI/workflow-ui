@@ -22,10 +22,6 @@ vi.mock("~/store/api/personalApi", () => ({
     useGetPersonalInstancesQuery: getPersonal,
 }));
 
-vi.mock("~/hooks/useAuthenticatedUser", () => ({
-    useAuthenticatedUser: () => ({currentUser: null, isLoading: false}),
-}));
-
 vi.mock("~/store/store", () => ({
     useAppDispatch: () => dispatch,
     useAppSelector: (select: (state: {homeNavigation: typeof homeNavigation}) => unknown) =>
@@ -129,11 +125,11 @@ it("keeps the outlet visible during background refetches", () => {
     expect(screen.getByRole("button", {name: "Personal"})).toBeInTheDocument();
 });
 
-// No coordinator screens leads to personal; one workflow opens its first screen; several keep choices.
+// Home remains available to anyone with coordinator screens.
 it.each([
     {definitions: [], target: "/personal"},
     {definitions: [{name: "project", screens: []}], target: "/personal"},
-    {definitions: [project], target: "/screens/project/overview"},
+    {definitions: [project], target: "/"},
     {definitions: [project, thesis], target: "/"},
 ])("routes home to $target for the available workflows", async ({definitions, target}) => {
     // Start elsewhere so every case also checks that the final destination is remembered.
@@ -160,12 +156,13 @@ it.each([
     expect(screen.queryByRole("button", {name: "Personal"}) !== null).toBe(visible);
 });
 
-// A coordinator screen needs a way back to workflow choices only when several workflows exist.
+// Coordinator users can return to home from both views.
 it.each([
     {path: "/", definitions: [project, thesis], visible: false},
-    {path: "/personal", definitions: [project, thesis], visible: false},
+    {path: "/personal", definitions: [project], visible: true},
+    {path: "/personal", definitions: [], visible: false},
     {path: "/screens/project/overview", definitions: [project, thesis], visible: true},
-    {path: "/screens/project/overview", definitions: [project], visible: false},
+    {path: "/screens/project/overview", definitions: [project], visible: true},
 ])("offers workflow choices on $path ($visible)", ({path, definitions, visible}) => {
     getDefinitions.mockReturnValue({data: definitions, isError: false});
     renderHome(path);
@@ -179,7 +176,7 @@ it.each([
     {
         savedPath: "/screens/removed/overview",
         definitions: [project],
-        target: "/screens/project/overview",
+        target: "/",
     },
     {savedPath: "/screens/removed/overview", definitions: [project, thesis], target: "/"},
 ])("returns from personal to $target", async ({savedPath, definitions, target}) => {

@@ -1,4 +1,5 @@
 import type {Organization} from "./organizations";
+import type {PersonalInstances} from "./personal";
 
 export interface UserSearchResult {
     id?: string;
@@ -15,7 +16,6 @@ export interface UserSearchResult {
 
 export interface CurrentUserResponse extends UserSearchResult {
     isSuperAdmin: boolean;
-    canSearchPeople: boolean;
 }
 
 export type MilestonesPerson = {
@@ -29,6 +29,8 @@ export type UserSearchResults = {
     people: MilestonesPerson[];
     hasMore: boolean;
 };
+
+export type PersonInstances = PersonalInstances & {person: MilestonesPerson};
 
 /** Signed token and expiry returned when starting impersonation. */
 export interface UserImpersonationStarted {
