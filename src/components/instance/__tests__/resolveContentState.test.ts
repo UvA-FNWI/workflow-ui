@@ -54,7 +54,19 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
                 name: "page-1",
                 title: {en: "Page 1", nl: "Pagina 1"},
                 layout: "Normal",
-                elements: [],
+                elements: [
+                    {
+                        kind: "Question",
+                        question: {
+                            name: "q1",
+                            text: {en: "Q1", nl: "Q1"},
+                            type: "String",
+                            isRequired: false,
+                            isArray: false,
+                            hideInResults: false,
+                        },
+                    },
+                ],
                 hasResults: false,
                 isInCurrentForm: true,
                 isActive: true,

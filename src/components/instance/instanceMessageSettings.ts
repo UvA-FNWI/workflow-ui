@@ -27,9 +27,9 @@ const defaults: InstanceMessageSettings = {
 };
 
 export function resolveInstanceMessageSettings(
-    workflowDefinition: WorkflowDefinition,
+    workflowDefinition: WorkflowDefinition | undefined,
 ): InstanceMessageSettings | null {
-    if (!workflowDefinition.messagesEnabled) return null;
+    if (!workflowDefinition?.messagesEnabled) return null;
     const settings = workflowDefinition.messages;
     if (!settings) return defaults;
     return {

@@ -1,8 +1,19 @@
-import {type ReactNode, useRef, useState} from "react";
+import {type ReactNode, useId, useRef, useState} from "react";
 
-import {cn, Disclosure, Heading, Pill, type PillVariantProps, Text} from "@uva-fnwi/datanose-ui";
+import {
+    Button,
+    cn,
+    Disclosure,
+    Heading,
+    Icon,
+    Pill,
+    type PillVariantProps,
+    Text,
+    Tooltip,
+} from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
+import {ImportedStepCard} from "~/components/instance/ImportedStepCard";
 import {
     getStepHierarchy,
     hasVersionHistory,
@@ -34,10 +45,13 @@ type Props = {
     step: WorkflowStep;
     instance: WorkflowInstance;
     nested?: boolean;
-    rootStep?: WorkflowStep;
+    sharedParticipants?: {displayName: string}[];
 };
 
-export const StepCard = ({step, instance, nested = false, rootStep = step}: Props) => {
+export const StepCard = (props: Props) =>
+    props.step.importStatus ? <ImportedStepCard step={props.step} /> : <OwnedStepCard {...props} />;
+
+const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Props) => {
     const {t, l} = useTranslate("workflow");
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -47,14 +61,15 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
 
     // Child rows own their content; combined cards include the whole hierarchy.
     const fullHierarchy = getStepHierarchy(step);
-    const contentStep = showChildRows ? getParentContent(step) : step;
-    const contentSteps = showChildRows ? [contentStep] : fullHierarchy;
+    const contentSteps = showChildRows ? [step] : fullHierarchy;
     const allStepIds = new Set(fullHierarchy.map((candidate) => candidate.id));
     const contentStepIds = showChildRows ? new Set([step.id]) : allStepIds;
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => contentStepIds.has(actionStepId)),
     );
-    const submissions = instance.submissions.filter((s) => contentStepIds.has(s.form.step ?? ""));
+    const submissions = showChildRows
+        ? step.submissions.filter((s) => s.form.step === step.id)
+        : step.submissions;
 
     const deadlineMessages = contentSteps.filter(
         (candidate) =>
@@ -62,26 +77,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
             (candidate.deadline?.type === "Hard" && candidate.deadline.isPassed),
     );
 
-    // Availability includes child actions even when they render in separate rows.
     const isCurrentStep = allStepIds.has(instance.currentStep ?? "");
-    const currentStepIndex = instance.steps.findIndex((s) =>
-        [s.id, ...(s.children?.map((c) => c.id) ?? [])].includes(instance.currentStep ?? ""),
-    );
-    const isAfterCurrentStep = instance.steps.indexOf(rootStep) > currentStepIndex;
-
-    // An unfinished alongside obligation can move the current step backward. Steps that are
-    // already completed or still have available actions must remain usable regardless of order.
-    const hasAvailableAction = instance.actions.some((action) =>
-        action.steps.some((id) => allStepIds.has(id)),
-    );
-    const isUnavailableFutureStep =
-        !step.dateCompleted &&
-        deadlineMessages.length === 0 &&
-        !hasAvailableAction &&
-        !!instance.currentStep &&
-        !isCurrentStep &&
-        isAfterCurrentStep;
-
     const {activeAction, resolvedAction, setActiveAction} = useStepActions(actions, submissions);
 
     const hasVisibleSubmission = submissions.length > 0 || contentSteps.some(hasVersionHistory);
@@ -98,11 +94,11 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
         actions.length > 0 ||
         submissions.length > 0 ||
         step.versions?.current != null ||
-        hasVersionHistory(contentStep) ||
+        hasVersionHistory(step) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
     const hasBodyContent = deadlineMessages.length > 0 || hasStepContent || childRows.length > 0;
-    const isContentless = !isUnavailableFutureStep && !hasBodyContent;
+    const isContentless = step.isAvailable && !hasBodyContent;
     const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
 
     const undoControl = step.undoCandidate && (
@@ -121,7 +117,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
             role="group"
             aria-label={l(step.title)}
             tabIndex={-1}
-            isDisabled={isUnavailableFutureStep || !hasBodyContent}
+            isDisabled={!step.isAvailable || !hasBodyContent}
             shadow={nested ? "none" : undefined}
             border={nested ? "none" : undefined}
             className={cn(
@@ -137,9 +133,16 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                 submissions={submissions}
                 currentStep={instance.currentStep}
                 deadlinePassed={fullHierarchy.some((candidate) => candidate.deadline?.isPassed)}
-                actions={undoControl}
+                leading={
+                    <>
+                        {sharedParticipants && (
+                            <SharedStepIndicator participants={sharedParticipants} />
+                        )}
+                        {undoControl}
+                    </>
+                }
             />
-            {hasBodyContent && (
+            {hasBodyContent && isExpanded && (
                 <Disclosure.Content padding={nested ? "none" : undefined}>
                     {deadlineMessages.map((candidate) => (
                         <div key={candidate.id} className="pt-4">
@@ -148,14 +151,14 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                             </MarkdownRenderer>
                         </div>
                     ))}
-                    {/* Closed rows must not mount an automatically opened form. */}
-                    {hasStepContent && (!nested || isExpanded) && (
+                    {hasStepContent && (
                         <StepCardBody
-                            step={contentStep}
+                            step={step}
+                            showChildHistory={!showChildRows}
                             instance={instance}
                             actions={actions}
                             submissions={submissions}
-                            contentState={resolveContentState(contentStep, submissions)}
+                            contentState={resolveContentState(step, submissions)}
                             modalState={resolveModalState(activeAction)}
                             activeAction={activeAction}
                             resolvedAction={resolvedAction}
@@ -164,13 +167,7 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
                         />
                     )}
                     {childRows.map((child) => (
-                        <StepCard
-                            key={child.id}
-                            step={child}
-                            instance={instance}
-                            nested
-                            rootStep={rootStep}
-                        />
+                        <StepCard key={child.id} step={child} instance={instance} nested />
                     ))}
                 </Disclosure.Content>
             )}
@@ -178,11 +175,44 @@ export const StepCard = ({step, instance, nested = false, rootStep = step}: Prop
     );
 };
 
+function SharedStepIndicator({participants}: {participants: {displayName: string}[]}) {
+    const {t} = useTranslate("workflow");
+    const [isOpen, setIsOpen] = useState(false);
+    const descriptionId = useId();
+    return (
+        <Tooltip
+            isOpen={isOpen}
+            onOpenChange={setIsOpen}
+            content={
+                <div id={descriptionId}>
+                    {participants.map((participant, index) => (
+                        <div key={index}>{participant.displayName}</div>
+                    ))}
+                </div>
+            }
+        >
+            <Button
+                intent="ghost"
+                variant="default"
+                size="small"
+                type="button"
+                aria-label={t("instance.shared_step")}
+                aria-describedby={isOpen ? descriptionId : undefined}
+                onFocus={() => setIsOpen(true)}
+                onBlur={() => setIsOpen(false)}
+            >
+                <Icon name="users-line" color="current" />
+            </Button>
+        </Tooltip>
+    );
+}
+
 function useStepActions(actions: Action[], submissions: Submission[]) {
     const [onlyAction] = actions;
     const autoOpenAction =
         actions.length === 1 &&
         onlyAction?.type === "SubmitForm" &&
+        onlyAction.formLayout !== "Modal" &&
         onlyAction.autoOpenForm !== false &&
         !submissions.some((s) => s.dateSubmitted && s.form.name === onlyAction.form)
             ? onlyAction
@@ -192,32 +222,6 @@ function useStepActions(actions: Action[], submissions: Submission[]) {
     // A refresh can revoke an action while its form or modal is still open.
     const activeAction = actions.find((action) => action.id === selectedAction?.id) ?? null;
     return {activeAction, resolvedAction: activeAction ?? autoOpenAction, setActiveAction};
-}
-
-function getParentContent(step: WorkflowStep): WorkflowStep {
-    if (!step.versions) return step;
-
-    const filterSubmissions = (submissions: Submission[]) =>
-        submissions.filter((submission) => submission.form.step === step.id);
-
-    const current = step.versions.current
-        ? {
-              ...step.versions.current,
-              submissions: filterSubmissions(step.versions.current.submissions),
-          }
-        : null;
-
-    const history = step.versions.history
-        .map((version) => ({
-            ...version,
-            submissions: filterSubmissions(version.submissions),
-        }))
-        .filter((version) => version.submissions.length > 0);
-
-    return {
-        ...step,
-        versions: {current, history},
-    };
 }
 
 function latestDate(dates: (string | null | undefined)[]): string | null {
@@ -236,7 +240,7 @@ function StepCardHeader({
     submissions,
     currentStep,
     deadlinePassed,
-    actions,
+    leading,
 }: {
     step: WorkflowStep;
     nested: boolean;
@@ -245,7 +249,7 @@ function StepCardHeader({
     submissions: Submission[];
     currentStep: WorkflowInstance["currentStep"];
     deadlinePassed: boolean;
-    actions?: ReactNode;
+    leading?: ReactNode;
 }) {
     const {t, l} = useTranslate("workflow");
 
@@ -256,7 +260,7 @@ function StepCardHeader({
             nested={nested}
             showChevron={hasBodyContent}
             className={isContentless ? "cursor-default!" : undefined}
-            actions={actions}
+            leading={leading}
         >
             <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
