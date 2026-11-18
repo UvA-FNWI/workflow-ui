@@ -18,6 +18,7 @@ export type PersonalInstance = {
     workflowDefinitionTitle: LocalString;
     title: string | null;
     currentStep: string | null;
+    workflowStopped?: boolean;
     progress: ProgressInformation;
     createdOn: string;
     roles: string[];
