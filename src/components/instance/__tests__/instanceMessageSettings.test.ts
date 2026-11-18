@@ -16,6 +16,8 @@ describe("resolveInstanceMessageSettings", () => {
                 layout: "threaded",
                 allowClose: true,
                 callout: false,
+                calloutTitle: null,
+                calloutText: null,
             },
         );
     });
@@ -30,6 +32,8 @@ describe("resolveInstanceMessageSettings", () => {
                     layout: "flat",
                     allowClose: false,
                     callout: true,
+                    calloutTitle: {en: "Privacy", nl: "Privacy"},
+                    calloutText: {en: "Body", nl: "Tekst"},
                     fieldsAllowAll: false,
                 },
             } as never),
@@ -38,6 +42,8 @@ describe("resolveInstanceMessageSettings", () => {
             layout: "flat",
             allowClose: false,
             callout: true,
+            calloutTitle: {en: "Privacy", nl: "Privacy"},
+            calloutText: {en: "Body", nl: "Tekst"},
         });
     });
 });

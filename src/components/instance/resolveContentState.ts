@@ -1,12 +1,22 @@
-import type {WorkflowStep} from "~/store/api/types/instances.ts";
+import type {Action, WorkflowStep} from "~/store/api/types/instances.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
-import {hasSubmissionContent} from "~/utils/submissionUtils.ts";
 
 /**
  * Background content state — what fills the card body regardless of any open form.
  */
 export type ContentState =
     {type: "submissions"; regular: Submission[]; assessments: Submission[]} | {type: "empty"};
+
+/**
+ * Form overlay state — shown alongside the background content (not exclusive).
+ */
+export type FormState = {type: "inPage"; action: Action} | null;
+
+/**
+ * Modal overlay state — dialog shown on top of everything.
+ */
+export type ModalState =
+    {type: "formModal"; action: Action} | {type: "confirmationModal"; action: Action} | null;
 
 const hasResults = (submission: Submission) => submission.form.pages.some((p) => p.hasResults);
 
@@ -15,12 +25,15 @@ export const getStepHierarchy = (step: WorkflowStep): WorkflowStep[] => [
     ...(step.children ?? []).flatMap((child) => getStepHierarchy(child)),
 ];
 
-/** Only attempts with visible question-and-answer rows have displayable history. */
+/** Indicates whether the step has any historical submissions to render as version cards. */
 export function hasVersionHistory(step: WorkflowStep): boolean {
-    return (
-        step.versions?.history.some((version) => version.submissions.some(hasSubmissionContent)) ??
-        false
-    );
+    return step.versions?.history.some((version) => version.submissions.length > 0) ?? false;
+}
+
+export function getCurrentVersionNumber(step: WorkflowStep): number | undefined {
+    const {versions} = step;
+    if (!versions?.current || versions.history.length === 0) return undefined;
+    return versions.current.versionNumber;
 }
 
 export function getPreviousFormVersion(step: WorkflowStep, form?: string): number | undefined {
@@ -45,4 +58,31 @@ export function resolveContentState(step: WorkflowStep, submissions: Submission[
     }
 
     return {type: "empty"};
+}
+
+/**
+ * Resolves the form overlay state (shown alongside background content).
+ */
+export function resolveFormState(resolvedAction: Action | null): FormState {
+    if (resolvedAction?.type === "SubmitForm" && resolvedAction.formLayout !== "Modal") {
+        return {type: "inPage", action: resolvedAction};
+    }
+    return null;
+}
+
+/**
+ * Resolves the modal state (overlay, independent from body content).
+ */
+export function resolveModalState(activeAction: Action | null): ModalState {
+    if (!activeAction) return null;
+
+    if (activeAction.type === "SubmitForm" && activeAction.formLayout === "Modal") {
+        return {type: "formModal", action: activeAction};
+    }
+
+    if (activeAction.type === "Execute") {
+        return {type: "confirmationModal", action: activeAction};
+    }
+
+    return null;
 }

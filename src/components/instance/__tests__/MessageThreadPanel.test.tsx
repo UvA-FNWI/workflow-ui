@@ -63,16 +63,16 @@ describe("MessageThreadPanel", () => {
     it("shows a compact new-conversation field without actions until it is focused", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(screen.getByLabelText("Start a new conversation")).toBeTruthy();
+        expect(screen.getByLabelText("Add a comment")).toBeTruthy();
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();
     });
 
     it("shows a compact new-conversation field when there are no threads", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[]} canAdd />);
 
-        expect(screen.getByLabelText("Start a new conversation")).toBeTruthy();
+        expect(screen.getByLabelText("Add a comment")).toBeTruthy();
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();
-        fireEvent.focus(screen.getByLabelText("Start a new conversation"));
+        fireEvent.focus(screen.getByLabelText("Add a comment"));
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
@@ -80,19 +80,16 @@ describe("MessageThreadPanel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();
-        fireEvent.focus(screen.getByLabelText("Start a new conversation"));
+        fireEvent.focus(screen.getByLabelText("Add a comment"));
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
-    it("replaces the reply button with the composer", () => {
+    it("replaces the reply starter with the composer when focused", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        const replyButtons = screen.getAllByRole("button", {name: "instance.messages.reply"});
-        fireEvent.click(replyButtons[0]!);
+        const starters = screen.getAllByLabelText("Write a reply");
+        fireEvent.focus(starters[0]!);
 
-        expect(screen.getAllByRole("button", {name: "instance.messages.reply"})).toHaveLength(
-            replyButtons.length - 1,
-        );
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
         expect(screen.getByRole("button", {name: "cancel"})).toBeTruthy();
     });
@@ -100,22 +97,21 @@ describe("MessageThreadPanel", () => {
     it("keeps the reply text when another reply is opened", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        fireEvent.click(screen.getAllByRole("button", {name: "instance.messages.reply"})[0]!);
-        fireEvent.change(screen.getByLabelText("Write a reply"), {target: {value: "Keep this"}});
-        fireEvent.click(screen.getByRole("button", {name: "instance.messages.reply"}));
+        const replyFields = () => screen.getAllByLabelText("Write a reply");
+        fireEvent.focus(replyFields()[0]!);
+        fireEvent.change(replyFields()[0]!, {target: {value: "Keep this"}});
+        fireEvent.focus(replyFields()[1]!);
 
-        expect(screen.getByLabelText("Write a reply")).toHaveValue("");
+        expect(replyFields()[1]!).toHaveValue("");
 
-        fireEvent.click(screen.getAllByRole("button", {name: "instance.messages.reply"})[0]!);
-        expect(screen.getByLabelText("Write a reply")).toHaveValue("Keep this");
+        fireEvent.focus(replyFields()[0]!);
+        expect(replyFields()[0]!).toHaveValue("Keep this");
     });
 
-    it("uses buttons for reply and close conversation", () => {
+    it("shows inline reply starters and a close conversation button", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(
-            screen.getAllByRole("button", {name: "instance.messages.reply"}).length,
-        ).toBeGreaterThan(0);
+        expect(screen.getAllByLabelText("Write a reply").length).toBeGreaterThan(0);
         expect(
             screen.getByRole("button", {name: "instance.messages.close_conversation"}),
         ).toBeTruthy();
@@ -124,7 +120,7 @@ describe("MessageThreadPanel", () => {
     it("can dismiss the new conversation field with cancel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        fireEvent.focus(screen.getByLabelText("Start a new conversation"));
+        fireEvent.focus(screen.getByLabelText("Add a comment"));
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
         fireEvent.click(screen.getByRole("button", {name: "cancel"}));
         expect(screen.queryByRole("button", {name: "save"})).toBeNull();

@@ -21,38 +21,59 @@ export function MessageMeta({
 }) {
     const formattedDate = formatDate(dateTime, language);
 
+    const line =
+        truncate || !dateOnHover ? (
+            <span className="block min-w-0 truncate">
+                <Text as="span" fontWeight="semibold" className="text-grey-900 dark:text-white">
+                    {displayName}
+                </Text>
+                {showDate && (
+                    <>
+                        <span aria-hidden="true"> · </span>
+                        <time dateTime={dateTime} title={formattedDate} className="text-grey-600">
+                            {formattedDate}
+                        </time>
+                    </>
+                )}
+                {suffix && (
+                    <>
+                        <span aria-hidden="true"> · </span>
+                        <Text as="span" className="text-grey-600">
+                            {suffix}
+                        </Text>
+                    </>
+                )}
+            </span>
+        ) : (
+            <>
+                <Text as="span" fontWeight="semibold" className="text-grey-900 dark:text-white">
+                    {displayName}
+                </Text>
+                {showDate && (
+                    <>
+                        <span aria-hidden="true"> · </span>
+                        <time
+                            dateTime={dateTime}
+                            title={formattedDate}
+                            className="text-grey-600 max-md:inline md:opacity-0 md:transition-opacity md:group-hover/reply:opacity-100"
+                        >
+                            {formattedDate}
+                        </time>
+                    </>
+                )}
+                {suffix && (
+                    <>
+                        <span aria-hidden="true"> · </span>
+                        <Text as="span" className="text-grey-600">
+                            {suffix}
+                        </Text>
+                    </>
+                )}
+            </>
+        );
+
     return (
-        <div
-            className={`min-w-0 text-grey-800 dark:text-grey-100 ${truncate ? "truncate" : "flex flex-wrap items-baseline"}`}
-        >
-            <Text as="span" fontWeight="semibold" className="text-grey-900 dark:text-white">
-                {displayName}
-            </Text>
-            {showDate && (
-                <>
-                    <span aria-hidden="true"> · </span>
-                    <time
-                        dateTime={dateTime}
-                        title={formattedDate}
-                        className={
-                            dateOnHover
-                                ? "text-grey-600 max-md:inline md:opacity-0 md:transition-opacity md:group-hover/reply:opacity-100"
-                                : "text-grey-600"
-                        }
-                    >
-                        {formattedDate}
-                    </time>
-                </>
-            )}
-            {suffix && (
-                <>
-                    <span aria-hidden="true"> · </span>
-                    <Text as="span" className="text-grey-600">
-                        {suffix}
-                    </Text>
-                </>
-            )}
-        </div>
+        <div className="flex min-w-0 items-baseline text-grey-800 dark:text-grey-100">{line}</div>
     );
 }
 

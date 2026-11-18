@@ -1,3 +1,4 @@
+import type {LocalString} from "~/hooks/useTranslate.ts";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 
 export type InstanceMessageSettings = {
@@ -5,6 +6,8 @@ export type InstanceMessageSettings = {
     layout: "threaded" | "flat";
     allowClose: boolean;
     callout: boolean;
+    calloutTitle: LocalString | null;
+    calloutText: LocalString | null;
 };
 
 export type MessageUiSettings = Pick<InstanceMessageSettings, "layout" | "allowClose">;
@@ -19,6 +22,8 @@ const defaults: InstanceMessageSettings = {
     layout: "threaded",
     allowClose: true,
     callout: false,
+    calloutTitle: null,
+    calloutText: null,
 };
 
 export function resolveInstanceMessageSettings(
@@ -32,5 +37,7 @@ export function resolveInstanceMessageSettings(
         layout: settings.layout === "flat" ? "flat" : "threaded",
         allowClose: settings.allowClose ?? true,
         callout: settings.callout ?? false,
+        calloutTitle: settings.calloutTitle ?? null,
+        calloutText: settings.calloutText ?? null,
     };
 }

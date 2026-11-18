@@ -15,7 +15,9 @@ vi.mock("~/hooks/useTranslate", () => ({
                 ? `${values?.title} - ${values?.audience}`
                 : key === "instance.messages.summary_open"
                   ? `${values?.count} open`
-                  : key,
+                  : key === "instance.messages.summary_count"
+                    ? `${values?.count}`
+                    : key,
     }),
 }));
 
@@ -67,6 +69,32 @@ describe("CommentsCard", () => {
         ).toBeTruthy();
         expect(screen.getByText("1 open")).toBeTruthy();
         expect(screen.getByLabelText("instance.messages.add")).toBeTruthy();
+    });
+
+    it("shows a comment count pill for flat layouts without close", () => {
+        getMessages.mockReturnValue({
+            data: [
+                {id: "t1", questionName: null, isClosed: false, items: []},
+                {id: "t2", questionName: null, isClosed: false, items: []},
+            ],
+            isSuccess: true,
+        });
+
+        render(
+            <CommentsCard
+                instance={
+                    {
+                        ...instance,
+                        workflowDefinition: {
+                            messagesEnabled: true,
+                            messages: {layout: "flat", allowClose: false},
+                        },
+                    } as WorkflowInstance
+                }
+            />,
+        );
+
+        expect(screen.getByText("2")).toBeTruthy();
     });
 
     it("focuses the new conversation field from the add control", () => {

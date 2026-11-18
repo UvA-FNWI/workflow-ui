@@ -95,7 +95,9 @@ export const ScreenTableToolbar = ({
                     />
                 </div>
             </div>
-            <ImportModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
+            {isImportModalOpen && (
+                <ImportModal isOpen onClose={() => setIsImportModalOpen(false)} />
+            )}
         </>
     );
 };

@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function CommentsCard({instance}: Props) {
-    const {t} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
     const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
     const canView = instance.permissions.includes("ViewMessages");
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
@@ -37,14 +37,18 @@ export function CommentsCard({instance}: Props) {
         title: t("instance.messages.title"),
         audience: t("instance.messages.audience"),
     });
-    const showThreadSummary = messageSettings.allowClose && messageSettings.layout === "threaded";
-    const threadSummary = showThreadSummary
+    const showOpenCloseSummary =
+        messageSettings.allowClose && messageSettings.layout === "threaded";
+    const totalCount = instanceThreads.length;
+    const threadSummary = showOpenCloseSummary
         ? openCount > 0
             ? t("instance.messages.summary_open", {count: openCount})
             : closedCount > 0
               ? t("instance.messages.summary_closed", {count: closedCount})
               : null
-        : null;
+        : totalCount > 0
+          ? t("instance.messages.summary_count", {count: totalCount})
+          : null;
 
     return (
         <Disclosure
@@ -59,7 +63,13 @@ export function CommentsCard({instance}: Props) {
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading className="font-semibold">{title}</Heading>
                         {threadSummary && (
-                            <Pill variant={openCount > 0 ? "red" : "grey"}>{threadSummary}</Pill>
+                            <Pill
+                                variant={
+                                    showOpenCloseSummary ? (openCount > 0 ? "red" : "grey") : "grey"
+                                }
+                            >
+                                {threadSummary}
+                            </Pill>
                         )}
                     </div>
                 </Disclosure.Header>
@@ -85,8 +95,14 @@ export function CommentsCard({instance}: Props) {
             <Disclosure.Content>
                 <div className="flex flex-col gap-3 pt-2">
                     {messageSettings.callout && (
-                        <Callout type="warning" header={t("instance.messages.callout_title")}>
-                            {t("instance.messages.callout_body")}
+                        <Callout
+                            type="warning"
+                            header={
+                                l(messageSettings.calloutTitle) ??
+                                t("instance.messages.callout_title")
+                            }
+                        >
+                            {l(messageSettings.calloutText) ?? t("instance.messages.callout_body")}
                         </Callout>
                     )}
                     <MessageThreadPanel

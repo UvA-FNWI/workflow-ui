@@ -20,5 +20,7 @@ export type WorkflowDefinition = {
         layout?: "threaded" | "flat";
         allowClose?: boolean;
         callout?: boolean;
+        calloutTitle?: LocalString | null;
+        calloutText?: LocalString | null;
     };
 };

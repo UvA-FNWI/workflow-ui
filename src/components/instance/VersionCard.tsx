@@ -4,7 +4,7 @@ import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {WorkflowStepVersion} from "~/store/api/types/instances";
 import {formatDateShort} from "~/utils/formatDate.ts";
-import {getVisibleQuestionAnswerPairs, hasSubmissionContent} from "~/utils/submissionUtils.ts";
+import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 type Props = {
     version: WorkflowStepVersion;
@@ -29,7 +29,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
                     </Heading>
                     {version.completionTimestamp && (
                         <Text as="span">
-                            <Text fontWeight="semibold">{t("status.completed_on")}:</Text>{" "}
+                            <Text fontWeight="semibold">{t("status.submitted")}:</Text>{" "}
                             {formatDateShort(version.completionTimestamp, i18n.language)}
                         </Text>
                     )}
@@ -38,7 +38,7 @@ export const VersionCard = ({version, instanceId, isExpandedByDefault}: Props) =
             <Disclosure.Content padding="none">
                 {/* Form data, questions and answers for each submission */}
                 <div className="flex flex-col gap-6">
-                    {version.submissions.filter(hasSubmissionContent).map((submission) => {
+                    {version.submissions.map((submission) => {
                         const pages = submission.form.pages.filter(
                             (p) => p.isInCurrentForm && p.isActive,
                         );

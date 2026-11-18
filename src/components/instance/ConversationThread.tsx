@@ -1,4 +1,4 @@
-import {Button, Icon} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {MessageBody, MessageMeta} from "./messageMeta";
 import {buildReplyTree, type MessageTreeNode} from "./messageTree";
@@ -20,24 +20,40 @@ type Props = {
     onReopenConversation: () => void;
     isLoading: boolean;
     replyComposer: React.ReactNode;
+    replyPlaceholder: string;
 };
 
 function messageItems(thread: MessageThread): MessageItem[] {
     return thread.items.filter((item) => item.kind === "Message");
 }
 
-function ReplyButton({label, onClick}: {label: string; onClick: () => void}) {
+function ReplyInlineStarter({
+    ariaLabel,
+    placeholder,
+    isActive,
+    onFocus,
+    replyComposer,
+}: {
+    ariaLabel: string;
+    placeholder: string;
+    isActive: boolean;
+    onFocus: () => void;
+    replyComposer: React.ReactNode;
+}) {
+    if (isActive) {
+        return <div className="w-full">{replyComposer}</div>;
+    }
+
     return (
-        <Button
-            intent="primary"
-            variant="destructive"
-            width="none"
-            className="self-start"
-            leftIcon={<Icon name="bubble-message-line" size="xs" color="current" decorative />}
-            onClick={onClick}
-        >
-            {label}
-        </Button>
+        <TextArea
+            aria-label={ariaLabel}
+            rows={1}
+            className="min-h-10! w-full resize-none"
+            placeholder={placeholder}
+            value=""
+            onChange={() => {}}
+            onFocus={onFocus}
+        />
     );
 }
 
@@ -53,8 +69,10 @@ export function ConversationThread({
     onReopenConversation,
     isLoading,
     replyComposer,
+    replyPlaceholder,
 }: Props) {
     const {t: m, i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
+    const replyAriaLabel = m("reply_placeholder", {defaultValue: "Write a reply"});
     const items = messageItems(thread);
     const root = items[0];
 
@@ -82,7 +100,7 @@ export function ConversationThread({
                         dateTime={root.dateTime}
                         language={i18n.language}
                         suffix={closedSuffix}
-                        truncate={!expanded}
+                        truncate
                     />
                 </div>
                 <Icon
@@ -99,16 +117,13 @@ export function ConversationThread({
                     {root.body && <MessageBody body={root.body} className="mt-0" />}
 
                     {canAdd && (!allowClose || !thread.isClosed) && (
-                        <div className="flex flex-col items-start gap-2">
-                            {replyParentItemId === root.id ? (
-                                replyComposer
-                            ) : (
-                                <ReplyButton
-                                    label={m("reply")}
-                                    onClick={() => onStartReply(root.id)}
-                                />
-                            )}
-                        </div>
+                        <ReplyInlineStarter
+                            ariaLabel={replyAriaLabel}
+                            placeholder={replyPlaceholder}
+                            isActive={replyParentItemId === root.id}
+                            onFocus={() => onStartReply(root.id)}
+                            replyComposer={replyComposer}
+                        />
                     )}
 
                     {replyTree.length > 0 && (
@@ -126,6 +141,8 @@ export function ConversationThread({
                                     replyParentItemId={replyParentItemId}
                                     onStartReply={onStartReply}
                                     replyComposer={replyComposer}
+                                    replyPlaceholder={replyPlaceholder}
+                                    replyAriaLabel={replyAriaLabel}
                                 />
                             ))}
                         </div>
@@ -167,6 +184,8 @@ type ReplyBranchProps = {
     replyParentItemId: string | null;
     onStartReply: (parentItemId: string) => void;
     replyComposer: React.ReactNode;
+    replyPlaceholder: string;
+    replyAriaLabel: string;
 };
 
 function ReplyBranch({
@@ -176,8 +195,10 @@ function ReplyBranch({
     replyParentItemId,
     onStartReply,
     replyComposer,
+    replyPlaceholder,
+    replyAriaLabel,
 }: ReplyBranchProps) {
-    const {t: m, i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
+    const {i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const isReplyingHere = replyParentItemId === node.id;
     const atMaxDepth = visualDepth >= MAX_REPLY_VISUAL_DEPTH;
 
@@ -191,13 +212,13 @@ function ReplyBranch({
             />
             {node.body && <MessageBody body={node.body} className="mt-1" />}
             {canAdd && (
-                <div className="flex flex-col items-start gap-2">
-                    {isReplyingHere ? (
-                        replyComposer
-                    ) : (
-                        <ReplyButton label={m("reply")} onClick={() => onStartReply(node.id)} />
-                    )}
-                </div>
+                <ReplyInlineStarter
+                    ariaLabel={replyAriaLabel}
+                    placeholder={replyPlaceholder}
+                    isActive={isReplyingHere}
+                    onFocus={() => onStartReply(node.id)}
+                    replyComposer={replyComposer}
+                />
             )}
             {node.children.length > 0 && (
                 <div
@@ -217,6 +238,8 @@ function ReplyBranch({
                             replyParentItemId={replyParentItemId}
                             onStartReply={onStartReply}
                             replyComposer={replyComposer}
+                            replyPlaceholder={replyPlaceholder}
+                            replyAriaLabel={replyAriaLabel}
                         />
                     ))}
                 </div>

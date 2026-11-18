@@ -49,7 +49,7 @@ export function MessageThreadPanel({
     const {t} = useTranslate("workflow");
     const {t: m} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const newConversationPlaceholder = m("new_conversation_placeholder", {
-        defaultValue: "Start a new conversation",
+        defaultValue: "Add a comment",
     });
     const replyPlaceholder = m("reply_placeholder", {defaultValue: "Write a reply"});
     const [body, setBody] = useState("");
@@ -148,26 +148,37 @@ export function MessageThreadPanel({
         onDismissComposer?.();
     };
 
+    const composingNewConversation = replyTarget == null;
     const showNewConversationActions =
-        newConversationExpanded ||
-        body.trim().length > 0 ||
-        focusNewConversation ||
-        showNewComposer ||
-        autoFocusComposer;
-    const showNewConversationStarter = canAdd && replyTarget == null;
-    const canSubmitNewMessage = !isLoading && body.trim().length > 0;
+        composingNewConversation &&
+        (newConversationExpanded ||
+            drafts[newConversationDraftKey]?.trim().length > 0 ||
+            body.trim().length > 0 ||
+            focusNewConversation ||
+            showNewComposer ||
+            autoFocusComposer);
+    const newConversationBody = composingNewConversation
+        ? body
+        : (drafts[newConversationDraftKey] ?? "");
+    const canSubmitNewMessage =
+        !isLoading && composingNewConversation && newConversationBody.trim().length > 0;
 
-    const newConversationStarter = showNewConversationStarter ? (
-        <div className="flex flex-col gap-2 pb-1">
+    const newConversationStarter = canAdd ? (
+        <div className="flex flex-col gap-2">
             <TextArea
                 id={newConversationFieldId}
                 aria-label={newConversationPlaceholder}
                 rows={showNewConversationActions ? 3 : 1}
-                className={showNewConversationActions ? undefined : "min-h-10! resize-none"}
-                value={body}
-                onChange={setBody}
-                onFocus={() => setNewConversationExpanded(true)}
+                className={showNewConversationActions ? "w-full" : "min-h-10! w-full resize-none"}
+                value={newConversationBody}
+                onChange={composingNewConversation ? setBody : undefined}
+                readOnly={!composingNewConversation}
+                onFocus={() => {
+                    if (!composingNewConversation) return;
+                    setNewConversationExpanded(true);
+                }}
                 onKeyDown={(event) =>
+                    composingNewConversation &&
                     handleMessageSubmitShortcut(event, () => submit("Message"), canSubmitNewMessage)
                 }
                 placeholder={newConversationPlaceholder}
@@ -178,12 +189,16 @@ export function MessageThreadPanel({
                         intent="primary"
                         variant="destructive"
                         width="none"
-                        disabled={isLoading || !body.trim()}
+                        disabled={isLoading || !newConversationBody.trim()}
                         onClick={() => submit("Message")}
                     >
                         {t("save")}
                     </Button>
-                    <Button intent="ghost" onClick={cancelNewConversation}>
+                    <Button
+                        intent="ghost"
+                        className="border-transparent!"
+                        onClick={cancelNewConversation}
+                    >
                         {t("cancel")}
                     </Button>
                 </div>
@@ -222,6 +237,7 @@ export function MessageThreadPanel({
             onReopenConversation={() => submit("Reopen", thread.id)}
             isLoading={isLoading}
             replyComposer={replyComposer}
+            replyPlaceholder={replyPlaceholder}
         />
     );
 
@@ -291,9 +307,10 @@ function Composer({
     const canSubmit = !isLoading && body.trim().length > 0;
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex w-full flex-col gap-2">
             <TextArea
                 aria-label={ariaLabel}
+                className="w-full"
                 rows={3}
                 value={body}
                 onChange={onChange}
@@ -311,7 +328,7 @@ function Composer({
                     {submitLabel}
                 </Button>
                 {onCancel && (
-                    <Button intent="ghost" onClick={onCancel}>
+                    <Button intent="ghost" className="border-transparent!" onClick={onCancel}>
                         {cancelLabel}
                     </Button>
                 )}
