@@ -39,7 +39,6 @@ vi.mock("~/store/api/baseApi", async () => {
 });
 vi.mock("~/components/HomePage", () => ({
     HomePage: ({children}: {children: React.ReactNode}) => children,
-    HomeRoleTabs: ({children}: {children: React.ReactNode}) => children,
 }));
 vi.mock("~/components/Import/ImportModal.tsx", () => ({ImportModal: () => null}));
 

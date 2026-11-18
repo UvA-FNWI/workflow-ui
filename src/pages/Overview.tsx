@@ -6,7 +6,7 @@ import {SearchInput, Text} from "@uva-fnwi/datanose-ui";
 
 import type {HomeLayoutContext} from "~/components/HomeLayout";
 import {HomeList} from "~/components/HomeList";
-import {HomePage, HomeRoleTabs} from "~/components/HomePage";
+import {HomePage} from "~/components/HomePage";
 import {HomeSearchResults} from "~/components/HomeSearchResults";
 import {WorkflowScreenLink} from "~/components/WorkflowScreenLink";
 import {useDebounce} from "~/hooks/useDebounce";
@@ -50,31 +50,35 @@ function Overview() {
     }
 
     return (
-        <HomePage title={searching ? t("home_search.title") : t("overview.choose_course_title")}>
-            <div role="search" className="mb-6 max-w-sm">
-                <SearchInput
-                    aria-label={t("home_search.label")}
-                    placeholder={t("home_search.placeholder")}
-                    value={input}
-                    maxLength={maxQueryLength}
-                    onChange={handleSearchChange}
-                />
-            </div>
-            {searching && !showResults && (
-                <Text role="status">{t("home_search.query_length")}</Text>
+        <HomePage
+            title={searching ? t("home_search.title") : t("overview.choose_course_title")}
+            personalContent={<PersonalContent />}
+            renderBody={(body) => (
+                <>
+                    <div role="search" className="mb-6 max-w-sm">
+                        <SearchInput
+                            aria-label={t("home_search.label")}
+                            placeholder={t("home_search.placeholder")}
+                            value={input}
+                            maxLength={maxQueryLength}
+                            onChange={handleSearchChange}
+                        />
+                    </div>
+                    {searching && !showResults && (
+                        <Text role="status">{t("home_search.query_length")}</Text>
+                    )}
+                    <div hidden={searching}>{body}</div>
+                    {showResults && <HomeSearchResults query={query} workflowScreens={screens} />}
+                </>
             )}
-            <div hidden={searching}>
-                <HomeRoleTabs personalContent={<PersonalContent />}>
-                    <HomeList>
-                        {screens.map(({definition, name}) => (
-                            <li key={`${definition.name}/${name}`}>
-                                <WorkflowScreenLink definition={definition} name={name} />
-                            </li>
-                        ))}
-                    </HomeList>
-                </HomeRoleTabs>
-            </div>
-            {showResults && <HomeSearchResults query={query} workflowScreens={screens} />}
+        >
+            <HomeList>
+                {screens.map(({definition, name}) => (
+                    <li key={`${definition.name}/${name}`}>
+                        <WorkflowScreenLink definition={definition} name={name} />
+                    </li>
+                ))}
+            </HomeList>
         </HomePage>
     );
 }

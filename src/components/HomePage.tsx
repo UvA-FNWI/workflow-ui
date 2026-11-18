@@ -11,51 +11,28 @@ import {useTranslate} from "~/hooks/useTranslate";
 type HomePageProps = {
     title: ReactNode;
     description?: ReactNode;
+    coordinatorTabLabel?: ReactNode;
+    personalContent?: ReactNode;
     maxWidth?: number;
     isLoading?: boolean;
     children: ReactNode;
+    renderBody?: (body: ReactNode) => ReactNode;
 };
 
 export function HomePage({
     title,
     description,
+    coordinatorTabLabel,
+    personalContent,
     maxWidth = 1280,
     isLoading = false,
     children,
+    renderBody,
 }: HomePageProps) {
     const navigation = useOutletContext<HomeLayoutContext | undefined>();
     const {t} = useTranslate("workflow");
-
-    return (
-        <Container maxWidth={maxWidth}>
-            <PageHeader
-                title={title}
-                description={description}
-                backLabel={navigation?.showBackToChoices ? t("home") : undefined}
-                backTo="/"
-                className={navigation?.showRoleTabs ? "mb-2" : undefined}
-                isLoading={isLoading}
-            />
-            {!isLoading && children}
-        </Container>
-    );
-}
-
-export function HomeRoleTabs({
-    coordinatorTabLabel,
-    personalContent,
-    children,
-}: {
-    coordinatorTabLabel?: ReactNode;
-    personalContent?: ReactNode;
-    children: ReactNode;
-}) {
-    const navigation = useOutletContext<HomeLayoutContext | undefined>();
-    const {t} = useTranslate("workflow");
-
-    if (!navigation?.showRoleTabs) return children;
-
-    return (
+    const showRoleTabs = navigation?.showRoleTabs;
+    const body = showRoleTabs ? (
         <Tabs activeIndex={navigation.activeTab} onTabChange={navigation.onTabChange}>
             <TabList className="mb-6">
                 <Tab>{coordinatorTabLabel ?? t("overview.coordinator_view")}</Tab>
@@ -66,5 +43,21 @@ export function HomeRoleTabs({
                 <TabPanel>{personalContent ?? children}</TabPanel>
             </TabPanels>
         </Tabs>
+    ) : (
+        children
+    );
+
+    return (
+        <Container maxWidth={maxWidth}>
+            <PageHeader
+                title={title}
+                description={description}
+                backLabel={navigation?.showBackToChoices ? t("home") : undefined}
+                backTo="/"
+                className={showRoleTabs ? "mb-2" : undefined}
+                isLoading={isLoading}
+            />
+            {!isLoading && (renderBody ? renderBody(body) : body)}
+        </Container>
     );
 }
