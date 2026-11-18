@@ -55,9 +55,7 @@ function Instance() {
                         stopMessage={instance?.stopMessage}
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
-                    {instance?.workflowDefinition.messagesEnabled && instance && (
-                        <CommentsCard instance={instance} />
-                    )}
+                    {instance && <CommentsCard instance={instance} />}
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
                         <CorrespondenceCard instanceId={id} />
                     )}

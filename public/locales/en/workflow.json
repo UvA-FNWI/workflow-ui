@@ -99,6 +99,8 @@
     "empty_step": "Nothing has been submitted yet.",
     "messages": {
       "add": "Add a comment",
+      "callout_body": "Avoid specific or identifiable information about the student (such as personal circumstances or details).",
+      "callout_title": "Keep the student's privacy in mind",
       "audience": "involved staff only",
       "close_conversation": "Close conversation",
       "closed": "Closed",

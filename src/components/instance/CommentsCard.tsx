@@ -1,7 +1,8 @@
 import {useState} from "react";
 
-import {Button, Disclosure, Heading, Icon, Pill} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, Disclosure, Heading, Icon, Pill} from "@uva-fnwi/datanose-ui";
 
+import {resolveInstanceMessageSettings} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -14,16 +15,16 @@ type Props = {
 
 export function CommentsCard({instance}: Props) {
     const {t} = useTranslate("workflow");
-    const enabled = instance.workflowDefinition.messagesEnabled === true;
+    const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
     const canView = instance.permissions.includes("ViewMessages");
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
         instance.id,
-        {skip: !enabled || !canView},
+        {skip: !messageSettings || !canView},
     );
     const [expanded, setExpanded] = useState(false);
     const [focusNewConversation, setFocusNewConversation] = useState(false);
 
-    if (!enabled || !canView) return null;
+    if (!messageSettings?.card || !canView) return null;
 
     const instanceThreads = threads.filter((thread) => thread.questionName == null);
     const canAdd = instance.permissions.includes("AddMessages");
@@ -36,12 +37,14 @@ export function CommentsCard({instance}: Props) {
         title: t("instance.messages.title"),
         audience: t("instance.messages.audience"),
     });
-    const threadSummary =
-        openCount > 0
+    const showThreadSummary = messageSettings.allowClose && messageSettings.layout === "threaded";
+    const threadSummary = showThreadSummary
+        ? openCount > 0
             ? t("instance.messages.summary_open", {count: openCount})
             : closedCount > 0
               ? t("instance.messages.summary_closed", {count: closedCount})
-              : null;
+              : null
+        : null;
 
     return (
         <Disclosure
@@ -81,12 +84,21 @@ export function CommentsCard({instance}: Props) {
             </div>
             <Disclosure.Content>
                 <div className="flex flex-col gap-3 pt-2">
+                    {messageSettings.callout && (
+                        <Callout type="warning" header={t("instance.messages.callout_title")}>
+                            {t("instance.messages.callout_body")}
+                        </Callout>
+                    )}
                     <MessageThreadPanel
                         instanceId={instance.id}
                         threads={instanceThreads}
                         canAdd={canAdd}
                         focusNewConversation={focusNewConversation}
                         onFocusNewConversationHandled={() => setFocusNewConversation(false)}
+                        messageUi={{
+                            layout: messageSettings.layout,
+                            allowClose: messageSettings.allowClose,
+                        }}
                     />
                 </div>
             </Disclosure.Content>

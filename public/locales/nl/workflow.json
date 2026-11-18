@@ -98,6 +98,8 @@
     "empty_step": "Er is nog niets ingeleverd.",
     "messages": {
       "add": "Opmerking toevoegen",
+      "callout_body": "Vermijd specifieke of herleidbare informatie over de student (zoals persoonlijke omstandigheden of details).",
+      "callout_title": "Houd rekening met de privacy van de student",
       "audience": "alleen voor betrokken medewerkers",
       "close_conversation": "Gesprek sluiten",
       "closed": "Gesloten",

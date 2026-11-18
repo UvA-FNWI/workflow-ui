@@ -14,4 +14,11 @@ export type WorkflowDefinition = {
     isPropertyOnly: boolean;
     properties: string[];
     messagesEnabled?: boolean;
+    messages?: {
+        card?: boolean;
+        fieldsAllowAll?: boolean;
+        layout?: "threaded" | "flat";
+        allowClose?: boolean;
+        callout?: boolean;
+    };
 };
