@@ -1,4 +1,4 @@
-import {Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Separator} from "@uva-fnwi/datanose-ui";
 
 import {MessageBody, MessageMeta} from "./messageMeta";
 import {useTranslate} from "~/hooks/useTranslate";
