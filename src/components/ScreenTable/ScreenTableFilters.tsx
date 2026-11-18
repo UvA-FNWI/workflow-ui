@@ -1,6 +1,6 @@
 import {type Key} from "react";
 
-import {Item, Select, Text} from "@uva-fnwi/datanose-ui";
+import {ComboBox, ComboBoxItem, Text} from "@uva-fnwi/datanose-ui";
 
 import type {ColumnFilterValues, Filter} from "~/components/ScreenTable/filterScreenRows.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -43,22 +43,25 @@ const ScreenTableFilter = ({filter, selected, onFilterChange}: ScreenTableFilter
     const {t, l} = useTranslate("screens");
 
     return (
-        <div className="flex min-w-0 flex-1 items-center gap-6">
+        <div className="flex min-w-0 flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-6">
             <Text size="sm" className="shrink-0">
                 {l(filter.title)}
             </Text>
-            <div className="w-2/3 min-w-0">
-                <Select
+            <div className="min-w-0 md:w-2/3">
+                <ComboBox
                     value={selected}
                     onChange={(keys: Key[]) => onFilterChange(filter.name, keys.map(String))}
                     placeholder={t("filters.choose")}
                     aria-label={l(filter.title)}
                     selectionMode="multiple"
+                    selectedSummary={(count: number) =>
+                        `${t("filters.selected_summary", {nr: count})}`
+                    }
                 >
                     {filter.options.map((option) => (
-                        <Item key={option.key}>{option.label}</Item>
+                        <ComboBoxItem key={option.key}>{option.label}</ComboBoxItem>
                     ))}
-                </Select>
+                </ComboBox>
             </div>
         </div>
     );

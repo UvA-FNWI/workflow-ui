@@ -35,6 +35,7 @@
     "choose": "Make a choice",
     "hide_filters": "Hide filters",
     "show_filters": "Show filters",
+    "selected_summary": "{{nr}} filters selected",
     "title": "Filters"
   },
   "import": {

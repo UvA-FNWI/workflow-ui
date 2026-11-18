@@ -34,6 +34,7 @@
   "filters": {
     "choose": "Maak een keuze",
     "hide_filters": "Verberg filters",
+    "selected_summary": "{{nr}} filters geselecteerd",
     "show_filters": "Toon filters",
     "title": "Filters"
   },
