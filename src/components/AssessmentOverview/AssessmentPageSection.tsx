@@ -31,7 +31,10 @@ export const AssessmentPageSection = ({
     const questions = page.elements
         .filter((element) => element.kind === "Question")
         .map((element) => element.question!);
-    const weightedQuestions = questions.filter(isWeightedQuestion);
+    const visibleQuestions = questions.filter((q) =>
+        submissions.some((s) => s.answers.some((a) => a.questionName == q.name && a.isVisible)),
+    );
+    const weightedQuestions = visibleQuestions.filter(isWeightedQuestion);
 
     const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
         getVisibleQuestionAnswerPairs(

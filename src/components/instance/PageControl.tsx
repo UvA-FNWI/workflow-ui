@@ -116,7 +116,7 @@ export const PageControl = ({
     );
 
     const pageResult = data?.pageResults?.[0];
-    const weightedQuestions = questions
+    const weightedQuestions = visibleQuestions
         .filter(isWeightedQuestion)
         .filter((question) => question.percentage != null);
     const totalPercentage = Number(
