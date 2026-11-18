@@ -1,4 +1,4 @@
-import {type ReactNode} from "react";
+import {type ReactElement, type ReactNode} from "react";
 
 import {useOutletContext} from "react-router";
 
@@ -10,24 +10,22 @@ import {useTranslate} from "~/hooks/useTranslate";
 
 type HomePageProps = {
     title: ReactNode;
-    description?: ReactNode;
     coordinatorTabLabel?: ReactNode;
     personalContent?: ReactNode;
-    maxWidth?: number;
     isLoading?: boolean;
+    toolbar?: ReactNode;
+    alternateContent?: ReactElement;
     children: ReactNode;
-    renderBody?: (body: ReactNode) => ReactNode;
 };
 
 export function HomePage({
     title,
-    description,
     coordinatorTabLabel,
     personalContent,
-    maxWidth = 1280,
     isLoading = false,
+    toolbar,
+    alternateContent,
     children,
-    renderBody,
 }: HomePageProps) {
     const navigation = useOutletContext<HomeLayoutContext | undefined>();
     const {t} = useTranslate("workflow");
@@ -48,16 +46,21 @@ export function HomePage({
     );
 
     return (
-        <Container maxWidth={maxWidth}>
+        <Container maxWidth={1280}>
             <PageHeader
                 title={title}
-                description={description}
                 backLabel={navigation?.showBackToChoices ? t("home") : undefined}
                 backTo="/"
                 className={showRoleTabs ? "mb-2" : undefined}
                 isLoading={isLoading}
             />
-            {!isLoading && (renderBody ? renderBody(body) : body)}
+            {!isLoading && (
+                <>
+                    {toolbar}
+                    <div hidden={alternateContent !== undefined}>{body}</div>
+                    {alternateContent}
+                </>
+            )}
         </Container>
     );
 }

@@ -49,28 +49,29 @@ function Overview() {
         setParams(nextParams, {replace: true, preventScrollReset: true});
     }
 
+    const searchInput = (
+        <div role="search" className="mb-6 max-w-sm">
+            <SearchInput
+                aria-label={t("home_search.label")}
+                placeholder={t("home_search.placeholder")}
+                value={input}
+                maxLength={maxQueryLength}
+                onChange={handleSearchChange}
+            />
+        </div>
+    );
+    const searchFeedback = showResults ? (
+        <HomeSearchResults query={query} workflowScreens={screens} />
+    ) : (
+        <Text role="status">{t("home_search.query_length")}</Text>
+    );
+
     return (
         <HomePage
             title={searching ? t("home_search.title") : t("overview.choose_course_title")}
+            toolbar={searchInput}
+            alternateContent={searching ? searchFeedback : undefined}
             personalContent={<PersonalContent />}
-            renderBody={(body) => (
-                <>
-                    <div role="search" className="mb-6 max-w-sm">
-                        <SearchInput
-                            aria-label={t("home_search.label")}
-                            placeholder={t("home_search.placeholder")}
-                            value={input}
-                            maxLength={maxQueryLength}
-                            onChange={handleSearchChange}
-                        />
-                    </div>
-                    {searching && !showResults && (
-                        <Text role="status">{t("home_search.query_length")}</Text>
-                    )}
-                    <div hidden={searching}>{body}</div>
-                    {showResults && <HomeSearchResults query={query} workflowScreens={screens} />}
-                </>
-            )}
         >
             <HomeList>
                 {screens.map(({definition, name}) => (
