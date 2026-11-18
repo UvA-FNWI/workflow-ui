@@ -19,7 +19,7 @@ export const ScreenTableFilters = ({filters, values, onFilterChange}: ScreenTabl
             <Text fontWeight="semibold" size="sm">
                 {t("filters.title")}
             </Text>
-            <div className="flex flex-col gap-6 md:flex-row md:items-center">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] gap-x-12 gap-y-6">
                 {filters.map((filter) => (
                     <ScreenTableFilter
                         filter={filter}
@@ -43,11 +43,11 @@ const ScreenTableFilter = ({filter, selected, onFilterChange}: ScreenTableFilter
     const {t, l} = useTranslate("screens");
 
     return (
-        <div className="flex min-w-0 flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-6">
-            <Text size="sm" className="shrink-0">
+        <div className="container flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
+            <Text size="sm" className="xs:text-right w-24 shrink-0 text-left wrap-break-word">
                 {l(filter.title)}
             </Text>
-            <div className="min-w-0 md:w-2/3">
+            <div className="min-w-0 grow basis-48">
                 <ComboBox
                     value={selected}
                     onChange={(keys: Key[]) => onFilterChange(filter.name, keys.map(String))}
