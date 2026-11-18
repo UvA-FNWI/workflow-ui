@@ -1,9 +1,9 @@
-import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Icon} from "@uva-fnwi/datanose-ui";
 
+import {MessageBody, MessageMeta} from "./messageMeta";
 import {buildReplyTree, type MessageTreeNode} from "./messageTree";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {MessageItem, MessageThread} from "~/store/api/types/messages";
-import {formatDate} from "~/utils/formatDate";
 
 /** Cap reply indent so deep API trees do not become a ladder of rails. */
 const MAX_REPLY_VISUAL_DEPTH = 2;
@@ -13,6 +13,7 @@ type Props = {
     expanded: boolean;
     onExpandedChange: (open: boolean) => void;
     canAdd: boolean;
+    allowClose: boolean;
     replyParentItemId: string | null;
     onStartReply: (parentItemId: string) => void;
     onCloseConversation: () => void;
@@ -30,7 +31,6 @@ function ReplyButton({label, onClick}: {label: string; onClick: () => void}) {
         <Button
             intent="primary"
             variant="destructive"
-            size="small"
             width="none"
             className="self-start"
             leftIcon={<Icon name="bubble-message-line" size="xs" color="current" decorative />}
@@ -41,92 +41,12 @@ function ReplyButton({label, onClick}: {label: string; onClick: () => void}) {
     );
 }
 
-function MessageMeta({
-    displayName,
-    dateTime,
-    language,
-    suffix,
-    showDate = true,
-    dateOnHover = false,
-}: {
-    displayName: string;
-    dateTime: string;
-    language: string;
-    suffix?: string;
-    showDate?: boolean;
-    dateOnHover?: boolean;
-}) {
-    const formattedDate = formatDate(dateTime, language);
-
-    return (
-        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
-            <Text as="span" fontWeight="semibold" className="text-grey-900 dark:text-white">
-                {displayName}
-            </Text>
-            {showDate && (
-                <time
-                    dateTime={dateTime}
-                    title={formattedDate}
-                    className={
-                        dateOnHover
-                            ? "text-grey-600 max-md:inline md:opacity-0 md:transition-opacity md:group-hover/reply:opacity-100"
-                            : "text-grey-600"
-                    }
-                >
-                    {formattedDate}
-                </time>
-            )}
-            {suffix && (
-                <Text as="span" className="text-grey-600">
-                    · {suffix}
-                </Text>
-            )}
-        </div>
-    );
-}
-
-function MessageBody({body, className}: {body: string; className?: string}) {
-    return (
-        <Text
-            as="p"
-            className={`whitespace-pre-wrap text-grey-900 dark:text-white ${className ?? "mt-2"}`}
-        >
-            {body}
-        </Text>
-    );
-}
-
-function CollapsedConversationSummary({
-    root,
-    isClosed,
-    language,
-    closedLabel,
-}: {
-    root: MessageItem;
-    isClosed: boolean;
-    language: string;
-    closedLabel: string;
-}) {
-    return (
-        <Text as="span" className="block truncate text-grey-800 dark:text-grey-100">
-            {root.user.displayName}
-            {" · "}
-            {formatDate(root.dateTime, language)}
-            {isClosed && (
-                <>
-                    {" · "}
-                    {closedLabel}
-                </>
-            )}
-        </Text>
-    );
-}
-
 export function ConversationThread({
     thread,
     expanded,
     onExpandedChange,
     canAdd,
+    allowClose,
     replyParentItemId,
     onStartReply,
     onCloseConversation,
@@ -143,11 +63,12 @@ export function ConversationThread({
     const replyTree = buildReplyTree(thread.items);
     const toggleLabel = expanded ? m("collapse_conversation") : m("expand_conversation");
     const closedLabel = m("closed");
+    const closedSuffix = allowClose && thread.isClosed ? closedLabel : undefined;
 
     const toggle = () => onExpandedChange(!expanded);
 
     return (
-        <article className={thread.isClosed ? "opacity-60" : undefined}>
+        <article className={allowClose && thread.isClosed ? "opacity-60" : undefined}>
             <button
                 type="button"
                 className="flex w-full min-w-0 items-start justify-between gap-4 py-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -156,21 +77,13 @@ export function ConversationThread({
                 onClick={toggle}
             >
                 <div className="min-w-0 flex-1">
-                    {!expanded ? (
-                        <CollapsedConversationSummary
-                            root={root}
-                            isClosed={thread.isClosed}
-                            language={i18n.language}
-                            closedLabel={closedLabel}
-                        />
-                    ) : (
-                        <MessageMeta
-                            displayName={root.user.displayName}
-                            dateTime={root.dateTime}
-                            language={i18n.language}
-                            suffix={thread.isClosed ? closedLabel : undefined}
-                        />
-                    )}
+                    <MessageMeta
+                        displayName={root.user.displayName}
+                        dateTime={root.dateTime}
+                        language={i18n.language}
+                        suffix={closedSuffix}
+                        truncate={!expanded}
+                    />
                 </div>
                 <Icon
                     name={expanded ? "minus-small-line" : "plus-small-line"}
@@ -185,7 +98,7 @@ export function ConversationThread({
                 <div className="flex flex-col gap-4 pb-4">
                     {root.body && <MessageBody body={root.body} className="mt-0" />}
 
-                    {canAdd && !thread.isClosed && (
+                    {canAdd && (!allowClose || !thread.isClosed) && (
                         <div className="flex flex-col items-start gap-2">
                             {replyParentItemId === root.id ? (
                                 replyComposer
@@ -209,7 +122,7 @@ export function ConversationThread({
                                     key={node.id}
                                     node={node}
                                     visualDepth={1}
-                                    canAdd={canAdd && !thread.isClosed}
+                                    canAdd={canAdd && (!allowClose || !thread.isClosed)}
                                     replyParentItemId={replyParentItemId}
                                     onStartReply={onStartReply}
                                     replyComposer={replyComposer}
@@ -218,12 +131,11 @@ export function ConversationThread({
                         </div>
                     )}
 
-                    {canAdd && (
+                    {canAdd && allowClose && (
                         <div className="flex flex-wrap items-center gap-2 border-t border-grey-200 pt-3 dark:border-grey-700">
                             {thread.isClosed ? (
                                 <Button
                                     intent="secondary"
-                                    size="small"
                                     width="none"
                                     disabled={isLoading}
                                     onClick={onReopenConversation}
@@ -233,7 +145,6 @@ export function ConversationThread({
                             ) : (
                                 <Button
                                     intent="secondary"
-                                    size="small"
                                     width="none"
                                     disabled={isLoading}
                                     onClick={onCloseConversation}

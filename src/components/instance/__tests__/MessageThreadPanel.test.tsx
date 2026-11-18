@@ -151,7 +151,8 @@ describe("MessageThreadPanel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[closed]} canAdd={false} />);
 
         expect(screen.queryByText("Will do.")).toBeNull();
-        expect(screen.getByText(/Ada Lovelace.*instance\.messages\.closed/)).toBeTruthy();
+        expect(screen.getByText("Ada Lovelace")).toBeTruthy();
+        expect(screen.getByText("instance.messages.closed")).toBeTruthy();
     });
 
     it("shows reopen only on an expanded closed conversation", () => {

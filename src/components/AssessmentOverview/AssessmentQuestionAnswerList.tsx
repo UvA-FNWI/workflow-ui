@@ -4,6 +4,7 @@ import {Link, Text} from "@uva-fnwi/datanose-ui";
 
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {fieldMessageQuestionName} from "~/components/instance/messageVisibility.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
@@ -19,6 +20,7 @@ type Props = {
     canAddMessages?: boolean;
     canViewMessages?: boolean;
     messagePropertyName?: string | null;
+    messageUi?: MessageUiSettings;
 };
 
 export const AssessmentQuestionAnswerList = ({
@@ -32,6 +34,7 @@ export const AssessmentQuestionAnswerList = ({
     canAddMessages = false,
     canViewMessages = false,
     messagePropertyName,
+    messageUi,
 }: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
@@ -124,6 +127,7 @@ export const AssessmentQuestionAnswerList = ({
                                         allowMessages={question.allowMessages}
                                         canAdd={canAddMessages}
                                         canView={canViewMessages}
+                                        messageUi={messageUi}
                                     />
                                 )}
                             </div>

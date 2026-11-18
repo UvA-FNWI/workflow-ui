@@ -5,6 +5,7 @@ import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {AnswerChangesModal} from "~/components/instance/AnswerChangesModal.tsx";
 import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {fieldMessageQuestionName} from "~/components/instance/messageVisibility.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
@@ -19,6 +20,7 @@ type Props = {
     canAddMessages?: boolean;
     canViewMessages?: boolean;
     messagePropertyName?: string | null;
+    messageUi?: MessageUiSettings;
 };
 
 export const QuestionAnswerList = ({
@@ -30,6 +32,7 @@ export const QuestionAnswerList = ({
     canAddMessages = false,
     canViewMessages = false,
     messagePropertyName,
+    messageUi,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
     const [historyPair, setHistoryPair] = useState<QuestionAnswerPair | null>(null);
@@ -65,6 +68,7 @@ export const QuestionAnswerList = ({
                                     allowMessages={question.allowMessages}
                                     canAdd={canAddMessages}
                                     canView={canViewMessages}
+                                    messageUi={messageUi}
                                 />
                             )}
                             {latestEdit && (

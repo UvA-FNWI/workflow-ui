@@ -2,6 +2,7 @@ import {Heading} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOverview.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
@@ -13,6 +14,7 @@ type Props = {
     collapseAnswers?: boolean;
     canAddMessages?: boolean;
     canViewMessages?: boolean;
+    messageUi?: MessageUiSettings;
 };
 
 export const FormSummary = ({
@@ -21,6 +23,7 @@ export const FormSummary = ({
     onEditPage,
     canAddMessages = false,
     canViewMessages = false,
+    messageUi,
 }: Props) => {
     const {l} = useTranslate("workflow");
 
@@ -42,6 +45,7 @@ export const FormSummary = ({
                 canAddMessages={canAddMessages}
                 canViewMessages={canViewMessages}
                 messagePropertyName={submission.form.propertyName}
+                messageUi={messageUi}
             />
         );
     }
@@ -72,6 +76,7 @@ export const FormSummary = ({
                             canAddMessages={canAddMessages}
                             canViewMessages={canViewMessages}
                             messagePropertyName={submission.form.propertyName}
+                            messageUi={messageUi}
                         />
                     </div>
                 );

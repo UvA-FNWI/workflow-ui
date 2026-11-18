@@ -3,6 +3,8 @@ import {useCallback, useEffect, useId, useState} from "react";
 import {Button, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {ConversationThread} from "./ConversationThread";
+import {FlatMessageFeed} from "./FlatMessageFeed";
+import {defaultMessageUi, type MessageUiSettings} from "./instanceMessageSettings";
 import {handleMessageSubmitShortcut} from "./messageComposerShortcuts";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
@@ -27,6 +29,7 @@ type Props = {
     onDismissComposer?: () => void;
     focusNewConversation?: boolean;
     onFocusNewConversationHandled?: () => void;
+    messageUi?: MessageUiSettings;
 };
 
 export function MessageThreadPanel({
@@ -39,7 +42,10 @@ export function MessageThreadPanel({
     onDismissComposer,
     focusNewConversation = false,
     onFocusNewConversationHandled,
+    messageUi = defaultMessageUi,
 }: Props) {
+    const {layout, allowClose} = messageUi;
+    const isFlat = layout === "flat";
     const {t} = useTranslate("workflow");
     const {t: m} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const newConversationPlaceholder = m("new_conversation_placeholder", {
@@ -61,9 +67,9 @@ export function MessageThreadPanel({
     const isExpanded = useCallback(
         (thread: MessageThread) => {
             if (thread.id in expandedOverrides) return expandedOverrides[thread.id]!;
-            return !thread.isClosed;
+            return !allowClose || !thread.isClosed;
         },
-        [expandedOverrides],
+        [allowClose, expandedOverrides],
     );
 
     const setThreadExpanded = (threadId: string, open: boolean) => {
@@ -171,14 +177,13 @@ export function MessageThreadPanel({
                     <Button
                         intent="primary"
                         variant="destructive"
-                        size="small"
                         width="none"
                         disabled={isLoading || !body.trim()}
                         onClick={() => submit("Message")}
                     >
                         {t("save")}
                     </Button>
-                    <Button intent="ghost" size="small" onClick={cancelNewConversation}>
+                    <Button intent="ghost" onClick={cancelNewConversation}>
                         {t("cancel")}
                     </Button>
                 </div>
@@ -207,7 +212,8 @@ export function MessageThreadPanel({
             thread={thread}
             expanded={isExpanded(thread)}
             onExpandedChange={(open) => setThreadExpanded(thread.id, open)}
-            canAdd={canAdd}
+            canAdd={canAdd && !isFlat}
+            allowClose={allowClose}
             replyParentItemId={
                 replyTarget?.threadId === thread.id ? replyTarget.parentItemId : null
             }
@@ -219,15 +225,32 @@ export function MessageThreadPanel({
         />
     );
 
+    const threadList = isFlat ? (
+        <FlatMessageFeed threads={threads} />
+    ) : (
+        <div className="flex flex-col">
+            {orderedThreads.map((thread, index) => (
+                <div key={thread.id}>
+                    {index > 0 && <Separator />}
+                    {renderThread(thread)}
+                    {index === orderedThreads.length - 1 && orderedThreads.length > 0 && (
+                        <Separator />
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+
     return (
         <div className="flex flex-col gap-3">
             {newConversationStarter}
-            {openThreads.length === 0 && closedThreads.length === 0 && !canAdd && (
+            {threads.length === 0 && !canAdd && (
                 <Text as="span" className="text-grey-600">
                     {m("empty")}
                 </Text>
             )}
             {canAdd &&
+                !isFlat &&
                 openThreads.length > 1 &&
                 replyTarget == null &&
                 !showNewConversationActions && (
@@ -235,17 +258,7 @@ export function MessageThreadPanel({
                         {m("reply_hint")}
                     </Text>
                 )}
-            <div className="flex flex-col">
-                {orderedThreads.map((thread, index) => (
-                    <div key={thread.id}>
-                        {index > 0 && <Separator />}
-                        {renderThread(thread)}
-                        {index === orderedThreads.length - 1 && orderedThreads.length > 0 && (
-                            <Separator />
-                        )}
-                    </div>
-                ))}
-            </div>
+            {threadList}
         </div>
     );
 }
@@ -292,14 +305,13 @@ function Composer({
                 <Button
                     intent="primary"
                     variant="destructive"
-                    size="small"
                     disabled={!canSubmit}
                     onClick={onSubmit}
                 >
                     {submitLabel}
                 </Button>
                 {onCancel && (
-                    <Button intent="ghost" size="small" onClick={onCancel}>
+                    <Button intent="ghost" onClick={onCancel}>
                         {cancelLabel}
                     </Button>
                 )}

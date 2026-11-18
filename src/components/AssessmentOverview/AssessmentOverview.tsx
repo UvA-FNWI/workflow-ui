@@ -2,6 +2,7 @@ import {Callout, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentGradeSummary} from "~/components/AssessmentOverview/AssessmentGradeSummary.tsx";
 import {AssessmentPageSection} from "~/components/AssessmentOverview/AssessmentPageSection.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
@@ -19,6 +20,7 @@ type Props = {
     canAddMessages?: boolean;
     canViewMessages?: boolean;
     messagePropertyName?: string | null;
+    messageUi?: MessageUiSettings;
 };
 
 export const AssessmentOverview = ({
@@ -31,6 +33,7 @@ export const AssessmentOverview = ({
     canAddMessages = false,
     canViewMessages = false,
     messagePropertyName,
+    messageUi,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -134,6 +137,7 @@ export const AssessmentOverview = ({
                             canAddMessages={canAddMessages}
                             canViewMessages={canViewMessages}
                             messagePropertyName={messagePropertyName}
+                            messageUi={messageUi}
                         />
                     ))}
 

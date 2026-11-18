@@ -1,6 +1,7 @@
 import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/AssessmentQuestionAnswerList.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
 import type {Page, StepResultsType, Submission} from "~/store/api/types/submissions.ts";
@@ -18,6 +19,7 @@ export type AssessmentPageSectionProps = {
     canAddMessages?: boolean;
     canViewMessages?: boolean;
     messagePropertyName?: string | null;
+    messageUi?: MessageUiSettings;
 };
 export const AssessmentPageSection = ({
     page,
@@ -31,6 +33,7 @@ export const AssessmentPageSection = ({
     canAddMessages = false,
     canViewMessages = false,
     messagePropertyName,
+    messageUi,
 }: AssessmentPageSectionProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -112,6 +115,7 @@ export const AssessmentPageSection = ({
                     canAddMessages={canAddMessages}
                     canViewMessages={canViewMessages}
                     messagePropertyName={messagePropertyName}
+                    messageUi={messageUi}
                 />
             )}
             <Separator weight={isLastPage ? "bold" : "normal"} />

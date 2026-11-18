@@ -2,6 +2,7 @@ import {useState} from "react";
 
 import {Button, Icon, Modal, Text} from "@uva-fnwi/datanose-ui";
 
+import {defaultMessageUi, type MessageUiSettings} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -14,6 +15,7 @@ type Props = {
     allowMessages?: boolean;
     canAdd: boolean;
     canView: boolean;
+    messageUi?: MessageUiSettings;
 };
 
 export function FieldMessageBalloon({
@@ -23,6 +25,7 @@ export function FieldMessageBalloon({
     allowMessages,
     canAdd,
     canView,
+    messageUi = defaultMessageUi,
 }: Props) {
     const {t} = useTranslate("workflow");
     const [open, setOpen] = useState(false);
@@ -85,6 +88,7 @@ export function FieldMessageBalloon({
                         threads={fieldThreads}
                         questionName={questionName}
                         canAdd={canAdd}
+                        messageUi={messageUi}
                     />
                 </Modal.Body>
             </Modal>

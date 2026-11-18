@@ -6,6 +6,7 @@ import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOver
 import {ActionModal} from "~/components/instance/ActionModal.tsx";
 import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
+import {resolveInstanceMessageSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {
     type ContentState,
     getPreviousFormVersion,
@@ -54,6 +55,10 @@ export const StepCardBody = ({
     const openFormId = inlineForm?.form;
     const canAddMessages = instance.permissions.includes("AddMessages");
     const canViewMessages = instance.permissions.includes("ViewMessages");
+    const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
+    const messageUi = messageSettings
+        ? {layout: messageSettings.layout, allowClose: messageSettings.allowClose}
+        : undefined;
 
     // Modal forms must not replace the step form registered for the admin helper.
     useEffect(() => {
@@ -90,6 +95,7 @@ export const StepCardBody = ({
                                     submission={submission}
                                     canAddMessages={canAddMessages}
                                     canViewMessages={canViewMessages}
+                                    messageUi={messageUi}
                                 />
                             </div>
                         ))}
@@ -100,6 +106,9 @@ export const StepCardBody = ({
                                 combine={true}
                                 step={step}
                                 emptyMessage={emptyStateMessage}
+                                canAddMessages={canAddMessages}
+                                canViewMessages={canViewMessages}
+                                messageUi={messageUi}
                             />
                         )}
                     </>
@@ -152,6 +161,7 @@ export const StepCardBody = ({
                             submissionId={inlineForm.form ?? ""}
                             canAddMessages={canAddMessages}
                             canViewMessages={canViewMessages}
+                            messageUi={messageUi}
                             onClose={() => setActiveAction(null)}
                             previousVersion={getPreviousFormVersion(step, inlineForm.form)}
                         />
