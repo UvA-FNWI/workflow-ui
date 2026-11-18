@@ -13,7 +13,7 @@ import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
 import type {PersonalInstance, PersonalInstances} from "~/store/api/types/personal";
 import {
     groupPersonalInstancesByRole,
-    partitionPersonalInstancesByCompletion,
+    partitionPersonalInstancesByStatus,
 } from "~/utils/personalInstances";
 import {getComparableTableCellValue} from "~/utils/tableCellValues";
 
@@ -69,17 +69,20 @@ export function PersonalInstancesContent({
         : undefined;
     const titleSuffix = workflowTitle ? ` (${workflowTitle})` : "";
 
-    const {activeRoleGroups, completedRoleGroups} = useMemo(() => {
+    const {activeRoleGroups, completedRoleGroups, stoppedRoleGroups} = useMemo(() => {
         const workflowInstances = workflowDefinition
             ? instances.filter((instance) => instance.workflowDefinition === workflowDefinition)
             : instances;
-        const {active, completed} = partitionPersonalInstancesByCompletion(workflowInstances);
+        const {active, completed, stopped} = partitionPersonalInstancesByStatus(workflowInstances);
         return {
             activeRoleGroups: groupPersonalInstancesByRole(active, data?.roles ?? []),
             completedRoleGroups: groupPersonalInstancesByRole(completed, data?.roles ?? []),
+            stoppedRoleGroups: groupPersonalInstancesByRole(stopped, data?.roles ?? []),
         };
     }, [data?.roles, instances, workflowDefinition]);
-    const hasRoleGroups = activeRoleGroups.length > 0 || completedRoleGroups.length > 0;
+    const hasActive = activeRoleGroups.length > 0;
+    const hasStopped = stoppedRoleGroups.length > 0;
+    const hasRoleGroups = hasActive || completedRoleGroups.length > 0 || hasStopped;
     const columns = useMemo<ColumnDef<PersonalInstance>[]>(
         () => [
             {
@@ -207,16 +210,24 @@ export function PersonalInstancesContent({
                         title={`${t("active")}${titleSuffix}`}
                         roleGroups={activeRoleGroups}
                         columns={columns}
-                        defaultExpanded={true}
+                        defaultExpanded={hasActive || !hasStopped}
                         personOverview={personOverview}
                     />
                     <PersonalDisclosure
                         title={`${t("completed")}${titleSuffix}`}
                         roleGroups={completedRoleGroups}
                         columns={columns}
-                        defaultExpanded={completedRoleGroups.length === 0}
+                        defaultExpanded={completedRoleGroups.length === 0 && !hasStopped}
                         personOverview={personOverview}
                     />
+                    {hasStopped && (
+                        <PersonalDisclosure
+                            title={`${t("stopped")}${titleSuffix}`}
+                            roleGroups={stoppedRoleGroups}
+                            columns={columns}
+                            defaultExpanded={!hasActive}
+                        />
+                    )}
                 </>
             )}
         </div>
