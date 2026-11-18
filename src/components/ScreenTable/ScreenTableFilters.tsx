@@ -56,7 +56,7 @@ const ScreenTableFilter = ({filter, selected, onFilterChange}: ScreenTableFilter
                     selectionMode="multiple"
                 >
                     {filter.options.map((option) => (
-                        <Item key={option}>{option}</Item>
+                        <Item key={option.key}>{option.label}</Item>
                     ))}
                 </Select>
             </div>

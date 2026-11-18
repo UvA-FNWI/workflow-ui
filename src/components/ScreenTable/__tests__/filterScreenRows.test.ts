@@ -105,11 +105,86 @@ describe("filterScreenRows", () => {
     });
 });
 
+describe("stable keys across languages", () => {
+    const progressColumns = [
+        column(0, {filterType: "Pick", isCurrentStep: true, dataType: "Object"}),
+    ];
+    const progressRows: ScreenRow[] = [
+        {
+            id: "a",
+            values: {
+                0: {
+                    text: {
+                        en: "Working (16/09) on revision of proposal",
+                        nl: "Werkt (16/09) aan herziening van voorstel",
+                    },
+                    color: "Green",
+                },
+            },
+        },
+        {
+            id: "b",
+            values: {
+                0: {
+                    text: {en: "Waits (09/11) for assessment", nl: "Wacht (09/11) op goedkeuring"},
+                    color: "Red",
+                },
+            },
+        },
+        {
+            id: "c",
+            values: {
+                0: {
+                    text: {en: "Waits (12/12) for assessment", nl: "Wacht (12/12) op goedkeuring"},
+                    color: "Green",
+                },
+            },
+        },
+    ];
+
+    const options = (language: string) =>
+        getFiltersByType(progressColumns, progressRows, language, "Pick")[0].options;
+
+    it("uses the same grouped keys in every language with localized labels", () => {
+        expect(options("en")).toEqual([
+            {key: "Waits for assessment", label: "Waits for assessment"},
+            {key: "Working on revision of proposal", label: "Working on revision of proposal"},
+        ]);
+        expect(options("nl")).toEqual([
+            {key: "Waits for assessment", label: "Wacht op goedkeuring"},
+            {key: "Working on revision of proposal", label: "Werkt aan herziening van voorstel"},
+        ]);
+    });
+
+    it("keeps a selected key working after a language change", () => {
+        const filters = {0: ["Waits for assessment"]};
+        for (const language of ["en", "nl"]) {
+            expect(
+                ids(filterScreenRows(progressColumns, progressRows, "", filters, language)),
+            ).toEqual(["b", "c"]);
+        }
+    });
+});
+
 describe("getFiltersByType", () => {
     it("builds deduplicated, sorted options and skips empty values", () => {
         expect(getFiltersByType(columns, rows, "en", "Pick")).toEqual([
-            {name: "1", title: columns[1].title, options: ["Closed", "Open"]},
-            {name: "2", title: columns[2].title, options: ["Chemistry", "Physics"]},
+            {
+                name: "1",
+                title: columns[1].title,
+                options: [
+                    {key: "Closed", label: "Closed"},
+                    {key: "Open", label: "Open"},
+                ],
+            },
+            {
+                name: "2",
+                title: columns[2].title,
+                options: [
+                    {key: "Chemistry", label: "Chemistry"},
+                    {key: "Physics", label: "Physics"},
+                ],
+            },
         ]);
     });
 
@@ -120,7 +195,7 @@ describe("getFiltersByType", () => {
             {id: "b", values: {0: "Review 18/12"}},
         ];
         expect(getFiltersByType(stepColumns, stepRows, "en", "Pick")[0].options).toEqual([
-            "Review",
+            {key: "Review", label: "Review"},
         ]);
     });
 });
