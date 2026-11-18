@@ -260,10 +260,6 @@ const ComboBoxInput = <
             className
           )}
         >
-          {/* Search part stays on top */}
-          <div className="ui:flex ui:w-full ui:items-center">{input}</div>
-
-          {/* Tags are in row below the search input */}
           {state.selectedItems.length > 0 && !isOpen && (
             <SelectedTags
               items={state.selectedItems}
@@ -279,6 +275,8 @@ const ComboBoxInput = <
               }}
             />
           )}
+
+          <div className="ui:flex ui:w-full ui:items-center">{input}</div>
         </div>
       ) : (
         <div {...hoverProps}>{input}</div>
