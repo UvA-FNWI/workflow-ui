@@ -136,48 +136,84 @@ afterEach(() => {
     vi.clearAllMocks();
 });
 
-it("waits until typing pauses before searching or warning about query length", async () => {
+it("keeps the committed search view until typing pauses", async () => {
     vi.useFakeTimers();
-    await renderHome("/", {showRoleTabs: true});
+    const router = await renderHome("/?version=pilot", {showRoleTabs: true});
     const input = screen.getByRole("textbox", {name: workflow.home_search.label});
-    const coordinatorTab = screen.getByRole("tab", {name: workflow.overview.coordinator_view});
+    const coordinatorTabName = workflow.overview.coordinator_view;
+    expect(screen.getByRole("tab", {name: coordinatorTabName})).toBeVisible();
 
     fireEvent.change(input, {target: {value: "a"}});
-    act(() => vi.advanceTimersByTime(499));
+    expect(input).toHaveValue("a");
+    expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
-    expect(coordinatorTab).toBeVisible();
+    expect(screen.getByRole("tab", {name: coordinatorTabName})).toBeVisible();
     expect(screen.getByRole("heading", {level: 1, name: "Choose your course"})).toBeVisible();
-    act(() => vi.advanceTimersByTime(1));
+    act(() => vi.advanceTimersByTime(499));
+    expect(router.state.location.search).toBe("?version=pilot");
+    expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
+    await act(async () => {
+        vi.advanceTimersByTime(1);
+    });
     expect(screen.getByText(workflow.home_search.query_length)).toBeVisible();
-    expect(coordinatorTab).not.toBeVisible();
+    expect(screen.queryByRole("tab", {name: coordinatorTabName})).not.toBeInTheDocument();
     expect(screen.getByRole("heading", {level: 1, name: workflow.home_search.title})).toBeVisible();
+    expect(search).not.toHaveBeenCalled();
+    expect(router.state.location.search).toBe("?version=pilot&search=a");
 
     fireEvent.change(input, {target: {value: "ad"}});
     act(() => vi.advanceTimersByTime(400));
     fireEvent.change(input, {target: {value: "ada"}});
-    act(() => vi.advanceTimersByTime(499));
-
-    expect(search).not.toHaveBeenCalled();
-    expect(screen.queryByText("Searching…")).not.toBeInTheDocument();
+    expect(input).toHaveValue("ada");
     expect(screen.getByText(workflow.home_search.query_length)).toBeVisible();
-
-    act(() => vi.advanceTimersByTime(1));
-
-    expect(search).toHaveBeenLastCalledWith("ada");
+    expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(499));
+    expect(router.state.location.search).toBe("?version=pilot&search=a");
+    expect(
+        screen.queryByRole("list", {name: workflow.home_search.workflows}),
+    ).not.toBeInTheDocument();
+    expect(search).not.toHaveBeenCalled();
+    await act(async () => {
+        vi.advanceTimersByTime(1);
+    });
+    expect(router.state.location.search).toBe("?version=pilot&search=ada");
+    expect(router.state.historyAction).toBe("REPLACE");
+    expect(search).toHaveBeenCalledWith("ada");
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
-    expect(coordinatorTab).not.toBeVisible();
+    expect(screen.getByRole("link", {name: /Ada Research Project\s*overview/})).toBeVisible();
+    expect(screen.getByRole("link", {name: /^Ada Example/})).toBeVisible();
 
-    fireEvent.change(input, {target: {value: "ada@example.com"}});
-    expect(screen.getByRole("heading", {name: "3 results for “ada”"})).toBeVisible();
+    search.mockImplementation((query) => ({
+        currentData: {people: query === "ada" ? [person] : [], hasMore: false},
+        isFetching: query === "archive",
+    }));
+    fireEvent.change(input, {target: {value: "archive"}});
+    expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
+    expect(screen.getByRole("link", {name: /Ada Research Project\s*overview/})).toBeVisible();
+    expect(screen.getByRole("link", {name: /^Ada Example/})).toBeVisible();
+    expect(router.state.location.search).toBe("?version=pilot&search=ada");
+    expect(search).not.toHaveBeenCalledWith("archive");
+    await act(async () => {
+        vi.advanceTimersByTime(500);
+    });
+    expect(router.state.location.search).toBe("?version=pilot&search=archive");
+    expect(search).toHaveBeenCalledWith("archive");
+    expect(screen.getByText(workflow.home_search.loading)).toBeVisible();
+    expect(screen.getByRole("link", {name: /Ada Research Project\s*archive/})).toBeVisible();
+    expect(screen.queryByRole("link", {name: /^Ada Example/})).not.toBeInTheDocument();
 
-    fireEvent.change(input, {target: {value: " "}});
-    expect(coordinatorTab).toBeVisible();
+    fireEvent.change(input, {target: {value: ""}});
+    expect(input).toHaveValue("");
+    expect(screen.getByText(workflow.home_search.loading)).toBeVisible();
+    expect(screen.getByRole("link", {name: /Ada Research Project\s*archive/})).toBeVisible();
+    expect(screen.queryByRole("tab", {name: coordinatorTabName})).not.toBeInTheDocument();
+    await act(async () => {
+        vi.advanceTimersByTime(500);
+    });
+    expect(router.state.location.search).toBe("?version=pilot");
+    expect(screen.getByRole("tab", {name: coordinatorTabName})).toBeVisible();
     expect(screen.getByRole("heading", {level: 1, name: "Choose your course"})).toBeVisible();
-
-    fireEvent.change(input, {target: {value: " ada@example.com "}});
-    expect(coordinatorTab).toBeVisible();
-    act(() => vi.advanceTimersByTime(500));
-    expect(search).toHaveBeenLastCalledWith("ada@example.com");
+    expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
 });
 
 it("searches from home and restores the query after opening a person", async () => {
@@ -205,8 +241,35 @@ it("searches from home and restores the query after opening a person", async () 
     expect(router.state.location.search).toBe("?version=pilot&search=ada%40example.com");
     expect(screen.getByRole("link", {name: /Ada Example/})).toBeVisible();
     fireEvent.change(restoredInput, {target: {value: ""}});
-    expect(screen.getByText("Bachelor Thesis")).toBeVisible();
+    expect(await screen.findByRole("link", {name: /^Bachelor Thesis/})).toBeVisible();
     expect(router.state.location.search).toBe("?version=pilot");
+});
+
+it("restores the previous search when going back with an uncommitted edit", async () => {
+    vi.useFakeTimers();
+    const router = await renderHome("/?search=ada&version=pilot");
+    await act(() => router.navigate("/?search=archive&version=pilot"));
+
+    const input = screen.getByRole("textbox", {name: workflow.home_search.label});
+    expect(input).toHaveValue("archive");
+    search.mockClear();
+    fireEvent.change(input, {target: {value: "bachelor"}});
+    expect(input).toHaveValue("bachelor");
+    expect(router.state.location.search).toBe("?search=archive&version=pilot");
+    expect(screen.getByRole("link", {name: /Ada Research Project\s*archive/})).toBeVisible();
+    expect(screen.queryByRole("link", {name: /^Bachelor Thesis/})).not.toBeInTheDocument();
+    expect(search).not.toHaveBeenCalledWith("bachelor");
+
+    await act(() => router.navigate(-1));
+    expect(screen.getByRole("textbox", {name: workflow.home_search.label})).toHaveValue("ada");
+    expect(search).toHaveBeenCalledWith("ada");
+    expect(screen.getByRole("link", {name: /^Ada Example/})).toBeVisible();
+
+    await act(async () => {
+        vi.advanceTimersByTime(500);
+    });
+    expect(router.state.location.search).toBe("?search=ada&version=pilot");
+    expect(search).not.toHaveBeenCalledWith("bachelor");
 });
 
 it.each([

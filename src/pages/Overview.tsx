@@ -1,6 +1,4 @@
-import {useEffect, useState} from "react";
-
-import {useOutletContext, useSearchParams} from "react-router";
+import {useOutletContext} from "react-router";
 
 import {SearchInput, Text} from "@uva-fnwi/datanose-ui";
 
@@ -9,8 +7,8 @@ import {HomeSearchResults} from "~/components/Home/HomeSearchResults";
 import {ScreenLink} from "~/components/Home/ScreenLink";
 import type {HomeLayoutContext} from "~/components/HomeLayout";
 import {HomePage} from "~/components/HomePage";
-import {useDebounce} from "~/hooks/useDebounce";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
+import {useHomeSearch} from "~/hooks/useHomeSearch";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
 
@@ -22,12 +20,7 @@ function Overview() {
     useDocumentTitle("Overview");
 
     const {definitions} = useOutletContext<HomeLayoutContext>();
-    const [params, setParams] = useSearchParams();
-    const input = params.get("search") ?? "";
-    const trimmedInput = input.trim();
-    const [query, setQuery] = useState(trimmedInput);
-    const updateQuery = useDebounce(() => setQuery(trimmedInput), 500);
-    useEffect(() => updateQuery(), [trimmedInput, updateQuery]);
+    const {input, query, setInput} = useHomeSearch();
 
     if (!definitions) return null;
 
@@ -36,18 +29,8 @@ function Overview() {
     );
     if (screens.length === 0) return null;
 
-    const searching = Boolean(trimmedInput && query);
-    const showResults =
-        searching && query.length >= minQueryLength && query.length <= maxQueryLength;
-
-    function handleSearchChange(value: string) {
-        if (!value.trim()) setQuery("");
-
-        const nextParams = new URLSearchParams(params);
-        if (value) nextParams.set("search", value);
-        else nextParams.delete("search");
-        setParams(nextParams, {replace: true, preventScrollReset: true});
-    }
+    const searching = Boolean(query);
+    const isQueryValid = query.length >= minQueryLength && query.length <= maxQueryLength;
 
     const searchInput = (
         <div role="search" className="mb-6 max-w-sm">
@@ -56,11 +39,11 @@ function Overview() {
                 placeholder={t("home_search.placeholder")}
                 value={input}
                 maxLength={maxQueryLength}
-                onChange={handleSearchChange}
+                onChange={setInput}
             />
         </div>
     );
-    const searchFeedback = showResults ? (
+    const searchFeedback = isQueryValid ? (
         <HomeSearchResults query={query} workflowScreens={screens} />
     ) : (
         <Text role="status">{t("home_search.query_length")}</Text>

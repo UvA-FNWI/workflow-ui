@@ -126,7 +126,7 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
     fireEvent.change(searchInput, {
         target: {value: ""},
     });
-    fireEvent.click(screen.getByRole("link", {name: /^Project/}));
+    fireEvent.click(await screen.findByRole("link", {name: /^Project/}));
     const homeLink = await screen.findByRole("link", {name: workflow.home});
     expect(homeLink).toHaveAttribute("href", "/?version=2026");
 });
