@@ -57,20 +57,6 @@ export const QuestionAnswerList = ({
                                 {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
                                 {":"}
                             </Text>
-                            {showMessages && (
-                                <FieldMessageBalloon
-                                    instanceId={instanceId}
-                                    questionName={fieldMessageQuestionName(
-                                        messagePropertyName,
-                                        question.name,
-                                    )}
-                                    fieldLabel={l(question.text) ?? question.name}
-                                    allowMessages={question.allowMessages}
-                                    canAdd={canAddMessages}
-                                    canView={canViewMessages}
-                                    messageUi={messageUi}
-                                />
-                            )}
                             {latestEdit && (
                                 <Button
                                     intent="ghost"
@@ -85,33 +71,49 @@ export const QuestionAnswerList = ({
                             )}
                         </div>
 
-                        <div className="flex min-w-0 flex-wrap items-baseline gap-1">
-                            <AnswerCell
-                                pair={pair}
-                                canEdit={canEdit}
-                                submissionId={submissionId}
-                                instanceId={instanceId}
-                                noAnswerText={t("version_card.no_answer")}
-                            />
-                            {latestEdit && (
-                                <button
-                                    type="button"
-                                    className="cursor-pointer"
-                                    onClick={() => setHistoryPair(pair)}
-                                    aria-label={t("instance.summary.view_changes")}
-                                >
-                                    <Text intent="secondary" display="inline">
-                                        (
-                                        {t("instance.summary.changed_on_inline", {
-                                            date: formatDateShort(
-                                                latestEdit.changedAt,
-                                                i18n.language,
-                                            ),
-                                        })}
-                                        )
-                                    </Text>
-                                </button>
+                        <div className="flex min-w-0 items-start gap-1">
+                            {showMessages && (
+                                <FieldMessageBalloon
+                                    instanceId={instanceId}
+                                    questionName={fieldMessageQuestionName(
+                                        messagePropertyName,
+                                        question.name,
+                                    )}
+                                    fieldLabel={l(question.text) ?? question.name}
+                                    allowMessages={question.allowMessages}
+                                    canAdd={canAddMessages}
+                                    canView={canViewMessages}
+                                    messageUi={messageUi}
+                                />
                             )}
+                            <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-1">
+                                <AnswerCell
+                                    pair={pair}
+                                    canEdit={canEdit}
+                                    submissionId={submissionId}
+                                    instanceId={instanceId}
+                                    noAnswerText={t("version_card.no_answer")}
+                                />
+                                {latestEdit && (
+                                    <button
+                                        type="button"
+                                        className="cursor-pointer"
+                                        onClick={() => setHistoryPair(pair)}
+                                        aria-label={t("instance.summary.view_changes")}
+                                    >
+                                        <Text intent="secondary" display="inline">
+                                            (
+                                            {t("instance.summary.changed_on_inline", {
+                                                date: formatDateShort(
+                                                    latestEdit.changedAt,
+                                                    i18n.language,
+                                                ),
+                                            })}
+                                            )
+                                        </Text>
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 );

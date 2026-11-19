@@ -11,7 +11,7 @@ type Props = {
 function flatItems(threads: MessageThread[]): MessageItem[] {
     return threads
         .flatMap((thread) => thread.items.filter((item) => item.kind === "Message"))
-        .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
+        .sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
 }
 
 export function FlatMessageFeed({threads}: Props) {

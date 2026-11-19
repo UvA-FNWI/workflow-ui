@@ -58,10 +58,7 @@ export const StepCardBody = ({
     const openFormId = formState?.action.form;
     const canAddMessages = (instance.permissions ?? []).includes("AddMessages");
     const canViewMessages = (instance.permissions ?? []).includes("ViewMessages");
-    const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
-    const messageUi = messageSettings
-        ? {layout: messageSettings.layout, allowClose: messageSettings.allowClose}
-        : undefined;
+    const messageUi = resolveInstanceMessageSettings(instance.workflowDefinition) ?? undefined;
 
     // Modal forms must not replace the step form registered for the admin helper.
     useEffect(() => {

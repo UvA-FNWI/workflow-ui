@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Button, Callout, Disclosure, Heading, Icon, Pill} from "@uva-fnwi/datanose-ui";
+import {Button, Disclosure, Heading, Icon, Pill} from "@uva-fnwi/datanose-ui";
 
 import {resolveInstanceMessageSettings} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function CommentsCard({instance}: Props) {
-    const {t, l} = useTranslate("workflow");
+    const {t} = useTranslate("workflow");
     const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
     const canView = instance.permissions.includes("ViewMessages");
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
@@ -22,53 +22,51 @@ export function CommentsCard({instance}: Props) {
         {skip: !messageSettings || !canView},
     );
     const [expanded, setExpanded] = useState(false);
+    const [showNewComposer, setShowNewComposer] = useState(false);
     const [focusNewConversation, setFocusNewConversation] = useState(false);
 
     if (!messageSettings?.card || !canView) return null;
 
     const instanceThreads = threads.filter((thread) => thread.questionName == null);
     const canAdd = instance.permissions.includes("AddMessages");
+    const composerVisible = canAdd && showNewComposer;
     if (!canAdd && !messagesLoaded) return null;
     if (!shouldShowMessageUi(canAdd, instanceThreads.length)) return null;
 
-    const closedCount = instanceThreads.filter((thread) => thread.isClosed).length;
-    const openCount = instanceThreads.length - closedCount;
-    const title = t("instance.messages.heading", {
-        title: t("instance.messages.title"),
-        audience: t("instance.messages.audience"),
-    });
+    const count = instanceThreads.length;
     const showOpenCloseSummary =
         messageSettings.allowClose && messageSettings.layout === "threaded";
-    const totalCount = instanceThreads.length;
-    const threadSummary = showOpenCloseSummary
-        ? openCount > 0
-            ? t("instance.messages.summary_open", {count: openCount})
-            : closedCount > 0
-              ? t("instance.messages.summary_closed", {count: closedCount})
-              : null
-        : totalCount > 0
-          ? t("instance.messages.summary_count", {count: totalCount})
-          : null;
+    const openCount = showOpenCloseSummary
+        ? instanceThreads.filter((thread) => !thread.isClosed).length
+        : 0;
+    const title = t("instance.messages.heading", {
+        title:
+            !showOpenCloseSummary && count > 0
+                ? t("instance.messages.title_count", {count})
+                : t("instance.messages.title"),
+        audience: t("instance.messages.audience"),
+    });
 
     return (
         <Disclosure
             isExpanded={expanded}
             onExpandedChange={(open) => {
                 setExpanded(open);
-                if (!open) setFocusNewConversation(false);
+                if (!open) {
+                    setShowNewComposer(false);
+                    setFocusNewConversation(false);
+                }
             }}
         >
             <div className="flex flex-row items-center justify-between">
                 <Disclosure.Header>
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading className="font-semibold">{title}</Heading>
-                        {threadSummary && (
-                            <Pill
-                                variant={
-                                    showOpenCloseSummary ? (openCount > 0 ? "red" : "grey") : "grey"
-                                }
-                            >
-                                {threadSummary}
+                        {showOpenCloseSummary && count > 0 && (
+                            <Pill variant={openCount > 0 ? "red" : "grey"}>
+                                {openCount > 0
+                                    ? t("instance.messages.summary_open", {count: openCount})
+                                    : t("instance.messages.summary_closed", {count})}
                             </Pill>
                         )}
                     </div>
@@ -80,10 +78,11 @@ export function CommentsCard({instance}: Props) {
                             variant="destructive"
                             size="square"
                             width="none"
-                            className="flex items-center justify-center leading-0"
                             aria-label={t("instance.messages.add")}
+                            aria-expanded={composerVisible}
                             onClick={() => {
                                 setExpanded(true);
+                                setShowNewComposer(true);
                                 setFocusNewConversation(true);
                             }}
                         >
@@ -94,27 +93,15 @@ export function CommentsCard({instance}: Props) {
             </div>
             <Disclosure.Content>
                 <div className="flex flex-col gap-3 pt-2">
-                    {messageSettings.callout && (
-                        <Callout
-                            type="warning"
-                            header={
-                                l(messageSettings.calloutTitle) ??
-                                t("instance.messages.callout_title")
-                            }
-                        >
-                            {l(messageSettings.calloutText) ?? t("instance.messages.callout_body")}
-                        </Callout>
-                    )}
                     <MessageThreadPanel
                         instanceId={instance.id}
                         threads={instanceThreads}
                         canAdd={canAdd}
+                        showNewComposer={composerVisible}
+                        onDismissComposer={() => setShowNewComposer(false)}
                         focusNewConversation={focusNewConversation}
                         onFocusNewConversationHandled={() => setFocusNewConversation(false)}
-                        messageUi={{
-                            layout: messageSettings.layout,
-                            allowClose: messageSettings.allowClose,
-                        }}
+                        messageUi={messageSettings}
                     />
                 </div>
             </Disclosure.Content>

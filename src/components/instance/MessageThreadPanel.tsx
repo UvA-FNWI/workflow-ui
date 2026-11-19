@@ -1,6 +1,6 @@
-import {useCallback, useEffect, useId, useState} from "react";
+import {type ReactNode, useCallback, useEffect, useId, useState} from "react";
 
-import {Button, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {ConversationThread} from "./ConversationThread";
 import {FlatMessageFeed} from "./FlatMessageFeed";
@@ -24,9 +24,10 @@ type Props = {
     canAdd: boolean;
     /** @deprecated Use focusNewConversation — kept for tests/mocks */
     composerFirst?: boolean;
+    /** Omit to show the compact composer. */
     showNewComposer?: boolean;
     autoFocusComposer?: boolean;
-    onDismissComposer?: () => void;
+    onDismissComposer?: (reason: "cancel" | "saved") => void;
     focusNewConversation?: boolean;
     onFocusNewConversationHandled?: () => void;
     messageUi?: MessageUiSettings;
@@ -37,16 +38,17 @@ export function MessageThreadPanel({
     threads,
     questionName = null,
     canAdd,
-    showNewComposer = false,
+    showNewComposer,
     autoFocusComposer = false,
     onDismissComposer,
     focusNewConversation = false,
     onFocusNewConversationHandled,
     messageUi = defaultMessageUi,
 }: Props) {
-    const {layout, allowClose} = messageUi;
+    const {layout, allowClose, callout, calloutTitle, calloutText} = messageUi;
     const isFlat = layout === "flat";
-    const {t} = useTranslate("workflow");
+    const cancelIntent = questionName == null ? "ghost" : "secondary";
+    const {t, l} = useTranslate("workflow");
     const {t: m} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const newConversationPlaceholder = m("new_conversation_placeholder", {
         defaultValue: "Add a comment",
@@ -122,7 +124,7 @@ export function MessageThreadPanel({
                     }));
                 }
                 if (kind === "Message" && !targetThreadId) {
-                    onDismissComposer?.();
+                    onDismissComposer?.("saved");
                 }
             });
     };
@@ -145,10 +147,11 @@ export function MessageThreadPanel({
         storeDraft(newConversationDraftKey, "");
         setBody("");
         setNewConversationExpanded(false);
-        onDismissComposer?.();
+        onDismissComposer?.("cancel");
     };
 
     const composingNewConversation = replyTarget == null;
+    const newComposerVisible = canAdd && showNewComposer !== false;
     const showNewConversationActions =
         composingNewConversation &&
         (newConversationExpanded ||
@@ -162,8 +165,13 @@ export function MessageThreadPanel({
         : (drafts[newConversationDraftKey] ?? "");
     const canSubmitNewMessage =
         !isLoading && composingNewConversation && newConversationBody.trim().length > 0;
+    const messageCallout = callout && (
+        <Callout type="warning" header={l(calloutTitle) ?? m("callout_title")}>
+            {l(calloutText) ?? m("callout_body")}
+        </Callout>
+    );
 
-    const newConversationStarter = canAdd ? (
+    const newConversationStarter = newComposerVisible ? (
         <div className="flex flex-col gap-2">
             <TextArea
                 id={newConversationFieldId}
@@ -174,7 +182,12 @@ export function MessageThreadPanel({
                 onChange={composingNewConversation ? setBody : undefined}
                 readOnly={!composingNewConversation}
                 onFocus={() => {
-                    if (!composingNewConversation) return;
+                    if (replyTarget) {
+                        if (!focusNewConversation) return;
+                        storeDraft(draftKeyFor(replyTarget), body);
+                        setReplyTarget(null);
+                        setBody(newConversationBody);
+                    }
                     setNewConversationExpanded(true);
                 }}
                 onKeyDown={(event) =>
@@ -183,22 +196,19 @@ export function MessageThreadPanel({
                 }
                 placeholder={newConversationPlaceholder}
             />
+            {composingNewConversation && messageCallout}
             {showNewConversationActions && (
                 <div className="flex flex-wrap items-center gap-2">
                     <Button
                         intent="primary"
                         variant="destructive"
                         width="none"
-                        disabled={isLoading || !newConversationBody.trim()}
+                        disabled={!canSubmitNewMessage}
                         onClick={() => submit("Message")}
                     >
                         {t("save")}
                     </Button>
-                    <Button
-                        intent="ghost"
-                        className="border-transparent!"
-                        onClick={cancelNewConversation}
-                    >
+                    <Button intent={cancelIntent} onClick={cancelNewConversation}>
                         {t("cancel")}
                     </Button>
                 </div>
@@ -212,10 +222,12 @@ export function MessageThreadPanel({
             onChange={setBody}
             onSubmit={() => submit("Message")}
             onCancel={cancelReply}
+            cancelIntent={cancelIntent}
             submitLabel={t("save")}
             cancelLabel={t("cancel")}
             ariaLabel={replyPlaceholder}
             placeholder={replyPlaceholder}
+            callout={messageCallout}
             isLoading={isLoading}
             autoFocus
         />
@@ -237,7 +249,6 @@ export function MessageThreadPanel({
             onReopenConversation={() => submit("Reopen", thread.id)}
             isLoading={isLoading}
             replyComposer={replyComposer}
-            replyPlaceholder={replyPlaceholder}
         />
     );
 
@@ -260,7 +271,7 @@ export function MessageThreadPanel({
     return (
         <div className="flex flex-col gap-3">
             {newConversationStarter}
-            {threads.length === 0 && !canAdd && (
+            {threads.length === 0 && !newComposerVisible && (
                 <Text as="span" className="text-grey-600">
                     {m("empty")}
                 </Text>
@@ -284,10 +295,12 @@ type ComposerProps = {
     onChange: (value: string) => void;
     onSubmit: () => void;
     onCancel?: () => void;
+    cancelIntent: "ghost" | "secondary";
     submitLabel: string;
     cancelLabel?: string;
     ariaLabel: string;
     placeholder?: string;
+    callout?: ReactNode;
     isLoading: boolean;
     autoFocus?: boolean;
 };
@@ -297,10 +310,12 @@ function Composer({
     onChange,
     onSubmit,
     onCancel,
+    cancelIntent,
     submitLabel,
     cancelLabel,
     ariaLabel,
     placeholder,
+    callout,
     isLoading,
     autoFocus,
 }: ComposerProps) {
@@ -318,6 +333,7 @@ function Composer({
                 placeholder={placeholder}
                 onKeyDown={(event) => handleMessageSubmitShortcut(event, onSubmit, canSubmit)}
             />
+            {callout}
             <div className="flex flex-wrap items-center gap-2">
                 <Button
                     intent="primary"
@@ -328,7 +344,7 @@ function Composer({
                     {submitLabel}
                 </Button>
                 {onCancel && (
-                    <Button intent="ghost" className="border-transparent!" onClick={onCancel}>
+                    <Button intent={cancelIntent} onClick={onCancel}>
                         {cancelLabel}
                     </Button>
                 )}

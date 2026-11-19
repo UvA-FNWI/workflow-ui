@@ -116,34 +116,39 @@ export const AssessmentQuestionAnswerList = ({
                                     {percentage &&
                                         ` (${percentage.toLocaleString(i18n.language)}%)`}
                                 </Text>
-                                {arrayOfPairs.length === 1 && (
-                                    <FieldMessageBalloon
-                                        instanceId={instanceId}
-                                        questionName={fieldMessageQuestionName(
-                                            messagePropertyName,
-                                            question.name,
-                                        )}
-                                        fieldLabel={l(question.text) ?? question.name}
-                                        allowMessages={question.allowMessages}
-                                        canAdd={canAddMessages}
-                                        canView={canViewMessages}
-                                        messageUi={messageUi}
-                                    />
-                                )}
                             </div>
                             {arrayOfPairs.map((submission, submissionIndex) => {
                                 const pair = submission.find(
                                     (s) => s.question.name === question.name,
                                 );
                                 return (
-                                    <div key={submissionIndex} className="w-24 min-w-0 sm:w-32">
-                                        <AnswerCell
-                                            pair={pair}
-                                            canEdit={canEdit}
-                                            noAnswerText="-"
-                                            instanceId={instanceId}
-                                            submissionId={submissionId}
-                                        />
+                                    <div
+                                        key={submissionIndex}
+                                        className="flex w-24 min-w-0 items-start gap-1 sm:w-32"
+                                    >
+                                        {arrayOfPairs.length === 1 && (
+                                            <FieldMessageBalloon
+                                                instanceId={instanceId}
+                                                questionName={fieldMessageQuestionName(
+                                                    messagePropertyName,
+                                                    question.name,
+                                                )}
+                                                fieldLabel={l(question.text) ?? question.name}
+                                                allowMessages={question.allowMessages}
+                                                canAdd={canAddMessages}
+                                                canView={canViewMessages}
+                                                messageUi={messageUi}
+                                            />
+                                        )}
+                                        <div className="min-w-0 flex-1">
+                                            <AnswerCell
+                                                pair={pair}
+                                                canEdit={canEdit}
+                                                noAnswerText="-"
+                                                instanceId={instanceId}
+                                                submissionId={submissionId}
+                                            />
+                                        </div>
                                     </div>
                                 );
                             })}

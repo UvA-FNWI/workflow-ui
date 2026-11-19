@@ -1,11 +1,14 @@
-import {cleanup, render, screen} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import {FieldMessageBalloon} from "../FieldMessageBalloon";
+import type {LocalString} from "~/hooks/useTranslate";
 
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
-        t: (key: string) => key,
+        t: (key: string, options?: {defaultValue?: string}) => options?.defaultValue ?? key,
+        l: (value?: LocalString | null) => value?.en,
+        i18n: {language: "en"},
     }),
 }));
 
@@ -42,9 +45,19 @@ describe("FieldMessageBalloon", () => {
         expect(container).toBeEmptyDOMElement();
     });
 
-    it("shows trigger when user can add on an eligible field", () => {
-        getMessages.mockReturnValue({data: [], isSuccess: true});
-        render(
+    it.each([
+        {notes: "no notes", isClosed: null, icon: "bubble-message-line"},
+        {notes: "an open note", isClosed: false, icon: "bubble-message-solid"},
+        {notes: "a closed note", isClosed: true, icon: "bubble-message-solid"},
+    ])("shows the $icon icon and no count with $notes", async ({isClosed, icon}) => {
+        getMessages.mockReturnValue({
+            data:
+                isClosed === null
+                    ? []
+                    : [{id: "thread-1", questionName: "Title", isClosed, items: []}],
+            isSuccess: true,
+        });
+        const {container} = render(
             <FieldMessageBalloon
                 instanceId="instance-1"
                 questionName="Title"
@@ -54,6 +67,61 @@ describe("FieldMessageBalloon", () => {
                 canView
             />,
         );
-        expect(screen.getByLabelText("instance.messages.field_label")).toBeTruthy();
+
+        const trigger = screen.getByRole("button", {name: "instance.messages.field_label"});
+        const svg = trigger.querySelector("svg");
+        expect(svg).toHaveAttribute("aria-hidden", "true");
+        expect(svg).toHaveClass("ui:text-red-600", "ui:dark:text-red-400");
+        expect(container).not.toHaveTextContent(/\d/);
+        await waitFor(() =>
+            expect(trigger.querySelector("use")).toHaveAttribute("href", `#${icon}`),
+        );
+        expect(document.getElementById(icon)).toBeInTheDocument();
+    });
+
+    it("opens the expanded composer with its configured callout and closes on cancel", () => {
+        getMessages.mockReturnValue({data: [], isSuccess: true});
+        render(
+            <FieldMessageBalloon
+                instanceId="instance-1"
+                questionName="Title"
+                fieldLabel="Working title"
+                allowMessages
+                canAdd
+                canView
+                messageUi={{
+                    layout: "flat",
+                    allowClose: false,
+                    callout: true,
+                    calloutTitle: {en: "Student privacy", nl: "Privacy van de student"},
+                    calloutText: {
+                        en: "Avoid identifying details.",
+                        nl: "Vermijd herkenbare details.",
+                    },
+                }}
+            />,
+        );
+
+        fireEvent.click(screen.getByRole("button", {name: "instance.messages.field_label"}));
+        const dialog = within(screen.getByRole("dialog"));
+        const input = dialog.getByRole("textbox", {name: "Add a comment"});
+        const save = dialog.getByRole("button", {name: "save"});
+        const cancel = dialog.getByRole("button", {name: "cancel"});
+        const callout = dialog.getByText("Avoid identifying details.");
+
+        expect(input).toHaveAttribute("rows", "3");
+        expect(dialog.getByText("Student privacy")).toBeVisible();
+        expect(input).toAppearBefore(callout);
+        expect(callout).toAppearBefore(save);
+        expect(cancel).toHaveClass("ui:bg-white", "ui:border-black");
+        expect(save).toBeDisabled();
+
+        fireEvent.change(input, {target: {value: "   "}});
+        expect(save).toBeDisabled();
+        fireEvent.change(input, {target: {value: "Check this answer"}});
+        expect(save).toBeEnabled();
+
+        fireEvent.click(cancel);
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 });

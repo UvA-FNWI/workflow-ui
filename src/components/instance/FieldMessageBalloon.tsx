@@ -1,8 +1,8 @@
 import {useState} from "react";
 
-import {Button, Icon, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Icon, Modal} from "@uva-fnwi/datanose-ui";
 
-import {defaultMessageUi, type MessageUiSettings} from "./instanceMessageSettings";
+import type {MessageUiSettings} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -25,7 +25,7 @@ export function FieldMessageBalloon({
     allowMessages,
     canAdd,
     canView,
-    messageUi = defaultMessageUi,
+    messageUi,
 }: Props) {
     const {t} = useTranslate("workflow");
     const [open, setOpen] = useState(false);
@@ -40,17 +40,11 @@ export function FieldMessageBalloon({
     if (!canAdd && !messagesLoaded) return null;
     if (!shouldShowMessageUi(canAdd, fieldThreads.length)) return null;
 
-    const openCount = fieldThreads.filter((thread) => !thread.isClosed).length;
-    const hasAnyComments = fieldThreads.length > 0;
-    const iconColor = hasAnyComments ? ("danger" as const) : ("current" as const);
-
-    const ariaLabel =
-        openCount > 0
-            ? `${t("instance.messages.field_label")} (${openCount})`
-            : t("instance.messages.field_label");
+    const hasNotes = fieldThreads.length > 0;
+    const modalTitle = t("instance.messages.field_modal_title", {field: fieldLabel});
 
     const triggerClassName =
-        "ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800";
+        "ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800";
 
     return (
         <>
@@ -60,17 +54,17 @@ export function FieldMessageBalloon({
                     size="small"
                     shape="circular"
                     className={triggerClassName}
-                    aria-label={ariaLabel}
+                    aria-label={t("instance.messages.field_label")}
                     aria-expanded={open}
                     onClick={() => setOpen(true)}
                 >
-                    <Icon name="bubble-message-line" size="xs" color={iconColor} />
+                    <Icon
+                        name={hasNotes ? "bubble-message-solid" : "bubble-message-line"}
+                        size="xs"
+                        color="danger"
+                        decorative
+                    />
                 </Button>
-                {openCount > 0 && (
-                    <Text as="span" size="xs" intent="error" display="inline" aria-hidden>
-                        {openCount}
-                    </Text>
-                )}
             </span>
             <Modal
                 isOpen={open}
@@ -78,9 +72,10 @@ export function FieldMessageBalloon({
                     if (!next) setOpen(false);
                 }}
                 size="md"
+                aria-label={modalTitle}
             >
                 <Modal.Header className="ui:gap-3 [&_h2]:truncate [&>div:first-child]:min-w-0 [&>div:first-child]:flex-1">
-                    {t("instance.messages.field_modal_title", {field: fieldLabel})}
+                    {modalTitle}
                 </Modal.Header>
                 <Modal.Body className="flex flex-col gap-4">
                     <MessageThreadPanel
@@ -88,6 +83,10 @@ export function FieldMessageBalloon({
                         threads={fieldThreads}
                         questionName={questionName}
                         canAdd={canAdd}
+                        showNewComposer
+                        onDismissComposer={(reason) => {
+                            if (reason === "cancel") setOpen(false);
+                        }}
                         messageUi={messageUi}
                     />
                 </Modal.Body>

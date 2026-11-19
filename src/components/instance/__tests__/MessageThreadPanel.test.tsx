@@ -1,8 +1,11 @@
 import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
+import {defaultMessageUi} from "../instanceMessageSettings";
 import {MessageThreadPanel} from "../MessageThreadPanel";
+import type {LocalString} from "~/hooks/useTranslate";
 import type {MessageThread} from "~/store/api/types/messages";
+import {formatDate} from "~/utils/formatDate";
 
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: (_ns?: string, options?: {keyPrefix?: string}) => ({
@@ -11,6 +14,7 @@ vi.mock("~/hooks/useTranslate", () => ({
             const prefix = options?.keyPrefix ? `${options.keyPrefix}.` : "";
             return `${prefix}${key}`;
         },
+        l: (value?: LocalString | null) => value?.en,
         i18n: {language: "en"},
     }),
 }));
@@ -49,15 +53,34 @@ const thread: MessageThread = {
     ],
 };
 
+const replyAction = {name: "instance.messages.reply"};
+
 describe("MessageThreadPanel", () => {
-    it("shows the author before reply text in the reply rail", () => {
+    it("shows flat messages newest first", () => {
+        render(
+            <MessageThreadPanel
+                instanceId="instance-1"
+                threads={[thread]}
+                canAdd={false}
+                messageUi={{...defaultMessageUi, layout: "flat", allowClose: false}}
+            />,
+        );
+
+        expect(screen.getByText("Will do.")).toAppearBefore(
+            screen.getByText("Please check the transfer rows."),
+        );
+    });
+
+    it("shows the timestamp next to the reply author before the reply text", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd={false} />);
 
         const reply = screen.getByText("Will do.");
         const author = screen.getByText("Grace Hopper");
-        expect(
-            author.compareDocumentPosition(reply) & Node.DOCUMENT_POSITION_FOLLOWING,
-        ).toBeTruthy();
+        const formattedDate = formatDate(thread.items[1]!.dateTime, "en");
+        const timestamp = screen.getByText(formattedDate, {selector: "time"});
+        expect(timestamp).toBeVisible();
+        expect(author.parentElement).toHaveTextContent(`Grace Hopper · ${formattedDate}`);
+        expect(timestamp).toAppearBefore(reply);
     });
 
     it("shows a compact new-conversation field without actions until it is focused", () => {
@@ -84,34 +107,69 @@ describe("MessageThreadPanel", () => {
         expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
     });
 
-    it("replaces the reply starter with the composer when focused", () => {
-        render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
+    it("opens a focused reply composer with its configured callout on click", () => {
+        render(
+            <MessageThreadPanel
+                instanceId="instance-1"
+                threads={[thread]}
+                canAdd
+                showNewComposer={false}
+                messageUi={{
+                    ...defaultMessageUi,
+                    callout: true,
+                    calloutTitle: {en: "Student privacy", nl: "Privacy van de student"},
+                    calloutText: {
+                        en: "Avoid identifying details.",
+                        nl: "Vermijd herkenbare details.",
+                    },
+                }}
+            />,
+        );
 
-        const starters = screen.getAllByLabelText("Write a reply");
-        fireEvent.focus(starters[0]!);
+        const [rootReply, nestedReply] = screen.getAllByRole("button", replyAction);
+        fireEvent.focus(rootReply!);
+        expect(screen.queryByRole("textbox", {name: "Write a reply"})).toBeNull();
+        fireEvent.click(rootReply!);
 
-        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
-        expect(screen.getByRole("button", {name: "cancel"})).toBeTruthy();
+        const input = screen.getByRole("textbox", {name: "Write a reply"});
+        const save = screen.getByRole("button", {name: "save"});
+        const cancel = screen.getByRole("button", {name: "cancel"});
+        const callout = screen.getByText("Avoid identifying details.");
+        expect(screen.getByRole("button", replyAction)).toBe(nestedReply);
+        expect(input).toHaveFocus();
+        expect(screen.getByText("Student privacy")).toBeVisible();
+        expect(input).toAppearBefore(callout);
+        expect(callout).toAppearBefore(save);
+        expect(save).toBeDisabled();
+
+        fireEvent.change(input, {target: {value: "   "}});
+        expect(save).toBeDisabled();
+        fireEvent.change(input, {target: {value: "I will check"}});
+        expect(save).toBeEnabled();
+
+        fireEvent.click(cancel);
+        expect(screen.queryByRole("textbox", {name: "Write a reply"})).toBeNull();
+        expect(screen.getAllByRole("button", replyAction)).toHaveLength(2);
     });
 
     it("keeps the reply text when another reply is opened", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        const replyFields = () => screen.getAllByLabelText("Write a reply");
-        fireEvent.focus(replyFields()[0]!);
-        fireEvent.change(replyFields()[0]!, {target: {value: "Keep this"}});
-        fireEvent.focus(replyFields()[1]!);
+        const replyField = () => screen.getByRole("textbox", {name: "Write a reply"});
+        fireEvent.click(screen.getAllByRole("button", replyAction)[0]!);
+        fireEvent.change(replyField(), {target: {value: "Keep this"}});
+        fireEvent.click(screen.getByRole("button", replyAction));
 
-        expect(replyFields()[1]!).toHaveValue("");
+        expect(replyField()).toHaveValue("");
 
-        fireEvent.focus(replyFields()[0]!);
-        expect(replyFields()[0]!).toHaveValue("Keep this");
+        fireEvent.click(screen.getByRole("button", replyAction));
+        expect(replyField()).toHaveValue("Keep this");
     });
 
     it("shows inline reply starters and a close conversation button", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(screen.getAllByLabelText("Write a reply").length).toBeGreaterThan(0);
+        expect(screen.getAllByRole("button", replyAction)).toHaveLength(2);
         expect(
             screen.getByRole("button", {name: "instance.messages.close_conversation"}),
         ).toBeTruthy();

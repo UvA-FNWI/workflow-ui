@@ -55,7 +55,9 @@ function Instance() {
                         stopMessage={instance?.stopMessage}
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
-                    {instance && <CommentsCard instance={instance} />}
+                    {instance?.permissions.includes("ViewMessages") && id && (
+                        <CommentsCard instance={instance} />
+                    )}
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
                         <CorrespondenceCard instanceId={id} />
                     )}

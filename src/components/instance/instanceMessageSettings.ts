@@ -10,20 +10,19 @@ export type InstanceMessageSettings = {
     calloutText: LocalString | null;
 };
 
-export type MessageUiSettings = Pick<InstanceMessageSettings, "layout" | "allowClose">;
+export type MessageUiSettings = Omit<InstanceMessageSettings, "card">;
 
 export const defaultMessageUi: MessageUiSettings = {
-    layout: "threaded",
-    allowClose: true,
-};
-
-const defaults: InstanceMessageSettings = {
-    card: true,
     layout: "threaded",
     allowClose: true,
     callout: false,
     calloutTitle: null,
     calloutText: null,
+};
+
+const defaults: InstanceMessageSettings = {
+    card: true,
+    ...defaultMessageUi,
 };
 
 export function resolveInstanceMessageSettings(
