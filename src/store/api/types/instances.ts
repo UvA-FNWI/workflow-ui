@@ -2,6 +2,7 @@ import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
+    AnswerChangeGroup,
     FormLayout,
     Question,
     RoleAction,
@@ -35,6 +36,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     infoCards: InfoCard[];
+    stopMessage: LocalString | null;
 };
 
 /**
@@ -90,13 +92,15 @@ export type StepDeadline = {
 
 export type WorkflowStep = {
     id: string;
+    isAvailable: boolean;
     title: LocalString;
     icon: IconVariant | null;
     event: string;
     dateCompleted: string | null;
     deadline: StepDeadline | null;
     children: WorkflowStep[] | null;
-    versions: WorkflowStepVersions | null;
+    versions: {current: WorkflowStepVersion | null; history: WorkflowStepVersion[]} | null;
+    submissions: Submission[];
     headerStatus: StepHeaderStatus | null;
     resultsType: StepResultsType;
     expectsSubmission: boolean;
@@ -104,11 +108,12 @@ export type WorkflowStep = {
     hierarchyMode: StepHierarchyMode;
     childrenLayout: StepChildrenLayout;
     undoCandidate?: UndoCandidate | null;
-};
-
-export type WorkflowStepVersions = {
-    current: WorkflowStepVersion | null;
-    history: WorkflowStepVersion[];
+    importStatus?: "Available" | "Unavailable" | "Restricted" | null;
+    importedFrom?: {
+        instanceId: string;
+        stepId: string;
+        participants: {displayName: string}[];
+    } | null;
 };
 
 export type WorkflowStepVersion = {
@@ -213,3 +218,24 @@ export type InfoCard =
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
     | (InfoCardBase & {type: "Text"; content?: LocalString | null})
     | (InfoCardBase & {type: "Progress"});
+
+export type InstanceHistoryType = "Event" | "Property" | "Undo";
+
+export type InstanceHistoryItem = {
+    id: string;
+    type: InstanceHistoryType;
+    title: LocalString;
+    timestamp: string;
+    user: UserSearchResult;
+    propertyHistory?: PropertyHistory;
+    undoHistory?: UndoHistory;
+};
+
+export type PropertyHistory = {
+    question: Question;
+    answerChangeGroup: AnswerChangeGroup;
+};
+
+export type UndoHistory = {
+    reason?: string;
+};

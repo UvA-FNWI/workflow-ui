@@ -11,6 +11,7 @@ import type {Submission} from "~/store/api/types/submissions.ts";
 
 const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     id: "step-1",
+    isAvailable: true,
     title: {en: "Step 1", nl: "Stap 1"},
     icon: null,
     event: "event-1",
@@ -18,6 +19,7 @@ const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     deadline: null,
     children: null,
     versions: null,
+    submissions: [],
     headerStatus: null,
     hierarchyMode: "Parallel",
     childrenLayout: "Combined",
