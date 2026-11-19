@@ -71,32 +71,33 @@ async function renderCard(workflowInstance: WorkflowInstance, language = "en") {
 }
 
 describe("CommentsCard", () => {
-    it("keeps the plain heading and open count pill when conversations can close", async () => {
-        getMessages.mockReturnValue({data: [note], isSuccess: true});
+    it.each([
+        ["en", false, "Comments - involved staff only", "1 open"],
+        ["nl", true, "Notities - alleen voor betrokken medewerkers", "1 gesloten"],
+    ] as const)(
+        "uses the default %s heading and status pill without a configured title",
+        async (language, isClosed, heading, summary) => {
+            getMessages.mockReturnValue({data: [{...note, isClosed}], isSuccess: true});
 
-        await renderCard(instance);
+            await renderCard(instance, language);
 
-        expect(screen.getByRole("heading", {name: "Comments - involved staff only"})).toBeVisible();
-        expect(screen.getByText("1 open")).toBeVisible();
-        expect(screen.getByRole("button", {name: enWorkflow.instance.messages.add})).toBeVisible();
-    });
+            const messages = (language === "nl" ? nlWorkflow : enWorkflow).instance.messages;
+            expect(screen.getByRole("heading", {name: heading})).toBeVisible();
+            expect(screen.getByText(summary)).toBeVisible();
+            expect(screen.getByRole("button", {name: messages.add})).toBeVisible();
+        },
+    );
 
     it.each([
-        ["en", "flat", 0, "Comments - involved staff only"],
-        ["en", "flat", 1, "1 Comment - involved staff only"],
-        ["en", "flat", 5, "5 Comments - involved staff only"],
-        ["nl", "flat", 0, "Notities - alleen voor betrokken medewerkers"],
-        ["nl", "flat", 1, "1 Notitie - alleen voor betrokken medewerkers"],
-        ["nl", "flat", 5, "5 Notities - alleen voor betrokken medewerkers"],
-        ["en", "threaded", 5, "5 Comments - involved staff only"],
-    ] as const)("shows the %s %s title for %i notes", async (language, layout, count, title) => {
-        const notes = Array.from({length: count}, (_, index) =>
-            index === 0
-                ? note
-                : {id: `note-${index}`, questionName: null, isClosed: true, items: []},
-        );
+        ["en", "Review notes (2)"],
+        ["nl", "Beoordelingsnotities (2)"],
+    ])("uses the configured %s heading with the instance note count", async (language, heading) => {
         getMessages.mockReturnValue({
-            data: [...notes, {id: "field-note", questionName: "Title", items: []}],
+            data: [
+                note,
+                {id: "closed-note", questionName: null, isClosed: true, items: []},
+                {id: "field-note", questionName: "Title", isClosed: false, items: []},
+            ],
             isSuccess: true,
         });
 
@@ -105,14 +106,19 @@ describe("CommentsCard", () => {
                 ...instance,
                 workflowDefinition: {
                     ...instance.workflowDefinition,
-                    messages: {layout, allowClose: false},
+                    messages: {
+                        cardTitle: {
+                            en: "Review notes ({{count}})",
+                            nl: "Beoordelingsnotities ({{ count }})",
+                        },
+                    },
                 },
             },
             language,
         );
 
-        expect(screen.getByRole("heading", {name: title})).toBeVisible();
-        expect(screen.queryByText(/^\d+(?: open| closed| gesloten)?$/)).toBeNull();
+        expect(screen.getByRole("heading", {name: heading})).toBeVisible();
+        expect(screen.getByText("1 open")).toBeVisible();
     });
 
     it("shows the callout and focuses the new comment only after clicking add", async () => {
@@ -126,7 +132,8 @@ describe("CommentsCard", () => {
         });
 
         const messages = enWorkflow.instance.messages;
-        const disclosure = screen.getByRole("button", {name: /^1 Comment - involved staff only/});
+        const disclosure = screen.getByRole("button", {name: /^Comments - involved staff only/});
+        expect(screen.getByRole("heading", {name: "Comments - involved staff only"})).toBeVisible();
         fireEvent.click(disclosure);
         expect(screen.getByText("An existing comment")).toBeVisible();
         expect(

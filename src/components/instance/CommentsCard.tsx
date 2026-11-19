@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function CommentsCard({instance}: Props) {
-    const {t} = useTranslate("workflow");
+    const {t, l, i18n} = useTranslate("workflow");
     const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
     const canView = instance.permissions.includes("ViewMessages");
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
@@ -39,13 +39,10 @@ export function CommentsCard({instance}: Props) {
     const openCount = showOpenCloseSummary
         ? instanceThreads.filter((thread) => !thread.isClosed).length
         : 0;
-    const title = t("instance.messages.heading", {
-        title:
-            !showOpenCloseSummary && count > 0
-                ? t("instance.messages.title_count", {count})
-                : t("instance.messages.title"),
-        audience: t("instance.messages.audience"),
-    });
+    const titleTemplate = l(messageSettings.cardTitle)?.trim();
+    const title = titleTemplate
+        ? i18n.services.interpolator.interpolate(titleTemplate, {count}, i18n.language, {})
+        : t("instance.messages.title");
 
     return (
         <Disclosure

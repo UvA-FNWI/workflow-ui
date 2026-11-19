@@ -3,6 +3,7 @@ import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 
 export type InstanceMessageSettings = {
     card: boolean;
+    cardTitle: LocalString | null;
     layout: "threaded" | "flat";
     allowClose: boolean;
     callout: boolean;
@@ -10,7 +11,7 @@ export type InstanceMessageSettings = {
     calloutText: LocalString | null;
 };
 
-export type MessageUiSettings = Omit<InstanceMessageSettings, "card">;
+export type MessageUiSettings = Omit<InstanceMessageSettings, "card" | "cardTitle">;
 
 export const defaultMessageUi: MessageUiSettings = {
     layout: "threaded",
@@ -22,6 +23,7 @@ export const defaultMessageUi: MessageUiSettings = {
 
 const defaults: InstanceMessageSettings = {
     card: true,
+    cardTitle: null,
     ...defaultMessageUi,
 };
 
@@ -33,6 +35,7 @@ export function resolveInstanceMessageSettings(
     if (!settings) return defaults;
     return {
         card: settings.card ?? true,
+        cardTitle: settings.cardTitle ?? null,
         layout: settings.layout === "flat" ? "flat" : "threaded",
         allowClose: settings.allowClose ?? true,
         callout: settings.callout ?? false,

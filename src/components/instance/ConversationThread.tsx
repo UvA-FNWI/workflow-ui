@@ -1,9 +1,9 @@
 import {Button, Icon, linkClassGenerator} from "@uva-fnwi/datanose-ui";
 
 import {MessageBody, MessageMeta} from "./messageMeta";
-import {buildReplyTree, type MessageTreeNode} from "./messageTree";
+import {buildReplyTree, getConversationOpener, type MessageTreeNode} from "./messageTree";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {MessageItem, MessageThread} from "~/store/api/types/messages";
+import type {MessageThread} from "~/store/api/types/messages";
 
 /** Cap reply indent so deep API trees do not become a ladder of rails. */
 const MAX_REPLY_VISUAL_DEPTH = 2;
@@ -21,10 +21,6 @@ type Props = {
     isLoading: boolean;
     replyComposer: React.ReactNode;
 };
-
-function messageItems(thread: MessageThread): MessageItem[] {
-    return thread.items.filter((item) => item.kind === "Message");
-}
 
 function ReplyControl({
     label,
@@ -66,8 +62,7 @@ export function ConversationThread({
 }: Props) {
     const {t: m, i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const replyLabel = m("reply");
-    const items = messageItems(thread);
-    const root = items[0];
+    const root = getConversationOpener(thread.items);
 
     if (!root) return null;
 

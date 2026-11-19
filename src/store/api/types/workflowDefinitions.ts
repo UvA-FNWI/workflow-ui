@@ -16,6 +16,7 @@ export type WorkflowDefinition = {
     messagesEnabled?: boolean;
     messages?: {
         card?: boolean;
+        cardTitle?: LocalString | null;
         fieldsAllowAll?: boolean;
         layout?: "threaded" | "flat";
         allowClose?: boolean;

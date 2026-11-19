@@ -1,6 +1,7 @@
 import {Separator} from "@uva-fnwi/datanose-ui";
 
 import {MessageBody, MessageMeta} from "./messageMeta";
+import {newestMessageFirst} from "./messageTree";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {MessageItem, MessageThread} from "~/store/api/types/messages";
 
@@ -11,7 +12,7 @@ type Props = {
 function flatItems(threads: MessageThread[]): MessageItem[] {
     return threads
         .flatMap((thread) => thread.items.filter((item) => item.kind === "Message"))
-        .sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
+        .sort(newestMessageFirst);
 }
 
 export function FlatMessageFeed({threads}: Props) {

@@ -6,6 +6,7 @@ import {ConversationThread} from "./ConversationThread";
 import {FlatMessageFeed} from "./FlatMessageFeed";
 import {defaultMessageUi, type MessageUiSettings} from "./instanceMessageSettings";
 import {handleMessageSubmitShortcut} from "./messageComposerShortcuts";
+import {getConversationOpener, newestMessageFirst} from "./messageTree";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
 import type {MessageItemKind, MessageThread} from "~/store/api/types/messages";
@@ -61,10 +62,6 @@ export function MessageThreadPanel({
     const [expandedOverrides, setExpandedOverrides] = useState<Record<string, boolean>>({});
     const [addMessage, {isLoading}] = messagesEndpoints.addMessage.useMutation();
     const newConversationFieldId = useId();
-
-    const openThreads = threads.filter((thread) => !thread.isClosed);
-    const closedThreads = threads.filter((thread) => thread.isClosed);
-    const orderedThreads = [...openThreads, ...closedThreads];
 
     const isExpanded = useCallback(
         (thread: MessageThread) => {
@@ -252,11 +249,23 @@ export function MessageThreadPanel({
         />
     );
 
+    const orderedThreads = isFlat
+        ? []
+        : threads
+              .flatMap((thread) => {
+                  const opener = getConversationOpener(thread.items);
+                  return opener ? [{thread, opener}] : [];
+              })
+              .sort((a, b) => {
+                  if (a.thread.isClosed !== b.thread.isClosed) return a.thread.isClosed ? 1 : -1;
+                  return newestMessageFirst(a.opener, b.opener);
+              });
+
     const threadList = isFlat ? (
         <FlatMessageFeed threads={threads} />
     ) : (
         <div className="flex flex-col">
-            {orderedThreads.map((thread, index) => (
+            {orderedThreads.map(({thread}, index) => (
                 <div key={thread.id}>
                     {index > 0 && <Separator />}
                     {renderThread(thread)}
@@ -276,15 +285,6 @@ export function MessageThreadPanel({
                     {m("empty")}
                 </Text>
             )}
-            {canAdd &&
-                !isFlat &&
-                openThreads.length > 1 &&
-                replyTarget == null &&
-                !showNewConversationActions && (
-                    <Text as="span" className="text-grey-600">
-                        {m("reply_hint")}
-                    </Text>
-                )}
             {threadList}
         </div>
     );

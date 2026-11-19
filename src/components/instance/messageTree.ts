@@ -4,6 +4,14 @@ export type MessageTreeNode = MessageItem & {
     children: MessageTreeNode[];
 };
 
+export function getConversationOpener(items: MessageItem[]): MessageItem | undefined {
+    return items.find((item) => item.kind === "Message");
+}
+
+export function newestMessageFirst(a: MessageItem, b: MessageItem): number {
+    return Date.parse(b.dateTime) - Date.parse(a.dateTime);
+}
+
 /** Builds nested reply nodes under the conversation opener (first message item). */
 export function buildReplyTree(items: MessageItem[]): MessageTreeNode[] {
     const messages = items.filter((item) => item.kind === "Message");
@@ -14,7 +22,7 @@ export function buildReplyTree(items: MessageItem[]): MessageTreeNode[] {
         messages.map((message) => [message.id, {...message, children: []}]),
     );
 
-    for (const message of messages.slice(1)) {
+    for (const message of messages.slice(1).sort(newestMessageFirst)) {
         const parentId = message.parentItemId ?? rootId;
         const parent = nodes.get(parentId) ?? nodes.get(rootId);
         const node = nodes.get(message.id);

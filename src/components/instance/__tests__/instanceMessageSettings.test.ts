@@ -13,6 +13,7 @@ describe("resolveInstanceMessageSettings", () => {
         expect(resolveInstanceMessageSettings({name: "X", messagesEnabled: true} as never)).toEqual(
             {
                 card: true,
+                cardTitle: null,
                 layout: "threaded",
                 allowClose: true,
                 callout: false,
@@ -29,6 +30,7 @@ describe("resolveInstanceMessageSettings", () => {
                 messagesEnabled: true,
                 messages: {
                     card: false,
+                    cardTitle: {en: "Notes", nl: "Notities"},
                     layout: "flat",
                     allowClose: false,
                     callout: true,
@@ -39,6 +41,7 @@ describe("resolveInstanceMessageSettings", () => {
             } as never),
         ).toEqual({
             card: false,
+            cardTitle: {en: "Notes", nl: "Notities"},
             layout: "flat",
             allowClose: false,
             callout: true,

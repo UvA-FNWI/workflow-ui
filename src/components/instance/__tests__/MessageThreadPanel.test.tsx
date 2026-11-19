@@ -71,6 +71,56 @@ describe("MessageThreadPanel", () => {
         );
     });
 
+    it("shows open conversations first and sorts each status by newest opener", () => {
+        const conversation = (
+            id: string,
+            displayName: string,
+            dateTime: string,
+            isClosed: boolean,
+        ): MessageThread => ({
+            ...thread,
+            id,
+            isClosed,
+            items: [
+                {
+                    ...thread.items[0]!,
+                    id: `${id}-root`,
+                    dateTime,
+                    user: {id, displayName},
+                },
+            ],
+        });
+        const olderClosed = conversation(
+            "older-closed",
+            "Margaret Hamilton",
+            "2026-09-17T10:15:00Z",
+            true,
+        );
+        const newerClosed = conversation(
+            "newer-closed",
+            "Katherine Johnson",
+            "2026-09-17T11:30:00Z",
+            true,
+        );
+        const newerOpen = conversation("newer-open", "Alan Turing", "2026-09-17T10:30:00Z", false);
+
+        render(
+            <MessageThreadPanel
+                instanceId="instance-1"
+                threads={[olderClosed, thread, newerClosed, newerOpen]}
+                canAdd={false}
+            />,
+        );
+
+        expect(screen.getByText("Alan Turing")).toAppearBefore(screen.getByText("Ada Lovelace"));
+        expect(screen.getByText("Ada Lovelace")).toAppearBefore(
+            screen.getByText("Katherine Johnson"),
+        );
+        expect(screen.getByText("Katherine Johnson")).toAppearBefore(
+            screen.getByText("Margaret Hamilton"),
+        );
+    });
+
     it("shows the timestamp next to the reply author before the reply text", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd={false} />);
 
