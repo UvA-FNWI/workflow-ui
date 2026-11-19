@@ -83,9 +83,18 @@ export function WorkflowInstancesPanel({definition}: WorkflowInstancesPanelProps
     return (
         <div className="flex flex-col gap-4">
             <div className="my-4 flex items-center justify-between">
-                <Heading as="h2" size="md" className="mb-0">
-                    {`${l(definition.title)} (${l(definition.titlePlural)})`}
-                </Heading>
+                <div className="flex flex-col gap-1">
+                    <Heading as="h2" size="md" className="mb-0">
+                        {`${l(definition.title)}`}
+                    </Heading>
+                    {definition.description && (
+                        <Heading
+                            as="h3"
+                            size="xs"
+                            className="text-grey-600"
+                        >{`${l(definition.description)}`}</Heading>
+                    )}
+                </div>
                 <div className="flex flex-wrap items-center justify-end gap-2">
                     <Button
                         intent="secondary"

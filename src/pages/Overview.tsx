@@ -9,7 +9,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
 import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 
-function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle: string}) {
+function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle?: string}) {
     return (
         <VersionedLink
             to={to}
@@ -22,9 +22,11 @@ function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle: 
                 <Text as="span" fontWeight="semibold" className="text-grey-900">
                     {title}
                 </Text>
-                <Text as="span" size="sm" className="text-grey-600">
-                    {subtitle}
-                </Text>
+                {subtitle && (
+                    <Text as="span" size="sm" className="text-grey-600">
+                        {subtitle}
+                    </Text>
+                )}
             </span>
             <Icon
                 name="chevron-right-line"
@@ -60,9 +62,7 @@ function Overview() {
                             <CourseRow
                                 to={`/screens/${def.name}/${name}`}
                                 title={l(def.title) || def.name}
-                                subtitle={
-                                    def.screens.length > 1 ? name : l(def.titlePlural) || def.name
-                                }
+                                subtitle={def.screens.length > 1 ? name : l(def.description)}
                             />
                         </Fragment>
                     ))}
