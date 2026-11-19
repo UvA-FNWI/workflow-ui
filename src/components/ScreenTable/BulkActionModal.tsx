@@ -1,6 +1,6 @@
 import type {ReactNode} from "react";
 
-import {Button, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, Modal, Text} from "@uva-fnwi/datanose-ui";
 
 import {ScreenTable} from "./ScreenTable";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -15,6 +15,7 @@ type Props = {
     rows: ScreenRow[];
     onClose: () => void;
     onComplete: () => void;
+    hiddenSelectedCount?: number;
 };
 
 export function BulkActionModal({
@@ -25,6 +26,7 @@ export function BulkActionModal({
     rows,
     onClose,
     onComplete,
+    hiddenSelectedCount = 0,
 }: Props) {
     const {t, l} = useTranslate(["screens", "common"]);
     const params = {
@@ -121,6 +123,11 @@ export function BulkActionModal({
         body = (
             <>
                 <p>{confirmation}</p>
+                {hiddenSelectedCount > 0 && (
+                    <Callout type="warning">
+                        {t("bulk.warning_hidden_selected", {count: hiddenSelectedCount})}
+                    </Callout>
+                )}
                 {eligibleRows.length > 0 && (
                     <section aria-label={t("bulk.eligible")}>
                         <h3 className="mb-2 font-semibold">{t("bulk.eligible")}</h3>

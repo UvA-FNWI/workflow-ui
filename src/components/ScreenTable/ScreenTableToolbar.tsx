@@ -3,6 +3,8 @@ import {useState} from "react";
 import {Button, Icon, SearchInput} from "@uva-fnwi/datanose-ui";
 
 import {ImportModal} from "~/components/Import/ImportModal.tsx";
+import type {ColumnFilterValues, Filter} from "~/components/ScreenTable/filterScreenRows.ts";
+import {ScreenTableFilters} from "~/components/ScreenTable/ScreenTableFilters.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate.ts";
 import {useCreateInstanceMutation} from "~/store/api/instancesApi.ts";
@@ -17,6 +19,9 @@ type ScreenTableToolbarProps = {
     bulkActions?: BulkAction[];
     selectedCount?: number;
     onBulkAction?: (action: BulkAction) => void;
+    filters?: Filter[];
+    filterValues?: ColumnFilterValues;
+    onFilterChange?: (name: string, value: string[]) => void;
 };
 
 export const ScreenTableToolbar = ({
@@ -28,10 +33,14 @@ export const ScreenTableToolbar = ({
     bulkActions = [],
     selectedCount = 0,
     onBulkAction,
+    filters = [],
+    filterValues = {},
+    onFilterChange = () => {},
 }: ScreenTableToolbarProps) => {
     const {t, l} = useTranslate("screens");
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const navigate = useVersionedNavigate();
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [createInstance, {isLoading: isCreating}] = useCreateInstanceMutation();
 
@@ -42,58 +51,97 @@ export const ScreenTableToolbar = ({
         }
     };
 
+    const hasActiveFilters = Object.values(filterValues).flat().length > 0;
+
     return (
         <>
-            <div className="flex w-full flex-wrap items-center gap-4">
-                {bulkActions.map((action) => (
-                    <Button
-                        key={action.action}
-                        intent="secondary"
-                        variant="destructive"
-                        leftIcon={
-                            <Icon name={action.icon.type} size="sm" color="current" decorative />
-                        }
-                        disabled={selectedCount === 0}
-                        onClick={() => onBulkAction?.(action)}
-                    >
-                        {l(action.label)}
-                    </Button>
-                ))}
-                {canEdit && (
-                    <Button
-                        intent="secondary"
-                        variant="destructive"
-                        leftIcon={<Icon name="download-solid" size="sm" color="current" />}
-                        onClick={() => setIsImportModalOpen(true)}
-                    >
-                        {t("import.title")}
-                    </Button>
-                )}
-
-                {canCreate && (
-                    <div className="lg:ml-auto">
+            <div className="my-4">
+                <div className="flex w-full flex-wrap items-center gap-4">
+                    {bulkActions.map((action) => (
+                        <Button
+                            key={action.action}
+                            intent="secondary"
+                            variant="destructive"
+                            leftIcon={
+                                <Icon
+                                    name={action.icon.type}
+                                    size="sm"
+                                    color="current"
+                                    decorative
+                                />
+                            }
+                            disabled={selectedCount === 0}
+                            onClick={() => onBulkAction?.(action)}
+                        >
+                            {l(action.label)}
+                        </Button>
+                    ))}
+                    {canEdit && (
                         <Button
                             intent="secondary"
                             variant="destructive"
-                            onClick={handleCreate}
-                            isLoading={isCreating}
+                            leftIcon={<Icon name="download-solid" size="sm" color="current" />}
+                            onClick={() => setIsImportModalOpen(true)}
                         >
-                            {t("create_new")}
+                            {t("import.title")}
                         </Button>
+                    )}
+
+                    {canCreate && (
+                        <div className="lg:ml-auto">
+                            <Button
+                                intent="secondary"
+                                variant="destructive"
+                                onClick={handleCreate}
+                                isLoading={isCreating}
+                            >
+                                {t("create_new")}
+                            </Button>
+                        </div>
+                    )}
+                    <div
+                        className={`order-first flex w-full flex-row items-center gap-2 lg:order-0 lg:w-auto ${canCreate ? "" : "lg:ml-auto"}`}
+                    >
+                        <div className="min-w-0 flex-1">
+                            <SearchInput
+                                aria-label={t("search_placeholder")}
+                                value={search}
+                                onChange={setSearch}
+                                placeholder={t("search_placeholder")}
+                                size="md"
+                                className="w-full"
+                            />
+                        </div>
+                        {filters?.length > 0 && (
+                            <Button
+                                intent="ghost"
+                                onClick={() => setIsFilterOpen((prev) => !prev)}
+                                leftIcon={
+                                    <Icon
+                                        name={
+                                            hasActiveFilters
+                                                ? "filter-funnel-solid"
+                                                : "filter-funnel-line"
+                                        }
+                                        color="current"
+                                    />
+                                }
+                                className="shrink-0 underline"
+                            >
+                                {isFilterOpen
+                                    ? t("filters.hide_filters")
+                                    : t("filters.show_filters")}
+                            </Button>
+                        )}
                     </div>
-                )}
-                <div
-                    className={`order-first w-full lg:order-0 lg:w-auto ${canCreate ? "" : "lg:ml-auto"}`}
-                >
-                    <SearchInput
-                        aria-label={t("search_placeholder")}
-                        value={search}
-                        onChange={setSearch}
-                        placeholder={t("search_placeholder")}
-                        size="md"
-                        className="w-full"
-                    />
                 </div>
+                {isFilterOpen && (
+                    <ScreenTableFilters
+                        filters={filters}
+                        values={filterValues}
+                        onFilterChange={onFilterChange}
+                    />
+                )}
             </div>
             <ImportModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
         </>

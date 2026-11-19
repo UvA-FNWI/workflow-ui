@@ -172,14 +172,27 @@ it("offers only configured buttons and supports mixed select-all state with stab
     expect(screen.getByRole("button", {name: "Approve proposals"})).toBeDisabled();
 });
 
-it("clears hidden selection when searching and selects only filtered rows", async () => {
+it("keeps hidden selected rows when searching and includes them in the bulk action", async () => {
     await openScreen();
     fireEvent.click(screen.getByRole("checkbox", {name: "Select all rows"}));
     fireEvent.change(screen.getByRole("textbox", {name: "Type a search query"}), {
         target: {value: "Alice"},
     });
-    expect(screen.getByRole("button", {name: "Approve proposals"})).toBeDisabled();
     expect(screen.queryByText("Bob")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", {name: "Approve proposals"})).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", {name: "Approve proposals"}));
+    await screen.findByRole("dialog");
+    const previewCall = request.mock.calls.find(
+        ([arg]) => typeof arg === "object" && arg.url.endsWith("/Preview"),
+    );
+    expect(previewCall?.[0].body.instanceIds).toEqual(["alice", "bob"]);
+});
+
+it("selects only filtered rows when using select all while searching", async () => {
+    await openScreen();
+    fireEvent.change(screen.getByRole("textbox", {name: "Type a search query"}), {
+        target: {value: "Alice"},
+    });
     fireEvent.click(screen.getByRole("checkbox", {name: "Select all rows"}));
     fireEvent.click(screen.getByRole("button", {name: "Approve proposals"}));
     await confirmButton();
@@ -189,7 +202,7 @@ it("clears hidden selection when searching and selects only filtered rows", asyn
     expect(previewCall?.[0].body.instanceIds).toEqual(["alice"]);
 });
 
-it("clears selection when changing tabs and when returning to the original tab", async () => {
+it("keeps selection when changing tabs and when returning to the original tab", async () => {
     data.groups = [
         {name: "active", title: {en: "Active", nl: "Actief"}, rows: [data.rows[0]]},
         {name: "completed", title: {en: "Completed", nl: "Afgerond"}, rows: [data.rows[1]]},
@@ -198,19 +211,18 @@ it("clears selection when changing tabs and when returning to the original tab",
     await openScreen();
     fireEvent.click(screen.getByRole("checkbox", {name: "Select all rows"}));
     fireEvent.click(screen.getByRole("tab", {name: /Completed/}));
-    expect(screen.getByRole("button", {name: "Approve proposals"})).toBeDisabled();
+    expect(screen.getByRole("button", {name: "Approve proposals"})).toBeEnabled();
+    expect(screen.getByRole("checkbox", {name: "Select row 1"})).not.toBeChecked();
     fireEvent.click(screen.getByRole("tab", {name: /Active/}));
-    expect(screen.getByRole("button", {name: "Approve proposals"})).toBeDisabled();
+    expect(screen.getByRole("checkbox", {name: "Select row 1"})).toBeChecked();
+    expect(screen.getByRole("button", {name: "Approve proposals"})).toBeEnabled();
 });
 
-it("does not offer a bulk action for rows hidden by a live refresh", async () => {
+it("drops selected rows that are removed by a live refresh", async () => {
     const {store} = await openScreen();
-    fireEvent.change(screen.getByRole("textbox", {name: "Type a search query"}), {
-        target: {value: "Alice"},
-    });
-    fireEvent.click(screen.getByRole("checkbox", {name: "Select all rows"}));
+    fireEvent.click(screen.getByRole("checkbox", {name: "Select row 1"}));
     expect(screen.getByRole("button", {name: "Approve proposals"})).toBeEnabled();
-    data = {...data, rows: [{id: "alice", values: {0: "Carol"}}, data.rows[1]]};
+    data = {...data, rows: [data.rows[1]]};
 
     await act(async () => {
         store.dispatch(screensApi.util.invalidateTags(["Screen"]));
@@ -220,7 +232,7 @@ it("does not offer a bulk action for rows hidden by a live refresh", async () =>
     expect(screen.getByRole("button", {name: "Approve proposals"})).toBeDisabled();
 });
 
-it("does not offer a bulk action for rows hidden by a language change", async () => {
+it("keeps selected rows hidden by a language change", async () => {
     data.columns[0].dataType = "Object";
     data.rows = [
         {id: "alice", values: {0: {text: {en: "Alice", nl: "Andere naam"}}}},
@@ -231,14 +243,18 @@ it("does not offer a bulk action for rows hidden by a language change", async ()
         target: {value: "Alice"},
     });
     fireEvent.click(screen.getByRole("checkbox", {name: "Select all rows"}));
-    expect(screen.getByRole("button", {name: "Approve proposals"})).toBeEnabled();
 
     await act(async () => {
         await i18n.changeLanguage("nl");
     });
 
     expect(screen.queryByText("Andere naam")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", {name: "Voorstellen goedkeuren"})).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", {name: "Voorstellen goedkeuren"}));
+    await screen.findByRole("dialog");
+    const previewCall = request.mock.calls.find(
+        ([arg]) => typeof arg === "object" && arg.url.endsWith("/Preview"),
+    );
+    expect(previewCall?.[0].body.instanceIds).toEqual(["alice"]);
 });
 
 it("previews both sets, runs eligible rows only, refreshes once, and suppresses individual feedback", async () => {

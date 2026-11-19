@@ -17,7 +17,9 @@
     "success_one": "De actie is succesvol uitgevoerd voor 1 rij.",
     "success_other": "De actie is succesvol uitgevoerd voor alle {{count}} rijen.",
     "unavailable": "Momenteel niet mogelijk",
-    "unknown_result": "Het resultaat kon niet worden bevestigd. Sommige acties zijn mogelijk uitgevoerd. Controleer de tabel voordat je een nieuwe bulkactie start. Neem contact op met een beheerder."
+    "unknown_result": "Het resultaat kon niet worden bevestigd. Sommige acties zijn mogelijk uitgevoerd. Controleer de tabel voordat je een nieuwe bulkactie start. Neem contact op met een beheerder.",
+    "warning_hidden_selected_one": "Je hebt {{count}} rij geselecteerd die momenteel verborgen is door filters of zoeken. De actie wordt ook uitgevoerd op deze rij.",
+    "warning_hidden_selected_other": "Je hebt {{count}} rijen geselecteerd die momenteel verborgen zijn door filters of zoeken. De actie wordt ook uitgevoerd op deze rijen."
   },
   "columns": {
     "course": "Vak",
@@ -29,6 +31,13 @@
   "completed": "Afgerond",
   "create_new": "Nieuw",
   "empty_title": "Geen scripties gevonden",
+  "filters": {
+    "choose": "Maak een keuze",
+    "hide_filters": "Verberg filters",
+    "selected_summary": "{{nr}} filters geselecteerd",
+    "show_filters": "Toon filters",
+    "title": "Filters"
+  },
   "import": {
     "column_selection": "Kies de kolommen die je wilt importeren:",
     "description_select": "Geef aan welk bestand en welke data je wilt importeren.",

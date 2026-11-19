@@ -1,9 +1,8 @@
 import {useMemo} from "react";
 
 import {type ColumnDef, type OnChangeFn, type RowSelectionState} from "@tanstack/react-table";
-import {Button, Checkbox, Icon} from "@uva-fnwi/datanose-ui";
+import {Button, Checkbox, Icon, Text} from "@uva-fnwi/datanose-ui";
 
-import {filterScreenRows} from "./filterScreenRows";
 import {DataTable, TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
@@ -14,7 +13,6 @@ import {formatTableCellValue, getComparableTableCellValue} from "~/utils/tableCe
 type ScreenTableProps = {
     columns: ScreenColumn[];
     rows: ScreenRow[];
-    globalFilter?: string;
     rowSelection?: RowSelectionState;
     onRowSelectionChange?: OnChangeFn<RowSelectionState>;
     showInstanceLink?: boolean;
@@ -23,7 +21,6 @@ type ScreenTableProps = {
 export const ScreenTable = ({
     columns,
     rows,
-    globalFilter = "",
     rowSelection,
     onRowSelectionChange,
     showInstanceLink = true,
@@ -31,10 +28,6 @@ export const ScreenTable = ({
     const {i18n, l, t} = useTranslate("workflow");
     const {t: screenT} = useTranslate("screens");
     const navigate = useVersionedNavigate();
-    const filteredRows = useMemo(
-        () => filterScreenRows(columns, rows, globalFilter, i18n.language),
-        [columns, rows, globalFilter, i18n.language],
-    );
 
     const tableColumns = useMemo<ColumnDef<ScreenRow>[]>(() => {
         const tableColumns = columns
@@ -124,12 +117,17 @@ export const ScreenTable = ({
 
     return (
         <DataTable
-            data={filteredRows}
+            data={rows}
             columns={tableColumns}
             getRowId={(row) => row.id}
             rowSelection={rowSelection}
             onRowSelectionChange={onRowSelectionChange}
             stickyFirstColumn={Boolean(onRowSelectionChange)}
+            emptyNode={
+                <div className="pt-4">
+                    <Text className="italic">{screenT("empty_title")}</Text>
+                </div>
+            }
         />
     );
 };
