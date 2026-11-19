@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import {useParams} from "react-router";
 
@@ -45,10 +45,13 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [confirm] = useConfirmMutation();
 
-    const importMessage = (key: string): LocalString => ({
-        en: t(key, {lng: "en"}),
-        nl: t(key, {lng: "nl"}),
-    });
+    const importMessage = useCallback(
+        (key: string): LocalString => ({
+            en: t(key, {lng: "en"}),
+            nl: t(key, {lng: "nl"}),
+        }),
+        [t],
+    );
     const [preview] = usePreviewMutation();
 
     const {workflowDefinition, screenName} = useParams();
@@ -102,7 +105,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         if (!importableColumnsError) {
             errorHandled.current = false;
         }
-    }, [dispatch, importableColumnsError, onClose, t]);
+    }, [dispatch, importableColumnsError, importMessage, onClose]);
 
     if (!workflowDefinition || !screenName) return;
 
