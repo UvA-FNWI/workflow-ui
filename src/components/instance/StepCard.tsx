@@ -13,6 +13,7 @@ import {
 } from "@uva-fnwi/datanose-ui";
 import i18n from "i18next";
 
+import {FormPreviewButton} from "~/components/instance/FormPreviewButton";
 import {ImportedStepCard} from "~/components/instance/ImportedStepCard";
 import {
     getStepHierarchy,
@@ -62,6 +63,11 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
     const contentSteps = showChildRows ? [step] : fullHierarchy;
     const allStepIds = new Set(fullHierarchy.map((candidate) => candidate.id));
     const contentStepIds = showChildRows ? new Set([step.id]) : allStepIds;
+    const previews = instance.previewableForms ?? [];
+    const stepPreviews = previews.filter((form) => form.step && contentStepIds.has(form.step));
+    const childPreviews =
+        showChildRows &&
+        previews.some((form) => form.step && form.step !== step.id && allStepIds.has(form.step));
     const actions = instance.actions.filter((action) =>
         action.steps.some((actionStepId) => contentStepIds.has(actionStepId)),
     );
@@ -97,8 +103,11 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
         hasVersionHistory(step) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
-    const hasBodyContent = deadlineMessages.length > 0 || hasStepContent || childRows.length > 0;
-    const isContentless = step.isAvailable && !hasBodyContent;
+    const hasBodyContent =
+        (step.isAvailable &&
+            (deadlineMessages.length > 0 || hasStepContent || childRows.length > 0)) ||
+        childPreviews;
+    const isContentless = (step.isAvailable || stepPreviews.length > 0) && !hasBodyContent;
     const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
 
     const undoControl = step.undoCandidate && (
@@ -117,7 +126,7 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
             role="group"
             aria-label={l(step.title)}
             tabIndex={-1}
-            isDisabled={!step.isAvailable || !hasBodyContent}
+            isDisabled={!hasBodyContent}
             shadow={nested ? "none" : undefined}
             border={nested ? "none" : undefined}
             className={cn(
@@ -142,16 +151,23 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
                     </>
                 }
             />
+            {stepPreviews.length > 0 && (
+                <div className={nested ? "pb-4" : "px-6 pb-6"}>
+                    <FormPreviewButton instanceId={instance.id} forms={stepPreviews} />
+                </div>
+            )}
             {hasBodyContent && isExpanded && (
                 <Disclosure.Content padding={nested ? "none" : undefined}>
-                    {deadlineMessages.map((candidate) => (
-                        <div key={candidate.id} className="pt-4">
-                            <MarkdownRenderer>
-                                {l(candidate.deadline?.message) || t("instance.deadline_passed")}
-                            </MarkdownRenderer>
-                        </div>
-                    ))}
-                    {hasStepContent && (
+                    {step.isAvailable &&
+                        deadlineMessages.map((candidate) => (
+                            <div key={candidate.id} className="pt-4">
+                                <MarkdownRenderer>
+                                    {l(candidate.deadline?.message) ||
+                                        t("instance.deadline_passed")}
+                                </MarkdownRenderer>
+                            </div>
+                        ))}
+                    {step.isAvailable && hasStepContent && (
                         <StepCardBody
                             step={step}
                             showChildHistory={!showChildRows}

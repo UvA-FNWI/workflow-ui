@@ -2,6 +2,7 @@ import {Provider} from "react-redux";
 
 import {configureStore, type Middleware} from "@reduxjs/toolkit";
 import {act, cleanup, fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {ToastProvider} from "@uva-fnwi/datanose-ui";
 import {afterEach, beforeEach, expect, it, vi} from "vitest";
 
 import {FormPreviewModal} from "../FormPreviewModal";
@@ -15,10 +16,13 @@ vi.mock("~/store/api/baseApi", async () => {
 });
 vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({
-        t: (key: string, options?: {answered?: number; total?: number; form?: string}) =>
+        t: (
+            key: string,
+            options?: {answered?: number; total?: number; form?: string; count?: number},
+        ) =>
             key === "form_preview.calculation_progress"
                 ? `${options?.answered} of ${options?.total} values entered`
-                : key === "form_preview.single_title"
+                : key === "form_preview.title" && options?.count === 1
                   ? `Preview: ${options?.form}`
                   : key,
         l: (value?: {en: string} | null) => value?.en ?? "",
@@ -102,7 +106,9 @@ function mount(availableForms = forms.slice(0, 1)) {
     const onClose = vi.fn();
     const rendered = render(
         <Provider store={store}>
-            <FormPreviewModal instanceId="instance" forms={availableForms} onClose={onClose} />
+            <ToastProvider>
+                <FormPreviewModal instanceId="instance" forms={availableForms} onClose={onClose} />
+            </ToastProvider>
         </Provider>,
     );
     return {...rendered, store, onClose};
@@ -123,12 +129,34 @@ it("opens one form directly and allows incomplete navigation without submit or u
     await screen.findByRole("textbox", {name: "Answer"});
     expect(screen.getByText("form_preview.temporary_notice")).toBeInTheDocument();
     expect(screen.queryByText("form_preview.section_count")).not.toBeInTheDocument();
-    expect(screen.getByText("form_preview.uploads_unavailable")).toBeInTheDocument();
+    expect(screen.getByRole("table")).toHaveTextContent("Document");
+    expect(screen.getByText("file_upload.allowed_file_types")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", {name: "file_upload.upload_file"}));
+    expect(screen.getByRole("alert")).toHaveTextContent("form_preview.uploads_unavailable");
     expect(screen.queryByRole("button", {name: /submit/i})).not.toBeInTheDocument();
     expect(document.querySelector('input[type="file"]')).toBeNull();
     fireEvent.click(screen.getByRole("button", {name: "next"}));
     expect(screen.getByRole("tab", {name: "Second"})).toHaveAttribute("aria-selected", "true");
     expect(request).toHaveBeenCalledTimes(1);
+});
+
+it("shows inactive tabs and skips them without hiding boundary controls", async () => {
+    const data = response();
+    data.form.pages.splice(1, 0, {
+        ...data.form.pages[1],
+        name: "Conditional",
+        title: {en: "Conditional", nl: "Voorwaardelijk"},
+        isActive: false,
+    });
+    request.mockResolvedValue({data});
+    mount();
+    await screen.findByRole("textbox", {name: "Answer"});
+
+    expect(screen.getByRole("tab", {name: "Conditional"})).toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole("button", {name: "previous"})).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", {name: "next"}));
+    expect(screen.getByRole("tab", {name: "Second"})).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("button", {name: "next"})).toBeDisabled();
 });
 
 it("offers a chooser for several forms and discards answers when switching", async () => {
@@ -157,7 +185,7 @@ it("uses one title and lets the tabs identify each section", async () => {
     expect(screen.queryByRole("heading", {name: "First"})).not.toBeInTheDocument();
 });
 
-it("keeps an optional checkbox marker beside its control", async () => {
+it("uses the normal optional label for preview checkboxes", async () => {
     const data = response();
     data.form.pages[0].elements = [
         {
@@ -177,11 +205,8 @@ it("keeps an optional checkbox marker beside its control", async () => {
     ];
     request.mockResolvedValue({data});
     mount();
-    const checkbox = await screen.findByRole("checkbox", {name: "Show extra page"});
-
-    expect(checkbox.closest("label")?.parentElement).toContainElement(
-        screen.getByText("form_preview.optional"),
-    );
+    await screen.findByRole("checkbox", {name: "Show extra page"});
+    expect(screen.getByText("optional")).toBeVisible();
 });
 
 it("keeps generic preview status visible without adding a separate rubric viewer", async () => {
@@ -327,13 +352,13 @@ it("ignores an older evaluation after a newer edit and reacts to evaluated condi
     fireEvent.change(input, {target: {value: "newer"}});
     await waitFor(() => expect(request).toHaveBeenCalledTimes(3));
     await waitFor(() =>
-        expect(screen.queryByRole("tab", {name: "Second"})).not.toBeInTheDocument(),
+        expect(screen.getByRole("tab", {name: "Second"})).toHaveAttribute("aria-disabled", "true"),
     );
     await act(async () => {
         finishOlder({data: response("older")});
     });
     expect(input).toHaveValue("newer");
-    expect(screen.queryByRole("tab", {name: "Second"})).not.toBeInTheDocument();
+    expect(screen.getByRole("tab", {name: "Second"})).toHaveAttribute("aria-disabled", "true");
 });
 
 it("starts fresh on reopening and cancels debounced work on close", async () => {

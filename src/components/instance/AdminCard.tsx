@@ -14,11 +14,13 @@ import {
     Text,
 } from "@uva-fnwi/datanose-ui";
 
+import {FormPreviewButton} from "~/components/instance/FormPreviewButton";
 import {VersionedLink} from "~/components/VersionedLink.tsx";
 import {useJobTranslations} from "~/hooks/useJobTranslations";
 import {useTranslate} from "~/hooks/useTranslate";
 import {instancesEndpoints} from "~/store/api/instancesApi";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
+import type {PreviewableForm} from "~/store/api/types/formPreviews";
 import type {Role} from "~/store/api/types/instances.ts";
 import {clearRoleImpersonation, selectRoleImpersonationForInstance} from "~/store/authSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
@@ -26,9 +28,11 @@ import {useAppDispatch, useAppSelector} from "~/store/store";
 export function AdminCard({
     canUseAdminTools,
     canImpersonate,
+    previewableForms = [],
 }: {
     canUseAdminTools: boolean;
     canImpersonate: boolean;
+    previewableForms?: PreviewableForm[];
 }) {
     const {id} = useParams<{id: string}>();
     const {t} = useTranslate("workflow");
@@ -65,6 +69,7 @@ export function AdminCard({
                         </VersionedLink>
                     </div>
                 )}
+                {id && <FormPreviewButton instanceId={id} forms={previewableForms} />}
                 {canImpersonate && <ImpersonationControls />}
             </div>
         </Card>

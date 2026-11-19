@@ -1,10 +1,21 @@
 import type {FormPreview} from "../../src/store/api/types/formPreviews";
-import type {Question} from "../../src/store/api/types/submissions";
+import type {Question, ReferenceQuestion} from "../../src/store/api/types/submissions";
 
 export const previewableForms = [
     {name: "Review", title: {en: "Review form", nl: "Controleformulier"}},
     {name: "Other", title: {en: "Other form", nl: "Ander formulier"}},
 ];
+
+const demoProjectQuestion: ReferenceQuestion = {
+    name: "PreviewDemoProject",
+    type: "Reference",
+    text: {en: "Select a demo project", nl: "Kies een demoproject"},
+    workflowDefinition: "Project-Preview-Demo",
+    control: "ComboBox",
+    isRequired: false,
+    isArray: false,
+    hideInResults: false,
+};
 
 export function formPreview(formName: string, values: Record<string, unknown>): FormPreview {
     const question = (name: string, type: "String" | "Check" | "File" | "Choice"): Question =>
@@ -56,18 +67,26 @@ export function formPreview(formName: string, values: Record<string, unknown>): 
                               question("ShowExtra", "Check"),
                               question("Document", "File"),
                               question("Score", "Choice"),
+                              demoProjectQuestion,
                           ].map((question) => ({kind: "Question", question}))
                         : [],
             })),
         },
-        answers: ["Answer", "ShowExtra", "Document", "Score"].map((name) => ({
-            id: name,
-            questionName: name,
-            isVisible: true,
-            value: values[name] ?? (name === "ShowExtra" ? false : null),
-            files: [],
-        })),
-        referenceChoices: {},
+        answers: ["Answer", "ShowExtra", "Document", "Score", demoProjectQuestion.name].map(
+            (name) => ({
+                id: name,
+                questionName: name,
+                isVisible: true,
+                value: values[name] ?? (name === "ShowExtra" ? false : null),
+                files: [],
+            }),
+        ),
+        referenceChoices: {
+            [demoProjectQuestion.name]: [
+                {name: "demo-project-a", text: {en: "Demo project A", nl: "Demoproject A"}},
+                {name: "demo-project-b", text: {en: "Demo project B", nl: "Demoproject B"}},
+            ],
+        },
         pageResults: [
             {
                 name: "Questions",

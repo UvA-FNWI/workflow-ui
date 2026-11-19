@@ -1,12 +1,63 @@
 import {expect, test} from "@playwright/test";
 
 import {formPreview, previewableForms} from "./data/formPreview";
-import {propertiesInstanceNonAdmin} from "./data/instanceProperties";
+import {propertiesInstance, propertiesInstanceNonAdmin} from "./data/instanceProperties";
+
+const assessmentStep = {
+    id: "Assessment",
+    title: {en: "Assessment", nl: "Beoordeling"},
+    isAvailable: false,
+    resultsType: "Normal",
+    expectsSubmission: false,
+    hasSubmission: false,
+    submissions: [],
+};
+
+test("keeps a coordinator's step preview on the card and unassigned previews in Admin", async ({
+    page,
+}) => {
+    await page.route(/\/WorkflowInstances\/form-preview(?:\?.*)?$/, (route) =>
+        route.fulfill({
+            json: {
+                ...propertiesInstance,
+                id: "form-preview",
+                previewableForms: [
+                    {...previewableForms[0], step: assessmentStep.id},
+                    previewableForms[1],
+                ],
+                steps: [assessmentStep],
+                workflowDefinition: {
+                    ...propertiesInstance.workflowDefinition,
+                    isPropertyOnly: false,
+                },
+            },
+        }),
+    );
+    await page.route(/\/FormPreviews\/form-preview\/(Review|Other)$/, (route) =>
+        route.fulfill({json: formPreview(route.request().url().split("/").pop()!, {})}),
+    );
+
+    await page.goto("instance/form-preview");
+    const stepCard = page.getByRole("group", {name: "Assessment", exact: true});
+    const stepPreview = stepCard.getByRole("button", {name: "Preview form", exact: true});
+    await expect(stepPreview).toBeVisible();
+    await stepPreview.click();
+    await expect(page.getByRole("dialog", {name: "Preview: Review form"})).toBeVisible();
+    await page.getByRole("button", {name: "Close modal", exact: true}).click();
+
+    const adminCard = page.getByRole("heading", {name: "Admin", exact: true}).locator("..");
+    await adminCard.getByRole("button", {name: "Preview form", exact: true}).click();
+    await expect(page.getByRole("dialog", {name: "Preview: Other form"})).toBeVisible();
+});
 
 test("preview interacts, navigates and resets without any mutation requests", async ({page}) => {
     const writes: string[] = [];
+    const submissionChoiceRequests: string[] = [];
     const previews: Record<string, unknown>[] = [];
     page.on("request", (request) => {
+        if (/\/Answers\/.+\/Choices$/.test(request.url())) {
+            submissionChoiceRequests.push(request.url());
+        }
         if (
             ["POST", "PUT", "PATCH", "DELETE"].includes(request.method()) &&
             !request.url().includes("/FormPreviews/")
@@ -18,7 +69,8 @@ test("preview interacts, navigates and resets without any mutation requests", as
             json: {
                 ...propertiesInstanceNonAdmin,
                 id: "form-preview",
-                previewableForms,
+                previewableForms: previewableForms.map((form) => ({...form, step: "Assessment"})),
+                steps: [assessmentStep],
                 workflowDefinition: {
                     ...propertiesInstanceNonAdmin.workflowDefinition,
                     isPropertyOnly: false,
@@ -35,7 +87,9 @@ test("preview interacts, navigates and resets without any mutation requests", as
     });
 
     await page.goto("instance/form-preview");
-    const entry = page.getByRole("button", {name: "Preview forms"});
+    const entry = page
+        .getByRole("group", {name: "Assessment"})
+        .getByRole("button", {name: "Preview forms", exact: true});
     await entry.click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("Choose a form to preview.")).toBeVisible();
@@ -52,8 +106,11 @@ test("preview interacts, navigates and resets without any mutation requests", as
     await page.keyboard.press("Enter");
     await expect(dialog.getByRole("textbox", {name: "Answer"})).toBeVisible();
     await expect(dialog.locator('input[type="file"]')).toHaveCount(0);
+    await expect(dialog.getByRole("table")).toContainText("PDF");
     await expect(dialog.getByText("File uploads are unavailable in preview.")).toBeVisible();
-    await expect(dialog.getByRole("tab", {name: "Extra", exact: true})).toHaveCount(0);
+    await dialog.getByRole("button", {name: "Upload file"}).click();
+    await expect(dialog.getByRole("alert")).toHaveText("File uploads are unavailable in preview.");
+    await expect(dialog.getByRole("tab", {name: "Extra", exact: true})).toBeDisabled();
     await expect(dialog.getByText("0 of 1 values entered")).toBeVisible();
     await expect(dialog.getByText("Enter the remaining values to see the result.")).toBeVisible();
     const progressBounds = (await dialog.getByText("0 of 1 values entered").boundingBox())!;
@@ -97,15 +154,22 @@ test("preview interacts, navigates and resets without any mutation requests", as
     await expect(dialog.getByText("1 of 1 values entered")).toBeVisible();
     await expect(dialog.getByText("Average: 8")).toBeVisible();
 
+    await dialog.getByRole("combobox", {name: "Select a demo project"}).fill("Demo project B");
+    await page.getByRole("option", {name: "Demo project B", exact: true}).click();
+    await expect.poll(() => previews.at(-1)?.PreviewDemoProject).toBe("demo-project-b");
+
     await dialog.getByRole("textbox", {name: "Answer"}).fill("rejected");
-    await expect(dialog.getByRole("alert")).toHaveText(
+    const evaluationError = dialog
+        .getByRole("alert")
+        .filter({hasText: "Couldn't update the preview"});
+    await expect(evaluationError).toHaveText(
         "Couldn't update the preview. Adjust your answers or try again.",
     );
     await expect(dialog.getByRole("textbox", {name: "Answer"})).toHaveValue("rejected");
     await expect(dialog.getByText("Average: 8")).toHaveCount(0);
     await page.screenshot({path: test.info().outputPath("preview-error.png")});
     await dialog.getByRole("textbox", {name: "Answer"}).fill("");
-    await expect(dialog.getByRole("alert")).toHaveCount(0);
+    await expect(evaluationError).toHaveCount(0);
     await expect(dialog.getByText("Average: 8")).toBeVisible();
 
     await dialog.getByRole("button", {name: "Next", exact: true}).click();
@@ -115,14 +179,14 @@ test("preview interacts, navigates and resets without any mutation requests", as
     );
     await dialog.getByRole("button", {name: "Previous", exact: true}).click();
     await dialog.getByText("ShowExtra", {exact: true}).click();
-    await expect(dialog.getByRole("tab", {name: "Extra", exact: true})).toBeVisible();
+    await expect(dialog.getByRole("tab", {name: "Extra", exact: true})).toBeEnabled();
     await dialog.getByRole("textbox", {name: "Answer"}).fill("temporary answer");
     await expect.poll(() => previews.at(-1)?.Answer).toBe("temporary answer");
     await expect(dialog.getByRole("button", {name: /submit/i})).toHaveCount(0);
 
     await dialog.getByRole("button", {name: "Reset answers"}).click();
     await expect(dialog.getByRole("textbox", {name: "Answer"})).toHaveValue("");
-    await expect(dialog.getByRole("tab", {name: "Extra", exact: true})).toHaveCount(0);
+    await expect(dialog.getByRole("tab", {name: "Extra", exact: true})).toBeDisabled();
     await expect(dialog.getByText("0 of 1 values entered")).toBeVisible();
     expect(previews.at(-1)).toEqual({});
     await dialog.getByRole("textbox", {name: "Answer"}).fill("another temporary answer");
@@ -139,4 +203,5 @@ test("preview interacts, navigates and resets without any mutation requests", as
     await expect(page.getByRole("textbox", {name: "Answer"})).toHaveValue("");
     expect(previews.at(-1)).toEqual({});
     expect(writes).toEqual([]);
+    expect(submissionChoiceRequests).toEqual([]);
 });

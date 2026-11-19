@@ -2,7 +2,7 @@ import type {LocalString} from "~/hooks/useTranslate";
 import type {PageResult} from "~/store/api/types/assessments";
 import type {Answer, Choice, Form} from "~/store/api/types/submissions";
 
-export type PreviewableForm = {name: string; title: LocalString};
+export type PreviewableForm = {name: string; title: LocalString; step?: string | null};
 
 export type PreviewPageResult = Omit<PageResult, "weightedAverage"> & {
     weightedAverage: number | null;

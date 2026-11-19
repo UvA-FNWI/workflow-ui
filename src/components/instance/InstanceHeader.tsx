@@ -1,9 +1,9 @@
 import {useState} from "react";
 
-import {Button, Icon} from "@uva-fnwi/datanose-ui";
+import {Button} from "@uva-fnwi/datanose-ui";
 
 import {ActionModal} from "~/components/instance/ActionModal";
-import {FormPreviewModal} from "~/components/instance/FormPreviewModal";
+import {FormPreviewButton} from "~/components/instance/FormPreviewButton";
 import {HighlightedFields} from "~/components/instance/HighlightedFields.tsx";
 import {PageHeader} from "~/components/PageHeader";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
@@ -29,7 +29,6 @@ export function InstanceHeader({
 }: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
     const [activeActionId, setActiveActionId] = useState<string | null>(null);
-    const [previewOpen, setPreviewOpen] = useState(false);
     const activeAction = pinnedActions.find((action) => action.id === activeActionId) ?? null;
     const homePath = useAppSelector((state) => state.homeNavigation.homePath);
 
@@ -57,28 +56,17 @@ export function InstanceHeader({
                                     {l(action.title)}
                                 </Button>
                             ))}
-                            {!isLoading && previewableForms.length > 0 && (
-                                <Button
-                                    intent="ghost"
-                                    aria-haspopup="dialog"
-                                    leftIcon={<Icon name="visible-line" size="sm" decorative />}
-                                    onClick={() => setPreviewOpen(true)}
-                                >
-                                    {t("form_preview.title")}
-                                </Button>
+                            {!isLoading && (
+                                <FormPreviewButton
+                                    instanceId={instanceId}
+                                    forms={previewableForms}
+                                />
                             )}
                         </div>
                     )
                 }
                 description={<HighlightedFields instanceId={instanceId} />}
             />
-            {instanceId && previewOpen && previewableForms.length > 0 && (
-                <FormPreviewModal
-                    instanceId={instanceId}
-                    forms={previewableForms}
-                    onClose={() => setPreviewOpen(false)}
-                />
-            )}
             {instanceId && activeAction && (
                 <ActionModal
                     key={activeAction.id}

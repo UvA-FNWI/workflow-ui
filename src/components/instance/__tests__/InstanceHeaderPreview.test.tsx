@@ -31,7 +31,9 @@ afterEach(cleanup);
 
 it("hides the preview entry when the API grants no forms or omits preview support", () => {
     render(<InstanceHeader instanceId="instance" isLoading={false} />);
-    expect(screen.queryByRole("button", {name: "form_preview.title"})).not.toBeInTheDocument();
+    expect(
+        screen.queryByRole("button", {name: "form_preview.entry_point"}),
+    ).not.toBeInTheDocument();
 });
 
 it("opens the generic preview entry independently of pinned actions", () => {
@@ -42,7 +44,7 @@ it("opens the generic preview entry independently of pinned actions", () => {
             previewableForms={[{name: "Review", title: {en: "Review", nl: "Review"}}]}
         />,
     );
-    fireEvent.click(screen.getByRole("button", {name: "form_preview.title"}));
+    fireEvent.click(screen.getByRole("button", {name: "form_preview.entry_point"}));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
 });
 
@@ -65,7 +67,7 @@ it("places preview after global actions and announces a dialog", () => {
             ]}
         />,
     );
-    const preview = screen.getByRole("button", {name: "form_preview.title"});
+    const preview = screen.getByRole("button", {name: "form_preview.entry_point"});
     expect(preview).toHaveAttribute("aria-haspopup", "dialog");
     const edit = within(screen.getByTestId("pinned-actions")).getByRole("button", {
         name: "Edit project",
@@ -83,5 +85,7 @@ it("keeps preview hidden while the project is loading", () => {
             previewableForms={[{name: "Review", title: {en: "Review", nl: "Review"}}]}
         />,
     );
-    expect(screen.queryByRole("button", {name: "form_preview.title"})).not.toBeInTheDocument();
+    expect(
+        screen.queryByRole("button", {name: "form_preview.entry_point"}),
+    ).not.toBeInTheDocument();
 });

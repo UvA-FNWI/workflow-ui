@@ -62,14 +62,6 @@ export const PageElement = ({
                 </Callout>
             );
         case "Question": {
-            if (preview && element.question?.type === "File" && answer?.isVisible) {
-                return (
-                    <div>
-                        <InputLabel>{l(element.question.text)}</InputLabel>
-                        <Text size="sm">{t("form_preview.uploads_unavailable")}</Text>
-                    </div>
-                );
-            }
             if (
                 !element.question ||
                 !answer ||
@@ -80,12 +72,6 @@ export const PageElement = ({
                 return null;
             const question = element.question;
             const errorMessage = answer?.validationError && l(answer.validationError);
-            const isPreviewCheckbox = preview && question.type === "Check";
-            const optionalLabel = !question.isRequired && (
-                <Text className={preview ? "shrink-0" : "text-grey-900 italic"} size="sm">
-                    {t(preview ? "form_preview.optional" : "optional")}
-                </Text>
-            );
             return (
                 <Controller
                     key={question.name}
@@ -100,13 +86,7 @@ export const PageElement = ({
                                 )}
                             >
                                 <div>
-                                    <div
-                                        className={
-                                            preview
-                                                ? "flex items-baseline justify-between gap-3"
-                                                : "flex justify-between"
-                                        }
-                                    >
+                                    <div className="flex justify-between">
                                         {question.type !== "Check" && (
                                             <InputLabel key={question.name}>
                                                 {l(question.text)}
@@ -116,7 +96,11 @@ export const PageElement = ({
                                                     ` (${question.percentage.toLocaleString(i18n.language)}%)`}
                                             </InputLabel>
                                         )}
-                                        {!isPreviewCheckbox && optionalLabel}
+                                        {!question.isRequired && (
+                                            <Text className="text-grey-900 italic" size="sm">
+                                                {t("optional")}
+                                            </Text>
+                                        )}
                                     </div>
                                     {question.description && (
                                         <div className="mr-2 mb-1 text-sm text-grey-600 dark:text-grey-400">
@@ -130,7 +114,6 @@ export const PageElement = ({
                                     className={cn(
                                         "w-full",
                                         showCompact && "max-w-full shrink-0 sm:w-32",
-                                        isPreviewCheckbox && "flex items-center gap-3",
                                     )}
                                 >
                                     <InputControl
@@ -152,7 +135,6 @@ export const PageElement = ({
                                         errorMessage={errorMessage}
                                         isValid={!errorMessage}
                                     />
-                                    {isPreviewCheckbox && optionalLabel}
                                 </div>
                             </div>
                         );
