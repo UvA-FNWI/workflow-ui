@@ -38,7 +38,6 @@ export type SourceResult = {
 
 export type PageResult = {
     name: string;
-    percentage?: number | null;
     weight: number;
     weightedAverage: number;
     questionResults: QuestionResult[];

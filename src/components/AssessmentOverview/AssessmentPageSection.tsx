@@ -31,15 +31,6 @@ export const AssessmentPageSection = ({
     const questions = page.elements
         .filter((element) => element.kind === "Question")
         .map((element) => element.question!);
-    const columns = assessmentSubmissions.map((source) => {
-        const result = source.pageResults.find((result) => result.name === page.name);
-        return {id: source.id, result, percentage: result?.percentage};
-    });
-    const percentages = new Set(columns.map(({percentage}) => percentage).filter((p) => p != null));
-    const sharedPercentage = percentages.size === 1 ? [...percentages][0] : null;
-    const formatPercentage = (percentage: number) =>
-        ` (${percentage.toLocaleString(i18n.language)}%)`;
-
     const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
         getVisibleQuestionAnswerPairs(
             questions,
@@ -73,7 +64,8 @@ export const AssessmentPageSection = ({
                         fontType="heading"
                     >
                         {l(page.title)}
-                        {sharedPercentage != null && formatPercentage(sharedPercentage)}
+                        {page.percentage != null &&
+                            ` (${page.percentage.toLocaleString(i18n.language)}%)`}
                     </Heading>
                     {onEditPage && resultsType === "Normal" && page.isInCurrentForm && (
                         <Button
@@ -91,16 +83,16 @@ export const AssessmentPageSection = ({
                 </div>
 
                 {/* Weighted averages for the page for each submission */}
-                {columns.map(({id, result: pageResult, percentage}) => {
+                {assessmentSubmissions.map((source) => {
+                    const pageResult = source.pageResults.find(
+                        (result) => result.name === page.name,
+                    );
                     const grade = pageResult?.weightedAverage ?? pageResult?.sum;
                     const hasGrade = !!(pageResult?.weightedAverage || pageResult?.sum);
                     return (
-                        <div key={id} className="w-24 min-w-0 sm:w-32">
+                        <div key={source.id} className="w-24 min-w-0 sm:w-32">
                             <Text fontWeight={hasGrade ? "semibold" : "bold"} size="lg">
                                 {hasGrade ? grade?.toLocaleString(i18n.language) : "-"}
-                                {sharedPercentage == null &&
-                                    percentage != null &&
-                                    formatPercentage(percentage)}
                             </Text>
                         </div>
                     );
