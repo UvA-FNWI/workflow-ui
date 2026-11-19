@@ -1,9 +1,7 @@
-import {useLocation} from "react-router";
+import {Card, Heading, Text} from "@uva-fnwi/datanose-ui";
 
-import {Card, Heading, Icon, Text} from "@uva-fnwi/datanose-ui";
-
-import {HomeListLink} from "~/components/HomeListLink";
-import {type WorkflowScreen, WorkflowScreenLink} from "~/components/WorkflowScreenLink";
+import {ScreenLink, type WorkflowScreen} from "~/components/Home/ScreenLink";
+import {UserLink} from "~/components/Home/UserLink";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useSearchUsersQuery} from "~/store/api/personalApi";
 
@@ -15,7 +13,6 @@ export function HomeSearchResults({
     workflowScreens: WorkflowScreen[];
 }) {
     const {t} = useTranslate("workflow");
-    const {pathname, search} = useLocation();
     const {currentData, isFetching, isError} = useSearchUsersQuery(query);
 
     const term = query.toLowerCase();
@@ -47,7 +44,7 @@ export function HomeSearchResults({
                             {workflows.map(({definition, name}) => (
                                 <li key={`${definition.name}/${name}`}>
                                     <Card padding="none">
-                                        <WorkflowScreenLink definition={definition} name={name} />
+                                        <ScreenLink definition={definition} name={name} />
                                     </Card>
                                 </li>
                             ))}
@@ -62,22 +59,7 @@ export function HomeSearchResults({
                                 {people.map((person) => (
                                     <li key={person.id}>
                                         <Card padding="none">
-                                            <HomeListLink
-                                                to={`/personal/${encodeURIComponent(person.id)}`}
-                                                state={{from: {pathname, search}}}
-                                                title={person.displayName}
-                                                subtitle={[person.email, person.userName]
-                                                    .filter(Boolean)
-                                                    .join(" · ")}
-                                                icon={
-                                                    <Icon
-                                                        name="user-line"
-                                                        color="current"
-                                                        decorative
-                                                    />
-                                                }
-                                                iconClassName="bg-green-100 text-black"
-                                            />
+                                            <UserLink user={person} />
                                         </Card>
                                     </li>
                                 ))}

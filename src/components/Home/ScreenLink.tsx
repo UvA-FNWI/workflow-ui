@@ -1,6 +1,6 @@
 import {Icon} from "@uva-fnwi/datanose-ui";
 
-import {HomeListLink} from "~/components/HomeListLink";
+import {HomeListLink} from "~/components/Home/HomeListLink";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 
@@ -9,7 +9,7 @@ export type WorkflowScreen = {
     name: string;
 };
 
-export function WorkflowScreenLink({definition, name}: WorkflowScreen) {
+export function ScreenLink({definition, name}: WorkflowScreen) {
     const {l} = useTranslate("workflow");
 
     return (

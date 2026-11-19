@@ -4,11 +4,11 @@ import {useOutletContext, useSearchParams} from "react-router";
 
 import {SearchInput, Text} from "@uva-fnwi/datanose-ui";
 
+import {HomeList} from "~/components/Home/HomeList";
+import {HomeSearchResults} from "~/components/Home/HomeSearchResults";
+import {ScreenLink} from "~/components/Home/ScreenLink";
 import type {HomeLayoutContext} from "~/components/HomeLayout";
-import {HomeList} from "~/components/HomeList";
 import {HomePage} from "~/components/HomePage";
-import {HomeSearchResults} from "~/components/HomeSearchResults";
-import {WorkflowScreenLink} from "~/components/WorkflowScreenLink";
 import {useDebounce} from "~/hooks/useDebounce";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -76,7 +76,7 @@ function Overview() {
             <HomeList>
                 {screens.map(({definition, name}) => (
                     <li key={`${definition.name}/${name}`}>
-                        <WorkflowScreenLink definition={definition} name={name} />
+                        <ScreenLink definition={definition} name={name} />
                     </li>
                 ))}
             </HomeList>

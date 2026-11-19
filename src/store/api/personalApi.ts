@@ -1,14 +1,14 @@
 import {baseApi} from "./baseApi";
-import type {PersonalPage, UserSearchResults} from "./types/personal";
+import type {PersonalInstances, UserSearchResults} from "./types/personal";
 
 export const personalApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getPersonalInstances: builder.query<PersonalPage, void>({
+        getPersonalInstances: builder.query<PersonalInstances, void>({
             query: () => "/Personal/Me",
             keepUnusedDataFor: 0,
             providesTags: ["Instance"],
         }),
-        getPersonInstances: builder.query<PersonalPage, string>({
+        getPersonInstances: builder.query<PersonalInstances, string>({
             query: (personId) => `/Personal/${encodeURIComponent(personId)}`,
             providesTags: ["Instance", "User"],
         }),
