@@ -30,7 +30,22 @@ vi.mock("~/store/store", () => ({
 
 const project = {name: "project", screens: ["overview", "other"]};
 const thesis = {name: "thesis", screens: ["overview"]};
-const personal = {roles: [{name: "student", title: {en: "Student"}}], instances: []};
+const personal = {
+    person: {
+        id: "user-1",
+        displayName: "Ada Example",
+        email: "ada@example.com",
+        userName: "ada",
+        preferredLanguage: null,
+        picture: null,
+        organization: null,
+        isExternal: false,
+        isSuperAdmin: false,
+        isEmailEditable: false,
+    },
+    roles: [{name: "student", title: {en: "Student"}}],
+    instances: [],
+};
 
 // Expose the outlet context as visible content and controls so we can exercise HomeLayout in isolation.
 function HomeContent() {

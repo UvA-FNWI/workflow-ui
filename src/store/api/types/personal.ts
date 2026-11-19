@@ -1,14 +1,21 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {ProgressInformation} from "~/store/api/types/progress";
+import type {UserDto} from "~/store/api/types/users";
+
+export type PersonalPage = {
+    person: UserDto;
+    roles: PersonalRole[];
+    instances: PersonalInstance[];
+};
+
+export type UserSearchResults = {
+    people: UserDto[];
+    hasMore: boolean;
+};
 
 export type PersonalRole = {
     name: string;
     title: LocalString;
-};
-
-export type PersonalInstances = {
-    roles: PersonalRole[];
-    instances: PersonalInstance[];
 };
 
 export type PersonalInstance = {

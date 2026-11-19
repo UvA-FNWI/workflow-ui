@@ -1,11 +1,9 @@
 import {baseApi} from "./baseApi";
 import type {
-    CurrentUserResponse,
-    PersonInstances,
     UpdateUserEmailRequest,
+    UserDto,
     UserImpersonationStarted,
     UserSearchResult,
-    UserSearchResults,
     VerifyEmailRequest,
     VerifyEmailResponse,
 } from "./types/users";
@@ -17,7 +15,7 @@ export type FindUsersParams = {
 
 export const usersApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getCurrentUser: builder.query<CurrentUserResponse, void>({
+        getCurrentUser: builder.query<UserDto, void>({
             query: () => "/Users/Me",
         }),
         findUsers: builder.query<UserSearchResult[], FindUsersParams>({
@@ -25,14 +23,6 @@ export const usersApi = baseApi.injectEndpoints({
                 url: "/Users/Find",
                 params: {query, includeExternalUsers},
             }),
-        }),
-        searchUsers: builder.query<UserSearchResults, string>({
-            query: (query) => ({url: "/Users/Search", params: {query}}),
-            providesTags: ["User", "Instance"],
-        }),
-        getPersonInstances: builder.query<PersonInstances, string>({
-            query: (personId) => `/Users/${encodeURIComponent(personId)}/Instances`,
-            providesTags: ["Instance", "User"],
         }),
         verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({
             query: (body) => ({
@@ -67,8 +57,6 @@ export const {
     useGetCurrentUserQuery,
     useFindUsersQuery,
     useLazyFindUsersQuery,
-    useSearchUsersQuery,
-    useGetPersonInstancesQuery,
     useVerifyEmailMutation,
     useStartImpersonationMutation,
     useUpdateUserEmailMutation,

@@ -10,7 +10,7 @@ import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
-import type {PersonalInstance, PersonalInstances} from "~/store/api/types/personal";
+import type {PersonalInstance, PersonalPage} from "~/store/api/types/personal";
 import {
     groupPersonalInstancesByRole,
     partitionPersonalInstancesByStatus,
@@ -49,7 +49,7 @@ export function PersonalInstancesContent({
     workflowDefinition,
     personOverview = false,
 }: {
-    data: PersonalInstances | undefined;
+    data: PersonalPage | undefined;
     isLoading: boolean;
     isError: boolean;
     workflowDefinition?: string;

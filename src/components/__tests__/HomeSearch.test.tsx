@@ -12,23 +12,30 @@ import {HomePage} from "../HomePage";
 import Overview from "~/pages/Overview";
 import Personal from "~/pages/Personal";
 import PersonOverview from "~/pages/PersonOverview";
+import type {UserDto} from "~/store/api/types/users";
 
 const {search, getPerson} = vi.hoisted(() => ({
     search: vi.fn(),
     getPerson: vi.fn(),
 }));
 
-vi.mock("~/store/api/usersApi", () => ({
-    useSearchUsersQuery: search,
+vi.mock("~/store/api/personalApi", () => ({
     useGetPersonInstancesQuery: getPerson,
+    useGetPersonalInstancesQuery: () => ({}),
+    useSearchUsersQuery: search,
 }));
-vi.mock("~/store/api/personalApi", () => ({useGetPersonalInstancesQuery: () => ({})}));
 
-const person = {
+const person: UserDto = {
     id: "person-1",
     displayName: "Ada Example",
     email: "ada@example.com",
     userName: "ada",
+    preferredLanguage: null,
+    picture: null,
+    organization: null,
+    isExternal: false,
+    isSuperAdmin: false,
+    isEmailEditable: false,
 };
 
 const availableDefinitions = [

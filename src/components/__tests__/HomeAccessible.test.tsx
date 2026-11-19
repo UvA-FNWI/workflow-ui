@@ -12,7 +12,9 @@ import {HomeLayout} from "../HomeLayout";
 import {HomePage} from "../HomePage";
 import Overview from "~/pages/Overview";
 import Personal from "~/pages/Personal";
+import PersonOverview from "~/pages/PersonOverview";
 import {baseApi} from "~/store/api/baseApi";
+import type {UserDto} from "~/store/api/types/users";
 import {clearCurrentUser, setAccessToken} from "~/store/authSlice";
 import {store} from "~/store/store";
 
@@ -33,16 +35,36 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
         titlePlural: {en: "Projects"},
         screens: ["overview"],
     };
-    const person = {id: "person-1", displayName: "Ada Example"};
+    const person: UserDto = {
+        id: "person-1",
+        displayName: "Ada Example",
+        email: "ada@example.com",
+        userName: "ada",
+        preferredLanguage: null,
+        picture: null,
+        organization: null,
+        isExternal: false,
+        isSuperAdmin: false,
+        isEmailEditable: false,
+    };
+    const currentUser = {
+        ...person,
+        id: "user-1",
+        displayName: "Admin",
+        email: "admin@example.com",
+        userName: "admin",
+    };
     const fetch = vi.fn(async (request: Request) => {
         switch (new URL(request.url).pathname) {
             case "/Users/Me":
-                return Response.json({userName: "admin"});
+                return Response.json(currentUser);
             case "/WorkflowDefinitions/Accessible":
                 return Response.json(count ? [project] : []);
-            case "/Personal/Instances":
-                return Response.json({roles: [], instances: []});
-            case "/Users/Search":
+            case "/Personal/Me":
+                return Response.json({person: currentUser, roles: [], instances: []});
+            case "/Personal/person-1":
+                return Response.json({person, roles: [], instances: []});
+            case "/Personal/Search":
                 return Response.json({people: [person], hasMore: false});
             default:
                 throw new Error(`Unexpected request to ${request.url}`);
@@ -65,6 +87,7 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
                     },
                 ],
             },
+            {path: "/personal/:personId", element: <PersonOverview />},
         ],
         {initialEntries: ["/?search=ada&version=2026"]},
     );
@@ -83,16 +106,24 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
         expect(router.state.location.pathname).toBe("/personal");
         expect(screen.queryByRole("search")).not.toBeInTheDocument();
         expect(
-            fetch.mock.calls.some(([request]) => new URL(request.url).pathname === "/Users/Search"),
+            fetch.mock.calls.some(
+                ([request]) => new URL(request.url).pathname === "/Personal/Search",
+            ),
         ).toBe(false);
         return;
     }
 
-    expect(await screen.findByRole("link", {name: person.displayName})).toBeVisible();
+    const personLink = await screen.findByRole("link", {name: /^Ada Example/});
     expect(router.state.location.pathname).toBe("/");
     expect(router.state.location.search).toBe("?search=ada&version=2026");
 
-    fireEvent.change(screen.getByRole("textbox", {name: workflow.home_search.label}), {
+    fireEvent.click(personLink);
+    expect(await screen.findByRole("heading", {name: person.displayName})).toBeVisible();
+    fireEvent.click(screen.getByRole("link", {name: screens.person.back_to_search}));
+
+    const searchInput = await screen.findByRole("textbox", {name: workflow.home_search.label});
+    expect(searchInput).toHaveValue("ada");
+    fireEvent.change(searchInput, {
         target: {value: ""},
     });
     fireEvent.click(screen.getByRole("link", {name: /^Project/}));

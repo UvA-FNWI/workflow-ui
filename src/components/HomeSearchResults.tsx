@@ -5,7 +5,7 @@ import {Card, Heading, Icon, Text} from "@uva-fnwi/datanose-ui";
 import {HomeListLink} from "~/components/HomeListLink";
 import {type WorkflowScreen, WorkflowScreenLink} from "~/components/WorkflowScreenLink";
 import {useTranslate} from "~/hooks/useTranslate";
-import {useSearchUsersQuery} from "~/store/api/usersApi";
+import {useSearchUsersQuery} from "~/store/api/personalApi";
 
 export function HomeSearchResults({
     query,
