@@ -22,6 +22,7 @@ type ScreenTableToolbarProps = {
     filters?: Filter[];
     filterValues?: ColumnFilterValues;
     onFilterChange?: (name: string, value: string[]) => void;
+    onClearFilters?: () => void;
 };
 
 export const ScreenTableToolbar = ({
@@ -36,6 +37,7 @@ export const ScreenTableToolbar = ({
     filters = [],
     filterValues = {},
     onFilterChange = () => {},
+    onClearFilters = () => {},
 }: ScreenTableToolbarProps) => {
     const {t, l} = useTranslate("screens");
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -51,7 +53,7 @@ export const ScreenTableToolbar = ({
         }
     };
 
-    const hasActiveFilters = Object.values(filterValues).flat().length > 0;
+    const hasActiveFilters = Object.values(filterValues).some((selection) => selection.length);
 
     return (
         <>
@@ -115,6 +117,7 @@ export const ScreenTableToolbar = ({
                         {filters?.length > 0 && (
                             <Button
                                 intent="ghost"
+                                aria-expanded={isFilterOpen}
                                 onClick={() => setIsFilterOpen((prev) => !prev)}
                                 leftIcon={
                                     <Icon
@@ -124,6 +127,7 @@ export const ScreenTableToolbar = ({
                                                 : "filter-funnel-line"
                                         }
                                         color="current"
+                                        decorative
                                     />
                                 }
                                 className="shrink-0 underline"
@@ -140,6 +144,7 @@ export const ScreenTableToolbar = ({
                         filters={filters}
                         values={filterValues}
                         onFilterChange={onFilterChange}
+                        onClearFilters={onClearFilters}
                     />
                 )}
             </div>
