@@ -2,6 +2,8 @@ import {useEffect, useState} from "react";
 
 import {useLocation, useNavigationType, useSearchParams} from "react-router";
 
+import {useDebounce} from "./useDebounce";
+
 export function useHomeSearch() {
     const {key} = useLocation();
     const navigationType = useNavigationType();
@@ -14,17 +16,20 @@ export function useHomeSearch() {
     }
     const input = draft.value;
 
+    const commitSearch = useDebounce(() => {
+        const nextParams = new URLSearchParams(params);
+        if (input) nextParams.set("search", input);
+        else nextParams.delete("search");
+
+        setParams(nextParams, {replace: true, preventScrollReset: true});
+    }, 500);
+
     useEffect(() => {
         if (input === urlInput) return;
 
-        const timeout = setTimeout(() => {
-            const nextParams = new URLSearchParams(params);
-            if (input) nextParams.set("search", input);
-            else nextParams.delete("search");
-            setParams(nextParams, {replace: true, preventScrollReset: true});
-        }, 500);
-        return () => clearTimeout(timeout);
-    }, [input, params, setParams, urlInput]);
+        commitSearch();
+        return commitSearch.cancel;
+    }, [commitSearch, input, params, setParams, urlInput]);
 
     return {input, query: urlInput.trim(), setInput: (value: string) => setDraft({key, value})};
 }

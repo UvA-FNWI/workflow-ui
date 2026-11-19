@@ -261,6 +261,7 @@ it("restores the previous search when going back with an uncommitted edit", asyn
     expect(search).not.toHaveBeenCalledWith("bachelor");
 
     await act(() => router.navigate(-1));
+    const restoredLocationKey = router.state.location.key;
     expect(screen.getByRole("textbox", {name: workflow.home_search.label})).toHaveValue("ada");
     expect(search).toHaveBeenCalledWith("ada");
     expect(screen.getByRole("link", {name: /^Ada Example/})).toBeVisible();
@@ -269,6 +270,8 @@ it("restores the previous search when going back with an uncommitted edit", asyn
         vi.advanceTimersByTime(500);
     });
     expect(router.state.location.search).toBe("?search=ada&version=pilot");
+    expect(router.state.location.key).toBe(restoredLocationKey);
+    expect(router.state.historyAction).toBe("POP");
     expect(search).not.toHaveBeenCalledWith("bachelor");
 });
 
