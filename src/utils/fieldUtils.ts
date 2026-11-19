@@ -17,7 +17,7 @@ export function getStringField(
     if (typeof value === "string") {
         return value;
     }
-    if (value !== undefined) {
+    if (value !== undefined && value !== null) {
         console.warn(`Expected string for field "${key}", got ${typeof value}`);
     }
     return undefined;
@@ -34,7 +34,7 @@ export function getLocalStringField(
     if (value !== null && typeof value === "object" && ("en" in value || "nl" in value)) {
         return value as LocalString;
     }
-    if (value !== undefined) {
+    if (value !== undefined && value !== null) {
         console.warn(`Expected string or LocalString for field "${key}", got ${typeof value}`);
     }
     return undefined;

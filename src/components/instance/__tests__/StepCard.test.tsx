@@ -107,6 +107,7 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
     canImpersonate: false,
     viewerRoles: [],
     infoCards: [],
+    stopMessage: null,
 });
 
 it.each([false, true])(

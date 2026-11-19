@@ -22,7 +22,7 @@ COPY . .
 
 RUN pnpm run build
 
-FROM docker.io/nginx:1.29.3-alpine
+FROM docker.io/nginx:1.31.9-alpine
 RUN apk add --no-cache bash
 
 RUN mkdir -p /etc/nginx/templates
