@@ -51,5 +51,6 @@
   "open_instance": "Open {{title}}",
   "role_title": "You are {{role}} for:",
   "search_placeholder": "Type a search query",
+  "stopped": "Stopped",
   "title": "Theses"
 }

@@ -51,6 +51,7 @@ function Instance() {
                         card={progressCard}
                         steps={instance?.steps ?? []}
                         currentStep={instance?.currentStep ?? ""}
+                        stopMessage={instance?.stopMessage}
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
