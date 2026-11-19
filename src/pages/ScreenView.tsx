@@ -58,6 +58,7 @@ const ScreenContent = () => {
         setSearch,
         columnFilters,
         setColumnFilter,
+        clearColumnFilters,
         pickTypeFilters,
         isFiltering,
         filteredGroupRows,
@@ -92,6 +93,7 @@ const ScreenContent = () => {
         filters: pickTypeFilters,
         filterValues: columnFilters,
         onFilterChange: setColumnFilter,
+        onClearFilters: clearColumnFilters,
     } satisfies Partial<ComponentProps<typeof ScreenTableToolbar>>;
 
     const selectionProps = bulkActions.length

@@ -129,7 +129,6 @@ interface ComboBoxListBoxProps<
   state: ComboBoxState<T, M>;
   listBoxRef: React.RefObject<HTMLUListElement | null>;
   noResults?: string;
-  selectedSummary?: (count: number) => string;
 }
 
 const ComboBoxListBox = <
@@ -139,41 +138,30 @@ const ComboBoxListBox = <
   state,
   listBoxRef,
   noResults = 'No results',
-  selectedSummary,
   ...props
 }: ComboBoxListBoxProps<T, M>) => {
   const { listBoxProps } = useListBox(props, state, listBoxRef);
 
   return (
-    <div className="ui:flex ui:max-h-64 ui:flex-col ui:rounded-xs ui:border ui:border-grey-300 ui:bg-grey-100 ui:shadow-lg ui:dark:border-grey-600 ui:dark:bg-grey-900">
-      {/* Selection Summary Header */}
-      {state.selectionManager.selectionMode === 'multiple' &&
-        selectedSummary && (
-          <div className="ui:border-b ui:border-grey-200 ui:px-3 ui:py-2 ui:text-xs ui:font-medium ui:text-grey-500 ui:dark:border-grey-700">
-            {selectedSummary(state.selectedItems.length)}
-          </div>
-        )}
-
-      <ul
-        {...listBoxProps}
-        ref={listBoxRef}
-        className="ui:overflow-y-auto ui:p-1 ui:outline-none"
-      >
-        {[...state.collection].map(item =>
-          item.type === 'item' ? (
-            <ComboBoxOption<T, M> key={item.key} item={item} state={state} />
-          ) : null
-        )}
-        {state.collection.size === 0 && (
-          <li
-            className="ui:text-md ui:px-3 ui:py-2 ui:text-grey-600 ui:dark:text-grey-400"
-            role="presentation"
-          >
-            {noResults}
-          </li>
-        )}
-      </ul>
-    </div>
+    <ul
+      {...listBoxProps}
+      ref={listBoxRef}
+      className="ui:max-h-64 ui:overflow-y-auto ui:rounded-xs ui:border ui:border-grey-300 ui:bg-grey-100 ui:p-1 ui:shadow-lg ui:outline-none ui:dark:border-grey-600 ui:dark:bg-grey-900"
+    >
+      {[...state.collection].map(item =>
+        item.type === 'item' ? (
+          <ComboBoxOption<T, M> key={item.key} item={item} state={state} />
+        ) : null
+      )}
+      {state.collection.size === 0 && (
+        <li
+          className="ui:text-md ui:px-3 ui:py-2 ui:text-grey-600 ui:dark:text-grey-400"
+          role="presentation"
+        >
+          {noResults}
+        </li>
+      )}
+    </ul>
   );
 };
 
@@ -256,27 +244,24 @@ const ComboBoxInput = <
           {...hoverProps}
           className={cn(
             fieldClasses,
-            'ui:flex ui:min-h-10 ui:flex-col ui:flex-nowrap ui:gap-1.5 ui:pt-2 ui:pr-10 ui:pl-2',
+            'ui:flex ui:min-h-10 ui:flex-nowrap ui:items-center ui:gap-1.5 ui:overflow-hidden ui:pr-10',
             className
           )}
         >
-          {state.selectedItems.length > 0 && !isOpen && (
-            <SelectedTags
-              items={state.selectedItems}
-              isDisabled={isDisabled}
-              className="ui:flex-wrap"
-              onRemove={key => {
-                state.setValue(
-                  [...state.selectionManager.selectedKeys].filter(
-                    selectedKey => selectedKey !== key
-                  )
-                );
-                inputRef.current?.focus();
-              }}
-            />
-          )}
-
-          <div className="ui:flex ui:w-full ui:items-center">{input}</div>
+          <SelectedTags
+            items={state.selectedItems}
+            isDisabled={isDisabled}
+            className="ui:max-w-[70%] ui:flex-none"
+            onRemove={key => {
+              state.setValue(
+                [...state.selectionManager.selectedKeys].filter(
+                  selectedKey => selectedKey !== key
+                )
+              );
+              inputRef.current?.focus();
+            }}
+          />
+          {input}
         </div>
       ) : (
         <div {...hoverProps}>{input}</div>
@@ -329,8 +314,6 @@ export interface ComboBoxProps<
   children: AriaComboBoxProps<T, M>['children'];
   /** Shown in the list when filtering matches nothing */
   noResults?: string;
-  /** Custom text to display the number of selected items */
-  selectedSummary?: (count: number) => string;
 }
 
 export function ComboBox<
@@ -346,7 +329,6 @@ export function ComboBox<
     isDisabled = false,
     placeholder,
     noResults,
-    selectedSummary,
     ...restProps
   } = props;
 
@@ -426,7 +408,6 @@ export function ComboBox<
             state={state}
             listBoxRef={listBoxRef}
             noResults={noResults}
-            selectedSummary={selectedSummary}
             {...listBoxProps}
           />
           <DismissButton onDismiss={state.close} />
