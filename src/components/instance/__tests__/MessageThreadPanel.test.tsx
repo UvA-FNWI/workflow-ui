@@ -166,11 +166,13 @@ describe("MessageThreadPanel", () => {
                 showNewComposer={false}
                 messageUi={{
                     ...defaultMessageUi,
-                    callout: true,
-                    calloutTitle: {en: "Student privacy", nl: "Privacy van de student"},
-                    calloutText: {
-                        en: "Avoid identifying details.",
-                        nl: "Vermijd herkenbare details.",
+                    callout: {
+                        variant: "Info",
+                        title: {en: "Student privacy", nl: "Privacy van de student"},
+                        text: {
+                            en: "Avoid identifying details.",
+                            nl: "Vermijd herkenbare details.",
+                        },
                     },
                 }}
             />,
@@ -188,6 +190,7 @@ describe("MessageThreadPanel", () => {
         expect(screen.getByRole("button", replyAction)).toBe(nestedReply);
         expect(input).toHaveFocus();
         expect(screen.getByText("Student privacy")).toBeVisible();
+        expect(callout.closest(".ui\\:border-l-4")).toHaveClass("ui:border-l-navy-600");
         expect(input).toAppearBefore(callout);
         expect(callout).toAppearBefore(save);
         expect(save).toBeDisabled();

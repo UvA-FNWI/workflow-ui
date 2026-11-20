@@ -1,6 +1,6 @@
 import {type ReactNode, useCallback, useEffect, useId, useState} from "react";
 
-import {Button, Callout, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
+import {Button, Callout, type CalloutType, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {ConversationThread} from "./ConversationThread";
 import {FlatMessageFeed} from "./FlatMessageFeed";
@@ -46,7 +46,7 @@ export function MessageThreadPanel({
     onFocusNewConversationHandled,
     messageUi = defaultMessageUi,
 }: Props) {
-    const {layout, allowClose, callout, calloutTitle, calloutText} = messageUi;
+    const {layout, allowClose, callout} = messageUi;
     const isFlat = layout === "flat";
     const cancelIntent = questionName == null ? "ghost" : "secondary";
     const {t, l} = useTranslate("workflow");
@@ -163,11 +163,14 @@ export function MessageThreadPanel({
         : (drafts[newConversationDraftKey] ?? "");
     const canSubmitNewMessage =
         !isLoading && composingNewConversation && newConversationBody.trim().length > 0;
-    const messageCallout = callout && (
-        <Callout type="warning" header={l(calloutTitle) ?? m("callout_title")}>
-            {l(calloutText) ?? m("callout_body")}
-        </Callout>
-    );
+    const calloutTitle = l(callout?.title)?.trim();
+    const calloutText = l(callout?.text)?.trim();
+    const messageCallout =
+        callout && (calloutTitle || calloutText) ? (
+            <Callout type={callout.variant.toLowerCase() as CalloutType} header={calloutTitle}>
+                {calloutText}
+            </Callout>
+        ) : null;
 
     const newConversationStarter = newComposerVisible ? (
         <div className="flex flex-col gap-2">

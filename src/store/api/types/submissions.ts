@@ -183,8 +183,8 @@ export type PageElement = {
 
 export type Callout = {
     variant: MessageVariant;
-    title?: LocalString;
-    text?: LocalString;
+    title?: LocalString | null;
+    text?: LocalString | null;
 };
 
 export type SortDirection = "Ascending" | "Descending";

@@ -122,12 +122,17 @@ describe("CommentsCard", () => {
     });
 
     it("shows the callout and focuses the new comment only after clicking add", async () => {
+        const callout = {
+            variant: "Warning",
+            title: {en: "Student privacy", nl: "Privacy van de student"},
+            text: {en: "Avoid identifying details.", nl: "Vermijd herkenbare details."},
+        } as const;
         getMessages.mockReturnValue({data: [note], isSuccess: true});
         await renderCard({
             ...instance,
             workflowDefinition: {
                 ...instance.workflowDefinition,
-                messages: {layout: "flat", allowClose: false, callout: true},
+                messages: {layout: "flat", allowClose: false, callout},
             },
         });
 
@@ -141,7 +146,7 @@ describe("CommentsCard", () => {
         expect(
             screen.queryByRole("textbox", {name: messages.new_conversation_placeholder}),
         ).toBeNull();
-        expect(screen.queryByText(messages.callout_body)).toBeNull();
+        expect(screen.queryByText(callout.text.en)).toBeNull();
 
         fireEvent.click(disclosure);
         const add = screen.getByRole("button", {name: messages.add});
@@ -149,17 +154,18 @@ describe("CommentsCard", () => {
         fireEvent.click(add);
         expect(add).toHaveAttribute("aria-expanded", "true");
         const input = screen.getByRole("textbox", {name: messages.new_conversation_placeholder});
-        const callout = screen.getByText(messages.callout_body);
-        expect(callout).toBeVisible();
-        expect(input).toAppearBefore(callout);
-        expect(callout).toAppearBefore(screen.getByRole("button", {name: enWorkflow.save}));
+        const calloutText = screen.getByText(callout.text.en);
+        expect(calloutText).toBeVisible();
+        expect(screen.getByText(callout.title.en)).toBeVisible();
+        expect(input).toAppearBefore(calloutText);
+        expect(calloutText).toAppearBefore(screen.getByRole("button", {name: enWorkflow.save}));
         await waitFor(() => expect(input).toHaveFocus());
 
         fireEvent.click(screen.getByRole("button", {name: enWorkflow.cancel}));
         expect(
             screen.queryByRole("textbox", {name: messages.new_conversation_placeholder}),
         ).toBeNull();
-        expect(screen.queryByText(messages.callout_body)).toBeNull();
+        expect(screen.queryByText(callout.text.en)).toBeNull();
         expect(screen.getByText("An existing comment")).toBeVisible();
     });
 });

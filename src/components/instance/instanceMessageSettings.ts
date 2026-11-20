@@ -1,4 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate.ts";
+import type {Callout} from "~/store/api/types/submissions";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 
 export type InstanceMessageSettings = {
@@ -6,9 +7,7 @@ export type InstanceMessageSettings = {
     cardTitle: LocalString | null;
     layout: "threaded" | "flat";
     allowClose: boolean;
-    callout: boolean;
-    calloutTitle: LocalString | null;
-    calloutText: LocalString | null;
+    callout: Callout | null;
 };
 
 export type MessageUiSettings = Omit<InstanceMessageSettings, "card" | "cardTitle">;
@@ -16,9 +15,7 @@ export type MessageUiSettings = Omit<InstanceMessageSettings, "card" | "cardTitl
 export const defaultMessageUi: MessageUiSettings = {
     layout: "threaded",
     allowClose: true,
-    callout: false,
-    calloutTitle: null,
-    calloutText: null,
+    callout: null,
 };
 
 const defaults: InstanceMessageSettings = {
@@ -38,8 +35,6 @@ export function resolveInstanceMessageSettings(
         cardTitle: settings.cardTitle ?? null,
         layout: settings.layout === "flat" ? "flat" : "threaded",
         allowClose: settings.allowClose ?? true,
-        callout: settings.callout ?? false,
-        calloutTitle: settings.calloutTitle ?? null,
-        calloutText: settings.calloutText ?? null,
+        callout: settings.callout ?? null,
     };
 }

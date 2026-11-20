@@ -16,9 +16,7 @@ describe("resolveInstanceMessageSettings", () => {
                 cardTitle: null,
                 layout: "threaded",
                 allowClose: true,
-                callout: false,
-                calloutTitle: null,
-                calloutText: null,
+                callout: null,
             },
         );
     });
@@ -33,9 +31,11 @@ describe("resolveInstanceMessageSettings", () => {
                     cardTitle: {en: "Notes", nl: "Notities"},
                     layout: "flat",
                     allowClose: false,
-                    callout: true,
-                    calloutTitle: {en: "Privacy", nl: "Privacy"},
-                    calloutText: {en: "Body", nl: "Tekst"},
+                    callout: {
+                        variant: "Warning",
+                        title: {en: "Privacy", nl: "Privacy"},
+                        text: {en: "Body", nl: "Tekst"},
+                    },
                     fieldsAllowAll: false,
                 },
             } as never),
@@ -44,9 +44,11 @@ describe("resolveInstanceMessageSettings", () => {
             cardTitle: {en: "Notes", nl: "Notities"},
             layout: "flat",
             allowClose: false,
-            callout: true,
-            calloutTitle: {en: "Privacy", nl: "Privacy"},
-            calloutText: {en: "Body", nl: "Tekst"},
+            callout: {
+                variant: "Warning",
+                title: {en: "Privacy", nl: "Privacy"},
+                text: {en: "Body", nl: "Tekst"},
+            },
         });
     });
 });
