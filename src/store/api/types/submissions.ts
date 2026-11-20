@@ -59,6 +59,8 @@ export type Form = {
     layout: FormLayout;
     pages: Page[];
     step?: string;
+    /** Set when this form edits an embedded object, e.g. AssessmentSupervisor. */
+    propertyName?: string | null;
 };
 
 export type Page = {
@@ -82,6 +84,7 @@ export type QuestionBase = {
     description?: LocalString | null;
     shortText?: LocalString | null;
     linkedTo?: string | null;
+    allowMessages?: boolean;
 };
 
 export type WeightedQuestionBase = QuestionBase & {
@@ -180,8 +183,8 @@ export type PageElement = {
 
 export type Callout = {
     variant: MessageVariant;
-    title?: LocalString;
-    text?: LocalString;
+    title?: LocalString | null;
+    text?: LocalString | null;
 };
 
 export type SortDirection = "Ascending" | "Descending";
@@ -224,7 +227,9 @@ export type RoleAction =
     | "CreateRelatedInstance"
     | "Undo"
     | "ViewCorrespondence"
-    | "ViewHistory";
+    | "ViewHistory"
+    | "AddMessages"
+    | "ViewMessages";
 export type DataType =
     | "File"
     | "Date"

@@ -1,6 +1,7 @@
 import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/AssessmentQuestionAnswerList.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
 import type {Page, StepResultsType, Submission} from "~/store/api/types/submissions.ts";
@@ -15,6 +16,10 @@ export type AssessmentPageSectionProps = {
     onEditPage?: (pageName: string) => void;
     resultsType?: StepResultsType;
     isLastPage?: boolean;
+    canAddMessages?: boolean;
+    canViewMessages?: boolean;
+    messagePropertyName?: string | null;
+    messageUi?: MessageUiSettings;
 };
 export const AssessmentPageSection = ({
     page,
@@ -25,6 +30,10 @@ export const AssessmentPageSection = ({
     resultsType,
     isLastPage = false,
     colsClass = "grid-cols-1",
+    canAddMessages = false,
+    canViewMessages = false,
+    messagePropertyName,
+    messageUi,
 }: AssessmentPageSectionProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -99,13 +108,20 @@ export const AssessmentPageSection = ({
                 })}
             </div>
             {/* Questions and answers */}
-            <AssessmentQuestionAnswerList
-                rows={rows}
-                questionAnswerPairs={allQuestionAnswerPairs}
-                instanceId={instanceId}
-                colsClass={colsClass}
-                collapseAnswers={true}
-            />
+            {allQuestionAnswerPairs.flat().length > 0 && (
+                <AssessmentQuestionAnswerList
+                    rows={rows}
+                    questionAnswerPairs={allQuestionAnswerPairs}
+                    instanceId={instanceId}
+                    colsClass={colsClass}
+                    collapseAnswers={true}
+                    canAddMessages={canAddMessages}
+                    canViewMessages={canViewMessages}
+                    messagePropertyName={messagePropertyName}
+                    messageUi={messageUi}
+                />
+            )}
+
             <Separator weight={isLastPage ? "bold" : "normal"} />
         </div>
     );

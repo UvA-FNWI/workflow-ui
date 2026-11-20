@@ -3,6 +3,9 @@ import {useMemo, useState} from "react";
 import {Link, Text} from "@uva-fnwi/datanose-ui";
 
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
+import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
+import {fieldMessageQuestionName} from "~/components/instance/messageVisibility.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
@@ -15,6 +18,10 @@ type Props = {
     colsClass?: string;
     collapseAnswers?: boolean;
     canEdit?: boolean;
+    canAddMessages?: boolean;
+    canViewMessages?: boolean;
+    messagePropertyName?: string | null;
+    messageUi?: MessageUiSettings;
 };
 
 export const AssessmentQuestionAnswerList = ({
@@ -26,6 +33,10 @@ export const AssessmentQuestionAnswerList = ({
     colsClass = "grid-cols-3",
     collapseAnswers = false,
     canEdit = false,
+    canAddMessages = false,
+    canViewMessages = false,
+    messagePropertyName,
+    messageUi,
 }: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
@@ -86,26 +97,49 @@ export const AssessmentQuestionAnswerList = ({
                 return (
                     <div key={question.name} className="flex flex-col gap-2">
                         <div className={`grid gap-4 ${colsClass}`}>
-                            <Text
-                                fontWeight="semibold"
-                                className="col-span-2 w-48 min-w-0 wrap-break-word sm:w-80"
-                            >
-                                {l(question.text)}
-                                {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                            </Text>
+                            <div className="col-span-2 flex w-48 min-w-0 items-start sm:w-80">
+                                <Text
+                                    as="span"
+                                    fontWeight="semibold"
+                                    className="min-w-0 wrap-break-word"
+                                >
+                                    {l(question.text)}
+                                    {percentage &&
+                                        ` (${percentage.toLocaleString(i18n.language)}%)`}
+                                </Text>
+                            </div>
                             {arrayOfPairs.map((submission, submissionIndex) => {
                                 const pair = submission.find(
                                     (s) => s.question.name === question.name,
                                 );
                                 return (
-                                    <div key={submissionIndex} className="w-24 min-w-0 sm:w-32">
-                                        <AnswerCell
-                                            pair={pair}
-                                            canEdit={canEdit}
-                                            noAnswerText="-"
-                                            instanceId={instanceId}
-                                            submissionId={submissionId}
-                                        />
+                                    <div
+                                        key={submissionIndex}
+                                        className="flex w-24 min-w-0 items-start gap-1 sm:w-32"
+                                    >
+                                        {arrayOfPairs.length === 1 && (
+                                            <FieldMessageBalloon
+                                                instanceId={instanceId}
+                                                questionName={fieldMessageQuestionName(
+                                                    messagePropertyName,
+                                                    question.name,
+                                                )}
+                                                fieldLabel={l(question.text) ?? question.name}
+                                                allowMessages={question.allowMessages}
+                                                canAdd={canAddMessages}
+                                                canView={canViewMessages}
+                                                messageUi={messageUi}
+                                            />
+                                        )}
+                                        <div className="min-w-0 flex-1">
+                                            <AnswerCell
+                                                pair={pair}
+                                                canEdit={canEdit}
+                                                noAnswerText="-"
+                                                instanceId={instanceId}
+                                                submissionId={submissionId}
+                                            />
+                                        </div>
                                     </div>
                                 );
                             })}

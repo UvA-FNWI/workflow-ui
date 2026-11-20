@@ -6,11 +6,14 @@ import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOver
 import {ActionModal} from "~/components/instance/ActionModal.tsx";
 import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
+import {resolveInstanceMessageSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {
     type ContentState,
     getPreviousFormVersion,
     getStepHierarchy,
     hasVersionHistory,
+    type ModalState,
+    resolveFormState,
 } from "~/components/instance/resolveContentState.ts";
 import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -28,7 +31,9 @@ type Props = {
     actions: Action[];
     submissions: Submission[];
     contentState: ContentState;
+    modalState: ModalState;
     activeAction: Action | null;
+    resolvedAction: Action | null;
     emptyStateMessage: string | null;
     setActiveAction: (action: Action | null) => void;
 };
@@ -40,18 +45,20 @@ export const StepCardBody = ({
     actions,
     submissions,
     contentState,
+    modalState,
     activeAction,
+    resolvedAction,
     emptyStateMessage,
     setActiveAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const dispatch = useAppDispatch();
 
-    const inlineForm =
-        activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal"
-            ? activeAction
-            : null;
-    const openFormId = inlineForm?.form;
+    const formState = resolveFormState(resolvedAction);
+    const openFormId = formState?.action.form;
+    const canAddMessages = (instance.permissions ?? []).includes("AddMessages");
+    const canViewMessages = (instance.permissions ?? []).includes("ViewMessages");
+    const messageUi = resolveInstanceMessageSettings(instance.workflowDefinition) ?? undefined;
 
     // Modal forms must not replace the step form registered for the admin helper.
     useEffect(() => {
@@ -83,7 +90,13 @@ export const StepCardBody = ({
                                 >
                                     {l(submission.form.title)?.toUpperCase()}
                                 </Heading>
-                                <FormSummary instanceId={instance.id} submission={submission} />
+                                <FormSummary
+                                    instanceId={instance.id}
+                                    submission={submission}
+                                    canAddMessages={canAddMessages}
+                                    canViewMessages={canViewMessages}
+                                    messageUi={messageUi}
+                                />
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
@@ -93,6 +106,9 @@ export const StepCardBody = ({
                                 combine={true}
                                 step={step}
                                 emptyMessage={emptyStateMessage}
+                                canAddMessages={canAddMessages}
+                                canViewMessages={canViewMessages}
+                                messageUi={messageUi}
                             />
                         )}
                     </>
@@ -108,19 +124,19 @@ export const StepCardBody = ({
         ) : null;
 
     // Action buttons show when form is NOT open and actions exist
-    const showActionButtons = !inlineForm && actions.length > 0;
+    const showActionButtons = !formState && actions.length > 0;
 
     return (
         <>
             <div className="flex flex-col gap-4">
-                {!inlineForm &&
+                {!formState &&
                     step.versions?.current?.submissions.some(hasSubmissionContent) &&
                     versionHeading}
                 {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
 
                 {/* Form overlay: shown alongside submissions */}
-                {inlineForm && (
+                {formState && (
                     <div className="py-4">
                         {versionHeading}
                         {actions.length > 1 && activeAction != null && (
@@ -140,11 +156,14 @@ export const StepCardBody = ({
                             </div>
                         )}
                         <FormPage
-                            key={inlineForm.form}
+                            key={formState.action.form}
                             instanceId={instance.id}
-                            submissionId={inlineForm.form ?? ""}
+                            submissionId={formState.action.form ?? ""}
+                            canAddMessages={canAddMessages}
+                            canViewMessages={canViewMessages}
+                            messageUi={messageUi}
                             onClose={() => setActiveAction(null)}
-                            previousVersion={getPreviousFormVersion(step, inlineForm.form)}
+                            previousVersion={getPreviousFormVersion(step, formState.action.form)}
                         />
                     </div>
                 )}
@@ -197,13 +216,13 @@ export const StepCardBody = ({
                         ))}
             </div>
 
-            {activeAction && !inlineForm && (
+            {modalState && (
                 <ActionModal
-                    key={activeAction.id}
-                    action={activeAction}
+                    key={modalState.action.id}
+                    action={modalState.action}
                     onClose={() => setActiveAction(null)}
                     instanceId={instance.id}
-                    previousVersion={getPreviousFormVersion(step, activeAction.form)}
+                    previousVersion={getPreviousFormVersion(step, modalState.action.form)}
                 />
             )}
         </>
