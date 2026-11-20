@@ -124,4 +124,49 @@ describe("FieldMessageBalloon", () => {
         fireEvent.click(cancel);
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
+
+    it("hides the new comment composer while replying and restores its draft on cancel", () => {
+        getMessages.mockReturnValue({
+            data: [
+                {
+                    id: "thread-1",
+                    questionName: "Title",
+                    isClosed: false,
+                    items: [
+                        {
+                            id: "comment-1",
+                            parentItemId: null,
+                            dateTime: "2026-09-17T10:00:00Z",
+                            user: {id: "user-1", displayName: "Ada Lovelace"},
+                            kind: "Message",
+                            body: "An existing comment",
+                        },
+                    ],
+                },
+            ],
+            isSuccess: true,
+        });
+        render(
+            <FieldMessageBalloon
+                instanceId="instance-1"
+                questionName="Title"
+                fieldLabel="Working title"
+                allowMessages
+                canAdd
+                canView
+            />,
+        );
+
+        fireEvent.click(screen.getByRole("button", {name: "instance.messages.field_label"}));
+        const dialog = within(screen.getByRole("dialog"));
+        const newComment = {name: "Add a comment"};
+        fireEvent.change(dialog.getByRole("textbox", newComment), {target: {value: "A draft"}});
+
+        fireEvent.click(dialog.getByRole("button", {name: "reply"}));
+        expect(dialog.getByRole("textbox", {name: "Write a reply"})).toHaveFocus();
+        expect(dialog.queryByRole("textbox", newComment)).not.toBeInTheDocument();
+
+        fireEvent.click(dialog.getByRole("button", {name: "cancel"}));
+        expect(dialog.getByRole("textbox", newComment)).toHaveValue("A draft");
+    });
 });

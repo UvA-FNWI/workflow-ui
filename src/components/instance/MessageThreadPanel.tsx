@@ -148,7 +148,8 @@ export function MessageThreadPanel({
     };
 
     const composingNewConversation = replyTarget == null;
-    const newComposerVisible = canAdd && showNewComposer !== false;
+    const newComposerVisible =
+        canAdd && showNewComposer !== false && (questionName == null || composingNewConversation);
     const showNewConversationActions =
         composingNewConversation &&
         (newConversationExpanded ||
