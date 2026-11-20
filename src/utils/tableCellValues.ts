@@ -54,6 +54,8 @@ export function getComparableTableCellValue(
             case "LocalString":
             case "Object":
                 return String(formatTableCellValue(value, dataType, locale) ?? "");
+            case "User":
+                return getUserDisplayNames(value);
             default:
                 return String(value);
         }
@@ -115,4 +117,16 @@ function getLocalStringFromObject(value: object): LocalString | null {
         }
     }
     return null;
+}
+
+function getUserDisplayNames(value: unknown): string {
+    const users = Array.isArray(value) ? value : [value];
+    return users
+        .map((user) =>
+            typeof user === "object" && user !== null && "displayName" in user
+                ? String((user as {displayName: unknown}).displayName ?? "")
+                : "",
+        )
+        .filter(Boolean)
+        .join(", ");
 }
