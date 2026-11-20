@@ -116,15 +116,12 @@ export const PageControl = ({
     );
 
     const pageResult = data?.pageResults?.[0];
-    const weightedQuestions = questions
+    const weightedQuestions = visibleQuestions
         .filter(isWeightedQuestion)
         .filter((question) => question.percentage != null);
-    const totalPercentage = Number(
-        weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toFixed(2),
-    );
 
     const gradeDisplayText =
-        totalPercentage === 100
+        page.percentage === 100
             ? t("instance.calculations.final_grade")
             : t("instance.calculations.average_grade", {
                   page: l(page.title),
@@ -152,7 +149,8 @@ export const PageControl = ({
                     <Heading size="sm" className="pb-2">
                         {l(page.title)}
                         {weightedQuestions.length > 0 &&
-                            ` (${totalPercentage.toLocaleString(i18n.language)}%)`}
+                            page.percentage != null &&
+                            ` (${page.percentage.toLocaleString(i18n.language)}%)`}
                     </Heading>
                 )}
                 {page.elements.length > 0 && (
