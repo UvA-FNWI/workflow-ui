@@ -87,7 +87,6 @@
     "title": "History",
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
-
   "home": "Home",
   "instance": {
     "calculations": {
@@ -109,7 +108,6 @@
       "expand_conversation": "Expand",
       "field_label": "Comments on this field",
       "field_modal_title": "Comments on {{field}}",
-      "mention_suggestions": "Staff suggestions",
       "new_conversation_placeholder": "Add a comment",
       "reopen_conversation": "Reopen",
       "replies_heading": "Replies",
@@ -119,7 +117,7 @@
       "summary_closed_other": "{{count}} closed",
       "summary_open_one": "{{count}} open",
       "summary_open_other": "{{count}} open",
-      "title": "Comments",
+      "title": "Comments"
     },
     "shared_loading": "Loading shared work…",
     "shared_restricted": "You do not have permission to view this shared work.",

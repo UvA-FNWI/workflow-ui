@@ -108,7 +108,6 @@
       "expand_conversation": "Uitklappen",
       "field_label": "Notities bij dit veld",
       "field_modal_title": "Notities bij {{field}}",
-      "mention_suggestions": "Suggesties voor medewerkers",
       "new_conversation_placeholder": "Opmerking toevoegen",
       "reopen_conversation": "Heropenen",
       "replies_heading": "Reacties",
@@ -118,7 +117,7 @@
       "summary_closed_other": "{{count}} gesloten",
       "summary_open_one": "{{count}} open",
       "summary_open_other": "{{count}} open",
-      "title": "Notities",
+      "title": "Notities"
     },
     "shared_loading": "Gedeeld werk laden…",
     "shared_restricted": "Je hebt geen toestemming om dit gedeelde werk te bekijken.",

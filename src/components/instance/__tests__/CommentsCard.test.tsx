@@ -72,17 +72,17 @@ async function renderCard(workflowInstance: WorkflowInstance, language = "en") {
 
 describe("CommentsCard", () => {
     it.each([
-        ["en", false, "Comments - involved staff only", "1 open"],
-        ["nl", true, "Notities - alleen voor betrokken medewerkers", "1 gesloten"],
+        ["en", false, "1 open"],
+        ["nl", true, "1 gesloten"],
     ] as const)(
         "uses the default %s heading and status pill without a configured title",
-        async (language, isClosed, heading, summary) => {
+        async (language, isClosed, summary) => {
             getMessages.mockReturnValue({data: [{...note, isClosed}], isSuccess: true});
 
             await renderCard(instance, language);
 
             const messages = (language === "nl" ? nlWorkflow : enWorkflow).instance.messages;
-            expect(screen.getByRole("heading", {name: heading})).toBeVisible();
+            expect(screen.getByRole("heading", {name: messages.title})).toBeVisible();
             expect(screen.getByText(summary)).toBeVisible();
             expect(screen.getByRole("button", {name: messages.add})).toBeVisible();
         },
@@ -132,8 +132,10 @@ describe("CommentsCard", () => {
         });
 
         const messages = enWorkflow.instance.messages;
-        const disclosure = screen.getByRole("button", {name: /^Comments - involved staff only/});
-        expect(screen.getByRole("heading", {name: "Comments - involved staff only"})).toBeVisible();
+        const disclosure = screen.getByRole("button", {
+            name: (name) => name.startsWith(messages.title),
+        });
+        expect(screen.getByRole("heading", {name: messages.title})).toBeVisible();
         fireEvent.click(disclosure);
         expect(screen.getByText("An existing comment")).toBeVisible();
         expect(
@@ -142,7 +144,10 @@ describe("CommentsCard", () => {
         expect(screen.queryByText(messages.callout_body)).toBeNull();
 
         fireEvent.click(disclosure);
-        fireEvent.click(screen.getByRole("button", {name: messages.add}));
+        const add = screen.getByRole("button", {name: messages.add});
+        expect(add).toHaveAttribute("aria-expanded", "false");
+        fireEvent.click(add);
+        expect(add).toHaveAttribute("aria-expanded", "true");
         const input = screen.getByRole("textbox", {name: messages.new_conversation_placeholder});
         const callout = screen.getByText(messages.callout_body);
         expect(callout).toBeVisible();

@@ -1,10 +1,11 @@
 import {useState} from "react";
 
-import {Button, Disclosure, Heading, Icon, Pill} from "@uva-fnwi/datanose-ui";
+import {Disclosure, Heading, Pill} from "@uva-fnwi/datanose-ui";
 
 import {resolveInstanceMessageSettings} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
+import {CardAddButton} from "~/components/CardAddButton";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
 import type {WorkflowInstance} from "~/store/api/types/instances";
@@ -69,23 +70,15 @@ export function CommentsCard({instance}: Props) {
                     </div>
                 </Disclosure.Header>
                 {canAdd && (
-                    <div className="pr-6">
-                        <Button
-                            intent="secondary"
-                            variant="destructive"
-                            size="square"
-                            width="none"
-                            aria-label={t("instance.messages.add")}
-                            aria-expanded={composerVisible}
-                            onClick={() => {
-                                setExpanded(true);
-                                setShowNewComposer(true);
-                                setFocusNewConversation(true);
-                            }}
-                        >
-                            <Icon name="plus-solid" color="current" />
-                        </Button>
-                    </div>
+                    <CardAddButton
+                        label={t("instance.messages.add")}
+                        expanded={composerVisible}
+                        onClick={() => {
+                            setExpanded(true);
+                            setShowNewComposer(true);
+                            setFocusNewConversation(true);
+                        }}
+                    />
                 )}
             </div>
             <Disclosure.Content>

@@ -1,7 +1,8 @@
 import {useMemo, useState} from "react";
 
-import {Button, Disclosure, Heading, Icon, Link, Text} from "@uva-fnwi/datanose-ui";
+import {Disclosure, Heading, Link, Text} from "@uva-fnwi/datanose-ui";
 
+import {CardAddButton} from "~/components/CardAddButton.tsx";
 import AddStaffModal from "~/components/StaffCard/AddStaffModal.tsx";
 import {RelatedStaffInfo} from "~/components/StaffCard/RelatedStaffInfo.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -23,7 +24,7 @@ export function RelatedUsersCard({
     relatedUserGroups,
     items,
 }: RelatedUsersCardProps) {
-    const {l} = useTranslate("workflow");
+    const {l, t} = useTranslate("workflow");
     const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
     const [addStaffModalData, setAddStaffModalData] = useState<{
         allowsExternalUsers: boolean;
@@ -87,18 +88,10 @@ export function RelatedUsersCard({
                         </Disclosure.Header>
                     </div>
                     {instanceUserRoles.length > 0 && (
-                        <div className="pr-6">
-                            <Button
-                                intent="secondary"
-                                variant="destructive"
-                                size="square"
-                                width="none"
-                                className="flex items-center justify-center leading-0"
-                                onClick={() => handleOpenAddStaffModal(false, undefined)}
-                            >
-                                <Icon name="plus-solid" color="current" />
-                            </Button>
-                        </div>
+                        <CardAddButton
+                            label={t("staff_card.add_modal.title")}
+                            onClick={() => handleOpenAddStaffModal(false, undefined)}
+                        />
                     )}
                 </div>
                 <Disclosure.Content padding="lg">
