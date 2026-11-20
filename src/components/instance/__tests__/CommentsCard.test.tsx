@@ -7,7 +7,7 @@ import {afterEach, describe, expect, it, vi} from "vitest";
 import enWorkflow from "../../../../public/locales/en/workflow.json";
 import nlWorkflow from "../../../../public/locales/nl/workflow.json";
 import {CommentsCard} from "../CommentsCard";
-import type {WorkflowInstance} from "~/store/api/types/instances";
+import type {MessagesInfoCard, WorkflowInstance} from "~/store/api/types/instances";
 import type {MessageThread} from "~/store/api/types/messages";
 
 const {getMessages} = vi.hoisted(() => ({
@@ -33,6 +33,8 @@ const instance = {
     workflowDefinition: {messagesEnabled: true},
 } as WorkflowInstance;
 
+const messagesCard: MessagesInfoCard = {name: "Messages", type: "Messages", title: null};
+
 const note: MessageThread = {
     id: "t1",
     questionName: null,
@@ -57,7 +59,11 @@ const note: MessageThread = {
     ],
 };
 
-async function renderCard(workflowInstance: WorkflowInstance, language = "en") {
+async function renderCard(
+    workflowInstance: WorkflowInstance,
+    language = "en",
+    card = messagesCard,
+) {
     const i18n = createInstance();
     await i18n.init({
         lng: language,
@@ -65,7 +71,7 @@ async function renderCard(workflowInstance: WorkflowInstance, language = "en") {
     });
     return render(
         <I18nextProvider i18n={i18n}>
-            <CommentsCard instance={workflowInstance} />
+            <CommentsCard instance={workflowInstance} card={card} />
         </I18nextProvider>,
     );
 }
@@ -108,14 +114,17 @@ describe("CommentsCard", () => {
                     messages: {
                         term: {en: "review note", nl: "beoordelingsnotitie"},
                         termPlural: {en: "review notes", nl: "beoordelingsnotities"},
-                        cardTitle: {
-                            en: "{{count}} {{termPlural}} (add {{term}})",
-                            nl: "{{ count }} {{termPlural}} ({{term}} toevoegen)",
-                        },
                     },
                 },
             },
             language,
+            {
+                ...messagesCard,
+                title: {
+                    en: "{{count}} {{termPlural}} (add {{term}})",
+                    nl: "{{ count }} {{termPlural}} ({{term}} toevoegen)",
+                },
+            },
         );
 
         expect(screen.getByRole("heading", {name: heading})).toBeVisible();

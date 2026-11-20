@@ -35,7 +35,11 @@ function Instance() {
     }
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
-    const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];
+    const messagesCard = instance?.infoCards?.find((card) => card.type === "Messages");
+    const infoCards =
+        instance?.infoCards?.filter(
+            (card) => card.type !== "Progress" && card.type !== "Messages",
+        ) ?? [];
 
     return (
         <Container maxWidth={1280}>
@@ -55,8 +59,8 @@ function Instance() {
                         stopMessage={instance?.stopMessage}
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
-                    {instance?.permissions.includes("ViewMessages") && id && (
-                        <CommentsCard instance={instance} />
+                    {instance?.permissions.includes("ViewMessages") && id && messagesCard && (
+                        <CommentsCard instance={instance} card={messagesCard} />
                     )}
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
                         <CorrespondenceCard instanceId={id} />

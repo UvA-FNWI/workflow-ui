@@ -16,8 +16,6 @@ export type WorkflowDefinition = {
     properties: string[];
     messagesEnabled?: boolean;
     messages?: {
-        card?: boolean;
-        cardTitle?: LocalString | null;
         term?: LocalString | null;
         termPlural?: LocalString | null;
         fieldsAllowAll?: boolean;

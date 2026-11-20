@@ -8,13 +8,14 @@ import {shouldShowMessageUi} from "./messageVisibility";
 import {CardAddButton} from "~/components/CardAddButton";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
-import type {WorkflowInstance} from "~/store/api/types/instances";
+import type {MessagesInfoCard, WorkflowInstance} from "~/store/api/types/instances";
 
 type Props = {
     instance: WorkflowInstance;
+    card: MessagesInfoCard;
 };
 
-export function CommentsCard({instance}: Props) {
+export function CommentsCard({instance, card}: Props) {
     const {t, l, i18n} = useTranslate("workflow");
     const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
     const terms = useMessageTerms(messageSettings);
@@ -27,7 +28,7 @@ export function CommentsCard({instance}: Props) {
     const [showNewComposer, setShowNewComposer] = useState(false);
     const [focusNewConversation, setFocusNewConversation] = useState(false);
 
-    if (!messageSettings?.card || !canView) return null;
+    if (!messageSettings || !canView) return null;
 
     const instanceThreads = threads.filter((thread) => thread.questionName == null);
     const canAdd = instance.permissions.includes("AddMessages");
@@ -41,7 +42,7 @@ export function CommentsCard({instance}: Props) {
     const openCount = showOpenCloseSummary
         ? instanceThreads.filter((thread) => !thread.isClosed).length
         : 0;
-    const titleTemplate = l(messageSettings.cardTitle)?.trim();
+    const titleTemplate = l(card.title)?.trim();
     const title = titleTemplate
         ? i18n.services.interpolator.interpolate(
               titleTemplate,

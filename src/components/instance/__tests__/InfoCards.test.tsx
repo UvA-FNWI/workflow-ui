@@ -62,9 +62,14 @@ it("renders configured cards in order and expands compact user fields", () => {
     expect(screen.getByText("Maintenance")).toBeTruthy();
 });
 
-it("does not render a card for Progress type entries", () => {
+it("leaves Progress and Messages cards to the main column", () => {
     const cards: InfoCard[] = [
         {name: "Progress", type: "Progress", title: {en: "Progress", nl: "Voortgang"}},
+        {
+            name: "Messages",
+            type: "Messages",
+            title: {en: "Review notes", nl: "Beoordelingsnotities"},
+        },
         {
             name: "Notice",
             type: "Text",
@@ -76,6 +81,7 @@ it("does not render a card for Progress type entries", () => {
     render(<InfoCards cards={cards} instanceId="project-1" />);
 
     expect(screen.queryByText("Progress")).toBeNull();
+    expect(screen.queryByText("Review notes")).toBeNull();
     expect(screen.getAllByRole("heading").map((heading) => heading.textContent)).toEqual([
         "Notice",
     ]);

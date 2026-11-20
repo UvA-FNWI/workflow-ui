@@ -12,8 +12,6 @@ describe("resolveInstanceMessageSettings", () => {
     it("uses defaults when enabled without a messages block", () => {
         expect(resolveInstanceMessageSettings({name: "X", messagesEnabled: true} as never)).toEqual(
             {
-                card: true,
-                cardTitle: null,
                 layout: "threaded",
                 allowClose: true,
                 callout: null,
@@ -23,7 +21,7 @@ describe("resolveInstanceMessageSettings", () => {
         );
     });
 
-    it("honours explicit settings from the API", () => {
+    it("uses workflow settings and terms for field messages without a card", () => {
         const term = {en: "review note", nl: "beoordelingsnotitie"};
         const termPlural = {en: "review notes", nl: "beoordelingsnotities"};
 
@@ -32,8 +30,6 @@ describe("resolveInstanceMessageSettings", () => {
                 name: "X",
                 messagesEnabled: true,
                 messages: {
-                    card: false,
-                    cardTitle: {en: "Notes", nl: "Notities"},
                     layout: "flat",
                     allowClose: false,
                     callout: {
@@ -41,14 +37,12 @@ describe("resolveInstanceMessageSettings", () => {
                         title: {en: "Privacy", nl: "Privacy"},
                         text: {en: "Body", nl: "Tekst"},
                     },
+                    fieldsAllowAll: false,
                     term,
                     termPlural,
-                    fieldsAllowAll: false,
                 },
             } as never),
         ).toEqual({
-            card: false,
-            cardTitle: {en: "Notes", nl: "Notities"},
             layout: "flat",
             allowClose: false,
             callout: {
