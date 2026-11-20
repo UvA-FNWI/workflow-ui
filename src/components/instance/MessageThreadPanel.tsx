@@ -4,7 +4,7 @@ import {Button, Callout, type CalloutType, Separator, Text, TextArea} from "@uva
 
 import {ConversationThread} from "./ConversationThread";
 import {FlatMessageFeed} from "./FlatMessageFeed";
-import {defaultMessageUi, type MessageUiSettings} from "./instanceMessageSettings";
+import {defaultMessageUi, type MessageUiSettings, useMessageTerms} from "./instanceMessageSettings";
 import {handleMessageSubmitShortcut} from "./messageComposerShortcuts";
 import {getConversationOpener, newestMessageFirst} from "./messageTree";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -51,10 +51,9 @@ export function MessageThreadPanel({
     const cancelIntent = questionName == null ? "ghost" : "secondary";
     const {t, l} = useTranslate("workflow");
     const {t: m} = useTranslate("workflow", {keyPrefix: "instance.messages"});
-    const newConversationPlaceholder = m("new_conversation_placeholder", {
-        defaultValue: "Add a comment",
-    });
-    const replyPlaceholder = m("reply_placeholder", {defaultValue: "Write a reply"});
+    const terms = useMessageTerms(messageUi);
+    const newConversationPlaceholder = m("new_conversation_placeholder", terms);
+    const replyPlaceholder = m("reply_placeholder", terms);
     const [body, setBody] = useState("");
     const [drafts, setDrafts] = useState<Record<string, string>>({});
     const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
@@ -286,7 +285,7 @@ export function MessageThreadPanel({
             {newConversationStarter}
             {threads.length === 0 && !newComposerVisible && (
                 <Text as="span" className="text-grey-600">
-                    {m("empty")}
+                    {m("empty", terms)}
                 </Text>
             )}
             {threadList}

@@ -18,6 +18,8 @@ export type WorkflowDefinition = {
     messages?: {
         card?: boolean;
         cardTitle?: LocalString | null;
+        term?: LocalString | null;
+        termPlural?: LocalString | null;
         fieldsAllowAll?: boolean;
         layout?: "threaded" | "flat";
         allowClose?: boolean;

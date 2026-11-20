@@ -1,23 +1,16 @@
-import {cleanup, fireEvent, render, screen} from "@testing-library/react";
-import {afterEach, describe, expect, it, vi} from "vitest";
+import type {ReactNode} from "react";
 
+import {I18nextProvider} from "react-i18next";
+
+import {cleanup, fireEvent, render as renderComponent, screen} from "@testing-library/react";
+import {createInstance} from "i18next";
+import {afterEach, beforeAll, describe, expect, it, vi} from "vitest";
+
+import enWorkflow from "../../../../public/locales/en/workflow.json";
 import {defaultMessageUi} from "../instanceMessageSettings";
 import {MessageThreadPanel} from "../MessageThreadPanel";
-import type {LocalString} from "~/hooks/useTranslate";
 import type {MessageThread} from "~/store/api/types/messages";
 import {formatDate} from "~/utils/formatDate";
-
-vi.mock("~/hooks/useTranslate", () => ({
-    useTranslate: (_ns?: string, options?: {keyPrefix?: string}) => ({
-        t: (key: string, translateOptions?: {defaultValue?: string}) => {
-            if (translateOptions?.defaultValue) return translateOptions.defaultValue;
-            const prefix = options?.keyPrefix ? `${options.keyPrefix}.` : "";
-            return `${prefix}${key}`;
-        },
-        l: (value?: LocalString | null) => value?.en,
-        i18n: {language: "en"},
-    }),
-}));
 
 vi.mock("~/store/api/messagesApi", () => ({
     messagesEndpoints: {
@@ -27,7 +20,14 @@ vi.mock("~/store/api/messagesApi", () => ({
     },
 }));
 
+const i18n = createInstance();
+beforeAll(async () => {
+    await i18n.init({lng: "en", resources: {en: {workflow: enWorkflow}}});
+});
 afterEach(cleanup);
+
+const render = (ui: ReactNode) =>
+    renderComponent(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
 
 const thread: MessageThread = {
     id: "thread-1",
@@ -53,7 +53,7 @@ const thread: MessageThread = {
     ],
 };
 
-const replyAction = {name: "instance.messages.reply"};
+const replyAction = {name: "Reply"};
 
 describe("MessageThreadPanel", () => {
     it("shows flat messages newest first", () => {
@@ -136,25 +136,25 @@ describe("MessageThreadPanel", () => {
     it("shows a compact new-conversation field without actions until it is focused", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(screen.getByLabelText("Add a comment")).toBeTruthy();
-        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
+        expect(screen.getByLabelText("Add comment")).toBeTruthy();
+        expect(screen.queryByRole("button", {name: enWorkflow.save})).toBeNull();
     });
 
     it("shows a compact new-conversation field when there are no threads", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[]} canAdd />);
 
-        expect(screen.getByLabelText("Add a comment")).toBeTruthy();
-        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
-        fireEvent.focus(screen.getByLabelText("Add a comment"));
-        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
+        expect(screen.getByLabelText("Add comment")).toBeTruthy();
+        expect(screen.queryByRole("button", {name: enWorkflow.save})).toBeNull();
+        fireEvent.focus(screen.getByLabelText("Add comment"));
+        expect(screen.getByRole("button", {name: enWorkflow.save})).toBeTruthy();
     });
 
     it("does not show save on the new conversation until it is expanded", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
-        fireEvent.focus(screen.getByLabelText("Add a comment"));
-        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
+        expect(screen.queryByRole("button", {name: enWorkflow.save})).toBeNull();
+        fireEvent.focus(screen.getByLabelText("Add comment"));
+        expect(screen.getByRole("button", {name: enWorkflow.save})).toBeTruthy();
     });
 
     it("opens a focused reply composer with its configured callout on click", () => {
@@ -180,12 +180,12 @@ describe("MessageThreadPanel", () => {
 
         const [rootReply, nestedReply] = screen.getAllByRole("button", replyAction);
         fireEvent.focus(rootReply!);
-        expect(screen.queryByRole("textbox", {name: "Write a reply"})).toBeNull();
+        expect(screen.queryByRole("textbox", {name: "Reply to comment"})).toBeNull();
         fireEvent.click(rootReply!);
 
-        const input = screen.getByRole("textbox", {name: "Write a reply"});
-        const save = screen.getByRole("button", {name: "save"});
-        const cancel = screen.getByRole("button", {name: "cancel"});
+        const input = screen.getByRole("textbox", {name: "Reply to comment"});
+        const save = screen.getByRole("button", {name: enWorkflow.save});
+        const cancel = screen.getByRole("button", {name: enWorkflow.cancel});
         const callout = screen.getByText("Avoid identifying details.");
         expect(screen.getByRole("button", replyAction)).toBe(nestedReply);
         expect(input).toHaveFocus();
@@ -201,14 +201,14 @@ describe("MessageThreadPanel", () => {
         expect(save).toBeEnabled();
 
         fireEvent.click(cancel);
-        expect(screen.queryByRole("textbox", {name: "Write a reply"})).toBeNull();
+        expect(screen.queryByRole("textbox", {name: "Reply to comment"})).toBeNull();
         expect(screen.getAllByRole("button", replyAction)).toHaveLength(2);
     });
 
     it("keeps the reply text when another reply is opened", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        const replyField = () => screen.getByRole("textbox", {name: "Write a reply"});
+        const replyField = () => screen.getByRole("textbox", {name: "Reply to comment"});
         fireEvent.click(screen.getAllByRole("button", replyAction)[0]!);
         fireEvent.change(replyField(), {target: {value: "Keep this"}});
         fireEvent.click(screen.getByRole("button", replyAction));
@@ -224,17 +224,17 @@ describe("MessageThreadPanel", () => {
 
         expect(screen.getAllByRole("button", replyAction)).toHaveLength(2);
         expect(
-            screen.getByRole("button", {name: "instance.messages.close_conversation"}),
+            screen.getByRole("button", {name: enWorkflow.instance.messages.close_conversation}),
         ).toBeTruthy();
     });
 
     it("can dismiss the new conversation field with cancel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 
-        fireEvent.focus(screen.getByLabelText("Add a comment"));
-        expect(screen.getByRole("button", {name: "save"})).toBeTruthy();
-        fireEvent.click(screen.getByRole("button", {name: "cancel"}));
-        expect(screen.queryByRole("button", {name: "save"})).toBeNull();
+        fireEvent.focus(screen.getByLabelText("Add comment"));
+        expect(screen.getByRole("button", {name: enWorkflow.save})).toBeTruthy();
+        fireEvent.click(screen.getByRole("button", {name: enWorkflow.cancel}));
+        expect(screen.queryByRole("button", {name: enWorkflow.save})).toBeNull();
     });
 
     it("starts with closed conversations collapsed", () => {
@@ -259,7 +259,7 @@ describe("MessageThreadPanel", () => {
 
         expect(screen.queryByText("Will do.")).toBeNull();
         expect(screen.getByText("Ada Lovelace")).toBeTruthy();
-        expect(screen.getByText("instance.messages.closed")).toBeTruthy();
+        expect(screen.getByText(enWorkflow.instance.messages.closed)).toBeTruthy();
     });
 
     it("shows reopen only on an expanded closed conversation", () => {
@@ -283,14 +283,14 @@ describe("MessageThreadPanel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[closed]} canAdd />);
 
         expect(
-            screen.queryByRole("button", {name: "instance.messages.reopen_conversation"}),
+            screen.queryByRole("button", {name: enWorkflow.instance.messages.reopen_conversation}),
         ).toBeNull();
 
         fireEvent.click(
-            screen.getByRole("button", {name: "instance.messages.expand_conversation"}),
+            screen.getByRole("button", {name: enWorkflow.instance.messages.expand_conversation}),
         );
         expect(
-            screen.getByRole("button", {name: "instance.messages.reopen_conversation"}),
+            screen.getByRole("button", {name: enWorkflow.instance.messages.reopen_conversation}),
         ).toBeTruthy();
     });
 });

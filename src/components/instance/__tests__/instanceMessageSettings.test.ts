@@ -17,11 +17,16 @@ describe("resolveInstanceMessageSettings", () => {
                 layout: "threaded",
                 allowClose: true,
                 callout: null,
+                term: null,
+                termPlural: null,
             },
         );
     });
 
     it("honours explicit settings from the API", () => {
+        const term = {en: "review note", nl: "beoordelingsnotitie"};
+        const termPlural = {en: "review notes", nl: "beoordelingsnotities"};
+
         expect(
             resolveInstanceMessageSettings({
                 name: "X",
@@ -36,6 +41,8 @@ describe("resolveInstanceMessageSettings", () => {
                         title: {en: "Privacy", nl: "Privacy"},
                         text: {en: "Body", nl: "Tekst"},
                     },
+                    term,
+                    termPlural,
                     fieldsAllowAll: false,
                 },
             } as never),
@@ -49,6 +56,8 @@ describe("resolveInstanceMessageSettings", () => {
                 title: {en: "Privacy", nl: "Privacy"},
                 text: {en: "Body", nl: "Tekst"},
             },
+            term,
+            termPlural,
         });
     });
 });

@@ -2,7 +2,7 @@ import {useState} from "react";
 
 import {Disclosure, Heading, Pill} from "@uva-fnwi/datanose-ui";
 
-import {resolveInstanceMessageSettings} from "./instanceMessageSettings";
+import {resolveInstanceMessageSettings, useMessageTerms} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {CardAddButton} from "~/components/CardAddButton";
@@ -17,6 +17,7 @@ type Props = {
 export function CommentsCard({instance}: Props) {
     const {t, l, i18n} = useTranslate("workflow");
     const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
+    const terms = useMessageTerms(messageSettings);
     const canView = instance.permissions.includes("ViewMessages");
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
         instance.id,
@@ -42,8 +43,13 @@ export function CommentsCard({instance}: Props) {
         : 0;
     const titleTemplate = l(messageSettings.cardTitle)?.trim();
     const title = titleTemplate
-        ? i18n.services.interpolator.interpolate(titleTemplate, {count}, i18n.language, {})
-        : t("instance.messages.title");
+        ? i18n.services.interpolator.interpolate(
+              titleTemplate,
+              {...terms, count},
+              i18n.language,
+              {},
+          )
+        : terms.termPluralTitle;
 
     return (
         <Disclosure
@@ -71,7 +77,7 @@ export function CommentsCard({instance}: Props) {
                 </Disclosure.Header>
                 {canAdd && (
                     <CardAddButton
-                        label={t("instance.messages.add")}
+                        label={t("instance.messages.add", terms)}
                         expanded={composerVisible}
                         onClick={() => {
                             setExpanded(true);

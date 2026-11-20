@@ -2,7 +2,7 @@ import {useState} from "react";
 
 import {Button, Icon, Modal} from "@uva-fnwi/datanose-ui";
 
-import type {MessageUiSettings} from "./instanceMessageSettings";
+import {type MessageUiSettings, useMessageTerms} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
 import {shouldShowMessageUi} from "./messageVisibility";
 import {useTranslate} from "~/hooks/useTranslate";
@@ -28,6 +28,7 @@ export function FieldMessageBalloon({
     messageUi,
 }: Props) {
     const {t} = useTranslate("workflow");
+    const terms = useMessageTerms(messageUi);
     const [open, setOpen] = useState(false);
     const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
         instanceId,
@@ -41,7 +42,7 @@ export function FieldMessageBalloon({
     if (!shouldShowMessageUi(canAdd, fieldThreads.length)) return null;
 
     const hasNotes = fieldThreads.length > 0;
-    const modalTitle = t("instance.messages.field_modal_title", {field: fieldLabel});
+    const modalTitle = t("instance.messages.field_modal_title", {...terms, field: fieldLabel});
 
     const triggerClassName =
         "ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800";
@@ -54,7 +55,7 @@ export function FieldMessageBalloon({
                     size="small"
                     shape="circular"
                     className={triggerClassName}
-                    aria-label={t("instance.messages.field_label")}
+                    aria-label={t("instance.messages.field_label", terms)}
                     aria-expanded={open}
                     onClick={() => setOpen(true)}
                 >
