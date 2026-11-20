@@ -63,6 +63,7 @@ export type Form = {
 
 export type Page = {
     index: number;
+    percentage?: number | null;
     name: string;
     title: LocalString;
     layout: PageLayout;
