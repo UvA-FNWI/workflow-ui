@@ -94,9 +94,9 @@ describe("CommentsCard", () => {
     );
 
     it.each([
-        ["en", "2 review notes (add review note)"],
-        ["nl", "2 beoordelingsnotities (beoordelingsnotitie toevoegen)"],
-    ])("uses the configured %s title with count and terms", async (language, heading) => {
+        ["en", "Review notes for staff", "Add review note"],
+        ["nl", "Beoordelingsnotities voor medewerkers", "Beoordelingsnotitie toevoegen"],
+    ])("uses the configured %s title and workflow terms", async (language, heading, add) => {
         getMessages.mockReturnValue({
             data: [
                 note,
@@ -121,13 +121,14 @@ describe("CommentsCard", () => {
             {
                 ...messagesCard,
                 title: {
-                    en: "{{count}} {{termPlural}} (add {{term}})",
-                    nl: "{{ count }} {{termPlural}} ({{term}} toevoegen)",
+                    en: "Review notes for staff",
+                    nl: "Beoordelingsnotities voor medewerkers",
                 },
             },
         );
 
         expect(screen.getByRole("heading", {name: heading})).toBeVisible();
+        expect(screen.getByRole("button", {name: add})).toBeVisible();
         expect(screen.getByText("1 open")).toBeVisible();
     });
 
@@ -137,7 +138,10 @@ describe("CommentsCard", () => {
             title: {en: "Student privacy", nl: "Privacy van de student"},
             text: {en: "Avoid identifying details.", nl: "Vermijd herkenbare details."},
         } as const;
-        getMessages.mockReturnValue({data: [note], isSuccess: true});
+        getMessages.mockReturnValue({
+            data: [note, {...note, id: "field-note", questionName: "Title"}],
+            isSuccess: true,
+        });
         await renderCard({
             ...instance,
             workflowDefinition: {
@@ -158,6 +162,7 @@ describe("CommentsCard", () => {
             name: (name) => name.startsWith(heading),
         });
         expect(screen.getByRole("heading", {name: heading})).toBeVisible();
+        expect(screen.getByText("1")).toBeVisible();
         fireEvent.click(disclosure);
         expect(screen.getByText("An existing comment")).toBeVisible();
         expect(screen.queryByRole("textbox", composer)).toBeNull();

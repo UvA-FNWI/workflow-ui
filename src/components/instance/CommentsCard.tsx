@@ -16,7 +16,7 @@ type Props = {
 };
 
 export function CommentsCard({instance, card}: Props) {
-    const {t, l, i18n} = useTranslate("workflow");
+    const {t, l} = useTranslate("workflow");
     const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
     const terms = useMessageTerms(messageSettings);
     const canView = instance.permissions.includes("ViewMessages");
@@ -42,15 +42,7 @@ export function CommentsCard({instance, card}: Props) {
     const openCount = showOpenCloseSummary
         ? instanceThreads.filter((thread) => !thread.isClosed).length
         : 0;
-    const titleTemplate = l(card.title)?.trim();
-    const title = titleTemplate
-        ? i18n.services.interpolator.interpolate(
-              titleTemplate,
-              {...terms, count},
-              i18n.language,
-              {},
-          )
-        : terms.termPluralTitle;
+    const title = l(card.title)?.trim() || terms.termPluralTitle;
 
     return (
         <Disclosure
@@ -67,11 +59,13 @@ export function CommentsCard({instance, card}: Props) {
                 <Disclosure.Header>
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Heading className="font-semibold">{title}</Heading>
-                        {showOpenCloseSummary && count > 0 && (
+                        {count > 0 && (
                             <Pill variant={openCount > 0 ? "red" : "grey"}>
-                                {openCount > 0
-                                    ? t("instance.messages.summary_open", {count: openCount})
-                                    : t("instance.messages.summary_closed", {count})}
+                                {showOpenCloseSummary
+                                    ? openCount > 0
+                                        ? t("instance.messages.summary_open", {count: openCount})
+                                        : t("instance.messages.summary_closed", {count})
+                                    : count}
                             </Pill>
                         )}
                     </div>
