@@ -25,6 +25,8 @@ type SearchAndSelectProps = {
     showSearchHint?: boolean;
     searchHintText?: string;
     noResultsText?: string;
+    isError?: boolean;
+    errorText?: string;
     initialSearchQuery?: string;
 };
 
@@ -44,6 +46,8 @@ export function SearchAndSelect({
     showSearchHint: showSearchHintEnabled = false,
     searchHintText,
     noResultsText,
+    isError = false,
+    errorText,
     initialSearchQuery = "",
 }: SearchAndSelectProps) {
     const {t} = useTranslate("workflow");
@@ -112,6 +116,7 @@ export function SearchAndSelect({
         const meetsMinSearchLength = trimmed >= minSearchLength;
 
         if (isSelected) return "selected";
+        if (isError) return "error";
         if (showSearchHintEnabled && !meetsMinSearchLength) return "hint";
         if (isLoading || isPendingSearch) return "loading";
         if (meetsMinSearchLength && items.length > 0) return "results";
@@ -161,6 +166,12 @@ export function SearchAndSelect({
                     aria-label={label}
                 />
             )}
+            {state === "error" && (
+                <div className="py-8 text-center text-grey-600 dark:text-grey-400">
+                    {errorText ?? t("search_and_select.directory_unavailable")}
+                </div>
+            )}
+
             {/* No results */}
             {(state === "no-results" || state === "no-results-add-new") && (
                 <div className="py-8 text-center text-grey-600 dark:text-grey-400">
