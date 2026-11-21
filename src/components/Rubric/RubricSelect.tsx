@@ -7,6 +7,7 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {RubricEntry} from "~/store/api/types/submissions.ts";
 
 interface RubricSelectProps {
+    ariaLabel?: string;
     label?: string;
     rubrics: RubricEntry[];
     onChange?: (selected: string) => void;
@@ -17,6 +18,7 @@ interface RubricSelectProps {
 }
 
 export function RubricSelect({
+    ariaLabel,
     label,
     rubrics,
     onChange,
@@ -39,6 +41,7 @@ export function RubricSelect({
 
     const {state, labelProps, triggerProps, valueProps} = useSelectControl(
         {
+            "aria-label": ariaLabel,
             label,
             placeholder: t("select"),
             value: value ?? null,

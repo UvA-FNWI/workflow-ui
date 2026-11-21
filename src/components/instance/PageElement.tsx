@@ -1,5 +1,3 @@
-import {useCallback} from "react";
-
 import {type Control, Controller, type FieldValues} from "react-hook-form";
 
 import {Callout, type CalloutType, cn, InputLabel, Text} from "@uva-fnwi/datanose-ui";
@@ -7,9 +5,9 @@ import {Callout, type CalloutType, cn, InputLabel, Text} from "@uva-fnwi/datanos
 import {InputControl} from "./InputControl";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import {answersApi} from "~/store/api/answersApi";
 import type {AnswerInput} from "~/store/api/types/params";
-import type {Answer, PageElement as PageElementType} from "~/store/api/types/submissions";
+import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
+import type {Answer, Choice, PageElement as PageElementType} from "~/store/api/types/submissions";
 import {isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageElementProps = {
@@ -20,6 +18,10 @@ type PageElementProps = {
     answer?: Answer;
     formControl?: Control<FieldValues>;
     showPercentages?: boolean;
+    onSave?: (answer: AnswerInput) => Promise<SaveAnswerResult>;
+    onChange?: (answer: AnswerInput) => void;
+    choices?: Choice[];
+    preview?: boolean;
 };
 
 export const PageElement = ({
@@ -30,15 +32,12 @@ export const PageElement = ({
     answer,
     formControl,
     showPercentages = false,
+    onSave,
+    onChange,
+    choices,
+    preview = false,
 }: PageElementProps) => {
     const {l, t, i18n} = useTranslate("workflow");
-
-    const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
-
-    const save = useCallback(
-        (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}).unwrap(),
-        [instanceId, submissionId, saveAnswer],
-    );
 
     switch (element.kind) {
         case "Text":
@@ -63,6 +62,14 @@ export const PageElement = ({
                 </Callout>
             );
         case "Question": {
+            if (preview && element.question?.type === "File" && answer?.isVisible) {
+                return (
+                    <div>
+                        <InputLabel>{l(element.question.text)}</InputLabel>
+                        <Text size="sm">{t("form_preview.uploads_unavailable")}</Text>
+                    </div>
+                );
+            }
             if (
                 !element.question ||
                 !answer ||
@@ -73,6 +80,12 @@ export const PageElement = ({
                 return null;
             const question = element.question;
             const errorMessage = answer?.validationError && l(answer.validationError);
+            const isPreviewCheckbox = preview && question.type === "Check";
+            const optionalLabel = !question.isRequired && (
+                <Text className={preview ? "shrink-0" : "text-grey-900 italic"} size="sm">
+                    {t(preview ? "form_preview.optional" : "optional")}
+                </Text>
+            );
             return (
                 <Controller
                     key={question.name}
@@ -87,7 +100,13 @@ export const PageElement = ({
                                 )}
                             >
                                 <div>
-                                    <div className="flex justify-between">
+                                    <div
+                                        className={
+                                            preview
+                                                ? "flex items-baseline justify-between gap-3"
+                                                : "flex justify-between"
+                                        }
+                                    >
                                         {question.type !== "Check" && (
                                             <InputLabel key={question.name}>
                                                 {l(question.text)}
@@ -97,11 +116,7 @@ export const PageElement = ({
                                                     ` (${question.percentage.toLocaleString(i18n.language)}%)`}
                                             </InputLabel>
                                         )}
-                                        {!question.isRequired && (
-                                            <Text className="text-grey-900 italic" size="sm">
-                                                {t("optional")}
-                                            </Text>
-                                        )}
+                                        {!isPreviewCheckbox && optionalLabel}
                                     </div>
                                     {question.description && (
                                         <div className="mr-2 mb-1 text-sm text-grey-600 dark:text-grey-400">
@@ -115,19 +130,29 @@ export const PageElement = ({
                                     className={cn(
                                         "w-full",
                                         showCompact && "max-w-full shrink-0 sm:w-32",
+                                        isPreviewCheckbox && "flex items-center gap-3",
                                     )}
                                 >
                                     <InputControl
                                         instanceId={instanceId}
                                         submissionId={submissionId}
                                         value={field.value}
-                                        onChange={field.onChange}
-                                        question={question}
-                                        onSave={save}
+                                        onChange={(value) => {
+                                            field.onChange(value);
+                                            onChange?.({questionName: question.name, value});
+                                        }}
+                                        question={
+                                            preview && question.type === "User"
+                                                ? {...question, allowsExternalUsers: false}
+                                                : question
+                                        }
+                                        onSave={onSave}
+                                        choices={choices}
                                         visibleChoices={answer?.visibleChoices}
                                         errorMessage={errorMessage}
                                         isValid={!errorMessage}
                                     />
+                                    {isPreviewCheckbox && optionalLabel}
                                 </div>
                             </div>
                         );

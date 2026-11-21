@@ -79,6 +79,23 @@
   },
   "form": "Form",
   "form_load_failed": "The form could not be loaded. Please try again.",
+  "form_preview": {
+    "average": "Average: {{value}}",
+    "calculation_progress": "{{answered}} of {{total}} values entered",
+    "choose_form": "Choose a form to preview.",
+    "complete_calculation": "Enter the remaining values to see the result.",
+    "form": "Form",
+    "no_active_pages": "This form has no pages to show with the current answers.",
+    "optional": "Optional",
+    "reset": "Reset answers",
+    "single_title": "Preview: {{form}}",
+    "switch_notice": "Switching forms clears your temporary answers.",
+    "temporary_notice": "Answers aren't saved.",
+    "title": "Preview forms",
+    "update_failed": "Couldn't update the preview. Adjust your answers or try again.",
+    "updating": "Updating calculation...",
+    "uploads_unavailable": "File uploads are unavailable in preview."
+  },
   "history": {
     "by": "By",
     "empty": "There is no history yet",
@@ -86,7 +103,6 @@
     "title": "History",
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
-
   "home": "Home",
   "instance": {
     "calculations": {
