@@ -90,14 +90,14 @@ describe('Checkbox Component', () => {
       expect(onChange).toHaveBeenCalledWith(false);
     });
 
-    test('can be toggled by clicking the visual checkbox span', () => {
+    test('can be toggled by clicking the visual checkbox span', async () => {
       const onChange = vi.fn();
       render(<Checkbox {...defaultProps} onChange={onChange} />);
 
       const visualCheckbox = document.querySelector(
         'span[class*="ui:relative"]'
       );
-      fireEvent.click(visualCheckbox!);
+      await userEvent.click(visualCheckbox!);
       expect(onChange).toHaveBeenCalledWith(true);
     });
 
@@ -155,7 +155,7 @@ describe('Checkbox Component', () => {
       render(<Checkbox {...defaultProps} isDisabled={true} />);
       const textElement = screen.getByText('Test Checkbox');
       // The Text component should receive secondary intent when disabled
-      expect(textElement).toHaveClass('ui:text-grey-600');
+      expect(textElement).toHaveClass('ui:text-grey-700');
     });
 
     test('shows primary text intent when not disabled', () => {
@@ -358,6 +358,60 @@ describe('Checkbox Component', () => {
       expect(label).toHaveClass('ui:cursor-not-allowed');
       expect(label).toHaveClass('ui:opacity-60');
       expect(label).toHaveClass('custom-class');
+    });
+  });
+  describe('Accessible name without visible label', () => {
+    test('uses aria-label on the native input', () => {
+      render(<Checkbox isSelected={false} aria-label="Select Jane Doe" />);
+      expect(
+        screen.getByRole('checkbox', { name: 'Select Jane Doe' })
+      ).toBeInTheDocument();
+    });
+
+    test('supports aria-labelledby', () => {
+      render(
+        <>
+          <span id="row-name">Jane Doe</span>
+          <Checkbox isSelected={false} aria-labelledby="row-name" />
+        </>
+      );
+      expect(
+        screen.getByRole('checkbox', { name: 'Jane Doe' })
+      ).toBeInTheDocument();
+    });
+
+    test('supports an external label via id', () => {
+      render(
+        <>
+          <label htmlFor="cb-1">Mandatory</label>
+          <Checkbox isSelected={false} id="cb-1" />
+        </>
+      );
+      expect(
+        screen.getByRole('checkbox', { name: 'Mandatory' })
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Indeterminate state', () => {
+    test('exposes the mixed state on the input', () => {
+      render(<Checkbox {...defaultProps} isIndeterminate />);
+      expect(
+        (screen.getByRole('checkbox') as HTMLInputElement).indeterminate
+      ).toBe(true);
+    });
+  });
+
+  describe('Toggling', () => {
+    test('calls onChange exactly once per click on the box', async () => {
+      const onChange = vi.fn();
+      render(<Checkbox {...defaultProps} onChange={onChange} />);
+
+      const visualCheckbox = document.querySelector(
+        'span[class*="ui:relative"]'
+      );
+      await userEvent.click(visualCheckbox!);
+      expect(onChange).toHaveBeenCalledTimes(1);
     });
   });
 });

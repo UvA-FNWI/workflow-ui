@@ -90,3 +90,21 @@ export const Invalid: StoryObj<typeof Checkbox> = {
     isValid: false,
   },
 };
+
+/** Without a visible label (e.g. table row selection), pass an aria-label. */
+export const WithoutVisibleLabel: StoryObj<typeof Checkbox> = {
+  render: InteractiveCheckbox,
+  args: {
+    'aria-label': 'Select Jane Doe',
+    isSelected: false,
+  },
+};
+
+/** Mixed state, e.g. a "select all" checkbox when some rows are selected. */
+export const Indeterminate: StoryObj<typeof Checkbox> = {
+  args: {
+    label: 'Select all',
+    isSelected: false,
+    isIndeterminate: true,
+  },
+};

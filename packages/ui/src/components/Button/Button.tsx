@@ -5,6 +5,7 @@ import { ButtonHTMLAttributes, forwardRef, ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
+import { devWarning } from '../../utils/devWarning';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 
 const buttonClassGenerator = cva(
@@ -26,6 +27,8 @@ const buttonClassGenerator = cva(
         medium: 'ui:h-8 ui:px-3 ui:text-sm',
         large: 'ui:h-10 ui:px-4 ui:text-base',
         square: 'ui:h-8 ui:w-8 ui:p-0',
+        // 24x24px: the WCAG 2.2 (2.5.8) minimum target size, for dense UIs such as table cells
+        'square-small': 'ui:h-6 ui:w-6 ui:min-w-6 ui:p-0',
       },
       shape: {
         circular: 'ui:rounded-full',
@@ -148,6 +151,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ...restProps
     } = props;
 
+    const hasChildren =
+      children !== undefined && children !== null && children !== '';
+    if (
+      !hasChildren &&
+      !restProps['aria-label'] &&
+      !restProps['aria-labelledby'] &&
+      !isLoading
+    ) {
+      devWarning(
+        'Button rendered without text content needs an aria-label or aria-labelledby. Consider <IconButton> for icon-only buttons.'
+      );
+    }
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled || isLoading) {
         event.preventDefault();
@@ -175,7 +191,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           className
         )}
         disabled={disabled || isLoading}
-        role="button"
+        aria-busy={!!isLoading}
       >
         {/* Content */}
         <div

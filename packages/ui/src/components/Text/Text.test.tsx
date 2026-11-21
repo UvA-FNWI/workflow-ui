@@ -68,7 +68,7 @@ describe('Text Component', () => {
     test('applies secondary intent', () => {
       render(<Text intent="secondary">Secondary text</Text>);
       const element = screen.getByText('Secondary text');
-      expect(element).toHaveClass('ui:text-grey-600');
+      expect(element).toHaveClass('ui:text-grey-700');
     });
   });
 
@@ -268,7 +268,7 @@ describe('Text Component', () => {
         </Text>
       );
       const element = screen.getByText('Complex text');
-      expect(element).toHaveClass('ui:text-grey-600');
+      expect(element).toHaveClass('ui:text-grey-700');
       expect(element).toHaveClass('ui:text-lg');
       expect(element).toHaveClass('ui:underline');
       expect(element).toHaveClass('ui:uppercase');

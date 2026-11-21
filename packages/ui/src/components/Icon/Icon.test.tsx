@@ -26,6 +26,7 @@ describe('Icon Component', () => {
 
   const defaultProps = {
     name: 'test-icon' as IconType,
+    label: 'Test icon',
   };
 
   beforeEach(async () => {
@@ -129,15 +130,61 @@ describe('Icon Component', () => {
   });
 
   describe('Accessibility', () => {
-    test('has proper role and aria attributes by default', async () => {
+    test('exposes role="img" with the label when a label is given', async () => {
       render(<Icon {...defaultProps} />);
 
       await waitFor(() => {
         const svg = screen.getByRole('img');
         expect(svg).toHaveAttribute('role', 'img');
-        expect(svg).toHaveAttribute('aria-label', 'test-icon');
+        expect(svg).toHaveAttribute('aria-label', 'Test icon');
         expect(svg).not.toHaveAttribute('aria-hidden');
       });
+    });
+
+    test('is decorative when no label is given (never uses the sprite name)', async () => {
+      render(<Icon name={'test-icon' as IconType} />);
+
+      await waitFor(() => {
+        const svg = document.querySelector('svg');
+        expect(svg).toHaveAttribute('aria-hidden', 'true');
+        expect(svg).not.toHaveAttribute('role');
+        expect(svg).not.toHaveAttribute('aria-label');
+      });
+    });
+
+    test('accepts aria-label as an alternative to label', async () => {
+      render(<Icon name={'test-icon' as IconType} aria-label="Via aria" />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('img', { name: 'Via aria' })
+        ).toBeInTheDocument();
+      });
+    });
+
+    test('an explicit aria-hidden wins over the label', async () => {
+      render(<Icon {...defaultProps} aria-hidden />);
+
+      await waitFor(() => {
+        const svg = document.querySelector('svg');
+        expect(svg).toHaveAttribute('aria-hidden', 'true');
+        expect(svg).not.toHaveAttribute('role');
+        expect(svg).not.toHaveAttribute('aria-label');
+      });
+    });
+
+    test('warns in development when an onClick is passed', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      render(
+        <Icon
+          {...defaultProps}
+          name={'another-icon' as IconType}
+          onClick={() => {}}
+        />
+      );
+
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('IconButton'));
+      warn.mockRestore();
     });
 
     test('uses custom label when provided', async () => {

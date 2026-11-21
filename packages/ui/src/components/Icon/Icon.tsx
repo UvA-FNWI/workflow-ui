@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '../../utils/cn';
+import { devWarning } from '../../utils/devWarning';
 import { IconType } from './IconTypes';
 import { loadSprite, SPRITE_ID } from './spriteData';
 
@@ -86,11 +87,18 @@ export interface IconProps
     VariantProps<typeof iconVariants> {
   /** Icon name from the sprite (e.g., 'accessibility-line', 'alarm-solid') */
   name: IconType;
-  /** Accessible label for screen readers */
+  /**
+   * Accessible label for screen readers. When provided (and the icon is not
+   * decorative) the icon is exposed as `role="img"` with this name. Without a
+   * label the icon is treated as decorative: the sprite name is never used as
+   * an accessible name, because it is not meaningful to users.
+   */
   label?: string;
   /** Whether the icon is decorative only (hidden from screen readers) */
   decorative?: boolean;
 }
+
+const isTruthyAria = (value: unknown) => value === true || value === 'true';
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -99,8 +107,20 @@ export const Icon: React.FC<IconProps> = ({
   label,
   decorative = false,
   className,
+  'aria-label': ariaLabelProp,
+  'aria-hidden': ariaHiddenProp,
   ...props
 }) => {
+  const accessibleName = label ?? ariaLabelProp;
+  const isHidden =
+    decorative || isTruthyAria(ariaHiddenProp) || !accessibleName;
+
+  if (props.onClick) {
+    devWarning(
+      `Icon "${name}" received an onClick handler. An <svg> is not focusable or keyboard operable; use <IconButton> instead.`
+    );
+  }
+
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -129,10 +149,11 @@ export const Icon: React.FC<IconProps> = ({
   return (
     <svg
       className={cn(iconClasses, className)}
-      aria-hidden={decorative || undefined}
-      aria-label={!decorative ? label || name : undefined}
-      role={!decorative ? 'img' : undefined}
       {...props}
+      aria-hidden={isHidden || undefined}
+      aria-label={isHidden ? undefined : accessibleName}
+      role={isHidden ? undefined : 'img'}
+      focusable="false"
     >
       {isReady && <use href={`#${name}`} />}
     </svg>
