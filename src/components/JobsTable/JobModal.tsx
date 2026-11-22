@@ -35,7 +35,7 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
     const [runJob, {isLoading: isRunning}] = jobsEndpoints.runJob.useMutation();
 
     const handleRun = async () => {
-        if (!jobId) {
+        if (!jobId || !job?.canRun) {
             return;
         }
         await runJob({instanceId, jobId});
@@ -61,14 +61,16 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
                     {job && <JobDetails job={job} locale={i18n.language} />}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button
-                        intent="primary"
-                        size="large"
-                        onClick={() => setIsRunConfirmOpen(true)}
-                        disabled={!jobId || job?.status === "Running" || isRunning || isLoading}
-                    >
-                        {modal.run}
-                    </Button>
+                    {job?.canRun && (
+                        <Button
+                            intent="primary"
+                            size="large"
+                            onClick={() => setIsRunConfirmOpen(true)}
+                            disabled={job.status === "Running" || isRunning}
+                        >
+                            {modal.run}
+                        </Button>
+                    )}
                     <Button
                         intent="secondary"
                         variant="destructive"
@@ -80,7 +82,11 @@ export const JobModal = ({jobId, instanceId, isOpen, onClose}: JobModalProps) =>
                 </Modal.Footer>
             </Modal>
 
-            <Modal isOpen={isRunConfirmOpen} onOpenChange={setIsRunConfirmOpen} size="sm">
+            <Modal
+                isOpen={isRunConfirmOpen && !!job?.canRun}
+                onOpenChange={setIsRunConfirmOpen}
+                size="sm"
+            >
                 <Modal.Header>{t("are_you_sure")}</Modal.Header>
                 <Modal.Body>
                     <Text>{modal.confirmRunMessage}</Text>

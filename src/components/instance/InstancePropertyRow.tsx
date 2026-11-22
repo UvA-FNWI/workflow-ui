@@ -15,6 +15,7 @@ type Props = {
     /** Dotted path from the instance root. */
     path: string;
     values: Record<string, unknown>;
+    editablePaths: ReadonlySet<string>;
     onSave: (path: string, value: unknown) => Promise<{error?: unknown}>;
 };
 
@@ -30,7 +31,14 @@ const EDITABLE_TYPES: DataType[] = [
     "Reference",
 ];
 
-export const InstancePropertyRow = ({instanceId, question, path, values, onSave}: Props) => {
+export const InstancePropertyRow = ({
+    instanceId,
+    question,
+    path,
+    values,
+    editablePaths,
+    onSave,
+}: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isEditing, setIsEditing] = useState(false);
 
@@ -40,6 +48,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
 
     const value = values[path];
     const label = l(question.text) ?? question.name;
+    const canEdit = editablePaths.has(path) && EDITABLE_TYPES.includes(question.type);
 
     const {
         data: referenceChoices,
@@ -67,6 +76,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                             question={child}
                             path={`${path}.${child.name}`}
                             values={values}
+                            editablePaths={editablePaths}
                             onSave={onSave}
                         />
                     ))}
@@ -82,7 +92,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
               ? question.choices
               : undefined;
 
-    if (isEditing) {
+    if (canEdit && isEditing) {
         return (
             <div className={ROW_CLASSES}>
                 <Text fontWeight="semibold">{label}</Text>
@@ -147,7 +157,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                         {formatted || "-"}
                     </Text>
                 )}
-                {EDITABLE_TYPES.includes(question.type) && (
+                {canEdit && (
                     <Button
                         intent="ghost"
                         size="small"
