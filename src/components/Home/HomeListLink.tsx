@@ -10,7 +10,7 @@ type HomeListLinkProps = Pick<LinkProps, "to" | "state"> & {
     title: string;
     subtitle: string;
     icon: ReactNode;
-    iconClassName: string;
+    iconClassName?: string;
 };
 
 export function HomeListLink({to, state, title, subtitle, icon, iconClassName}: HomeListLinkProps) {
@@ -20,14 +20,14 @@ export function HomeListLink({to, state, title, subtitle, icon, iconClassName}: 
             state={state}
             className="group hover:bg-grey-50 flex items-center gap-4 px-5 py-3 text-grey-900 transition-colors focus-visible:outline focus-visible:-outline-offset-2 dark:text-grey-100 dark:hover:bg-grey-700"
         >
-            <span
+            <div
                 className={cn(
                     "flex size-11 shrink-0 items-center justify-center rounded-full",
                     iconClassName,
                 )}
             >
                 {icon}
-            </span>
+            </div>
             <span className="flex min-w-0 flex-1 flex-col">
                 <Text as="span" fontWeight="semibold" className="break-words">
                     {title}

@@ -64,11 +64,11 @@ const availableDefinitions = [
 
 async function renderHome(
     path: string,
-    {definitions = availableDefinitions, showRoleTabs = false} = {},
+    {definitions = availableDefinitions, people = [person], showRoleTabs = false} = {},
 ) {
     search.mockImplementation((query) => ({
         currentData: {
-            people: query === "ada" || query === person.email ? [person] : [],
+            people: query === "ada" || query === person.email ? people : [],
             hasMore: false,
         },
     }));
@@ -134,6 +134,44 @@ afterEach(() => {
     cleanup();
     vi.useRealTimers();
     vi.clearAllMocks();
+});
+
+it("shows a profile picture when available and initials otherwise", async () => {
+    const picture = "/avatar.png";
+    await renderHome("/?search=ada", {
+        people: [person, {...person, id: "person-2", displayName: "Alma Example", picture}],
+    });
+
+    const withoutPicture = within(screen.getByRole("link", {name: /^Ada Example/}));
+    expect(withoutPicture.getByText("A. E.")).toBeVisible();
+    expect(withoutPicture.queryByAltText("Ada Example")).not.toBeInTheDocument();
+
+    const withPicture = within(screen.getByRole("link", {name: /^Alma Example/}));
+    const image = withPicture.getByAltText("Alma Example");
+    expect(image).toHaveAttribute("src", picture);
+    fireEvent.load(image);
+    expect(image).toBeVisible();
+    expect(withPicture.queryByText("A. E.")).not.toBeInTheDocument();
+});
+
+it("shows the organization when available and a student number or email", async () => {
+    await renderHome("/?search=ada", {
+        people: [
+            {...person, userName: "1234567", organization: {id: "fnwi", name: "FNWI"}},
+            {
+                ...person,
+                id: "person-2",
+                displayName: "Alma Example",
+                userName: "alma1234",
+                email: "alma@example.com",
+            },
+        ],
+    });
+
+    const student = within(screen.getByRole("link", {name: /^Ada Example/}));
+    const employee = within(screen.getByRole("link", {name: /^Alma Example/}));
+    expect(student.getByText("FNWI - 1234567")).toBeVisible();
+    expect(employee.getByText("alma@example.com")).toBeVisible();
 });
 
 it("keeps the committed search view until typing pauses", async () => {
