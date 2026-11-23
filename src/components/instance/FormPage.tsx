@@ -27,8 +27,7 @@ type Props = {
     onClose: () => void;
     previousVersion?: number;
     renderLayout?: (content: ReactNode, actions: ReactNode) => ReactNode;
-    canAddMessages?: boolean;
-    canViewMessages?: boolean;
+    showMessages?: boolean;
     messageUi?: MessageUiSettings;
 };
 
@@ -38,8 +37,7 @@ export const FormPage = ({
     onClose,
     previousVersion,
     renderLayout,
-    canAddMessages = false,
-    canViewMessages = false,
+    showMessages = false,
     messageUi,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
@@ -154,8 +152,7 @@ export const FormPage = ({
                                     <FormSummary
                                         submission={submission}
                                         instanceId={instanceId}
-                                        canAddMessages={canAddMessages}
-                                        canViewMessages={canViewMessages}
+                                        showMessages={showMessages}
                                         messageUi={messageUi}
                                         onEditPage={onEditPage}
                                     />

@@ -6,7 +6,6 @@ import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {AnswerChangesModal} from "~/components/instance/AnswerChangesModal.tsx";
 import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
 import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
-import {fieldMessageQuestionName} from "~/components/instance/messageVisibility.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
@@ -17,9 +16,6 @@ type Props = {
     submissionId?: string;
     canEdit?: boolean;
     showMessages?: boolean;
-    canAddMessages?: boolean;
-    canViewMessages?: boolean;
-    messagePropertyName?: string | null;
     messageUi?: MessageUiSettings;
 };
 
@@ -29,9 +25,6 @@ export const QuestionAnswerList = ({
     submissionId,
     canEdit = false,
     showMessages = true,
-    canAddMessages = false,
-    canViewMessages = false,
-    messagePropertyName,
     messageUi,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
@@ -72,17 +65,10 @@ export const QuestionAnswerList = ({
                         </div>
 
                         <div className="flex min-w-0 items-start gap-1">
-                            {showMessages && (
+                            {showMessages && question.messages && (
                                 <FieldMessageBalloon
-                                    instanceId={instanceId}
-                                    questionName={fieldMessageQuestionName(
-                                        messagePropertyName,
-                                        question.name,
-                                    )}
+                                    {...question.messages}
                                     fieldLabel={l(question.text) ?? question.name}
-                                    allowMessages={question.allowMessages}
-                                    canAdd={canAddMessages}
-                                    canView={canViewMessages}
                                     messageUi={messageUi}
                                 />
                             )}

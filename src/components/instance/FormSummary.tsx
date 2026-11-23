@@ -12,8 +12,7 @@ type Props = {
     submission: Submission;
     onEditPage?: (pageName: string) => void;
     collapseAnswers?: boolean;
-    canAddMessages?: boolean;
-    canViewMessages?: boolean;
+    showMessages?: boolean;
     messageUi?: MessageUiSettings;
 };
 
@@ -21,8 +20,7 @@ export const FormSummary = ({
     instanceId,
     submission,
     onEditPage,
-    canAddMessages = false,
-    canViewMessages = false,
+    showMessages = true,
     messageUi,
 }: Props) => {
     const {l} = useTranslate("workflow");
@@ -42,9 +40,7 @@ export const FormSummary = ({
                 submissions={[submission]}
                 onEditPage={onEditPage}
                 combine={false}
-                canAddMessages={canAddMessages}
-                canViewMessages={canViewMessages}
-                messagePropertyName={submission.form.propertyName}
+                showMessages={showMessages}
                 messageUi={messageUi}
             />
         );
@@ -73,9 +69,7 @@ export const FormSummary = ({
                             instanceId={instanceId}
                             submissionId={submission.id}
                             canEdit={canEdit}
-                            canAddMessages={canAddMessages}
-                            canViewMessages={canViewMessages}
-                            messagePropertyName={submission.form.propertyName}
+                            showMessages={showMessages}
                             messageUi={messageUi}
                         />
                     </div>

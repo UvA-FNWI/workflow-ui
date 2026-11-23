@@ -59,7 +59,6 @@ export type Form = {
     layout: FormLayout;
     pages: Page[];
     step?: string;
-    propertyName?: string | null;
     confirmation?: FormConfirmation;
 };
 
@@ -89,7 +88,12 @@ export type QuestionBase = {
     description?: LocalString | null;
     shortText?: LocalString | null;
     linkedTo?: string | null;
-    allowMessages?: boolean;
+    messages?: {
+        instanceId: string;
+        questionName: string;
+        canView: boolean;
+        canAdd: boolean;
+    } | null;
 };
 
 export type WeightedQuestionBase = QuestionBase & {

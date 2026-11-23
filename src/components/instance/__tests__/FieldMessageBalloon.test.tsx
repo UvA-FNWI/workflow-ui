@@ -16,10 +16,15 @@ import {afterEach, beforeAll, describe, expect, it, vi} from "vitest";
 import enWorkflow from "../../../../public/locales/en/workflow.json";
 import {FieldMessageBalloon} from "../FieldMessageBalloon";
 import {defaultMessageUi} from "../instanceMessageSettings";
+import {QuestionAnswerList} from "../QuestionAnswerList";
+import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/AssessmentQuestionAnswerList";
+import type {QuestionAnswerPair} from "~/utils/submissionUtils";
 
 const {getMessages} = vi.hoisted(() => ({
     getMessages: vi.fn(),
 }));
+
+vi.mock("~/components/instance/AnswerCell.tsx", () => ({AnswerCell: () => null}));
 
 vi.mock("~/store/api/messagesApi", () => ({
     messagesEndpoints: {
@@ -42,19 +47,77 @@ const render = (ui: ReactNode) =>
     renderComponent(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
 
 describe("FieldMessageBalloon", () => {
-    it("renders nothing when allowMessages is false", () => {
+    it.each(["form", "assessment"])("uses the field message target in the %s summary", (view) => {
+        const pair: QuestionAnswerPair = {
+            question: {
+                type: "String",
+                name: "Consent",
+                text: {en: "Consent", nl: "Toestemming"},
+                isRequired: false,
+                isArray: false,
+                hideInResults: false,
+                messages: {
+                    instanceId: "assessment-owner",
+                    questionName: "AssessmentSupervisor.Consent",
+                    canView: true,
+                    canAdd: false,
+                },
+            },
+            answer: null,
+            percentage: null,
+        };
+        getMessages.mockReturnValue({
+            data: [
+                {
+                    id: "correct-thread",
+                    questionName: "AssessmentSupervisor.Consent",
+                    isClosed: false,
+                    items: [
+                        {
+                            id: "comment-1",
+                            parentItemId: null,
+                            dateTime: "2026-09-17T10:00:00Z",
+                            user: {id: "user-1", displayName: "Ada Lovelace"},
+                            kind: "Message",
+                            body: "An assessment comment",
+                        },
+                    ],
+                },
+            ],
+            isSuccess: true,
+        });
+        render(
+            view === "form" ? (
+                <QuestionAnswerList instanceId="project" questionAnswerPairs={[pair]} />
+            ) : (
+                <AssessmentQuestionAnswerList
+                    instanceId="project"
+                    rows={[pair]}
+                    questionAnswerPairs={[[pair]]}
+                />
+            ),
+        );
+
+        expect(getMessages).toHaveBeenLastCalledWith("assessment-owner", {skip: false});
+        fireEvent.click(screen.getByRole("button", {name: "Comments on this field"}));
+        const dialog = within(screen.getByRole("dialog"));
+        expect(dialog.getByText("An assessment comment")).toBeVisible();
+        expect(dialog.queryByRole("textbox")).not.toBeInTheDocument();
+    });
+
+    it("skips loading and renders nothing without view permission", () => {
         getMessages.mockReturnValue({data: [], isSuccess: true});
         const {container} = render(
             <FieldMessageBalloon
                 instanceId="instance-1"
                 questionName="Title"
                 fieldLabel="Working title"
-                allowMessages={false}
                 canAdd
-                canView
+                canView={false}
             />,
         );
         expect(container).toBeEmptyDOMElement();
+        expect(getMessages).toHaveBeenLastCalledWith("instance-1", {skip: true});
     });
 
     it.each([
@@ -74,7 +137,6 @@ describe("FieldMessageBalloon", () => {
                 instanceId="instance-1"
                 questionName="Title"
                 fieldLabel="Working title"
-                allowMessages
                 canAdd
                 canView
             />,
@@ -102,7 +164,6 @@ describe("FieldMessageBalloon", () => {
                 instanceId="instance-1"
                 questionName="Title"
                 fieldLabel="Working title"
-                allowMessages
                 canAdd
                 canView
                 messageUi={{
@@ -170,7 +231,6 @@ describe("FieldMessageBalloon", () => {
                 instanceId="instance-1"
                 questionName="Title"
                 fieldLabel="Working title"
-                allowMessages
                 canAdd
                 canView
                 messageUi={{
