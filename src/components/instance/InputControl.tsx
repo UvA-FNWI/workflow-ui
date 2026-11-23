@@ -226,6 +226,7 @@ export const InputControl = ({
                 value={value as UserSearchResult | UserSearchResult[] | null | undefined}
                 onChange={(newValue) => debouncedChange(newValue)}
                 allowsExternalUsers={question.allowsExternalUsers}
+                userSearchOptions={question.userSearchOptions}
                 onCreateExternalUser={handleCreateExternalUser}
                 selectionMode={question.isArray ? "multiple" : "single"}
             />

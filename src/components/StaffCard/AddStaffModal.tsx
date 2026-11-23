@@ -59,12 +59,13 @@ export default function AddStaffModal({
         }
     }, [isOpen, initialRole]);
 
-    const {isReplacing, currentName, currentRole} = useMemo(() => {
+    const {isReplacing, currentName, currentRole, userSearchOptions} = useMemo(() => {
         if (!selectedRole || !relatedUserGroups)
             return {
                 isReplacing: false,
                 currentName: "",
                 currentRole: {en: "", nl: ""} as LocalString,
+                userSearchOptions: undefined,
             };
         const matchedRole = relatedUserGroups
             .flatMap((ug) => ug.userRoles)
@@ -74,6 +75,7 @@ export default function AddStaffModal({
                 !!matchedRole && !matchedRole.allowsMultipleUsers && matchedRole.users.length >= 1,
             currentName: matchedRole?.users[0]?.displayName ?? "",
             currentRole: matchedRole?.title ?? ({en: "", nl: ""} as LocalString),
+            userSearchOptions: matchedRole?.userSearchOptions,
         };
     }, [selectedRole, relatedUserGroups]);
 
@@ -123,11 +125,20 @@ export default function AddStaffModal({
                         <Select
                             placeholder={t("make_a_choice")}
                             value={selectedRole?.name}
-                            onChange={(value) =>
-                                setSelectedRole(
-                                    instanceRoles?.find((role) => role.name === value) ?? null,
-                                )
-                            }
+                            onChange={(value) => {
+                                const nextRole = instanceRoles.find((role) => role.name === value);
+                                const nextRoleDetails = relatedUserGroups
+                                    ?.flatMap((group) => group.userRoles)
+                                    .find((role) => role.role === value);
+                                if (
+                                    value !== selectedRole?.name &&
+                                    (userSearchOptions || nextRoleDetails?.userSearchOptions)
+                                ) {
+                                    setSelectedUsers([]);
+                                    setExternalUser(null);
+                                }
+                                setSelectedRole(nextRole ?? null);
+                            }}
                             isDisabled={disableRoleSelection}
                         >
                             {instanceRoles?.map((role) => (
@@ -140,12 +151,13 @@ export default function AddStaffModal({
                     <div>
                         <InputLabel>{t("staff_card.add_modal.choose_staff")}</InputLabel>
                         <UserPickerInput
-                            key={selectedUsers.map((u) => u.email).join(",")}
+                            key={`${userSearchOptions ? selectedRole?.name : ""}:${selectedUsers.map((user) => user.userName).join(",")}`}
                             initialSelection={selectedUsers}
                             onSelectionChange={setSelectedUsers}
                             searchPlaceholder={t("make_a_choice")}
                             autoFocus={false}
                             allowsExternalUsers={allowsExternalUsers}
+                            userSearchOptions={userSearchOptions}
                             showSelectedEmail={true}
                         />
                     </div>

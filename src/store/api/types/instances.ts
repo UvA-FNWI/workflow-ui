@@ -9,7 +9,7 @@ import type {
     StepResultsType,
     Submission,
 } from "~/store/api/types/submissions.ts";
-import type {UserSearchResult} from "~/store/api/types/users.ts";
+import type {UserSearchOptions, UserSearchResult} from "~/store/api/types/users.ts";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions.ts";
 
 export type WorkflowInstanceField = {
@@ -174,6 +174,7 @@ export type RelatedUserRoles = {
     title: LocalString;
     users: (UserSearchResult & {id: string})[];
     allowsExternalUsers: boolean;
+    userSearchOptions?: UserSearchOptions | null;
     allowsAssignment: boolean;
     allowsMultipleUsers: boolean;
     canEdit: boolean;

@@ -1,5 +1,9 @@
 import type {Organization} from "./organizations";
 
+export type UserSearchOptions = {
+    include: readonly ("Employees" | "Students")[];
+};
+
 export interface UserSearchResult {
     id?: string;
     userName: string;

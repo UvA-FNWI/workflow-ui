@@ -11,6 +11,8 @@ import type {
 export type FindUsersParams = {
     query: string;
     includeExternalUsers: boolean;
+    includeEmployees?: boolean;
+    includeStudents?: boolean;
 };
 
 export const usersApi = baseApi.injectEndpoints({
@@ -19,9 +21,9 @@ export const usersApi = baseApi.injectEndpoints({
             query: () => "/Users/Me",
         }),
         findUsers: builder.query<UserSearchResult[], FindUsersParams>({
-            query: ({query, includeExternalUsers}) => ({
+            query: (params) => ({
                 url: "/Users/Find",
-                params: {query, includeExternalUsers},
+                params,
             }),
         }),
         verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({

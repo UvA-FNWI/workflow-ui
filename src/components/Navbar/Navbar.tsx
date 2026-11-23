@@ -142,6 +142,7 @@ function Navbar() {
                     isOpen={isPickerOpen}
                     onOpenChange={setIsPickerOpen}
                     selectionMode="single"
+                    userSearchOptions={{include: ["Employees", "Students"]}}
                     title={t("impersonate_modal_title")}
                     onConfirm={(users) => void handleImpersonate(users)}
                 />

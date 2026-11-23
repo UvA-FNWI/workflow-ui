@@ -3,7 +3,7 @@ import {useCallback, useMemo, useState} from "react";
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {UserSearchResult} from "~/store/api/types/users";
+import type {UserSearchOptions, UserSearchResult} from "~/store/api/types/users";
 import {useLazyFindUsersQuery} from "~/store/api/usersApi";
 
 // Selection type from react-stately
@@ -17,6 +17,7 @@ export interface UserPickerInputProps {
     showSearchHint?: boolean;
     minSearchLength?: number;
     allowsExternalUsers?: boolean;
+    userSearchOptions?: UserSearchOptions | null;
     autoFocus?: boolean;
     showSelectedEmail?: boolean;
 }
@@ -30,6 +31,7 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
     minSearchLength,
     autoFocus,
     allowsExternalUsers,
+    userSearchOptions,
     showSelectedEmail = false,
 }) => {
     const {t} = useTranslate("workflow");
@@ -37,18 +39,30 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
     const resetSearch = searchState.reset;
     const includeExternalUsers = allowsExternalUsers ?? false;
+    const includeEmployees = userSearchOptions?.include.includes("Employees");
+    const includeStudents = userSearchOptions?.include.includes("Students");
     const searchResults = useMemo(() => {
         const results = searchState.data ?? [];
         return includeExternalUsers ? results : results.filter((user) => !user.isExternal);
     }, [includeExternalUsers, searchState.data]);
 
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
-        return searchResults.map((user) => ({
-            key: user.userName,
-            primaryValue: user.displayName,
-            secondaryValue: user.email,
-            tertiaryValue: user.organization?.name,
-        }));
+        return searchResults.map((user) => {
+            const hasMatchingDetails = searchResults.some(
+                (other) =>
+                    other.userName !== user.userName &&
+                    other.displayName === user.displayName &&
+                    other.email === user.email,
+            );
+            return {
+                key: user.userName,
+                primaryValue: user.displayName,
+                secondaryValue: hasMatchingDetails
+                    ? `${user.userName} | ${user.email}`
+                    : user.email,
+                tertiaryValue: user.organization?.name,
+            };
+        });
     }, [searchResults]);
 
     // Store all encountered users
@@ -82,9 +96,9 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
     const searchPlaceholderText = searchPlaceholder ?? t("user_picker.search_placeholder");
     const handleSearch = useCallback(
         (query: string) => {
-            triggerSearch({query, includeExternalUsers});
+            triggerSearch({query, includeExternalUsers, includeEmployees, includeStudents});
         },
-        [includeExternalUsers, triggerSearch],
+        [includeEmployees, includeExternalUsers, includeStudents, triggerSearch],
     );
 
     const initialSearchQuery =
