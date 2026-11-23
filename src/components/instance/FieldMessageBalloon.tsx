@@ -62,7 +62,7 @@ export function FieldMessageBalloon({
                     <Icon
                         name={hasNotes ? "bubble-message-solid" : "bubble-message-line"}
                         size="xs"
-                        color="danger"
+                        color={hasNotes ? "danger" : "current"}
                         decorative
                     />
                 </Button>

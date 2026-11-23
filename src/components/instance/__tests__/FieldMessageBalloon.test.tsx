@@ -83,7 +83,11 @@ describe("FieldMessageBalloon", () => {
         const trigger = screen.getByRole("button", {name: "Comments on this field"});
         const svg = trigger.querySelector("svg");
         expect(svg).toHaveAttribute("aria-hidden", "true");
-        expect(svg).toHaveClass("ui:text-red-600", "ui:dark:text-red-400");
+        if (isClosed === null) {
+            expect(svg).toHaveClass("ui:text-current");
+        } else {
+            expect(svg).toHaveClass("ui:text-red-600", "ui:dark:text-red-400");
+        }
         expect(container).not.toHaveTextContent(/\d/);
         await waitFor(() =>
             expect(trigger.querySelector("use")).toHaveAttribute("href", `#${icon}`),
