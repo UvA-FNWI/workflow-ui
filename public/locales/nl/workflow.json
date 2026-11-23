@@ -233,14 +233,16 @@
     "title": "Actie ongedaan maken"
   },
   "user_picker": {
-    "no_results": "Geen medewerkers gevonden",
+    "no_results": "Geen gebruikers gevonden",
     "not_in_list": "Niet in lijst",
-    "search_hint_one": "Zoek een medewerker",
-    "search_hint_other": "Zoek medewerkers",
-    "search_placeholder": "Zoek een medewerker",
+    "search_hint_one": "Zoek een gebruiker",
+    "search_hint_other": "Zoek gebruikers",
+    "search_placeholder": "Zoek een gebruiker",
     "selected_users_one": "{{count}} gebruiker geselecteerd",
     "selected_users_other": "{{count}} gebruikers geselecteerd",
-    "title": "Zoek medewerker"
+    "title": "Zoek medewerker",
+    "title_student": "Zoek student",
+    "title_user": "Zoek gebruiker"
   },
   "validation": {
     "email": "Vul een geldig e-mailadres in",

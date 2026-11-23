@@ -241,7 +241,9 @@
     "search_placeholder": "Search for a user",
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
-    "title": "Search user"
+    "title": "Search employee",
+    "title_student": "Search student",
+    "title_user": "Search user"
   },
   "validation": {
     "email": "Please enter a valid email address",
