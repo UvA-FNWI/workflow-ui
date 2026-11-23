@@ -6,16 +6,16 @@ import type {UserDto} from "~/store/api/types/users";
 
 export function UserLink({user}: {user: UserDto}) {
     const {pathname, search} = useLocation();
-    const userName = user.userName?.trim() ?? "";
-    const isStudentNumber = !user.isExternal && /^\d{7}$/.test(userName);
-    const identifier = isStudentNumber ? userName : user.email?.trim() || userName;
+    const subtitle = [user.organization?.name?.trim(), user.userName?.trim(), user.email?.trim()]
+        .filter(Boolean)
+        .join(" - ");
 
     return (
         <HomeListLink
             to={`/personal/${encodeURIComponent(user.id)}`}
             state={{from: {pathname, search}}}
             title={user.displayName}
-            subtitle={[user.organization?.name?.trim(), identifier].filter(Boolean).join(" - ")}
+            subtitle={subtitle}
             icon={
                 <UserAvatar
                     userName={user.displayName}

@@ -93,7 +93,7 @@
     "label": "Zoek personen en workflows",
     "loading": "Zoeken…",
     "people": "Personen",
-    "placeholder": "Zoek op project, persoon of studentnummer",
+    "placeholder": "Zoek op workflow of persoon",
     "query_length": "Voer 2 tot 200 tekens in.",
     "refine": "Er zijn meer resultaten. Verfijn je zoekopdracht om ze te vinden.",
     "results_one": "{{count}} resultaat voor ‘{{query}}’",

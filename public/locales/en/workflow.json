@@ -94,7 +94,7 @@
     "label": "Search people and workflows",
     "loading": "Searching…",
     "people": "People",
-    "placeholder": "Search by project, person or studentnumber",
+    "placeholder": "Search by workflow or person",
     "query_length": "Enter between 2 and 200 characters.",
     "refine": "More people matched. Refine your search to find them.",
     "results_one": "{{count}} result for “{{query}}”",

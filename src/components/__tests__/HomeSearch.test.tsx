@@ -154,7 +154,7 @@ it("shows a profile picture when available and initials otherwise", async () => 
     expect(withPicture.queryByText("A. E.")).not.toBeInTheDocument();
 });
 
-it("shows the organization when available and a student number or email", async () => {
+it("shows the organization when available, followed by the username and email", async () => {
     await renderHome("/?search=ada", {
         people: [
             {...person, userName: "1234567", organization: {id: "fnwi", name: "FNWI"}},
@@ -170,8 +170,8 @@ it("shows the organization when available and a student number or email", async 
 
     const student = within(screen.getByRole("link", {name: /^Ada Example/}));
     const employee = within(screen.getByRole("link", {name: /^Alma Example/}));
-    expect(student.getByText("FNWI - 1234567")).toBeVisible();
-    expect(employee.getByText("alma@example.com")).toBeVisible();
+    expect(student.getByText("FNWI - 1234567 - ada@example.com")).toBeVisible();
+    expect(employee.getByText("alma1234 - alma@example.com")).toBeVisible();
 });
 
 it("keeps the committed search view until typing pauses", async () => {
