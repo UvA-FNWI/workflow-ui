@@ -78,12 +78,61 @@ async function renderCard(
 
 describe("CommentsCard", () => {
     it.each([
+        {canAdd: true, currentData: undefined},
+        {canAdd: false, currentData: [{...note, questionName: "Title"}]},
+    ])(
+        "shows a load error without cached instance comments (can add: $canAdd)",
+        async ({canAdd, currentData}) => {
+            getMessages.mockReturnValue({
+                data: currentData ?? [note],
+                currentData,
+                isError: true,
+                isSuccess: false,
+            });
+            await renderCard(canAdd ? instance : {...instance, permissions: ["ViewMessages"]});
+
+            expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+            fireEvent.click(screen.getByRole("button", {name: /^Comments/}));
+
+            expect(screen.getByRole("alert")).toHaveTextContent("Couldn’t load comments.");
+            expect(screen.queryByText("No comments yet.")).not.toBeInTheDocument();
+            expect(screen.queryByText("An existing comment")).not.toBeInTheDocument();
+        },
+    );
+
+    it("shows the empty message after a successful load", async () => {
+        getMessages.mockReturnValue({isLoading: true, isSuccess: false});
+        await renderCard(instance);
+        const disclosure = screen.getByRole("button", {name: /^Comments/});
+        fireEvent.click(disclosure);
+
+        expect(screen.queryByText("No comments yet.")).not.toBeInTheDocument();
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+        getMessages.mockReturnValue({currentData: [], isSuccess: true});
+        fireEvent.click(disclosure);
+        fireEvent.click(disclosure);
+
+        expect(screen.getByText("No comments yet.")).toBeVisible();
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
+
+    it("keeps cached comments visible to readers after a failed refetch", async () => {
+        getMessages.mockReturnValue({currentData: [note], isError: true, isSuccess: false});
+        await renderCard({...instance, permissions: ["ViewMessages"]});
+        fireEvent.click(screen.getByRole("button", {name: /^Comments/}));
+
+        expect(screen.getByText("An existing comment")).toBeVisible();
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
+
+    it.each([
         ["en", false, "Comments", "Add comment", "1 open"],
         ["nl", true, "Notities", "Notitie toevoegen", "1 gesloten"],
     ] as const)(
         "uses the default %s heading and status pill without a configured title",
         async (language, isClosed, heading, add, summary) => {
-            getMessages.mockReturnValue({data: [{...note, isClosed}], isSuccess: true});
+            getMessages.mockReturnValue({currentData: [{...note, isClosed}], isSuccess: true});
 
             await renderCard(instance, language);
 
@@ -98,7 +147,7 @@ describe("CommentsCard", () => {
         ["nl", "Beoordelingsnotities voor medewerkers", "Beoordelingsnotitie toevoegen"],
     ])("uses the configured %s title and workflow terms", async (language, heading, add) => {
         getMessages.mockReturnValue({
-            data: [
+            currentData: [
                 note,
                 {id: "closed-note", questionName: null, isClosed: true, items: []},
                 {id: "field-note", questionName: "Title", isClosed: false, items: []},
@@ -139,7 +188,7 @@ describe("CommentsCard", () => {
             text: {en: "Avoid identifying details.", nl: "Vermijd herkenbare details."},
         } as const;
         getMessages.mockReturnValue({
-            data: [note, {...note, id: "field-note", questionName: "Title"}],
+            currentData: [note, {...note, id: "field-note", questionName: "Title"}],
             isSuccess: true,
         });
         await renderCard({

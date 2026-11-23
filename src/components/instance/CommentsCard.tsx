@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Disclosure, Heading, Pill} from "@uva-fnwi/datanose-ui";
+import {Disclosure, Heading, Pill, Text} from "@uva-fnwi/datanose-ui";
 
 import {resolveInstanceMessageSettings, useMessageTerms} from "./instanceMessageSettings";
 import {MessageThreadPanel} from "./MessageThreadPanel";
@@ -20,21 +20,21 @@ export function CommentsCard({instance, card}: Props) {
     const messageSettings = resolveInstanceMessageSettings(instance.workflowDefinition);
     const terms = useMessageTerms(messageSettings);
     const canView = instance.permissions.includes("ViewMessages");
-    const {data: threads = [], isSuccess: messagesLoaded} = messagesEndpoints.getMessages.useQuery(
-        instance.id,
-        {skip: !messageSettings || !canView},
-    );
+    const {currentData, isSuccess, isError} = messagesEndpoints.getMessages.useQuery(instance.id, {
+        skip: !messageSettings || !canView,
+    });
     const [expanded, setExpanded] = useState(false);
     const [showNewComposer, setShowNewComposer] = useState(false);
     const [focusNewConversation, setFocusNewConversation] = useState(false);
 
     if (!messageSettings || !canView) return null;
 
-    const instanceThreads = threads.filter((thread) => thread.questionName == null);
+    const instanceThreads = currentData?.filter((thread) => thread.questionName == null) ?? [];
     const canAdd = instance.permissions.includes("AddMessages");
     const composerVisible = canAdd && showNewComposer;
-    if (!canAdd && !messagesLoaded) return null;
-    if (!shouldShowMessageUi(canAdd, instanceThreads.length)) return null;
+    const messagesLoaded = isSuccess && currentData != null;
+    const loadFailed = isError && instanceThreads.length === 0;
+    if (!loadFailed && !shouldShowMessageUi(canAdd, instanceThreads.length)) return null;
 
     const count = instanceThreads.length;
     const showOpenCloseSummary =
@@ -84,16 +84,23 @@ export function CommentsCard({instance, card}: Props) {
             </div>
             <Disclosure.Content>
                 <div className="flex flex-col gap-3 pt-2">
-                    <MessageThreadPanel
-                        instanceId={instance.id}
-                        threads={instanceThreads}
-                        canAdd={canAdd}
-                        showNewComposer={composerVisible}
-                        onDismissComposer={() => setShowNewComposer(false)}
-                        focusNewConversation={focusNewConversation}
-                        onFocusNewConversationHandled={() => setFocusNewConversation(false)}
-                        messageUi={messageSettings}
-                    />
+                    {loadFailed && (
+                        <Text role="alert" intent="error">
+                            {t("instance.messages.load_error", terms)}
+                        </Text>
+                    )}
+                    {(messagesLoaded || count > 0 || composerVisible) && (
+                        <MessageThreadPanel
+                            instanceId={instance.id}
+                            threads={instanceThreads}
+                            canAdd={canAdd}
+                            showNewComposer={composerVisible}
+                            onDismissComposer={() => setShowNewComposer(false)}
+                            focusNewConversation={focusNewConversation}
+                            onFocusNewConversationHandled={() => setFocusNewConversation(false)}
+                            messageUi={messageSettings}
+                        />
+                    )}
                 </div>
             </Disclosure.Content>
         </Disclosure>

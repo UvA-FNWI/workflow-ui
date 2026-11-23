@@ -108,6 +108,7 @@
       "expand_conversation": "Expand",
       "field_label": "{{termPluralTitle}} on this field",
       "field_modal_title": "{{termPluralTitle}} on {{field}}",
+      "load_error": "Couldn’t load {{termPlural}}.",
       "new_conversation_placeholder": "Add {{term}}",
       "reopen_conversation": "Reopen",
       "replies_heading": "Replies",

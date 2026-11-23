@@ -108,6 +108,7 @@
       "expand_conversation": "Uitklappen",
       "field_label": "{{termPluralTitle}} bij dit veld",
       "field_modal_title": "{{termPluralTitle}} bij {{field}}",
+      "load_error": "Kon {{termPlural}} niet laden.",
       "new_conversation_placeholder": "{{termTitle}} toevoegen",
       "reopen_conversation": "Heropenen",
       "replies_heading": "Reacties",
