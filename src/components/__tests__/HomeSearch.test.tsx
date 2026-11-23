@@ -88,7 +88,7 @@ async function renderHome(
                     roles: ["student"],
                     student: person.displayName,
                     course: null,
-                    employees: [],
+                    staff: [],
                 },
             ],
         },
