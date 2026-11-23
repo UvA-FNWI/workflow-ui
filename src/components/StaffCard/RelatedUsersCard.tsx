@@ -142,6 +142,7 @@ export function RelatedUsersCard({
                 </Disclosure.Content>
             </Disclosure>
             <AddStaffModal
+                instanceId={instanceId}
                 isOpen={isAddStaffModalOpen}
                 onOpenChange={() => setIsAddStaffModalOpen(!isAddStaffModalOpen)}
                 onConfirm={handleAddStaff}

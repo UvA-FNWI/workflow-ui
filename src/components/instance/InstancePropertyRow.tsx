@@ -98,6 +98,7 @@ export const InstancePropertyRow = ({
                 <Text fontWeight="semibold">{label}</Text>
                 <InlineQuestionEdit
                     instanceId={instanceId}
+                    propertyPath={path}
                     question={question}
                     choices={choices}
                     choicesLoading={question.type === "Reference" ? isLoading : undefined}

@@ -3,6 +3,8 @@ import type {
     CurrentUserResponse,
     UpdateUserEmailRequest,
     UserImpersonationStarted,
+    UserSearchField,
+    UserSearchGroup,
     UserSearchResult,
     VerifyEmailRequest,
     VerifyEmailResponse,
@@ -15,6 +17,10 @@ export type FindUsersParams = {
     includeStudents?: boolean;
 };
 
+type SearchFieldUsersParams = UserSearchField & {
+    query: string;
+};
+
 export const usersApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getCurrentUser: builder.query<CurrentUserResponse, void>({
@@ -25,6 +31,18 @@ export const usersApi = baseApi.injectEndpoints({
                 url: "/Users/Find",
                 params,
             }),
+        }),
+        searchFieldUsers: builder.query<UserSearchGroup[], SearchFieldUsersParams>({
+            query: ({instanceId, submissionId, property, query}) => {
+                const field = encodeURIComponent(property);
+                const fieldPath = submissionId
+                    ? `/Answers/${instanceId}/${submissionId}/${field}`
+                    : `/WorkflowInstances/${instanceId}/Properties/${field}`;
+                return {
+                    url: `${fieldPath}/UserSearch`,
+                    params: {query},
+                };
+            },
         }),
         verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({
             query: (body) => ({
@@ -59,6 +77,7 @@ export const {
     useGetCurrentUserQuery,
     useFindUsersQuery,
     useLazyFindUsersQuery,
+    useLazySearchFieldUsersQuery,
     useVerifyEmailMutation,
     useStartImpersonationMutation,
     useUpdateUserEmailMutation,

@@ -1,7 +1,14 @@
 import type {Organization} from "./organizations";
 
-export type UserSearchOptions = {
-    include: readonly ("Employees" | "Students")[];
+export type UserSearchField = {
+    instanceId: string;
+    submissionId?: string;
+    property: string;
+};
+
+export type UserSearchGroup = {
+    label: string;
+    users: UserSearchResult[];
 };
 
 export interface UserSearchResult {

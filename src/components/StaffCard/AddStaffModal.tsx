@@ -21,6 +21,7 @@ import type {RelatedUserGroup, Role} from "~/store/api/types/instances.ts";
 import type {CreateExternalUserInput, UserSearchResult} from "~/store/api/types/users.ts";
 
 export interface AddStaffModalProps {
+    instanceId: string;
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
     onConfirm: (
@@ -37,6 +38,7 @@ export interface AddStaffModalProps {
 }
 
 export default function AddStaffModal({
+    instanceId,
     isOpen,
     onOpenChange,
     onConfirm,
@@ -59,13 +61,12 @@ export default function AddStaffModal({
         }
     }, [isOpen, initialRole]);
 
-    const {isReplacing, currentName, currentRole, userSearchOptions} = useMemo(() => {
+    const {isReplacing, currentName, currentRole} = useMemo(() => {
         if (!selectedRole || !relatedUserGroups)
             return {
                 isReplacing: false,
                 currentName: "",
                 currentRole: {en: "", nl: ""} as LocalString,
-                userSearchOptions: undefined,
             };
         const matchedRole = relatedUserGroups
             .flatMap((ug) => ug.userRoles)
@@ -75,7 +76,6 @@ export default function AddStaffModal({
                 !!matchedRole && !matchedRole.allowsMultipleUsers && matchedRole.users.length >= 1,
             currentName: matchedRole?.users[0]?.displayName ?? "",
             currentRole: matchedRole?.title ?? ({en: "", nl: ""} as LocalString),
-            userSearchOptions: matchedRole?.userSearchOptions,
         };
     }, [selectedRole, relatedUserGroups]);
 
@@ -115,7 +115,12 @@ export default function AddStaffModal({
 
     return (
         <>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={(open) => {
+                    if (!open) handleClose();
+                }}
+            >
                 <Modal.Header>{t("staff_card.add_modal.title")}</Modal.Header>
                 <Modal.Body className="flex flex-col gap-4">
                     <Text>{t("staff_card.add_modal.description")}</Text>
@@ -127,13 +132,7 @@ export default function AddStaffModal({
                             value={selectedRole?.name}
                             onChange={(value) => {
                                 const nextRole = instanceRoles.find((role) => role.name === value);
-                                const nextRoleDetails = relatedUserGroups
-                                    ?.flatMap((group) => group.userRoles)
-                                    .find((role) => role.role === value);
-                                if (
-                                    value !== selectedRole?.name &&
-                                    (userSearchOptions || nextRoleDetails?.userSearchOptions)
-                                ) {
+                                if (value !== selectedRole?.name) {
                                     setSelectedUsers([]);
                                     setExternalUser(null);
                                 }
@@ -148,19 +147,20 @@ export default function AddStaffModal({
                             )) ?? []}
                         </Select>
                     </div>
-                    <div>
-                        <InputLabel>{t("staff_card.add_modal.choose_staff")}</InputLabel>
-                        <UserPickerInput
-                            key={`${userSearchOptions ? selectedRole?.name : ""}:${selectedUsers.map((user) => user.userName).join(",")}`}
-                            initialSelection={selectedUsers}
-                            onSelectionChange={setSelectedUsers}
-                            searchPlaceholder={t("make_a_choice")}
-                            autoFocus={false}
-                            allowsExternalUsers={allowsExternalUsers}
-                            userSearchOptions={userSearchOptions}
-                            showSelectedEmail={true}
-                        />
-                    </div>
+                    {selectedRole && (
+                        <div>
+                            <InputLabel>{t("staff_card.add_modal.choose_staff")}</InputLabel>
+                            <UserPickerInput
+                                key={`${instanceId}:${selectedRole.name}:${selectedUsers.map((user) => user.userName).join(",")}`}
+                                initialSelection={selectedUsers}
+                                onSelectionChange={setSelectedUsers}
+                                searchPlaceholder={t("make_a_choice")}
+                                field={{instanceId, property: selectedRole.name}}
+                                autoFocus={false}
+                                showSelectedEmail
+                            />
+                        </div>
+                    )}
                     <Callout header={t("staff_card.add_modal.info_callout_header")}>
                         {t("staff_card.add_modal.info_callout_text")}
                     </Callout>

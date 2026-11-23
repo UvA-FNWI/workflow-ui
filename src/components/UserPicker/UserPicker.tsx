@@ -8,7 +8,7 @@ import {useModalState} from "~/hooks/useModalState.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {
     CreateExternalUserInput,
-    UserSearchOptions,
+    UserSearchField,
     UserSearchResult,
 } from "~/store/api/types/users.ts";
 
@@ -33,7 +33,7 @@ export interface UserPickerProps {
     minSearchLength?: number;
     /** Whether to allow adding external users */
     allowsExternalUsers?: boolean;
-    userSearchOptions?: UserSearchOptions | null;
+    field?: UserSearchField;
     onCreateExternalUser: (newUser: CreateExternalUserInput) => Promise<void>;
 }
 
@@ -48,7 +48,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
     searchPlaceholder,
     minSearchLength,
     allowsExternalUsers = false,
-    userSearchOptions,
+    field,
     onCreateExternalUser,
 }) => {
     const [isOpenUserPicker, setIsOpenUserPicker] = useState(false);
@@ -175,7 +175,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                     searchPlaceholder={searchPlaceholder}
                     minSearchLength={minSearchLength}
                     allowsExternalUsers={allowsExternalUsers}
-                    userSearchOptions={userSearchOptions}
+                    field={field}
                 />
             )}
 

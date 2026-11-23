@@ -4,7 +4,7 @@ import {Button, Icon, Modal} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {UserSearchOptions, UserSearchResult} from "~/store/api/types/users";
+import type {UserSearchField, UserSearchResult} from "~/store/api/types/users";
 
 export interface UserPickerModalProps {
     isOpen: boolean;
@@ -17,7 +17,8 @@ export interface UserPickerModalProps {
     searchPlaceholder?: string;
     minSearchLength?: number;
     allowsExternalUsers?: boolean;
-    userSearchOptions?: UserSearchOptions | null;
+    includeStudents?: boolean;
+    field?: UserSearchField;
 }
 
 export const UserPickerModal: React.FC<UserPickerModalProps> = ({
@@ -31,7 +32,8 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     searchPlaceholder,
     minSearchLength,
     allowsExternalUsers,
-    userSearchOptions,
+    includeStudents,
+    field,
 }) => {
     const {t} = useTranslate(["workflow", "common"]);
     const confirmButtonRef = useRef<HTMLButtonElement>(null);
@@ -56,14 +58,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     // UI states
     const hasSelection = selectedUsers.length > 0;
-
-    let defaultTitle = t("user_picker.title");
-    if (userSearchOptions?.include.includes("Students")) {
-        defaultTitle = userSearchOptions.include.includes("Employees")
-            ? t("user_picker.title_user")
-            : t("user_picker.title_student");
-    }
-    const modalTitle = title ?? defaultTitle;
+    const modalTitle = title ?? t(includeStudents ? "user_picker.title_user" : "user_picker.title");
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
@@ -81,7 +76,8 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     minSearchLength={minSearchLength}
                     autoFocus={isOpen}
                     allowsExternalUsers={allowsExternalUsers}
-                    userSearchOptions={userSearchOptions}
+                    includeStudents={includeStudents}
+                    field={field}
                 />
             </Modal.Body>
 

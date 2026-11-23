@@ -241,7 +241,6 @@
     "selected_users_one": "{{count}} gebruiker geselecteerd",
     "selected_users_other": "{{count}} gebruikers geselecteerd",
     "title": "Zoek medewerker",
-    "title_student": "Zoek student",
     "title_user": "Zoek gebruiker"
   },
   "validation": {

@@ -3,8 +3,8 @@ import {useCallback, useMemo, useState} from "react";
 import {SearchAndSelect} from "~/components/instance/SearchAndSelect.tsx";
 import {type SearchListBoxValue} from "~/components/instance/SearchListBox.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {UserSearchOptions, UserSearchResult} from "~/store/api/types/users";
-import {useLazyFindUsersQuery} from "~/store/api/usersApi";
+import type {UserSearchField, UserSearchResult} from "~/store/api/types/users";
+import {useLazyFindUsersQuery, useLazySearchFieldUsersQuery} from "~/store/api/usersApi";
 
 // Selection type from react-stately
 type Selection = "all" | Set<string | number>;
@@ -17,7 +17,8 @@ export interface UserPickerInputProps {
     showSearchHint?: boolean;
     minSearchLength?: number;
     allowsExternalUsers?: boolean;
-    userSearchOptions?: UserSearchOptions | null;
+    includeStudents?: boolean;
+    field?: UserSearchField;
     autoFocus?: boolean;
     showSelectedEmail?: boolean;
 }
@@ -31,20 +32,27 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
     minSearchLength,
     autoFocus,
     allowsExternalUsers,
-    userSearchOptions,
+    includeStudents,
+    field,
     showSelectedEmail = false,
 }) => {
     const {t} = useTranslate("workflow");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
     const [triggerSearch, searchState] = useLazyFindUsersQuery();
-    const resetSearch = searchState.reset;
-    const includeExternalUsers = allowsExternalUsers ?? false;
-    const includeEmployees = userSearchOptions?.include.includes("Employees");
-    const includeStudents = userSearchOptions?.include.includes("Students");
-    const searchResults = useMemo(() => {
-        const results = searchState.data ?? [];
-        return includeExternalUsers ? results : results.filter((user) => !user.isExternal);
-    }, [includeExternalUsers, searchState.data]);
+    const [triggerFieldSearch, fieldSearchState] = useLazySearchFieldUsersQuery();
+    const activeSearchState = field ? fieldSearchState : searchState;
+    const fieldSearchArgs = fieldSearchState.originalArgs;
+    const isCurrentField =
+        field != null &&
+        fieldSearchArgs?.instanceId === field.instanceId &&
+        fieldSearchArgs.submissionId === field.submissionId &&
+        fieldSearchArgs.property === field.property;
+    const groups = isCurrentField ? fieldSearchState.currentData : undefined;
+    const searchResults = useMemo(
+        () =>
+            field ? (groups ?? []).flatMap(({users}) => users) : (searchState.currentData ?? []),
+        [field, groups, searchState.currentData],
+    );
 
     const searchListBoxValues: SearchListBoxValue[] = useMemo(() => {
         return searchResults.map((user) => {
@@ -65,16 +73,10 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
         });
     }, [searchResults]);
 
-    // Store all encountered users
     const usersCache = useMemo(() => {
         const cache = new Map<string, UserSearchResult>();
-
-        // Add initial selection
         initialSelection.forEach((user) => cache.set(user.userName, user));
-
-        // Add search results
         searchResults.forEach((user) => cache.set(user.userName, user));
-
         return cache;
     }, [searchResults, initialSelection]);
 
@@ -96,9 +98,18 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
     const searchPlaceholderText = searchPlaceholder ?? t("user_picker.search_placeholder");
     const handleSearch = useCallback(
         (query: string) => {
-            triggerSearch({query, includeExternalUsers, includeEmployees, includeStudents});
+            if (field) {
+                triggerFieldSearch({...field, query});
+                return;
+            }
+            triggerSearch({
+                query,
+                includeExternalUsers: allowsExternalUsers ?? false,
+                includeEmployees: includeStudents ? true : undefined,
+                includeStudents,
+            });
         },
-        [includeEmployees, includeExternalUsers, includeStudents, triggerSearch],
+        [allowsExternalUsers, field, includeStudents, triggerFieldSearch, triggerSearch],
     );
 
     const initialSearchQuery =
@@ -112,12 +123,12 @@ export const UserPickerInput: React.FC<UserPickerInputProps> = ({
             selectedKeys={selectedKeys}
             onSelect={handleSelectionChange}
             onSearch={handleSearch}
-            resetSearch={resetSearch}
+            resetSearch={activeSearchState.reset}
             placeholder={searchPlaceholderText}
             autoFocus={autoFocus}
             selectionMode={selectionMode}
             minSearchLength={minSearchLength}
-            isLoading={searchState.isLoading || searchState.isFetching}
+            isLoading={activeSearchState.isLoading || activeSearchState.isFetching}
             initialSearchQuery={initialSearchQuery}
             noResultsText={t("user_picker.no_results")}
             showSearchHint={showSearchHint}

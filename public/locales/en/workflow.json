@@ -242,7 +242,6 @@
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search employee",
-    "title_student": "Search student",
     "title_user": "Search user"
   },
   "validation": {

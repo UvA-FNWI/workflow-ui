@@ -1,6 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {ApiErrorState} from "~/store/api/types/returnTypes.ts";
-import type {UserSearchOptions} from "~/store/api/types/users";
 
 export type MessageVariant = "Success" | "Error" | "Info" | "Warning" | "Note";
 
@@ -137,7 +136,6 @@ export type FileQuestion = QuestionBase & {
 export type UserQuestion = QuestionBase & {
     type: "User";
     allowsExternalUsers: boolean;
-    userSearchOptions?: UserSearchOptions | null;
 };
 
 export type ChoiceQuestion = WeightedQuestionBase & {
