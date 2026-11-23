@@ -182,7 +182,7 @@ export const FormPage = ({
     ) : (
         <div>
             {content}
-            <div className="mt-4 flex justify-end gap-3">{actions}</div>
+            <div className="mt-4 flex justify-start gap-3">{actions}</div>
         </div>
     );
 };

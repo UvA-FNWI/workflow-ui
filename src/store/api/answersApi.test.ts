@@ -184,6 +184,7 @@ it.each(["draft", "submitted", "missing instance", "clear", "dummy"] as const)(
                         data: {
                             properties: [],
                             values: {Comments: serverSubmission.answers[0].value},
+                            editablePaths: [],
                         },
                     };
                 if (input.endsWith("/Roles"))

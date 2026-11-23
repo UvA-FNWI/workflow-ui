@@ -59,8 +59,13 @@ export type Form = {
     layout: FormLayout;
     pages: Page[];
     step?: string;
-    /** Set when this form edits an embedded object, e.g. AssessmentSupervisor. */
     propertyName?: string | null;
+    confirmation?: FormConfirmation;
+};
+
+export type FormConfirmation = {
+    title: LocalString;
+    text: LocalString;
 };
 
 export type Page = {

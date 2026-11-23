@@ -54,6 +54,7 @@ export type InstanceSummary = {
 export type InstanceProperties = {
     properties: Question[];
     values: Record<string, unknown>;
+    editablePaths: string[];
 };
 
 export type RecalculateCurrentStepsResult = {
