@@ -21,8 +21,8 @@
   },
   "columns": {
     "course": "Course",
-    "employees": "Employees",
     "progress": "Progress",
+    "staff": "Staff",
     "student_name": "Student name",
     "title": "Title"
   },

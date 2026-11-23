@@ -29,7 +29,11 @@ vi.mock("~/store/api/assessmentsApi.ts", () => ({
     assessmentsApi: {endpoints: {getPageResults: {useQuery: () => ({})}}},
 }));
 vi.mock("~/hooks/useTranslate", () => ({
-    useTranslate: () => ({t: (key: string) => key, l: () => "", i18n: {language: "en"}}),
+    useTranslate: () => ({
+        t: (key: string) => key,
+        l: (value: {en: string}) => value?.en ?? "",
+        i18n: {language: "en"},
+    }),
 }));
 vi.mock("~/components/instance/InputControl", () => ({
     InputControl: ({
@@ -82,6 +86,37 @@ function updateAnswers(first: string, second: string, secondVisible = true) {
 const control = () => <PageControl instanceId="instance" submissionId="submission" page={page} />;
 
 afterEach(cleanup);
+
+it("shows the API page percentage before the weighted answers are complete", () => {
+    render(
+        <PageControl
+            instanceId="instance"
+            submissionId="submission"
+            page={{
+                ...page,
+                hasResults: true,
+                percentage: 11.76,
+                elements: [
+                    {
+                        kind: "Question",
+                        question: {
+                            name: "Grade",
+                            type: "Double",
+                            text: page.title,
+                            isRequired: true,
+                            isArray: false,
+                            hideInResults: false,
+                            weight: 1,
+                            percentage: 2.94,
+                        },
+                    },
+                ],
+            }}
+        />,
+    );
+
+    expect(screen.getByRole("heading", {name: "Details (11.76%)"})).toBeInTheDocument();
+});
 
 it.each([false, true])(
     "preserves the caret when backspacing to the previous server value (multiline: %s)",

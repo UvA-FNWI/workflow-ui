@@ -41,6 +41,14 @@ const question = (name: string): QuestionBase => ({
 });
 
 export const instanceProperties = {
+    editablePaths: [
+        "Name",
+        "GradingBasis",
+        "GradeGap",
+        "Coordinator",
+        "Assessment.Consent",
+        "Assessment.Grade",
+    ],
     properties: [
         {...question("Name"), type: "String"},
         {

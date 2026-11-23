@@ -1,5 +1,6 @@
 import type {LocalString} from "~/hooks/useTranslate";
 import type {ProgressInformation} from "~/store/api/types/progress";
+import type {ScreenRelatedUser} from "~/store/api/types/screens.ts";
 import type {UserDto} from "~/store/api/types/users";
 
 export type PersonalInstances = {
@@ -30,5 +31,5 @@ export type PersonalInstance = {
     roles: string[];
     student: string | null;
     course: string | null;
-    employees: string[];
+    staff: ScreenRelatedUser[];
 };

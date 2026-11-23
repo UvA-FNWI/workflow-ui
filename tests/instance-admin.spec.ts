@@ -1,6 +1,6 @@
 import {expect, test} from "@playwright/test";
 
-import {propertiesInstance} from "./data/instanceProperties";
+import {instanceProperties, propertiesInstance} from "./data/instanceProperties";
 
 test.describe("instance admin data page", () => {
     const openDataView = async (page: import("@playwright/test").Page) => {
@@ -32,6 +32,19 @@ test.describe("instance admin data page", () => {
         await expect(page.getByRole("button", {name: "Edit Grade", exact: true})).toBeVisible();
         // File editing is not supported.
         await expect(page.getByRole("button", {name: "Edit Study manual"})).toHaveCount(0);
+    });
+
+    test("shows values without edit controls when the user can only view data", async ({page}) => {
+        await page.route("**/WorkflowInstances/context-admin/Properties", (route) =>
+            route.fulfill({json: {...instanceProperties, editablePaths: []}}),
+        );
+
+        await openDataView(page);
+
+        await expect(page.getByText("Decimal", {exact: true})).toBeVisible();
+        await page.getByText("Assessment", {exact: true}).click();
+        await expect(page.getByText("8.5", {exact: true})).toBeVisible();
+        await expect(page.getByRole("button", {name: /^Edit /})).toHaveCount(0);
     });
 
     test("saves a single property to its own path", async ({page}) => {

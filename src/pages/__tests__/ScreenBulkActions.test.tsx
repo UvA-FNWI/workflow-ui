@@ -73,7 +73,7 @@ beforeEach(() => {
                 filterType: "None",
                 displayType: "Normal",
                 link: false,
-                isCurrentStep: false,
+                columnType: "Normal",
                 dataType: "String",
             },
         ],
