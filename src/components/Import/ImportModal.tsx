@@ -1,22 +1,19 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {useParams} from "react-router";
 
-import {Button, Modal, Text} from "@uva-fnwi/datanose-ui";
+import {Button, Modal, Text, useToast} from "@uva-fnwi/datanose-ui";
 
 import {ImportColumnSelection} from "~/components/Import/ImportColumnSelection.tsx";
 import {ImportFileUpload} from "~/components/Import/ImportFileUpload.tsx";
 import {ImportOverview} from "~/components/Import/ImportOverview.tsx";
-import {type LocalString, useTranslate} from "~/hooks/useTranslate.ts";
+import {useTranslate} from "~/hooks/useTranslate.ts";
 import {
     useConfirmMutation,
     useGetColumnNamesQuery,
     usePreviewMutation,
 } from "~/store/api/importApi.ts";
 import type {ColumnMapping, ImportPreview} from "~/store/api/types/import.ts";
-import {applyEffectResult} from "~/store/effectsSlice.ts";
-import {triggerApiError} from "~/store/errorSlice.ts";
-import {useAppDispatch} from "~/store/store.ts";
 
 type ImportModalProps = {
     isOpen: boolean;
@@ -34,7 +31,6 @@ type ImportStep = (typeof ImportStep)[keyof typeof ImportStep];
 export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const {t} = useTranslate("screens", {keyPrefix: "import"});
     const {t: tc} = useTranslate("common");
-    const dispatch = useAppDispatch();
     const prevIsOpen = useRef(false);
     const errorHandled = useRef(false);
     const [activeStep, setActiveStep] = useState<ImportStep>(ImportStep.UploadFile);
@@ -43,15 +39,8 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
     const [file, setFile] = useState<File | null>(null);
     const [previewData, setPreviewData] = useState<ImportPreview>();
     const [isLoading, setIsLoading] = useState(false);
+    const toast = useToast();
     const [confirm] = useConfirmMutation();
-
-    const importMessage = useCallback(
-        (key: string): LocalString => ({
-            en: t(key, {lng: "en"}),
-            nl: t(key, {lng: "nl"}),
-        }),
-        [t],
-    );
     const [preview] = usePreviewMutation();
 
     const {workflowDefinition, screenName} = useParams();
@@ -95,17 +84,12 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
         if (importableColumnsError && !errorHandled.current) {
             errorHandled.current = true;
             onClose();
-            dispatch(
-                triggerApiError({
-                    type: "error",
-                    message: importMessage("error_importing"),
-                }),
-            );
+            toast.error(t("error_importing"));
         }
         if (!importableColumnsError) {
             errorHandled.current = false;
         }
-    }, [dispatch, importableColumnsError, importMessage, onClose]);
+    }, [importableColumnsError, onClose, t, toast]);
 
     if (!workflowDefinition || !screenName) return;
 
@@ -152,24 +136,14 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                 setIsLoading(false);
             } else {
                 setIsLoading(false);
-                dispatch(
-                    triggerApiError({
-                        type: "error",
-                        message: importMessage("error_importing"),
-                    }),
-                );
+                toast.error(t("error_importing"));
                 onClose();
             }
         }
 
         if (activeStep === ImportStep.Preview) {
             if (!previewData) {
-                dispatch(
-                    triggerApiError({
-                        type: "error",
-                        message: importMessage("error_importing"),
-                    }),
-                );
+                toast.error(t("error_importing"));
                 resetState();
                 onClose();
                 return;
@@ -183,14 +157,7 @@ export const ImportModal = ({isOpen, onClose}: ImportModalProps) => {
                 })),
             });
             onClose();
-            dispatch(
-                applyEffectResult({
-                    toast: {
-                        type: "Success",
-                        message: importMessage("success_importing"),
-                    },
-                }),
-            );
+            toast.success(t("success_importing"));
             return;
         }
 
