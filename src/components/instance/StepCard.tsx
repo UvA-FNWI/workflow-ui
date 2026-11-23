@@ -18,8 +18,6 @@ import {
     getStepHierarchy,
     hasVersionHistory,
     resolveContentState,
-    resolveFormState,
-    resolveModalState,
 } from "~/components/instance/resolveContentState.ts";
 import {StepCardBody} from "~/components/instance/StepCardBody.tsx";
 import {UndoControl} from "~/components/instance/UndoControl.tsx";
@@ -78,11 +76,13 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
     );
 
     const isCurrentStep = allStepIds.has(instance.currentStep ?? "");
-    const {activeAction, resolvedAction, setActiveAction} = useStepActions(actions, submissions);
+    const {activeAction, setActiveAction} = useStepActions(actions);
+    const hasInlineForm =
+        activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal";
 
     const hasVisibleSubmission = submissions.length > 0 || contentSteps.some(hasVersionHistory);
     let emptyStateMessage: string | null = null;
-    if (!resolveFormState(resolvedAction)) {
+    if (!hasInlineForm) {
         if (!hasVisibleSubmission && contentSteps.some((candidate) => candidate.hasSubmission)) {
             emptyStateMessage = t("instance.unauthorized_submission");
         } else if (contentSteps.some((candidate) => candidate.expectsSubmission)) {
@@ -159,9 +159,7 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
                             actions={actions}
                             submissions={submissions}
                             contentState={resolveContentState(step, submissions)}
-                            modalState={resolveModalState(activeAction)}
                             activeAction={activeAction}
-                            resolvedAction={resolvedAction}
                             emptyStateMessage={emptyStateMessage}
                             setActiveAction={setActiveAction}
                         />
@@ -207,21 +205,23 @@ function SharedStepIndicator({participants}: {participants: {displayName: string
     );
 }
 
-function useStepActions(actions: Action[], submissions: Submission[]) {
+function useStepActions(actions: Action[]) {
     const [onlyAction] = actions;
-    const autoOpenAction =
+    const defaultAction =
         actions.length === 1 &&
-        onlyAction?.type === "SubmitForm" &&
+        onlyAction.type === "SubmitForm" &&
         onlyAction.formLayout !== "Modal" &&
-        onlyAction.autoOpenForm !== false &&
-        !submissions.some((s) => s.dateSubmitted && s.form.name === onlyAction.form)
+        onlyAction.autoOpenForm !== false
             ? onlyAction
             : null;
-    const [selectedAction, setActiveAction] = useState<Action | null>(autoOpenAction);
-
-    // A refresh can revoke an action while its form or modal is still open.
-    const activeAction = actions.find((action) => action.id === selectedAction?.id) ?? null;
-    return {activeAction, resolvedAction: activeAction ?? autoOpenAction, setActiveAction};
+    const [selectedActionId, setSelectedActionId] = useState<string | null>(
+        defaultAction?.id ?? null,
+    );
+    const activeAction = actions.find((action) => action.id === selectedActionId) ?? defaultAction;
+    return {
+        activeAction,
+        setActiveAction: (action: Action | null) => setSelectedActionId(action?.id ?? null),
+    };
 }
 
 function latestDate(dates: (string | null | undefined)[]): string | null {

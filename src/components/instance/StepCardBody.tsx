@@ -12,8 +12,6 @@ import {
     getPreviousFormVersion,
     getStepHierarchy,
     hasVersionHistory,
-    type ModalState,
-    resolveFormState,
 } from "~/components/instance/resolveContentState.ts";
 import {VersionHistory} from "~/components/instance/VersionHistory.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -31,9 +29,7 @@ type Props = {
     actions: Action[];
     submissions: Submission[];
     contentState: ContentState;
-    modalState: ModalState;
     activeAction: Action | null;
-    resolvedAction: Action | null;
     emptyStateMessage: string | null;
     setActiveAction: (action: Action | null) => void;
 };
@@ -45,17 +41,18 @@ export const StepCardBody = ({
     actions,
     submissions,
     contentState,
-    modalState,
     activeAction,
-    resolvedAction,
     emptyStateMessage,
     setActiveAction,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const dispatch = useAppDispatch();
 
-    const formState = resolveFormState(resolvedAction);
-    const openFormId = formState?.action.form;
+    const inlineForm =
+        activeAction?.type === "SubmitForm" && activeAction.formLayout !== "Modal"
+            ? activeAction
+            : null;
+    const openFormId = inlineForm?.form;
     const canAddMessages = (instance.permissions ?? []).includes("AddMessages");
     const canViewMessages = (instance.permissions ?? []).includes("ViewMessages");
     const messageUi = resolveInstanceMessageSettings(instance.workflowDefinition) ?? undefined;
@@ -124,19 +121,19 @@ export const StepCardBody = ({
         ) : null;
 
     // Action buttons show when form is NOT open and actions exist
-    const showActionButtons = !formState && actions.length > 0;
+    const showActionButtons = !inlineForm && actions.length > 0;
 
     return (
         <>
             <div className="flex flex-col gap-4">
-                {!formState &&
+                {!inlineForm &&
                     step.versions?.current?.submissions.some(hasSubmissionContent) &&
                     versionHeading}
                 {/* Background content: submissions or empty */}
                 {renderBackgroundContent()}
 
                 {/* Form overlay: shown alongside submissions */}
-                {formState && (
+                {inlineForm && (
                     <div className="py-4">
                         {versionHeading}
                         {actions.length > 1 && activeAction != null && (
@@ -156,14 +153,14 @@ export const StepCardBody = ({
                             </div>
                         )}
                         <FormPage
-                            key={formState.action.form}
+                            key={inlineForm.form}
                             instanceId={instance.id}
-                            submissionId={formState.action.form ?? ""}
+                            submissionId={inlineForm.form ?? ""}
                             canAddMessages={canAddMessages}
                             canViewMessages={canViewMessages}
                             messageUi={messageUi}
                             onClose={() => setActiveAction(null)}
-                            previousVersion={getPreviousFormVersion(step, formState.action.form)}
+                            previousVersion={getPreviousFormVersion(step, inlineForm.form)}
                         />
                     </div>
                 )}
@@ -216,13 +213,13 @@ export const StepCardBody = ({
                         ))}
             </div>
 
-            {modalState && (
+            {activeAction && !inlineForm && (
                 <ActionModal
-                    key={modalState.action.id}
-                    action={modalState.action}
+                    key={activeAction.id}
+                    action={activeAction}
                     onClose={() => setActiveAction(null)}
                     instanceId={instance.id}
-                    previousVersion={getPreviousFormVersion(step, modalState.action.form)}
+                    previousVersion={getPreviousFormVersion(step, activeAction.form)}
                 />
             )}
         </>
