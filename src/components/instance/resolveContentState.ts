@@ -34,12 +34,6 @@ export function hasVersionHistory(step: WorkflowStep): boolean {
     );
 }
 
-export function getCurrentVersionNumber(step: WorkflowStep): number | undefined {
-    const {versions} = step;
-    if (!versions?.current || versions.history.length === 0) return undefined;
-    return versions.current.versionNumber;
-}
-
 export function getPreviousFormVersion(step: WorkflowStep, form?: string): number | undefined {
     return getStepHierarchy(step)
         .flatMap((candidate) => candidate.versions?.history ?? [])
