@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { type ComponentProps, useRef } from 'react';
 
 import {
   mergeProps,
@@ -93,6 +93,7 @@ const checkboxBoxVariants = cva(
 
 type CheckboxProps = {
   label: string;
+  labelSize?: ComponentProps<typeof Text>['size'];
   isSelected: boolean;
   isIndeterminate?: boolean;
   isDisabled?: boolean;
@@ -103,6 +104,7 @@ type CheckboxProps = {
 
 export const Checkbox: React.FC<CheckboxProps> = ({
   label,
+  labelSize,
   isSelected,
   isIndeterminate = false,
   isDisabled,
@@ -180,6 +182,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       {label && (
         <Text
           intent={isDisabled ? 'secondary' : 'primary'}
+          size={labelSize}
           className="ui:leading-6"
         >
           {label}

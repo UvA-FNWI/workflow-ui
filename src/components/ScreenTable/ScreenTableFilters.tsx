@@ -132,7 +132,7 @@ function ColumnFilterPicker({filter, selected, onChange}: ColumnFilterPickerProp
                         id={dialogId}
                         aria-modal="true"
                         aria-label={title}
-                        className="relative m-0 w-full bg-transparent text-inherit"
+                        className="relative m-0 w-full bg-transparent text-sm"
                     >
                         <div className="p-3">
                             <SearchInput
@@ -150,6 +150,7 @@ function ColumnFilterPicker({filter, selected, onChange}: ColumnFilterPickerProp
                                         ? t("filters.select_all_results")
                                         : t("filters.select_all")
                                 }
+                                labelSize="sm"
                                 isSelected={allMatchesSelected}
                                 isIndeterminate={matchingSelectedCount > 0 && !allMatchesSelected}
                                 isDisabled={!matches.length}
@@ -170,6 +171,7 @@ function ColumnFilterPicker({filter, selected, onChange}: ColumnFilterPickerProp
                                     <Checkbox
                                         key={key}
                                         label={label}
+                                        labelSize="sm"
                                         isSelected={isSelected}
                                         className={`flex w-full px-3 py-2 wrap-anywhere focus-within:inset-ring-2 focus-within:inset-ring-navy-600 hover:bg-grey-200 dark:focus-within:inset-ring-orange-500 dark:hover:bg-grey-800 ${isSelected ? "bg-grey-300 dark:bg-grey-700" : ""}`}
                                         onChange={(checked) =>
