@@ -43,12 +43,14 @@ const availableDefinitions = [
         name: "project",
         title: {en: "Ada Research Project", nl: "Onderzoeksproject"},
         titlePlural: {en: "Research projects", nl: "Onderzoeksprojecten"},
+        description: {en: "A project about Ada", nl: "Een project over Ada"},
         screens: ["overview", "archive"],
     },
     {
         name: "thesis",
         title: {en: "Bachelor Thesis", nl: "Bachelorscriptie"},
         titlePlural: {en: "Bachelor theses", nl: "Bachelorscripties"},
+        description: {en: "All bachelor theses", nl: "Alle bachelorscripties"},
         screens: ["overview"],
     },
 ].map((definition) => ({

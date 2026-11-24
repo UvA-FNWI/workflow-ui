@@ -19,6 +19,7 @@ import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {ConfigVersionCard} from "~/pages/develop/ConfigVersionCard";
 import {FormEditorCard} from "~/pages/develop/FormEditorCard";
 import {WorkflowInstancesPanel} from "~/pages/develop/WorkflowInstancesPanel";
+import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions.ts";
 import {useGetCurrentUserQuery} from "~/store/api/usersApi";
 import {useGetWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 
@@ -85,6 +86,10 @@ function Develop() {
             {replace: true},
         );
     };
+    const getDisplayTitle = (definition: WorkflowDefinition) => {
+        const title = l(definition.title) ?? definition.name;
+        return definition.description ? `${title} (${l(definition.description)})` : title;
+    };
 
     return (
         <Container maxWidth={1280}>
@@ -107,9 +112,9 @@ function Develop() {
                                 {creatableDefinitions.map((definition) => (
                                     <ComboBoxItem
                                         key={definition.name}
-                                        textValue={`${l(definition.title)} (${l(definition.titlePlural)})`}
+                                        textValue={getDisplayTitle(definition)}
                                     >
-                                        {`${l(definition.title)} (${l(definition.titlePlural)})`}
+                                        {getDisplayTitle(definition)}
                                     </ComboBoxItem>
                                 ))}
                             </ComboBox>

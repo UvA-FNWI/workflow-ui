@@ -8,7 +8,7 @@ import {VersionedLink} from "~/components/VersionedLink";
 
 type HomeListLinkProps = Pick<LinkProps, "to" | "state"> & {
     title: string;
-    subtitle: string;
+    subtitle?: string;
     icon: ReactNode;
     iconClassName?: string;
 };
@@ -29,12 +29,18 @@ export function HomeListLink({to, state, title, subtitle, icon, iconClassName}: 
                 {icon}
             </div>
             <span className="flex min-w-0 flex-1 flex-col">
-                <Text as="span" fontWeight="semibold" className="break-words">
+                <Text as="span" fontWeight="semibold" className="wrap-break-word">
                     {title}
                 </Text>
-                <Text as="span" size="sm" className="break-words text-grey-600 dark:text-grey-300">
-                    {subtitle}
-                </Text>
+                {subtitle && (
+                    <Text
+                        as="span"
+                        size="sm"
+                        className="wrap-break-word text-grey-600 dark:text-grey-300"
+                    >
+                        {subtitle}
+                    </Text>
+                )}
             </span>
             <Icon
                 name="chevron-right-line"

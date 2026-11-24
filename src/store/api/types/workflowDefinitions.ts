@@ -4,6 +4,7 @@ export type WorkflowDefinition = {
     name: string;
     title: LocalString | null;
     titlePlural: LocalString;
+    description: LocalString | null;
     index: number | null;
     isAlwaysVisible: boolean;
     inheritsFrom: string | null;
