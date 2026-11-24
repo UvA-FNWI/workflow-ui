@@ -17,10 +17,10 @@
     "back_to_instance": "Back to instance",
     "back_to_overview": "Back to overview",
     "description": "All properties of this instance. Changes take effect immediately and are recorded in the change log.",
-    "edit_data": "Edit data",
     "edit_property": "Edit {{property}}",
     "load_error": "Could not load the properties of this instance",
     "no_properties": "This instance type has no properties",
+    "read_only_description": "All properties of this instance. You have read-only access.",
     "title": "Data"
   },
   "are_you_sure": "Are you sure?",
@@ -105,6 +105,20 @@
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
   "home": "Home",
+  "home_search": {
+    "empty": "No people or workflows found.",
+    "error": "People search failed. Please try again.",
+    "label": "Search people and workflows",
+    "loading": "Searching…",
+    "people": "People",
+    "placeholder": "Search by workflow or person",
+    "query_length": "Enter between 2 and 200 characters.",
+    "refine": "More people matched. Refine your search to find them.",
+    "results_one": "{{count}} result for “{{query}}”",
+    "results_other": "{{count}} results for “{{query}}”",
+    "title": "Search",
+    "workflows": "Workflows"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
@@ -169,7 +183,7 @@
   "overview": {
     "choose_course_title": "Choose your course",
     "coordinator_view": "All courses",
-    "no_access": "You don't have access to any courses yet.",
+    "load_error": "Could not load the home page. Please try again later.",
     "personal_view": "My overview"
   },
   "previous": "Previous",
@@ -193,6 +207,7 @@
     "question": "Do you want to start over?"
   },
   "retry": "Try again",
+  "review_and_submit": "Review and submit",
   "save": "Save",
   "screens": {
     "actions": "Actions"

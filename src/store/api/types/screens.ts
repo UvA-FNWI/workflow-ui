@@ -38,6 +38,8 @@ export type BulkActionResult = {
     rows: {instanceId: string; status: "Eligible" | "Unavailable" | "Succeeded" | "Failed"}[];
 };
 
+export type ScreenColumnType = "Normal" | "CurrentStep" | "RelatedUsers";
+
 export type ScreenColumn = {
     id: number;
     title: LocalString;
@@ -45,7 +47,7 @@ export type ScreenColumn = {
     filterType: FilterType;
     displayType: DisplayType;
     defaultSort?: SortDirection;
-    isCurrentStep: boolean;
+    columnType: ScreenColumnType;
     link: boolean;
     dataType: DataType;
 };
@@ -53,6 +55,13 @@ export type ScreenColumn = {
 export type ScreenRow = {
     id: string;
     values: Record<number, unknown>;
+};
+
+export type ScreenRelatedUser = {
+    userName: string;
+    displayName: string;
+    roles: LocalString[];
+    organisation?: string;
 };
 
 export type FilterType = "None" | "Pick";

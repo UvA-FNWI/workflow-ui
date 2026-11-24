@@ -51,9 +51,9 @@ export function AdminCard({
                                 size="medium"
                                 width="full"
                                 type="button"
-                                leftIcon={<Icon name="edit-line" size="sm" color="current" />}
+                                leftIcon={<Icon name="visible-line" size="sm" color="current" />}
                             >
-                                {t("admin_data.edit_data")}
+                                {t("admin_data.title")}
                             </Button>
                         </VersionedLink>
                         <VersionedLink className="block min-w-0" to={`/instance/${id}/jobs`}>

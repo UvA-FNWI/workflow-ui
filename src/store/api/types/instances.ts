@@ -38,6 +38,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     infoCards: InfoCard[];
+    stopMessage: LocalString | null;
 };
 
 /**
@@ -55,6 +56,7 @@ export type InstanceSummary = {
 export type InstanceProperties = {
     properties: Question[];
     values: Record<string, unknown>;
+    editablePaths: string[];
 };
 
 export type RecalculateCurrentStepsResult = {

@@ -113,6 +113,7 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
     canImpersonate: false,
     viewerRoles: [],
     infoCards: [],
+    stopMessage: null,
 });
 
 it("opens a preview for a future step inside a collapsed group", () => {

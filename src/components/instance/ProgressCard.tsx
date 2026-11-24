@@ -1,7 +1,7 @@
-import {Card, Heading, Separator, Skeleton} from "@uva-fnwi/datanose-ui";
+import {Card, Heading, Pill, Separator, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {WorkflowProgressBar} from "~/components/WorkflowProgressBar";
-import {useTranslate} from "~/hooks/useTranslate";
+import {type LocalString, useTranslate} from "~/hooks/useTranslate";
 import type {InfoCard, WorkflowStep} from "~/store/api/types/instances";
 
 interface ProgressCardProps {
@@ -9,9 +9,16 @@ interface ProgressCardProps {
     isLoading: boolean;
     steps: WorkflowStep[];
     currentStep: string;
+    stopMessage?: LocalString | null;
 }
 
-export function ProgressCard({card, isLoading, steps, currentStep}: ProgressCardProps) {
+export function ProgressCard({
+    card,
+    isLoading,
+    steps,
+    currentStep,
+    stopMessage,
+}: ProgressCardProps) {
     const {l} = useTranslate("workflow");
 
     if (isLoading) {
@@ -28,12 +35,17 @@ export function ProgressCard({card, isLoading, steps, currentStep}: ProgressCard
 
     if (card === undefined || card.type !== "Progress") return null;
 
+    const message = l(stopMessage);
+
     return (
         <Card>
             <div className="flex flex-col gap-4">
-                <Heading as="h2" className="font-semibold">
-                    {l(card.title)}
-                </Heading>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Heading as="h2" className="font-semibold">
+                        {l(card.title)}
+                    </Heading>
+                    {message && <Pill variant="red">{message}</Pill>}
+                </div>
                 <Separator className="mt-2" />
                 <WorkflowProgressBar steps={steps} currentStep={currentStep} />
             </div>
