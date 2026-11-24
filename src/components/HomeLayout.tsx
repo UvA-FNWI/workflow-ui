@@ -2,16 +2,19 @@ import {useEffect} from "react";
 
 import {Navigate, Outlet, useLocation} from "react-router";
 
-import {Container, useTabsWithLocalStorage} from "@uva-fnwi/datanose-ui";
+import {Container, Text, useTabsWithLocalStorage} from "@uva-fnwi/datanose-ui";
 
 import {PageHeader} from "~/components/PageHeader";
-import {useVersionedNavigate, useVersionedPath} from "~/hooks/useVersionedNavigate";
+import {useTranslate} from "~/hooks/useTranslate";
+import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
+import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 import {rememberHomePath} from "~/store/homeNavigationSlice";
 import {useAppDispatch, useAppSelector} from "~/store/store";
 
 export type HomeLayoutContext = {
+    definitions: WorkflowDefinition[] | undefined;
     showRoleTabs: boolean;
     activeTab: number;
     onTabChange: (index: number) => void;
@@ -19,8 +22,8 @@ export type HomeLayoutContext = {
 };
 
 export function HomeLayout() {
-    const {pathname} = useLocation();
-    const versionedPath = useVersionedPath();
+    const {t} = useTranslate("workflow");
+    const {pathname, search} = useLocation();
     const navigate = useVersionedNavigate();
     const dispatch = useAppDispatch();
     const {homePath, coordinatorPath, userName} = useAppSelector((state) => state.homeNavigation);
@@ -30,12 +33,12 @@ export function HomeLayout() {
         definitions?.flatMap((definition) =>
             definition.screens.map((name) => `/screens/${definition.name}/${name}`),
         ) ?? [];
-    const hasMultipleWorkflows = (definitions?.length ?? 0) > 1;
     const hasCoordinatorView = screens.length > 0;
     const hasPersonalView = (personal?.roles.length ?? 0) > 0;
+    const isHome = pathname === "/";
     const isPersonal = pathname === "/personal";
-    const coordinatorHome = hasMultipleWorkflows ? "/" : (screens[0] ?? "/personal");
-    const coordinatorTarget = screens.includes(coordinatorPath) ? coordinatorPath : coordinatorHome;
+    const redirectToPersonal = definitions && isHome && !hasCoordinatorView;
+    const coordinatorTarget = screens.includes(coordinatorPath) ? coordinatorPath : "/";
     const {activeIndex, onTabChange} = useTabsWithLocalStorage({
         tabs: ["coordinator", "personal"],
         storageKey: [
@@ -49,22 +52,23 @@ export function HomeLayout() {
             .join(":"),
     });
 
-    let redirect: string | undefined;
-    if (definitions && pathname === "/") {
-        if (!hasCoordinatorView) {
-            redirect = "/personal";
-        } else if (!hasMultipleWorkflows) {
-            redirect = coordinatorHome;
-        }
-    }
-
     useEffect(() => {
-        if (definitions && !redirect && homePath !== pathname) {
+        if (definitions && !redirectToPersonal && homePath !== pathname) {
             dispatch(rememberHomePath(pathname));
         }
-    }, [definitions, dispatch, homePath, pathname, redirect]);
+    }, [definitions, dispatch, homePath, pathname, redirectToPersonal]);
 
-    if (redirect) return <Navigate to={versionedPath(redirect)} replace />;
+    if (redirectToPersonal) return <Navigate to={{pathname: "/personal", search}} replace />;
+    if (isHome && isError && !definitions) {
+        return (
+            <Container maxWidth={1280}>
+                <PageHeader title={t("home")} />
+                <Text role="alert" intent="error">
+                    {t("overview.load_error")}
+                </Text>
+            </Container>
+        );
+    }
     if ((!definitions && !isError) || isPersonalLoading) {
         return (
             <Container maxWidth={1280}>
@@ -77,6 +81,7 @@ export function HomeLayout() {
         <Outlet
             context={
                 {
+                    definitions,
                     showRoleTabs: hasCoordinatorView && hasPersonalView,
                     activeTab: isPersonal ? 1 : activeIndex,
                     onTabChange: (index) => {
@@ -85,7 +90,7 @@ export function HomeLayout() {
                             navigate(coordinatorTarget);
                         }
                     },
-                    showBackToChoices: !isPersonal && pathname !== "/" && hasMultipleWorkflows,
+                    showBackToChoices: !isHome && hasCoordinatorView,
                 } satisfies HomeLayoutContext
             }
         />

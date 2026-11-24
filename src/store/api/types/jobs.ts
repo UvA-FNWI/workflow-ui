@@ -29,4 +29,5 @@ export type Job = {
     message: string | null;
     workerGroup: string | null;
     claimedUntil: string | null;
+    canRun: boolean;
 };

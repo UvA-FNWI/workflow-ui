@@ -6,11 +6,12 @@ import {Button, Card, Icon, Skeleton, Text} from "@uva-fnwi/datanose-ui";
 import {HomePage} from "~/components/HomePage";
 import {PersonalDisclosure} from "~/components/PersonalDisclosure";
 import {TableLinkCell, TableProgressCell, TableTextCell} from "~/components/Table";
+import {TableStaffCell} from "~/components/Table/TableStaffCell.tsx";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {useGetPersonalInstancesQuery} from "~/store/api/personalApi";
-import type {PersonalInstance} from "~/store/api/types/personal";
+import type {PersonalInstance, PersonalInstances} from "~/store/api/types/personal";
 import {
     groupPersonalInstancesByRole,
     partitionPersonalInstancesByStatus,
@@ -32,6 +33,29 @@ export default function Personal() {
 
 export function PersonalContent({workflowDefinition}: {workflowDefinition?: string}) {
     const {data, isLoading, isError} = useGetPersonalInstancesQuery();
+    return (
+        <PersonalInstancesContent
+            data={data}
+            isLoading={isLoading}
+            isError={isError}
+            workflowDefinition={workflowDefinition}
+        />
+    );
+}
+
+export function PersonalInstancesContent({
+    data,
+    isLoading,
+    isError,
+    workflowDefinition,
+    personOverview = false,
+}: {
+    data: PersonalInstances | undefined;
+    isLoading: boolean;
+    isError: boolean;
+    workflowDefinition?: string;
+    personOverview?: boolean;
+}) {
     const instances = data?.instances ?? noInstances;
     const {i18n, l, t} = useTranslate("screens");
     const {t: workflowT} = useTranslate("workflow");
@@ -102,24 +126,21 @@ export function PersonalContent({workflowDefinition}: {workflowDefinition?: stri
                 enableSorting: true,
             },
             {
-                id: "employees",
+                id: "staff",
                 size: 200,
                 accessorFn: (instance) =>
                     getComparableTableCellValue(
-                        instance.employees.join(", "),
+                        instance.staff.map((user) => user.displayName).join(", "),
                         "String",
                         i18n.language,
                     ),
-                header: () => t("columns.employees"),
-                cell: ({row}) => (
-                    <div>
-                        {row.original.employees.length
-                            ? row.original.employees.map((employee) => (
-                                  <div key={employee}>{employee}</div>
-                              ))
-                            : "—"}
-                    </div>
-                ),
+                header: () => t("columns.staff"),
+                cell: ({row}) =>
+                    row.original.staff.length ? (
+                        <TableStaffCell users={row.original.staff} />
+                    ) : (
+                        <TableTextCell>—</TableTextCell>
+                    ),
                 enableSorting: true,
             },
             {
@@ -167,13 +188,15 @@ export function PersonalContent({workflowDefinition}: {workflowDefinition?: stri
 
             {!isLoading && isError && (
                 <Card>
-                    <Text className="text-red-700">{t("load_error")}</Text>
+                    <Text className="text-red-700">
+                        {personOverview ? t("person.load_error") : t("load_error")}
+                    </Text>
                 </Card>
             )}
 
             {!isLoading && !isError && !hasRoleGroups && (
                 <Card>
-                    <Text>{t("empty_title")}</Text>
+                    <Text>{personOverview ? t("person.empty") : t("empty_title")}</Text>
                 </Card>
             )}
 
@@ -184,12 +207,14 @@ export function PersonalContent({workflowDefinition}: {workflowDefinition?: stri
                         roleGroups={activeRoleGroups}
                         columns={columns}
                         defaultExpanded={hasActive || !hasStopped}
+                        personOverview={personOverview}
                     />
                     <PersonalDisclosure
                         title={`${t("completed")}${titleSuffix}`}
                         roleGroups={completedRoleGroups}
                         columns={columns}
                         defaultExpanded={completedRoleGroups.length === 0 && !hasStopped}
+                        personOverview={personOverview}
                     />
                     {hasStopped && (
                         <PersonalDisclosure

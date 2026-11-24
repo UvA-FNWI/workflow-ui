@@ -4,7 +4,7 @@ import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/Asse
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
 import type {Page, StepResultsType, Submission} from "~/store/api/types/submissions.ts";
-import {getVisibleQuestionAnswerPairs, isWeightedQuestion} from "~/utils/submissionUtils.ts";
+import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
 
 export type AssessmentPageSectionProps = {
     page: Page;
@@ -31,8 +31,6 @@ export const AssessmentPageSection = ({
     const questions = page.elements
         .filter((element) => element.kind === "Question")
         .map((element) => element.question!);
-    const weightedQuestions = questions.filter(isWeightedQuestion);
-
     const allQuestionAnswerPairs = assessmentSubmissions.map((sourceResult) =>
         getVisibleQuestionAnswerPairs(
             questions,
@@ -42,7 +40,15 @@ export const AssessmentPageSection = ({
         ),
     );
 
-    if (!allQuestionAnswerPairs.some((p) => p.some((r) => r.answer))) {
+    const rowsByName = new Map(
+        allQuestionAnswerPairs
+            .flat()
+            .filter((pair) => pair.answer)
+            .map((pair) => [pair.question.name, pair]),
+    );
+    const rows = questions.map(({name}) => rowsByName.get(name)).filter((row) => row != null);
+
+    if (rows.length === 0) {
         return null;
     }
 
@@ -58,8 +64,8 @@ export const AssessmentPageSection = ({
                         fontType="heading"
                     >
                         {l(page.title)}
-                        {weightedQuestions.some((question) => question.percentage != null) &&
-                            ` (${weightedQuestions.reduce((sum, question) => sum + (question.percentage ?? 0), 0).toLocaleString(i18n.language)}%)`}
+                        {page.percentage != null &&
+                            ` (${page.percentage.toLocaleString(i18n.language)}%)`}
                     </Heading>
                     {onEditPage && resultsType === "Normal" && page.isInCurrentForm && (
                         <Button
@@ -77,34 +83,29 @@ export const AssessmentPageSection = ({
                 </div>
 
                 {/* Weighted averages for the page for each submission */}
-                {assessmentSubmissions.map((sourceResult) => {
-                    const pageResult = sourceResult.pageResults.find((p) => p.name === page.name);
+                {assessmentSubmissions.map((source) => {
+                    const pageResult = source.pageResults.find(
+                        (result) => result.name === page.name,
+                    );
+                    const grade = pageResult?.weightedAverage ?? pageResult?.sum;
+                    const hasGrade = !!(pageResult?.weightedAverage || pageResult?.sum);
                     return (
-                        <div key={sourceResult.id} className="w-24 min-w-0 sm:w-32">
-                            {pageResult?.weightedAverage || pageResult?.sum ? (
-                                <Text fontWeight="semibold" size="lg">
-                                    {(pageResult.weightedAverage ?? pageResult.sum).toLocaleString(
-                                        i18n.language,
-                                    )}
-                                </Text>
-                            ) : (
-                                <Text fontWeight="bold" size="lg">
-                                    -
-                                </Text>
-                            )}
+                        <div key={source.id} className="w-24 min-w-0 sm:w-32">
+                            <Text fontWeight={hasGrade ? "semibold" : "bold"} size="lg">
+                                {hasGrade ? grade?.toLocaleString(i18n.language) : "-"}
+                            </Text>
                         </div>
                     );
                 })}
             </div>
             {/* Questions and answers */}
-            {allQuestionAnswerPairs.flat().length > 0 && (
-                <AssessmentQuestionAnswerList
-                    questionAnswerPairs={allQuestionAnswerPairs}
-                    instanceId={instanceId}
-                    colsClass={colsClass}
-                    collapseAnswers={true}
-                />
-            )}
+            <AssessmentQuestionAnswerList
+                rows={rows}
+                questionAnswerPairs={allQuestionAnswerPairs}
+                instanceId={instanceId}
+                colsClass={colsClass}
+                collapseAnswers={true}
+            />
             <Separator weight={isLastPage ? "bold" : "normal"} />
         </div>
     );

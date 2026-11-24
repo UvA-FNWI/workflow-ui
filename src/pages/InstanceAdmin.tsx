@@ -38,6 +38,7 @@ function InstanceAdmin() {
     } else if (!data?.properties.length) {
         content = <Text intent="secondary">{t("no_properties")}</Text>;
     } else {
+        const editablePaths = new Set(data.editablePaths);
         content = (
             <div className="flex flex-col gap-4">
                 {data.properties.map((question) => {
@@ -48,6 +49,7 @@ function InstanceAdmin() {
                             question={question}
                             path={question.name}
                             values={data.values}
+                            editablePaths={editablePaths}
                             onSave={(path, value) => saveProperty({instanceId: id, path, value})}
                         />
                     );
@@ -67,9 +69,11 @@ function InstanceAdmin() {
                 <Heading as="h1" size="lg">
                     {displayTitle}
                 </Heading>
-                <Text size="sm" intent="secondary">
-                    {t("description")}
-                </Text>
+                {data && (
+                    <Text size="sm" intent="secondary">
+                        {data.editablePaths?.length ? t("description") : t("read_only_description")}
+                    </Text>
+                )}
             </div>
             <Card>{content}</Card>
         </Container>

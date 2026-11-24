@@ -17,10 +17,10 @@
     "back_to_instance": "Terug naar workflow",
     "back_to_overview": "Terug naar overzicht",
     "description": "Alle eigenschappen van deze instantie. Wijzigingen zijn direct van kracht en worden vastgelegd in het wijzigingslogboek.",
-    "edit_data": "Gegevens bewerken",
     "edit_property": "{{property}} bewerken",
     "load_error": "Kan de eigenschappen van deze instantie niet laden",
     "no_properties": "Deze workflow heeft geen eigenschappen",
+    "read_only_description": "Alle eigenschappen van deze instantie. Je kunt ze alleen bekijken.",
     "title": "Gegevens"
   },
   "are_you_sure": "Weet je het zeker?",
@@ -87,6 +87,20 @@
     "undo_reason_empty": "Er is geen reden voor ongedaan maken opgegeven"
   },
   "home": "Home",
+  "home_search": {
+    "empty": "Geen personen of workflows gevonden.",
+    "error": "Zoeken naar personen is mislukt. Probeer het opnieuw.",
+    "label": "Zoek personen en workflows",
+    "loading": "Zoeken…",
+    "people": "Personen",
+    "placeholder": "Zoek op workflow of persoon",
+    "query_length": "Voer 2 tot 200 tekens in.",
+    "refine": "Er zijn meer resultaten. Verfijn je zoekopdracht om ze te vinden.",
+    "results_one": "{{count}} resultaat voor ‘{{query}}’",
+    "results_other": "{{count}} resultaten voor ‘{{query}}’",
+    "title": "Zoeken",
+    "workflows": "Workflows"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
@@ -151,7 +165,7 @@
   "overview": {
     "choose_course_title": "Kies je vak",
     "coordinator_view": "Alle vakken",
-    "no_access": "Je hebt nog geen toegang tot vakken.",
+    "load_error": "De startpagina kon niet worden geladen. Probeer het later opnieuw.",
     "personal_view": "Mijn overzicht"
   },
   "previous": "Vorige",
@@ -175,6 +189,7 @@
     "question": "Wil je helemaal opnieuw beginnen?"
   },
   "retry": "Opnieuw proberen",
+  "review_and_submit": "Controleren en inleveren",
   "save": "Opslaan",
   "screens": {
     "actions": "Acties"
