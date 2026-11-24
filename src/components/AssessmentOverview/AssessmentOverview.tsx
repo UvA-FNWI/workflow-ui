@@ -2,6 +2,7 @@ import {Callout, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentGradeSummary} from "~/components/AssessmentOverview/AssessmentGradeSummary.tsx";
 import {AssessmentPageSection} from "~/components/AssessmentOverview/AssessmentPageSection.tsx";
+import {AssessmentResultCell} from "~/components/AssessmentOverview/AssessmentResultCell.tsx";
 import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {PageControl} from "~/components/instance/PageControl.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
@@ -88,6 +89,11 @@ export const AssessmentOverview = ({
     const hasWeightedAverage =
         assessmentSubmissions.length > 0 &&
         assessmentSubmissions.some((s) => s.weightedAverage > 0);
+    const showMessageColumn =
+        showMessages &&
+        assessmentSubmissions.some((source) =>
+            source.answers.some((answer) => answer.messages?.canView),
+        );
 
     const form = assessmentResults.parts[0]?.form ?? submissions[0]?.form;
 
@@ -109,13 +115,16 @@ export const AssessmentOverview = ({
                         <div className={`grid gap-4 ${colsClass}`}>
                             <div className="col-span-2 w-48 sm:w-80"></div>
                             {assessmentSubmissions.map((assessmentPart) => (
-                                <div key={assessmentPart.id} className="w-24 sm:w-32">
+                                <AssessmentResultCell
+                                    key={assessmentPart.id}
+                                    showMessageColumn={showMessageColumn}
+                                >
                                     <Text fontWeight="normal" size="lg" intent="error">
                                         {l(assessmentPart.title)?.toUpperCase()}{" "}
                                         {assessmentPart.percentage &&
                                             `(${assessmentPart.percentage}%)`}
                                     </Text>
-                                </div>
+                                </AssessmentResultCell>
                             ))}
                         </div>
                     )}
@@ -130,7 +139,7 @@ export const AssessmentOverview = ({
                             resultsType={step?.resultsType ?? "Normal"}
                             instanceId={instanceId}
                             colsClass={colsClass}
-                            showMessages={showMessages}
+                            showMessages={showMessageColumn}
                             messageUi={messageUi}
                         />
                     ))}
@@ -146,9 +155,16 @@ export const AssessmentOverview = ({
                                 {t("instance.calculations.final_grade").toUpperCase()}
                             </Text>
                             {assessmentSubmissions.map((sourceResult) => (
-                                <Text key={sourceResult.id} fontWeight="semibold" size="xl">
-                                    {sourceResult.weightedAverage?.toLocaleString(i18n.language)}
-                                </Text>
+                                <AssessmentResultCell
+                                    key={sourceResult.id}
+                                    showMessageColumn={showMessageColumn}
+                                >
+                                    <Text fontWeight="semibold" size="xl">
+                                        {sourceResult.weightedAverage?.toLocaleString(
+                                            i18n.language,
+                                        )}
+                                    </Text>
+                                </AssessmentResultCell>
                             ))}
                         </div>
                     )}

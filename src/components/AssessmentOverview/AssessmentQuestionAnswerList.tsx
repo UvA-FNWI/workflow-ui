@@ -2,6 +2,7 @@ import {useMemo, useState} from "react";
 
 import {Link, Text} from "@uva-fnwi/datanose-ui";
 
+import {AssessmentResultCell} from "~/components/AssessmentOverview/AssessmentResultCell.tsx";
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
 import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
@@ -107,30 +108,29 @@ export const AssessmentQuestionAnswerList = ({
                                 const pair = submission.find(
                                     (s) => s.question.name === question.name,
                                 );
+                                const messages = pair?.answer?.messages;
                                 return (
-                                    <div
+                                    <AssessmentResultCell
                                         key={submissionIndex}
-                                        className="flex w-24 min-w-0 items-start gap-1 sm:w-32"
-                                    >
-                                        {showMessages &&
-                                            arrayOfPairs.length === 1 &&
-                                            question.messages && (
+                                        showMessageColumn={showMessages}
+                                        messageButton={
+                                            messages && (
                                                 <FieldMessageBalloon
-                                                    {...question.messages}
+                                                    {...messages}
                                                     fieldLabel={l(question.text) ?? question.name}
                                                     messageUi={messageUi}
                                                 />
-                                            )}
-                                        <div className="min-w-0 flex-1">
-                                            <AnswerCell
-                                                pair={pair}
-                                                canEdit={canEdit}
-                                                noAnswerText="-"
-                                                instanceId={instanceId}
-                                                submissionId={submissionId}
-                                            />
-                                        </div>
-                                    </div>
+                                            )
+                                        }
+                                    >
+                                        <AnswerCell
+                                            pair={pair}
+                                            canEdit={canEdit}
+                                            noAnswerText="-"
+                                            instanceId={instanceId}
+                                            submissionId={submissionId}
+                                        />
+                                    </AssessmentResultCell>
                                 );
                             })}
                         </div>

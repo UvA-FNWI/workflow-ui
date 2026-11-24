@@ -18,6 +18,7 @@ import {FieldMessageBalloon} from "../FieldMessageBalloon";
 import {defaultMessageUi} from "../instanceMessageSettings";
 import {QuestionAnswerList} from "../QuestionAnswerList";
 import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/AssessmentQuestionAnswerList";
+import type {Answer, Question} from "~/store/api/types/submissions";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils";
 
 const {getMessages} = vi.hoisted(() => ({
@@ -46,24 +47,46 @@ afterEach(cleanup);
 const render = (ui: ReactNode) =>
     renderComponent(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
 
+const consentQuestion = {
+    type: "String",
+    name: "Consent",
+    text: {en: "Consent", nl: "Toestemming"},
+    isRequired: false,
+    isArray: false,
+    hideInResults: false,
+} satisfies Question;
+
+const consentAnswer: Answer = {
+    id: "consent",
+    questionName: "Consent",
+    isVisible: true,
+    value: null,
+    files: [],
+};
+
+const assessmentComment = {
+    id: "comment-1",
+    parentItemId: null,
+    dateTime: "2026-09-17T10:00:00Z",
+    user: {id: "user-1", displayName: "Ada Lovelace"},
+    kind: "Message",
+    body: "An assessment comment",
+};
+
 describe("FieldMessageBalloon", () => {
     it.each(["form", "assessment"])("uses the field message target in the %s summary", (view) => {
+        const messages = {
+            instanceId: "assessment-owner",
+            questionName: "AssessmentSupervisor.Consent",
+            canView: true,
+            canAdd: false,
+        };
         const pair: QuestionAnswerPair = {
             question: {
-                type: "String",
-                name: "Consent",
-                text: {en: "Consent", nl: "Toestemming"},
-                isRequired: false,
-                isArray: false,
-                hideInResults: false,
-                messages: {
-                    instanceId: "assessment-owner",
-                    questionName: "AssessmentSupervisor.Consent",
-                    canView: true,
-                    canAdd: false,
-                },
+                ...consentQuestion,
+                messages: view === "form" ? messages : undefined,
             },
-            answer: null,
+            answer: view === "assessment" ? {...consentAnswer, messages} : null,
             percentage: null,
         };
         getMessages.mockReturnValue({
@@ -72,16 +95,7 @@ describe("FieldMessageBalloon", () => {
                     id: "correct-thread",
                     questionName: "AssessmentSupervisor.Consent",
                     isClosed: false,
-                    items: [
-                        {
-                            id: "comment-1",
-                            parentItemId: null,
-                            dateTime: "2026-09-17T10:00:00Z",
-                            user: {id: "user-1", displayName: "Ada Lovelace"},
-                            kind: "Message",
-                            body: "An assessment comment",
-                        },
-                    ],
+                    items: [assessmentComment],
                 },
             ],
             isSuccess: true,
@@ -103,6 +117,68 @@ describe("FieldMessageBalloon", () => {
         const dialog = within(screen.getByRole("dialog"));
         expect(dialog.getByText("An assessment comment")).toBeVisible();
         expect(dialog.queryByRole("textbox")).not.toBeInTheDocument();
+    });
+
+    it("uses each assessment column's answer target and hides the balloon for the average", () => {
+        const columns = [
+            {
+                messages: {
+                    instanceId: "supervisor-owner",
+                    questionName: "AssessmentSupervisor.Consent",
+                    canView: true,
+                    canAdd: true,
+                },
+                body: "A supervisor comment",
+            },
+            {
+                messages: {
+                    instanceId: "reviewer-owner",
+                    questionName: "AssessmentReviewer.Consent",
+                    canView: true,
+                    canAdd: false,
+                },
+                body: "A reviewer comment",
+            },
+        ];
+        const average: QuestionAnswerPair = {
+            question: consentQuestion,
+            answer: consentAnswer,
+            percentage: null,
+        };
+        getMessages.mockImplementation((instanceId: string) => ({
+            data: columns
+                .filter(({messages}) => messages.instanceId === instanceId)
+                .map(({messages, body}) => ({
+                    id: instanceId,
+                    questionName: messages.questionName,
+                    isClosed: false,
+                    items: [{...assessmentComment, body}],
+                })),
+            isSuccess: true,
+        }));
+        render(
+            <AssessmentQuestionAnswerList
+                instanceId="project"
+                rows={[average]}
+                questionAnswerPairs={[
+                    ...columns.map(({messages}) => [
+                        {...average, answer: {...consentAnswer, messages}},
+                    ]),
+                    [average],
+                ]}
+            />,
+        );
+
+        const balloons = screen.getAllByRole("button", {name: "Comments on this field"});
+        expect(balloons).toHaveLength(2);
+        for (const [index, {messages, body}] of columns.entries()) {
+            expect(getMessages).toHaveBeenCalledWith(messages.instanceId, {skip: false});
+            fireEvent.click(balloons[index]);
+            const dialog = within(screen.getByRole("dialog"));
+            expect(dialog.getByText(body)).toBeVisible();
+            expect(dialog.queryByRole("textbox") != null).toBe(messages.canAdd);
+            fireEvent.click(dialog.getByRole("button", {name: "Close modal"}));
+        }
     });
 
     it("skips loading and renders nothing without view permission", () => {

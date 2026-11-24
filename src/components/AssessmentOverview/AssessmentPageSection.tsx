@@ -1,6 +1,7 @@
 import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/AssessmentQuestionAnswerList.tsx";
+import {AssessmentResultCell} from "~/components/AssessmentOverview/AssessmentResultCell.tsx";
 import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
@@ -28,7 +29,7 @@ export const AssessmentPageSection = ({
     resultsType,
     isLastPage = false,
     colsClass = "grid-cols-1",
-    showMessages,
+    showMessages = true,
     messageUi,
 }: AssessmentPageSectionProps) => {
     const {t, l, i18n} = useTranslate("workflow");
@@ -95,11 +96,11 @@ export const AssessmentPageSection = ({
                     const grade = pageResult?.weightedAverage ?? pageResult?.sum;
                     const hasGrade = !!(pageResult?.weightedAverage || pageResult?.sum);
                     return (
-                        <div key={source.id} className="w-24 min-w-0 sm:w-32">
+                        <AssessmentResultCell key={source.id} showMessageColumn={showMessages}>
                             <Text fontWeight={hasGrade ? "semibold" : "bold"} size="lg">
                                 {hasGrade ? grade?.toLocaleString(i18n.language) : "-"}
                             </Text>
-                        </div>
+                        </AssessmentResultCell>
                     );
                 })}
             </div>

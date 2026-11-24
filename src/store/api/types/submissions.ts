@@ -35,6 +35,13 @@ export type AnswerChangeGroup = {
     changes: AnswerChange[];
 };
 
+type QuestionMessages = {
+    instanceId: string;
+    questionName: string;
+    canView: boolean;
+    canAdd: boolean;
+};
+
 export type Answer = {
     id: string;
     questionName: string;
@@ -44,6 +51,7 @@ export type Answer = {
     visibleChoices?: string[] | null;
     files: StoredFile[];
     changes?: AnswerChangeGroup[] | null;
+    messages?: QuestionMessages | null;
 };
 
 export type StoredFile = {
@@ -88,12 +96,7 @@ export type QuestionBase = {
     description?: LocalString | null;
     shortText?: LocalString | null;
     linkedTo?: string | null;
-    messages?: {
-        instanceId: string;
-        questionName: string;
-        canView: boolean;
-        canAdd: boolean;
-    } | null;
+    messages?: QuestionMessages | null;
 };
 
 export type WeightedQuestionBase = QuestionBase & {
