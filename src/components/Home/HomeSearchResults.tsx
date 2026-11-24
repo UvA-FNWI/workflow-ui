@@ -22,8 +22,8 @@ export function HomeSearchResults({
             definition.name,
             definition.title?.en,
             definition.title?.nl,
-            definition.titlePlural.en,
-            definition.titlePlural.nl,
+            definition.description?.en,
+            definition.description?.nl,
         ].some((label) => label?.toLowerCase().includes(term)),
     );
     const people = currentData?.people ?? [];
