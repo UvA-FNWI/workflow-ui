@@ -1,4 +1,4 @@
-import type {MessageItem} from "~/store/api/types/messages";
+import type {MessageItem, MessageThread} from "~/store/api/types/messages";
 
 export type MessageTreeNode = MessageItem & {
     children: MessageTreeNode[];
@@ -10,6 +10,19 @@ export function getConversationOpener(items: MessageItem[]): MessageItem | undef
 
 export function newestMessageFirst(a: MessageItem, b: MessageItem): number {
     return Date.parse(b.dateTime) - Date.parse(a.dateTime);
+}
+
+export function orderConversationThreads(threads: MessageThread[]): MessageThread[] {
+    return threads
+        .flatMap((thread) => {
+            const opener = getConversationOpener(thread.items);
+            return opener ? [{thread, opener}] : [];
+        })
+        .sort((a, b) => {
+            if (a.thread.isClosed !== b.thread.isClosed) return a.thread.isClosed ? 1 : -1;
+            return newestMessageFirst(a.opener, b.opener);
+        })
+        .map(({thread}) => thread);
 }
 
 /** Builds nested reply nodes under the conversation opener (first message item). */

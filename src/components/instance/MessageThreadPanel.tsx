@@ -1,12 +1,12 @@
-import {type ReactNode, useCallback, useEffect, useId, useState} from "react";
+import {useCallback, useEffect, useId, useState} from "react";
 
-import {Button, Callout, type CalloutType, Separator, Text, TextArea} from "@uva-fnwi/datanose-ui";
+import {Callout, type CalloutType, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {ConversationThread} from "./ConversationThread";
 import {FlatMessageFeed} from "./FlatMessageFeed";
 import {defaultMessageUi, type MessageUiSettings, useMessageTerms} from "./instanceMessageSettings";
-import {handleMessageSubmitShortcut} from "./messageComposerShortcuts";
-import {getConversationOpener, newestMessageFirst} from "./messageTree";
+import {MessageComposer, type MessageComposerProps} from "./MessageComposer";
+import {orderConversationThreads} from "./messageTree";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
 import type {MessageThread} from "~/store/api/types/messages";
@@ -51,7 +51,7 @@ export function MessageThreadPanel({
 }: Props) {
     const {layout, allowClose, callout} = messageUi;
     const isFlat = layout === "flat";
-    const cancelIntent: ComposerProps["cancelIntent"] =
+    const cancelIntent: MessageComposerProps["cancelIntent"] =
         questionName == null ? "ghost" : "secondary";
     const {t, l} = useTranslate("workflow");
     const {t: m} = useTranslate("workflow", {keyPrefix: "instance.messages"});
@@ -185,7 +185,7 @@ export function MessageThreadPanel({
         ) : null;
 
     const newConversationStarter = newComposerVisible ? (
-        <Composer
+        <MessageComposer
             {...draftProps(null)}
             id={newConversationFieldId}
             placeholder={newConversationPlaceholder}
@@ -204,7 +204,7 @@ export function MessageThreadPanel({
     ) : null;
 
     const replyComposer = replyTarget ? (
-        <Composer
+        <MessageComposer
             {...draftProps(replyTarget)}
             onCancel={cancelReply}
             placeholder={replyPlaceholder}
@@ -232,29 +232,17 @@ export function MessageThreadPanel({
         />
     );
 
-    const orderedThreads = isFlat
-        ? []
-        : threads
-              .flatMap((thread) => {
-                  const opener = getConversationOpener(thread.items);
-                  return opener ? [{thread, opener}] : [];
-              })
-              .sort((a, b) => {
-                  if (a.thread.isClosed !== b.thread.isClosed) return a.thread.isClosed ? 1 : -1;
-                  return newestMessageFirst(a.opener, b.opener);
-              });
+    const orderedThreads = isFlat ? [] : orderConversationThreads(threads);
 
     const threadList = isFlat ? (
         <FlatMessageFeed threads={threads} />
     ) : (
         <div className="flex flex-col">
-            {orderedThreads.map(({thread}, index) => (
+            {orderedThreads.map((thread, index) => (
                 <div key={thread.id}>
                     {index > 0 && <Separator />}
                     {renderThread(thread)}
-                    {index === orderedThreads.length - 1 && orderedThreads.length > 0 && (
-                        <Separator />
-                    )}
+                    {index === orderedThreads.length - 1 && <Separator />}
                 </div>
             ))}
         </div>
@@ -269,87 +257,6 @@ export function MessageThreadPanel({
                 </Text>
             )}
             {threadList}
-        </div>
-    );
-}
-
-type ComposerProps = {
-    id?: string;
-    body: string;
-    error?: string;
-    onChange: (value: string) => void;
-    onSubmit: () => void;
-    onCancel: () => void;
-    onFocus?: () => void;
-    cancelIntent: "ghost" | "secondary";
-    submitLabel: string;
-    cancelLabel: string;
-    placeholder: string;
-    callout?: ReactNode;
-    expanded?: boolean;
-    readOnly?: boolean;
-    isLoading: boolean;
-    autoFocus?: boolean;
-};
-
-function Composer({
-    id,
-    body,
-    error,
-    onChange,
-    onSubmit,
-    onCancel,
-    onFocus,
-    cancelIntent,
-    submitLabel,
-    cancelLabel,
-    placeholder,
-    callout,
-    expanded = true,
-    readOnly = false,
-    isLoading,
-    autoFocus,
-}: ComposerProps) {
-    const isReadOnly = isLoading || readOnly;
-    const canSubmit = expanded && !isReadOnly && body.trim().length > 0;
-
-    return (
-        <div className="flex w-full flex-col gap-2">
-            <TextArea
-                id={id}
-                aria-label={placeholder}
-                className={expanded ? "w-full" : "min-h-10! w-full resize-none"}
-                rows={expanded ? 3 : 1}
-                value={body}
-                onChange={isReadOnly ? undefined : onChange}
-                onFocus={onFocus}
-                readOnly={isReadOnly}
-                autoFocus={autoFocus}
-                placeholder={placeholder}
-                onKeyDown={(event) => handleMessageSubmitShortcut(event, onSubmit, canSubmit)}
-            />
-            {error && (
-                <Text role="alert" intent="error" size="sm">
-                    {error}
-                </Text>
-            )}
-            {callout}
-            {expanded && (
-                <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                        intent="primary"
-                        variant="destructive"
-                        width="none"
-                        disabled={!canSubmit}
-                        onClick={onSubmit}
-                    >
-                        {submitLabel}
-                    </Button>
-                    <Button intent={cancelIntent} disabled={isLoading} onClick={onCancel}>
-                        {cancelLabel}
-                    </Button>
-                </div>
-            )}
         </div>
     );
 }
