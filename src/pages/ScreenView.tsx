@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {type ComponentProps, useMemo, useState} from "react";
 
 import {useParams} from "react-router";
 
@@ -11,15 +11,14 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
-    TabToolbar,
     useTabsWithLocalStorage,
 } from "@uva-fnwi/datanose-ui";
 
 import {HomePage} from "~/components/HomePage";
 import {ScreenTable} from "~/components/ScreenTable";
 import {BulkActionModal} from "~/components/ScreenTable/BulkActionModal";
-import {filterScreenRows} from "~/components/ScreenTable/filterScreenRows";
 import {ScreenTableToolbar} from "~/components/ScreenTable/ScreenTableToolbar.tsx";
+import {useScreenFilters} from "~/components/ScreenTable/useScreenFilters.ts";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
@@ -38,13 +37,12 @@ export const ScreenView = () => {
 };
 
 const ScreenContent = () => {
-    const {l, i18n} = useTranslate("common");
+    const {l} = useTranslate("screens");
     const {workflowDefinition, screenName} = useParams();
     const {currentData: screen, isFetching} = useGetScreenQuery(
         {workflowDefinition: workflowDefinition ?? "", screenName: screenName ?? ""},
         {skip: !workflowDefinition || !screenName},
     );
-    const [search, setSearch] = useState("");
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [bulkSelection, setBulkSelection] = useState<{
         action: BulkAction;
@@ -54,29 +52,53 @@ const ScreenContent = () => {
         tabs: screen?.groups?.map((group) => group.name) ?? [],
         storageKey: getScreenTabStorageKey(workflowDefinition, screenName),
     });
+    const columns = useMemo(() => screen?.columns ?? [], [screen]);
+    const {
+        search,
+        setSearch,
+        columnFilters,
+        setColumnFilter,
+        clearColumnFilters,
+        pickTypeFilters,
+        isFiltering,
+        filteredGroupRows,
+    } = useScreenFilters({
+        columns,
+        rows: screen?.rows,
+        groups: screen?.groups,
+    });
 
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
 
-    const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
     const bulkActions = screen?.bulkActions ?? [];
-    const selectedRows = filterScreenRows(
-        screen?.columns ?? [],
-        rows,
-        search,
-        i18n.language,
-    ).filter((row) => rowSelection[row.id]);
+    const selectedRows = useMemo(() => {
+        const allRows = screen?.groups
+            ? screen.groups.flatMap((group) => group.rows)
+            : (screen?.rows ?? []);
+        return allRows.filter((row) => rowSelection[row.id]);
+    }, [screen, rowSelection]);
+
+    const hiddenSelectedCount = useMemo(() => {
+        const visibleIds = new Set(filteredGroupRows.flat().map((row) => row.id));
+        return selectedRows.filter((row) => !visibleIds.has(row.id)).length;
+    }, [filteredGroupRows, selectedRows]);
+
     const toolbarBulkProps = {
         bulkActions,
         selectedCount: selectedRows.length,
         onBulkAction: (action: BulkAction) => setBulkSelection({action, rows: selectedRows}),
-    };
+    } satisfies Partial<ComponentProps<typeof ScreenTableToolbar>>;
+
+    const filterProps = {
+        filters: pickTypeFilters,
+        filterValues: columnFilters,
+        onFilterChange: setColumnFilter,
+        onClearFilters: clearColumnFilters,
+    } satisfies Partial<ComponentProps<typeof ScreenTableToolbar>>;
+
     const selectionProps = bulkActions.length
         ? {rowSelection, onRowSelectionChange: setRowSelection}
         : {};
-    const changeSearch = (value: string) => {
-        setSearch(value);
-        setRowSelection({});
-    };
 
     if (!screen || !workflowDefinition || !screenName) {
         return isFetching ? (
@@ -86,16 +108,6 @@ const ScreenContent = () => {
         ) : null;
     }
 
-    const toolbar = (
-        <ScreenTableToolbar
-            search={search}
-            setSearch={changeSearch}
-            canEdit={screen.isBulkEditEnabled}
-            canCreate={screen.workflowDefinition.canCreateInstance}
-            workflowDefinition={workflowDefinition}
-            {...toolbarBulkProps}
-        />
-    );
     const title = l(screen.workflowDefinition.title);
     return (
         <HomePage
@@ -104,34 +116,37 @@ const ScreenContent = () => {
             personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
         >
             <Card>
+                <ScreenTableToolbar
+                    search={search}
+                    setSearch={setSearch}
+                    canEdit={screen.isBulkEditEnabled}
+                    canCreate={screen.workflowDefinition.canCreateInstance}
+                    workflowDefinition={workflowDefinition}
+                    {...toolbarBulkProps}
+                    {...filterProps}
+                />
                 {screen.groups ? (
-                    <Tabs
-                        activeIndex={activeTab}
-                        onTabChange={(index) => {
-                            setActiveTab(index);
-                            setRowSelection({});
-                        }}
-                    >
-                        <TabList>
+                    <Tabs activeIndex={activeTab} onTabChange={(index) => setActiveTab(index)}>
+                        <TabList className="my-4">
                             {screen.groups.map((group, index) => (
                                 <Tab key={group.name}>
                                     <div className="flex w-full justify-between gap-2">
                                         <span>{l(group.title)}</span>
                                         <Pill variant={activeTab === index ? "darkRed" : "grey"}>
-                                            {group.rows.length}
+                                            {isFiltering
+                                                ? `${filteredGroupRows[index].length}/${group.rows.length}`
+                                                : group.rows.length}
                                         </Pill>
                                     </div>
                                 </Tab>
                             ))}
                         </TabList>
-                        <TabToolbar className="py-4">{toolbar}</TabToolbar>
                         <TabPanels>
-                            {screen.groups.map((group) => (
+                            {screen.groups.map((group, index) => (
                                 <TabPanel key={group.name}>
                                     <ScreenTable
                                         columns={screen.columns}
-                                        rows={group.rows}
-                                        globalFilter={search}
+                                        rows={filteredGroupRows[index]}
                                         {...selectionProps}
                                     />
                                 </TabPanel>
@@ -139,15 +154,11 @@ const ScreenContent = () => {
                         </TabPanels>
                     </Tabs>
                 ) : (
-                    <div className="flex flex-col gap-4">
-                        {toolbar}
-                        <ScreenTable
-                            columns={screen.columns}
-                            rows={screen.rows}
-                            globalFilter={search}
-                            {...selectionProps}
-                        />
-                    </div>
+                    <ScreenTable
+                        columns={screen.columns}
+                        rows={filteredGroupRows[0]}
+                        {...selectionProps}
+                    />
                 )}
             </Card>
             {bulkSelection && (
@@ -159,6 +170,7 @@ const ScreenContent = () => {
                     rows={bulkSelection.rows}
                     onClose={() => setBulkSelection(null)}
                     onComplete={() => setRowSelection({})}
+                    hiddenSelectedCount={hiddenSelectedCount}
                 />
             )}
         </HomePage>

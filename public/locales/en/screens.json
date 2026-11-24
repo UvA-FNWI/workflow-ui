@@ -17,7 +17,9 @@
     "success_one": "The action was executed successfully for 1 row.",
     "success_other": "The action was executed successfully for all {{count}} rows.",
     "unavailable": "Currently unavailable",
-    "unknown_result": "The result could not be confirmed. Some actions may have completed. Check the table before starting another bulk action. Please contact an administrator."
+    "unknown_result": "The result could not be confirmed. Some actions may have completed. Check the table before starting another bulk action. Please contact an administrator.",
+    "warning_hidden_selected_one": "You have selected {{count}} row that is currently hidden by filters or search. The action will also be applied to this row.",
+    "warning_hidden_selected_other": "You have selected {{count}} rows that are currently hidden by filters or search. The action will also be applied to these rows."
   },
   "columns": {
     "course": "Course",
@@ -29,6 +31,23 @@
   "completed": "Completed",
   "create_new": "New",
   "empty_title": "No theses found",
+  "filters": {
+    "choose": "Make a choice",
+    "clear_all": "Clear all filters",
+    "clear_selection": "Clear selection",
+    "done": "Done",
+    "hide_filters": "Hide filters",
+    "matches_one": "{{count}} match",
+    "matches_other": "{{count}} matches",
+    "no_matches": "No matching options",
+    "outside_search": "{{nr}} outside this search",
+    "search_options": "Search options",
+    "select_all": "Select all",
+    "select_all_results": "Select all results",
+    "selected_summary": "{{nr}} selected",
+    "show_filters": "Show filters",
+    "title": "Filters"
+  },
   "import": {
     "column_selection": "Choose the columns you want to import:",
     "description_select": "Indicate which file and data you want to import.",
