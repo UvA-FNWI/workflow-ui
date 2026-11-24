@@ -2,6 +2,10 @@ import './styles/index.css';
 
 export { Button, type ButtonProps } from './components/Button/Button';
 export {
+  IconButton,
+  type IconButtonProps,
+} from './components/Button/IconButton';
+export {
   Callout,
   type CalloutProps,
   type CalloutType,
@@ -160,7 +164,11 @@ export {
 
 export { Confetti, type ConfettiProps } from './components/Confetti/Confetti';
 
-export { Tooltip, type TooltipProps } from './components/Tooltip/Tooltip';
+export {
+  Tooltip,
+  type TooltipProps,
+  type TooltipPlacement,
+} from './components/Tooltip/Tooltip';
 export {
   Container,
   type ContainerProps,

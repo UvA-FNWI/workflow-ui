@@ -285,7 +285,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
               aria-labelledby={ariaLabelledBy}
               aria-describedby={describedBy}
               aria-invalid={!isValid || undefined}
-              className="ui:min-w-[8rem] ui:flex-1 ui:border-0 ui:bg-transparent ui:p-0 ui:text-inherit ui:outline-none ui:placeholder:text-grey-600 ui:disabled:cursor-not-allowed ui:dark:placeholder:text-grey-400"
+              className="ui:min-w-[8rem] ui:flex-1 ui:border-0 ui:bg-transparent ui:p-0 ui:text-inherit ui:outline-none ui:placeholder:text-grey-700 ui:disabled:cursor-not-allowed ui:dark:placeholder:text-grey-400"
               onChange={event => {
                 setSearch(event.currentTarget.value);
               }}

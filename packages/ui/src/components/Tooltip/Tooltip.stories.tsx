@@ -98,3 +98,43 @@ export const OnIcon: Story = {
     ),
   },
 };
+
+/**
+ * Plain text triggers are made focusable automatically, so keyboard users can
+ * read the tooltip too. Hover the text, then move the pointer onto the tooltip:
+ * it stays open (WCAG 1.4.13 hoverable). Press Escape to dismiss it.
+ */
+export const OnText: Story = {
+  args: {
+    content: 'Calculated grade will be a fail if the minimum is not met',
+    children: (
+      <span style={{ textDecoration: 'underline dotted' }}>Must be ≥ 5.5</span>
+    ),
+  },
+};
+
+/** A disabled button cannot receive focus, so the wrapper becomes focusable. */
+export const OnDisabledButton: Story = {
+  args: {
+    content: 'There are no changes to save',
+    children: <button disabled>Save</button>,
+  },
+};
+
+/**
+ * Near the edge of the viewport the tooltip is shifted to stay on screen; the arrow keeps
+ * pointing at the trigger (as with the impersonate icon at the right of the navbar).
+ */
+export const NearViewportEdge: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: args => (
+    <div
+      style={{ display: 'flex', justifyContent: 'flex-end', padding: '80px 0' }}
+    >
+      <Tooltip {...args}>
+        <button aria-label="Impersonate a user">👥</button>
+      </Tooltip>
+    </div>
+  ),
+  args: { content: 'Impersonate a user', delay: 0 },
+};

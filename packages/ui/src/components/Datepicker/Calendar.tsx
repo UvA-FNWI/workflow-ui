@@ -39,7 +39,7 @@ function CalendarGrid({
           {weekDays.map((day, index) => (
             <th
               key={index}
-              className="ui:h-10 ui:w-10 ui:text-sm ui:font-medium ui:text-grey-600 ui:dark:text-grey-400"
+              className="ui:h-10 ui:w-10 ui:text-sm ui:font-medium ui:text-grey-700 ui:dark:text-grey-400"
             >
               {day}
             </th>

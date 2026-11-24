@@ -106,7 +106,8 @@ describe("UserPicker", () => {
 
         const trigger = screen.getByRole("textbox", {name: "user_picker.search_placeholder"});
         expect(trigger).toHaveAttribute("readonly");
-        expect(screen.getByRole("img", {name: "search-line"})).toBeInTheDocument();
+        // The search icon is decorative: it must not be exposed with its sprite name
+        expect(screen.queryByRole("img", {name: "search-line"})).not.toBeInTheDocument();
 
         fireEvent.click(
             screen.getByRole("button", {name: "Remove Ada Lovelace | ada@example.com"}),
