@@ -1,7 +1,12 @@
 import {rankings, rankItem} from "@tanstack/match-sorter-utils";
 
 import type {LocalString} from "~/hooks/useTranslate.ts";
-import type {FilterType, ScreenColumn, ScreenRow} from "~/store/api/types/screens";
+import type {
+    FilterType,
+    ScreenColumn,
+    ScreenRelatedUser,
+    ScreenRow,
+} from "~/store/api/types/screens";
 import {isProgressInformation} from "~/utils/progress.ts";
 import {formatTableCellValue, getComparableTableCellValue} from "~/utils/tableCellValues";
 
@@ -18,29 +23,38 @@ export interface FilterOption {
     label: string;
 }
 
-// strip DD/MM dates, optionally wrapped in brackets: "03/09", "(18/12)"
-export const stripDates = (value: string): string =>
-    value
-        .replace(/\s*(?:\(\s*\d{1,2}\/\d{1,2}\s*\)|\b\d{1,2}\/\d{1,2}\b)/g, "")
-        .replace(/\s{2,}/g, " ")
-        .trim();
+export const EMPTY_FILTER_KEY = "__empty__";
+const EMPTY_OPTION: FilterOption = {key: EMPTY_FILTER_KEY, label: "—"};
 
-const getFilterKey = (raw: unknown, col: ScreenColumn): string => {
+const getFilterKey = (raw: unknown): string => {
     const value = isProgressInformation(raw) ? raw.text : raw;
-    const text =
-        typeof value === "object" && value !== null
-            ? ((value as Record<string, string>).en ?? "")
-            : String(value ?? "");
-    return col.isCurrentStep ? stripDates(text) : text;
+    if (value == null) return "";
+    const text = typeof value === "object" ? (value as Record<string, string>).en : String(value);
+    return text?.trim() ?? "";
 };
 
-const getFilterOption = (row: ScreenRow, col: ScreenColumn, language: string): FilterOption => {
+const getItemKey = (item: unknown, col: ScreenColumn): string => {
+    if (col.columnType === "RelatedUsers") {
+        const user = item as Partial<ScreenRelatedUser> | null;
+        return user?.displayName?.trim() || user?.userName?.trim() || "";
+    }
+
+    return getFilterKey(item);
+};
+
+const getFilterOptions = (row: ScreenRow, col: ScreenColumn, language: string): FilterOption[] => {
     const raw = row.values[col.id];
-    const label = String(formatTableCellValue(raw, col.dataType, language) ?? "");
-    return {
-        key: getFilterKey(raw, col),
-        label: col.isCurrentStep ? stripDates(label) : label,
-    };
+
+    if (Array.isArray(raw)) {
+        const keys = raw.map((item) => getItemKey(item, col)).filter(Boolean);
+        return keys.length ? keys.map((key) => ({key, label: key})) : [EMPTY_OPTION];
+    }
+
+    const key = getFilterKey(raw);
+    if (!key) return [EMPTY_OPTION];
+
+    const label = String(formatTableCellValue(raw, col.dataType, language) ?? "").trim();
+    return [{key, label: label || key}];
 };
 
 export const getFiltersByType = (
@@ -54,16 +68,19 @@ export const getFiltersByType = (
         .map((col) => {
             const options = new Map<string, FilterOption>();
             rows.forEach((row) => {
-                const option = getFilterOption(row, col, language);
-                if (option.key && !options.has(option.key)) options.set(option.key, option);
+                getFilterOptions(row, col, language).forEach((option) => {
+                    if (option.key && !options.has(option.key)) options.set(option.key, option);
+                });
             });
 
             return {
                 name: String(col.id),
                 title: col.title,
-                options: [...options.values()].sort((a, b) =>
-                    a.label.localeCompare(b.label, language),
-                ),
+                options: [...options.values()].sort((a, b) => {
+                    if (a.key === EMPTY_FILTER_KEY) return 1;
+                    if (b.key === EMPTY_FILTER_KEY) return -1;
+                    return a.label.localeCompare(b.label, language);
+                }),
             };
         });
 
@@ -83,9 +100,10 @@ export function filterScreenRows(
     if (!activeFilterColumns.length && !searchTerm) return rows;
 
     return rows.filter((row) => {
-        const passesFilters = activeFilterColumns.every((col) =>
-            filters[String(col.id)].includes(getFilterKey(row.values[col.id], col)),
-        );
+        const passesFilters = activeFilterColumns.every((col) => {
+            const selected = filters[String(col.id)];
+            return getFilterOptions(row, col, language).some(({key}) => selected.includes(key));
+        });
         if (!passesFilters) return false;
         if (!searchTerm) return true;
 

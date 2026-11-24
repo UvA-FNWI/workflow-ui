@@ -1,9 +1,9 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    EMPTY_FILTER_KEY,
     filterScreenRows,
     getFiltersByType,
-    stripDates,
 } from "~/components/ScreenTable/filterScreenRows";
 import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
 
@@ -14,7 +14,7 @@ function column(id: number, overrides: Partial<ScreenColumn> = {}): ScreenColumn
         filterType: "None",
         displayType: "Normal",
         link: false,
-        isCurrentStep: false,
+        columnType: "Normal",
         dataType: "String",
         ...overrides,
     };
@@ -80,19 +80,6 @@ describe("filterScreenRows", () => {
         expect(ids(filterScreenRows(columns, rows, "", {0: ["Alice"]}, "en"))).toEqual(ids(rows));
     });
 
-    it("matches pick filters on current-step values with dates stripped", () => {
-        const stepColumns = [column(0, {filterType: "Pick", isCurrentStep: true})];
-        const stepRows: ScreenRow[] = [
-            {id: "a", values: {0: "Review (03/09)"}},
-            {id: "b", values: {0: "Review 18/12"}},
-            {id: "c", values: {0: "Grading (01/01)"}},
-        ];
-        expect(ids(filterScreenRows(stepColumns, stepRows, "", {0: ["Review"]}, "en"))).toEqual([
-            "a",
-            "b",
-        ]);
-    });
-
     it("searches localized values in the active language", () => {
         const localized = [column(0, {dataType: "Object"})];
         const localizedRows: ScreenRow[] = [
@@ -107,7 +94,7 @@ describe("filterScreenRows", () => {
 
 describe("stable keys across languages", () => {
     const progressColumns = [
-        column(0, {filterType: "Pick", isCurrentStep: true, dataType: "Object"}),
+        column(0, {filterType: "Pick", columnType: "CurrentStep", dataType: "Object"}),
     ];
     const progressRows: ScreenRow[] = [
         {
@@ -115,8 +102,8 @@ describe("stable keys across languages", () => {
             values: {
                 0: {
                     text: {
-                        en: "Working (16/09) on revision of proposal",
-                        nl: "Werkt (16/09) aan herziening van voorstel",
+                        en: "Working on revision of proposal",
+                        nl: "Werkt aan herziening van voorstel",
                     },
                     color: "Green",
                 },
@@ -126,7 +113,7 @@ describe("stable keys across languages", () => {
             id: "b",
             values: {
                 0: {
-                    text: {en: "Waits (09/11) for assessment", nl: "Wacht (09/11) op goedkeuring"},
+                    text: {en: "Waits for assessment", nl: "Wacht op goedkeuring"},
                     color: "Red",
                 },
             },
@@ -135,7 +122,7 @@ describe("stable keys across languages", () => {
             id: "c",
             values: {
                 0: {
-                    text: {en: "Waits (12/12) for assessment", nl: "Wacht (12/12) op goedkeuring"},
+                    text: {en: "Waits for assessment", nl: "Wacht op goedkeuring"},
                     color: "Green",
                 },
             },
@@ -167,7 +154,7 @@ describe("stable keys across languages", () => {
 });
 
 describe("getFiltersByType", () => {
-    it("builds deduplicated, sorted options and skips empty values", () => {
+    it("builds deduplicated, sorted options with the empty option last", () => {
         expect(getFiltersByType(columns, rows, "en", "Pick")).toEqual([
             {
                 name: "1",
@@ -175,6 +162,7 @@ describe("getFiltersByType", () => {
                 options: [
                     {key: "Closed", label: "Closed"},
                     {key: "Open", label: "Open"},
+                    {key: EMPTY_FILTER_KEY, label: "—"},
                 ],
             },
             {
@@ -188,26 +176,87 @@ describe("getFiltersByType", () => {
         ]);
     });
 
-    it("strips dates from current-step options so they group together", () => {
-        const stepColumns = [column(0, {filterType: "Pick", isCurrentStep: true})];
-        const stepRows: ScreenRow[] = [
-            {id: "a", values: {0: "Review (03/09)"}},
-            {id: "b", values: {0: "Review 18/12"}},
-        ];
-        expect(getFiltersByType(stepColumns, stepRows, "en", "Pick")[0].options).toEqual([
-            {key: "Review", label: "Review"},
+    it("filters rows with an empty value via the empty key", () => {
+        expect(ids(filterScreenRows(columns, rows, "", {1: [EMPTY_FILTER_KEY]}, "en"))).toEqual([
+            "dave",
         ]);
+    });
+
+    it("trims whitespace from keys", () => {
+        const trimRows: ScreenRow[] = [{id: "a", values: {1: "  Open  "}}];
+        expect(getFiltersByType([columns[1]], trimRows, "en", "Pick")[0].options).toEqual([
+            {key: "Open", label: "Open"},
+        ]);
+    });
+
+    it("does not throw on localized objects without an en value", () => {
+        const localized = [column(0, {filterType: "Pick", dataType: "Object"})];
+        const localizedRows: ScreenRow[] = [{id: "a", values: {0: {nl: "Alleen Nederlands"}}}];
+        expect(() => getFiltersByType(localized, localizedRows, "en", "Pick")).not.toThrow();
     });
 });
 
-describe("stripDates", () => {
-    it.each([
-        ["Review (03/09)", "Review"],
-        ["Review ( 3/9 )", "Review"],
-        ["Review 18/12", "Review"],
-        ["Due 01/02 then 03/04 done", "Due then done"],
-        ["No date here", "No date here"],
-    ])("strips %s to %s", (input, expected) => {
-        expect(stripDates(input)).toBe(expected);
+describe("related users", () => {
+    const userColumns = [
+        column(0, {filterType: "Pick", columnType: "RelatedUsers", dataType: "Object"}),
+    ];
+    const userRows: ScreenRow[] = [
+        {
+            id: "a",
+            values: {0: [{displayName: "Alice Smith", userName: "asmith"}, {userName: "bob"}]},
+        },
+        {id: "b", values: {0: [{displayName: "Alice Smith"}]}},
+        {id: "c", values: {0: []}},
+        {id: "d", values: {0: [null, {displayName: "   "}]}},
+        {id: "e", values: {0: [{displayName: "  ", userName: "carol"}]}},
+    ];
+
+    it("uses displayName, falls back to userName, and adds the empty option last", () => {
+        expect(getFiltersByType(userColumns, userRows, "en", "Pick")[0].options).toEqual([
+            {key: "Alice Smith", label: "Alice Smith"},
+            {key: "bob", label: "bob"},
+            {key: "carol", label: "carol"},
+            {key: EMPTY_FILTER_KEY, label: "—"},
+        ]);
+    });
+
+    it("falls back to userName when displayName is blank", () => {
+        expect(ids(filterScreenRows(userColumns, userRows, "", {0: ["carol"]}, "en"))).toEqual([
+            "e",
+        ]);
+    });
+
+    it("matches a row when any of its users is selected", () => {
+        expect(
+            ids(filterScreenRows(userColumns, userRows, "", {0: ["Alice Smith"]}, "en")),
+        ).toEqual(["a", "b"]);
+        expect(ids(filterScreenRows(userColumns, userRows, "", {0: ["bob"]}, "en"))).toEqual(["a"]);
+    });
+
+    it("treats empty arrays, null users and blank names as empty", () => {
+        expect(
+            ids(filterScreenRows(userColumns, userRows, "", {0: [EMPTY_FILTER_KEY]}, "en")),
+        ).toEqual(["c", "d"]);
+    });
+});
+
+describe("generic array values", () => {
+    const tagColumns = [column(0, {filterType: "Pick"})];
+    const tagRows: ScreenRow[] = [
+        {id: "a", values: {0: ["Physics", " Chemistry "]}},
+        {id: "b", values: {0: ["Physics"]}},
+    ];
+
+    it("creates one trimmed option per item", () => {
+        expect(getFiltersByType(tagColumns, tagRows, "en", "Pick")[0].options).toEqual([
+            {key: "Chemistry", label: "Chemistry"},
+            {key: "Physics", label: "Physics"},
+        ]);
+    });
+
+    it("matches a row when any item is selected", () => {
+        expect(ids(filterScreenRows(tagColumns, tagRows, "", {0: ["Chemistry"]}, "en"))).toEqual([
+            "a",
+        ]);
     });
 });
