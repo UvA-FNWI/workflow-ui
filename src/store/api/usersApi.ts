@@ -1,7 +1,7 @@
 import {baseApi} from "./baseApi";
 import type {
-    CurrentUserResponse,
     UpdateUserEmailRequest,
+    UserDto,
     UserImpersonationStarted,
     UserSearchField,
     UserSearchGroup,
@@ -23,7 +23,7 @@ type SearchFieldUsersParams = UserSearchField & {
 
 export const usersApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getCurrentUser: builder.query<CurrentUserResponse, void>({
+        getCurrentUser: builder.query<UserDto, void>({
             query: () => "/Users/Me",
         }),
         findUsers: builder.query<UserSearchResult[], FindUsersParams>({

@@ -24,9 +24,18 @@ export interface UserSearchResult {
     sourceKey?: string | null;
 }
 
-export interface CurrentUserResponse extends UserSearchResult {
+export type UserDto = {
+    id: string;
+    userName: string;
+    displayName: string;
+    email: string;
+    preferredLanguage: string | null;
+    picture: string | null;
+    organization: Organization | null;
+    isExternal: boolean;
     isSuperAdmin: boolean;
-}
+    isEmailEditable: boolean;
+};
 
 /** Signed token and expiry returned when starting impersonation. */
 export interface UserImpersonationStarted {

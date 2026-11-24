@@ -1,5 +1,7 @@
 import {type ReactNode} from "react";
 
+import type {To} from "react-router";
+
 import {cn, Heading, Skeleton} from "@uva-fnwi/datanose-ui";
 
 import {BackLink} from "~/components/BackLink";
@@ -7,7 +9,7 @@ import {BackLink} from "~/components/BackLink";
 interface PageHeaderProps {
     title: ReactNode;
     backLabel?: ReactNode;
-    backTo?: string;
+    backTo?: To;
     description?: ReactNode;
     actions?: ReactNode;
     isLoading?: boolean;
