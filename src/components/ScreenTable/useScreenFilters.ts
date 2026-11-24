@@ -44,11 +44,14 @@ export function useScreenFilters({columns, rows, groups}: UseScreenFiltersOption
         setColumnFilters((prev) => ({...prev, [name]: values}));
     }, []);
 
+    const clearColumnFilters = () => setColumnFilters({});
+
     return {
         search,
         setSearch,
         columnFilters,
         setColumnFilter,
+        clearColumnFilters,
         isFiltering,
         pickTypeFilters,
         filteredGroupRows,
