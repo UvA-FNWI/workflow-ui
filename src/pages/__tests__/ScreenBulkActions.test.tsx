@@ -55,6 +55,7 @@ beforeEach(() => {
             name: "Project",
             title: {en: "Projects", nl: "Projecten"},
             titlePlural: {en: "Projects", nl: "Projecten"},
+            description: {en: "123456789Y", nl: "123456789Y"},
             index: null,
             isAlwaysVisible: false,
             inheritsFrom: null,
