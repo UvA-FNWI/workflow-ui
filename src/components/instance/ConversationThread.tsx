@@ -68,8 +68,8 @@ export function ConversationThread({
 
     const replyTree = buildReplyTree(thread.items);
     const toggleLabel = expanded ? m("collapse_conversation") : m("expand_conversation");
-    const closedLabel = m("closed");
-    const closedSuffix = allowClose && thread.isClosed ? closedLabel : undefined;
+    const closedSuffix = thread.isClosed ? m("closed") : undefined;
+    const canReply = canAdd && !thread.isClosed;
 
     const toggle = () => onExpandedChange(!expanded);
 
@@ -104,7 +104,7 @@ export function ConversationThread({
                 <div className="flex flex-col gap-4 pb-4">
                     {root.body && <MessageBody body={root.body} className="mt-0" />}
 
-                    {canAdd && (!allowClose || !thread.isClosed) && (
+                    {canReply && (
                         <ReplyControl
                             label={replyLabel}
                             isActive={replyParentItemId === root.id}
@@ -124,7 +124,7 @@ export function ConversationThread({
                                     key={node.id}
                                     node={node}
                                     visualDepth={1}
-                                    canAdd={canAdd && (!allowClose || !thread.isClosed)}
+                                    canAdd={canReply}
                                     replyParentItemId={replyParentItemId}
                                     onStartReply={onStartReply}
                                     replyComposer={replyComposer}

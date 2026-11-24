@@ -405,4 +405,23 @@ describe("MessageThreadPanel", () => {
             screen.getByRole("button", {name: enWorkflow.instance.messages.reopen_conversation}),
         ).toBeTruthy();
     });
+
+    it("keeps previously closed conversations read-only when closing is disabled", () => {
+        render(
+            <MessageThreadPanel
+                instanceId="instance-1"
+                threads={[{...thread, isClosed: true}]}
+                canAdd
+                messageUi={{...defaultMessageUi, allowClose: false}}
+            />,
+        );
+
+        expect(screen.getByText(enWorkflow.instance.messages.closed)).toBeVisible();
+        expect(screen.getByText("Please check the transfer rows.")).toBeVisible();
+        expect(screen.getByText("Will do.")).toBeVisible();
+        expect(screen.queryAllByRole("button", replyAction)).toHaveLength(0);
+        expect(
+            screen.queryByRole("button", {name: enWorkflow.instance.messages.reopen_conversation}),
+        ).not.toBeInTheDocument();
+    });
 });
