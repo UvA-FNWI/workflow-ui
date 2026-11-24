@@ -25,7 +25,13 @@ const instance = (
     roles,
     student: "Student Name",
     course: "Software Engineering",
-    employees: ["Employee Name"],
+    staff: [
+        {
+            userName: "staffmember",
+            displayName: "Staffmember Name",
+            roles: [{en: "supervisor", nl: "begeleider"}],
+        },
+    ],
 });
 
 const role = (name: string, en: string, nl: string): PersonalRole => ({

@@ -32,6 +32,7 @@ vi.mock("~/store/api/baseApi", async () => {
                 "Submission",
                 "Assessments",
                 "Choices",
+                "User",
             ],
             endpoints: () => ({}),
         }),
@@ -72,7 +73,7 @@ beforeEach(() => {
                 filterType: "None",
                 displayType: "Normal",
                 link: false,
-                isCurrentStep: false,
+                columnType: "Normal",
                 dataType: "String",
             },
         ],
@@ -102,7 +103,26 @@ beforeEach(() => {
         if (typeof arg !== "string" && arg.method === "POST")
             return pendingExecution ?? executeResult;
         if (url === "/Screens/Project/Projects") return {data};
-        if (url === "/Personal/Instances") return {data: {roles: [], instances: []}};
+        if (url === "/Personal/Me") {
+            return {
+                data: {
+                    person: {
+                        id: "user-1",
+                        displayName: "User",
+                        email: "user@example.com",
+                        userName: "user",
+                        preferredLanguage: null,
+                        picture: null,
+                        organization: null,
+                        isExternal: false,
+                        isSuperAdmin: false,
+                        isEmailEditable: false,
+                    },
+                    roles: [],
+                    instances: [],
+                },
+            };
+        }
         throw new Error(`Unexpected request ${url}`);
     });
 });
@@ -291,16 +311,14 @@ it.each(["success", "uncertain outcome"])(
         await act(async () => {
             await store.dispatch(personalApi.endpoints.getPersonalInstances.initiate());
         });
-        expect(request.mock.calls.filter(([arg]) => arg === "/Personal/Instances")).toHaveLength(1);
+        expect(request.mock.calls.filter(([arg]) => arg === "/Personal/Me")).toHaveLength(1);
 
         fireEvent.click(screen.getByRole("checkbox", {name: "Select row 1"}));
         fireEvent.click(screen.getByRole("button", {name: "Approve proposals"}));
         fireEvent.click(await confirmButton());
 
         await waitFor(() =>
-            expect(
-                request.mock.calls.filter(([arg]) => arg === "/Personal/Instances"),
-            ).toHaveLength(2),
+            expect(request.mock.calls.filter(([arg]) => arg === "/Personal/Me")).toHaveLength(2),
         );
         expect(executions()).toHaveLength(1);
     },

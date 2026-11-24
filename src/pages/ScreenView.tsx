@@ -108,10 +108,11 @@ const ScreenContent = () => {
         ) : null;
     }
 
+    const title = l(screen.workflowDefinition.title);
     return (
         <HomePage
-            title={l(screen.workflowDefinition.title)}
-            coordinatorTabLabel={l(screen.workflowDefinition.title)}
+            title={title}
+            coordinatorTabLabel={title}
             personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
         >
             <Card>

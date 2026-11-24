@@ -14,6 +14,7 @@ type PersonalDisclosureProps = {
     columns: ColumnDef<PersonalInstance>[];
     defaultExpanded?: boolean;
     isExpanded?: boolean;
+    personOverview?: boolean;
 };
 
 export function PersonalDisclosure({
@@ -22,6 +23,7 @@ export function PersonalDisclosure({
     columns,
     defaultExpanded,
     isExpanded,
+    personOverview = false,
 }: PersonalDisclosureProps) {
     const {l, t} = useTranslate("screens");
     const [search, setSearch] = useState("");
@@ -33,7 +35,9 @@ export function PersonalDisclosure({
             </Disclosure.Header>
             <Disclosure.Content>
                 {roleGroups.length === 0 ? (
-                    <Text className="pt-4 italic">{t("empty_title")}</Text>
+                    <Text className="pt-4 italic">
+                        {personOverview ? t("person.empty") : t("empty_title")}
+                    </Text>
                 ) : (
                     <>
                         <div className="flex justify-end pt-4">
@@ -48,11 +52,13 @@ export function PersonalDisclosure({
                             {roleGroups.map(({role, instances}) => (
                                 <section key={role.name} className="overflow-hidden">
                                     <Heading as="h3" size="sm" className="pb-4 pl-6">
-                                        {t("role_title", {
-                                            role: (
-                                                l(role.title) || formatIdentifier(role.name)
-                                            ).toLocaleLowerCase(),
-                                        })}
+                                        {personOverview
+                                            ? l(role.title) || formatIdentifier(role.name)
+                                            : t("role_title", {
+                                                  role: (
+                                                      l(role.title) || formatIdentifier(role.name)
+                                                  ).toLocaleLowerCase(),
+                                              })}
                                     </Heading>
                                     <DataTable
                                         data={instances}
@@ -61,9 +67,9 @@ export function PersonalDisclosure({
                                         globalFilter={search}
                                         emptyNode={
                                             <Text className="txt-center px-4 pb-4">
-                                                {t("no_instances_found", {
-                                                    search: search,
-                                                })}
+                                                {personOverview
+                                                    ? t("person.no_instances_found", {search})
+                                                    : t("no_instances_found", {search})}
                                             </Text>
                                         }
                                     />

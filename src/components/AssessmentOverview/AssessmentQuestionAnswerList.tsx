@@ -7,7 +7,8 @@ import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
 type Props = {
-    questionAnswerPairs: QuestionAnswerPair[] | QuestionAnswerPair[][];
+    rows: QuestionAnswerPair[];
+    questionAnswerPairs: QuestionAnswerPair[][];
     instanceId: string;
     submissionId?: string;
     isOpen?: boolean;
@@ -17,7 +18,8 @@ type Props = {
 };
 
 export const AssessmentQuestionAnswerList = ({
-    questionAnswerPairs,
+    rows: questions,
+    questionAnswerPairs: arrayOfPairs,
     instanceId,
     submissionId,
     isOpen: initialIsOpen = false,
@@ -28,17 +30,6 @@ export const AssessmentQuestionAnswerList = ({
     const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
     const [expandedLinks, setExpandedLinks] = useState<Set<string>>(new Set());
-
-    const arrayOfPairs: QuestionAnswerPair[][] = useMemo(
-        () =>
-            Array.isArray(questionAnswerPairs[0])
-                ? (questionAnswerPairs as QuestionAnswerPair[][])
-                : [questionAnswerPairs as QuestionAnswerPair[]],
-        [questionAnswerPairs],
-    );
-
-    // Use the first submission's questions as the row definitions
-    const questions = useMemo(() => arrayOfPairs[0] ?? [], [arrayOfPairs]);
 
     const linkedQuestionsMap = useMemo(() => {
         const map = new Map<string, number[]>();

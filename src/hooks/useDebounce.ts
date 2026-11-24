@@ -12,7 +12,7 @@ import {debounce} from "lodash-es";
  *
  * @param callback - The function to debounce. This can take any number of arguments.
  * @param delay - The number of milliseconds to delay invoking the callback.
- * @returns A debounced version of the callback function.
+ * @returns A debounced version of the callback function with `.cancel()` to discard a pending call.
  *
  * @example
  * const debouncedCallback = useDebounce(someFunction, 500);
@@ -41,11 +41,11 @@ export function useDebounce(
         };
     }, [delay, flushOnUnmount]);
 
-    return useMemo(
-        () =>
-            (...args: unknown[]) => {
-                debouncedFnRef.current?.(...args);
-            },
-        [],
-    );
+    return useMemo(() => {
+        const invoke = (...args: unknown[]) => {
+            debouncedFnRef.current?.(...args);
+        };
+        invoke.cancel = () => debouncedFnRef.current?.cancel();
+        return invoke;
+    }, []);
 }

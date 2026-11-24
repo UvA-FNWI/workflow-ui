@@ -1,4 +1,4 @@
-import {rankItem} from "@tanstack/match-sorter-utils";
+import {rankings, rankItem} from "@tanstack/match-sorter-utils";
 
 import type {LocalString} from "~/hooks/useTranslate.ts";
 import type {FilterType, ScreenColumn, ScreenRow} from "~/store/api/types/screens";
@@ -94,6 +94,7 @@ export function filterScreenRows(
                 rankItem(
                     getComparableTableCellValue(row.values[column.id], column.dataType, language),
                     searchTerm,
+                    {threshold: rankings.CONTAINS},
                 ).passed,
         );
     });
