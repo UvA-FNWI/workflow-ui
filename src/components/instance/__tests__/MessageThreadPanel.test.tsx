@@ -2,7 +2,7 @@ import type {ReactNode} from "react";
 
 import {I18nextProvider} from "react-i18next";
 
-import {cleanup, fireEvent, render as renderComponent, screen} from "@testing-library/react";
+import {act, cleanup, fireEvent, render as renderComponent, screen} from "@testing-library/react";
 import {createInstance} from "i18next";
 import {afterEach, beforeAll, describe, expect, it, vi} from "vitest";
 
@@ -12,10 +12,15 @@ import {MessageThreadPanel} from "../MessageThreadPanel";
 import type {MessageThread} from "~/store/api/types/messages";
 import {formatDate} from "~/utils/formatDate";
 
+const {addMessage, mutationState} = vi.hoisted(() => ({
+    addMessage: vi.fn(),
+    mutationState: {isLoading: false},
+}));
+
 vi.mock("~/store/api/messagesApi", () => ({
     messagesEndpoints: {
         addMessage: {
-            useMutation: () => [vi.fn(), {isLoading: false}],
+            useMutation: () => [addMessage, mutationState],
         },
     },
 }));
@@ -24,10 +29,16 @@ const i18n = createInstance();
 beforeAll(async () => {
     await i18n.init({lng: "en", resources: {en: {workflow: enWorkflow}}});
 });
-afterEach(cleanup);
+afterEach(() => {
+    cleanup();
+    addMessage.mockReset();
+    mutationState.isLoading = false;
+});
 
 const render = (ui: ReactNode) =>
-    renderComponent(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
+    renderComponent(ui, {
+        wrapper: ({children}) => <I18nextProvider i18n={i18n}>{children}</I18nextProvider>,
+    });
 
 const thread: MessageThread = {
     id: "thread-1",
@@ -217,6 +228,107 @@ describe("MessageThreadPanel", () => {
 
         fireEvent.click(screen.getByRole("button", replyAction));
         expect(replyField()).toHaveValue("Keep this");
+    });
+
+    it("keeps the new and reply drafts when closing and reopening a conversation", async () => {
+        const closed = {...thread, isClosed: true};
+        const panel = (current: MessageThread) => (
+            <MessageThreadPanel instanceId="instance-1" threads={[current]} canAdd />
+        );
+        addMessage.mockResolvedValueOnce({data: closed}).mockResolvedValueOnce({data: thread});
+        const {rerender} = render(panel(thread));
+        const newDraft = screen.getByRole("textbox", {name: "Add comment"});
+        fireEvent.focus(newDraft);
+        fireEvent.change(newDraft, {target: {value: "New draft"}});
+        fireEvent.click(screen.getAllByRole("button", replyAction)[0]!);
+        fireEvent.change(screen.getByRole("textbox", {name: "Reply to comment"}), {
+            target: {value: "Reply draft"},
+        });
+
+        const {close_conversation, expand_conversation, reopen_conversation} =
+            enWorkflow.instance.messages;
+        await act(async () => {
+            fireEvent.click(screen.getByRole("button", {name: close_conversation}));
+        });
+        rerender(panel(closed));
+        fireEvent.click(screen.getByRole("button", {name: expand_conversation}));
+        await act(async () => {
+            fireEvent.click(screen.getByRole("button", {name: reopen_conversation}));
+        });
+        rerender(panel(thread));
+
+        expect(addMessage).toHaveBeenNthCalledWith(1, {
+            instanceId: "instance-1",
+            replyToId: thread.id,
+            kind: "Close",
+        });
+        expect(addMessage).toHaveBeenNthCalledWith(2, {
+            instanceId: "instance-1",
+            replyToId: thread.id,
+            kind: "Reopen",
+        });
+        expect(screen.getByRole("textbox", {name: "Add comment"})).toHaveValue("New draft");
+        const replyInput = {name: "Reply to comment"};
+        if (!screen.queryByRole("textbox", replyInput)) {
+            fireEvent.click(screen.getAllByRole("button", replyAction)[0]!);
+        }
+        expect(screen.getByRole("textbox", replyInput)).toHaveValue("Reply draft");
+    });
+
+    it("clears the submitted reply draft and leaves the new draft after a save", async () => {
+        addMessage.mockResolvedValueOnce({data: thread});
+        render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
+
+        const newDraft = screen.getByRole("textbox", {name: "Add comment"});
+        fireEvent.focus(newDraft);
+        fireEvent.change(newDraft, {target: {value: "New draft"}});
+        fireEvent.click(screen.getAllByRole("button", replyAction)[0]!);
+        const replyInput = {name: "Reply to comment"};
+        fireEvent.change(screen.getByRole("textbox", replyInput), {
+            target: {value: "  Saved reply  "},
+        });
+        await act(async () => {
+            fireEvent.click(screen.getByRole("button", {name: enWorkflow.save}));
+        });
+
+        expect(addMessage).toHaveBeenCalledWith(
+            expect.objectContaining({
+                replyToId: thread.id,
+                parentItemId: "item-root",
+                kind: "Message",
+                body: "Saved reply",
+            }),
+        );
+        expect(screen.queryByRole("textbox", replyInput)).not.toBeInTheDocument();
+        expect(screen.getByRole("textbox", {name: "Add comment"})).toHaveValue("New draft");
+        fireEvent.click(screen.getAllByRole("button", replyAction)[0]!);
+        expect(screen.getByRole("textbox", replyInput)).toHaveValue("");
+    });
+
+    it("makes the pending composer read-only and keeps its draft on failure", async () => {
+        const request = Promise.withResolvers<{error: {status: number}}>();
+        addMessage.mockReturnValueOnce(request.promise);
+        const panel = () => <MessageThreadPanel instanceId="instance-1" threads={[]} canAdd />;
+        const {rerender} = render(panel());
+        const draft = screen.getByRole("textbox", {name: "Add comment"});
+        fireEvent.focus(draft);
+        fireEvent.change(draft, {target: {value: "Retry this"}});
+        const save = screen.getByRole("button", {name: enWorkflow.save});
+        fireEvent.click(save);
+
+        mutationState.isLoading = true;
+        rerender(panel());
+        expect(draft).toHaveAttribute("readonly");
+        expect(save).toBeDisabled();
+
+        mutationState.isLoading = false;
+        await act(async () => request.resolve({error: {status: 500}}));
+        rerender(panel());
+
+        expect(draft).toHaveValue("Retry this");
+        expect(draft).not.toHaveAttribute("readonly");
+        expect(save).toBeEnabled();
+        expect(screen.getByRole("alert")).toHaveTextContent("Failed to save. Please try again.");
     });
 
     it("shows inline reply starters and a close conversation button", () => {

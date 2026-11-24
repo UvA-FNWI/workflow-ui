@@ -9,25 +9,29 @@ import {handleMessageSubmitShortcut} from "./messageComposerShortcuts";
 import {getConversationOpener, newestMessageFirst} from "./messageTree";
 import {useTranslate} from "~/hooks/useTranslate";
 import {messagesEndpoints} from "~/store/api/messagesApi";
-import type {MessageItemKind, MessageThread} from "~/store/api/types/messages";
+import type {MessageThread} from "~/store/api/types/messages";
 
 type ReplyTarget = {
     threadId: string;
     parentItemId: string;
 };
 
+type Draft = {
+    text: string;
+    error?: string;
+};
+
 const newConversationDraftKey = "new";
+const draftKey = (target: ReplyTarget | null) =>
+    target ? `${target.threadId}:${target.parentItemId}` : newConversationDraftKey;
 
 type Props = {
     instanceId: string;
     threads: MessageThread[];
     questionName?: string | null;
     canAdd: boolean;
-    /** @deprecated Use focusNewConversation — kept for tests/mocks */
-    composerFirst?: boolean;
     /** Omit to show the compact composer. */
     showNewComposer?: boolean;
-    autoFocusComposer?: boolean;
     onDismissComposer?: (reason: "cancel" | "saved") => void;
     focusNewConversation?: boolean;
     onFocusNewConversationHandled?: () => void;
@@ -40,7 +44,6 @@ export function MessageThreadPanel({
     questionName = null,
     canAdd,
     showNewComposer,
-    autoFocusComposer = false,
     onDismissComposer,
     focusNewConversation = false,
     onFocusNewConversationHandled,
@@ -48,14 +51,14 @@ export function MessageThreadPanel({
 }: Props) {
     const {layout, allowClose, callout} = messageUi;
     const isFlat = layout === "flat";
-    const cancelIntent = questionName == null ? "ghost" : "secondary";
+    const cancelIntent: ComposerProps["cancelIntent"] =
+        questionName == null ? "ghost" : "secondary";
     const {t, l} = useTranslate("workflow");
     const {t: m} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const terms = useMessageTerms(messageUi);
     const newConversationPlaceholder = m("new_conversation_placeholder", terms);
     const replyPlaceholder = m("reply_placeholder", terms);
-    const [body, setBody] = useState("");
-    const [drafts, setDrafts] = useState<Record<string, string>>({});
+    const [drafts, setDrafts] = useState<Record<string, Draft>>({});
     const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
     const [newConversationExpanded, setNewConversationExpanded] = useState(false);
     const [expandedOverrides, setExpandedOverrides] = useState<Record<string, boolean>>({});
@@ -83,65 +86,82 @@ export function MessageThreadPanel({
         return () => cancelAnimationFrame(frame);
     }, [focusNewConversation, newConversationFieldId, onFocusNewConversationHandled]);
 
-    const draftKeyFor = (target: ReplyTarget | null) =>
-        target?.parentItemId ?? newConversationDraftKey;
-
-    const storeDraft = (key: string, text: string) => {
+    const setDraft = (key: string, draft: Draft) => {
         setDrafts((current) => {
             const next = {...current};
-            if (text.trim()) next[key] = text;
+            if (draft.text) next[key] = draft;
             else delete next[key];
             return next;
         });
     };
 
-    const submit = (kind: MessageItemKind, threadId?: string) => {
-        const targetThreadId = threadId ?? replyTarget?.threadId;
-        if (kind === "Message" && !body.trim()) return;
+    const saveDraft = async (target: ReplyTarget | null) => {
+        const key = draftKey(target);
+        const text = drafts[key]?.text ?? "";
+        if (isLoading || !text.trim()) return;
 
-        void addMessage({
+        const result = await addMessage({
             instanceId,
-            questionName: targetThreadId ? undefined : questionName,
-            replyToId: targetThreadId,
-            parentItemId: kind === "Message" ? replyTarget?.parentItemId : undefined,
-            kind,
-            body: kind === "Message" ? body.trim() : undefined,
-        })
-            .unwrap()
-            .then(() => {
-                if (kind === "Message") storeDraft(draftKeyFor(replyTarget), "");
-                setBody("");
-                setReplyTarget(null);
-                setNewConversationExpanded(false);
-                if ((kind === "Close" || kind === "Reopen") && targetThreadId) {
-                    setExpandedOverrides((prev) => ({
-                        ...prev,
-                        [targetThreadId]: kind === "Reopen",
-                    }));
-                }
-                if (kind === "Message" && !targetThreadId) {
-                    onDismissComposer?.("saved");
-                }
-            });
+            questionName: target ? undefined : questionName,
+            replyToId: target?.threadId,
+            parentItemId: target?.parentItemId,
+            kind: "Message",
+            body: text.trim(),
+        });
+        if ("error" in result) {
+            setDraft(key, {text, error: t("instance.summary.save_error")});
+            return;
+        }
+
+        setDraft(key, {text: ""});
+        if (target) {
+            setReplyTarget((current) => (draftKey(current) === key ? null : current));
+        } else {
+            setNewConversationExpanded(false);
+            onDismissComposer?.("saved");
+        }
+    };
+
+    const changeThreadStatus = async (threadId: string, kind: "Close" | "Reopen") => {
+        if (isLoading) return;
+
+        const result = await addMessage({instanceId, replyToId: threadId, kind});
+        if ("error" in result) return;
+
+        setThreadExpanded(threadId, kind === "Reopen");
+        if (kind === "Close") {
+            setReplyTarget((current) => (current?.threadId === threadId ? null : current));
+        }
+    };
+
+    const draftProps = (target: ReplyTarget | null) => {
+        const key = draftKey(target);
+        const draft = drafts[key];
+        return {
+            body: draft?.text ?? "",
+            error: draft?.error,
+            onChange: (text: string) => setDraft(key, {text}),
+            onSubmit: () => void saveDraft(target),
+            isLoading,
+            cancelIntent,
+            submitLabel: t("save"),
+            cancelLabel: t("cancel"),
+        };
     };
 
     const startReply = (threadId: string, parentItemId: string) => {
-        storeDraft(draftKeyFor(replyTarget), body);
         setReplyTarget({threadId, parentItemId});
-        setBody(drafts[parentItemId] ?? "");
         setNewConversationExpanded(false);
-        setExpandedOverrides((prev) => ({...prev, [threadId]: true}));
+        setThreadExpanded(threadId, true);
     };
 
     const cancelReply = () => {
-        if (replyTarget) storeDraft(replyTarget.parentItemId, "");
+        if (replyTarget) setDraft(draftKey(replyTarget), {text: ""});
         setReplyTarget(null);
-        setBody(drafts[newConversationDraftKey] ?? "");
     };
 
     const cancelNewConversation = () => {
-        storeDraft(newConversationDraftKey, "");
-        setBody("");
+        setDraft(newConversationDraftKey, {text: ""});
         setNewConversationExpanded(false);
         onDismissComposer?.("cancel");
     };
@@ -152,16 +172,9 @@ export function MessageThreadPanel({
     const showNewConversationActions =
         composingNewConversation &&
         (newConversationExpanded ||
-            drafts[newConversationDraftKey]?.trim().length > 0 ||
-            body.trim().length > 0 ||
+            Boolean(drafts[newConversationDraftKey]?.text.trim()) ||
             focusNewConversation ||
-            showNewComposer ||
-            autoFocusComposer);
-    const newConversationBody = composingNewConversation
-        ? body
-        : (drafts[newConversationDraftKey] ?? "");
-    const canSubmitNewMessage =
-        !isLoading && composingNewConversation && newConversationBody.trim().length > 0;
+            showNewComposer === true);
     const calloutTitle = l(callout?.title)?.trim();
     const calloutText = l(callout?.text)?.trim();
     const messageCallout =
@@ -172,66 +185,33 @@ export function MessageThreadPanel({
         ) : null;
 
     const newConversationStarter = newComposerVisible ? (
-        <div className="flex flex-col gap-2">
-            <TextArea
-                id={newConversationFieldId}
-                aria-label={newConversationPlaceholder}
-                rows={showNewConversationActions ? 3 : 1}
-                className={showNewConversationActions ? "w-full" : "min-h-10! w-full resize-none"}
-                value={newConversationBody}
-                onChange={composingNewConversation ? setBody : undefined}
-                readOnly={!composingNewConversation}
-                onFocus={() => {
-                    if (replyTarget) {
-                        if (!focusNewConversation) return;
-                        storeDraft(draftKeyFor(replyTarget), body);
-                        setReplyTarget(null);
-                        setBody(newConversationBody);
-                    }
-                    setNewConversationExpanded(true);
-                }}
-                onKeyDown={(event) =>
-                    composingNewConversation &&
-                    handleMessageSubmitShortcut(event, () => submit("Message"), canSubmitNewMessage)
+        <Composer
+            {...draftProps(null)}
+            id={newConversationFieldId}
+            placeholder={newConversationPlaceholder}
+            expanded={showNewConversationActions}
+            readOnly={!composingNewConversation}
+            callout={composingNewConversation && messageCallout}
+            onCancel={cancelNewConversation}
+            onFocus={() => {
+                if (replyTarget) {
+                    if (!focusNewConversation) return;
+                    setReplyTarget(null);
                 }
-                placeholder={newConversationPlaceholder}
-            />
-            {composingNewConversation && messageCallout}
-            {showNewConversationActions && (
-                <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                        intent="primary"
-                        variant="destructive"
-                        width="none"
-                        disabled={!canSubmitNewMessage}
-                        onClick={() => submit("Message")}
-                    >
-                        {t("save")}
-                    </Button>
-                    <Button intent={cancelIntent} onClick={cancelNewConversation}>
-                        {t("cancel")}
-                    </Button>
-                </div>
-            )}
-        </div>
+                setNewConversationExpanded(true);
+            }}
+        />
     ) : null;
 
-    const replyComposer = (
+    const replyComposer = replyTarget ? (
         <Composer
-            body={body}
-            onChange={setBody}
-            onSubmit={() => submit("Message")}
+            {...draftProps(replyTarget)}
             onCancel={cancelReply}
-            cancelIntent={cancelIntent}
-            submitLabel={t("save")}
-            cancelLabel={t("cancel")}
-            ariaLabel={replyPlaceholder}
             placeholder={replyPlaceholder}
             callout={messageCallout}
-            isLoading={isLoading}
             autoFocus
         />
-    );
+    ) : null;
 
     const renderThread = (thread: MessageThread) => (
         <ConversationThread
@@ -245,8 +225,8 @@ export function MessageThreadPanel({
                 replyTarget?.threadId === thread.id ? replyTarget.parentItemId : null
             }
             onStartReply={(parentItemId) => startReply(thread.id, parentItemId)}
-            onCloseConversation={() => submit("Close", thread.id)}
-            onReopenConversation={() => submit("Reopen", thread.id)}
+            onCloseConversation={() => void changeThreadStatus(thread.id, "Close")}
+            onReopenConversation={() => void changeThreadStatus(thread.id, "Reopen")}
             isLoading={isLoading}
             replyComposer={replyComposer}
         />
@@ -294,64 +274,82 @@ export function MessageThreadPanel({
 }
 
 type ComposerProps = {
+    id?: string;
     body: string;
+    error?: string;
     onChange: (value: string) => void;
     onSubmit: () => void;
-    onCancel?: () => void;
+    onCancel: () => void;
+    onFocus?: () => void;
     cancelIntent: "ghost" | "secondary";
     submitLabel: string;
-    cancelLabel?: string;
-    ariaLabel: string;
-    placeholder?: string;
+    cancelLabel: string;
+    placeholder: string;
     callout?: ReactNode;
+    expanded?: boolean;
+    readOnly?: boolean;
     isLoading: boolean;
     autoFocus?: boolean;
 };
 
 function Composer({
+    id,
     body,
+    error,
     onChange,
     onSubmit,
     onCancel,
+    onFocus,
     cancelIntent,
     submitLabel,
     cancelLabel,
-    ariaLabel,
     placeholder,
     callout,
+    expanded = true,
+    readOnly = false,
     isLoading,
     autoFocus,
 }: ComposerProps) {
-    const canSubmit = !isLoading && body.trim().length > 0;
+    const isReadOnly = isLoading || readOnly;
+    const canSubmit = expanded && !isReadOnly && body.trim().length > 0;
 
     return (
         <div className="flex w-full flex-col gap-2">
             <TextArea
-                aria-label={ariaLabel}
-                className="w-full"
-                rows={3}
+                id={id}
+                aria-label={placeholder}
+                className={expanded ? "w-full" : "min-h-10! w-full resize-none"}
+                rows={expanded ? 3 : 1}
                 value={body}
-                onChange={onChange}
+                onChange={isReadOnly ? undefined : onChange}
+                onFocus={onFocus}
+                readOnly={isReadOnly}
                 autoFocus={autoFocus}
                 placeholder={placeholder}
                 onKeyDown={(event) => handleMessageSubmitShortcut(event, onSubmit, canSubmit)}
             />
+            {error && (
+                <Text role="alert" intent="error" size="sm">
+                    {error}
+                </Text>
+            )}
             {callout}
-            <div className="flex flex-wrap items-center gap-2">
-                <Button
-                    intent="primary"
-                    variant="destructive"
-                    disabled={!canSubmit}
-                    onClick={onSubmit}
-                >
-                    {submitLabel}
-                </Button>
-                {onCancel && (
-                    <Button intent={cancelIntent} onClick={onCancel}>
+            {expanded && (
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                        intent="primary"
+                        variant="destructive"
+                        width="none"
+                        disabled={!canSubmit}
+                        onClick={onSubmit}
+                    >
+                        {submitLabel}
+                    </Button>
+                    <Button intent={cancelIntent} disabled={isLoading} onClick={onCancel}>
                         {cancelLabel}
                     </Button>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
