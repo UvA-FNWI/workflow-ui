@@ -1,5 +1,16 @@
 import type {Organization} from "./organizations";
 
+export type UserSearchField = {
+    instanceId: string;
+    submissionId?: string;
+    property: string;
+};
+
+export type UserSearchGroup = {
+    label: string;
+    users: UserSearchResult[];
+};
+
 export interface UserSearchResult {
     id?: string;
     userName: string;

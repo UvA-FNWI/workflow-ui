@@ -4,7 +4,7 @@ import {Button, Icon, Modal} from "@uva-fnwi/datanose-ui";
 
 import {UserPickerInput} from "~/components/UserPicker/UserPickerInput.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import type {UserSearchResult} from "~/store/api/types/users";
+import type {UserSearchField, UserSearchResult} from "~/store/api/types/users";
 
 export interface UserPickerModalProps {
     isOpen: boolean;
@@ -17,6 +17,8 @@ export interface UserPickerModalProps {
     searchPlaceholder?: string;
     minSearchLength?: number;
     allowsExternalUsers?: boolean;
+    includeStudents?: boolean;
+    field?: UserSearchField;
 }
 
 export const UserPickerModal: React.FC<UserPickerModalProps> = ({
@@ -30,6 +32,8 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
     searchPlaceholder,
     minSearchLength,
     allowsExternalUsers,
+    includeStudents,
+    field,
 }) => {
     const {t} = useTranslate(["workflow", "common"]);
     const confirmButtonRef = useRef<HTMLButtonElement>(null);
@@ -54,7 +58,6 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     // UI states
     const hasSelection = selectedUsers.length > 0;
-
     const modalTitle = title ?? t("user_picker.title");
 
     return (
@@ -73,6 +76,8 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
                     minSearchLength={minSearchLength}
                     autoFocus={isOpen}
                     allowsExternalUsers={allowsExternalUsers}
+                    includeStudents={includeStudents}
+                    field={field}
                 />
             </Modal.Body>
 

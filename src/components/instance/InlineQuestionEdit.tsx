@@ -11,6 +11,7 @@ import type {Choice, Question} from "~/store/api/types/submissions.ts";
 type Props = {
     instanceId: string;
     submissionId?: string;
+    propertyPath?: string;
     question: Question;
     choices?: Choice[];
     choicesLoading?: boolean;
@@ -26,6 +27,7 @@ type Props = {
 export const InlineQuestionEdit = ({
     instanceId,
     submissionId,
+    propertyPath,
     question,
     choices,
     choicesLoading,
@@ -55,6 +57,7 @@ export const InlineQuestionEdit = ({
             <InputControl
                 instanceId={instanceId}
                 submissionId={submissionId ?? ""}
+                propertyPath={propertyPath}
                 value={localValue}
                 question={question}
                 choices={choices}

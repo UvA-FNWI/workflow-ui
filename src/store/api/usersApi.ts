@@ -3,6 +3,8 @@ import type {
     UpdateUserEmailRequest,
     UserDto,
     UserImpersonationStarted,
+    UserSearchField,
+    UserSearchGroup,
     UserSearchResult,
     VerifyEmailRequest,
     VerifyEmailResponse,
@@ -11,6 +13,12 @@ import type {
 export type FindUsersParams = {
     query: string;
     includeExternalUsers: boolean;
+    includeEmployees?: boolean;
+    includeStudents?: boolean;
+};
+
+type SearchFieldUsersParams = UserSearchField & {
+    query: string;
 };
 
 export const usersApi = baseApi.injectEndpoints({
@@ -19,10 +27,22 @@ export const usersApi = baseApi.injectEndpoints({
             query: () => "/Users/Me",
         }),
         findUsers: builder.query<UserSearchResult[], FindUsersParams>({
-            query: ({query, includeExternalUsers}) => ({
+            query: (params) => ({
                 url: "/Users/Find",
-                params: {query, includeExternalUsers},
+                params,
             }),
+        }),
+        searchFieldUsers: builder.query<UserSearchGroup[], SearchFieldUsersParams>({
+            query: ({instanceId, submissionId, property, query}) => {
+                const field = encodeURIComponent(property);
+                const fieldPath = submissionId
+                    ? `/Answers/${instanceId}/${submissionId}/${field}`
+                    : `/WorkflowInstances/${instanceId}/Properties/${field}`;
+                return {
+                    url: `${fieldPath}/UserSearch`,
+                    params: {query},
+                };
+            },
         }),
         verifyEmail: builder.mutation<VerifyEmailResponse, VerifyEmailRequest>({
             query: (body) => ({
@@ -57,6 +77,7 @@ export const {
     useGetCurrentUserQuery,
     useFindUsersQuery,
     useLazyFindUsersQuery,
+    useLazySearchFieldUsersQuery,
     useVerifyEmailMutation,
     useStartImpersonationMutation,
     useUpdateUserEmailMutation,

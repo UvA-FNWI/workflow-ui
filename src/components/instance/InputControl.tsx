@@ -42,6 +42,7 @@ const toDate = (value: unknown) => {
 interface InputControlProps {
     instanceId?: string;
     submissionId?: string;
+    propertyPath?: string;
     value?: unknown;
     question: Question;
     choices?: Choice[];
@@ -60,6 +61,7 @@ interface InputControlProps {
 export const InputControl = ({
     instanceId = "",
     submissionId = "",
+    propertyPath,
     value,
     question,
     choices,
@@ -221,11 +223,18 @@ export const InputControl = ({
         );
     }
     if (question.type === "User") {
+        const property = propertyPath ?? question.name;
         return (
             <UserPicker
+                key={JSON.stringify([instanceId, submissionId, property])}
                 value={value as UserSearchResult | UserSearchResult[] | null | undefined}
                 onChange={(newValue) => debouncedChange(newValue)}
                 allowsExternalUsers={question.allowsExternalUsers}
+                field={
+                    instanceId
+                        ? {instanceId, submissionId: submissionId || undefined, property}
+                        : undefined
+                }
                 onCreateExternalUser={handleCreateExternalUser}
                 selectionMode={question.isArray ? "multiple" : "single"}
             />
