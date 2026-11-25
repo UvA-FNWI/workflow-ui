@@ -23,7 +23,7 @@ export function FormPreviewButton({
             <Button
                 intent="secondary"
                 aria-haspopup="dialog"
-                leftIcon={<Icon name="visible-line" size="sm" decorative />}
+                leftIcon={<Icon name="visible-line" size="sm" color="current" decorative />}
                 onClick={() => setOpen(true)}
             >
                 {t("form_preview.entry_point", {count: forms.length})}

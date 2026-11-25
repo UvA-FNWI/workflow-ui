@@ -43,6 +43,9 @@ test("keeps a coordinator's step preview on the card and unassigned previews in 
     await expect(stepPreview).toHaveCount(0);
     await stepCard.getByRole("button", {name: "Assessment", expanded: false}).click();
     await expect(stepPreview).toBeVisible();
+    await expect(stepCard.getByRole("separator")).toHaveCount(1);
+    await stepPreview.hover();
+    await expect(stepPreview.locator("svg")).toHaveCSS("color", "rgb(255, 255, 255)");
     await stepPreview.click();
     await expect(page.getByRole("dialog", {name: "Preview: Review form"})).toBeVisible();
     await page.getByRole("button", {name: "Close modal", exact: true}).click();
@@ -72,7 +75,7 @@ test("preview interacts, navigates and resets without any mutation requests", as
                 ...propertiesInstanceNonAdmin,
                 id: "form-preview",
                 previewableForms: previewableForms.map((form) => ({...form, step: "Assessment"})),
-                steps: [assessmentStep],
+                steps: [{...assessmentStep, isAvailable: true, expectsSubmission: true}],
                 workflowDefinition: {
                     ...propertiesInstanceNonAdmin.workflowDefinition,
                     isPropertyOnly: false,
@@ -92,6 +95,7 @@ test("preview interacts, navigates and resets without any mutation requests", as
     const stepCard = page.getByRole("group", {name: "Assessment", exact: true});
     await stepCard.getByRole("button", {name: "Assessment", expanded: false}).click();
     const entry = stepCard.getByRole("button", {name: "Preview forms", exact: true});
+    await expect(stepCard.getByRole("separator")).toHaveCount(2);
     await entry.click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("Choose a form to preview.")).toBeVisible();

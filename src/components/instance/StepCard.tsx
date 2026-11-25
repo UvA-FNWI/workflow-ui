@@ -8,6 +8,7 @@ import {
     Icon,
     Pill,
     type PillVariantProps,
+    Separator,
     Text,
     Tooltip,
 } from "@uva-fnwi/datanose-ui";
@@ -103,11 +104,11 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
         hasVersionHistory(step) ||
         step.resultsType !== "Normal" ||
         emptyStateMessage !== null;
-    const hasBodyContent =
+    const hasOtherContent =
         (step.isAvailable &&
             (deadlineMessages.length > 0 || hasStepContent || childRows.length > 0)) ||
-        childPreviews ||
-        stepPreviews.length > 0;
+        childPreviews;
+    const hasBodyContent = hasOtherContent || stepPreviews.length > 0;
     const isContentless = step.isAvailable && !hasBodyContent;
     const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
 
@@ -181,6 +182,7 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
                     ))}
                     {stepPreviews.length > 0 && (
                         <div className={nested ? "py-4" : "pt-4"}>
+                            {hasOtherContent && <Separator className="mb-4" />}
                             <FormPreviewButton instanceId={instance.id} forms={stepPreviews} />
                         </div>
                     )}
