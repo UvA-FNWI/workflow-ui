@@ -1,5 +1,7 @@
 import {useEffect, useState} from "react";
 
+import {Link, useSearchParams} from "react-router";
+
 import {isEmbeddedInCanvas, useAuth} from "@uva-fnwi/datanose-core";
 import {Button, Heading, useToast} from "@uva-fnwi/datanose-ui";
 
@@ -10,6 +12,7 @@ import {VITE_ENV, VITE_WEBAPI_URL} from "~/helpers/Environment";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {UserSearchResult} from "~/store/api/types/users";
 import {useStartImpersonationMutation} from "~/store/api/usersApi";
+import {useGetAuthoringProjectsQuery} from "~/store/api/workflowDraftsApi";
 import {
     clearUserImpersonation,
     selectCurrentUser,
@@ -22,6 +25,8 @@ import {useAppDispatch, useAppSelector} from "~/store/store";
 
 function Navbar() {
     const {i18n, t} = useTranslate("common");
+    const [params] = useSearchParams();
+    const isDraftPreview = params.get("version")?.startsWith("draft-preview-");
     const {isAuthenticated, surfLogout} = useAuth();
     const swaggerUrl = `${VITE_WEBAPI_URL.replace(/\/$/, "")}/swagger`;
     const dispatch = useAppDispatch();
@@ -36,6 +41,9 @@ function Navbar() {
     // reflects the target, not the admin).
     const userImpersonation = useAppSelector(selectUserImpersonation);
     const isImpersonating = !!userImpersonation;
+    const {data: authoringProjects} = useGetAuthoringProjectsQuery(undefined, {
+        skip: !isAuthenticated || isImpersonating,
+    });
     const [isPickerOpen, setIsPickerOpen] = useState(false);
     const [startImpersonation] = useStartImpersonationMutation();
 
@@ -105,7 +113,15 @@ function Navbar() {
                     </p>
                 )}
             </div>
+            {isDraftPreview && (
+                <span className="text-sm font-medium">{t("workflow_preview_read_only")}</span>
+            )}
             <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+                {!isImpersonating && !!authoringProjects?.length && (
+                    <Link to="/configure" className="text-sm font-medium underline">
+                        {t("configure")}
+                    </Link>
+                )}
                 {isSuperAdmin && (
                     <VersionedLink to="/develop">
                         <Button

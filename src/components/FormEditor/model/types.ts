@@ -3,6 +3,8 @@ import type {Document} from "yaml";
 /** Every config file, parsed. Keys are repo-root-relative paths, exactly as the API returns them. */
 export type ConfigDocs = Map<string, Document>;
 
+export type ApplyFormEdit = (action: () => string[] | Promise<string[]>, source?: "yaml") => void;
+
 /**
  * The question kinds that map cleanly onto engine types. The ceiling is InputControl: anything it
  * falls through to "Not supported type..." for stays out, and is edited as yaml instead.
@@ -42,6 +44,7 @@ export type EditorQuestion = {
     text: LocalText;
     description: LocalText;
     choices: EditorChoice[];
+    usesSharedChoices?: boolean;
     /** Path of the file the property is defined in. */
     definedIn: string;
     /** True when the property comes from an ancestor definition and must not be edited here. */

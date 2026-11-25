@@ -25,10 +25,18 @@ type Props = {
     triggerRef: React.RefObject<HTMLElement>;
     onSelect: (kind: QuestionKind) => void;
     selectedKind?: QuestionKind | "Unknown";
+    onAddText?: () => void;
 };
 
 /** The kind list, shared by "add a question" and by the type pill on a question card. */
-export function QuestionKindMenu({label, state, triggerRef, onSelect, selectedKind}: Props) {
+export function QuestionKindMenu({
+    label,
+    state,
+    triggerRef,
+    onSelect,
+    selectedKind,
+    onAddText,
+}: Props) {
     const {t} = useTranslate("form_editor");
 
     return (
@@ -56,6 +64,19 @@ export function QuestionKindMenu({label, state, triggerRef, onSelect, selectedKi
                         {t(`kind.${kind}`)}
                     </button>
                 ))}
+                {onAddText && (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            state.close();
+                            onAddText();
+                        }}
+                        className="flex w-full items-center gap-2 rounded-xs border-t border-grey-200 px-2 py-1.5 text-left text-sm hover:bg-grey-100 focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none dark:border-grey-700 dark:hover:bg-grey-700"
+                    >
+                        <Icon name="article-line" size="sm" color="current" decorative />
+                        {t("text_block")}
+                    </button>
+                )}
             </dialog>
         </Popover>
     );

@@ -1,5 +1,3 @@
-import {useCallback} from "react";
-
 import {type Control, Controller, type FieldValues} from "react-hook-form";
 
 import {Callout, type CalloutType, cn, InputLabel, Text} from "@uva-fnwi/datanose-ui";
@@ -7,14 +5,16 @@ import {Callout, type CalloutType, cn, InputLabel, Text} from "@uva-fnwi/datanos
 import {InputControl} from "./InputControl";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import {answersApi} from "~/store/api/answersApi";
 import type {AnswerInput} from "~/store/api/types/params";
+import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
 import type {Answer, PageElement as PageElementType} from "~/store/api/types/submissions";
 import {isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageElementProps = {
-    instanceId: string;
-    submissionId: string;
+    instanceId?: string;
+    submissionId?: string;
+    preview?: boolean;
+    onSave?: (answer: AnswerInput) => Promise<SaveAnswerResult>;
     element: PageElementType;
     showCompact?: boolean;
     answer?: Answer;
@@ -26,19 +26,14 @@ export const PageElement = ({
     instanceId,
     submissionId,
     element,
+    preview = false,
+    onSave,
     showCompact = false,
     answer,
     formControl,
     showPercentages = false,
 }: PageElementProps) => {
     const {l, t, i18n} = useTranslate("workflow");
-
-    const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
-
-    const save = useCallback(
-        (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}).unwrap(),
-        [instanceId, submissionId, saveAnswer],
-    );
 
     switch (element.kind) {
         case "Text":
@@ -65,10 +60,9 @@ export const PageElement = ({
         case "Question": {
             if (
                 !element.question ||
-                !answer ||
                 !formControl ||
-                element.question.type == "File" ||
-                !answer.isVisible
+                element.question.type === "File" ||
+                (!preview && !answer?.isVisible)
             )
                 return null;
             const question = element.question;
@@ -123,7 +117,11 @@ export const PageElement = ({
                                         value={field.value}
                                         onChange={field.onChange}
                                         question={question}
-                                        onSave={save}
+                                        onSave={onSave}
+                                        localPreview={preview}
+                                        ariaLabel={
+                                            preview ? l(question.text) || question.name : undefined
+                                        }
                                         visibleChoices={answer?.visibleChoices}
                                         errorMessage={errorMessage}
                                         isValid={!errorMessage}

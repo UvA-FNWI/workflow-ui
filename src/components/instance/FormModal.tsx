@@ -1,34 +1,28 @@
+import {skipToken} from "@reduxjs/toolkit/query";
 import {Button, LoadingSpinner, Modal, Text} from "@uva-fnwi/datanose-ui";
 
-import {FormPage} from "~/components/instance/FormPage.tsx";
+import {FormPage, type FormPageSource} from "~/components/instance/FormPage.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi.ts";
 
-type FormModalProps = {
-    onClose: () => void;
-    instanceId: string;
-    submissionId: string;
-    previousVersion?: number;
-};
-
-export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: FormModalProps) => {
+export const FormModal = ({onClose, ...source}: FormPageSource & {onClose: () => void}) => {
     const {t, l} = useTranslate(["workflow", "common"]);
 
     const {
         data: submission,
         isError,
         refetch,
-    } = submissionsEndpoints.getSubmission.useQuery({
-        instanceId,
-        submissionId,
-    });
-    const title = submission ? l(submission.form.title) : t("form");
+    } = submissionsEndpoints.getSubmission.useQuery(
+        source.previewForm
+            ? skipToken
+            : {instanceId: source.instanceId, submissionId: source.submissionId},
+    );
+    const form = source.previewForm ?? submission?.form;
+    const title = form ? l(form.title) : t("form");
 
     return (
         <FormPage
-            instanceId={instanceId}
-            submissionId={submissionId}
-            previousVersion={previousVersion}
+            {...source}
             onClose={onClose}
             renderLayout={(content, actions) => (
                 <Modal isOpen onOpenChange={onClose} size="lg" aria-label={title}>
@@ -38,7 +32,7 @@ export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: 
                             <Text role="alert" intent="error">
                                 {t("form_load_failed")}
                             </Text>
-                        ) : submission ? (
+                        ) : form ? (
                             content
                         ) : (
                             <LoadingSpinner />
@@ -46,7 +40,7 @@ export const FormModal = ({onClose, instanceId, submissionId, previousVersion}: 
                     </Modal.Body>
                     <Modal.Footer className="flex-wrap gap-y-3">
                         <Button intent="secondary" onClick={onClose}>
-                            {t("common:cancel")}
+                            {source.previewForm ? t("common:close") : t("common:cancel")}
                         </Button>
                         <div className="flex flex-wrap justify-end gap-3">
                             {isError ? (

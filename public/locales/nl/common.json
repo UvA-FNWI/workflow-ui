@@ -2,6 +2,7 @@
   "cancel": "Annuleren",
   "close": "Sluiten",
   "config_version": "Versie",
+  "configure": "Configureren",
   "confirm": "Bevestigen",
   "develop": "Ontwikkelen",
   "errors": {
@@ -42,5 +43,6 @@
   "version_ref_placeholder": "branch / tag / SHA",
   "version_reload_baseline": "Standaardversie opnieuw laden",
   "version_reload_error": "Opnieuw laden mislukt",
-  "version_upload": "upload"
+  "version_upload": "upload",
+  "workflow_preview_read_only": "Workflowvoorbeeld · Alleen-lezen"
 }

@@ -1,5 +1,8 @@
 import {useCallback, useMemo} from "react";
 
+import type {UseFormReturn} from "react-hook-form";
+
+import {skipToken} from "@reduxjs/toolkit/query";
 import {Heading, LoadingSpinner, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {FileUploadTable} from "./FileUploadTable";
@@ -10,27 +13,33 @@ import {useTranslate} from "~/hooks/useTranslate";
 import {answersApi} from "~/store/api/answersApi";
 import {assessmentsApi} from "~/store/api/assessmentsApi.ts";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {Page, PageElement as PageElementType} from "~/store/api/types/submissions";
+import type {AnswerInput} from "~/store/api/types/params";
+import type {FormLayout, Page, PageElement as PageElementType} from "~/store/api/types/submissions";
 import {isPageComplete, isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageControlProps = {
-    instanceId: string;
-    submissionId: string;
     page: Page;
     showTitle?: boolean;
-};
+} & (
+    | {instanceId: string; submissionId: string; preview?: never}
+    | {
+          preview: {layout: FormLayout; inputs: UseFormReturn};
+          instanceId?: never;
+          submissionId?: never;
+      }
+);
 
 export const PageControl = ({
     instanceId,
     submissionId,
     page,
     showTitle = true,
+    preview,
 }: PageControlProps) => {
     const {l, t, i18n} = useTranslate("workflow");
-    const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
-        instanceId,
-        submissionId,
-    });
+    const {data: submission} = submissionsEndpoints.getSubmission.useQuery(
+        preview ? skipToken : {instanceId, submissionId},
+    );
 
     const answers = useMemo(() => submission?.answers ?? [], [submission]);
     const questions = page.elements
@@ -40,14 +49,25 @@ export const PageControl = ({
         const a = answers.find((x) => x.questionName === q.name);
         return !a || a.isVisible;
     });
-    const form = usePageForm(answers);
+    const submissionInputs = usePageForm(answers);
+    const form = preview?.inputs ?? submissionInputs;
 
     const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
     const [saveFile] = answersApi.endpoints.saveFile.useMutation();
     const [deleteFile] = answersApi.endpoints.deleteFile.useMutation();
 
+    const save = useCallback(
+        (answer: AnswerInput) => {
+            if (!instanceId || !submissionId)
+                throw new Error("A submission is required to save answers.");
+            return saveAnswer({instanceId, submissionId, answer}).unwrap();
+        },
+        [instanceId, submissionId, saveAnswer],
+    );
+
     const removeFileAnswer = useCallback(
         async (questionName: string, artifactId?: string) => {
+            if (!instanceId || !submissionId) return;
             try {
                 if (artifactId) {
                     await deleteFile({instanceId, submissionId, questionName, artifactId}).unwrap();
@@ -68,6 +88,7 @@ export const PageControl = ({
 
     const saveFileAnswer = useCallback(
         async (questionName: string, file: File) => {
+            if (!instanceId || !submissionId) return {success: true, error: null};
             try {
                 await saveFile({instanceId, submissionId, questionName, file}).unwrap();
                 return {success: true, error: null};
@@ -105,14 +126,8 @@ export const PageControl = ({
     );
 
     const {data, isFetching: isFetchingAverages} = assessmentsApi.endpoints.getPageResults.useQuery(
-        {
-            instanceId,
-            submissionId,
-            pageName: page.name,
-        },
-        {
-            skip: !page.hasResults || !areWeightedQuestionsComplete,
-        },
+        preview ? skipToken : {instanceId, submissionId, pageName: page.name},
+        {skip: !page.hasResults || !areWeightedQuestionsComplete},
     );
 
     const pageResult = data?.pageResults?.[0];
@@ -155,7 +170,10 @@ export const PageControl = ({
                 )}
                 {page.elements.length > 0 && (
                     <div>
-                        <form className="flex flex-col gap-6">
+                        <form
+                            className="flex flex-col gap-6"
+                            onSubmit={preview ? (event) => event.preventDefault() : undefined}
+                        >
                             {page.elements.map((element, index) => {
                                 const answer =
                                     element.kind === "Question"
@@ -169,8 +187,11 @@ export const PageControl = ({
                                         instanceId={instanceId}
                                         submissionId={submissionId}
                                         element={element}
+                                        preview={!!preview}
+                                        onSave={preview ? undefined : save}
                                         showCompact={
-                                            submission?.form.layout === "Compact" &&
+                                            (preview?.layout ?? submission?.form.layout) ===
+                                                "Compact" &&
                                             element.kind === "Question" &&
                                             element.question!.type === "Choice"
                                         }
@@ -193,7 +214,7 @@ export const PageControl = ({
                     </div>
                 )}
 
-                {page.hasResults && weightedQuestions.length > 1 && (
+                {!preview && page.hasResults && weightedQuestions.length > 1 && (
                     <div className="my-4">
                         <Separator weight="bold" color="black" className="mb-4" />
                         <div className="flex items-center justify-between gap-2 pr-12">

@@ -3,8 +3,10 @@ import {type RouteObject} from "react-router";
 import FormEditorPage from "../components/FormEditor/FormEditorPage";
 import Develop from "../pages/Develop";
 import Migrations from "../pages/Migrations";
+import WorkflowAuthoring from "../pages/WorkflowAuthoring";
 
 export const developRoutes: RouteObject[] = [
+    {path: "/configure/:projectId?", element: <WorkflowAuthoring />},
     {
         path: "/develop",
         element: <Develop />,
