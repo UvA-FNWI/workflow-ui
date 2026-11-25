@@ -58,7 +58,7 @@ export const UserPickerModal: React.FC<UserPickerModalProps> = ({
 
     // UI states
     const hasSelection = selectedUsers.length > 0;
-    const modalTitle = title ?? t(includeStudents ? "user_picker.title_user" : "user_picker.title");
+    const modalTitle = title ?? t("user_picker.title");
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
