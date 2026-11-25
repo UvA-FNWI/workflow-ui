@@ -1,4 +1,5 @@
 {
+  "action_failed": "The action failed. Please try again.",
   "add": "Add",
   "admin": {
     "current_step_title": "Current step",
@@ -16,43 +17,23 @@
     "back_to_instance": "Back to instance",
     "back_to_overview": "Back to overview",
     "description": "All properties of this instance. Changes take effect immediately and are recorded in the change log.",
-    "edit_data": "Edit data",
     "edit_property": "Edit {{property}}",
     "load_error": "Could not load the properties of this instance",
     "no_properties": "This instance type has no properties",
+    "read_only_description": "All properties of this instance. You have read-only access.",
     "title": "Data"
   },
   "app_name": "Workflow",
   "are_you_sure": "Are you sure?",
-  "bom": {
-    "applicable_list": {
-      "empty": "No measures apply yet. Complete classification and routing questions on the subject.",
-      "purpose": "Read-only preview of measures that apply to this subject. Use Sync below to create implementation rows — this list is not editable.",
-      "title_one": "Applicable measure ({{count}})",
-      "title_other": "Applicable measures ({{count}})"
-    },
-    "export": "Export JSON",
-    "filter": {
-      "no_results": "No measures match your filter.",
-      "placeholder": "Filter by ID, title, status or remarks…"
-    },
-    "import": "Import JSON",
-    "measure": {
-      "background": "Measure background"
-    },
-    "summary": {
-      "applicable": "Applicable",
-      "catalogue": "Catalogue total",
-      "filtered_hint_one": "{{count}} catalogue measure is hidden by applicability rules.",
-      "filtered_hint_other": "{{count}} catalogue measures are hidden by applicability rules.",
-      "handled": "Handled (with status)",
-      "recorded": "Recorded rows"
-    },
-    "sync_applicable": "Sync applicable measures"
-  },
-  "cancel": "Cancel",
   "change_selection": "Change selection",
-  "confirm": "Confirm",
+  "correspondence": {
+    "content": "Content",
+    "empty": "No automated emails found",
+    "recipients": "Recipient(s)",
+    "subject": "Subject",
+    "title": "Automated emails"
+  },
+  "date": "Date",
   "develop": {
     "columns": {
       "created": "Created",
@@ -62,18 +43,16 @@
     "load_error": "Could not load instances",
     "loading": "Loading…",
     "new": "New {{name}}",
+    "no_definition_selected": "Select a definition to show instances of that type.",
     "no_definitions": "No project types available",
     "no_instances": "No instances yet",
     "recalculate_current_steps": "Recalculate steps",
     "recalculate_current_steps_error": "Could not recalculate the current steps",
     "recalculate_current_steps_success": "Checked {{total}} instances: {{updated}} updated and {{unchanged}} unchanged",
+    "select_definition": "Select a definition",
     "title": "Develop"
   },
   "email": "Email address",
-  "embedded_list": {
-    "empty": "No items yet. Add a row to record measure implementation.",
-    "item": "Item {{index}}"
-  },
   "external_user_add": {
     "back_to_search": "Back to search",
     "description": "Can't you find someone in the list? You can add them yourself. Fill in the details below:",
@@ -85,6 +64,7 @@
     "title": "Add external user"
   },
   "file_upload": {
+    "allowed_any_file_type": "Any file type, max. {{size}}.",
     "allowed_file_types": "Only {{types}} files, max. {{size}}.",
     "confirm_delete_message": "Are you sure you want to delete this file?",
     "description": "Description",
@@ -94,59 +74,49 @@
     "error_upload_failed": "Failed to upload file. Please try again.",
     "no_file_uploaded": "No file uploaded",
     "removed_success": "File removed",
+    "select_files": "Select files",
     "upload_file": "Upload file",
     "uploaded": "Uploaded"
   },
+  "form": "Form",
+  "form_load_failed": "The form could not be loaded. Please try again.",
+  "history": {
+    "by": "By",
+    "empty": "There is no history yet",
+    "status": "Status",
+    "title": "History",
+    "undo_reason_empty": "There is no reason provided for this undo action"
+  },
+
   "home": "Home",
-  "overview": {
-    "coordinator_view": "Coordinator view",
-    "default_no_access": "You do not have access to any registers",
-    "default_subtitle": "Select a register to open.",
-    "default_title": "Registers",
-    "load_error": "Could not load accessible workflows",
-    "page_title": "Overview",
-    "personal_view": "Personal view"
+  "home_search": {
+    "empty": "No people or workflows found.",
+    "error": "People search failed. Please try again.",
+    "label": "Search people and workflows",
+    "loading": "Searching…",
+    "people": "People",
+    "placeholder": "Search by workflow or person",
+    "query_length": "Enter between 2 and 200 characters.",
+    "refine": "More people matched. Refine your search to find them.",
+    "results_one": "{{count}} result for “{{query}}”",
+    "results_other": "{{count}} results for “{{query}}”",
+    "title": "Search",
+    "workflows": "Workflows"
   },
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
       "calculated_grade": "Calculated grade: ",
-      "discrepancy_warning": "There is a large discrepancy between the supervisors' assessments. Please discuss the grades before submitting and consult the coordinator if needed.",
       "final_grade": "Final grade",
       "grading_incomplete": "Grading not yet complete"
     },
+    "deadline_passed": "The deadline has passed. You can no longer submit this form.",
     "empty_step": "Nothing has been submitted yet.",
-    "follow_up_assessments": {
-      "description": "Additional privacy assessments required based on your RoPA answers.",
-      "title": "Follow-up assessments"
-    },
-    "groups": {
-      "general": "General",
-      "privacy": "Privacy",
-      "security": "Security"
-    },
-    "messages": {
-      "body": "Comment",
-      "close": "Close",
-      "closed": "Closed",
-      "closed_count_one": "Show {{count}} closed comment",
-      "closed_count_other": "Show {{count}} closed comments",
-      "empty": "No comments yet.",
-      "field_label": "Comments on this field",
-      "hide_closed": "Hide closed comments",
-      "new": "New comment",
-      "reply": "Reply",
-      "reply_placeholder": "Write a reply",
-      "show_closed_one": "Show {{count}} closed comment",
-      "show_closed_other": "Show {{count}} closed comments",
-      "title": "Comments"
-    },
-    "parent": "Back to subject",
-    "step": {
-      "optional": "Non-blocking"
-    },
+    "shared_loading": "Loading shared work…",
+    "shared_restricted": "You do not have permission to view this shared work.",
+    "shared_step": "Shared step",
+    "shared_unavailable": "Shared work is not available. Check the linked instance.",
     "summary": {
-      "back_to_summary": "Back to summary",
       "change_version": "Version {{version}}",
       "change_version_in_progress": "Version {{version}} (in progress)",
       "changed_on": "Changed on {{date}}",
@@ -155,12 +125,12 @@
       "changes_title": "Changes",
       "delete_file": "Delete file",
       "edit_answer": "Edit answer",
-      "edit_form": "Edit in form",
       "edit_page": "Edit page",
       "explanation": "Explanation",
       "hide_answers": "Hide parts and explanations",
       "hide_linked": "Hide explanations",
       "replace_file": "Replace file",
+      "reversed_on_by": "Reversed on {{date}} by {{name}}",
       "save_error": "Failed to save. Please try again.",
       "show_answers": "Show parts and explanations",
       "show_linked": "Show explanations",
@@ -168,23 +138,47 @@
       "title": "Summary",
       "view_changes": "View changes"
     },
-    "transfer_summary": {
-      "location": "Processing location",
-      "non_eea": "Outside EEA",
-      "title": "Transfer assessment (derived)"
-    },
     "unauthorized_submission": "You are not authorized to see this submission",
     "workflowInstance": "Workflow Instance"
   },
   "make_a_choice": "Make a choice",
+  "migrations": {
+    "back_to_develop": "Back to Develop",
+    "columns": {
+      "change": "Property change",
+      "progress": "Progress",
+      "status": "Status",
+      "updated": "Updated",
+      "workflow": "Workflow type"
+    },
+    "empty": "No migrations yet",
+    "load_error": "Could not load migrations",
+    "progress": "{{updated}} of {{matched}} instances updated",
+    "status": {
+      "applying": "Applying",
+      "failed": "Failed",
+      "finished": "Finished"
+    },
+    "title": "Migrations"
+  },
   "name": "Name",
   "next": "Next",
   "optional": "* Not required",
+  "overview": {
+    "choose_course_title": "Choose your course",
+    "coordinator_view": "Coordinator view",
+    "default_no_access": "You do not have access to any registers",
+    "default_subtitle": "Select a register to open.",
+    "default_title": "Registers",
+    "load_error": "Could not load the home page. Please try again later.",
+    "page_title": "Overview",
+    "personal_view": "Personal view"
+  },
   "previous": "Previous",
   "progress": {
+    "amsterdam_time": "Amsterdam time",
     "completed": "Completed",
-    "deadline": "Deadline",
-    "title": "Progress"
+    "deadline": "Deadline"
   },
   "reference": {
     "empty": "No options available",
@@ -192,7 +186,6 @@
     "loading": "Loading options…",
     "no_results": "No results"
   },
-  "remove": "Remove",
   "repeated_form": {
     "clear": "Clear prefilled fields",
     "clear_error": "Failed to clear the fields. Please try again.",
@@ -201,6 +194,8 @@
     "message": "Adjustments are needed. We have copied over the details you entered earlier for you to adjust as needed.",
     "question": "Do you want to start over?"
   },
+  "retry": "Try again",
+  "review_and_submit": "Review and submit",
   "save": "Save",
   "screens": {
     "actions": "Actions"
@@ -233,10 +228,30 @@
     "remove_staff_title": "Remove user"
   },
   "status": {
+    "completed_on": "Completed on",
+    "deadline_passed": "Deadline passed",
     "submitted": "Submitted"
   },
-  "string_validation": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
+  "string_validation_max": "Maximum number of characters {{maxInputLength}}. {{remainingInputLength}} of {{maxInputLength}} remaining.",
+  "string_validation_min": "Minimum number of characters {{minInputLength}}.",
+  "string_validation_min_remaining": " {{remainingInputLength}} more required.",
   "submit": "Submit",
+  "undo": {
+    "action": "Action",
+    "candidate_changed": "The undo candidate changed. The workflow has been refreshed.",
+    "confirm": "Undo",
+    "error": "The operation could not be undone. Please try again.",
+    "execute_action": "Execute action",
+    "form": "Form",
+    "form_submission": "Form submission",
+    "occurred_at": "Occurred at",
+    "open": "Undo operation for {{step}}",
+    "operation_type": "Operation type",
+    "reason": "Reason",
+    "reason_description": "Explain why this operation is being undone.",
+    "step": "Step",
+    "title": "Undo operation"
+  },
   "user_picker": {
     "no_results": "No users found",
     "not_in_list": "Not in list",

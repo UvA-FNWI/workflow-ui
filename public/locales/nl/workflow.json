@@ -1,4 +1,5 @@
 {
+  "action_failed": "De actie is mislukt. Probeer het opnieuw.",
   "add": "Toevoegen",
   "admin": {
     "current_step_title": "Huidige stap",
@@ -16,43 +17,23 @@
     "back_to_instance": "Terug naar workflow",
     "back_to_overview": "Terug naar overzicht",
     "description": "Alle eigenschappen van deze instantie. Wijzigingen zijn direct van kracht en worden vastgelegd in het wijzigingslogboek.",
-    "edit_data": "Gegevens bewerken",
     "edit_property": "{{property}} bewerken",
     "load_error": "Kan de eigenschappen van deze instantie niet laden",
     "no_properties": "Deze workflow heeft geen eigenschappen",
+    "read_only_description": "Alle eigenschappen van deze instantie. Je kunt ze alleen bekijken.",
     "title": "Gegevens"
   },
   "app_name": "Workflow",
   "are_you_sure": "Weet je het zeker?",
-  "bom": {
-    "applicable_list": {
-      "empty": "Er zijn nog geen maatregelen van toepassing. Rond classificatie en routeringsvragen op het onderwerp af.",
-      "purpose": "Alleen-lezen voorbeeld van maatregelen die voor dit onderwerp gelden. Gebruik Synchroniseren hieronder om implementatieregels aan te maken — deze lijst is niet bewerkbaar.",
-      "title_one": "Toepasselijke maatregel ({{count}})",
-      "title_other": "Toepasselijke maatregelen ({{count}})"
-    },
-    "export": "Exporteer JSON",
-    "filter": {
-      "no_results": "Geen maatregelen gevonden voor dit filter.",
-      "placeholder": "Filter op ID, titel, status of toelichting…"
-    },
-    "import": "Importeer JSON",
-    "measure": {
-      "background": "Achtergrond maatregel"
-    },
-    "summary": {
-      "applicable": "Toepasselijk",
-      "catalogue": "Catalogus totaal",
-      "filtered_hint_one": "{{count}} catalogusmaatregel is verborgen door toepasbaarheidsregels.",
-      "filtered_hint_other": "{{count}} catalogusmaatregelen zijn verborgen door toepasbaarheidsregels.",
-      "handled": "Afgehandeld (met status)",
-      "recorded": "Vastgelegde regels"
-    },
-    "sync_applicable": "Toepasselijke synchroniseren"
-  },
-  "cancel": "Annuleren",
   "change_selection": "Wijzig keuze",
-  "confirm": "Bevestigen",
+  "correspondence": {
+    "content": "Inhoud",
+    "empty": "Geen automatische mails gevonden",
+    "recipients": "Ontvanger(s)",
+    "subject": "Onderwerp",
+    "title": "Automatische mails"
+  },
+  "date": "Datum",
   "develop": {
     "columns": {
       "created": "Aangemaakt",
@@ -62,18 +43,16 @@
     "load_error": "Kon instanties niet laden",
     "loading": "Laden…",
     "new": "Nieuw {{name}}",
+    "no_definition_selected": "Selecteer een definitie om instanties van dat type te tonen.",
     "no_definitions": "Geen projecttypes beschikbaar",
     "no_instances": "Nog geen instanties",
     "recalculate_current_steps": "Stappen herberekenen",
     "recalculate_current_steps_error": "Kon de huidige stappen niet herberekenen",
     "recalculate_current_steps_success": "{{total}} instanties gecontroleerd: {{updated}} bijgewerkt en {{unchanged}} ongewijzigd",
+    "select_definition": "Kies een definitie",
     "title": "Ontwikkelen"
   },
   "email": "E-mailadres",
-  "embedded_list": {
-    "empty": "Nog geen regels. Voeg een regel toe om de implementatiestatus vast te leggen.",
-    "item": "Regel {{index}}"
-  },
   "external_user_add": {
     "back_to_search": "Terug naar zoeken",
     "description": "Staat iemand niet in de lijst? Dan mag je deze zelf toevoegen. Vul onderstaande gegevens in:",
@@ -85,6 +64,7 @@
     "title": "Voeg externe gebruiker toe"
   },
   "file_upload": {
+    "allowed_any_file_type": "Elk bestandstype, max. {{size}}.",
     "allowed_file_types": "Alleen {{types}}-bestanden, max. {{size}}.",
     "confirm_delete_message": "Weet je zeker dat je dit bestand wilt verwijderen?",
     "description": "Beschrijving",
@@ -94,59 +74,48 @@
     "error_upload_failed": "Uploaden mislukt. Probeer het opnieuw.",
     "no_file_uploaded": "Geen bestand geüpload",
     "removed_success": "Bestand verwijderd",
+    "select_files": "Bestanden selecteren",
     "upload_file": "Upload bestand",
     "uploaded": "Geüpload"
   },
+  "form": "Formulier",
+  "form_load_failed": "Het formulier kon niet worden geladen. Probeer het opnieuw.",
+  "history": {
+    "by": "Door",
+    "empty": "Er is nog geen geschiedenis",
+    "status": "Status",
+    "title": "Geschiedenis",
+    "undo_reason_empty": "Er is geen reden voor ongedaan maken opgegeven"
+  },
   "home": "Home",
-  "overview": {
-    "coordinator_view": "Coördinatorweergave",
-    "default_no_access": "Je hebt geen toegang tot registers",
-    "default_subtitle": "Kies een register om te openen.",
-    "default_title": "Registers",
-    "load_error": "Kon toegankelijke workflows niet laden",
-    "page_title": "Overzicht",
-    "personal_view": "Persoonlijke weergave"
+  "home_search": {
+    "empty": "Geen personen of workflows gevonden.",
+    "error": "Zoeken naar personen is mislukt. Probeer het opnieuw.",
+    "label": "Zoek personen en workflows",
+    "loading": "Zoeken…",
+    "people": "Personen",
+    "placeholder": "Zoek op workflow of persoon",
+    "query_length": "Voer 2 tot 200 tekens in.",
+    "refine": "Er zijn meer resultaten. Verfijn je zoekopdracht om ze te vinden.",
+    "results_one": "{{count}} resultaat voor ‘{{query}}’",
+    "results_other": "{{count}} resultaten voor ‘{{query}}’",
+    "title": "Zoeken",
+    "workflows": "Workflows"
   },
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",
       "calculated_grade": "Berekend cijfer: ",
-      "discrepancy_warning": "Er is een groot verschil tussen de cijfers van de verschillende beoordelaars. Bespreek de cijfers voordat je indient en raadpleeg de coördinator indien nodig.",
       "final_grade": "Eindcijfer",
       "grading_incomplete": "Beoordeling nog niet volledig"
     },
+    "deadline_passed": "De deadline is verstreken. Je kunt dit formulier niet meer indienen.",
     "empty_step": "Er is nog niets ingeleverd.",
-    "follow_up_assessments": {
-      "description": "Aanvullende privacybeoordelingen op basis van je RoPA-antwoorden.",
-      "title": "Vervolgbeoordelingen"
-    },
-    "groups": {
-      "general": "Algemeen",
-      "privacy": "Privacy",
-      "security": "Security"
-    },
-    "messages": {
-      "body": "Opmerking",
-      "close": "Sluiten",
-      "closed": "Gesloten",
-      "closed_count_one": "Toon {{count}} gesloten opmerking",
-      "closed_count_other": "Toon {{count}} gesloten opmerkingen",
-      "empty": "Nog geen opmerkingen.",
-      "field_label": "Opmerkingen bij dit veld",
-      "hide_closed": "Gesloten opmerkingen verbergen",
-      "new": "Nieuwe opmerking",
-      "reply": "Reageren",
-      "reply_placeholder": "Schrijf een reactie",
-      "show_closed_one": "Toon {{count}} gesloten opmerking",
-      "show_closed_other": "Toon {{count}} gesloten opmerkingen",
-      "title": "Opmerkingen"
-    },
-    "parent": "Terug naar onderwerp",
-    "step": {
-      "optional": "Niet-blokkerend"
-    },
+    "shared_loading": "Gedeeld werk laden…",
+    "shared_restricted": "Je hebt geen toestemming om dit gedeelde werk te bekijken.",
+    "shared_step": "Gedeelde stap",
+    "shared_unavailable": "Gedeeld werk is niet beschikbaar. Controleer de gekoppelde instantie.",
     "summary": {
-      "back_to_summary": "Terug naar samenvatting",
       "change_version": "Versie {{version}}",
       "change_version_in_progress": "Versie {{version}} (in behandeling)",
       "changed_on": "Gewijzigd op {{date}}",
@@ -155,12 +124,12 @@
       "changes_title": "Wijzigingen",
       "delete_file": "Bestand verwijderen",
       "edit_answer": "Antwoord bewerken",
-      "edit_form": "Bewerken in formulier",
       "edit_page": "Pagina bewerken",
       "explanation": "Toelichting",
       "hide_answers": "Verberg onderdelen en toelichting",
       "hide_linked": "Verberg toelichtingen",
       "replace_file": "Bestand vervangen",
+      "reversed_on_by": "Teruggedraaid op {{date}} door {{name}}",
       "save_error": "Opslaan mislukt. Probeer het opnieuw.",
       "show_answers": "Toon onderdelen en toelichting",
       "show_linked": "Toon toelichtingen",
@@ -168,23 +137,47 @@
       "title": "Samenvatting",
       "view_changes": "Wijzigingen bekijken"
     },
-    "transfer_summary": {
-      "location": "Verwerkingslocatie",
-      "non_eea": "Buiten de EER",
-      "title": "Doorgiftebeoordeling (afgeleid)"
-    },
     "unauthorized_submission": "Je hebt geen rechten om dit in te zien",
     "workflowInstance": "Workflow"
   },
   "make_a_choice": "Maak een keuze",
+  "migrations": {
+    "back_to_develop": "Terug naar Ontwikkelen",
+    "columns": {
+      "change": "Wijziging",
+      "progress": "Voortgang",
+      "status": "Status",
+      "updated": "Bijgewerkt",
+      "workflow": "Workflowtype"
+    },
+    "empty": "Nog geen migraties",
+    "load_error": "Kon migraties niet laden",
+    "progress": "{{updated}} van {{matched}} instanties bijgewerkt",
+    "status": {
+      "applying": "Bezig",
+      "failed": "Mislukt",
+      "finished": "Voltooid"
+    },
+    "title": "Migraties"
+  },
   "name": "Naam",
   "next": "Volgende",
   "optional": "* Niet verplicht",
+  "overview": {
+    "choose_course_title": "Kies je vak",
+    "coordinator_view": "Coördinatorweergave",
+    "default_no_access": "Je hebt geen toegang tot registers",
+    "default_subtitle": "Kies een register om te openen.",
+    "default_title": "Registers",
+    "load_error": "De startpagina kon niet worden geladen. Probeer het later opnieuw.",
+    "page_title": "Overzicht",
+    "personal_view": "Persoonlijke weergave"
+  },
   "previous": "Vorige",
   "progress": {
+    "amsterdam_time": "Amsterdamse tijd",
     "completed": "Voltooid",
-    "deadline": "Deadline",
-    "title": "Voortgang"
+    "deadline": "Deadline"
   },
   "reference": {
     "empty": "Geen opties beschikbaar",
@@ -192,7 +185,6 @@
     "loading": "Opties laden…",
     "no_results": "Geen resultaten"
   },
-  "remove": "Verwijderen",
   "repeated_form": {
     "clear": "Wis vooringevulde velden",
     "clear_error": "De velden konden niet worden gewist. Probeer het opnieuw.",
@@ -201,6 +193,8 @@
     "message": "Er zijn aanpassingen nodig. Daarom hebben we wat je eerder hebt ingevuld alvast overgenomen. Pas alleen aan wat nodig is; wat al goed was, hoef je niet aan te passen.",
     "question": "Wil je helemaal opnieuw beginnen?"
   },
+  "retry": "Opnieuw proberen",
+  "review_and_submit": "Controleren en inleveren",
   "save": "Opslaan",
   "screens": {
     "actions": "Acties"
@@ -233,10 +227,30 @@
     "remove_staff_title": "Gebruiker verwijderen"
   },
   "status": {
+    "completed_on": "Voltooid op",
+    "deadline_passed": "Deadline verstreken",
     "submitted": "Ingeleverd"
   },
-  "string_validation": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
+  "string_validation_max": "Maximaal aantal tekens {{maxInputLength}}. Nog {{remainingInputLength}} van de {{maxInputLength}} over.",
+  "string_validation_min": "Minimaal aantal tekens {{minInputLength}}.",
+  "string_validation_min_remaining": " Nog {{remainingInputLength}} vereist.",
   "submit": "Inleveren",
+  "undo": {
+    "action": "Actie",
+    "candidate_changed": "De actie die ongedaan kan worden gemaakt is gewijzigd. De workflow is vernieuwd.",
+    "confirm": "Terugdraaien",
+    "error": "De actie kon niet ongedaan worden gemaakt. Probeer het opnieuw.",
+    "execute_action": "Uitgevoerde actie",
+    "form": "Formulier",
+    "form_submission": "Formulierinzending",
+    "occurred_at": "Uitgevoerd op",
+    "open": "Actie voor {{step}} ongedaan maken",
+    "operation_type": "Type actie",
+    "reason": "Reden",
+    "reason_description": "Leg uit waarom deze actie ongedaan wordt gemaakt.",
+    "step": "Stap",
+    "title": "Actie ongedaan maken"
+  },
   "user_picker": {
     "no_results": "Geen medewerkers gevonden",
     "not_in_list": "Niet in lijst",

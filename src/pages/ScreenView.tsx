@@ -55,7 +55,9 @@ const ScreenContent = () => {
         storageKey: getScreenTabStorageKey(workflowDefinition, screenName),
     });
 
-    useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
+    useDocumentTitle(
+        screen ? l(screen.title) || l(screen.workflowDefinition.title) : null,
+    );
 
     const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
     const bulkActions = screen?.bulkActions ?? [];
@@ -86,10 +88,21 @@ const ScreenContent = () => {
         ) : null;
     }
 
+    const toolbar = (
+        <ScreenTableToolbar
+            search={search}
+            setSearch={changeSearch}
+            canEdit={screen.isBulkEditEnabled}
+            canCreate={screen.workflowDefinition.canCreateInstance}
+            workflowDefinition={workflowDefinition}
+            {...toolbarBulkProps}
+        />
+    );
+    const title = l(screen.title) || l(screen.workflowDefinition.title);
     return (
         <HomePage
-            title={l(screen.workflowDefinition.title)}
-            coordinatorTabLabel={l(screen.workflowDefinition.title)}
+            title={title}
+            coordinatorTabLabel={title}
             personalContent={<PersonalContent workflowDefinition={workflowDefinition} />}
         >
             <Card>
@@ -113,16 +126,7 @@ const ScreenContent = () => {
                                 </Tab>
                             ))}
                         </TabList>
-                        <TabToolbar className="py-4">
-                            <ScreenTableToolbar
-                                search={search}
-                                setSearch={changeSearch}
-                                canEdit={screen.isBulkEditEnabled}
-                                canCreate={screen.workflowDefinition.canCreateInstance}
-                                workflowDefinition={workflowDefinition}
-                                {...toolbarBulkProps}
-                            />
-                        </TabToolbar>
+                        <TabToolbar className="py-4">{toolbar}</TabToolbar>
                         <TabPanels>
                             {screen.groups.map((group) => (
                                 <TabPanel key={group.name}>
@@ -138,14 +142,7 @@ const ScreenContent = () => {
                     </Tabs>
                 ) : (
                     <div className="flex flex-col gap-4">
-                        <ScreenTableToolbar
-                            search={search}
-                            setSearch={changeSearch}
-                            canEdit={screen.isBulkEditEnabled}
-                            canCreate={screen.workflowDefinition.canCreateInstance}
-                            workflowDefinition={workflowDefinition}
-                            {...toolbarBulkProps}
-                        />
+                        {toolbar}
                         <ScreenTable
                             columns={screen.columns}
                             rows={screen.rows}
