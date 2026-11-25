@@ -43,7 +43,19 @@ const makeSubmission = (overrides: Partial<Submission> = {}): Submission => ({
                 name: "page-1",
                 title: {en: "Page 1", nl: "Pagina 1"},
                 layout: "Normal",
-                elements: [],
+                elements: [
+                    {
+                        kind: "Question",
+                        question: {
+                            name: "q1",
+                            text: {en: "Question", nl: ""},
+                            type: "String",
+                            isRequired: false,
+                            isArray: false,
+                            hideInResults: false,
+                        },
+                    },
+                ],
                 hasResults: false,
                 isInCurrentForm: true,
                 isActive: true,
@@ -75,7 +87,7 @@ describe("hasVersionHistory", () => {
         expect(hasVersionHistory(step)).toBe(true);
     });
 
-    it("keeps history when permissions hide all submissions", () => {
+    it("hides history when permissions hide all submissions", () => {
         const step = makeStep({
             versions: {
                 current: null,
@@ -89,7 +101,7 @@ describe("hasVersionHistory", () => {
             },
         });
 
-        expect(hasVersionHistory(step)).toBe(true);
+        expect(hasVersionHistory(step)).toBe(false);
     });
 });
 

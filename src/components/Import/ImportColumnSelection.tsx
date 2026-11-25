@@ -53,15 +53,18 @@ export const ImportColumnSelection = ({
     return (
         <div>
             <div className="flex items-center bg-grey-200 px-4 py-2 dark:bg-grey-800 dark:text-white">
-                <Text size="sm">{fileName}</Text>
+                <Text size="sm" className="min-w-0 truncate">
+                    {fileName}
+                </Text>
                 <Button
                     intent="ghost"
                     onClick={onRemoveFile}
                     aria-label="Remove file"
                     size="square"
-                    className="ml-auto"
+                    width="none"
+                    className="ml-auto shrink-0 leading-0"
                 >
-                    <Icon name="trash-line" size="md" color="current" />
+                    <Icon name="trash-line" size="md" color="current" decorative />
                 </Button>
             </div>
             <div className="flex flex-col gap-2 py-4">
@@ -71,9 +74,12 @@ export const ImportColumnSelection = ({
                     })}
                 </Text>
                 <Select
-                    value={selectedColumns[importableColumnIdentifier.name]}
+                    value={selectedColumns[importableColumnIdentifier.name] ?? null}
                     onChange={handleColumnSelect(importableColumnIdentifier.name)}
                     placeholder={tw("select")}
+                    aria-label={t("select_identifier", {
+                        identifier: l(importableColumnIdentifier.title) ?? t("identifier"),
+                    })}
                     disabledKeys={getDisabledKeys(importableColumnIdentifier.name)}
                 >
                     {fileColumns.map((col) => (
@@ -124,9 +130,10 @@ const ImportColumnSelectionRow = ({
             {isSelected && (
                 <div className="ml-auto">
                     <Select
-                        value={selectedColumn}
+                        value={selectedColumn ?? null}
                         onChange={onSelect}
                         placeholder={tw("select")}
+                        aria-label={name}
                         disabledKeys={disabledKeys}
                         className="h-10 w-40"
                     >

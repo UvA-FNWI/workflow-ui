@@ -2,11 +2,12 @@ import {useState} from "react";
 
 import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
+import {VersionedLink} from "../VersionedLink";
 import {InlineQuestionEdit} from "~/components/instance/InlineQuestionEdit.tsx";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {instancesEndpoints} from "~/store/api/instancesApi.ts";
 import type {DataType, Question} from "~/store/api/types/submissions.ts";
-import {formatAnswer} from "~/utils/formatAnswer.ts";
+import {formatAnswer, hasReferenceId} from "~/utils/formatAnswer.ts";
 
 type Props = {
     instanceId: string;
@@ -14,6 +15,7 @@ type Props = {
     /** Dotted path from the instance root. */
     path: string;
     values: Record<string, unknown>;
+    editablePaths: ReadonlySet<string>;
     onSave: (path: string, value: unknown) => Promise<{error?: unknown}>;
 };
 
@@ -29,7 +31,14 @@ const EDITABLE_TYPES: DataType[] = [
     "Reference",
 ];
 
-export const InstancePropertyRow = ({instanceId, question, path, values, onSave}: Props) => {
+export const InstancePropertyRow = ({
+    instanceId,
+    question,
+    path,
+    values,
+    editablePaths,
+    onSave,
+}: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isEditing, setIsEditing] = useState(false);
 
@@ -39,6 +48,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
 
     const value = values[path];
     const label = l(question.text) ?? question.name;
+    const canEdit = editablePaths.has(path) && EDITABLE_TYPES.includes(question.type);
 
     const {
         data: referenceChoices,
@@ -66,6 +76,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                             question={child}
                             path={`${path}.${child.name}`}
                             values={values}
+                            editablePaths={editablePaths}
                             onSave={onSave}
                         />
                     ))}
@@ -81,7 +92,7 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
               ? question.choices
               : undefined;
 
-    if (isEditing) {
+    if (canEdit && isEditing) {
         return (
             <div className={ROW_CLASSES}>
                 <Text fontWeight="semibold">{label}</Text>
@@ -101,6 +112,11 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
 
     const formatted = formatAnswer(value, question.type, i18n.language, choices);
 
+    const referenceIds: string[] =
+        question.type === "Reference" && hasReferenceId(value)
+            ? (Array.isArray(value) ? value : [value]).map(String)
+            : [];
+
     return (
         <div className={ROW_CLASSES}>
             <div className="min-w-0">
@@ -112,16 +128,41 @@ export const InstancePropertyRow = ({instanceId, question, path, values, onSave}
                     </Text>
                 )}
             </div>
-            <div className="min-w-0">
-                <Text as="span" display="inline" className="wrap-break-word whitespace-pre-wrap">
-                    {formatted || "-"}
-                </Text>
-                {EDITABLE_TYPES.includes(question.type) && (
+            <div className="flex min-w-0 flex-row gap-1">
+                {referenceIds.length > 0 ? (
+                    <div className="flex min-w-0 flex-col gap-1">
+                        {referenceIds.map((id) => (
+                            <VersionedLink
+                                key={id}
+                                className="block min-w-0 underline hover:text-grey-800"
+                                to={`/instance/${id}`}
+                            >
+                                <Text
+                                    as="span"
+                                    display="inline"
+                                    className="wrap-break-word whitespace-pre-wrap"
+                                    color="inherit"
+                                >
+                                    {formatAnswer(id, question.type, i18n.language, choices) || "-"}
+                                </Text>
+                            </VersionedLink>
+                        ))}
+                    </div>
+                ) : (
+                    <Text
+                        as="span"
+                        display="inline"
+                        className="min-w-0 wrap-break-word whitespace-pre-wrap"
+                    >
+                        {formatted || "-"}
+                    </Text>
+                )}
+                {canEdit && (
                     <Button
                         intent="ghost"
                         size="small"
                         shape="circular"
-                        className="ui:ml-1 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
+                        className="ui:ml-1 ui:shrink-0 ui:border-0 ui:px-1 ui:align-middle ui:hover:enabled:bg-grey-100 ui:dark:hover:enabled:bg-grey-800"
                         onClick={() => setIsEditing(true)}
                         aria-label={t("admin_data.edit_property", {property: label})}
                     >

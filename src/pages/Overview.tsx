@@ -1,73 +1,68 @@
-import {Fragment} from "react";
+import {useOutletContext} from "react-router";
 
-import {Card, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {SearchInput, Text} from "@uva-fnwi/datanose-ui";
 
+import {HomeList} from "~/components/Home/HomeList";
+import {HomeSearchResults} from "~/components/Home/HomeSearchResults";
+import {ScreenLink} from "~/components/Home/ScreenLink";
+import type {HomeLayoutContext} from "~/components/HomeLayout";
 import {HomePage} from "~/components/HomePage";
-import {VersionedLink} from "~/components/VersionedLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
+import {useHomeSearch} from "~/hooks/useHomeSearch";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
-import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
 
-function CourseRow({to, title, subtitle}: {to: string; title: string; subtitle: string}) {
-    return (
-        <VersionedLink
-            to={to}
-            className="group hover:bg-grey-50 flex items-center gap-4 px-5 py-4 transition-colors"
-        >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-grey-100 text-grey-700">
-                <Icon name="graduate-cap-solid" size="md" decorative />
-            </span>
-            <span className="flex min-w-0 flex-col">
-                <Text as="span" fontWeight="semibold" className="text-grey-900">
-                    {title}
-                </Text>
-                <Text as="span" size="sm" className="text-grey-600">
-                    {subtitle}
-                </Text>
-            </span>
-            <Icon
-                name="chevron-right-line"
-                size="md"
-                decorative
-                className="ml-auto shrink-0 text-grey-400 transition-transform group-hover:translate-x-1 group-hover:text-grey-700"
-            />
-        </VersionedLink>
-    );
-}
+const minQueryLength = 2;
+const maxQueryLength = 200;
 
 function Overview() {
-    const {t, l} = useTranslate("workflow");
+    const {t} = useTranslate("workflow");
     useDocumentTitle("Overview");
 
-    const {data: accessibleDefinitions} = useGetAccessibleWorkflowDefinitionsQuery();
+    const {definitions} = useOutletContext<HomeLayoutContext>();
+    const {input, query, setInput} = useHomeSearch();
 
-    if (!accessibleDefinitions) return null;
+    if (!definitions) return null;
 
-    const screens = accessibleDefinitions.flatMap((definition) =>
+    const screens = definitions.flatMap((definition) =>
         definition.screens.map((name) => ({definition, name})),
+    );
+    if (screens.length === 0) return null;
+
+    const searching = Boolean(query);
+    const isQueryValid = query.length >= minQueryLength && query.length <= maxQueryLength;
+
+    const searchInput = (
+        <div role="search" className="mb-6 max-w-sm">
+            <SearchInput
+                aria-label={t("home_search.label")}
+                placeholder={t("home_search.placeholder")}
+                value={input}
+                maxLength={maxQueryLength}
+                onChange={setInput}
+            />
+        </div>
+    );
+    const searchFeedback = isQueryValid ? (
+        <HomeSearchResults query={query} workflowScreens={screens} />
+    ) : (
+        <Text role="status">{t("home_search.query_length")}</Text>
     );
 
     return (
-        <HomePage title={t("overview.choose_course_title")} personalContent={<PersonalContent />}>
-            {screens.length === 0 ? (
-                <p>{t("overview.no_access")}</p>
-            ) : (
-                <Card padding="none" className="overflow-hidden">
-                    {screens.map(({definition: def, name}, index) => (
-                        <Fragment key={`${def.name}/${name}`}>
-                            {index > 0 && <Separator />}
-                            <CourseRow
-                                to={`/screens/${def.name}/${name}`}
-                                title={l(def.title) || def.name}
-                                subtitle={
-                                    def.screens.length > 1 ? name : l(def.titlePlural) || def.name
-                                }
-                            />
-                        </Fragment>
-                    ))}
-                </Card>
-            )}
+        <HomePage
+            title={searching ? t("home_search.title") : t("overview.choose_course_title")}
+            toolbar={searchInput}
+            alternateContent={searching ? searchFeedback : undefined}
+            personalContent={<PersonalContent />}
+        >
+            <HomeList>
+                {screens.map(({definition, name}) => (
+                    <li key={`${definition.name}/${name}`}>
+                        <ScreenLink definition={definition} name={name} />
+                    </li>
+                ))}
+            </HomeList>
         </HomePage>
     );
 }

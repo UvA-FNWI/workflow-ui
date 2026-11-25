@@ -2,6 +2,7 @@ import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
 import type {
+    AnswerChangeGroup,
     FormLayout,
     Question,
     RoleAction,
@@ -35,6 +36,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     infoCards: InfoCard[];
+    stopMessage: LocalString | null;
 };
 
 /**
@@ -52,6 +54,7 @@ export type InstanceSummary = {
 export type InstanceProperties = {
     properties: Question[];
     values: Record<string, unknown>;
+    editablePaths: string[];
 };
 
 export type RecalculateCurrentStepsResult = {
@@ -106,6 +109,12 @@ export type WorkflowStep = {
     hierarchyMode: StepHierarchyMode;
     childrenLayout: StepChildrenLayout;
     undoCandidate?: UndoCandidate | null;
+    importStatus?: "Available" | "Unavailable" | "Restricted" | null;
+    importedFrom?: {
+        instanceId: string;
+        stepId: string;
+        participants: {displayName: string}[];
+    } | null;
 };
 
 export type WorkflowStepVersion = {
@@ -210,3 +219,24 @@ export type InfoCard =
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
     | (InfoCardBase & {type: "Text"; content?: LocalString | null})
     | (InfoCardBase & {type: "Progress"});
+
+export type InstanceHistoryType = "Event" | "Property" | "Undo";
+
+export type InstanceHistoryItem = {
+    id: string;
+    type: InstanceHistoryType;
+    title: LocalString;
+    timestamp: string;
+    user: UserSearchResult;
+    propertyHistory?: PropertyHistory;
+    undoHistory?: UndoHistory;
+};
+
+export type PropertyHistory = {
+    question: Question;
+    answerChangeGroup: AnswerChangeGroup;
+};
+
+export type UndoHistory = {
+    reason?: string;
+};

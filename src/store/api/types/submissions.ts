@@ -59,10 +59,17 @@ export type Form = {
     layout: FormLayout;
     pages: Page[];
     step?: string;
+    confirmation?: FormConfirmation;
+};
+
+export type FormConfirmation = {
+    title: LocalString;
+    text: LocalString;
 };
 
 export type Page = {
     index: number;
+    percentage?: number | null;
     name: string;
     title: LocalString;
     layout: PageLayout;
@@ -222,7 +229,8 @@ export type RoleAction =
     | "Execute"
     | "CreateRelatedInstance"
     | "Undo"
-    | "ViewCorrespondence";
+    | "ViewCorrespondence"
+    | "ViewHistory";
 export type DataType =
     | "File"
     | "Date"

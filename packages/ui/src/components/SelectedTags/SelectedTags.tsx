@@ -24,7 +24,7 @@ export function SelectedTags({
   return (
     <div
       className={cn(
-        'ui:flex ui:min-w-0 ui:flex-1 ui:flex-nowrap ui:items-center ui:gap-1.5 ui:overflow-x-auto',
+        'ui:flex ui:min-w-0 ui:flex-1 ui:flex-wrap ui:items-center ui:gap-1.5 ui:overflow-x-auto',
         className
       )}
     >

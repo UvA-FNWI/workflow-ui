@@ -1,7 +1,7 @@
-import {rankItem} from "@tanstack/match-sorter-utils";
+import {rankings, rankItem} from "@tanstack/match-sorter-utils";
 
 import type {ScreenColumn, ScreenRow} from "~/store/api/types/screens";
-import {getComparableTableCellValue} from "~/utils/tableCellValues";
+import {getComparableTableCellValue} from "~/utils/tableCellValues.ts";
 
 export function filterScreenRows(
     columns: ScreenColumn[],
@@ -17,6 +17,7 @@ export function filterScreenRows(
                 rankItem(
                     getComparableTableCellValue(row.values[column.id], column.dataType, language),
                     search,
+                    {threshold: rankings.CONTAINS},
                 ).passed,
         ),
     );
