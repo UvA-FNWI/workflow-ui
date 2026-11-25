@@ -28,6 +28,8 @@ describe("shared schema loading", () => {
     });
 
     it("loads root and referenced schemas from the runtime API with authentication", async () => {
+        vi.doUnmock("~/helpers/Environment");
+        vi.resetModules();
         vi.stubEnv("VITE_WORKFLOW_SCHEMA_BASE_URL", undefined);
         vi.stubEnv("VITE_WEBAPI_URL", "https://build-api.example.test");
         Reflect.set(window, "_env", {

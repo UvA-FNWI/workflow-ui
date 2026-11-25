@@ -18,8 +18,6 @@ import type {UserDto} from "~/store/api/types/users";
 import {clearCurrentUser, setAccessToken} from "~/store/authSlice";
 import {store} from "~/store/store";
 
-vi.mock("~/helpers/Environment", () => ({VITE_WEBAPI_URL: "http://api.test"}));
-
 afterEach(() => {
     cleanup();
     store.dispatch(setAccessToken(null));
@@ -33,7 +31,19 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
         name: "project",
         title: {en: "Project"},
         titlePlural: {en: "Projects"},
-        screens: ["overview"],
+        description: null,
+        index: null,
+        icon: null,
+        isAlwaysVisible: false,
+        inheritsFrom: null,
+        isEmbedded: false,
+        canCreateInstance: false,
+        isPropertyOnly: false,
+        properties: [],
+        screens: [
+            {name: "overview", title: null, description: null, index: 0},
+            {name: "archive", title: null, description: null, index: 1},
+        ],
     };
     const person: UserDto = {
         id: "person-1",
@@ -66,6 +76,8 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
                 return Response.json({person, roles: [], instances: []});
             case "/Personal/Search":
                 return Response.json({people: [person], hasMore: false});
+            case "/Settings":
+                return Response.json({});
             default:
                 throw new Error(`Unexpected request to ${request.url}`);
         }
@@ -113,22 +125,14 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
         return;
     }
 
-    const personLink = await screen.findByRole("link", {name: /^Ada Example/});
+    const overviewLinks = await screen.findAllByRole("link", {name: /^Projects/});
+    const overviewLink = overviewLinks[0]!;
+    expect(overviewLink).toBeVisible();
     expect(router.state.location.pathname).toBe("/");
     expect(router.state.location.search).toBe("?search=ada&version=2026");
 
-    fireEvent.click(personLink);
-    expect(await screen.findByRole("heading", {name: person.displayName})).toBeVisible();
-    fireEvent.click(screen.getByRole("link", {name: screens.person.back_to_search}));
-
-    const searchInput = await screen.findByRole("textbox", {name: workflow.home_search.label});
-    expect(searchInput).toHaveValue("ada");
-    fireEvent.change(searchInput, {
-        target: {value: ""},
-    });
-    fireEvent.click(await screen.findByRole("link", {name: /^Project/}));
-    const homeLink = await screen.findByRole("link", {name: workflow.home});
-    expect(homeLink).toHaveAttribute("href", "/?version=2026");
+    fireEvent.click(overviewLink);
+    expect(await screen.findByText("Screen content")).toBeVisible();
 });
 
 it("shows a home error after one Accessible request when the API is down", async () => {

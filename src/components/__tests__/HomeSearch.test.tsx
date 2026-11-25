@@ -14,9 +14,14 @@ import Personal from "~/pages/Personal";
 import PersonOverview from "~/pages/PersonOverview";
 import type {UserDto} from "~/store/api/types/users";
 
-const {search, getPerson} = vi.hoisted(() => ({
+const {search, getPerson, getAccessibleDefinitions} = vi.hoisted(() => ({
     search: vi.fn(),
     getPerson: vi.fn(),
+    getAccessibleDefinitions: vi.fn(),
+}));
+
+vi.mock("~/store/api/workflowDefinitionsApi", () => ({
+    useGetAccessibleWorkflowDefinitionsQuery: () => getAccessibleDefinitions(),
 }));
 
 vi.mock("~/store/api/personalApi", () => ({
@@ -72,6 +77,11 @@ async function renderHome(
             hasMore: false,
         },
     }));
+    getAccessibleDefinitions.mockReturnValue({
+        data: definitions,
+        isLoading: false,
+        isError: false,
+    });
     getPerson.mockReturnValue({
         currentData: {
             person,

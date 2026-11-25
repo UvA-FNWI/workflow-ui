@@ -98,6 +98,15 @@
     "uploaded": "Geüpload"
   },
   "home": "Home",
+  "overview": {
+    "coordinator_view": "Coördinatorweergave",
+    "default_no_access": "Je hebt geen toegang tot registers",
+    "default_subtitle": "Kies een register om te openen.",
+    "default_title": "Registers",
+    "load_error": "Kon toegankelijke workflows niet laden",
+    "page_title": "Overzicht",
+    "personal_view": "Persoonlijke weergave"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Gem. cijfer [{{page}}]:",

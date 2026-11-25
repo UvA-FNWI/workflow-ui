@@ -98,6 +98,15 @@
     "uploaded": "Uploaded"
   },
   "home": "Home",
+  "overview": {
+    "coordinator_view": "Coordinator view",
+    "default_no_access": "You do not have access to any registers",
+    "default_subtitle": "Select a register to open.",
+    "default_title": "Registers",
+    "load_error": "Could not load accessible workflows",
+    "page_title": "Overview",
+    "personal_view": "Personal view"
+  },
   "instance": {
     "calculations": {
       "average_grade": "Avg. grade [{{page}}]:",
