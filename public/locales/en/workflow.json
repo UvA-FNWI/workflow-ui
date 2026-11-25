@@ -79,6 +79,24 @@
   },
   "form": "Form",
   "form_load_failed": "The form could not be loaded. Please try again.",
+  "form_preview": {
+    "average": "Average: {{value}}",
+    "calculation_progress": "{{answered}} of {{total}} values entered",
+    "choose_form": "Choose a form to preview.",
+    "complete_calculation": "Enter the remaining values to see the result.",
+    "entry_point_one": "Preview form",
+    "entry_point_other": "Preview forms",
+    "form": "Form",
+    "no_active_pages": "This form has no pages to show with the current answers.",
+    "reset": "Reset answers",
+    "switch_notice": "Switching forms clears your temporary answers.",
+    "temporary_notice": "Answers aren't saved.",
+    "title_one": "Preview: {{form}}",
+    "title_other": "Preview forms",
+    "update_failed": "Couldn't update the preview. Adjust your answers or try again.",
+    "updating": "Updating calculation...",
+    "uploads_unavailable": "File uploads are unavailable in preview."
+  },
   "history": {
     "by": "By",
     "empty": "There is no history yet",
@@ -86,7 +104,6 @@
     "title": "History",
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
-
   "home": "Home",
   "home_search": {
     "empty": "No people or workflows found.",

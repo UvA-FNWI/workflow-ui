@@ -1,5 +1,3 @@
-import {useCallback} from "react";
-
 import {type Control, Controller, type FieldValues} from "react-hook-form";
 
 import {Callout, type CalloutType, cn, InputLabel, Text} from "@uva-fnwi/datanose-ui";
@@ -7,9 +5,9 @@ import {Callout, type CalloutType, cn, InputLabel, Text} from "@uva-fnwi/datanos
 import {InputControl} from "./InputControl";
 import {MarkdownRenderer} from "~/components/MarkdownRenderer.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
-import {answersApi} from "~/store/api/answersApi";
 import type {AnswerInput} from "~/store/api/types/params";
-import type {Answer, PageElement as PageElementType} from "~/store/api/types/submissions";
+import type {SaveAnswerResult} from "~/store/api/types/returnTypes";
+import type {Answer, Choice, PageElement as PageElementType} from "~/store/api/types/submissions";
 import {isWeightedQuestion} from "~/utils/submissionUtils.ts";
 
 type PageElementProps = {
@@ -20,6 +18,10 @@ type PageElementProps = {
     answer?: Answer;
     formControl?: Control<FieldValues>;
     showPercentages?: boolean;
+    onSave?: (answer: AnswerInput) => Promise<SaveAnswerResult>;
+    onChange?: (answer: AnswerInput) => void;
+    choices?: Choice[];
+    preview?: boolean;
 };
 
 export const PageElement = ({
@@ -30,15 +32,12 @@ export const PageElement = ({
     answer,
     formControl,
     showPercentages = false,
+    onSave,
+    onChange,
+    choices,
+    preview = false,
 }: PageElementProps) => {
     const {l, t, i18n} = useTranslate("workflow");
-
-    const [saveAnswer] = answersApi.endpoints.saveAnswer.useMutation();
-
-    const save = useCallback(
-        (val: AnswerInput) => saveAnswer({instanceId, submissionId, answer: val}).unwrap(),
-        [instanceId, submissionId, saveAnswer],
-    );
 
     switch (element.kind) {
         case "Text":
@@ -121,9 +120,17 @@ export const PageElement = ({
                                         instanceId={instanceId}
                                         submissionId={submissionId}
                                         value={field.value}
-                                        onChange={field.onChange}
-                                        question={question}
-                                        onSave={save}
+                                        onChange={(value) => {
+                                            field.onChange(value);
+                                            onChange?.({questionName: question.name, value});
+                                        }}
+                                        question={
+                                            preview && question.type === "User"
+                                                ? {...question, allowsExternalUsers: false}
+                                                : question
+                                        }
+                                        onSave={onSave}
+                                        choices={choices}
                                         visibleChoices={answer?.visibleChoices}
                                         errorMessage={errorMessage}
                                         isValid={!errorMessage}

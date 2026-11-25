@@ -40,6 +40,12 @@ vi.mock("~/components/instance/StepCardBody.tsx", () => ({
     ),
 }));
 
+vi.mock("../FormPreviewModal", () => ({
+    FormPreviewModal: ({forms}: {forms: {name: string}[]}) => (
+        <div role="dialog">{forms.map((form) => form.name).join(",")}</div>
+    ),
+}));
+
 afterEach(cleanup);
 
 const deadline: StepDeadline = {
@@ -108,6 +114,39 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
     viewerRoles: [],
     infoCards: [],
     stopMessage: null,
+});
+
+it("opens a preview for a future step inside a collapsed group", () => {
+    const child = makeStep({
+        id: "Assessment",
+        title: {en: "Assessment", nl: "Beoordeling"},
+        isAvailable: false,
+        expectsSubmission: false,
+    });
+    const parent = makeStep({
+        children: [child],
+        childrenLayout: "CollapsibleRows",
+        isAvailable: false,
+        expectsSubmission: false,
+    });
+    const instance = {
+        ...makeInstance(parent),
+        currentStep: "Earlier",
+        previewableForms: [
+            {name: "Review", title: child.title, step: child.id},
+            {name: "Other", title: child.title, step: "OtherStep"},
+        ],
+    };
+    render(<StepCard step={parent} instance={instance} />);
+
+    fireEvent.click(screen.getByRole("button", {name: /^Step/}));
+    const assessment = screen.getByRole("group", {name: "Assessment"});
+    expect(
+        within(assessment).queryByRole("button", {name: "form_preview.entry_point"}),
+    ).not.toBeInTheDocument();
+    fireEvent.click(within(assessment).getByRole("button", {name: /^Assessment/}));
+    fireEvent.click(within(assessment).getByRole("button", {name: "form_preview.entry_point"}));
+    expect(screen.getByRole("dialog")).toHaveTextContent(/^Review$/);
 });
 
 it.each([false, true])(

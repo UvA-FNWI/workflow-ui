@@ -10,19 +10,19 @@ import {formatAllowedFileSize, formatAllowedFileTypes, toFileInputAccept} from "
 
 interface FileUploadTableProps {
     questions: FileQuestion[];
-    values: Record<string, File | null>;
+    values?: Record<string, File | null>;
     answers?: Answer[];
     /**
      * Callback when file is selected or removed.
      * Pass null to clear local file selection.
      * Return success: false to show error and clear file.
      */
-    onFileSelect: (
+    onFileSelect?: (
         questionName: string,
         file: File | null,
     ) => Promise<{success: boolean; error: Error | null}>;
     /** Callback to remove file from server */
-    onRemoveStoredFile: (questionName: string, artifactId?: string) => Promise<void>;
+    onRemoveStoredFile?: (questionName: string, artifactId?: string) => Promise<void>;
 }
 
 export const FileUploadTable = ({
@@ -43,6 +43,7 @@ export const FileUploadTable = ({
         files: FileList,
         currentSize: number,
     ) => {
+        if (!onFileSelect) return;
         const selected = Array.from(files);
         if (
             currentSize + selected.reduce((sum, file) => sum + file.size, 0) >
@@ -76,6 +77,7 @@ export const FileUploadTable = ({
     };
 
     const removeStoredFile = async (questionName: string, artifactId?: string) => {
+        if (!onRemoveStoredFile) return false;
         try {
             await onRemoveStoredFile(questionName, artifactId);
             toast.success(t("file_upload.removed_success"));
@@ -92,6 +94,7 @@ export const FileUploadTable = ({
         file: File | null,
         hasStoredFiles: boolean,
     ) => {
+        if (!onFileSelect) return;
         setUploadingFiles((prev) => ({...prev, [questionName]: true}));
         setUploadErrors((prev) => ({...prev, [questionName]: ""}));
 
@@ -128,9 +131,9 @@ export const FileUploadTable = ({
                 </thead>
                 <tbody>
                     {questions.map((question) => {
-                        const selectedFile = values[question.name];
+                        const selectedFile = values?.[question.name];
                         const answer = answers?.find((a) => a.questionName === question.name);
-                        const storedFiles = answer?.files || [];
+                        const storedFiles = (onFileSelect && answer?.files) || [];
                         const isLoading = !!uploadingFiles[question.name];
                         const hasError = !!uploadErrors[question.name];
                         const hasValidFile =
@@ -197,7 +200,33 @@ export const FileUploadTable = ({
                                 </td>
                                 <td className="min-w-0 p-2 align-top">
                                     <div className="flex min-w-0 flex-col gap-2">
-                                        {question.isArray ? (
+                                        {!onFileSelect ? (
+                                            <>
+                                                <Button
+                                                    intent="secondary"
+                                                    className="self-start"
+                                                    onClick={() =>
+                                                        setUploadErrors((prev) => ({
+                                                            ...prev,
+                                                            [question.name]: t(
+                                                                "form_preview.uploads_unavailable",
+                                                            ),
+                                                        }))
+                                                    }
+                                                >
+                                                    {t(
+                                                        question.isArray
+                                                            ? "file_upload.select_files"
+                                                            : "file_upload.upload_file",
+                                                    )}
+                                                </Button>
+                                                {!hasError && (
+                                                    <Text size="sm" intent="secondary">
+                                                        {t("form_preview.uploads_unavailable")}
+                                                    </Text>
+                                                )}
+                                            </>
+                                        ) : question.isArray ? (
                                             <div className="flex min-w-0 flex-col gap-2">
                                                 {storedFiles.map((file) => (
                                                     <div
@@ -310,7 +339,7 @@ export const FileUploadTable = ({
                                             />
                                         )}
                                         {uploadErrors[question.name] && (
-                                            <Text size="sm" intent="error">
+                                            <Text size="sm" intent="error" role="alert">
                                                 {uploadErrors[question.name]}
                                             </Text>
                                         )}

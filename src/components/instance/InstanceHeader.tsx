@@ -3,9 +3,11 @@ import {useState} from "react";
 import {Button} from "@uva-fnwi/datanose-ui";
 
 import {ActionModal} from "~/components/instance/ActionModal";
+import {FormPreviewButton} from "~/components/instance/FormPreviewButton";
 import {HighlightedFields} from "~/components/instance/HighlightedFields.tsx";
 import {PageHeader} from "~/components/PageHeader";
 import {type LocalString, useTranslate} from "~/hooks/useTranslate";
+import type {PreviewableForm} from "~/store/api/types/formPreviews";
 import type {Action} from "~/store/api/types/instances";
 import {useAppSelector} from "~/store/store";
 import {actionIntentToButtonProps} from "~/utils/actionIntentToButtonProps";
@@ -14,6 +16,7 @@ interface InstanceHeaderProps {
     courseName?: LocalString | string | null;
     instanceId?: string;
     pinnedActions?: Action[];
+    previewableForms?: PreviewableForm[];
     isLoading: boolean;
 }
 
@@ -21,6 +24,7 @@ export function InstanceHeader({
     courseName,
     instanceId,
     pinnedActions = [],
+    previewableForms = [],
     isLoading,
 }: InstanceHeaderProps) {
     const {t, l} = useTranslate("workflow");
@@ -41,7 +45,7 @@ export function InstanceHeader({
                 isLoading={isLoading}
                 actions={
                     instanceId &&
-                    pinnedActions.length > 0 && (
+                    (pinnedActions.length > 0 || previewableForms.length > 0) && (
                         <div className="flex flex-wrap gap-2">
                             {pinnedActions.map((action) => (
                                 <Button
@@ -52,6 +56,12 @@ export function InstanceHeader({
                                     {l(action.title)}
                                 </Button>
                             ))}
+                            {!isLoading && (
+                                <FormPreviewButton
+                                    instanceId={instanceId}
+                                    forms={previewableForms}
+                                />
+                            )}
                         </div>
                     )
                 }

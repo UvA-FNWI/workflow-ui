@@ -1,6 +1,7 @@
 import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
+import type {PreviewableForm} from "~/store/api/types/formPreviews";
 import type {
     AnswerChangeGroup,
     FormLayout,
@@ -31,6 +32,7 @@ export type WorkflowInstance = {
     submissions: Submission[];
     actions: Action[];
     pinnedActions: Action[];
+    previewableForms?: PreviewableForm[];
     permissions: RoleAction[];
     canUseAdminTools: boolean;
     canImpersonate: boolean;

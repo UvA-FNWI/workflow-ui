@@ -11,11 +11,23 @@ import {InstanceHeader} from "~/components/instance/InstanceHeader";
 import {ProgressCard} from "~/components/instance/ProgressCard";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
 import {instancesEndpoints} from "~/store/api/instancesApi";
+import {useAppSelector} from "~/store/store";
 import {getLocalStringField, getStringField} from "~/utils/fieldUtils";
 
 function Instance() {
     const {id} = useParams<{id: string}>();
+    const viewer = useAppSelector((state) =>
+        [
+            state.auth.currentUser?.userName,
+            state.auth.userImpersonation?.targetUserName,
+            state.auth.roleImpersonation?.instanceId,
+            state.auth.roleImpersonation?.role.name,
+        ].join("/"),
+    );
 
+    const isRoleImpersonating = useAppSelector(
+        (state) => state.auth.roleImpersonation?.instanceId === id && id != null,
+    );
     const {data: instance, isLoading} = instancesEndpoints.getInstance.useQuery(id ?? "", {
         skip: !id,
     });
@@ -32,6 +44,9 @@ function Instance() {
     if (isPropertyOnly && instance.canUseAdminTools) {
         return <Navigate to={`/instance/${id}/admin`} replace />;
     }
+    const unplacedPreviews = instance?.previewableForms?.filter((form) => !form.step) ?? [];
+    const unplacedPreviewsInAdminCard = instance?.canUseAdminTools && !isRoleImpersonating;
+    const previewViewer = `${id}/${viewer}/${instance?.viewerRoles.join(",")}`;
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
     const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];
@@ -39,9 +54,11 @@ function Instance() {
     return (
         <Container maxWidth={1280}>
             <InstanceHeader
+                key={previewViewer}
                 courseName={courseName}
                 instanceId={id}
                 pinnedActions={instance?.pinnedActions ?? []}
+                previewableForms={unplacedPreviewsInAdminCard ? [] : unplacedPreviews}
                 isLoading={isLoading}
             />
             <Grid>
@@ -53,7 +70,7 @@ function Instance() {
                         currentStep={instance?.currentStep ?? ""}
                         stopMessage={instance?.stopMessage}
                     />
-                    <ContentCard instance={instance} isLoading={isLoading} />
+                    <ContentCard key={previewViewer} instance={instance} isLoading={isLoading} />
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
                         <CorrespondenceCard instanceId={id} />
                     )}
@@ -65,6 +82,8 @@ function Instance() {
                     <InfoCards cards={infoCards} instanceId={id ?? ""} isLoading={isLoading} />
                     {(instance?.canUseAdminTools || instance?.canImpersonate) && (
                         <AdminCard
+                            key={previewViewer}
+                            previewableForms={unplacedPreviewsInAdminCard ? unplacedPreviews : []}
                             canUseAdminTools={instance.canUseAdminTools}
                             canImpersonate={instance.canImpersonate}
                         />

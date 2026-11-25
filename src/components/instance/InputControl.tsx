@@ -73,6 +73,7 @@ export const InputControl = ({
     errorMessage,
 }: InputControlProps) => {
     const {t, l, i18n} = useTranslate("workflow");
+    const ariaLabel = l(question.text)?.trim() || question.name;
 
     const save = useCallback(
         (value: unknown) => {
@@ -117,6 +118,7 @@ export const InputControl = ({
         if (question.isArray) {
             return (
                 <TagInput
+                    aria-label={ariaLabel}
                     value={Array.isArray(value) ? value.map((item) => String(item)) : []}
                     onChange={(value) => debouncedChange(value)}
                     maxLength={question.maxLength ?? undefined}
@@ -132,6 +134,7 @@ export const InputControl = ({
         if (control === "Email") {
             return (
                 <EmailInput
+                    aria-label={ariaLabel}
                     value={(value as string) || ""}
                     onChange={(value) => debouncedChange(value)}
                     isValid={isValid}
@@ -143,6 +146,7 @@ export const InputControl = ({
         if (control === "Phone") {
             return (
                 <PhoneInput
+                    aria-label={ariaLabel}
                     value={(value as string) || ""}
                     onChange={(value) => debouncedChange(value)}
                     isValid={isValid}
@@ -177,6 +181,7 @@ export const InputControl = ({
 
         return (
             <StringField
+                aria-label={ariaLabel}
                 value={(value as string) || ""}
                 onChange={(value) => {
                     debouncedChange(value);
@@ -195,6 +200,7 @@ export const InputControl = ({
         const isInt = question.type === "Int";
         return (
             <NumberInput
+                aria-label={ariaLabel}
                 value={Number.isFinite(value) ? (value as number) : undefined}
                 step={isInt ? 1 : 0.1}
                 minValue={isInt ? -2_147_483_648 : undefined}
@@ -213,6 +219,7 @@ export const InputControl = ({
     if (question.type === "Date") {
         return (
             <DatePicker
+                aria-label={ariaLabel}
                 value={toDate(value)}
                 onChange={(newValue) => debouncedChange(newValue)}
                 isValid={isValid}
@@ -253,6 +260,7 @@ export const InputControl = ({
                 const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
                 return (
                     <Select
+                        aria-label={ariaLabel}
                         selectionMode="multiple"
                         value={selectedValues}
                         onChange={(selectedValue) => {
@@ -278,6 +286,7 @@ export const InputControl = ({
 
             return (
                 <Select
+                    aria-label={ariaLabel}
                     value={typeof value === "string" ? value : null}
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
@@ -305,7 +314,7 @@ export const InputControl = ({
             return (
                 <ComboBox
                     selectionMode={question.isArray ? "multiple" : "single"}
-                    aria-label={l(question.text)?.trim() || question.name}
+                    aria-label={ariaLabel}
                     value={comboBoxValue}
                     onChange={immediateChange}
                     placeholder={t("select")}
@@ -325,6 +334,7 @@ export const InputControl = ({
         if (question.control == "Rubric") {
             return (
                 <RubricSelect
+                    ariaLabel={ariaLabel}
                     value={typeof value === "string" ? value : undefined}
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
@@ -364,6 +374,7 @@ export const InputControl = ({
         // RadioGroup for single select
         return (
             <RadioGroup
+                aria-label={ariaLabel}
                 value={(value as string) || ""}
                 onChange={(selectedValue: string) => {
                     immediateChange(selectedValue);
