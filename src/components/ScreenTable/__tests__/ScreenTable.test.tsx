@@ -50,12 +50,12 @@ it("styles paused and stopped rows and keeps stopped rows last when sorting", ()
             <ScreenTable
                 columns={columns}
                 rows={[
-                    {name: "Paused", stopEvent: "Pause"},
+                    {name: "Paused", eventId: "Pause"},
                     {name: "Zulu"},
-                    {name: "Stopped", stopEvent: "Cancel"},
+                    {name: "Stopped", eventId: "Cancel"},
                     {name: "Alpha"},
-                ].map(({name, stopEvent}) => {
-                    const workflowStopped = stopEvent !== undefined;
+                ].map(({name, eventId}) => {
+                    const workflowStopped = eventId !== undefined;
                     return {
                         id: name,
                         workflowStopped,
@@ -66,7 +66,7 @@ it("styles paused and stopped rows and keeps stopped rows last when sorting", ()
                             3: {
                                 text: {en: name, nl: name},
                                 color: workflowStopped ? "Red" : "Green",
-                                stopEvent,
+                                eventId,
                             },
                         },
                     };

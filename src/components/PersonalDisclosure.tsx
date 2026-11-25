@@ -69,7 +69,7 @@ export function PersonalDisclosure({
                                         placeLast={(instance) =>
                                             isStopped(
                                                 instance.workflowStopped,
-                                                instance.progress.stopEvent,
+                                                instance.progress.eventId,
                                             )
                                         }
                                         emptyNode={

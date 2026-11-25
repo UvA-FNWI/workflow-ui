@@ -22,7 +22,7 @@ import {getComparableTableCellValue} from "~/utils/tableCellValues";
 const noInstances: PersonalInstance[] = [];
 
 function stoppedTextClassName(instance: PersonalInstance) {
-    return isStopped(instance.workflowStopped, instance.progress.stopEvent)
+    return isStopped(instance.workflowStopped, instance.progress.eventId)
         ? "line-through"
         : undefined;
 }

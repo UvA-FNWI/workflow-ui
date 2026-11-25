@@ -4,9 +4,6 @@ export function isProgressInformation(value: unknown): value is ProgressInformat
     return typeof value === "object" && value !== null && "text" in value && "color" in value;
 }
 
-export function isStopped(
-    workflowStopped: boolean | undefined,
-    stopEvent?: string | null,
-): boolean {
-    return workflowStopped === true && stopEvent !== "Pause";
+export function isStopped(workflowStopped: boolean | undefined, eventId?: string | null): boolean {
+    return workflowStopped === true && eventId !== "Pause";
 }

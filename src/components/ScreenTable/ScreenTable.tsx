@@ -25,7 +25,7 @@ function isStoppedRow(row: ScreenRow, progressColumnId: number | undefined): boo
     const progress = progressColumnId === undefined ? undefined : row.values[progressColumnId];
     return isStopped(
         row.workflowStopped,
-        isProgressInformation(progress) ? progress.stopEvent : null,
+        isProgressInformation(progress) ? progress.eventId : null,
     );
 }
 

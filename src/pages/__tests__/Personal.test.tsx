@@ -30,15 +30,15 @@ vi.mock("~/store/api/personalApi", () => ({
 
 afterEach(cleanup);
 
-function project(name: string, stopEvent?: string): PersonalInstance {
+function project(name: string, eventId?: string): PersonalInstance {
     return {
         id: name.toLowerCase(),
         workflowDefinition: "Project-Playground",
         workflowDefinitionTitle: {en: "Projects", nl: "Projecten"},
         title: `${name} project`,
         currentStep: "Upload",
-        workflowStopped: stopEvent !== undefined,
-        progress: {text: {en: name, nl: name}, color: "Red", stopEvent},
+        workflowStopped: eventId !== undefined,
+        progress: {text: {en: name, nl: name}, color: "Red", eventId},
         createdOn: "2026-01-01",
         roles: ["Supervisor"],
         student: `${name} student`,
