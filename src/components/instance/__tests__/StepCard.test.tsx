@@ -141,6 +141,10 @@ it("opens a preview for a future step inside a collapsed group", () => {
 
     fireEvent.click(screen.getByRole("button", {name: /^Step/}));
     const assessment = screen.getByRole("group", {name: "Assessment"});
+    expect(
+        within(assessment).queryByRole("button", {name: "form_preview.entry_point"}),
+    ).not.toBeInTheDocument();
+    fireEvent.click(within(assessment).getByRole("button", {name: /^Assessment/}));
     fireEvent.click(within(assessment).getByRole("button", {name: "form_preview.entry_point"}));
     expect(screen.getByRole("dialog")).toHaveTextContent(/^Review$/);
 });

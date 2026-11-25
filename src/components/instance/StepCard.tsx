@@ -106,8 +106,9 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
     const hasBodyContent =
         (step.isAvailable &&
             (deadlineMessages.length > 0 || hasStepContent || childRows.length > 0)) ||
-        childPreviews;
-    const isContentless = (step.isAvailable || stepPreviews.length > 0) && !hasBodyContent;
+        childPreviews ||
+        stepPreviews.length > 0;
+    const isContentless = step.isAvailable && !hasBodyContent;
     const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
 
     const undoControl = step.undoCandidate && (
@@ -151,11 +152,6 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
                     </>
                 }
             />
-            {stepPreviews.length > 0 && (
-                <div className={nested ? "pb-4" : "px-6 pb-6"}>
-                    <FormPreviewButton instanceId={instance.id} forms={stepPreviews} />
-                </div>
-            )}
             {hasBodyContent && isExpanded && (
                 <Disclosure.Content padding={nested ? "none" : undefined}>
                     {step.isAvailable &&
@@ -183,6 +179,11 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
                     {childRows.map((child) => (
                         <StepCard key={child.id} step={child} instance={instance} nested />
                     ))}
+                    {stepPreviews.length > 0 && (
+                        <div className={nested ? "py-4" : "pt-4"}>
+                            <FormPreviewButton instanceId={instance.id} forms={stepPreviews} />
+                        </div>
+                    )}
                 </Disclosure.Content>
             )}
         </Disclosure>
@@ -273,6 +274,7 @@ function StepCardHeader({
 
     return (
         <Disclosure.Header
+            aria-label={l(step.title)}
             nested={nested}
             showChevron={hasBodyContent}
             className={isContentless ? "cursor-default!" : undefined}

@@ -2,7 +2,6 @@ import {useCallback, useEffect, useId, useRef, useState} from "react";
 
 import {
     Button,
-    Heading,
     Icon,
     LoadingSpinner,
     Modal,
@@ -238,9 +237,6 @@ function PreviewSession({
                             return (
                                 <TabPanel key={page.name}>
                                     <div className="my-4 flex flex-col gap-6">
-                                        {pages.length === 1 && (
-                                            <Heading size="sm">{l(page.title)}</Heading>
-                                        )}
                                         {page.elements.map((element, index) => (
                                             <PageElement
                                                 key={element.question?.name ?? index}
@@ -272,7 +268,7 @@ function PreviewSession({
                                         {fileQuestions.length > 0 && (
                                             <FileUploadTable questions={fileQuestions} />
                                         )}
-                                        {!showError && result && result.questionCount > 0 && (
+                                        {!showError && result && result.questionCount > 1 && (
                                             <div role="status" className="my-4">
                                                 <Separator
                                                     weight="bold"

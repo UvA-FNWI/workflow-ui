@@ -31,7 +31,7 @@ export function formPreview(formName: string, values: Record<string, unknown>): 
                 ? {
                       control: "Rubric",
                       weight: 1,
-                      percentage: 100,
+                      percentage: 50,
                       choices: [{name: "8", text: {en: "8", nl: "8"}, value: 8}],
                       rubric: [
                           {
@@ -46,6 +46,7 @@ export function formPreview(formName: string, values: Record<string, unknown>): 
                   }
                 : {}),
         }) as Question;
+    const defaults: Record<string, unknown> = {ShowExtra: false, "Second score": "8"};
     return {
         formName,
         form: {
@@ -67,20 +68,26 @@ export function formPreview(formName: string, values: Record<string, unknown>): 
                               question("ShowExtra", "Check"),
                               question("Document", "File"),
                               question("Score", "Choice"),
+                              question("Second score", "Choice"),
                               demoProjectQuestion,
                           ].map((question) => ({kind: "Question", question}))
                         : [],
             })),
         },
-        answers: ["Answer", "ShowExtra", "Document", "Score", demoProjectQuestion.name].map(
-            (name) => ({
-                id: name,
-                questionName: name,
-                isVisible: true,
-                value: values[name] ?? (name === "ShowExtra" ? false : null),
-                files: [],
-            }),
-        ),
+        answers: [
+            "Answer",
+            "ShowExtra",
+            "Document",
+            "Score",
+            "Second score",
+            demoProjectQuestion.name,
+        ].map((name) => ({
+            id: name,
+            questionName: name,
+            isVisible: true,
+            value: values[name] ?? defaults[name] ?? null,
+            files: [],
+        })),
         referenceChoices: {
             [demoProjectQuestion.name]: [
                 {name: "demo-project-a", text: {en: "Demo project A", nl: "Demoproject A"}},
@@ -90,12 +97,17 @@ export function formPreview(formName: string, values: Record<string, unknown>): 
         pageResults: [
             {
                 name: "Questions",
-                weight: 1,
+                weight: 2,
                 sum: 0,
                 questionResults: [],
-                weightedAverage: values.Score == null ? null : Number(values.Score),
-                answeredCount: values.Score == null ? 0 : 1,
-                questionCount: 1,
+                weightedAverage:
+                    values.Score == null
+                        ? null
+                        : (Number(values.Score) +
+                              Number(values["Second score"] ?? defaults["Second score"])) /
+                          2,
+                answeredCount: values.Score == null ? 1 : 2,
+                questionCount: 2,
             },
         ],
     };

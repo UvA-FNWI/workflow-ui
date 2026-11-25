@@ -252,6 +252,29 @@ it("keeps generic preview status visible without adding a separate rubric viewer
     expect(request).toHaveBeenCalledTimes(1);
 });
 
+it("omits the page heading and calculation summary for a single-page preview with one weighted question", async () => {
+    const data = response();
+    data.form.pages = data.form.pages.slice(0, 1);
+    data.pageResults = [
+        {
+            name: "First",
+            weight: 1,
+            sum: 8,
+            questionResults: [],
+            weightedAverage: 8,
+            answeredCount: 1,
+            questionCount: 1,
+        },
+    ];
+    request.mockResolvedValue({data});
+    mount();
+
+    await screen.findByRole("textbox", {name: "Answer"});
+    expect(screen.queryByRole("heading", {name: "First"})).not.toBeInTheDocument();
+    expect(screen.queryByText("form_preview.average")).not.toBeInTheDocument();
+    expect(screen.queryByText("1 of 1 values entered")).not.toBeInTheDocument();
+});
+
 it("shows calculation progress without presenting missing answers as zero", async () => {
     const data = response();
     data.pageResults = [
@@ -475,8 +498,8 @@ it("keeps rejected answers editable and hides stale calculations until recovery"
                 sum: 0,
                 questionResults: [],
                 weightedAverage: value === "fixed" ? 8 : 5,
-                answeredCount: 1,
-                questionCount: 1,
+                answeredCount: 2,
+                questionCount: 2,
             },
         ];
         return {data};
