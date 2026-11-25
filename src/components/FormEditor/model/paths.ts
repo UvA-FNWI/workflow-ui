@@ -76,6 +76,17 @@ export function definitionChain(docs: ConfigDocs, definitionFolder: string): str
     return chain;
 }
 
+export function findValueSet(docs: ConfigDocs, definitionFolder: string, name: string) {
+    for (const folder of [...definitionChain(docs, definitionFolder), "Common"]) {
+        const prefix = folder + "/ValueSets/";
+        for (const [path, doc] of docs) {
+            if (!path.startsWith(prefix) || path.slice(prefix.length).includes("/")) continue;
+            if ((doc.get("name") ?? path.slice(prefix.length, -5)) === name) return doc;
+        }
+    }
+    return undefined;
+}
+
 /**
  * Files in the definition folder or its Steps folder that can carry a properties list. ModelParser
  * merges both into the workflow definition.

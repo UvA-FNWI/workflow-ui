@@ -14,6 +14,7 @@ import {nodeToYaml} from "~/components/FormEditor/model/nodeYaml";
 import {
     definitionChain,
     definitionFolderOf,
+    findValueSet,
     listDefinitionFolders,
     listFormPaths,
     propertyFilePaths,
@@ -37,8 +38,12 @@ import type {
 
 const EMPTY_TEXT: LocalText = {en: "", nl: ""};
 
+// A newly created field can be discarded with its last question reference until the draft is saved.
+const newQuestionDefinitions = new WeakSet<YAMLMap>();
+const newPropertyCollections = new WeakMap<YAMLSeq, unknown>();
+
 /** A bilingual field may be a plain string in yaml; normalize both shapes to LocalText. */
-function readLocalText(value: unknown): LocalText {
+export function readLocalText(value: unknown): LocalText {
     if (typeof value === "string") {
         return {en: value, nl: value};
     }
@@ -50,6 +55,13 @@ function readLocalText(value: unknown): LocalText {
         };
     }
     return EMPTY_TEXT;
+}
+
+export function readFormTitle(document: Document): LocalText | undefined {
+    const raw = document.get("title");
+    return typeof raw === "string" || isMap(raw)
+        ? readLocalText(isMap(raw) ? raw.toJSON() : raw)
+        : undefined;
 }
 
 function pagesSeq(doc: Document): YAMLSeq | null {
@@ -125,7 +137,7 @@ export function addPage(
     return {name, touched: [formPath]};
 }
 
-/** Remove a page. Its question-type elements are references, so the properties they point at stay defined. */
+/** Remove a page and discard any unsaved questions that were only used there. */
 export function deletePage(docs: ConfigDocs, formPath: string, pageName: string): string[] {
     const pages = pagesSeq(requireDoc(docs, formPath));
     const index =
@@ -133,8 +145,12 @@ export function deletePage(docs: ConfigDocs, formPath: string, pageName: string)
     if (!pages || index === -1) {
         return [];
     }
+    const questions = elementsSeq(requireDoc(docs, formPath), pageName)?.items ?? [];
     pages.delete(index);
-    return [formPath];
+    return [
+        formPath,
+        ...discardUnusedNewQuestions(docs, formPath, questions.map(elementQuestionName)),
+    ];
 }
 
 export function updatePageTitle(
@@ -182,8 +198,7 @@ export function findProperty(
     return null;
 }
 
-function readChoices(node: YAMLMap): EditorChoice[] {
-    const values = node.get("values");
+function readChoices(values: unknown): EditorChoice[] {
     if (!isSeq(values)) {
         return [];
     }
@@ -235,19 +250,29 @@ export function readQuestions(
                 text?: unknown;
                 description?: unknown;
             };
+            const shared =
+                raw.type && raw.values === undefined
+                    ? findValueSet(
+                          docs,
+                          definitionFolder,
+                          parseTypeString(raw.type).underlying,
+                      )?.get("values")
+                    : undefined;
+            const sharedValues = isSeq(shared) ? shared.toJSON() : undefined;
 
             return {
                 name,
-                kind: kindOf(raw),
+                kind: kindOf(sharedValues ? {...raw, values: sharedValues} : raw),
                 rawType: raw.type ?? "",
                 isRequired: raw.type ? parseTypeString(raw.type).isRequired : false,
                 text: readLocalText(raw.text),
                 description: readLocalText(raw.description),
-                choices: readChoices(found.node),
+                choices: readChoices(shared ?? found.node.get("values")),
+                usesSharedChoices: sharedValues !== undefined,
                 definedIn: found.path,
                 isInherited: found.ownerFolder !== definitionFolder,
                 advancedKeys: ADVANCED_KEYS.filter((key) => raw[key] != null),
-                raw,
+                raw: sharedValues ? {...raw, values: sharedValues} : raw,
             };
         });
 }
@@ -321,6 +346,7 @@ function propertiesCollection(doc: Document): YAMLSeq | YAMLMap {
         return existing;
     }
     const created = doc.createNode([]) as YAMLSeq;
+    newPropertyCollections.set(created, doc.get("properties", true));
     doc.set("properties", created);
     return created;
 }
@@ -341,15 +367,17 @@ export function addQuestion(
     }
     const targetPath = propertyTargetFile(docs, definitionFolder);
     const targetDoc = requireDoc(docs, targetPath);
-    const value = newPropertyValue(kind, name, {en: textNl, nl: textNl});
+    const definition = targetDoc.createNode(
+        newPropertyValue(kind, name, {en: textNl, nl: textNl}),
+    ) as YAMLMap;
     const properties = propertiesCollection(targetDoc);
     if (isMap(properties)) {
-        const mappingValue = {...value};
-        delete mappingValue.name;
-        properties.set(name, targetDoc.createNode(mappingValue));
+        definition.delete("name");
+        properties.set(name, definition);
     } else {
-        properties.add(targetDoc.createNode(value));
+        properties.add(definition);
     }
+    newQuestionDefinitions.add(definition);
 
     elements.add(formDoc.createNode({question: name}));
 
@@ -363,18 +391,26 @@ export async function changeQuestionKind(
     name: string,
     kind: QuestionKind,
 ): Promise<string[]> {
-    const schema = await loadSchema("PropertyDefinition");
-    if (!schema) throw new Error("Could not load the property schema");
     const found = requireProperty(docs, formPath, name);
     const doc = requireDoc(docs, found.path);
-    const {isRequired} = parseTypeString(String(found.node.get("type") ?? ""));
+    const {isRequired, underlying: previousType} = parseTypeString(
+        String(found.node.get("type") ?? ""),
+    );
     const next = newPropertyValue(kind, name, EMPTY_TEXT) as {
         type: string;
         control?: unknown;
         values?: unknown;
     };
     const {underlying, isArray} = parseTypeString(next.type);
-    // The generated fields distinguish choices from references with the same type constraint.
+    if (next.values && !found.node.has("values")) {
+        const shared = findValueSet(docs, definitionFolderOf(formPath), previousType)?.get(
+            "values",
+        );
+        if (isSeq(shared)) next.values = shared.toJSON();
+    }
+    const schema = await loadSchema("PropertyDefinition");
+    if (!schema) throw new Error("Could not load the property schema");
+    // A choice and a reference can have the same type constraint.
     const properties = (schema.anyOf ?? schema.oneOf ?? [schema])
         .map((branch) => flatten({anyOf: [branch]}, schema, 0, next).properties ?? {})
         .find((fields) => Object.keys(next).every((key) => key in fields));
@@ -475,18 +511,45 @@ export function deleteProperty(docs: ConfigDocs, formPath: string, name: string)
         }
     }
 
-    const properties = requireDoc(docs, found.path).get("properties");
+    deletePropertyDefinition(docs, found, name);
+    return [...touched];
+}
+
+function deletePropertyDefinition(
+    docs: ConfigDocs,
+    {path, node}: {path: string; node: YAMLMap},
+    name: string,
+) {
+    const doc = requireDoc(docs, path);
+    const properties = doc.get("properties");
     if (isSeq(properties)) {
-        const index = properties.items.findIndex(
-            (item) => isMap(item) && item.get("name") === name,
-        );
-        if (index !== -1) {
-            properties.delete(index);
+        const index = properties.items.indexOf(node);
+        if (index !== -1) properties.delete(index);
+        if (properties.items.length === 0 && newPropertyCollections.has(properties)) {
+            const replaced = newPropertyCollections.get(properties);
+            if (replaced === undefined) doc.delete("properties");
+            else doc.set("properties", replaced);
         }
     } else if (isMap(properties)) {
         properties.delete(name);
     }
+}
 
+function discardUnusedNewQuestions(docs: ConfigDocs, formPath: string, names: (string | null)[]) {
+    const folder = definitionFolderOf(formPath);
+    const touched = new Set<string>();
+    for (const name of new Set(names)) {
+        if (name === null) continue;
+        const found = findProperty(docs, folder, name);
+        if (
+            found?.ownerFolder === folder &&
+            newQuestionDefinitions.has(found.node) &&
+            countFieldUsages(docs, formPath, name).length === 0
+        ) {
+            deletePropertyDefinition(docs, found, name);
+            touched.add(found.path);
+        }
+    }
     return [...touched];
 }
 
@@ -773,7 +836,16 @@ export function removeField(
         return [];
     }
     elements.delete(index);
-    return [formPath];
+    return [formPath, ...discardUnusedNewQuestions(docs, formPath, [name])];
+}
+
+export function isSortableElement(item: unknown): item is YAMLMap {
+    return (
+        isMap(item) &&
+        (elementQuestionName(item) !== null ||
+            item.get("text") != null ||
+            isMap(item.get("callout")))
+    );
 }
 
 export function reorderElements(
@@ -790,10 +862,17 @@ export function reorderElements(
     if (!elements) {
         return [];
     }
-    if (from >= elements.items.length || to >= elements.items.length) {
+    const positions = elements.items.flatMap((item, index) =>
+        isSortableElement(item) ? [index] : [],
+    );
+    if (from >= positions.length || to >= positions.length) {
         return [];
     }
-    const [moved] = elements.items.splice(from, 1);
-    elements.items.splice(to, 0, moved);
+    const movable = positions.map((index) => elements.items[index]);
+    const [moved] = movable.splice(from, 1);
+    movable.splice(to, 0, moved);
+    positions.forEach((position, index) => {
+        elements.items[position] = movable[index];
+    });
     return [formPath];
 }

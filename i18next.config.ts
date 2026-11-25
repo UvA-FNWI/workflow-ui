@@ -8,6 +8,10 @@ export default defineConfig({
         defaultNS: "common",
         defaultValue: "$TODO$",
         useTranslationNames: ["useTranslation", "useTranslate"],
-        preservePatterns: ["*.dynamic.*"],
+        preservePatterns: [
+            "*.dynamic.*",
+            "form_editor:authoring_action_type.*",
+            "form_editor:authoring_rule.*",
+        ],
     },
 });

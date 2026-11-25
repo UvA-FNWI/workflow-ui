@@ -22,13 +22,21 @@ type Props = {
     question: EditorQuestion;
     isDisabled: boolean;
     apply: (action: () => string[]) => void;
+    sharedChoices?: boolean;
 };
 
 const CHOICE_KINDS: QuestionKind[] = ["SingleChoice", "MultipleChoice"];
 const PERSON_KINDS: QuestionKind[] = ["Person", "People"];
 const CHOICE_CONTROLS = ["RadioList", "Dropdown"] as const;
 
-export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Props) {
+export function QuestionConfig({
+    docs,
+    formPath,
+    question,
+    isDisabled,
+    apply,
+    sharedChoices,
+}: Props) {
     const {t} = useTranslate("form_editor");
     const [nameDraft, setNameDraft] = useState<string | null>(null);
     const [fileTypesDraft, setFileTypesDraft] = useState<string | null>(null);
@@ -120,12 +128,17 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                     <legend className="mb-1 text-sm font-medium text-grey-700">
                         {t("choices")}
                     </legend>
+                    {sharedChoices && (
+                        <p className="text-sm text-grey-600 dark:text-grey-300">
+                            {t("authoring_shared_choices")}
+                        </p>
+                    )}
                     {question.choices.map((choice) => (
                         <div key={choice.name} className="flex items-center gap-2">
                             <Input
                                 aria-label={t("choice_text")}
                                 value={choice.text.nl}
-                                isDisabled={isDisabled}
+                                isDisabled={isDisabled || sharedChoices}
                                 onChange={(next) =>
                                     apply(() =>
                                         updateChoice(
@@ -142,7 +155,7 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                                 intent="ghost"
                                 size="square"
                                 aria-label={t("remove_choice")}
-                                disabled={isDisabled}
+                                disabled={isDisabled || sharedChoices}
                                 onClick={() =>
                                     apply(() =>
                                         removeChoice(docs, formPath, question.name, choice.name),
@@ -157,7 +170,7 @@ export function QuestionConfig({docs, formPath, question, isDisabled, apply}: Pr
                         intent="secondary"
                         size="small"
                         className="self-start"
-                        disabled={isDisabled}
+                        disabled={isDisabled || sharedChoices}
                         leftIcon={<Icon name="plus-line" size="sm" color="current" decorative />}
                         onClick={() =>
                             apply(() => addChoice(docs, formPath, question.name, t("new_choice")))

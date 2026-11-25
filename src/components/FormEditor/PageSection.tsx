@@ -1,32 +1,30 @@
 import {useRef, useState} from "react";
 
 import {
-    DndContext,
-    type DragEndEvent,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-} from "@dnd-kit/core";
-import {
-    SortableContext,
-    sortableKeyboardCoordinates,
-    useSortable,
-    verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import {CSS} from "@dnd-kit/utilities";
-import {Button, Heading, Icon, usePopoverState} from "@uva-fnwi/datanose-ui";
+    Button,
+    Heading,
+    Icon,
+    Menu,
+    MenuItem,
+    TextArea,
+    usePopoverState,
+} from "@uva-fnwi/datanose-ui";
+import {isMap, type YAMLMap, type YAMLSeq} from "yaml";
 
 import {BilingualPair} from "~/components/FormEditor/BilingualPair";
+import {CalloutEditor} from "~/components/FormEditor/CalloutEditor";
 import {
     addQuestion,
+    type ApplyFormEdit,
     applyYamlToNode,
     type ConfigDocs,
-    type EditorQuestion,
+    elementsSeq,
+    isSortableElement,
     type LocalText,
     nodeToYaml,
     pageMap,
     type QuestionKind,
+    readLocalText,
     readQuestions,
     reorderElements,
     requireDoc,
@@ -35,6 +33,7 @@ import {
 import {NodeYamlEditor} from "~/components/FormEditor/NodeYamlEditor";
 import {QuestionCard} from "~/components/FormEditor/QuestionCard";
 import {QuestionKindMenu} from "~/components/FormEditor/QuestionKindMenu";
+import {SortableElement, SortableElements} from "~/components/FormEditor/SortableElements";
 import {useTranslate} from "~/hooks/useTranslate";
 
 type Props = {
@@ -42,70 +41,47 @@ type Props = {
     formPath: string;
     pageName: string;
     pageTitle: LocalText | null;
-    apply: (action: () => string[] | Promise<string[]>) => void;
+    apply: ApplyFormEdit;
+    localPreview?: boolean;
 };
 
-function SortableCard({
-    question,
-    ...props
-}: Omit<React.ComponentProps<typeof QuestionCard>, "dragHandle"> & {question: EditorQuestion}) {
-    const {t} = useTranslate("form_editor");
-    const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
-        id: question.name,
-    });
+const elementIds = new WeakMap<YAMLMap, string>();
+let nextElementId = 0;
 
-    return (
-        <div
-            ref={setNodeRef}
-            style={{transform: CSS.Transform.toString(transform), transition}}
-            className={isDragging ? "opacity-60" : undefined}
-        >
-            <QuestionCard
-                question={question}
-                {...props}
-                dragHandle={
-                    <button
-                        type="button"
-                        className="cursor-grab rounded-xs p-1 focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
-                        {...attributes}
-                        {...listeners}
-                        aria-label={t("drag_handle")}
-                    >
-                        <Icon name="chevron-grabber-vertical-line" decorative />
-                    </button>
-                }
-            />
-        </div>
-    );
+// Keep each editor and drag handle attached to its YAML node as positions change.
+function elementId(element: YAMLMap) {
+    let id = elementIds.get(element);
+    if (id === undefined) {
+        id = String(++nextElementId);
+        elementIds.set(element, id);
+    }
+    return id;
 }
 
-export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props) {
+export function PageSection({docs, formPath, pageName, pageTitle, apply, localPreview}: Props) {
     const {t, l} = useTranslate("form_editor");
     const [isYamlMode, setIsYamlMode] = useState(false);
     const [isRenaming, setIsRenaming] = useState(false);
     const addMenu = usePopoverState();
     const addTriggerRef = useRef<HTMLButtonElement>(null);
     const questions = readQuestions(docs, formPath, pageName);
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates}),
-    );
-
     const onAdd = (kind: QuestionKind) =>
         apply(() => addQuestion(docs, formPath, pageName, kind, t("new_question")).touched);
 
-    const onDragEnd = ({active, over}: DragEndEvent) => {
-        if (!over || active.id === over.id) {
-            return;
-        }
-        const from = questions.findIndex((question) => question.name === active.id);
-        const to = questions.findIndex((question) => question.name === over.id);
-        if (from >= 0 && to >= 0) {
-            apply(() => reorderElements(docs, formPath, pageName, from, to));
-        }
-    };
-
-    const node = pageMap(requireDoc(docs, formPath), pageName);
+    const form = requireDoc(docs, formPath);
+    const node = pageMap(form, pageName);
+    const sequence = elementsSeq(form, pageName);
+    const elements = sequence?.items ?? [];
+    const sortableIds = elements.filter(isSortableElement).map(elementId);
+    const addText = () =>
+        apply(() => {
+            if (!node) return [];
+            const list = sequence ?? (form.createNode([]) as YAMLSeq);
+            if (!sequence) node.set("elements", list);
+            list.add(form.createNode({text: ""}));
+            return [formPath];
+        });
+    const byName = new Map(questions.map((question) => [question.name, question]));
 
     return (
         <section>
@@ -124,21 +100,30 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                         <Icon name="square-edit-line" size="sm" decorative />
                     </Button>
                 </div>
-                <Button
-                    intent="ghost"
-                    size="small"
-                    leftIcon={
-                        <Icon
-                            name={isYamlMode ? "square-edit-line" : "code-brackets-line"}
-                            size="sm"
-                            color="current"
-                            decorative
-                        />
-                    }
-                    onClick={() => setIsYamlMode((previous) => !previous)}
+                <Menu
+                    ariaLabel={t("page_options")}
+                    trigger={({triggerProps, triggerRef}) => (
+                        <Button
+                            {...triggerProps}
+                            ref={triggerRef}
+                            intent="ghost"
+                            size="square"
+                            aria-label={t("page_options")}
+                        >
+                            <Icon name="dots-single-line" decorative />
+                        </Button>
+                    )}
                 >
-                    {isYamlMode ? t("edit_visually") : t("edit_page_yaml")}
-                </Button>
+                    <MenuItem
+                        id="page-edit-mode"
+                        icon={isYamlMode ? "square-edit-line" : "code-brackets-line"}
+                        label={isYamlMode ? t("edit_visually") : t("edit_page_yaml")}
+                        onAction={() => {
+                            setIsYamlMode((previous) => !previous);
+                            setIsRenaming(false);
+                        }}
+                    />
+                </Menu>
             </div>
 
             {isRenaming && (
@@ -164,35 +149,136 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                         }
                         const error = applyYamlToNode(node, text);
                         if (error === null) {
-                            apply(() => [formPath]);
+                            apply(() => [formPath], "yaml");
                         }
                         return error;
                     }}
                 />
             ) : (
-                <DndContext sensors={sensors} onDragEnd={onDragEnd}>
-                    <SortableContext
-                        items={questions.map((question) => question.name)}
-                        strategy={verticalListSortingStrategy}
-                    >
-                        <div className="flex flex-col gap-2">
-                            {questions.map((question) => (
-                                <SortableCard
-                                    key={question.name}
-                                    docs={docs}
-                                    formPath={formPath}
-                                    pageName={pageName}
-                                    question={question}
-                                    apply={apply}
-                                />
-                            ))}
-                        </div>
-                    </SortableContext>
-                </DndContext>
+                <SortableElements
+                    ids={sortableIds}
+                    onMove={(from, to) =>
+                        apply(() => reorderElements(docs, formPath, pageName, from, to))
+                    }
+                >
+                    <div className="flex flex-col gap-2">
+                        {elements.map((item, index) => {
+                            if (!isMap(item)) return null;
+                            const id = elementId(item);
+                            const element = item.toJSON();
+                            const question = byName.get(element.question);
+                            if (!question) {
+                                const callout = item.get("callout");
+                                if (isMap(callout)) {
+                                    return (
+                                        <SortableElement
+                                            key={id}
+                                            id={id}
+                                            label={
+                                                l(readLocalText(element.callout.title)) ||
+                                                t("callout")
+                                            }
+                                            disabled={sortableIds.length < 2}
+                                        >
+                                            {(dragHandle) => (
+                                                <CalloutEditor
+                                                    callout={callout}
+                                                    content={element.callout}
+                                                    formPath={formPath}
+                                                    apply={apply}
+                                                    dragHandle={dragHandle}
+                                                />
+                                            )}
+                                        </SortableElement>
+                                    );
+                                }
+                                if (element.text == null) return null;
+                                const text = l(readLocalText(element.text))?.trim().split("\n")[0];
+                                return (
+                                    <SortableElement
+                                        key={id}
+                                        id={id}
+                                        label={text?.slice(0, 60) || t("text_block")}
+                                        disabled={sortableIds.length < 2}
+                                    >
+                                        {(dragHandle) => (
+                                            <div className="flex items-start gap-2 rounded-sm border border-grey-200 p-3 dark:border-grey-700">
+                                                <div className="text-grey-500">{dragHandle}</div>
+                                                <div className="min-w-0 flex-1">
+                                                    {isMap(item.get("text")) ? (
+                                                        <BilingualPair
+                                                            label={t("text_block")}
+                                                            value={readLocalText(element.text)}
+                                                            multiline
+                                                            onChange={(language, value) =>
+                                                                apply(() => {
+                                                                    item.setIn(
+                                                                        ["text", language],
+                                                                        value,
+                                                                    );
+                                                                    return [formPath];
+                                                                })
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <TextArea
+                                                            label={t("text_block")}
+                                                            value={String(element.text)}
+                                                            onChange={(value) =>
+                                                                apply(() => {
+                                                                    item.set("text", value);
+                                                                    return [formPath];
+                                                                })
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
+                                                <Button
+                                                    intent="ghost"
+                                                    size="square"
+                                                    aria-label={t("remove_text_block")}
+                                                    onClick={() =>
+                                                        apply(() => {
+                                                            sequence?.delete(index);
+                                                            return [formPath];
+                                                        })
+                                                    }
+                                                >
+                                                    <Icon name="trash-line" size="sm" decorative />
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </SortableElement>
+                                );
+                            }
+
+                            return (
+                                <SortableElement
+                                    key={id}
+                                    id={id}
+                                    disabled={sortableIds.length < 2}
+                                    label={l(question.text) || question.name}
+                                >
+                                    {(dragHandle) => (
+                                        <QuestionCard
+                                            docs={docs}
+                                            formPath={formPath}
+                                            pageName={pageName}
+                                            question={question}
+                                            apply={apply}
+                                            dragHandle={dragHandle}
+                                            localPreview={localPreview}
+                                        />
+                                    )}
+                                </SortableElement>
+                            );
+                        })}
+                    </div>
+                </SortableElements>
             )}
 
-            {!isYamlMode && questions.length === 0 && (
-                <p className="py-2 text-sm text-grey-600">{t("no_questions")}</p>
+            {!isYamlMode && elements.length === 0 && (
+                <p className="py-2 text-sm text-grey-600">{t("no_elements")}</p>
             )}
 
             {!isYamlMode && (
@@ -207,14 +293,15 @@ export function PageSection({docs, formPath, pageName, pageTitle, apply}: Props)
                         aria-haspopup="dialog"
                         onClick={addMenu.toggle}
                     >
-                        {t("add_question")}
+                        {t("add_element")}
                     </Button>
                     {addMenu.isOpen && (
                         <QuestionKindMenu
-                            label={t("add_question")}
+                            label={t("add_element")}
                             state={addMenu}
                             triggerRef={addTriggerRef as React.RefObject<HTMLElement>}
                             onSelect={onAdd}
+                            onAddText={addText}
                         />
                     )}
                 </>

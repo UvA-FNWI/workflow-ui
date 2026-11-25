@@ -2,6 +2,7 @@
   "cancel": "Cancel",
   "close": "Close",
   "config_version": "Version",
+  "configure": "Configure",
   "confirm": "Confirm",
   "develop": "Develop",
   "errors": {
@@ -42,5 +43,6 @@
   "version_ref_placeholder": "branch / tag / SHA",
   "version_reload_baseline": "Reload baseline",
   "version_reload_error": "Failed to reload baseline",
-  "version_upload": "upload"
+  "version_upload": "upload",
+  "workflow_preview_read_only": "Workflow preview · Read-only"
 }

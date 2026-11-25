@@ -8,6 +8,7 @@ import type {RubricEntry} from "~/store/api/types/submissions.ts";
 
 interface RubricSelectProps {
     label?: string;
+    ariaLabel?: string;
     rubrics: RubricEntry[];
     onChange?: (selected: string) => void;
     value?: string;
@@ -18,6 +19,7 @@ interface RubricSelectProps {
 
 export function RubricSelect({
     label,
+    ariaLabel,
     rubrics,
     onChange,
     value,
@@ -40,6 +42,7 @@ export function RubricSelect({
     const {state, labelProps, triggerProps, valueProps} = useSelectControl(
         {
             label,
+            "aria-label": ariaLabel,
             placeholder: t("select"),
             value: value ?? null,
             onChange: (key) => handleGradeSelect(key as string),

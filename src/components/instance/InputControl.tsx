@@ -44,6 +44,8 @@ interface InputControlProps {
     submissionId?: string;
     value?: unknown;
     question: Question;
+    ariaLabel?: string;
+    localPreview?: boolean;
     choices?: Choice[];
     choicesLoading?: boolean;
     choicesError?: boolean;
@@ -62,6 +64,8 @@ export const InputControl = ({
     submissionId = "",
     value,
     question,
+    ariaLabel,
+    localPreview = false,
     choices,
     choicesLoading,
     choicesError,
@@ -113,10 +117,15 @@ export const InputControl = ({
         save(value);
     };
 
+    if (localPreview && (question.type === "User" || question.type === "Reference")) {
+        return <Input aria-label={ariaLabel} placeholder={t("select")} isDisabled />;
+    }
+
     if (question.type === "String") {
         if (question.isArray) {
             return (
                 <TagInput
+                    aria-label={ariaLabel}
                     value={Array.isArray(value) ? value.map((item) => String(item)) : []}
                     onChange={(value) => debouncedChange(value)}
                     maxLength={question.maxLength ?? undefined}
@@ -132,6 +141,7 @@ export const InputControl = ({
         if (control === "Email") {
             return (
                 <EmailInput
+                    aria-label={ariaLabel}
                     value={(value as string) || ""}
                     onChange={(value) => debouncedChange(value)}
                     isValid={isValid}
@@ -143,6 +153,7 @@ export const InputControl = ({
         if (control === "Phone") {
             return (
                 <PhoneInput
+                    aria-label={ariaLabel}
                     value={(value as string) || ""}
                     onChange={(value) => debouncedChange(value)}
                     isValid={isValid}
@@ -177,6 +188,7 @@ export const InputControl = ({
 
         return (
             <StringField
+                aria-label={ariaLabel}
                 value={(value as string) || ""}
                 onChange={(value) => {
                     debouncedChange(value);
@@ -195,6 +207,7 @@ export const InputControl = ({
         const isInt = question.type === "Int";
         return (
             <NumberInput
+                aria-label={ariaLabel}
                 value={Number.isFinite(value) ? (value as number) : undefined}
                 step={isInt ? 1 : 0.1}
                 minValue={isInt ? -2_147_483_648 : undefined}
@@ -213,6 +226,7 @@ export const InputControl = ({
     if (question.type === "Date") {
         return (
             <DatePicker
+                aria-label={ariaLabel}
                 value={toDate(value)}
                 onChange={(newValue) => debouncedChange(newValue)}
                 isValid={isValid}
@@ -253,6 +267,7 @@ export const InputControl = ({
                 const selectedValues = Array.isArray(value) ? value.map((v) => String(v)) : [];
                 return (
                     <Select
+                        aria-label={ariaLabel}
                         selectionMode="multiple"
                         value={selectedValues}
                         onChange={(selectedValue) => {
@@ -278,6 +293,7 @@ export const InputControl = ({
 
             return (
                 <Select
+                    aria-label={ariaLabel}
                     value={typeof value === "string" ? value : null}
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
@@ -325,6 +341,7 @@ export const InputControl = ({
         if (question.control == "Rubric") {
             return (
                 <RubricSelect
+                    ariaLabel={ariaLabel}
                     value={typeof value === "string" ? value : undefined}
                     onChange={(selectedValue) => {
                         immediateChange(selectedValue != null ? String(selectedValue) : null);
@@ -348,7 +365,11 @@ export const InputControl = ({
             };
 
             return (
-                <div className="flex flex-col gap-4">
+                <div
+                    className="flex flex-col gap-4"
+                    role={ariaLabel ? "group" : undefined}
+                    aria-label={ariaLabel}
+                >
                     {choices.map((choice) => (
                         <Checkbox
                             key={choice.name}
@@ -364,6 +385,7 @@ export const InputControl = ({
         // RadioGroup for single select
         return (
             <RadioGroup
+                aria-label={ariaLabel}
                 value={(value as string) || ""}
                 onChange={(selectedValue: string) => {
                     immediateChange(selectedValue);

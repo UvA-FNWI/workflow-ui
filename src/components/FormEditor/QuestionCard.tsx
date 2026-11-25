@@ -10,7 +10,9 @@ import {
     usePopoverState,
 } from "@uva-fnwi/datanose-ui";
 
+import {FormElementCard} from "~/components/FormEditor/FormElementCard";
 import {
+    type ApplyFormEdit,
     applyYamlToNode,
     changeQuestionKind,
     type ConfigDocs,
@@ -36,8 +38,11 @@ type Props = {
     formPath: string;
     pageName: string;
     question: EditorQuestion;
-    apply: (action: () => string[] | Promise<string[]>) => void;
+    apply: ApplyFormEdit;
     dragHandle?: ReactNode;
+    isDisabled?: boolean;
+    sharedChoices?: boolean;
+    localPreview?: boolean;
 };
 
 function MenuItem({
@@ -65,7 +70,17 @@ function MenuItem({
     );
 }
 
-export function QuestionCard({docs, formPath, pageName, question, apply, dragHandle}: Props) {
+export function QuestionCard({
+    docs,
+    formPath,
+    pageName,
+    question,
+    apply,
+    dragHandle,
+    isDisabled = false,
+    sharedChoices = question.usesSharedChoices ?? false,
+    localPreview = false,
+}: Props) {
     const {t, l} = useTranslate("form_editor");
     const [isExpanded, setIsExpanded] = useState(false);
     const [isYamlMode, setIsYamlMode] = useState(false);
@@ -87,7 +102,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
 
     const forcedReason = yamlOnlyReason(question);
     const isMissing = node === null;
-    const isYaml = isYamlMode || forcedReason !== null;
+    const isYaml = isYamlMode;
     const isInherited = question.isInherited;
     const usages = isMissing ? [] : countFieldUsages(docs, formPath, question.name);
 
@@ -95,7 +110,7 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
      * Rewriting type, control and values under a condition or validation is how one silently breaks,
      * so the pill only changes the kind for questions the visual editor owns outright.
      */
-    const canChangeKind = forcedReason === null && !isInherited;
+    const canChangeKind = forcedReason === null && !isInherited && !isDisabled && !isYaml;
     const kindLabel =
         question.kind === "Unknown"
             ? parseTypeString(question.rawType).underlying || t("kind.Missing")
@@ -112,230 +127,218 @@ export function QuestionCard({docs, formPath, pageName, question, apply, dragHan
     };
 
     return (
-        <div className="rounded-xs border border-grey-300 bg-white dark:border-grey-600 dark:bg-grey-900">
-            <div className="flex items-center gap-2 p-2">
-                <div className="text-grey-500">{dragHandle}</div>
-                <button
-                    type="button"
-                    onClick={() => setIsExpanded((previous) => !previous)}
-                    aria-expanded={isExpanded}
-                    className="flex min-w-0 items-center gap-2 rounded-xs px-1 py-1 text-left focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
-                >
-                    <Icon
-                        name={isExpanded ? "chevron-down-line" : "chevron-right-line"}
-                        size="sm"
-                        decorative
-                    />
-                    <div className="flex items-center gap-2 truncate font-medium">
-                        <span>{l(question.text) || question.name} </span>
-                        {!question.isRequired && (
-                            <span className="pr-1 text-grey-900 italic">
-                                {t("optional", {ns: "workflow"})}
-                            </span>
-                        )}
-                    </div>
-                </button>
-
-                {canChangeKind ? (
-                    <button
-                        ref={kindTriggerRef}
-                        type="button"
-                        aria-label={t("change_type", {type: kindLabel})}
-                        aria-expanded={kindMenu.isOpen}
-                        aria-haspopup="dialog"
-                        onClick={kindMenu.toggle}
-                        className="rounded-full focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
-                    >
-                        <Pill variant="grey" className="gap-1">
-                            <Icon name="square-edit-line" size="xs" color="current" decorative />
-                            {kindLabel}
-                        </Pill>
-                    </button>
-                ) : (
-                    <Pill variant={isMissing ? "red" : "grey"}>{kindLabel}</Pill>
-                )}
-                {kindMenu.isOpen && (
-                    <QuestionKindMenu
-                        label={t("change_type", {type: kindLabel})}
-                        state={kindMenu}
-                        triggerRef={kindTriggerRef as React.RefObject<HTMLElement>}
-                        selectedKind={question.kind}
-                        onSelect={(kind) =>
-                            apply(() => changeQuestionKind(docs, formPath, question.name, kind))
-                        }
-                    />
-                )}
-
-                {forcedReason !== null && !isMissing && (
-                    <Pill variant="grey" className="gap-1">
-                        <Icon name="code-brackets-line" size="xs" color="current" decorative />
-                        {t("yaml_only_short")}
-                    </Pill>
-                )}
-                {isInherited && (
-                    <Pill variant="grey" className="gap-1">
-                        <Icon name="lock-line" size="xs" color="current" decorative />
-                        {t("inherited_short")}
-                    </Pill>
-                )}
-
-                <Button
-                    className="ml-auto"
-                    ref={menuTriggerRef}
-                    intent="ghost"
-                    size="square"
-                    aria-label={t("options")}
-                    aria-expanded={menu.isOpen}
-                    aria-haspopup="dialog"
-                    onClick={menu.toggle}
-                >
-                    <Icon name="dots-single-line" decorative />
-                </Button>
-                {menu.isOpen && (
-                    <Popover
-                        state={menu}
-                        triggerRef={menuTriggerRef as React.RefObject<HTMLElement>}
-                        placement="bottom end"
-                        className="border border-grey-400 bg-white shadow-md outline-none dark:bg-grey-800"
-                    >
-                        <dialog
-                            open
-                            aria-label={t("options")}
-                            className="relative m-0 flex w-64 flex-col p-1"
+        <FormElementCard
+            dragHandle={dragHandle}
+            expanded={isExpanded}
+            onToggle={() => setIsExpanded((previous) => !previous)}
+            title={
+                <div className="flex items-center gap-2 truncate font-medium">
+                    <span>{l(question.text) || question.name} </span>
+                    {!question.isRequired && (
+                        <span className="pr-1 text-grey-900 italic">
+                            {t("optional", {ns: "workflow"})}
+                        </span>
+                    )}
+                </div>
+            }
+            actions={
+                <>
+                    {canChangeKind ? (
+                        <button
+                            ref={kindTriggerRef}
+                            type="button"
+                            aria-label={t("change_type", {type: kindLabel})}
+                            aria-expanded={kindMenu.isOpen}
+                            aria-haspopup="dialog"
+                            onClick={kindMenu.toggle}
+                            className="rounded-full focus-visible:ring-2 focus-visible:ring-navy-600 focus-visible:outline-none"
                         >
-                            {forcedReason === null && (
-                                <MenuItem
-                                    icon={isYamlMode ? "square-edit-line" : "code-brackets-line"}
-                                    onClick={() => {
-                                        setIsYamlMode((previous) => !previous);
-                                        setIsExpanded(true);
-                                        closeMenu();
-                                    }}
-                                >
-                                    {isYamlMode ? t("edit_visually") : t("edit_in_yaml")}
-                                </MenuItem>
-                            )}
-                            {isInherited && !isMissing && (
-                                <MenuItem
-                                    icon="unlock-line"
-                                    onClick={() => {
-                                        closeMenu();
-                                        override();
-                                    }}
-                                >
-                                    {t("override_here")}
-                                </MenuItem>
-                            )}
-                            <MenuItem
-                                icon="minus-line"
-                                onClick={() =>
-                                    runAndClose(() =>
-                                        removeField(docs, formPath, pageName, question.name),
-                                    )
-                                }
+                            <Pill variant="grey" className="gap-1">
+                                <Icon
+                                    name="square-edit-line"
+                                    size="xs"
+                                    color="current"
+                                    decorative
+                                />
+                                {kindLabel}
+                            </Pill>
+                        </button>
+                    ) : (
+                        <Pill variant={isMissing ? "red" : "grey"}>{kindLabel}</Pill>
+                    )}
+                    {kindMenu.isOpen && (
+                        <QuestionKindMenu
+                            label={t("change_type", {type: kindLabel})}
+                            state={kindMenu}
+                            triggerRef={kindTriggerRef as React.RefObject<HTMLElement>}
+                            selectedKind={question.kind}
+                            onSelect={(kind) =>
+                                apply(() => changeQuestionKind(docs, formPath, question.name, kind))
+                            }
+                        />
+                    )}
+
+                    {forcedReason !== null && !isMissing && (
+                        <Pill variant="grey" className="gap-1">
+                            <Icon name="code-brackets-line" size="xs" color="current" decorative />
+                            {t("yaml_only_short")}
+                        </Pill>
+                    )}
+                    {isInherited && (
+                        <Pill variant="grey" className="gap-1">
+                            <Icon name="lock-line" size="xs" color="current" decorative />
+                            {t("inherited_short")}
+                        </Pill>
+                    )}
+
+                    <Button
+                        className="ml-auto"
+                        ref={menuTriggerRef}
+                        intent="ghost"
+                        size="square"
+                        aria-label={t("options")}
+                        aria-expanded={menu.isOpen}
+                        aria-haspopup="dialog"
+                        onClick={menu.toggle}
+                    >
+                        <Icon name="dots-single-line" decorative />
+                    </Button>
+                    {menu.isOpen && (
+                        <Popover
+                            state={menu}
+                            triggerRef={menuTriggerRef as React.RefObject<HTMLElement>}
+                            placement="bottom end"
+                            className="border border-grey-400 bg-white shadow-md outline-none dark:bg-grey-800"
+                        >
+                            <dialog
+                                open
+                                aria-label={t("options")}
+                                className="relative m-0 flex w-64 flex-col p-1"
                             >
-                                {t("remove_from_page")}
-                            </MenuItem>
-                            {!isMissing && !isInherited && (
+                                {!isMissing && (
+                                    <MenuItem
+                                        icon={
+                                            isYamlMode ? "square-edit-line" : "code-brackets-line"
+                                        }
+                                        onClick={() => {
+                                            setIsYamlMode((previous) => !previous);
+                                            setIsExpanded(true);
+                                            closeMenu();
+                                        }}
+                                    >
+                                        {isYamlMode ? t("edit_visually") : t("edit_in_yaml")}
+                                    </MenuItem>
+                                )}
+                                {isInherited && !isMissing && (
+                                    <MenuItem
+                                        icon="unlock-line"
+                                        onClick={() => {
+                                            closeMenu();
+                                            override();
+                                        }}
+                                    >
+                                        {t("override_here")}
+                                    </MenuItem>
+                                )}
                                 <MenuItem
-                                    icon="trash-line"
-                                    isDestructive
+                                    icon="minus-line"
                                     onClick={() =>
                                         runAndClose(() =>
-                                            deleteProperty(docs, formPath, question.name),
+                                            removeField(docs, formPath, pageName, question.name),
                                         )
                                     }
                                 >
-                                    {t("delete_everywhere", {count: usages.length})}
+                                    {t("remove_from_page")}
                                 </MenuItem>
-                            )}
-                        </dialog>
-                    </Popover>
-                )}
-            </div>
-
-            {isExpanded && (
-                <div className="grid gap-4 border-t border-grey-200 p-3 lg:grid-cols-[3fr_2fr] dark:border-grey-700">
-                    <div className="min-w-0">
-                        {forcedReason !== null && (
-                            <Callout type={isMissing ? "error" : "info"} className="mb-3">
-                                {t(`yaml_only.${forcedReason}`, {
-                                    keys: question.advancedKeys.join(", "),
-                                    type: parseTypeString(question.rawType).underlying,
-                                    file: question.definedIn,
-                                })}
-                            </Callout>
-                        )}
-                        {isInherited && !isMissing && (
-                            <Callout type="info" className="mb-3">
-                                <div className="flex flex-wrap items-center gap-3">
-                                    <span>
-                                        {t("inherited_hint", {
-                                            file: question.definedIn,
-                                        })}
-                                    </span>
-                                    <Button
-                                        intent="secondary"
-                                        size="small"
-                                        leftIcon={
-                                            <Icon
-                                                name="unlock-line"
-                                                size="sm"
-                                                color="current"
-                                                decorative
-                                            />
+                                {!isMissing && !isInherited && (
+                                    <MenuItem
+                                        icon="trash-line"
+                                        isDestructive
+                                        onClick={() =>
+                                            runAndClose(() =>
+                                                deleteProperty(docs, formPath, question.name),
+                                            )
                                         }
-                                        onClick={override}
                                     >
-                                        {t("override_here")}
-                                    </Button>
-                                </div>
-                            </Callout>
-                        )}
-
-                        {isMissing ? (
-                            <p className="text-sm text-grey-600">
-                                {t("missing_hint", {name: question.name})}
-                            </p>
-                        ) : isYaml ? (
-                            <>
-                                <p className="mb-2 text-xs text-grey-600">
-                                    {t("editing_file", {file: question.definedIn})}
-                                </p>
-                                <NodeYamlEditor
-                                    initialText={node ? nodeToYaml(node.node) : ""}
-                                    isReadOnly={isInherited}
-                                    schema={{name: "PropertyDefinition"}}
-                                    onChange={(text) => {
-                                        if (!node) {
-                                            return null;
-                                        }
-                                        // applyYamlToNode has already mutated the shared Document;
-                                        // apply only records which file changed and re-renders, which
-                                        // is what makes the preview beside this track every keystroke.
-                                        const error = applyYamlToNode(node.node, text);
-                                        if (error === null) {
-                                            apply(() => [node.path]);
-                                        }
-                                        return error;
-                                    }}
-                                />
-                            </>
-                        ) : (
-                            <QuestionConfig
-                                docs={docs}
-                                formPath={formPath}
-                                question={question}
-                                isDisabled={isInherited}
-                                apply={apply}
-                            />
-                        )}
-                    </div>
-                    <div className="lg:sticky lg:top-4 lg:self-start">
-                        <QuestionPreview docs={docs} question={question} />
-                    </div>
-                </div>
+                                        {t("delete_everywhere", {count: usages.length})}
+                                    </MenuItem>
+                                )}
+                            </dialog>
+                        </Popover>
+                    )}
+                </>
+            }
+            preview={
+                <QuestionPreview docs={docs} question={question} localPreview={localPreview} />
+            }
+        >
+            {forcedReason !== null && (!isYaml || isMissing) && (
+                <Callout type={isMissing ? "error" : "info"} className="mb-3">
+                    {t(`yaml_only.${forcedReason}`, {
+                        keys: question.advancedKeys.join(", "),
+                        type: parseTypeString(question.rawType).underlying,
+                        file: question.definedIn,
+                    })}
+                </Callout>
             )}
-        </div>
+            {isInherited && !isMissing && (
+                <Callout type="info" className="mb-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <span>
+                            {t("inherited_hint", {
+                                file: question.definedIn,
+                            })}
+                        </span>
+                        <Button
+                            intent="secondary"
+                            size="small"
+                            leftIcon={
+                                <Icon name="unlock-line" size="sm" color="current" decorative />
+                            }
+                            onClick={override}
+                        >
+                            {t("override_here")}
+                        </Button>
+                    </div>
+                </Callout>
+            )}
+
+            {isMissing ? (
+                <p className="text-sm text-grey-600">{t("missing_hint", {name: question.name})}</p>
+            ) : isYaml ? (
+                <>
+                    <p className="mb-2 text-xs text-grey-600">
+                        {t("editing_file", {file: question.definedIn})}
+                    </p>
+                    <NodeYamlEditor
+                        initialText={node ? nodeToYaml(node.node) : ""}
+                        isReadOnly={isInherited || isDisabled}
+                        schema={{name: "PropertyDefinition"}}
+                        onChange={(text) => {
+                            if (!node) {
+                                return null;
+                            }
+                            // applyYamlToNode has already mutated the shared Document;
+                            // apply only records which file changed and re-renders, which
+                            // is what makes the preview beside this track every keystroke.
+                            const error = applyYamlToNode(node.node, text);
+                            if (error === null) {
+                                apply(() => [node.path], "yaml");
+                            }
+                            return error;
+                        }}
+                    />
+                </>
+            ) : forcedReason === null ? (
+                <QuestionConfig
+                    docs={docs}
+                    formPath={formPath}
+                    question={question}
+                    isDisabled={isInherited || isDisabled}
+                    sharedChoices={sharedChoices}
+                    apply={apply}
+                />
+            ) : null}
+        </FormElementCard>
     );
 }

@@ -1,5 +1,8 @@
 import {type ReactNode, useState} from "react";
 
+import {useForm} from "react-hook-form";
+
+import {skipToken} from "@reduxjs/toolkit/query";
 import {
     Button,
     Heading,
@@ -17,14 +20,15 @@ import {FormSummary} from "~/components/instance/FormSummary.tsx";
 import {PrefilledAnswersNotice} from "~/components/instance/PrefilledAnswersNotice.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
-import type {Page} from "~/store/api/types/submissions";
+import type {Form, Page} from "~/store/api/types/submissions";
 import {isPageComplete as isPageCompleteUtil} from "~/utils/submissionUtils.ts";
 
-type Props = {
-    instanceId: string;
-    submissionId: string;
+export type FormPageSource =
+    | {instanceId: string; submissionId: string; previousVersion?: number; previewForm?: never}
+    | {previewForm: Form; instanceId?: never; submissionId?: never; previousVersion?: never};
+
+type Props = FormPageSource & {
     onClose: () => void;
-    previousVersion?: number;
     renderLayout?: (content: ReactNode, actions: ReactNode) => ReactNode;
 };
 
@@ -33,23 +37,25 @@ export const FormPage = ({
     submissionId,
     onClose,
     previousVersion,
+    previewForm,
     renderLayout,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
-    const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
-        instanceId,
-        submissionId,
-    });
+    const submissionKey = previewForm ? skipToken : {instanceId, submissionId};
+    const {data: submission} = submissionsEndpoints.getSubmission.useQuery(submissionKey);
     const [selectedTabIndex, setActiveTabIndex] = useState(0);
+    const previewInputs = useForm();
+    const form = previewForm ?? submission?.form;
 
-    if (!submission) return renderLayout ? renderLayout(null, null) : <div>Loading...</div>;
+    if (!form) return renderLayout ? renderLayout(null, null) : <div>Loading...</div>;
 
-    const pages = submission.form.pages.filter((page) => page.isInCurrentForm);
+    const pages = form.pages.filter((page) => page.isInCurrentForm);
     const showTabView = pages.length > 1; // only show tabs and summary when there is more than one page
 
-    const isPageComplete = (page: Page): boolean => isPageCompleteUtil(page, submission);
+    const isPageComplete = (page: Page) => !!submission && isPageCompleteUtil(page, submission);
 
-    const areAllPagesComplete = pages.filter((page) => page.isActive).every(isPageComplete);
+    const areAllPagesComplete =
+        !!submission && pages.filter((page) => page.isActive).every(isPageComplete);
     const firstActivePage = pages.findIndex((page) => page.isActive);
     const activeTabIndex =
         pages[selectedTabIndex]?.isActive ||
@@ -70,6 +76,22 @@ export const FormPage = ({
         if (tabIndex !== -1) setActiveTabIndex(tabIndex);
     };
 
+    const renderPage = (page: Page, showTitle = true) =>
+        previewForm ? (
+            <PageControl
+                page={page}
+                showTitle={showTitle}
+                preview={{layout: form.layout, inputs: previewInputs}}
+            />
+        ) : (
+            <PageControl
+                instanceId={instanceId}
+                submissionId={submissionId}
+                page={page}
+                showTitle={showTitle}
+            />
+        );
+
     const actions = (
         <>
             {showTabView && previousTabIndex !== undefined && (
@@ -77,32 +99,42 @@ export const FormPage = ({
                     {t("previous")}
                 </Button>
             )}
-            {showTabView && activeTabIndex !== pages.length ? (
+            {showTabView &&
+            pages[activeTabIndex] &&
+            (!previewForm || nextTabIndex !== undefined) ? (
                 <Button
                     intent="primary"
-                    disabled={nextTabIndex === undefined || !isPageComplete(pages[activeTabIndex])}
+                    disabled={
+                        nextTabIndex === undefined ||
+                        (!previewForm && !isPageComplete(pages[activeTabIndex]))
+                    }
                     onClick={() => setActiveTabIndex(nextTabIndex ?? activeTabIndex)}
                 >
                     {t("next")}
                 </Button>
             ) : (
-                <FormSubmitButton
-                    instanceId={instanceId}
-                    submission={submission}
-                    disabled={!areAllPagesComplete}
-                    onSubmit={onClose}
-                />
+                !previewForm &&
+                submission && (
+                    <FormSubmitButton
+                        instanceId={instanceId}
+                        submission={submission}
+                        disabled={!areAllPagesComplete}
+                        onSubmit={onClose}
+                    />
+                )
             )}
         </>
     );
 
     const content = (
         <>
-            <PrefilledAnswersNotice
-                instanceId={instanceId}
-                submissionId={submissionId}
-                previousVersion={previousVersion}
-            />
+            {!previewForm && (
+                <PrefilledAnswersNotice
+                    instanceId={instanceId}
+                    submissionId={submissionId}
+                    previousVersion={previousVersion}
+                />
+            )}
             {showTabView ? (
                 <Tabs activeIndex={activeTabIndex} onTabChange={setActiveTabIndex}>
                     <TabList>
@@ -122,47 +154,44 @@ export const FormPage = ({
                                     )}
                                 </Tab>
                             )),
-                            <Tab key="summary" disabled={!areAllPagesComplete}>
-                                {t("instance.summary.title")}
-                            </Tab>,
+                            ...(!previewForm
+                                ? [
+                                      <Tab key="summary" disabled={!areAllPagesComplete}>
+                                          {t("instance.summary.title")}
+                                      </Tab>,
+                                  ]
+                                : []),
                         ]}
                     </TabList>
                     <TabPanels>
                         {[
                             ...pages.map((page, index) => (
                                 <TabPanel key={index}>
-                                    <div className="my-4">
-                                        <PageControl
-                                            instanceId={instanceId}
-                                            submissionId={submissionId}
-                                            page={page}
-                                        />
-                                    </div>
+                                    <div className="my-4">{renderPage(page)}</div>
                                 </TabPanel>
                             )),
-                            <TabPanel key="summary">
-                                <div className="flex flex-col gap-6 pt-4">
-                                    {/* Summary of all pages */}
-                                    <Heading size="sm">{t("instance.summary.title")}</Heading>
-                                    <FormSummary
-                                        submission={submission}
-                                        instanceId={instanceId}
-                                        onEditPage={onEditPage}
-                                    />
-                                </div>
-                            </TabPanel>,
+                            ...(!previewForm && submission
+                                ? [
+                                      <TabPanel key="summary">
+                                          <div className="flex flex-col gap-6 pt-4">
+                                              {/* Summary of all pages */}
+                                              <Heading size="sm">
+                                                  {t("instance.summary.title")}
+                                              </Heading>
+                                              <FormSummary
+                                                  submission={submission}
+                                                  instanceId={instanceId}
+                                                  onEditPage={onEditPage}
+                                              />
+                                          </div>
+                                      </TabPanel>,
+                                  ]
+                                : []),
                         ]}
                     </TabPanels>
                 </Tabs>
             ) : (
-                pages[0]?.isActive && (
-                    <PageControl
-                        instanceId={instanceId}
-                        submissionId={submissionId}
-                        page={pages[0]}
-                        showTitle={false}
-                    />
-                )
+                pages[0]?.isActive && renderPage(pages[0], false)
             )}
         </>
     );

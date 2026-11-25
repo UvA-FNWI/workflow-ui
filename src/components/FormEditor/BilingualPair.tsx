@@ -1,4 +1,4 @@
-import {Input} from "@uva-fnwi/datanose-ui";
+import {Input, TextArea} from "@uva-fnwi/datanose-ui";
 
 import {useTranslate} from "~/hooks/useTranslate";
 
@@ -7,20 +7,23 @@ export function BilingualPair({
     label,
     value,
     isDisabled,
+    multiline,
     onChange,
 }: {
     label: string;
     value: {nl: string; en: string};
     isDisabled?: boolean;
+    multiline?: boolean;
     onChange: (language: "nl" | "en", next: string) => void;
 }) {
     const {t} = useTranslate("form_editor");
+    const Control = multiline ? TextArea : Input;
 
     return (
         <fieldset className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <legend className="mb-1 text-sm font-medium text-grey-700">{label}</legend>
             {(["nl", "en"] as const).map((language) => (
-                <Input
+                <Control
                     key={language}
                     label={language === "nl" ? t("language.nl") : t("language.en")}
                     value={value[language]}
