@@ -166,18 +166,37 @@ export const AssessmentQuestionAnswerList = ({
                                                             const pair = submission.find(
                                                                 (s) => s.question.name === lq.name,
                                                             );
+                                                            const messages = pair?.answer?.messages;
                                                             return (
-                                                                <AnswerCell
+                                                                <div
                                                                     key={submissionIndex}
-                                                                    pair={pair}
-                                                                    canEdit={canEdit}
-                                                                    noAnswerText="-"
-                                                                    instanceId={instanceId}
-                                                                    submissionId={submissionId}
-                                                                    showLinkedTitle={
-                                                                        arrayOfPairs.length > 1
-                                                                    }
-                                                                />
+                                                                    className="flex min-w-0 items-start gap-1"
+                                                                >
+                                                                    {showMessages && messages && (
+                                                                        <FieldMessageBalloon
+                                                                            {...messages}
+                                                                            fieldLabel={
+                                                                                l(lq.text) ??
+                                                                                lq.name
+                                                                            }
+                                                                            messageUi={messageUi}
+                                                                        />
+                                                                    )}
+                                                                    <div className="min-w-0 flex-1">
+                                                                        <AnswerCell
+                                                                            pair={pair}
+                                                                            canEdit={canEdit}
+                                                                            noAnswerText="-"
+                                                                            instanceId={instanceId}
+                                                                            submissionId={
+                                                                                submissionId
+                                                                            }
+                                                                            showLinkedTitle={
+                                                                                isMultiSubmission
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                </div>
                                                             );
                                                         },
                                                     )}

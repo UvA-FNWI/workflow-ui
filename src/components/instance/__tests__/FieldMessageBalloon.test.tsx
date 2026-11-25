@@ -119,12 +119,25 @@ describe("FieldMessageBalloon", () => {
         expect(dialog.queryByRole("textbox")).not.toBeInTheDocument();
     });
 
-    it("uses each assessment column's answer target and hides the balloon for the average", () => {
+    it.each(["main row", "explanations"])("routes balloons by column for %s", (row) => {
+        const isExplanation = row === "explanations";
+        const question = isExplanation
+            ? {
+                  ...consentQuestion,
+                  name: "ConsentExplanation",
+                  text: {en: "Consent explanation", nl: "Toelichting bij toestemming"},
+                  linkedTo: consentQuestion.name,
+              }
+            : consentQuestion;
+        const parentRows: QuestionAnswerPair[] = isExplanation
+            ? [{question: consentQuestion, answer: consentAnswer, percentage: null}]
+            : [];
+        const answer = {...consentAnswer, questionName: question.name};
         const columns = [
             {
                 messages: {
                     instanceId: "supervisor-owner",
-                    questionName: "AssessmentSupervisor.Consent",
+                    questionName: `AssessmentSupervisor.${question.name}`,
                     canView: true,
                     canAdd: true,
                 },
@@ -133,7 +146,7 @@ describe("FieldMessageBalloon", () => {
             {
                 messages: {
                     instanceId: "reviewer-owner",
-                    questionName: "AssessmentReviewer.Consent",
+                    questionName: `AssessmentReviewer.${question.name}`,
                     canView: true,
                     canAdd: false,
                 },
@@ -141,8 +154,8 @@ describe("FieldMessageBalloon", () => {
             },
         ];
         const average: QuestionAnswerPair = {
-            question: consentQuestion,
-            answer: consentAnswer,
+            question,
+            answer,
             percentage: null,
         };
         getMessages.mockImplementation((instanceId: string) => ({
@@ -159,22 +172,32 @@ describe("FieldMessageBalloon", () => {
         render(
             <AssessmentQuestionAnswerList
                 instanceId="project"
-                rows={[average]}
+                rows={[...parentRows, average]}
                 questionAnswerPairs={[
                     ...columns.map(({messages}) => [
-                        {...average, answer: {...consentAnswer, messages}},
+                        ...parentRows,
+                        {...average, answer: {...answer, messages}},
                     ]),
-                    [average],
+                    [...parentRows, average],
                 ]}
             />,
         );
+
+        if (isExplanation) {
+            expect(
+                screen.queryByRole("button", {name: "Comments on this field"}),
+            ).not.toBeInTheDocument();
+            fireEvent.click(screen.getByText("Show explanations"));
+        }
 
         const balloons = screen.getAllByRole("button", {name: "Comments on this field"});
         expect(balloons).toHaveLength(2);
         for (const [index, {messages, body}] of columns.entries()) {
             expect(getMessages).toHaveBeenCalledWith(messages.instanceId, {skip: false});
             fireEvent.click(balloons[index]);
-            const dialog = within(screen.getByRole("dialog"));
+            const dialog = within(
+                screen.getByRole("dialog", {name: `Comments on ${question.text.en}`}),
+            );
             expect(dialog.getByText(body)).toBeVisible();
             expect(dialog.queryByRole("textbox") != null).toBe(messages.canAdd);
             fireEvent.click(dialog.getByRole("button", {name: "Close modal"}));
