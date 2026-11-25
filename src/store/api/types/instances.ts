@@ -1,6 +1,7 @@
 import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {LocalString} from "~/hooks/useTranslate";
+import type {ProgressInformation} from "~/store/api/types/progress.ts";
 import type {
     AnswerChangeGroup,
     FormLayout,
@@ -36,8 +37,7 @@ export type WorkflowInstance = {
     canImpersonate: boolean;
     viewerRoles: string[];
     infoCards: InfoCard[];
-    stopMessage: LocalString | null;
-    stopEvent?: string | null;
+    stoppedProgress: ProgressInformation | null;
 };
 
 /**

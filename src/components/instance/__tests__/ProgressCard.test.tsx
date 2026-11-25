@@ -14,16 +14,15 @@ afterEach(cleanup);
 it.each([
     ["Pause", "ui:bg-grey-300"],
     ["Cancel", "ui:bg-red-200"],
-    [undefined, "ui:bg-red-200"],
-] as const)("styles a progress pill for stop event %s", (stopEvent, colorClass) => {
+    [null, "ui:bg-red-200"],
+] as const)("styles a progress pill for stop event %s", (eventId, colorClass) => {
     render(
         <ProgressCard
             card={{name: "progress", type: "Progress", title: {en: "Progress", nl: "Voortgang"}}}
             isLoading={false}
             steps={[]}
             currentStep=""
-            stopMessage={{en: "Status", nl: "Status"}}
-            stopEvent={stopEvent}
+            stoppedProgress={{text: {en: "Status", nl: "Status"}, color: "Red", eventId}}
         />,
     );
 
