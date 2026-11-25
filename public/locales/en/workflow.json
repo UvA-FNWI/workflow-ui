@@ -248,11 +248,11 @@
     "title": "Undo operation"
   },
   "user_picker": {
-    "no_results": "No users found",
+    "no_results": "No employees found",
     "not_in_list": "Not in list",
-    "search_hint_one": "Search for a user",
-    "search_hint_other": "Search for users",
-    "search_placeholder": "Search for a user",
+    "search_hint_one": "Search for an employee",
+    "search_hint_other": "Search for employees",
+    "search_placeholder": "Search for an employee",
     "selected_users_one": "{{count}} user selected",
     "selected_users_other": "{{count}} users selected",
     "title": "Search employee",
