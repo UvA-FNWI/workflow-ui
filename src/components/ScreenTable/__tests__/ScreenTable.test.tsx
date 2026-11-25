@@ -97,12 +97,19 @@ it.each([
         for (const status of ["Paused", "Stopped"]) {
             const progress = screen.getByText(status);
             expect(progress).toHaveClass("font-bold");
+            expect(progress.parentElement).toHaveClass("gap-2");
+            expect(progress.previousElementSibling).toHaveClass("w-2", "shrink-0");
             expect(progress.closest(".line-through")).toBeNull();
             expect(progress.closest("td")?.querySelector(".rounded-full")).toBeNull();
         }
         const activeProgress = screen.getByText("Alpha");
         expect(activeProgress).not.toHaveClass("font-bold");
-        expect(activeProgress.closest("td")?.querySelector(".bg-green-600")).toBeInTheDocument();
+        expect(activeProgress.parentElement).toHaveClass("gap-2");
+        expect(activeProgress.previousElementSibling).toHaveClass(
+            "w-2",
+            "shrink-0",
+            "bg-green-600",
+        );
     }
 
     const students = () =>

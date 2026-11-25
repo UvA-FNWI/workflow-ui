@@ -1,3 +1,5 @@
+import {cn} from "@uva-fnwi/datanose-ui";
+
 import {useTranslate} from "~/hooks/useTranslate";
 import type {ProgressInformation} from "~/store/api/types/progress";
 
@@ -9,18 +11,19 @@ type TableProgressCellProps = {
 export function TableProgressCell({progress, workflowStopped}: TableProgressCellProps) {
     const {l} = useTranslate("workflow");
 
-    if (workflowStopped) {
-        return <span className="font-bold">{l(progress.text)}</span>;
-    }
+    const indicatorColor =
+        progress.color?.toLowerCase() === "green" ? "bg-green-600" : "bg-red-600";
 
     return (
         <div className="flex items-baseline gap-2">
-            <div
-                className={`h-2 min-w-2 rounded-full ${
-                    progress.color?.toLowerCase() === "green" ? "bg-green-600" : "bg-red-600"
-                }`}
+            <span
+                aria-hidden="true"
+                className={cn(
+                    "h-2 w-2 shrink-0",
+                    !workflowStopped && `rounded-full ${indicatorColor}`,
+                )}
             />
-            <span>{l(progress.text)}</span>
+            <span className={workflowStopped ? "font-bold" : undefined}>{l(progress.text)}</span>
         </div>
     );
 }
