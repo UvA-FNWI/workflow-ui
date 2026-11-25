@@ -99,7 +99,15 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
         emptyStateMessage !== null;
     const hasBodyContent = deadlineMessages.length > 0 || hasStepContent || childRows.length > 0;
     const isContentless = step.isAvailable && !hasBodyContent;
+    const isDisabled = !step.isAvailable || !hasBodyContent;
     const [isExpanded, setIsExpanded] = useState(isCurrentStep && hasBodyContent);
+
+    const headerStatus = isDisabled
+        ? null
+        : showChildRows
+          ? step.headerStatus
+          : (step.headerStatus ??
+            fullHierarchy.find((c) => c.id === instance.currentStep)?.headerStatus);
 
     const undoControl = step.undoCandidate && (
         <UndoControl
@@ -117,7 +125,7 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
             role="group"
             aria-label={l(step.title)}
             tabIndex={-1}
-            isDisabled={!step.isAvailable || !hasBodyContent}
+            isDisabled={isDisabled}
             shadow={nested ? "none" : undefined}
             border={nested ? "none" : undefined}
             className={cn(
@@ -132,6 +140,7 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
                 isContentless={isContentless}
                 submissions={submissions}
                 currentStep={instance.currentStep}
+                headerStatus={headerStatus}
                 deadlinePassed={fullHierarchy.some((candidate) => candidate.deadline?.isPassed)}
                 leading={
                     <>
@@ -239,6 +248,7 @@ function StepCardHeader({
     isContentless,
     submissions,
     currentStep,
+    headerStatus,
     deadlinePassed,
     leading,
 }: {
@@ -248,6 +258,7 @@ function StepCardHeader({
     isContentless: boolean;
     submissions: Submission[];
     currentStep: WorkflowInstance["currentStep"];
+    headerStatus?: StepHeaderStatus | null;
     deadlinePassed: boolean;
     leading?: ReactNode;
 }) {
@@ -277,9 +288,9 @@ function StepCardHeader({
                             {formatDateShort(step.dateCompleted, i18n.language)}
                         </Pill>
                     )}
-                    {step.headerStatus && (
-                        <Pill variant={HEADER_STATUS_VARIANT[step.headerStatus.type]}>
-                            {l(step.headerStatus.label) ||
+                    {headerStatus && (
+                        <Pill variant={HEADER_STATUS_VARIANT[headerStatus.type]}>
+                            {l(headerStatus.label) ||
                                 (deadlinePassed ? t("status.deadline_passed") : null)}
                         </Pill>
                     )}
