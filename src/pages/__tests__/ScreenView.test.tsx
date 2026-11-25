@@ -21,7 +21,7 @@ vi.mock("~/store/api/screensApi", () => ({
                 {
                     name: "completed",
                     title: {en: "Completed"},
-                    rows: [{id: "project-1", values: {}}],
+                    rows: [{id: "project-1", values: {}, stoppedProgress: null}],
                 },
             ],
         },

@@ -78,8 +78,8 @@ beforeEach(() => {
             },
         ],
         rows: [
-            {id: "alice", values: {0: "Alice"}},
-            {id: "bob", values: {0: "Bob"}},
+            {id: "alice", values: {0: "Alice"}, stoppedProgress: null},
+            {id: "bob", values: {0: "Bob"}, stoppedProgress: null},
         ],
         bulkActions: [
             {
@@ -230,7 +230,7 @@ it("does not offer a bulk action for rows hidden by a live refresh", async () =>
     });
     fireEvent.click(screen.getByRole("checkbox", {name: "Select all rows"}));
     expect(screen.getByRole("button", {name: "Approve proposals"})).toBeEnabled();
-    data = {...data, rows: [{id: "alice", values: {0: "Carol"}}, data.rows[1]]};
+    data = {...data, rows: [{...data.rows[0], values: {0: "Carol"}}, data.rows[1]]};
 
     await act(async () => {
         store.dispatch(screensApi.util.invalidateTags(["Screen"]));
@@ -243,8 +243,8 @@ it("does not offer a bulk action for rows hidden by a live refresh", async () =>
 it("does not offer a bulk action for rows hidden by a language change", async () => {
     data.columns[0].dataType = "Object";
     data.rows = [
-        {id: "alice", values: {0: {text: {en: "Alice", nl: "Andere naam"}}}},
-        {id: "bob", values: {0: {text: {en: "Bob", nl: "Bob"}}}},
+        {...data.rows[0], values: {0: {text: {en: "Alice", nl: "Andere naam"}}}},
+        {...data.rows[1], values: {0: {text: {en: "Bob", nl: "Bob"}}}},
     ];
     const {i18n} = await openScreen();
     fireEvent.change(screen.getByRole("textbox", {name: "Type a search query"}), {

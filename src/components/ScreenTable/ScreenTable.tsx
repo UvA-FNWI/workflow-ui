@@ -21,12 +21,8 @@ type ScreenTableProps = {
     showInstanceLink?: boolean;
 };
 
-function isStoppedRow(row: ScreenRow, progressColumnId: number | undefined): boolean {
-    const progress = progressColumnId === undefined ? undefined : row.values[progressColumnId];
-    return isStopped(
-        row.workflowStopped,
-        isProgressInformation(progress) ? progress.eventId : null,
-    );
+function isStoppedRow({stoppedProgress}: ScreenRow): boolean {
+    return isStopped(stoppedProgress != null, stoppedProgress?.eventId);
 }
 
 export const ScreenTable = ({
@@ -40,7 +36,6 @@ export const ScreenTable = ({
     const {i18n, l, t} = useTranslate("workflow");
     const {t: screenT} = useTranslate("screens");
     const navigate = useVersionedNavigate();
-    const progressColumnId = columns.find((column) => column.columnType === "CurrentStep")?.id;
     const filteredRows = useMemo(
         () => filterScreenRows(columns, rows, globalFilter, i18n.language),
         [columns, rows, globalFilter, i18n.language],
@@ -76,7 +71,7 @@ export const ScreenTable = ({
                     const row = info.row.original;
                     const value = row.values[col.id];
                     const strikeThrough =
-                        isStoppedRow(row, progressColumnId) &&
+                        isStoppedRow(row) &&
                         col.property !== "Student.DisplayName" &&
                         col.columnType !== "CurrentStep";
                     const textClassName = strikeThrough ? "line-through" : undefined;
@@ -95,7 +90,7 @@ export const ScreenTable = ({
                             return (
                                 <TableProgressCell
                                     progress={value}
-                                    workflowStopped={row.workflowStopped}
+                                    workflowStopped={row.stoppedProgress != null}
                                 />
                             );
                         }
@@ -170,24 +165,14 @@ export const ScreenTable = ({
         }
 
         return tableColumns;
-    }, [
-        columns,
-        i18n.language,
-        l,
-        t,
-        navigate,
-        screenT,
-        onRowSelectionChange,
-        progressColumnId,
-        showInstanceLink,
-    ]);
+    }, [columns, i18n.language, l, t, navigate, screenT, onRowSelectionChange, showInstanceLink]);
 
     return (
         <DataTable
             data={filteredRows}
             columns={tableColumns}
             getRowId={(row) => row.id}
-            placeLast={(row) => isStoppedRow(row, progressColumnId)}
+            placeLast={isStoppedRow}
             rowSelection={rowSelection}
             onRowSelectionChange={onRowSelectionChange}
             stickyFirstColumn={Boolean(onRowSelectionChange)}

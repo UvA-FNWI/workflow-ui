@@ -2,6 +2,7 @@ import type {IconType} from "@uva-fnwi/datanose-ui";
 
 import type {DataType} from "./submissions";
 import type {LocalString} from "~/hooks/useTranslate";
+import type {ProgressInformation} from "~/store/api/types/progress";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions.ts";
 
 export type ScreenGroup = {
@@ -55,7 +56,7 @@ export type ScreenColumn = {
 export type ScreenRow = {
     id: string;
     values: Record<number, unknown>;
-    workflowStopped?: boolean;
+    stoppedProgress: ProgressInformation | null;
 };
 
 export type ScreenRelatedUser = {

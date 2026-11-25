@@ -44,30 +44,36 @@ const columns: ScreenColumn[] = [
     },
 ];
 
-it("styles paused and stopped rows and keeps stopped rows last when sorting", () => {
+it.each([
+    {screenType: "with a progress column", withProgressColumn: true, stoppedEventId: "Cancel"},
+    {screenType: "without a progress column", withProgressColumn: false, stoppedEventId: null},
+])("styles and sorts stopped rows $screenType", ({withProgressColumn, stoppedEventId}) => {
+    const screenColumns = withProgressColumn
+        ? columns
+        : columns.filter((column) => column.columnType !== "CurrentStep");
     render(
         <MemoryRouter>
             <ScreenTable
-                columns={columns}
+                columns={screenColumns}
                 rows={[
                     {name: "Paused", eventId: "Pause"},
                     {name: "Zulu"},
-                    {name: "Stopped", eventId: "Cancel"},
+                    {name: "Stopped", eventId: stoppedEventId},
                     {name: "Alpha"},
                 ].map(({name, eventId}) => {
-                    const workflowStopped = eventId !== undefined;
+                    const progress = {
+                        text: {en: name, nl: name},
+                        color: eventId === undefined ? "Green" : "Red",
+                        eventId,
+                    };
                     return {
                         id: name,
-                        workflowStopped,
+                        stoppedProgress: eventId === undefined ? null : progress,
                         values: {
                             0: `${name} student`,
                             1: `${name} title`,
                             2: `${name} course`,
-                            3: {
-                                text: {en: name, nl: name},
-                                color: workflowStopped ? "Red" : "Green",
-                                eventId,
-                            },
+                            ...(withProgressColumn ? {3: progress} : {}),
                         },
                     };
                 })}
@@ -84,16 +90,20 @@ it("styles paused and stopped rows and keeps stopped rows last when sorting", ()
                 status === "Stopped",
             );
         }
-        const progress = screen.getByText(status);
-        expect(progress).toHaveClass("font-bold");
-        expect(progress.closest(".line-through")).toBeNull();
-        expect(progress.closest("td")?.querySelector(".rounded-full")).toBeNull();
     }
 
     expect(screen.getByText("Alpha title").closest(".line-through")).toBeNull();
-    const activeProgress = screen.getByText("Alpha");
-    expect(activeProgress).not.toHaveClass("font-bold");
-    expect(activeProgress.closest("td")?.querySelector(".bg-green-600")).toBeInTheDocument();
+    if (withProgressColumn) {
+        for (const status of ["Paused", "Stopped"]) {
+            const progress = screen.getByText(status);
+            expect(progress).toHaveClass("font-bold");
+            expect(progress.closest(".line-through")).toBeNull();
+            expect(progress.closest("td")?.querySelector(".rounded-full")).toBeNull();
+        }
+        const activeProgress = screen.getByText("Alpha");
+        expect(activeProgress).not.toHaveClass("font-bold");
+        expect(activeProgress.closest("td")?.querySelector(".bg-green-600")).toBeInTheDocument();
+    }
 
     const students = () =>
         screen.getAllByRole("link", {name: / student$/}).map((link) => link.textContent);
