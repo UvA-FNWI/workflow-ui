@@ -29,18 +29,23 @@ function summarizeForm(
     label: (title: LocalString, fallback: string) => string,
 ) {
     const changes: string[] = [];
-    const add = (key: string, values?: Record<string, string>) => changes.push(t(key, values));
     if (differs(before.title, after.title)) {
-        add("authoring_change_title", {
-            before: label(before.title, before.name),
-            after: label(after.title, after.name),
-        });
+        changes.push(
+            t("authoring_change_title", {
+                ns: "form_editor",
+                before: label(before.title, before.name),
+                after: label(after.title, after.name),
+            }),
+        );
     }
     if (before.layout !== after.layout) {
-        add("authoring_change_layout", {
-            before: t(`authoring_form_layouts.${before.layout}`),
-            after: t(`authoring_form_layouts.${after.layout}`),
-        });
+        changes.push(
+            t("authoring_change_layout", {
+                ns: "form_editor",
+                before: t(`authoring_form_layouts.${before.layout}`),
+                after: t(`authoring_form_layouts.${after.layout}`),
+            }),
+        );
     }
 
     const oldPages = new Map(before.pages.filter((p) => p.isInCurrentForm).map((p) => [p.name, p]));
@@ -51,7 +56,7 @@ function summarizeForm(
             [...newPages.keys()].filter((name) => oldPages.has(name)),
         )
     ) {
-        add("authoring_change_tabs_reordered");
+        changes.push(t("authoring_change_tabs_reordered", {ns: "form_editor"}));
     }
 
     for (const name of new Set([...oldPages.keys(), ...newPages.keys()])) {
@@ -59,11 +64,22 @@ function summarizeForm(
         const page = newPages.get(name);
         const tab = page ? label(page.title, name) : label(oldPage!.title, name);
         if (!oldPage || !page) {
-            add(page ? "authoring_change_tab_added" : "authoring_change_tab_removed", {tab});
+            changes.push(
+                t(page ? "authoring_change_tab_added" : "authoring_change_tab_removed", {
+                    ns: "form_editor",
+                    tab,
+                }),
+            );
             continue;
         }
         if (differs(oldPage.title, page.title)) {
-            add("authoring_change_tab_title", {before: label(oldPage.title, name), after: tab});
+            changes.push(
+                t("authoring_change_tab_title", {
+                    ns: "form_editor",
+                    before: label(oldPage.title, name),
+                    after: tab,
+                }),
+            );
         }
 
         const oldQuestions = questions(oldPage);
@@ -75,32 +91,41 @@ function summarizeForm(
             const field = label(text.text, text.name);
 
             if (!oldQuestion || !question) {
-                add(
-                    question
-                        ? "authoring_change_question_added"
-                        : "authoring_change_question_removed",
-                    {tab, field},
+                changes.push(
+                    t(
+                        question
+                            ? "authoring_change_question_added"
+                            : "authoring_change_question_removed",
+                        {ns: "form_editor", tab, field},
+                    ),
                 );
                 continue;
             }
             if (oldQuestion.isRequired !== question.isRequired) {
-                add("authoring_change_required", {
-                    tab,
-                    field,
-                    before: t(
-                        oldQuestion.isRequired ? "required" : "authoring_optional",
-                    ).toLowerCase(),
-                    after: t(question.isRequired ? "required" : "authoring_optional").toLowerCase(),
-                });
+                changes.push(
+                    t("authoring_change_required", {
+                        ns: "form_editor",
+                        tab,
+                        field,
+                        before: t(oldQuestion.isRequired ? "required" : "authoring_optional", {
+                            ns: "form_editor",
+                        }).toLowerCase(),
+                        after: t(question.isRequired ? "required" : "authoring_optional", {
+                            ns: "form_editor",
+                        }).toLowerCase(),
+                    }),
+                );
             }
             if (differs({...oldQuestion, isRequired: false}, {...question, isRequired: false})) {
-                add("authoring_change_question_settings", {tab, field});
+                changes.push(
+                    t("authoring_change_question_settings", {ns: "form_editor", tab, field}),
+                );
             }
         }
 
         const blocks = (p: Page) => p.elements.filter((item) => item.kind !== "Question");
         if (differs(blocks(oldPage), blocks(page))) {
-            add("authoring_change_help", {tab});
+            changes.push(t("authoring_change_help", {ns: "form_editor", tab}));
         }
         const commonElementOrder = (p: Page) =>
             p.elements
@@ -113,7 +138,7 @@ function summarizeForm(
         const oldOrder = commonElementOrder(oldPage);
         const order = commonElementOrder(page);
         if (differs(oldOrder, order) && !differs(oldOrder.toSorted(), order.toSorted())) {
-            add("authoring_change_order", {tab});
+            changes.push(t("authoring_change_order", {ns: "form_editor", tab}));
         }
     }
 

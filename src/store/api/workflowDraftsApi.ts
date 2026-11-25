@@ -176,23 +176,28 @@ export const workflowDraftsApi = baseApi.injectEndpoints({
     }),
 });
 
-export function authoringErrorMessage(error: unknown, t: (key: string) => string) {
+export function authoringErrorMessage(
+    error: unknown,
+    t: (key: string, options: {ns: "form_editor"}) => string,
+) {
     const {error: code, message} =
         (error as {data?: {error?: string; message?: unknown}})?.data ?? {};
     switch (code) {
         case "GitHubUnavailable":
-            return t("authoring_error_connection");
+            return t("authoring_error_connection", {ns: "form_editor"});
         case "DraftHeadChanged":
         case "DraftProposalChanged":
-            return t("authoring_error_draft_changed");
+            return t("authoring_error_draft_changed", {ns: "form_editor"});
         case "DraftBaseChanged":
-            return t("authoring_error_workflow_changed");
+            return t("authoring_error_workflow_changed", {ns: "form_editor"});
         case "CannotPropose":
-            return t("authoring_error_cannot_submit");
+            return t("authoring_error_cannot_submit", {ns: "form_editor"});
         case "MergeBlocked":
-            return t("authoring_error_review_blocked");
+            return t("authoring_error_review_blocked", {ns: "form_editor"});
         default:
-            return typeof message === "string" ? message : t("authoring_error");
+            return typeof message === "string"
+                ? message
+                : t("authoring_error", {ns: "form_editor"});
     }
 }
 
