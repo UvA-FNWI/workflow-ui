@@ -42,7 +42,7 @@ export const PageElement = ({
 
     switch (element.kind) {
         case "Text":
-            if (!element.text) return null;
+            if (!l(element.text)) return null;
             return (
                 <div className="flex flex-col gap-2">
                     <MarkdownRenderer>{l(element.text)}</MarkdownRenderer>
