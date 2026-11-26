@@ -1,21 +1,47 @@
 import {
   CalendarDate,
+  CalendarDateTime,
   DateValue,
   fromDate,
   getLocalTimeZone,
   toCalendarDate,
 } from '@internationalized/date';
 
+export type DateGranularity = 'day' | 'hour' | 'minute' | 'second';
+
 /**
- * Converts a JavaScript Date to a react-aria CalendarDate
+ * Converts a JavaScript Date to a react-aria DateValue.
+ * Returns a CalendarDate for 'day' granularity, or a CalendarDateTime
+ * for 'hour' | 'minute' | 'second' granularity.
  */
 export function dateToDateValue(
-  date: Date | null | undefined
-): CalendarDate | null {
+  date: Date | null | undefined,
+  granularity: DateGranularity = 'day'
+): DateValue | null {
   if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
     return null;
   }
-  return toCalendarDate(fromDate(date, getLocalTimeZone()));
+
+  const calendarDate = toCalendarDate(fromDate(date, getLocalTimeZone()));
+
+  if (granularity === 'day') {
+    return calendarDate;
+  }
+
+  return new CalendarDateTime(
+    calendarDate.year,
+    calendarDate.month,
+    calendarDate.day,
+    granularity === 'hour' ||
+      granularity === 'minute' ||
+      granularity === 'second'
+      ? date.getHours()
+      : 0,
+    granularity === 'minute' || granularity === 'second'
+      ? date.getMinutes()
+      : 0,
+    granularity === 'second' ? date.getSeconds() : 0
+  );
 }
 
 /**
@@ -42,8 +68,8 @@ export interface DateRange {
  * Internal DateValue range type
  */
 export interface DateValueRange {
-  start: CalendarDate;
-  end: CalendarDate;
+  start: DateValue;
+  end: DateValue;
 }
 
 /**

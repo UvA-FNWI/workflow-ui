@@ -15,7 +15,7 @@ import {
 } from "@uva-fnwi/datanose-ui";
 import {parseISO} from "date-fns";
 
-import {DatePicker} from "~/components/Datepicker/Datepicker";
+import {DatePicker, DateTimePicker} from "~/components/Datepicker/Datepicker";
 import {EmailInput} from "~/components/inputs/EmailInput";
 import {PhoneInput} from "~/components/inputs/PhoneInput";
 import {ReferenceControl} from "~/components/instance/ReferenceControl.tsx";
@@ -213,6 +213,16 @@ export const InputControl = ({
     if (question.type === "Date") {
         return (
             <DatePicker
+                value={toDate(value)}
+                onChange={(newValue) => debouncedChange(newValue)}
+                isValid={isValid}
+                errorMessage={errorMessage}
+            />
+        );
+    }
+    if (question.type === "DateTime") {
+        return (
+            <DateTimePicker
                 value={toDate(value)}
                 onChange={(newValue) => debouncedChange(newValue)}
                 isValid={isValid}
