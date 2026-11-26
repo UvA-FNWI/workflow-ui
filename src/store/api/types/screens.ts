@@ -50,6 +50,7 @@ export type ScreenColumn = {
     columnType: ScreenColumnType;
     link: boolean;
     dataType: DataType;
+    groups?: string[];
 };
 
 export type ScreenRow = {
