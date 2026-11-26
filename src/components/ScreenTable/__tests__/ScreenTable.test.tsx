@@ -82,9 +82,7 @@ it.each([
     );
 
     for (const status of ["Paused", "Stopped"]) {
-        expect(
-            screen.getByRole("link", {name: `${status} student`}).closest(".line-through"),
-        ).toBeNull();
+        expect(screen.getByText(`${status} student`).closest(".line-through")).toBeNull();
         for (const field of ["title", "course"]) {
             expect(!!screen.getByText(`${status} ${field}`).closest(".line-through")).toBe(
                 status === "Stopped",
