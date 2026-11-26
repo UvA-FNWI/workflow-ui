@@ -7,6 +7,7 @@ import {DataTable} from "~/components/Table";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {PersonalInstance} from "~/store/api/types/personal";
 import type {PersonalRoleGroup} from "~/utils/personalInstances";
+import {isStopped} from "~/utils/progress";
 
 type PersonalDisclosureProps = {
     title: ReactNode;
@@ -65,6 +66,12 @@ export function PersonalDisclosure({
                                         columns={columns}
                                         getRowId={(instance) => instance.id}
                                         globalFilter={search}
+                                        placeLast={(instance) =>
+                                            isStopped(
+                                                instance.workflowStopped,
+                                                instance.progress.eventId,
+                                            )
+                                        }
                                         emptyNode={
                                             <Text className="txt-center px-4 pb-4">
                                                 {personOverview

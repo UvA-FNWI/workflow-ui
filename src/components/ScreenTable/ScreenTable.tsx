@@ -9,7 +9,7 @@ import {TableStaffCell} from "~/components/Table/TableStaffCell.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import type {ScreenColumn, ScreenRelatedUser, ScreenRow} from "~/store/api/types/screens";
-import {isProgressInformation} from "~/utils/progress";
+import {isProgressInformation, isStopped} from "~/utils/progress";
 import {formatTableCellValue, getComparableTableCellValue} from "~/utils/tableCellValues";
 
 type ScreenTableProps = {
@@ -20,6 +20,10 @@ type ScreenTableProps = {
     onRowSelectionChange?: OnChangeFn<RowSelectionState>;
     showInstanceLink?: boolean;
 };
+
+function isStoppedRow({stoppedProgress}: ScreenRow): boolean {
+    return isStopped(stoppedProgress != null, stoppedProgress?.eventId);
+}
 
 export const ScreenTable = ({
     columns,
@@ -64,33 +68,49 @@ export const ScreenTable = ({
                 },
                 header: () => l(col.title),
                 cell: (info) => {
-                    const value = info.row.original.values[col.id];
+                    const row = info.row.original;
+                    const value = row.values[col.id];
+                    const strikeThrough =
+                        isStoppedRow(row) &&
+                        col.property !== "Student.DisplayName" &&
+                        col.columnType !== "CurrentStep";
+                    const textClassName = strikeThrough ? "line-through" : undefined;
                     if (col.columnType === "RelatedUsers") {
                         const users = value as ScreenRelatedUser[];
                         if (!users.length) {
-                            return <TableTextCell>—</TableTextCell>;
+                            return <TableTextCell className={textClassName}>—</TableTextCell>;
                         }
-                        return <TableStaffCell users={users} />;
+                        return <TableStaffCell users={users} textClassName={textClassName} />;
                     }
                     const formattedValue = formatTableCellValue(value, col.dataType, i18n.language);
 
                     // Custom formatting for the progress column
                     if (col.columnType === "CurrentStep" && col.dataType === "Object") {
                         if (isProgressInformation(value)) {
-                            return <TableProgressCell progress={value} />;
+                            return (
+                                <TableProgressCell
+                                    progress={value}
+                                    workflowStopped={row.stoppedProgress != null}
+                                />
+                            );
                         }
                     }
 
                     if (col.link) {
-                        const rowId = info.row.original.id;
                         return (
-                            <TableLinkCell to={`/instance/${rowId}`}>
-                                {formattedValue}
+                            <TableLinkCell to={`/instance/${row.id}`}>
+                                {strikeThrough ? (
+                                    <span className="line-through">{formattedValue}</span>
+                                ) : (
+                                    formattedValue
+                                )}
                             </TableLinkCell>
                         );
                     }
 
-                    return <TableTextCell>{formattedValue}</TableTextCell>;
+                    return (
+                        <TableTextCell className={textClassName}>{formattedValue}</TableTextCell>
+                    );
                 },
                 enableSorting: true,
             }));
@@ -152,6 +172,7 @@ export const ScreenTable = ({
             data={filteredRows}
             columns={tableColumns}
             getRowId={(row) => row.id}
+            placeLast={isStoppedRow}
             rowSelection={rowSelection}
             onRowSelectionChange={onRowSelectionChange}
             stickyFirstColumn={Boolean(onRowSelectionChange)}

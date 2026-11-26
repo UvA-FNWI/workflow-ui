@@ -79,7 +79,7 @@ describe("groupPersonalInstancesByRole", () => {
     });
 });
 
-it("partitions stopped instances before checking the current step", () => {
+it("groups all instances by whether they have a current step", () => {
     const active = {...instance("active", ["Student"]), workflowStopped: false};
     const completed = instance("completed", ["Student"], "Project", null);
     const stopped = {...instance("stopped", ["Student"]), workflowStopped: true};
@@ -88,8 +88,7 @@ it("partitions stopped instances before checking the current step", () => {
     expect(
         partitionPersonalInstancesByStatus([active, stopped, completed, stoppedWithoutStep]),
     ).toEqual({
-        active: [active],
-        completed: [completed],
-        stopped: [stopped, stoppedWithoutStep],
+        active: [active, stopped],
+        completed: [completed, stoppedWithoutStep],
     });
 });

@@ -15,6 +15,7 @@ type Props = {
     onSubmit: () => void;
     disabled?: boolean;
     size?: "small" | "medium" | "large";
+    text?: string;
 };
 
 export const FormSubmitButton = ({
@@ -23,6 +24,7 @@ export const FormSubmitButton = ({
     onSubmit,
     disabled,
     size = "medium",
+    text,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const toast = useToast();
@@ -69,7 +71,7 @@ export const FormSubmitButton = ({
                 isLoading={isLoading}
                 onClick={handleClick}
             >
-                {hasConfirmationModal ? t("review_and_submit") : t("submit")}
+                {hasConfirmationModal ? t("review_and_submit") : (text ?? t("submit"))}
             </Button>
 
             {hasConfirmationModal && (
