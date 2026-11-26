@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
 import {useParams} from "react-router";
 
@@ -24,7 +24,7 @@ import {useDocumentTitle} from "~/hooks/useDocumentTitle.ts";
 import {useTranslate} from "~/hooks/useTranslate";
 import {PersonalContent} from "~/pages/Personal";
 import {useGetScreenQuery} from "~/store/api/screensApi";
-import type {BulkAction, ScreenRow} from "~/store/api/types/screens";
+import type {BulkAction, ScreenColumn, ScreenRow} from "~/store/api/types/screens";
 
 function getScreenTabStorageKey(workflowDefinition = "", screenName = "") {
     return ["workflow", "screen", workflowDefinition, screenName, "active-tab"]
@@ -48,6 +48,7 @@ const ScreenContent = () => {
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [bulkSelection, setBulkSelection] = useState<{
         action: BulkAction;
+        columns: ScreenColumn[];
         rows: ScreenRow[];
     } | null>(null);
     const {activeIndex: activeTab, onTabChange: setActiveTab} = useTabsWithLocalStorage({
@@ -57,18 +58,28 @@ const ScreenContent = () => {
 
     useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
 
-    const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
+    const activeGroup = screen?.groups?.[activeTab];
+    const rows = activeGroup?.rows ?? screen?.rows ?? [];
+    const screenColumns = screen?.columns;
+    const activeGroupName = activeGroup?.name;
+    const columns = useMemo(
+        () =>
+            screenColumns?.filter(
+                ({groups}) =>
+                    !groups?.length ||
+                    (activeGroupName !== undefined && groups.includes(activeGroupName)),
+            ) ?? [],
+        [screenColumns, activeGroupName],
+    );
     const bulkActions = screen?.bulkActions ?? [];
-    const selectedRows = filterScreenRows(
-        screen?.columns ?? [],
-        rows,
-        search,
-        i18n.language,
-    ).filter((row) => rowSelection[row.id]);
+    const selectedRows = filterScreenRows(columns, rows, search, i18n.language).filter(
+        (row) => rowSelection[row.id],
+    );
     const toolbarBulkProps = {
         bulkActions,
         selectedCount: selectedRows.length,
-        onBulkAction: (action: BulkAction) => setBulkSelection({action, rows: selectedRows}),
+        onBulkAction: (action: BulkAction) =>
+            setBulkSelection({action, columns, rows: selectedRows}),
     };
     const selectionProps = bulkActions.length
         ? {rowSelection, onRowSelectionChange: setRowSelection}
@@ -128,12 +139,14 @@ const ScreenContent = () => {
                         <TabPanels>
                             {screen.groups.map((group) => (
                                 <TabPanel key={group.name}>
-                                    <ScreenTable
-                                        columns={screen.columns}
-                                        rows={group.rows}
-                                        globalFilter={search}
-                                        {...selectionProps}
-                                    />
+                                    {group === activeGroup && (
+                                        <ScreenTable
+                                            columns={columns}
+                                            rows={rows}
+                                            globalFilter={search}
+                                            {...selectionProps}
+                                        />
+                                    )}
                                 </TabPanel>
                             ))}
                         </TabPanels>
@@ -142,8 +155,8 @@ const ScreenContent = () => {
                     <div className="flex flex-col gap-4">
                         {toolbar}
                         <ScreenTable
-                            columns={screen.columns}
-                            rows={screen.rows}
+                            columns={columns}
+                            rows={rows}
                             globalFilter={search}
                             {...selectionProps}
                         />
@@ -155,7 +168,7 @@ const ScreenContent = () => {
                     workflowDefinition={workflowDefinition}
                     screenName={screenName}
                     action={bulkSelection.action}
-                    columns={screen.columns}
+                    columns={bulkSelection.columns}
                     rows={bulkSelection.rows}
                     onClose={() => setBulkSelection(null)}
                     onComplete={() => setRowSelection({})}

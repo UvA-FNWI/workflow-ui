@@ -223,6 +223,52 @@ it("clears selection when changing tabs and when returning to the original tab",
     expect(screen.getByRole("button", {name: "Approve proposals"})).toBeDisabled();
 });
 
+it("uses each tab's columns for display, search, and bulk previews", async () => {
+    const [nameColumn] = data.columns;
+    nameColumn.groups = [];
+    data.columns.push(
+        {...nameColumn, id: 1, title: {en: "Grade", nl: "Cijfer"}, groups: ["completed"]},
+        {
+            ...nameColumn,
+            id: 2,
+            title: {en: "Supervisor", nl: "Begeleider"},
+            groups: ["active", "completed"],
+        },
+        {...nameColumn, id: 3, title: {en: "Proposal", nl: "Voorstel"}, groups: ["active"]},
+    );
+    data.groups = [
+        {name: "active", title: {en: "Active", nl: "Actief"}, rows: [data.rows[0]]},
+        {name: "completed", title: {en: "Completed", nl: "Afgerond"}, rows: [data.rows[1]]},
+        {name: "archived", title: {en: "Archived", nl: "Gearchiveerd"}, rows: []},
+    ];
+    data.rows[0].values[1] = "Passed";
+    data.rows[1].values[1] = "Passed";
+    data.rows = [];
+    await openScreen();
+
+    expect(screen.getByRole("columnheader", {name: "Name"})).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", {name: "Supervisor"})).toBeInTheDocument();
+    expect(screen.queryByRole("columnheader", {name: "Grade"})).not.toBeInTheDocument();
+    fireEvent.change(screen.getByRole("textbox", {name: "Type a search query"}), {
+        target: {value: "Passed"},
+    });
+    expect(screen.queryByText("Alice")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", {name: /Archived/}));
+    expect(screen.getByRole("columnheader", {name: "Name"})).toBeInTheDocument();
+    expect(screen.queryByRole("columnheader", {name: "Supervisor"})).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", {name: /Completed/}));
+    expect(screen.getByRole("columnheader", {name: "Grade"})).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", {name: "Supervisor"})).toBeInTheDocument();
+    expect(screen.getByText("Bob")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("checkbox", {name: "Select all rows"}));
+    fireEvent.click(screen.getByRole("button", {name: "Approve proposals"}));
+    const modal = within(await screen.findByRole("dialog"));
+    expect(await modal.findByRole("columnheader", {name: "Grade"})).toBeInTheDocument();
+    expect(modal.queryByRole("columnheader", {name: "Proposal"})).not.toBeInTheDocument();
+});
+
 it("does not offer a bulk action for rows hidden by a live refresh", async () => {
     const {store} = await openScreen();
     fireEvent.change(screen.getByRole("textbox", {name: "Type a search query"}), {
