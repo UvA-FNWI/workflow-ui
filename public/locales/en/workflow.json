@@ -113,7 +113,7 @@
     "empty_step": "Nothing has been submitted yet.",
     "messages": {
       "add": "Add {{term}}",
-      "close_conversation": "Close",
+      "close_conversation": "Archive thread",
       "closed": "Closed",
       "collapse_conversation": "Collapse",
       "default_term": "comment",
@@ -124,7 +124,7 @@
       "field_modal_title": "{{termPluralTitle}} on {{field}}",
       "load_error": "Couldn’t load {{termPlural}}.",
       "new_conversation_placeholder": "Add {{term}}",
-      "reopen_conversation": "Reopen",
+      "reopen_conversation": "Restore thread",
       "replies_heading": "Replies",
       "reply": "Reply",
       "reply_placeholder": "Reply to {{term}}",

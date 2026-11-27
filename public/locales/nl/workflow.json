@@ -113,7 +113,7 @@
     "empty_step": "Er is nog niets ingeleverd.",
     "messages": {
       "add": "{{termTitle}} toevoegen",
-      "close_conversation": "Sluiten",
+      "close_conversation": "Gesprek archiveren",
       "closed": "Gesloten",
       "collapse_conversation": "Inklappen",
       "default_term": "notitie",
@@ -124,7 +124,7 @@
       "field_modal_title": "{{termPluralTitle}} bij {{field}}",
       "load_error": "Kon {{termPlural}} niet laden.",
       "new_conversation_placeholder": "{{termTitle}} toevoegen",
-      "reopen_conversation": "Heropenen",
+      "reopen_conversation": "Gesprek heropenen",
       "replies_heading": "Reacties",
       "reply": "Beantwoorden",
       "reply_placeholder": "Reageren op {{term}}",
