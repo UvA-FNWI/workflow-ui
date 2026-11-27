@@ -1,4 +1,3 @@
-import type {LocalString} from "~/hooks/useTranslate";
 import {useTranslate} from "~/hooks/useTranslate";
 import type {OverviewUiSettings} from "~/store/api/types/settings";
 
@@ -14,8 +13,7 @@ export function useOverviewCopy(overview?: OverviewUiSettings | null) {
     const configuredSubtitle = overview?.subtitle ? l(overview.subtitle) : undefined;
 
     return {
-        pageTitle:
-            (overview?.pageTitle && l(overview.pageTitle)) || t("overview.page_title"),
+        pageTitle: (overview?.pageTitle && l(overview.pageTitle)) || t("overview.page_title"),
         title: (overview?.title && l(overview.title)) || t("overview.hub_title"),
         /** Shown under the page title when set in Settings.yaml; omit the key to hide. */
         subtitle: configuredSubtitle,

@@ -217,9 +217,7 @@ it("keeps the committed search view until typing pauses", async () => {
     expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
     expect(screen.getByRole("tab", {name: coordinatorTabName})).toBeVisible();
-    expect(
-        screen.getByRole("heading", {level: 1, name: hubOverviewTitle}),
-    ).toBeVisible();
+    expect(screen.getByRole("heading", {level: 1, name: hubOverviewTitle})).toBeVisible();
     act(() => vi.advanceTimersByTime(499));
     expect(router.state.location.search).toBe("?version=pilot");
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
@@ -283,9 +281,7 @@ it("keeps the committed search view until typing pauses", async () => {
     });
     expect(router.state.location.search).toBe("?version=pilot");
     expect(screen.getByRole("tab", {name: coordinatorTabName})).toBeVisible();
-    expect(
-        screen.getByRole("heading", {level: 1, name: hubOverviewTitle}),
-    ).toBeVisible();
+    expect(screen.getByRole("heading", {level: 1, name: hubOverviewTitle})).toBeVisible();
     expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
 });
 

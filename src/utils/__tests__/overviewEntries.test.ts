@@ -42,9 +42,13 @@ describe("buildOverviewEntries", () => {
                     makeScreen("Second", {title: {en: "Beta B", nl: "Beta B"}, index: 2}),
                     makeScreen("First", {title: {en: "Beta A", nl: "Beta A"}, index: 1}),
                 ]),
-                definition("Alpha", [makeScreen("Main", {title: {en: "Alpha main", nl: "Alpha main"}})], {
-                    index: 0,
-                }),
+                definition(
+                    "Alpha",
+                    [makeScreen("Main", {title: {en: "Alpha main", nl: "Alpha main"}})],
+                    {
+                        index: 0,
+                    },
+                ),
             ],
             l,
         );

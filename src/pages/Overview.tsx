@@ -1,6 +1,6 @@
 import {Fragment, useEffect, useMemo} from "react";
 
-import {Card, Icon, SearchInput, Separator, Text, type IconType} from "@uva-fnwi/datanose-ui";
+import {Card, Icon, type IconType, SearchInput, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {HomeSearchResults} from "~/components/Home/HomeSearchResults";
 import {HomePage} from "~/components/HomePage";
