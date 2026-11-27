@@ -164,13 +164,8 @@
   "next": "Volgende",
   "optional": "* Niet verplicht",
   "overview": {
-    "choose_course_title": "Kies je vak",
     "coordinator_view": "Coördinatorweergave",
-    "default_no_access": "Je hebt geen toegang tot registers",
-    "default_subtitle": "Kies een register om te openen.",
-    "default_title": "Registers",
     "load_error": "De startpagina kon niet worden geladen. Probeer het later opnieuw.",
-    "page_title": "Overzicht",
     "personal_view": "Persoonlijke weergave"
   },
   "previous": "Vorige",

@@ -87,7 +87,6 @@
     "title": "History",
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
-
   "home": "Home",
   "home_search": {
     "empty": "No people or workflows found.",
@@ -165,13 +164,8 @@
   "next": "Next",
   "optional": "* Not required",
   "overview": {
-    "choose_course_title": "Choose your course",
     "coordinator_view": "Coordinator view",
-    "default_no_access": "You do not have access to any registers",
-    "default_subtitle": "Select a register to open.",
-    "default_title": "Registers",
     "load_error": "Could not load the home page. Please try again later.",
-    "page_title": "Overview",
     "personal_view": "Personal view"
   },
   "previous": "Previous",
