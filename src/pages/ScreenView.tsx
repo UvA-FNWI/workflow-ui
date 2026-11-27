@@ -55,7 +55,9 @@ const ScreenContent = () => {
         storageKey: getScreenTabStorageKey(workflowDefinition, screenName),
     });
 
-    useDocumentTitle(screen ? l(screen.workflowDefinition.title) : null);
+    useDocumentTitle(
+        screen ? (screen.title ? l(screen.title) : l(screen.workflowDefinition.title)) : null,
+    );
 
     const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
     const bulkActions = screen?.bulkActions ?? [];
@@ -96,7 +98,7 @@ const ScreenContent = () => {
             {...toolbarBulkProps}
         />
     );
-    const title = l(screen.workflowDefinition.title);
+    const title = screen.title ? l(screen.title) : l(screen.workflowDefinition.title);
     return (
         <HomePage
             title={title}

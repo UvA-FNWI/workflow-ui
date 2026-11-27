@@ -14,15 +14,36 @@ import Personal from "~/pages/Personal";
 import PersonOverview from "~/pages/PersonOverview";
 import type {UserDto} from "~/store/api/types/users";
 
-const {search, getPerson} = vi.hoisted(() => ({
+const {search, getPerson, getAccessibleDefinitions} = vi.hoisted(() => ({
     search: vi.fn(),
     getPerson: vi.fn(),
+    getAccessibleDefinitions: vi.fn(),
+}));
+
+vi.mock("~/store/api/workflowDefinitionsApi", () => ({
+    useGetAccessibleWorkflowDefinitionsQuery: () => getAccessibleDefinitions(),
 }));
 
 vi.mock("~/store/api/personalApi", () => ({
     useGetPersonInstancesQuery: getPerson,
     useGetPersonalInstancesQuery: () => ({}),
     useSearchUsersQuery: search,
+}));
+
+const hubOverviewTitle = "Choose your course";
+
+vi.mock("~/store/api/settingsApi", () => ({
+    useGetSettingsQuery: () => ({
+        data: {
+            ui: {
+                overview: {
+                    title: {en: hubOverviewTitle, nl: "Kies je vak"},
+                },
+            },
+        },
+        isLoading: false,
+        isError: false,
+    }),
 }));
 
 const person: UserDto = {
@@ -43,17 +64,22 @@ const availableDefinitions = [
         name: "project",
         title: {en: "Ada Research Project", nl: "Onderzoeksproject"},
         titlePlural: {en: "Research projects", nl: "Onderzoeksprojecten"},
-        screens: ["overview", "archive"],
+        screens: [
+            {name: "overview", title: null, description: null, index: 0},
+            {name: "archive", title: null, description: null, index: 1},
+        ],
     },
     {
         name: "thesis",
         title: {en: "Bachelor Thesis", nl: "Bachelorscriptie"},
         titlePlural: {en: "Bachelor theses", nl: "Bachelorscripties"},
-        screens: ["overview"],
+        screens: [{name: "overview", title: null, description: null, index: 0}],
     },
 ].map((definition) => ({
     ...definition,
+    description: null,
     index: null,
+    icon: null,
     isAlwaysVisible: false,
     inheritsFrom: null,
     isEmbedded: false,
@@ -72,6 +98,11 @@ async function renderHome(
             hasMore: false,
         },
     }));
+    getAccessibleDefinitions.mockReturnValue({
+        data: definitions,
+        isLoading: false,
+        isError: false,
+    });
     getPerson.mockReturnValue({
         currentData: {
             person,
@@ -186,7 +217,7 @@ it("keeps the committed search view until typing pauses", async () => {
     expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
     expect(screen.getByRole("tab", {name: coordinatorTabName})).toBeVisible();
-    expect(screen.getByRole("heading", {level: 1, name: "Choose your course"})).toBeVisible();
+    expect(screen.getByRole("heading", {level: 1, name: hubOverviewTitle})).toBeVisible();
     act(() => vi.advanceTimersByTime(499));
     expect(router.state.location.search).toBe("?version=pilot");
     expect(screen.queryByText(workflow.home_search.query_length)).not.toBeInTheDocument();
@@ -250,7 +281,7 @@ it("keeps the committed search view until typing pauses", async () => {
     });
     expect(router.state.location.search).toBe("?version=pilot");
     expect(screen.getByRole("tab", {name: coordinatorTabName})).toBeVisible();
-    expect(screen.getByRole("heading", {level: 1, name: "Choose your course"})).toBeVisible();
+    expect(screen.getByRole("heading", {level: 1, name: hubOverviewTitle})).toBeVisible();
     expect(screen.queryByText(workflow.home_search.loading)).not.toBeInTheDocument();
 });
 
@@ -279,7 +310,7 @@ it("searches from home and restores the query after opening a person", async () 
     expect(router.state.location.search).toBe("?version=pilot&search=ada%40example.com");
     expect(screen.getByRole("link", {name: /Ada Example/})).toBeVisible();
     fireEvent.change(restoredInput, {target: {value: ""}});
-    expect(await screen.findByRole("link", {name: /^Bachelor Thesis/})).toBeVisible();
+    expect(await screen.findByRole("link", {name: /Bachelor theses/i})).toBeVisible();
     expect(router.state.location.search).toBe("?version=pilot");
 });
 

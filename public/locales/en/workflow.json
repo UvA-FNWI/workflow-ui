@@ -23,6 +23,7 @@
     "read_only_description": "All properties of this instance. You have read-only access.",
     "title": "Data"
   },
+  "app_name": "Workflow",
   "are_you_sure": "Are you sure?",
   "change_selection": "Change selection",
   "correspondence": {
@@ -86,7 +87,6 @@
     "title": "History",
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
-
   "home": "Home",
   "home_search": {
     "empty": "No people or workflows found.",
@@ -164,10 +164,12 @@
   "next": "Next",
   "optional": "* Not required",
   "overview": {
-    "choose_course_title": "Choose your course",
-    "coordinator_view": "All courses",
+    "coordinator_view": "Coordinator view",
+    "hub_title": "Registers",
     "load_error": "Could not load the home page. Please try again later.",
-    "personal_view": "My overview"
+    "no_access": "You do not have access to any registers.",
+    "page_title": "Overview",
+    "personal_view": "Personal view"
   },
   "previous": "Previous",
   "progress": {

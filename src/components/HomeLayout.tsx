@@ -31,7 +31,7 @@ export function HomeLayout() {
     const {data: personal, isLoading: isPersonalLoading} = useGetPersonalInstancesQuery();
     const screens =
         definitions?.flatMap((definition) =>
-            definition.screens.map((name) => `/screens/${definition.name}/${name}`),
+            definition.screens.map((screen) => `/screens/${definition.name}/${screen.name}`),
         ) ?? [];
     const hasCoordinatorView = screens.length > 0;
     const hasPersonalView = (personal?.roles.length ?? 0) > 0;

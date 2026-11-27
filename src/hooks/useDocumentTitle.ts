@@ -1,18 +1,15 @@
 import {useEffect} from "react";
 
-const APP_NAME = "Milestones";
+import {useAppName} from "~/hooks/useAppName";
 
 /**
- * Sets the browser tab title to "Milestones | <title>".
- * Falls back to just "Milestones" when title is empty/undefined (e.g. while loading).
- *
- * @param title - The page-specific part of the title.
- *
- * @example
- * useDocumentTitle("Develop"); // -> "Milestones | Develop"
+ * Sets the browser tab title to "<appName> | <title>".
+ * Falls back to just the app name when title is empty/undefined (e.g. while loading).
  */
 export function useDocumentTitle(title?: string | null) {
+    const appName = useAppName();
+
     useEffect(() => {
-        document.title = title ? `${APP_NAME} | ${title}` : APP_NAME;
-    }, [title]);
+        document.title = title ? `${appName} | ${title}` : appName;
+    }, [appName, title]);
 }

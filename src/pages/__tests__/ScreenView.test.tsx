@@ -10,6 +10,8 @@ vi.mock("~/hooks/useTranslate", () => ({
     useTranslate: () => ({l: (value: {en: string}) => value.en, i18n: {language: "en"}}),
 }));
 
+vi.mock("~/hooks/useDocumentTitle", () => ({useDocumentTitle: () => {}}));
+
 vi.mock("~/store/api/screensApi", () => ({
     useGetScreenQuery: () => ({
         currentData: {

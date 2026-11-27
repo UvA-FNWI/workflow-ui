@@ -5,19 +5,26 @@ import {useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 
 export type WorkflowScreen = {
-    definition: Pick<WorkflowDefinition, "name" | "title" | "titlePlural" | "screens">;
+    definition: Pick<
+        WorkflowDefinition,
+        "name" | "title" | "titlePlural" | "description" | "screens"
+    >;
     name: string;
 };
 
 export function ScreenLink({definition, name}: WorkflowScreen) {
     const {l} = useTranslate("workflow");
+    const screen = definition.screens.find((entry) => entry.name === name);
 
     return (
         <HomeListLink
             to={`/screens/${definition.name}/${name}`}
             title={l(definition.title) || definition.name}
             subtitle={
-                definition.screens.length > 1 ? name : l(definition.titlePlural) || definition.name
+                (screen?.title && l(screen.title)) ||
+                (definition.screens.length > 1
+                    ? name
+                    : l(definition.titlePlural) || definition.name)
             }
             icon={<Icon name="graduate-cap-solid" decorative />}
             iconClassName="bg-grey-100 text-grey-700"

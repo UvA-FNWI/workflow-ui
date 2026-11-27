@@ -28,8 +28,17 @@ vi.mock("~/store/store", () => ({
         select({homeNavigation}),
 }));
 
-const project = {name: "project", screens: ["overview", "other"]};
-const thesis = {name: "thesis", screens: ["overview"]};
+const workflowScreen = (name: string, index = 0) => ({
+    name,
+    title: null,
+    description: null,
+    index,
+});
+const project = {
+    name: "project",
+    screens: [workflowScreen("overview"), workflowScreen("other", 1)],
+};
+const thesis = {name: "thesis", screens: [workflowScreen("overview")]};
 const personal = {
     person: {
         id: "user-1",
@@ -143,7 +152,7 @@ it("keeps the outlet visible during background refetches", () => {
 // Home remains available to anyone with coordinator screens.
 it.each([
     {definitions: [], target: "/personal"},
-    {definitions: [{name: "project", screens: []}], target: "/personal"},
+    {definitions: [{name: "project", screens: [] as {name: string}[]}], target: "/personal"},
     {definitions: [project], target: "/"},
     {definitions: [project, thesis], target: "/"},
 ])("routes home to $target for the available workflows", async ({definitions, target}) => {
@@ -160,9 +169,9 @@ it.each([
 
 // Switching roles only makes sense when the user has both coordinator screens and personal roles.
 it.each([
-    {screens: ["overview"], roles: personal.roles, visible: true},
+    {screens: [workflowScreen("overview")], roles: personal.roles, visible: true},
     {screens: [], roles: personal.roles, visible: false},
-    {screens: ["overview"], roles: [], visible: false},
+    {screens: [workflowScreen("overview")], roles: [], visible: false},
 ])("shows role tabs only when both views are available ($visible)", ({screens, roles, visible}) => {
     getDefinitions.mockReturnValue({data: [{...project, screens}], isError: false});
     getPersonal.mockReturnValue({data: {...personal, roles}, isLoading: false});

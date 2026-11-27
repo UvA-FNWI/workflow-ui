@@ -87,6 +87,8 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
         name: "Project",
         title: null,
         titlePlural: {en: "Projects", nl: "Projecten"},
+        description: null,
+        icon: null,
         index: null,
         isAlwaysVisible: true,
         inheritsFrom: null,

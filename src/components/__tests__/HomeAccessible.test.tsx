@@ -2,7 +2,7 @@ import {I18nextProvider} from "react-i18next";
 import {Provider} from "react-redux";
 import {createMemoryRouter, RouterProvider} from "react-router";
 
-import {cleanup, fireEvent, render, screen} from "@testing-library/react";
+import {cleanup, render, screen, waitFor} from "@testing-library/react";
 import {createInstance} from "i18next";
 import {afterEach, expect, it, vi} from "vitest";
 
@@ -18,7 +18,10 @@ import type {UserDto} from "~/store/api/types/users";
 import {clearCurrentUser, setAccessToken} from "~/store/authSlice";
 import {store} from "~/store/store";
 
-vi.mock("~/helpers/Environment", () => ({VITE_WEBAPI_URL: "http://api.test"}));
+vi.mock("~/helpers/Environment", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("~/helpers/Environment")>();
+    return {...actual, VITE_WEBAPI_URL: "http://api.test"};
+});
 
 afterEach(() => {
     cleanup();
@@ -28,13 +31,29 @@ afterEach(() => {
     vi.unstubAllGlobals();
 });
 
+const hubProject = (screenCount: 1 | 2) => ({
+    name: "project",
+    title: {en: "Project"},
+    titlePlural: {en: "Projects"},
+    description: null,
+    index: null,
+    icon: null,
+    isAlwaysVisible: false,
+    inheritsFrom: null,
+    isEmbedded: false,
+    canCreateInstance: false,
+    isPropertyOnly: false,
+    properties: [],
+    screens:
+        screenCount === 1
+            ? [{name: "overview", title: null, description: null, index: 0}]
+            : [
+                  {name: "overview", title: null, description: null, index: 0},
+                  {name: "archive", title: null, description: null, index: 1},
+              ],
+});
+
 it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
-    const project = {
-        name: "project",
-        title: {en: "Project"},
-        titlePlural: {en: "Projects"},
-        screens: ["overview"],
-    };
     const person: UserDto = {
         id: "person-1",
         displayName: "Ada Example",
@@ -59,13 +78,15 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
             case "/Users/Me":
                 return Response.json(currentUser);
             case "/WorkflowDefinitions/Accessible":
-                return Response.json(count ? [project] : []);
+                return Response.json(count ? [hubProject(1)] : []);
             case "/Personal/Me":
                 return Response.json({person: currentUser, roles: [], instances: []});
             case "/Personal/person-1":
                 return Response.json({person, roles: [], instances: []});
             case "/Personal/Search":
                 return Response.json({people: [person], hasMore: false});
+            case "/Settings":
+                return Response.json({});
             default:
                 throw new Error(`Unexpected request to ${request.url}`);
         }
@@ -89,7 +110,7 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
             },
             {path: "/personal/:personId", element: <PersonOverview />},
         ],
-        {initialEntries: ["/?search=ada&version=2026"]},
+        {initialEntries: ["/?version=2026"]},
     );
 
     store.dispatch(setAccessToken("test-token"));
@@ -104,31 +125,18 @@ it.each([0, 1])("routes using the %i accessible workflows", async (count) => {
     if (count === 0) {
         expect(await screen.findByText(screens.empty_title)).toBeVisible();
         expect(router.state.location.pathname).toBe("/personal");
-        expect(screen.queryByRole("search")).not.toBeInTheDocument();
         expect(
             fetch.mock.calls.some(
-                ([request]) => new URL(request.url).pathname === "/Personal/Search",
+                ([request]) => new URL(request.url).pathname === "/WorkflowDefinitions/Accessible",
             ),
-        ).toBe(false);
+        ).toBe(true);
         return;
     }
 
-    const personLink = await screen.findByRole("link", {name: /^Ada Example/});
-    expect(router.state.location.pathname).toBe("/");
-    expect(router.state.location.search).toBe("?search=ada&version=2026");
-
-    fireEvent.click(personLink);
-    expect(await screen.findByRole("heading", {name: person.displayName})).toBeVisible();
-    fireEvent.click(screen.getByRole("link", {name: screens.person.back_to_search}));
-
-    const searchInput = await screen.findByRole("textbox", {name: workflow.home_search.label});
-    expect(searchInput).toHaveValue("ada");
-    fireEvent.change(searchInput, {
-        target: {value: ""},
+    await waitFor(() => {
+        expect(router.state.location.pathname).toBe("/screens/project/overview");
     });
-    fireEvent.click(await screen.findByRole("link", {name: /^Project/}));
-    const homeLink = await screen.findByRole("link", {name: workflow.home});
-    expect(homeLink).toHaveAttribute("href", "/?version=2026");
+    expect(await screen.findByText("Screen content")).toBeVisible();
 });
 
 it("shows a home error after one Accessible request when the API is down", async () => {
