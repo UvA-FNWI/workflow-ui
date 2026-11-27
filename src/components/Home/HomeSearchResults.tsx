@@ -16,16 +16,23 @@ export function HomeSearchResults({
     const {currentData, isFetching, isError} = useSearchUsersQuery(query);
 
     const term = query.toLowerCase();
-    const workflows = workflowScreens.filter(({definition, name}) =>
-        [
+    const workflows = workflowScreens.filter(({definition, name}) => {
+        const screen = definition.screens.find((entry) => entry.name === name);
+        return [
             name,
             definition.name,
             definition.title?.en,
             definition.title?.nl,
             definition.titlePlural.en,
             definition.titlePlural.nl,
-        ].some((label) => label?.toLowerCase().includes(term)),
-    );
+            definition.description?.en,
+            definition.description?.nl,
+            screen?.title?.en,
+            screen?.title?.nl,
+            screen?.description?.en,
+            screen?.description?.nl,
+        ].some((label) => label?.toLowerCase().includes(term));
+    });
     const people = currentData?.people ?? [];
     const count = people.length + workflows.length;
 

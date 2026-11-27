@@ -10,7 +10,6 @@ export default defineConfig({
     test: {
         environment: "jsdom",
         include: ["src/**/*.test.{ts,tsx}"],
-        exclude: ["src/components/__tests__/HomeSearch.test.tsx"],
-        setupFiles: ["./src/test/setup.ts"],
+        setupFiles: ["@testing-library/jest-dom/vitest"],
     },
 });

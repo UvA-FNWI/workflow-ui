@@ -54,7 +54,7 @@ describe("buildOverviewEntries", () => {
         });
     });
 
-    it("uses screen title and workflow description for labels", () => {
+    it("uses workflow title and description like the coordinator home list", () => {
         const entries = buildOverviewEntries(
             [
                 definition("Catalog", [
@@ -69,8 +69,29 @@ describe("buildOverviewEntries", () => {
         );
 
         expect(entries[0]).toMatchObject({
-            title: "Items",
-            subtitle: "All items",
+            title: "Catalog title",
+            subtitle: "Catalog description",
+        });
+    });
+
+    it("falls back to titlePlural when there is no workflow description", () => {
+        const entries = buildOverviewEntries(
+            [
+                definition("RMSS", [{name: "Projects", title: null, description: null, index: 0}], {
+                    title: {
+                        en: "Research Master Social Sciences",
+                        nl: "Research Master Social Sciences",
+                    },
+                    titlePlural: {en: "Projecten (RMSS)", nl: "Projecten (RMSS)"},
+                    description: null,
+                }),
+            ],
+            l,
+        );
+
+        expect(entries[0]).toMatchObject({
+            title: "Research Master Social Sciences",
+            subtitle: "Projecten (RMSS)",
         });
     });
 });

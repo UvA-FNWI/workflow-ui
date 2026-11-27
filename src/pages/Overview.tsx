@@ -1,17 +1,26 @@
 import {Fragment, useEffect, useMemo} from "react";
 
-import {Card, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Card, Icon, SearchInput, Separator, Text} from "@uva-fnwi/datanose-ui";
 
+import {HomeSearchResults} from "~/components/Home/HomeSearchResults";
 import {HomePage} from "~/components/HomePage";
 import {VersionedLink} from "~/components/VersionedLink";
 import {useDocumentTitle} from "~/hooks/useDocumentTitle";
+import {useHomeSearch} from "~/hooks/useHomeSearch";
 import {useOverviewCopy} from "~/hooks/useOverviewCopy";
 import {useTranslate} from "~/hooks/useTranslate";
 import {useVersionedNavigate} from "~/hooks/useVersionedNavigate";
 import {PersonalContent} from "~/pages/Personal";
 import {useGetSettingsQuery} from "~/store/api/settingsApi";
 import {useGetAccessibleWorkflowDefinitionsQuery} from "~/store/api/workflowDefinitionsApi";
-import {buildOverviewEntries, overviewScreenUrl} from "~/utils/overviewEntries";
+import {
+    buildOverviewEntries,
+    buildSearchableScreens,
+    overviewScreenUrl,
+} from "~/utils/overviewEntries";
+
+const minQueryLength = 2;
+const maxQueryLength = 200;
 
 function OverviewEntryRow({
     to,
@@ -53,12 +62,11 @@ function OverviewEntryRow({
 }
 
 function Overview() {
-    const {l} = useTranslate("workflow");
+    const {l, t} = useTranslate("workflow");
     const {data: settings} = useGetSettingsQuery();
     const copy = useOverviewCopy(settings?.ui?.overview);
     const navigate = useVersionedNavigate();
-    useDocumentTitle(copy.pageTitle);
-
+    const {input, query, setInput} = useHomeSearch();
     const {data: accessibleDefinitions} = useGetAccessibleWorkflowDefinitionsQuery();
 
     const overviewEntries = useMemo(
@@ -66,7 +74,18 @@ function Overview() {
         [accessibleDefinitions, l],
     );
 
-    const singleAccessible = overviewEntries?.length === 1 ? overviewEntries[0] : undefined;
+    const workflowScreens = useMemo(
+        () => (accessibleDefinitions ? buildSearchableScreens(accessibleDefinitions) : []),
+        [accessibleDefinitions],
+    );
+
+    const canSearch = workflowScreens.length > 0;
+    const searching = canSearch && Boolean(query);
+    useDocumentTitle(searching ? t("home_search.title") : copy.pageTitle);
+
+    const isQueryValid = query.length >= minQueryLength && query.length <= maxQueryLength;
+    const singleAccessible =
+        !searching && overviewEntries?.length === 1 ? overviewEntries[0] : undefined;
 
     useEffect(() => {
         if (singleAccessible) {
@@ -76,6 +95,26 @@ function Overview() {
             );
         }
     }, [singleAccessible, navigate]);
+
+    const searchInput = canSearch ? (
+        <div role="search" className="mb-6 max-w-sm">
+            <SearchInput
+                aria-label={t("home_search.label")}
+                placeholder={t("home_search.placeholder")}
+                value={input}
+                maxLength={maxQueryLength}
+                onChange={setInput}
+            />
+        </div>
+    ) : undefined;
+
+    const searchFeedback = isQueryValid ? (
+        <HomeSearchResults query={query} workflowScreens={workflowScreens} />
+    ) : (
+        <Text role="status">{t("home_search.query_length")}</Text>
+    );
+
+    const pageTitle = searching ? t("home_search.title") : copy.title;
 
     if (!overviewEntries) {
         return (
@@ -90,17 +129,17 @@ function Overview() {
     }
 
     return (
-        <HomePage title={copy.title} personalContent={<PersonalContent />}>
+        <HomePage
+            title={pageTitle}
+            description={!searching ? copy.subtitle : undefined}
+            toolbar={!singleAccessible ? searchInput : undefined}
+            alternateContent={searching ? searchFeedback : undefined}
+            personalContent={<PersonalContent />}
+        >
             {overviewEntries.length === 0 ? (
                 <p>{copy.noAccess}</p>
             ) : (
                 <>
-                    <div className="mb-6 flex flex-col gap-1">
-                        <Heading as="h2" size="lg">
-                            {copy.title}
-                        </Heading>
-                        <Text className="text-grey-600">{copy.subtitle}</Text>
-                    </div>
                     <Card padding="none" className="overflow-hidden">
                         {overviewEntries.map((entry, index) => (
                             <Fragment key={entry.key}>

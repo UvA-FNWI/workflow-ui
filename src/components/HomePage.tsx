@@ -10,6 +10,7 @@ import {useTranslate} from "~/hooks/useTranslate";
 
 type HomePageProps = {
     title: ReactNode;
+    description?: ReactNode;
     coordinatorTabLabel?: ReactNode;
     personalContent?: ReactNode;
     isLoading?: boolean;
@@ -20,6 +21,7 @@ type HomePageProps = {
 
 export function HomePage({
     title,
+    description,
     coordinatorTabLabel,
     personalContent,
     isLoading = false,
@@ -49,6 +51,7 @@ export function HomePage({
         <Container maxWidth={1280}>
             <PageHeader
                 title={title}
+                description={description}
                 backLabel={navigation?.showBackToChoices ? t("home") : undefined}
                 backTo="/"
                 className={showRoleTabs ? "mb-2" : undefined}

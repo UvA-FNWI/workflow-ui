@@ -8,8 +8,7 @@ vi.mock("~/hooks/useTranslate", () => ({
         t: (key: string) =>
             ({
                 "overview.page_title": "Overview",
-                "overview.default_title": "Registers",
-                "overview.default_subtitle": "Select a register to open.",
+                "overview.choose_course_title": "Choose your course",
                 "overview.default_no_access": "No access",
             })[key] ?? key,
         l: (value?: {en?: string}) => value?.en ?? "",
@@ -40,9 +39,20 @@ describe("useOverviewCopy", () => {
 
         expect(result.current).toEqual({
             pageTitle: "Overview",
-            title: "Registers",
-            subtitle: "Select a register to open.",
+            title: "Choose your course",
+            subtitle: undefined,
             noAccess: "No access",
         });
+    });
+
+    it("omits subtitle when Settings.yaml has no overview.subtitle", () => {
+        const {result} = renderHook(() =>
+            useOverviewCopy({
+                title: {en: "Courses", nl: "Courses"},
+            }),
+        );
+
+        expect(result.current.subtitle).toBeUndefined();
+        expect(result.current.title).toBe("Courses");
     });
 });

@@ -1,3 +1,4 @@
+import type {WorkflowScreen as SearchableWorkflowScreen} from "~/components/Home/ScreenLink";
 import type {LocalString} from "~/hooks/useTranslate";
 import type {WorkflowDefinition, WorkflowScreen} from "~/store/api/types/workflowDefinitions";
 
@@ -48,24 +49,26 @@ export function primaryRegisterScreen(definition: WorkflowDefinition): WorkflowS
     });
 }
 
+/** Primary line — matches coordinator {@link ScreenLink} on main (course / workflow title). */
 function entryLabel(
     def: WorkflowDefinition,
-    screen: WorkflowScreen,
+    _screen: WorkflowScreen,
     l: (value: LocalString | null | undefined) => string,
 ) {
-    return (screen.title && l(screen.title)) || l(def.titlePlural) || l(def.title) || def.name;
+    return l(def.title) || def.name;
 }
 
+/**
+ * Secondary line — {@link ScreenLink} subtitle, with optional {@link WorkflowDefinition.description}
+ * from hub metadata when the API provides it (IBP registers).
+ */
 function entryDescription(
     def: WorkflowDefinition,
     screen: WorkflowScreen,
     l: (value: LocalString | null | undefined) => string,
 ) {
-    return (
-        (screen.description && l(screen.description)) ||
-        (def.description ? l(def.description) : l(def.title)) ||
-        ""
-    );
+    if (def.description && l(def.description)) return l(def.description);
+    return def.screens.length > 1 ? screen.name : l(def.titlePlural) || def.name;
 }
 
 export function buildOverviewEntries(
@@ -90,4 +93,13 @@ export function buildOverviewEntries(
             if (left.sortKey !== right.sortKey) return left.sortKey - right.sortKey;
             return left.title.localeCompare(right.title);
         });
+}
+
+/** Screens exposed on the coordinator home for global register search (DN-4112). */
+export function buildSearchableScreens(
+    definitions: WorkflowDefinition[],
+): SearchableWorkflowScreen[] {
+    return definitions.flatMap((definition) =>
+        definition.screens.map((screen) => ({definition, name: screen.name})),
+    );
 }
