@@ -133,6 +133,7 @@ it.each(["Normal", "Compact", "Modal"] as const)(
         const step = {
             id: "Writing",
             title: {en: "Writing", nl: ""},
+            isActive: true,
             isAvailable: true,
             children: null,
             submissions: [],
@@ -205,6 +206,7 @@ it("opens execution confirmation only after selection and closes it on cancel", 
     const step = {
         id: "Writing",
         title: {en: "Writing", nl: ""},
+        isActive: true,
         isAvailable: true,
         children: null,
         submissions: [],
@@ -241,6 +243,7 @@ it("opens execution confirmation only after selection and closes it on cancel", 
 it("hides empty attempts while keeping backend version numbers and expanding the first visible history", () => {
     const step: WorkflowStep = {
         id: "Writing",
+        isActive: true,
         isAvailable: true,
         title: {en: "Writing", nl: "Schrijven"},
         icon: null,
@@ -317,6 +320,7 @@ it.each([true, false])(
         } as import("~/store/api/types/submissions.ts").Submission;
         const step: WorkflowStep = {
             id: "Writing",
+            isActive: true,
             isAvailable: true,
             title: {en: "Writing", nl: ""},
             icon: null,
@@ -368,6 +372,7 @@ it.each(["Combined", "CollapsibleRows"] as const)(
         const submissions = [approvalSubmission];
         const child: WorkflowStep = {
             id: "Writing",
+            isActive: true,
             isAvailable: true,
             title: {en: "Writing", nl: ""},
             icon: null,
@@ -469,6 +474,7 @@ it.each([false, true])(
         const step: WorkflowStep = {
             id: "Writing",
             title: {en: "Writing", nl: ""},
+            isActive: true,
             isAvailable: true,
             children: null,
             icon: null,
