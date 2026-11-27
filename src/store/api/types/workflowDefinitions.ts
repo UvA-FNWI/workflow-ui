@@ -4,6 +4,7 @@ export type WorkflowDefinition = {
     name: string;
     title: LocalString | null;
     titlePlural: LocalString;
+    languages: (keyof LocalString)[];
     index: number | null;
     isAlwaysVisible: boolean;
     inheritsFrom: string | null;
