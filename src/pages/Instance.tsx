@@ -3,6 +3,7 @@ import {Navigate, useParams} from "react-router";
 import {Container, Grid, GridItem} from "@uva-fnwi/datanose-ui";
 
 import {AdminCard} from "~/components/instance/AdminCard";
+import {CommentsCard} from "~/components/instance/CommentsCard";
 import {ContentCard} from "~/components/instance/ContentCard";
 import {CorrespondenceCard} from "~/components/instance/CorrespondenceCard.tsx";
 import {HistoryCard} from "~/components/instance/HistoryCard.tsx";
@@ -34,7 +35,11 @@ function Instance() {
     }
     const courseName = getLocalStringField(instance?.fields, "Course.Name");
     const progressCard = instance?.infoCards?.find((card) => card.type === "Progress");
-    const infoCards = instance?.infoCards?.filter((card) => card.type !== "Progress") ?? [];
+    const messagesCard = instance?.infoCards?.find((card) => card.type === "Messages");
+    const infoCards =
+        instance?.infoCards?.filter(
+            (card) => card.type !== "Progress" && card.type !== "Messages",
+        ) ?? [];
 
     return (
         <Container maxWidth={1280}>
@@ -54,6 +59,9 @@ function Instance() {
                         stopMessage={instance?.stopMessage}
                     />
                     <ContentCard instance={instance} isLoading={isLoading} />
+                    {instance?.permissions.includes("ViewMessages") && id && messagesCard && (
+                        <CommentsCard instance={instance} card={messagesCard} />
+                    )}
                     {instance?.permissions.includes("ViewCorrespondence") && id && (
                         <CorrespondenceCard instanceId={id} />
                     )}

@@ -4,6 +4,8 @@ import {Button, Icon, Text} from "@uva-fnwi/datanose-ui";
 
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
 import {AnswerChangesModal} from "~/components/instance/AnswerChangesModal.tsx";
+import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import {formatDateShort} from "~/utils/formatDate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
@@ -13,6 +15,8 @@ type Props = {
     instanceId: string;
     submissionId?: string;
     canEdit?: boolean;
+    showMessages?: boolean;
+    messageUi?: MessageUiSettings;
 };
 
 export const QuestionAnswerList = ({
@@ -20,6 +24,8 @@ export const QuestionAnswerList = ({
     instanceId,
     submissionId,
     canEdit = false,
+    showMessages = true,
+    messageUi,
 }: Props) => {
     const {t, l, i18n} = useTranslate("workflow");
     const [historyPair, setHistoryPair] = useState<QuestionAnswerPair | null>(null);
@@ -58,33 +64,42 @@ export const QuestionAnswerList = ({
                             )}
                         </div>
 
-                        <div className="flex min-w-0 flex-wrap items-baseline gap-1">
-                            <AnswerCell
-                                pair={pair}
-                                canEdit={canEdit}
-                                submissionId={submissionId}
-                                instanceId={instanceId}
-                                noAnswerText={t("version_card.no_answer")}
-                            />
-                            {latestEdit && (
-                                <button
-                                    type="button"
-                                    className="cursor-pointer"
-                                    onClick={() => setHistoryPair(pair)}
-                                    aria-label={t("instance.summary.view_changes")}
-                                >
-                                    <Text intent="secondary" display="inline">
-                                        (
-                                        {t("instance.summary.changed_on_inline", {
-                                            date: formatDateShort(
-                                                latestEdit.changedAt,
-                                                i18n.language,
-                                            ),
-                                        })}
-                                        )
-                                    </Text>
-                                </button>
+                        <div className="flex min-w-0 items-start gap-1">
+                            {showMessages && question.messages && (
+                                <FieldMessageBalloon
+                                    {...question.messages}
+                                    fieldLabel={l(question.text) ?? question.name}
+                                    messageUi={messageUi}
+                                />
                             )}
+                            <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-1">
+                                <AnswerCell
+                                    pair={pair}
+                                    canEdit={canEdit}
+                                    submissionId={submissionId}
+                                    instanceId={instanceId}
+                                    noAnswerText={t("version_card.no_answer")}
+                                />
+                                {latestEdit && (
+                                    <button
+                                        type="button"
+                                        className="cursor-pointer"
+                                        onClick={() => setHistoryPair(pair)}
+                                        aria-label={t("instance.summary.view_changes")}
+                                    >
+                                        <Text intent="secondary" display="inline">
+                                            (
+                                            {t("instance.summary.changed_on_inline", {
+                                                date: formatDateShort(
+                                                    latestEdit.changedAt,
+                                                    i18n.language,
+                                                ),
+                                            })}
+                                            )
+                                        </Text>
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 );

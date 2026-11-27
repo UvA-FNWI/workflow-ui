@@ -1,6 +1,8 @@
 import {Button, Heading, Icon, Separator, Text} from "@uva-fnwi/datanose-ui";
 
 import {AssessmentQuestionAnswerList} from "~/components/AssessmentOverview/AssessmentQuestionAnswerList.tsx";
+import {AssessmentResultCell} from "~/components/AssessmentOverview/AssessmentResultCell.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {SourceResult} from "~/store/api/types/assessments.ts";
 import type {Page, StepResultsType, Submission} from "~/store/api/types/submissions.ts";
@@ -15,6 +17,8 @@ export type AssessmentPageSectionProps = {
     onEditPage?: (pageName: string) => void;
     resultsType?: StepResultsType;
     isLastPage?: boolean;
+    showMessages?: boolean;
+    messageUi?: MessageUiSettings;
 };
 export const AssessmentPageSection = ({
     page,
@@ -25,6 +29,8 @@ export const AssessmentPageSection = ({
     resultsType,
     isLastPage = false,
     colsClass = "grid-cols-1",
+    showMessages = true,
+    messageUi,
 }: AssessmentPageSectionProps) => {
     const {t, l, i18n} = useTranslate("workflow");
 
@@ -90,22 +96,27 @@ export const AssessmentPageSection = ({
                     const grade = pageResult?.weightedAverage ?? pageResult?.sum;
                     const hasGrade = !!(pageResult?.weightedAverage || pageResult?.sum);
                     return (
-                        <div key={source.id} className="w-24 min-w-0 sm:w-32">
+                        <AssessmentResultCell key={source.id} showMessageColumn={showMessages}>
                             <Text fontWeight={hasGrade ? "semibold" : "bold"} size="lg">
                                 {hasGrade ? grade?.toLocaleString(i18n.language) : "-"}
                             </Text>
-                        </div>
+                        </AssessmentResultCell>
                     );
                 })}
             </div>
             {/* Questions and answers */}
-            <AssessmentQuestionAnswerList
-                rows={rows}
-                questionAnswerPairs={allQuestionAnswerPairs}
-                instanceId={instanceId}
-                colsClass={colsClass}
-                collapseAnswers={true}
-            />
+            {allQuestionAnswerPairs.flat().length > 0 && (
+                <AssessmentQuestionAnswerList
+                    rows={rows}
+                    questionAnswerPairs={allQuestionAnswerPairs}
+                    instanceId={instanceId}
+                    colsClass={colsClass}
+                    collapseAnswers={true}
+                    showMessages={showMessages}
+                    messageUi={messageUi}
+                />
+            )}
+
             <Separator weight={isLastPage ? "bold" : "normal"} />
         </div>
     );

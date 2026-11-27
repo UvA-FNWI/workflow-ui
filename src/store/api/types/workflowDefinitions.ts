@@ -1,4 +1,5 @@
 import type {LocalString} from "~/hooks/useTranslate";
+import type {Callout} from "~/store/api/types/submissions";
 
 export type WorkflowDefinition = {
     name: string;
@@ -13,4 +14,14 @@ export type WorkflowDefinition = {
     /** Whether the definition has no steps. */
     isPropertyOnly: boolean;
     properties: string[];
+    messagesEnabled?: boolean;
+    messages?: {
+        term?: LocalString | null;
+        termPlural?: LocalString | null;
+        fieldsAllowAll?: boolean;
+        layout?: "threaded" | "flat";
+        allowClose?: boolean;
+        maxReplyDepth?: number | null;
+        callout?: Callout | null;
+    };
 };

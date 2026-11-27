@@ -2,6 +2,7 @@ import {Heading} from "@uva-fnwi/datanose-ui";
 
 import {QuestionAnswerList} from "./QuestionAnswerList.tsx";
 import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOverview.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {Submission} from "~/store/api/types/submissions.ts";
 import {getVisibleQuestionAnswerPairs} from "~/utils/submissionUtils.ts";
@@ -11,9 +12,17 @@ type Props = {
     submission: Submission;
     onEditPage?: (pageName: string) => void;
     collapseAnswers?: boolean;
+    showMessages?: boolean;
+    messageUi?: MessageUiSettings;
 };
 
-export const FormSummary = ({instanceId, submission, onEditPage}: Props) => {
+export const FormSummary = ({
+    instanceId,
+    submission,
+    onEditPage,
+    showMessages = true,
+    messageUi,
+}: Props) => {
     const {l} = useTranslate("workflow");
 
     // Only form-scoped Edit counts: the instance-level permission is form-less (property editing only)
@@ -31,6 +40,8 @@ export const FormSummary = ({instanceId, submission, onEditPage}: Props) => {
                 submissions={[submission]}
                 onEditPage={onEditPage}
                 combine={false}
+                showMessages={showMessages}
+                messageUi={messageUi}
             />
         );
     }
@@ -58,6 +69,8 @@ export const FormSummary = ({instanceId, submission, onEditPage}: Props) => {
                             instanceId={instanceId}
                             submissionId={submission.id}
                             canEdit={canEdit}
+                            showMessages={showMessages}
+                            messageUi={messageUi}
                         />
                     </div>
                 );

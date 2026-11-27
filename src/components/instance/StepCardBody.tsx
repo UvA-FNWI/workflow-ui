@@ -6,6 +6,7 @@ import {AssessmentOverview} from "~/components/AssessmentOverview/AssessmentOver
 import {ActionModal} from "~/components/instance/ActionModal.tsx";
 import {FormPage} from "~/components/instance/FormPage.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
+import {resolveInstanceMessageSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {
     type ContentState,
     getPreviousFormVersion,
@@ -52,6 +53,7 @@ export const StepCardBody = ({
             ? activeAction
             : null;
     const openFormId = inlineForm?.form;
+    const messageUi = resolveInstanceMessageSettings(instance.workflowDefinition) ?? undefined;
 
     // Modal forms must not replace the step form registered for the admin helper.
     useEffect(() => {
@@ -83,7 +85,11 @@ export const StepCardBody = ({
                                 >
                                     {l(submission.form.title)?.toUpperCase()}
                                 </Heading>
-                                <FormSummary instanceId={instance.id} submission={submission} />
+                                <FormSummary
+                                    instanceId={instance.id}
+                                    submission={submission}
+                                    messageUi={messageUi}
+                                />
                             </div>
                         ))}
                         {(contentState.assessments.length > 0 || step.resultsType !== "Normal") && (
@@ -93,6 +99,7 @@ export const StepCardBody = ({
                                 combine={true}
                                 step={step}
                                 emptyMessage={emptyStateMessage}
+                                messageUi={messageUi}
                             />
                         )}
                     </>
@@ -143,6 +150,8 @@ export const StepCardBody = ({
                             key={inlineForm.form}
                             instanceId={instance.id}
                             submissionId={inlineForm.form ?? ""}
+                            showMessages
+                            messageUi={messageUi}
                             onClose={() => setActiveAction(null)}
                             previousVersion={getPreviousFormVersion(step, inlineForm.form)}
                         />

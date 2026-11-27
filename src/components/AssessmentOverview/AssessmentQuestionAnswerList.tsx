@@ -2,7 +2,10 @@ import {useMemo, useState} from "react";
 
 import {Link, Text} from "@uva-fnwi/datanose-ui";
 
+import {AssessmentResultCell} from "~/components/AssessmentOverview/AssessmentResultCell.tsx";
 import {AnswerCell} from "~/components/instance/AnswerCell.tsx";
+import {FieldMessageBalloon} from "~/components/instance/FieldMessageBalloon.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {useTranslate} from "~/hooks/useTranslate.ts";
 import type {QuestionAnswerPair} from "~/utils/submissionUtils.ts";
 
@@ -15,6 +18,8 @@ type Props = {
     colsClass?: string;
     collapseAnswers?: boolean;
     canEdit?: boolean;
+    showMessages?: boolean;
+    messageUi?: MessageUiSettings;
 };
 
 export const AssessmentQuestionAnswerList = ({
@@ -26,6 +31,8 @@ export const AssessmentQuestionAnswerList = ({
     colsClass = "grid-cols-3",
     collapseAnswers = false,
     canEdit = false,
+    showMessages = true,
+    messageUi,
 }: Props) => {
     const {i18n, l, t} = useTranslate("workflow");
     const [isOpen, setIsOpen] = useState(initialIsOpen);
@@ -86,19 +93,36 @@ export const AssessmentQuestionAnswerList = ({
                 return (
                     <div key={question.name} className="flex flex-col gap-2">
                         <div className={`grid gap-4 ${colsClass}`}>
-                            <Text
-                                fontWeight="semibold"
-                                className="col-span-2 w-48 min-w-0 wrap-break-word sm:w-80"
-                            >
-                                {l(question.text)}
-                                {percentage && ` (${percentage.toLocaleString(i18n.language)}%)`}
-                            </Text>
+                            <div className="col-span-2 flex w-48 min-w-0 items-start sm:w-80">
+                                <Text
+                                    as="span"
+                                    fontWeight="semibold"
+                                    className="min-w-0 wrap-break-word"
+                                >
+                                    {l(question.text)}
+                                    {percentage &&
+                                        ` (${percentage.toLocaleString(i18n.language)}%)`}
+                                </Text>
+                            </div>
                             {arrayOfPairs.map((submission, submissionIndex) => {
                                 const pair = submission.find(
                                     (s) => s.question.name === question.name,
                                 );
+                                const messages = pair?.answer?.messages;
                                 return (
-                                    <div key={submissionIndex} className="w-24 min-w-0 sm:w-32">
+                                    <AssessmentResultCell
+                                        key={submissionIndex}
+                                        showMessageColumn={showMessages}
+                                        messageButton={
+                                            messages && (
+                                                <FieldMessageBalloon
+                                                    {...messages}
+                                                    fieldLabel={l(question.text) ?? question.name}
+                                                    messageUi={messageUi}
+                                                />
+                                            )
+                                        }
+                                    >
                                         <AnswerCell
                                             pair={pair}
                                             canEdit={canEdit}
@@ -106,7 +130,7 @@ export const AssessmentQuestionAnswerList = ({
                                             instanceId={instanceId}
                                             submissionId={submissionId}
                                         />
-                                    </div>
+                                    </AssessmentResultCell>
                                 );
                             })}
                         </div>
@@ -142,18 +166,37 @@ export const AssessmentQuestionAnswerList = ({
                                                             const pair = submission.find(
                                                                 (s) => s.question.name === lq.name,
                                                             );
+                                                            const messages = pair?.answer?.messages;
                                                             return (
-                                                                <AnswerCell
+                                                                <div
                                                                     key={submissionIndex}
-                                                                    pair={pair}
-                                                                    canEdit={canEdit}
-                                                                    noAnswerText="-"
-                                                                    instanceId={instanceId}
-                                                                    submissionId={submissionId}
-                                                                    showLinkedTitle={
-                                                                        arrayOfPairs.length > 1
-                                                                    }
-                                                                />
+                                                                    className="flex min-w-0 items-start gap-1"
+                                                                >
+                                                                    {showMessages && messages && (
+                                                                        <FieldMessageBalloon
+                                                                            {...messages}
+                                                                            fieldLabel={
+                                                                                l(lq.text) ??
+                                                                                lq.name
+                                                                            }
+                                                                            messageUi={messageUi}
+                                                                        />
+                                                                    )}
+                                                                    <div className="min-w-0 flex-1">
+                                                                        <AnswerCell
+                                                                            pair={pair}
+                                                                            canEdit={canEdit}
+                                                                            noAnswerText="-"
+                                                                            instanceId={instanceId}
+                                                                            submissionId={
+                                                                                submissionId
+                                                                            }
+                                                                            showLinkedTitle={
+                                                                                isMultiSubmission
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                </div>
                                                             );
                                                         },
                                                     )}

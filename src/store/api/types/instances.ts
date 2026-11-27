@@ -204,6 +204,12 @@ export type InfoCardItem = {
     url: LocalString;
 };
 
+export type MessagesInfoCard = {
+    name: string;
+    type: "Messages";
+    title: LocalString | null;
+};
+
 export type InfoCard =
     | (InfoCardBase & {
           type: "User";
@@ -218,7 +224,8 @@ export type InfoCard =
       })
     | (InfoCardBase & {type: "Links"; items?: InfoCardItem[] | null})
     | (InfoCardBase & {type: "Text"; content?: LocalString | null})
-    | (InfoCardBase & {type: "Progress"});
+    | (InfoCardBase & {type: "Progress"})
+    | MessagesInfoCard;
 
 export type InstanceHistoryType = "Event" | "Property" | "Undo";
 

@@ -24,6 +24,7 @@
     "title": "Data"
   },
   "are_you_sure": "Are you sure?",
+  "cancel": "Cancel",
   "change_selection": "Change selection",
   "correspondence": {
     "content": "Content",
@@ -86,7 +87,6 @@
     "title": "History",
     "undo_reason_empty": "There is no reason provided for this undo action"
   },
-
   "home": "Home",
   "home_search": {
     "empty": "No people or workflows found.",
@@ -111,6 +111,28 @@
     },
     "deadline_passed": "The deadline has passed. You can no longer submit this form.",
     "empty_step": "Nothing has been submitted yet.",
+    "messages": {
+      "add": "Add {{term}}",
+      "close_conversation": "Archive thread",
+      "closed": "Closed",
+      "collapse_conversation": "Collapse",
+      "default_term": "comment",
+      "default_term_plural": "comments",
+      "empty": "No {{termPlural}} yet.",
+      "expand_conversation": "Expand",
+      "field_label": "{{termPluralTitle}} on this field",
+      "field_modal_title": "{{termPluralTitle}} on {{field}}",
+      "load_error": "Couldn’t load {{termPlural}}.",
+      "new_conversation_placeholder": "Add {{term}}",
+      "reopen_conversation": "Restore thread",
+      "replies_heading": "Replies",
+      "reply": "Reply",
+      "reply_placeholder": "Reply to {{term}}",
+      "summary_closed_one": "{{count}} closed",
+      "summary_closed_other": "{{count}} closed",
+      "summary_open_one": "{{count}} open",
+      "summary_open_other": "{{count}} open"
+    },
     "shared_loading": "Loading shared work…",
     "shared_restricted": "You do not have permission to view this shared work.",
     "shared_step": "Shared step",

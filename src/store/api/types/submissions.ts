@@ -35,6 +35,13 @@ export type AnswerChangeGroup = {
     changes: AnswerChange[];
 };
 
+type QuestionMessages = {
+    instanceId: string;
+    questionName: string;
+    canView: boolean;
+    canAdd: boolean;
+};
+
 export type Answer = {
     id: string;
     questionName: string;
@@ -44,6 +51,7 @@ export type Answer = {
     visibleChoices?: string[] | null;
     files: StoredFile[];
     changes?: AnswerChangeGroup[] | null;
+    messages?: QuestionMessages | null;
 };
 
 export type StoredFile = {
@@ -88,6 +96,7 @@ export type QuestionBase = {
     description?: LocalString | null;
     shortText?: LocalString | null;
     linkedTo?: string | null;
+    messages?: QuestionMessages | null;
 };
 
 export type WeightedQuestionBase = QuestionBase & {
@@ -186,8 +195,8 @@ export type PageElement = {
 
 export type Callout = {
     variant: MessageVariant;
-    title?: LocalString;
-    text?: LocalString;
+    title?: LocalString | null;
+    text?: LocalString | null;
 };
 
 export type SortDirection = "Ascending" | "Descending";
@@ -230,7 +239,9 @@ export type RoleAction =
     | "CreateRelatedInstance"
     | "Undo"
     | "ViewCorrespondence"
-    | "ViewHistory";
+    | "ViewHistory"
+    | "AddMessages"
+    | "ViewMessages";
 export type DataType =
     | "File"
     | "Date"

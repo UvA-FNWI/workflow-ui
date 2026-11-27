@@ -14,6 +14,7 @@ import {
 import {PageControl} from "./PageControl";
 import {FormSubmitButton} from "~/components/instance/FormSubmitButton.tsx";
 import {FormSummary} from "~/components/instance/FormSummary.tsx";
+import {type MessageUiSettings} from "~/components/instance/instanceMessageSettings.ts";
 import {PrefilledAnswersNotice} from "~/components/instance/PrefilledAnswersNotice.tsx";
 import {useTranslate} from "~/hooks/useTranslate";
 import {submissionsEndpoints} from "~/store/api/submissionsApi";
@@ -26,6 +27,8 @@ type Props = {
     onClose: () => void;
     previousVersion?: number;
     renderLayout?: (content: ReactNode, actions: ReactNode) => ReactNode;
+    showMessages?: boolean;
+    messageUi?: MessageUiSettings;
 };
 
 export const FormPage = ({
@@ -34,6 +37,8 @@ export const FormPage = ({
     onClose,
     previousVersion,
     renderLayout,
+    showMessages = false,
+    messageUi,
 }: Props) => {
     const {t, l} = useTranslate("workflow");
     const {data: submission} = submissionsEndpoints.getSubmission.useQuery({
@@ -147,6 +152,8 @@ export const FormPage = ({
                                     <FormSummary
                                         submission={submission}
                                         instanceId={instanceId}
+                                        showMessages={showMessages}
+                                        messageUi={messageUi}
                                         onEditPage={onEditPage}
                                     />
                                 </div>

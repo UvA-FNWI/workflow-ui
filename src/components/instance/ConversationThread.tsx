@@ -1,0 +1,231 @@
+import {Button, Icon, linkClassGenerator} from "@uva-fnwi/datanose-ui";
+
+import {MessageBody, MessageMeta} from "./messageMeta";
+import {buildReplyTree, getConversationOpener, type MessageTreeNode} from "./messageTree";
+import {useTranslate} from "~/hooks/useTranslate";
+import type {MessageThread} from "~/store/api/types/messages";
+
+/** Cap reply indent so deep API trees do not become a ladder of rails. */
+const MAX_REPLY_VISUAL_DEPTH = 2;
+
+type Props = {
+    thread: MessageThread;
+    expanded: boolean;
+    onExpandedChange: (open: boolean) => void;
+    canAdd: boolean;
+    allowClose: boolean;
+    maxReplyDepth: number | null;
+    replyParentItemId: string | null;
+    onStartReply: (parentItemId: string) => void;
+    onCloseConversation: () => void;
+    onReopenConversation: () => void;
+    isLoading: boolean;
+    replyComposer: React.ReactNode;
+};
+
+function ReplyControl({
+    label,
+    isActive,
+    onClick,
+    replyComposer,
+}: {
+    label: string;
+    isActive: boolean;
+    onClick: () => void;
+    replyComposer: React.ReactNode;
+}) {
+    if (isActive) return replyComposer;
+
+    return (
+        <button
+            type="button"
+            className={`flex items-center gap-1 self-start ${linkClassGenerator({intent: "destructive", size: "sm"})}`}
+            onClick={onClick}
+        >
+            <Icon name="arrow-left-solid" size="sm" color="current" decorative />
+            <span className="underline">{label}</span>
+        </button>
+    );
+}
+
+export function ConversationThread({
+    thread,
+    expanded,
+    onExpandedChange,
+    canAdd,
+    allowClose,
+    maxReplyDepth,
+    replyParentItemId,
+    onStartReply,
+    onCloseConversation,
+    onReopenConversation,
+    isLoading,
+    replyComposer,
+}: Props) {
+    const {t: m, i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
+    const replyLabel = m("reply");
+    const root = getConversationOpener(thread.items);
+
+    if (!root) return null;
+
+    const replyTree = buildReplyTree(thread.items);
+    const toggleLabel = expanded ? m("collapse_conversation") : m("expand_conversation");
+    const closedSuffix = thread.isClosed ? m("closed") : undefined;
+    const canReply = canAdd && !thread.isClosed;
+
+    const toggle = () => onExpandedChange(!expanded);
+
+    return (
+        <article className={allowClose && thread.isClosed ? "opacity-60" : undefined}>
+            <button
+                type="button"
+                className="flex w-full min-w-0 items-start justify-between gap-4 py-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                aria-expanded={expanded}
+                aria-label={toggleLabel}
+                onClick={toggle}
+            >
+                <div className="min-w-0 flex-1">
+                    <MessageMeta
+                        displayName={root.user.displayName}
+                        dateTime={root.dateTime}
+                        language={i18n.language}
+                        suffix={closedSuffix}
+                        truncate
+                    />
+                </div>
+                <Icon
+                    name={expanded ? "minus-small-line" : "plus-small-line"}
+                    size="sm"
+                    color="primary"
+                    className="mt-0.5 shrink-0"
+                    decorative
+                />
+            </button>
+
+            {expanded && (
+                <div className="flex flex-col gap-4 pb-4">
+                    {root.body && <MessageBody body={root.body} className="mt-0" />}
+
+                    {canReply && maxReplyDepth !== 0 && (
+                        <ReplyControl
+                            label={replyLabel}
+                            isActive={replyParentItemId === root.id}
+                            onClick={() => onStartReply(root.id)}
+                            replyComposer={replyComposer}
+                        />
+                    )}
+
+                    {replyTree.length > 0 && (
+                        <div
+                            className="flex flex-col gap-6 border-l border-grey-300 pl-4 dark:border-grey-600"
+                            role="list"
+                            aria-label={m("replies_heading")}
+                        >
+                            {replyTree.map((node) => (
+                                <ReplyBranch
+                                    key={node.id}
+                                    node={node}
+                                    depth={1}
+                                    maxReplyDepth={maxReplyDepth}
+                                    canAdd={canReply}
+                                    replyParentItemId={replyParentItemId}
+                                    onStartReply={onStartReply}
+                                    replyComposer={replyComposer}
+                                    replyLabel={replyLabel}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {canAdd && allowClose && (
+                        <div className="flex flex-wrap items-center gap-2 border-t border-grey-200 pt-3 dark:border-grey-700">
+                            <Button
+                                intent="secondary"
+                                width="none"
+                                disabled={isLoading}
+                                onClick={
+                                    thread.isClosed ? onReopenConversation : onCloseConversation
+                                }
+                            >
+                                {thread.isClosed
+                                    ? m("reopen_conversation")
+                                    : m("close_conversation")}
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </article>
+    );
+}
+
+type ReplyBranchProps = {
+    node: MessageTreeNode;
+    depth: number;
+    maxReplyDepth: number | null;
+    canAdd: boolean;
+    replyParentItemId: string | null;
+    onStartReply: (parentItemId: string) => void;
+    replyComposer: React.ReactNode;
+    replyLabel: string;
+};
+
+function ReplyBranch({
+    node,
+    depth,
+    maxReplyDepth,
+    canAdd,
+    replyParentItemId,
+    onStartReply,
+    replyComposer,
+    replyLabel,
+}: ReplyBranchProps) {
+    const {i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
+    const isReplyingHere = replyParentItemId === node.id;
+    const atMaxVisualDepth = depth >= MAX_REPLY_VISUAL_DEPTH;
+    const canReply = canAdd && (maxReplyDepth === null || depth < maxReplyDepth);
+
+    return (
+        <div role="listitem" className="flex flex-col gap-2">
+            <MessageMeta
+                displayName={node.user.displayName}
+                dateTime={node.dateTime}
+                language={i18n.language}
+                truncate={false}
+            />
+            {node.body && <MessageBody body={node.body} className="mt-1" />}
+            {canReply && (
+                <ReplyControl
+                    label={replyLabel}
+                    isActive={isReplyingHere}
+                    onClick={() => onStartReply(node.id)}
+                    replyComposer={replyComposer}
+                />
+            )}
+            {node.children.length > 0 && (
+                <div
+                    className={
+                        atMaxVisualDepth
+                            ? "flex flex-col gap-6 pl-4"
+                            : "flex flex-col gap-6 border-l border-grey-300 pl-4 dark:border-grey-600"
+                    }
+                    role="list"
+                >
+                    {node.children.map((child) => (
+                        <ReplyBranch
+                            key={child.id}
+                            node={child}
+                            depth={depth + 1}
+                            maxReplyDepth={maxReplyDepth}
+                            canAdd={canAdd}
+                            replyParentItemId={replyParentItemId}
+                            onStartReply={onStartReply}
+                            replyComposer={replyComposer}
+                            replyLabel={replyLabel}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
