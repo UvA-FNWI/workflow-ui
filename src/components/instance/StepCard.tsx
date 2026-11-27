@@ -131,7 +131,6 @@ const OwnedStepCard = ({step, instance, nested = false, sharedParticipants}: Pro
                 hasBodyContent={hasBodyContent}
                 isContentless={isContentless}
                 submissions={submissions}
-                currentStep={instance.currentStep}
                 deadlinePassed={fullHierarchy.some((candidate) => candidate.deadline?.isPassed)}
                 leading={
                     <>
@@ -238,7 +237,6 @@ function StepCardHeader({
     hasBodyContent,
     isContentless,
     submissions,
-    currentStep,
     deadlinePassed,
     leading,
 }: {
@@ -247,13 +245,12 @@ function StepCardHeader({
     hasBodyContent: boolean;
     isContentless: boolean;
     submissions: Submission[];
-    currentStep: WorkflowInstance["currentStep"];
     deadlinePassed: boolean;
     leading?: ReactNode;
 }) {
     const {t, l} = useTranslate("workflow");
 
-    const shownDate = getHeaderDate(step, submissions, nested, currentStep);
+    const shownDate = getHeaderDate(step, submissions, nested);
 
     return (
         <Disclosure.Header
@@ -304,12 +301,7 @@ function StepCardHeader({
     );
 }
 
-function getHeaderDate(
-    step: WorkflowStep,
-    submissions: Submission[],
-    nested: boolean,
-    currentStep: WorkflowInstance["currentStep"],
-) {
+function getHeaderDate(step: WorkflowStep, submissions: Submission[], nested: boolean) {
     // Outer cards retain their completion date; rows use visible submissions and history.
     const submissionDates = nested
         ? [
@@ -324,7 +316,7 @@ function getHeaderDate(
 
     const deadlineDate =
         step.deadline?.date ??
-        step.children?.find((child) => child.id === currentStep)?.deadline?.date;
+        step.children?.find((child) => child.isActive && child.deadline?.date)?.deadline?.date;
     if (deadlineDate) return {date: deadlineDate, submitted: false};
 
     return null;

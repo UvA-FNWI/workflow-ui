@@ -9,6 +9,7 @@ const emptyStepContent = {
     resultsType: "Normal",
     expectsSubmission: false,
     hasSubmission: false,
+    isActive: false,
     hierarchyMode: "Sequential",
     childrenLayout: "Combined",
 } satisfies Partial<WorkflowStep>;
@@ -519,6 +520,7 @@ export const formSubmitted = {
             id: "Subject",
             submissions,
             hasSubmission: true,
+            isActive: true,
             isAvailable: true,
             title: {
                 en: "Subject",
@@ -550,6 +552,7 @@ export const formSubmitted = {
                     ...emptyStepContent,
                     id: "SubjectFeedback",
                     expectsSubmission: true,
+                    isActive: true,
                     isAvailable: true,
                     title: {
                         en: "Assessment of proposal",

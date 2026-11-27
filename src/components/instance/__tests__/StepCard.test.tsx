@@ -52,6 +52,7 @@ const deadline: StepDeadline = {
 const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     id: "Step",
     isAvailable: true,
+    isActive: true,
     title: {en: "Step", nl: "Stap"},
     icon: null,
     event: "Submit",
@@ -113,7 +114,7 @@ const makeInstance = (step: WorkflowStep, actions: Action[] = []): WorkflowInsta
 it.each([false, true])(
     "uses backend availability even when the step order disagrees: %s",
     (isAvailable) => {
-        const step = makeStep({isAvailable});
+        const step = makeStep({isAvailable, isActive: isAvailable});
         const instance = makeInstance(step);
         const current = makeStep({id: "Other"});
         instance.steps = isAvailable ? [current, step] : [step, current];
@@ -124,6 +125,31 @@ it.each([false, true])(
         const header = screen.getByRole("button", {name: /^Step/});
         if (isAvailable) expect(header).toBeEnabled();
         else expect(header).toBeDisabled();
+    },
+);
+
+it.each([
+    {currentStep: "FinalEvaluation", isActive: true, showsDeadline: true},
+    {currentStep: "FinalReportPhase", isActive: true, showsDeadline: true},
+    {currentStep: "FinalEvaluation", isActive: false, showsDeadline: false},
+])(
+    "resolves the Final report deadline with currentStep=$currentStep and isActive=$isActive",
+    ({currentStep, isActive, showsDeadline}) => {
+        const report = makeStep({id: "FinalReport", isActive});
+        const phase = makeStep({
+            id: "FinalReportPhase",
+            title: {en: "Final report", nl: "Stageverslag"},
+            deadline: null,
+            children: [report],
+        });
+        const instance = makeInstance(phase);
+        instance.currentStep = currentStep;
+
+        render(<StepCard step={phase} instance={instance} />);
+
+        const header = screen.getByRole("button", {name: /^Final report/});
+        if (showsDeadline) expect(header).toHaveTextContent("progress.deadline");
+        else expect(header).not.toHaveTextContent("progress.deadline");
     },
 );
 
@@ -313,6 +339,7 @@ it("shows future child headers but does not expand rows without content", () => 
     const future = makeStep({
         id: "Future",
         title: {en: "Future", nl: "Toekomstig"},
+        isActive: false,
         expectsSubmission: false,
         deadline: null,
     });
@@ -364,6 +391,7 @@ it("does not fade a completed child row without content", () => {
     const done = makeStep({
         id: "Report1",
         title: {en: "Report 1", nl: "Rapport 1"},
+        isActive: false,
         dateCompleted: "2026-09-20T12:00:00Z",
         expectsSubmission: false,
     });

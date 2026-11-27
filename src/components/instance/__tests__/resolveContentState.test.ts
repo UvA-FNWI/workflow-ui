@@ -10,6 +10,7 @@ import type {Submission} from "~/store/api/types/submissions.ts";
 
 const makeStep = (overrides: Partial<WorkflowStep> = {}): WorkflowStep => ({
     id: "step-1",
+    isActive: true,
     isAvailable: true,
     title: {en: "Step 1", nl: "Stap 1"},
     icon: null,
