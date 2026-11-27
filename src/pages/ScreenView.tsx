@@ -56,9 +56,7 @@ const ScreenContent = () => {
     });
 
     useDocumentTitle(
-        screen
-            ? (screen.title ? l(screen.title) : l(screen.workflowDefinition.title))
-            : null,
+        screen ? (screen.title ? l(screen.title) : l(screen.workflowDefinition.title)) : null,
     );
 
     const rows = screen?.groups?.[activeTab]?.rows ?? screen?.rows ?? [];
