@@ -1,6 +1,6 @@
 import {Fragment, useEffect, useMemo} from "react";
 
-import {Card, Icon, SearchInput, Separator, Text} from "@uva-fnwi/datanose-ui";
+import {Card, Icon, SearchInput, Separator, Text, type IconType} from "@uva-fnwi/datanose-ui";
 
 import {HomeSearchResults} from "~/components/Home/HomeSearchResults";
 import {HomePage} from "~/components/HomePage";
@@ -31,7 +31,7 @@ function OverviewEntryRow({
     to: string;
     title: string;
     subtitle: string;
-    iconName: string;
+    iconName: IconType;
 }) {
     return (
         <VersionedLink
@@ -70,7 +70,10 @@ function Overview() {
     const {data: accessibleDefinitions} = useGetAccessibleWorkflowDefinitionsQuery();
 
     const overviewEntries = useMemo(
-        () => (accessibleDefinitions ? buildOverviewEntries(accessibleDefinitions, l) : undefined),
+        () =>
+            accessibleDefinitions
+                ? buildOverviewEntries(accessibleDefinitions, (value) => l(value) ?? "")
+                : undefined,
         [accessibleDefinitions, l],
     );
 

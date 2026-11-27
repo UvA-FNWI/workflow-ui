@@ -5,7 +5,10 @@ import {useTranslate} from "~/hooks/useTranslate";
 import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 
 export type WorkflowScreen = {
-    definition: Pick<WorkflowDefinition, "name" | "title" | "titlePlural" | "screens">;
+    definition: Pick<
+        WorkflowDefinition,
+        "name" | "title" | "titlePlural" | "description" | "screens"
+    >;
     name: string;
 };
 

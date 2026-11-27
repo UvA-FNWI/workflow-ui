@@ -165,7 +165,10 @@
   "optional": "* Not required",
   "overview": {
     "coordinator_view": "Coordinator view",
+    "hub_title": "Registers",
     "load_error": "Could not load the home page. Please try again later.",
+    "no_access": "You do not have access to any registers.",
+    "page_title": "Overview",
     "personal_view": "Personal view"
   },
   "previous": "Previous",

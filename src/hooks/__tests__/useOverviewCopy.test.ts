@@ -8,8 +8,8 @@ vi.mock("~/hooks/useTranslate", () => ({
         t: (key: string) =>
             ({
                 "overview.page_title": "Overview",
-                "overview.choose_course_title": "Choose your course",
-                "overview.default_no_access": "No access",
+                "overview.hub_title": "Registers",
+                "overview.no_access": "No access",
             })[key] ?? key,
         l: (value?: {en?: string}) => value?.en ?? "",
     }),
@@ -39,7 +39,7 @@ describe("useOverviewCopy", () => {
 
         expect(result.current).toEqual({
             pageTitle: "Overview",
-            title: "Choose your course",
+            title: "Registers",
             subtitle: undefined,
             noAccess: "No access",
         });

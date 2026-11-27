@@ -52,15 +52,18 @@ const stores: {dispatch: (action: ReturnType<typeof baseApi.util.resetApiState>)
 beforeEach(() => {
     data = {
         name: "Projects",
+        title: {en: "Projects", nl: "Projecten"},
         workflowDefinition: {
             name: "Project",
             title: {en: "Projects", nl: "Projecten"},
             titlePlural: {en: "Projects", nl: "Projecten"},
+            description: null,
+            icon: null,
             index: null,
             isAlwaysVisible: false,
             inheritsFrom: null,
             isEmbedded: false,
-            screens: ["Projects"],
+            screens: [{name: "Projects", title: null, description: null, index: 0}],
             canCreateInstance: false,
             isPropertyOnly: false,
             properties: [],

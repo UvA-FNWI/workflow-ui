@@ -1,9 +1,17 @@
 import {describe, expect, it} from "vitest";
 
 import {buildOverviewEntries, primaryRegisterScreen} from "../overviewEntries";
-import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
+import type {WorkflowDefinition, WorkflowScreen} from "~/store/api/types/workflowDefinitions";
 
 const l = (value?: {en?: string} | null) => value?.en ?? "";
+
+const makeScreen = (name: string, overrides: Partial<WorkflowScreen> = {}): WorkflowScreen => ({
+    name,
+    title: {en: name, nl: name},
+    description: null,
+    index: 0,
+    ...overrides,
+});
 
 const definition = (
     name: string,
@@ -21,6 +29,7 @@ const definition = (
     isEmbedded: false,
     isPropertyOnly: false,
     canCreateInstance: true,
+    properties: [],
     screens,
     ...overrides,
 });
@@ -30,14 +39,12 @@ describe("buildOverviewEntries", () => {
         const entries = buildOverviewEntries(
             [
                 definition("Beta", [
-                    {name: "Second", title: {en: "Beta B", nl: "Beta B"}, index: 2},
-                    {name: "First", title: {en: "Beta A", nl: "Beta A"}, index: 1},
+                    makeScreen("Second", {title: {en: "Beta B", nl: "Beta B"}, index: 2}),
+                    makeScreen("First", {title: {en: "Beta A", nl: "Beta A"}, index: 1}),
                 ]),
-                definition(
-                    "Alpha",
-                    [{name: "Main", title: {en: "Alpha main", nl: "Alpha main"}, index: 0}],
-                    {index: 0},
-                ),
+                definition("Alpha", [makeScreen("Main", {title: {en: "Alpha main", nl: "Alpha main"}})], {
+                    index: 0,
+                }),
             ],
             l,
         );
@@ -58,11 +65,10 @@ describe("buildOverviewEntries", () => {
         const entries = buildOverviewEntries(
             [
                 definition("Catalog", [
-                    {
-                        name: "Items",
+                    makeScreen("Items", {
                         title: {en: "Items", nl: "Items"},
                         description: {en: "All items", nl: "All items"},
-                    },
+                    }),
                 ]),
             ],
             l,
@@ -77,7 +83,7 @@ describe("buildOverviewEntries", () => {
     it("falls back to titlePlural when there is no workflow description", () => {
         const entries = buildOverviewEntries(
             [
-                definition("RMSS", [{name: "Projects", title: null, description: null, index: 0}], {
+                definition("RMSS", [makeScreen("Projects", {title: null, description: null})], {
                     title: {
                         en: "Research Master Social Sciences",
                         nl: "Research Master Social Sciences",
@@ -100,8 +106,8 @@ describe("primaryRegisterScreen", () => {
     it("picks the lowest-index screen", () => {
         const screen = primaryRegisterScreen(
             definition("Catalog", [
-                {name: "Archive", title: {en: "Archive", nl: "Archive"}, index: 2},
-                {name: "Items", title: {en: "Items", nl: "Items"}, index: 1},
+                makeScreen("Archive", {title: {en: "Archive", nl: "Archive"}, index: 2}),
+                makeScreen("Items", {title: {en: "Items", nl: "Items"}, index: 1}),
             ]),
         );
 

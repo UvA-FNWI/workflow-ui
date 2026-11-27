@@ -1,9 +1,11 @@
+import type {IconType} from "@uva-fnwi/datanose-ui";
+
 import type {WorkflowScreen as SearchableWorkflowScreen} from "~/components/Home/ScreenLink";
 import type {LocalString} from "~/hooks/useTranslate";
 import type {WorkflowDefinition, WorkflowScreen} from "~/store/api/types/workflowDefinitions";
 
 /** Fallback when the API omits a workflow definition icon (config: Entity.yaml `icon`). */
-export const DEFAULT_OVERVIEW_ICON = "folder-open-line";
+export const DEFAULT_OVERVIEW_ICON: IconType = "folder-line";
 
 export type OverviewEntry = {
     key: string;
@@ -11,7 +13,7 @@ export type OverviewEntry = {
     screenName: string;
     title: string;
     subtitle: string;
-    iconName: string;
+    iconName: IconType;
     sortKey: number;
 };
 
@@ -83,7 +85,7 @@ export function buildOverviewEntries(
                 screenName: screen.name,
                 title: entryLabel(def, screen, l),
                 subtitle: entryDescription(def, screen, l),
-                iconName: def.icon?.type ?? DEFAULT_OVERVIEW_ICON,
+                iconName: (def.icon?.type as IconType | undefined) ?? DEFAULT_OVERVIEW_ICON,
                 sortKey:
                     (def.index ?? Number.MAX_SAFE_INTEGER) * 1000 +
                     (screen.index ?? Number.MAX_SAFE_INTEGER),

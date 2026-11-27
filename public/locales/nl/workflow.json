@@ -165,7 +165,10 @@
   "optional": "* Niet verplicht",
   "overview": {
     "coordinator_view": "Coördinatorweergave",
+    "hub_title": "Registers",
     "load_error": "De startpagina kon niet worden geladen. Probeer het later opnieuw.",
+    "no_access": "Je hebt geen toegang tot registers.",
+    "page_title": "Overzicht",
     "personal_view": "Persoonlijke weergave"
   },
   "previous": "Vorige",
