@@ -165,11 +165,15 @@ const getStepPositions = (steps: WorkflowStep[]): number[] => {
     return positions.map((position, i) => position ?? getEvenPosition(i, steps.length));
 };
 
-const getProgressPercentage = (positions: number[], currentStepIndex: number): number => {
+const getProgressPercentage = (
+    positions: number[],
+    currentStepIndex: number,
+    isComplete: boolean,
+): number => {
     if (positions.length === 0) return 0;
-    if (currentStepIndex === -1) return 100;
+    if (isComplete) return 100;
 
-    return Math.round(positions[currentStepIndex]);
+    return Math.round(positions[currentStepIndex] ?? 0);
 };
 
 /** Centres the label on its percentage position without overflowing the track. */
@@ -213,9 +217,15 @@ const CurrentStepLabel = ({position, label}: {position: number; label: string}) 
 export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarProps) => {
     const {l, t, i18n} = useTranslate("workflow");
     const displaySteps = flattenSteps(steps);
-    const currentStepIndex = getCurrentStepIndex(displaySteps, currentStep);
+    const currentGroup = steps.find(
+        (step) => step.id === currentStep && step.hierarchyMode === "Sequential",
+    );
+    const currentChild = currentGroup?.children?.find((child) => !child.dateCompleted);
+    const currentStepIndex = getCurrentStepIndex(displaySteps, currentChild?.id ?? currentStep);
+    const currentMarker = displaySteps[currentStepIndex];
+    const isComplete = currentStep === "";
     const positions = getStepPositions(displaySteps);
-    const progress = getProgressPercentage(positions, currentStepIndex);
+    const progress = getProgressPercentage(positions, currentStepIndex, isComplete);
 
     const formatDeadline = (deadline: string) =>
         new Date(deadline).toLocaleDateString(i18n.language, {
@@ -289,15 +299,16 @@ export const WorkflowProgressBar = ({steps, currentStep}: WorkflowProgressBarPro
                         />
                     )}
                 </div>
-                <CurrentStepLabel
-                    position={positions[currentStepIndex] ?? 100}
-                    label={
-                        currentStepIndex >= 0
-                            ? (l(displaySteps[currentStepIndex]?.title) ??
-                              displaySteps[currentStepIndex]?.id)
-                            : t("progress.completed")
-                    }
-                />
+                {(currentMarker || isComplete) && (
+                    <CurrentStepLabel
+                        position={positions[currentStepIndex] ?? 100}
+                        label={
+                            currentMarker
+                                ? (l(currentMarker.title) ?? currentMarker.id)
+                                : t("progress.completed")
+                        }
+                    />
+                )}
             </div>
         </div>
     );
