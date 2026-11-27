@@ -13,6 +13,7 @@ import Overview from "~/pages/Overview";
 import Personal from "~/pages/Personal";
 import PersonOverview from "~/pages/PersonOverview";
 import type {UserDto} from "~/store/api/types/users";
+import type {WorkflowDefinition} from "~/store/api/types/workflowDefinitions";
 
 const {search, getPerson} = vi.hoisted(() => ({
     search: vi.fn(),
@@ -51,8 +52,9 @@ const availableDefinitions = [
         titlePlural: {en: "Bachelor theses", nl: "Bachelorscripties"},
         screens: ["overview"],
     },
-].map((definition) => ({
+].map<WorkflowDefinition>((definition) => ({
     ...definition,
+    languages: ["en", "nl"],
     index: null,
     isAlwaysVisible: false,
     inheritsFrom: null,
