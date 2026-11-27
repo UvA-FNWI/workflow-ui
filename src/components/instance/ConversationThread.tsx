@@ -14,6 +14,7 @@ type Props = {
     onExpandedChange: (open: boolean) => void;
     canAdd: boolean;
     allowClose: boolean;
+    maxReplyDepth: number | null;
     replyParentItemId: string | null;
     onStartReply: (parentItemId: string) => void;
     onCloseConversation: () => void;
@@ -53,6 +54,7 @@ export function ConversationThread({
     onExpandedChange,
     canAdd,
     allowClose,
+    maxReplyDepth,
     replyParentItemId,
     onStartReply,
     onCloseConversation,
@@ -104,7 +106,7 @@ export function ConversationThread({
                 <div className="flex flex-col gap-4 pb-4">
                     {root.body && <MessageBody body={root.body} className="mt-0" />}
 
-                    {canReply && (
+                    {canReply && maxReplyDepth !== 0 && (
                         <ReplyControl
                             label={replyLabel}
                             isActive={replyParentItemId === root.id}
@@ -123,7 +125,8 @@ export function ConversationThread({
                                 <ReplyBranch
                                     key={node.id}
                                     node={node}
-                                    visualDepth={1}
+                                    depth={1}
+                                    maxReplyDepth={maxReplyDepth}
                                     canAdd={canReply}
                                     replyParentItemId={replyParentItemId}
                                     onStartReply={onStartReply}
@@ -158,7 +161,8 @@ export function ConversationThread({
 
 type ReplyBranchProps = {
     node: MessageTreeNode;
-    visualDepth: number;
+    depth: number;
+    maxReplyDepth: number | null;
     canAdd: boolean;
     replyParentItemId: string | null;
     onStartReply: (parentItemId: string) => void;
@@ -168,7 +172,8 @@ type ReplyBranchProps = {
 
 function ReplyBranch({
     node,
-    visualDepth,
+    depth,
+    maxReplyDepth,
     canAdd,
     replyParentItemId,
     onStartReply,
@@ -177,7 +182,8 @@ function ReplyBranch({
 }: ReplyBranchProps) {
     const {i18n} = useTranslate("workflow", {keyPrefix: "instance.messages"});
     const isReplyingHere = replyParentItemId === node.id;
-    const atMaxDepth = visualDepth >= MAX_REPLY_VISUAL_DEPTH;
+    const atMaxVisualDepth = depth >= MAX_REPLY_VISUAL_DEPTH;
+    const canReply = canAdd && (maxReplyDepth === null || depth < maxReplyDepth);
 
     return (
         <div role="listitem" className="flex flex-col gap-2">
@@ -188,7 +194,7 @@ function ReplyBranch({
                 truncate={false}
             />
             {node.body && <MessageBody body={node.body} className="mt-1" />}
-            {canAdd && (
+            {canReply && (
                 <ReplyControl
                     label={replyLabel}
                     isActive={isReplyingHere}
@@ -199,7 +205,7 @@ function ReplyBranch({
             {node.children.length > 0 && (
                 <div
                     className={
-                        atMaxDepth
+                        atMaxVisualDepth
                             ? "flex flex-col gap-6 pl-4"
                             : "flex flex-col gap-6 border-l border-grey-300 pl-4 dark:border-grey-600"
                     }
@@ -209,7 +215,8 @@ function ReplyBranch({
                         <ReplyBranch
                             key={child.id}
                             node={child}
-                            visualDepth={Math.min(visualDepth + 1, MAX_REPLY_VISUAL_DEPTH)}
+                            depth={depth + 1}
+                            maxReplyDepth={maxReplyDepth}
                             canAdd={canAdd}
                             replyParentItemId={replyParentItemId}
                             onStartReply={onStartReply}

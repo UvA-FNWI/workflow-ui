@@ -340,6 +340,29 @@ describe("MessageThreadPanel", () => {
         ).toBeTruthy();
     });
 
+    it("limits new replies by their actual depth while showing existing deeper replies", () => {
+        const nestedReplies = [2, 3, 4].map((depth) => ({
+            ...thread.items[1]!,
+            id: `item-reply-${depth}`,
+            parentItemId: depth === 2 ? "item-reply" : `item-reply-${depth - 1}`,
+            body: `Reply at depth ${depth}`,
+        }));
+
+        render(
+            <MessageThreadPanel
+                instanceId="instance-1"
+                threads={[{...thread, items: [...thread.items, ...nestedReplies]}]}
+                canAdd
+                messageUi={{...defaultMessageUi, maxReplyDepth: 3}}
+            />,
+        );
+
+        const replyButtons = screen.getAllByRole("button", replyAction);
+        expect(replyButtons).toHaveLength(3);
+        expect(replyButtons[2]).toAppearBefore(screen.getByText("Reply at depth 3"));
+        expect(screen.getByText("Reply at depth 4")).toBeVisible();
+    });
+
     it("can dismiss the new conversation field with cancel", () => {
         render(<MessageThreadPanel instanceId="instance-1" threads={[thread]} canAdd />);
 

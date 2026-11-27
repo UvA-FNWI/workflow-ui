@@ -14,6 +14,7 @@ describe("resolveInstanceMessageSettings", () => {
             {
                 layout: "threaded",
                 allowClose: true,
+                maxReplyDepth: null,
                 callout: null,
                 term: null,
                 termPlural: null,
@@ -32,6 +33,7 @@ describe("resolveInstanceMessageSettings", () => {
                 messages: {
                     layout: "flat",
                     allowClose: false,
+                    maxReplyDepth: 0,
                     callout: {
                         variant: "Warning",
                         title: {en: "Privacy", nl: "Privacy"},
@@ -45,6 +47,7 @@ describe("resolveInstanceMessageSettings", () => {
         ).toEqual({
             layout: "flat",
             allowClose: false,
+            maxReplyDepth: 0,
             callout: {
                 variant: "Warning",
                 title: {en: "Privacy", nl: "Privacy"},

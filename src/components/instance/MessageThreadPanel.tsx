@@ -49,7 +49,7 @@ export function MessageThreadPanel({
     onFocusNewConversationHandled,
     messageUi = defaultMessageUi,
 }: Props) {
-    const {layout, allowClose, callout} = messageUi;
+    const {layout, allowClose, maxReplyDepth, callout} = messageUi;
     const isFlat = layout === "flat";
     const cancelIntent: MessageComposerProps["cancelIntent"] =
         questionName == null ? "ghost" : "secondary";
@@ -221,6 +221,7 @@ export function MessageThreadPanel({
             onExpandedChange={(open) => setThreadExpanded(thread.id, open)}
             canAdd={canAdd && !isFlat}
             allowClose={allowClose}
+            maxReplyDepth={maxReplyDepth}
             replyParentItemId={
                 replyTarget?.threadId === thread.id ? replyTarget.parentItemId : null
             }

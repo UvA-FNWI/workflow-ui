@@ -9,6 +9,7 @@ export type MessageUiSettings = {
     termPlural: LocalString | null;
     layout: "threaded" | "flat";
     allowClose: boolean;
+    maxReplyDepth: number | null;
     callout: Callout | null;
 };
 
@@ -17,6 +18,7 @@ export const defaultMessageUi: MessageUiSettings = {
     termPlural: null,
     layout: "threaded",
     allowClose: true,
+    maxReplyDepth: null,
     callout: null,
 };
 
@@ -30,6 +32,7 @@ export function resolveInstanceMessageSettings(
         termPlural: settings?.termPlural ?? null,
         layout: settings?.layout === "flat" ? "flat" : "threaded",
         allowClose: settings?.allowClose ?? true,
+        maxReplyDepth: settings?.maxReplyDepth ?? null,
         callout: settings?.callout ?? null,
     };
 }

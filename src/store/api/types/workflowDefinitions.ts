@@ -21,6 +21,7 @@ export type WorkflowDefinition = {
         fieldsAllowAll?: boolean;
         layout?: "threaded" | "flat";
         allowClose?: boolean;
+        maxReplyDepth?: number | null;
         callout?: Callout | null;
     };
 };
