@@ -23,6 +23,7 @@ export type UserDto = {
     organization: Organization | null;
     isExternal: boolean;
     isSuperAdmin: boolean;
+    canImpersonateUsers?: boolean;
     isEmailEditable: boolean;
 };
 

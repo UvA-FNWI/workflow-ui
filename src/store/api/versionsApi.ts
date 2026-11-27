@@ -22,7 +22,7 @@ export const versionsApi = baseApi.injectEndpoints({
                 url: "/Versions/Reload",
                 method: "POST",
             }),
-            invalidatesTags: ["Screen", "Workflow"],
+            invalidatesTags: ["Screen", "Workflow", "User"],
         }),
     }),
 });

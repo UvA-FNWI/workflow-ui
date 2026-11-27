@@ -28,12 +28,10 @@ function Navbar() {
     const toast = useToast();
     const user = useAppSelector(selectCurrentUser);
     const configStreamConnected = useAppSelector(selectConfigStreamConnected);
-    // The Develop page and version switching are developer/admin functionality, locked behind
-    // super-admin rights (see /Users/Me isSuperAdmin).
-    const isSuperAdmin = user?.isSuperAdmin ?? false;
+    const canAccessGlobalAdminTools = user?.isSuperAdmin ?? false;
+    const canImpersonateUsers = user?.canImpersonateUsers ?? false;
 
-    // While impersonating, the stop control is gated on the token, not isSuperAdmin (which now
-    // reflects the target, not the admin).
+    // Keep the stop control available while viewing the target's account.
     const userImpersonation = useAppSelector(selectUserImpersonation);
     const isImpersonating = !!userImpersonation;
     const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -106,7 +104,7 @@ function Navbar() {
                 )}
             </div>
             <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-                {isSuperAdmin && (
+                {canAccessGlobalAdminTools && (
                     <VersionedLink to="/develop">
                         <Button
                             intent="primary"
@@ -126,9 +124,9 @@ function Navbar() {
                 {isAuthenticated && user && (
                     <NavbarUser
                         displayName={userImpersonation?.targetDisplayName ?? user.displayName}
-                        showVersionPicker={isSuperAdmin}
+                        showVersionPicker={canAccessGlobalAdminTools}
                         onStartImpersonation={
-                            isSuperAdmin && !isImpersonating
+                            canImpersonateUsers && !isImpersonating
                                 ? () => setIsPickerOpen(true)
                                 : undefined
                         }
@@ -137,7 +135,7 @@ function Navbar() {
                     />
                 )}
             </div>
-            {isSuperAdmin && !isImpersonating && (
+            {canImpersonateUsers && !isImpersonating && (
                 <UserPickerModal
                     isOpen={isPickerOpen}
                     onOpenChange={setIsPickerOpen}
